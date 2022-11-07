@@ -1,0 +1,8 @@
+*.blend1
+southseaMapMeta.json
+southseaChunkMeta.json
+build/
+Ogre.log
+avTestFile.txt
+.DS_Store
+__substance_*
