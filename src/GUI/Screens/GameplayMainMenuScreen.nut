@@ -1,16 +1,9 @@
-::SaveSelectionScreen <- class extends ::Screen{
+::GameplayMainMenuScreen <- class extends ::Screen{
 
     mWindow_ = null;
 
     constructor(){
 
-    }
-
-    function saveSelectionCallback_(widget, action){
-        print(format("Selected save %i", widget.getUserId()));
-
-        //There is no implementation for saves yet, so just switch the screen.
-        ::ScreenManager.transitionToScreen(::GameplayMainMenuScreen);
     }
 
     function setup(){
@@ -23,16 +16,28 @@
 
         local title = mWindow_.createLabel();
         title.setDefaultFontSize(title.getDefaultFontSize() * 2);
-        title.setText("Select a save");
+        title.setText("Main Menu");
         layoutLine.addCell(title);
 
-        for(local i = 0; i < 3; i++){
+        local buttonOptions = ["Explore", "Inventory", "Visit"];
+        local buttonFunctions = [
+            function(widget, action){
+                print("Explore")
+            },
+            function(widget, action){
+                print("Inventory");
+            },
+            function(widget, action){
+                print("Visit");
+            }
+        ]
+
+        foreach(i,c in buttonOptions){
             local button = mWindow_.createButton();
             button.setDefaultFontSize(button.getDefaultFontSize() * 1.5);
-            button.setText(format("Save %i", i));
+            button.setText(c);
             button.setSize(_window.getWidth() * 0.9, buttonSize.y);
-            button.setUserId(i);
-            button.attachListenerForEvent(saveSelectionCallback_, _GUI_ACTION_PRESSED, this);
+            button.attachListenerForEvent(buttonFunctions[i], _GUI_ACTION_PRESSED, this);
             layoutLine.addCell(button);
         }
 
