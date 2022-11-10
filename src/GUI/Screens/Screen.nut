@@ -3,4 +3,12 @@
     constructor(){
 
     }
+
+    function start(){
+
+    }
+
+    function update(){
+
+    }
 };

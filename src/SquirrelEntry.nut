@@ -15,7 +15,7 @@ function start(){
 }
 
 function update(){
-
+    ::Base.update();
 }
 
 function end(){

@@ -50,4 +50,8 @@
     function shutdown(){
         _gui.destroy(mWindow_);
     }
+
+    function update(){
+
+    }
 };

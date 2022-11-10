@@ -10,7 +10,7 @@
         print(format("Selected save %i", widget.getUserId()));
 
         //There is no implementation for saves yet, so just switch the screen.
-        ::ScreenManager.transitionToScreen(::GameplayMainMenuScreen);
+        ::ScreenManager.transitionToScreen(GameplayMainMenuScreen());
     }
 
     function setup(){
@@ -44,5 +44,9 @@
 
     function shutdown(){
         _gui.destroy(mWindow_);
+    }
+
+    function update(){
+
     }
 };

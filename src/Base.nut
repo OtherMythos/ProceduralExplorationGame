@@ -6,7 +6,14 @@
         _doFile("res://src/GUI/Screens/MainMenuScreen.nut");
         _doFile("res://src/GUI/Screens/SaveSelectionScreen.nut");
         _doFile("res://src/GUI/Screens/GameplayMainMenuScreen.nut");
+        _doFile("res://src/GUI/Screens/ExplorationScreen.nut");
 
-        ::ScreenManager.transitionToScreen(MainMenuScreen);
+        _doFile("res://src/Logic/ExplorationLogic.nut");
+
+        ::ScreenManager.transitionToScreen(ExplorationScreen(ExplorationLogic()));
+    }
+
+    function update(){
+        ::ScreenManager.update();
     }
 };

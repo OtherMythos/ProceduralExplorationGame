@@ -22,7 +22,7 @@
         local buttonOptions = ["play", "help"];
         local buttonFunctions = [
             function(widget, action){
-                ::ScreenManager.transitionToScreen(::SaveSelectionScreen);
+                ::ScreenManager.transitionToScreen(SaveSelectionScreen());
             },
             function(widget, action){
                 print("Help");
@@ -46,5 +46,9 @@
 
     function shutdown(){
         _gui.destroy(mMainMenuWindow_);
+    }
+
+    function update(){
+
     }
 };

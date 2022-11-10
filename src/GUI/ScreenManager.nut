@@ -1,6 +1,6 @@
 ::ScreenManager <- {
 
-    "mTargetScreen_": null,
+    "mActiveScreen_": null,
 
     function setup(){
 
@@ -10,11 +10,15 @@
      * Transition to a new screen.
      */
     function transitionToScreen(screenObject, transitionEffect = null){
-        if(mTargetScreen_ != null){
-            mTargetScreen_.shutdown();
+        if(mActiveScreen_ != null){
+            mActiveScreen_.shutdown();
         }
-        mTargetScreen_ = screenObject();
+        mActiveScreen_ = screenObject;
 
-        mTargetScreen_.setup();
+        mActiveScreen_.setup();
+    }
+
+    function update(){
+        if(mActiveScreen_ != null) mActiveScreen_.update();
     }
 };
