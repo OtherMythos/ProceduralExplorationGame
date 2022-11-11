@@ -10,7 +10,8 @@
 
         _doFile("res://src/Logic/ExplorationLogic.nut");
 
-        ::ScreenManager.transitionToScreen(ExplorationScreen(ExplorationLogic()));
+        ::ScreenManager.transitionToScreen(MainMenuScreen());
+        //::ScreenManager.transitionToScreen(ExplorationScreen(ExplorationLogic()));
     }
 
     function update(){

@@ -1,4 +1,6 @@
 function start(){
+    _doFile("res://src/Constants.nut");
+
     ::buttonSize <- Vec2(350, 90);
 
     _camera.setProjectionType(_PT_ORTHOGRAPHIC);

@@ -22,7 +22,8 @@
         local buttonOptions = ["Explore", "Inventory", "Visit"];
         local buttonFunctions = [
             function(widget, action){
-                print("Explore")
+                print("Explore");
+                ::ScreenManager.transitionToScreen(ExplorationScreen(ExplorationLogic()));
             },
             function(widget, action){
                 print("Inventory");

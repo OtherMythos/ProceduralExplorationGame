@@ -4,11 +4,12 @@
     mWorldMapDisplay_ = null;
     mExplorationProgressBar_ = null;
     mLogicInterface_ = null;
+    mExplorationItemsContainer_ = null;
 
     WorldMapDisplay = class{
         mWindow_ = null;
 
-        mHeight_ = 200;
+        mHeight_ = 300;
 
         constructor(parentWin){
             mWindow_ = _gui.createWindow(parentWin);
@@ -42,7 +43,6 @@
             local highlightDatablock = _hlms.unlit.createDatablock("progressBar", null, null, {"diffuse": "0.4 1.0 0.4"});
 
             mPanel_ = mWindow_.createPanel();
-            mPanel_.setSkinPack("Empty");
             mPanel_.setSize(100, 100);
             mPanel_.setPosition(mPadding_, mPadding_);
             mPanel_.setDatablock(highlightDatablock);
@@ -61,14 +61,60 @@
         }
     };
 
+    ExplorationItemsContainer = class{
+        mWindow_ = null;
+        mPanel_ = null;
+        mButtons_ = null;
+
+        mWidth_ = 0;
+        mHeight_ = 240;
+        mButtonSize_ = 0;
+
+        mNumSlots_ = 4;
+
+        constructor(parentWin){
+            mWidth_ = _window.getWidth() * 0.9;
+            mButtonSize_ = mWidth_ / 5;
+
+            mWindow_ = _gui.createWindow(parentWin);
+            mWindow_.setSize(mWidth_, mHeight_);
+
+            local layoutLine = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
+            mButtons_ = array(mNumSlots_);
+            for(local i = 0; i < mNumSlots_; i++){
+                local button = mWindow_.createButton();
+                button.setText("Empty");
+                button.setSize(mButtonSize_, mButtonSize_);
+                button.setHidden(true);
+                layoutLine.addCell(button);
+                mButtons_[i] = button;
+            }
+            layoutLine.setMarginForAllCells(10, 0);
+            layoutLine.layout();
+        }
+
+        function addToLayout(layoutLine){
+            layoutLine.addCell(mWindow_);
+        }
+
+        function setItemForIndex(item, index){
+            assert(index < mButtons_.len());
+            local button = mButtons_[index];
+            if(item == Item.NONE){
+                button.setHidden(true);
+                return;
+            }
+            button.setText(::ItemToName(item), false);
+            button.setHidden(false);
+        }
+    };
+
     constructor(logicInterface){
         mLogicInterface_ = logicInterface;
         mLogicInterface_.setGuiObject(this);
     }
 
     function setup(){
-        mLogicInterface_.resetExploration();
-
         mWindow_ = _gui.createWindow();
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setVisualsEnabled(false);
@@ -92,6 +138,9 @@
         mWorldMapDisplay_ = WorldMapDisplay(mWindow_);
         mWorldMapDisplay_.addToLayout(layoutLine);
 
+        mExplorationItemsContainer_ = ExplorationItemsContainer(mWindow_);
+        mExplorationItemsContainer_.addToLayout(layoutLine);
+
         mExplorationProgressBar_ = ExplorationProgressBar(mWindow_);
         mExplorationProgressBar_.addToLayout(layoutLine);
 
@@ -99,6 +148,8 @@
         layoutLine.setPosition(_window.getWidth() * 0.05, 50);
         layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
         layoutLine.layout();
+
+        mLogicInterface_.resetExploration();
     }
 
     function update(){
@@ -111,5 +162,9 @@
 
     function notifyExplorationPercentage(percentage){
         mExplorationProgressBar_.setPercentage(percentage);
+    }
+
+    function notifyItemFound(item, idx){
+        mExplorationItemsContainer_.setItemForIndex(item, idx);
     }
 };
