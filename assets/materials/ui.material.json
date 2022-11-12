@@ -1,0 +1,28 @@
+{
+    "blendblocks" :
+    {
+        "gui/uiBlend" :
+        {
+            "src_blend_factor": "src_alpha",
+            "dst_blend_factor": "one_minus_src_alpha",
+            "src_alpha_blend_factor": "one_minus_dst_alpha",
+            "dst_alpha_blend_factor": "one"
+        }
+    },
+
+    "unlit" :
+    {
+        "gui/encounterWindowFirstColour" :
+        {
+            "diffuse" : [1, 1, 0.5, 1]
+        },
+        "gui/encounterWindowSecondColour" :
+        {
+            "diffuse" : [1, 0.2, 0.2, 1]
+        },
+        "gui/explorationProgressBar" :
+        {
+            "diffuse" : [0.4, 1.0, 0.4, 1]
+        }
+    }
+}

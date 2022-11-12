@@ -40,12 +40,10 @@
             mWindow_.setSize(mWidth_, mHeight_);
             mWindow_.setClipBorders(0, 0, 0, 0);
 
-            local highlightDatablock = _hlms.unlit.createDatablock("progressBar", null, null, {"diffuse": "0.4 1.0 0.4"});
-
             mPanel_ = mWindow_.createPanel();
             mPanel_.setSize(100, 100);
             mPanel_.setPosition(mPadding_, mPadding_);
-            mPanel_.setDatablock(highlightDatablock);
+            mPanel_.setDatablock("gui/explorationProgressBar");
 
             setPercentage(0);
         }
@@ -166,5 +164,9 @@
 
     function notifyItemFound(item, idx){
         mExplorationItemsContainer_.setItemForIndex(item, idx);
+    }
+
+    function notifyEnemyEncounter(enemy){
+        ::ScreenManager.transitionToScreen(EncounterPopupScreen(), null, 2);
     }
 };

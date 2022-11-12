@@ -1,24 +1,30 @@
 ::ScreenManager <- {
 
-    "mActiveScreen_": null,
+    "MAX_SCREENS": 3,
+    "mActiveScreens_": null,
 
     function setup(){
-
+        mActiveScreens_ = array(MAX_SCREENS, null);
     }
 
     /**
      * Transition to a new screen.
      */
-    function transitionToScreen(screenObject, transitionEffect = null){
-        if(mActiveScreen_ != null){
-            mActiveScreen_.shutdown();
+    function transitionToScreen(screenObject, transitionEffect = null, layerId = 0){
+        assert(layerId < MAX_SCREENS);
+        if(mActiveScreens_[layerId] != null){
+            mActiveScreens_[layerId].shutdown();
         }
-        mActiveScreen_ = screenObject;
+        mActiveScreens_[layerId] = screenObject;
 
-        mActiveScreen_.setup();
+        mActiveScreens_[layerId].setup();
     }
 
     function update(){
-        if(mActiveScreen_ != null) mActiveScreen_.update();
+        foreach(i in mActiveScreens_){
+            if(i != null) i.update();
+        }
     }
 };
+
+::ScreenManager.setup();
