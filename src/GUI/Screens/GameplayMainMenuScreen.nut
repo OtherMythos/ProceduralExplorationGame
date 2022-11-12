@@ -1,7 +1,5 @@
 ::GameplayMainMenuScreen <- class extends ::Screen{
 
-    mWindow_ = null;
-
     constructor(){
 
     }
@@ -46,10 +44,6 @@
         layoutLine.setPosition(_window.getWidth() * 0.05, 100);
         layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
         layoutLine.layout();
-    }
-
-    function shutdown(){
-        _gui.destroy(mWindow_);
     }
 
     function update(){

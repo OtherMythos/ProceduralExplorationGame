@@ -1,6 +1,5 @@
 ::ExplorationScreen <- class extends ::Screen{
 
-    mWindow_ = null;
     mWorldMapDisplay_ = null;
     mExplorationProgressBar_ = null;
     mLogicInterface_ = null;
@@ -152,10 +151,6 @@
 
     function update(){
         mLogicInterface_.tickUpdate();
-    }
-
-    function shutdown(){
-        _gui.destroy(mWindow_);
     }
 
     function notifyExplorationPercentage(percentage){

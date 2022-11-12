@@ -1,5 +1,7 @@
 //Base class
 ::Screen <- class{
+    mWindow_ = null;
+
     constructor(){
 
     }
@@ -10,5 +12,9 @@
 
     function update(){
 
+    }
+
+    function shutdown(){
+        _gui.destroy(mWindow_);
     }
 };

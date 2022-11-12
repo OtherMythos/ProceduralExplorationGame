@@ -1,7 +1,5 @@
 ::EncounterPopupScreen <- class extends ::Screen{
 
-    mWindow_ = null;
-
     mCount_ = 0;
     mBackgroundColour_ = false;
 
@@ -40,9 +38,5 @@
     function setBackground(background){
         if(background) mWindow_.setDatablock("gui/encounterWindowFirstColour");
         else mWindow_.setDatablock("gui/encounterWindowSecondColour");
-    }
-
-    function shutdown(){
-        _gui.destroy(mWindow_);
     }
 }
