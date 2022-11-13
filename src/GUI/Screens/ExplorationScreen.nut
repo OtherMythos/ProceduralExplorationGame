@@ -12,7 +12,6 @@
 
         constructor(parentWin){
             mWindow_ = _gui.createWindow(parentWin);
-            mWindow_.setSize(_window.getWidth() * 0.9, mHeight_);
             mWindow_.setClipBorders(0, 0, 0, 0);
 
             local title = mWindow_.createLabel();
@@ -20,7 +19,10 @@
         }
 
         function addToLayout(layoutLine){
-            layoutLine.addCell(mWindow_);
+            local cellId = layoutLine.addCell(mWindow_);
+            layoutLine.setCellExpandHorizontal(cellId, true);
+            layoutLine.setCellExpandVertical(cellId, true);
+            layoutLine.setCellProportionVertical(cellId, 2);
         }
     };
 
@@ -64,34 +66,39 @@
         mButtons_ = null;
 
         mWidth_ = 0;
-        mHeight_ = 240;
         mButtonSize_ = 0;
 
         mNumSlots_ = 4;
+
+        mLayoutLine_ = null;
 
         constructor(parentWin){
             mWidth_ = _window.getWidth() * 0.9;
             mButtonSize_ = mWidth_ / 5;
 
             mWindow_ = _gui.createWindow(parentWin);
-            mWindow_.setSize(mWidth_, mHeight_);
+            mWindow_.setClipBorders(0, 0, 0, 0);
 
-            local layoutLine = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
+            mLayoutLine_ = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
             mButtons_ = array(mNumSlots_);
             for(local i = 0; i < mNumSlots_; i++){
                 local button = mWindow_.createButton();
                 button.setText("Empty");
-                button.setSize(mButtonSize_, mButtonSize_);
                 button.setHidden(true);
-                layoutLine.addCell(button);
+                local cellId = mLayoutLine_.addCell(button);
+                mLayoutLine_.setCellExpandHorizontal(cellId, true);
+                mLayoutLine_.setCellExpandVertical(cellId, true);
+                mLayoutLine_.setCellProportionHorizontal(cellId, 1);
                 mButtons_[i] = button;
             }
-            layoutLine.setMarginForAllCells(10, 0);
-            layoutLine.layout();
+            mLayoutLine_.setMarginForAllCells(10, 10);
         }
 
         function addToLayout(layoutLine){
-            layoutLine.addCell(mWindow_);
+            local cellId = layoutLine.addCell(mWindow_);
+            layoutLine.setCellExpandHorizontal(cellId, true);
+            layoutLine.setCellExpandVertical(cellId, true);
+            layoutLine.setCellProportionVertical(cellId, 1);
         }
 
         function setItemForIndex(item, index){
@@ -103,6 +110,12 @@
             }
             button.setText(::ItemToName(item), false);
             button.setHidden(false);
+        }
+
+        function sizeForButtons(){
+            //Actually sizing up the buttons has to be delayed until the window has its size.
+            mLayoutLine_.setSize(mWindow_.getSize());
+            mLayoutLine_.layout();
         }
     };
 
@@ -128,7 +141,9 @@
 
         local title = mWindow_.createLabel();
         title.setDefaultFontSize(title.getDefaultFontSize() * 2);
-        title.setText("Exploring");
+        title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
+        title.setText("Exploring", false);
+        title.sizeToFit(_window.getWidth() * 0.9);
         layoutLine.addCell(title);
 
         //World map display
@@ -141,10 +156,14 @@
         mExplorationProgressBar_ = ExplorationProgressBar(mWindow_);
         mExplorationProgressBar_.addToLayout(layoutLine);
 
+        layoutLine.setHardMaxSize(_window.getWidth() * 0.9, _window.getHeight());
+        layoutLine.setSize(_window.getWidth() * 0.9, _window.getHeight() * 0.9);
         layoutLine.setMarginForAllCells(0, 20);
-        layoutLine.setPosition(_window.getWidth() * 0.05, 50);
+        layoutLine.setPosition(_window.getWidth() * 0.05, _window.getHeight() * 0.1);
         layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
         layoutLine.layout();
+
+        mExplorationItemsContainer_.sizeForButtons();
 
         mLogicInterface_.resetExploration();
     }

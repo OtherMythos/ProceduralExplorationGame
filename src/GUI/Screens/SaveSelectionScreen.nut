@@ -22,7 +22,7 @@
         local title = mWindow_.createLabel();
         title.setDefaultFontSize(title.getDefaultFontSize() * 2);
         title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
-        title.setText("Select a save kfjsdlkf fskldjfsdkl", false);
+        title.setText("Select a save", false);
         title.sizeToFit(_window.getWidth() * 0.9);
         layoutLine.addCell(title);
 
