@@ -34,7 +34,7 @@
         button.setDefaultFontSize(button.getDefaultFontSize() * 1.5);
         button.setText("End combat");
         button.attachListenerForEvent(function(widget, action){
-            ::ScreenManager.transitionToScreen(ExplorationScreen(ExplorationLogic()));
+            ::ScreenManager.transitionToScreen(ExplorationScreen(::Base.mExplorationLogic));
         }, _GUI_ACTION_PRESSED, this);
         local cellId = layoutLine.addCell(button);
         layoutLine.setCellExpandHorizontal(cellId, true);

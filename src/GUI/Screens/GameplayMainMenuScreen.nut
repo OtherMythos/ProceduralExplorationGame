@@ -23,7 +23,7 @@
         local buttonFunctions = [
             function(widget, action){
                 print("Explore");
-                ::ScreenManager.transitionToScreen(ExplorationScreen(ExplorationLogic()));
+                ::ScreenManager.transitionToScreen(ExplorationScreen(::Base.mExplorationLogic));
             },
             function(widget, action){
                 print("Inventory");

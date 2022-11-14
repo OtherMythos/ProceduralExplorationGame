@@ -1,4 +1,6 @@
 ::Base <- {
+    "mExplorationLogic": null,
+
     function setup(){
 
         _doFile("res://src/GUI/ScreenManager.nut");
@@ -13,9 +15,11 @@
         _doFile("res://src/Logic/ExplorationLogic.nut");
         _doFile("res://src/Logic/CombatLogic.nut");
 
-        ::ScreenManager.transitionToScreen(MainMenuScreen());
-        //::ScreenManager.transitionToScreen(ExplorationScreen(ExplorationLogic()));
-        //::ScreenManager.transitionToScreen(::CombatScreen(::CombatLogic()));
+        mExplorationLogic = ExplorationLogic();
+
+        //::ScreenManager.transitionToScreen(MainMenuScreen());
+        ::ScreenManager.transitionToScreen(ExplorationScreen(mExplorationLogic));
+        //::ScreenManager.transitionToScreen(::CombatScreen(CombatLogic()));
         //::ScreenManager.transitionToScreen(EncounterPopupScreen(), null, 1);
     }
 

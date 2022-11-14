@@ -15,12 +15,13 @@
     mFoundItems_ = null;
     mNumFoundItems_ = 0;
 
-    mEnemyEncountered = false;
+    mEnemyEncountered_ = false;
+    mExplorationFinished_ = false;
 
     mGui_ = null;
 
     constructor(){
-
+        resetExploration();
     }
 
     function resetExploration(){
@@ -29,16 +30,20 @@
 
         mNumFoundItems_ = 0;
         mFoundItems_ = array(EXPLORATION_MAX_FOUND_ITEMS, Item.NONE);
-        foreach(i,c in mFoundItems_){
-            mGui_.notifyItemFound(c, i);
-        }
+        mEnemyEncountered_ = false;
+        mExplorationFinished_ = false;
 
-        mEnemyEncountered = false;
+        renotifyItems();
+        processExplorationBegan();
     }
 
     function tickUpdate(){
+        if(mExplorationCount_ >= EXPLORATION_MAX_LENGTH){
+            processExplorationEnd();
+            return;
+        }
         if(mExplorationCount_ == EXPLORATION_MAX_LENGTH) return;
-        if(mEnemyEncountered) return;
+        if(mEnemyEncountered_) return;
         updatePercentage();
         checkForItem();
         checkForEncounter();
@@ -91,10 +96,44 @@
     function processEncounter(enemy){
         print("Encountered enemy " + ::EnemyToName(enemy));
         mGui_.notifyEnemyEncounter(enemy);
-        mEnemyEncountered = true;
+        mEnemyEncountered_ = true;
+    }
+
+    function processExplorationBegan(){
+        if(mGui_) mGui_.notifyExplorationBegan();
+    }
+
+    function processExplorationEnd(){
+        if(mExplorationFinished_) return;
+        mExplorationFinished_ = true;
+
+        if(mGui_) mGui_.notifyExplorationEnd();
+    }
+
+    function continueExploration(){
+        mEnemyEncountered_ = false;
+        renotifyItems();
     }
 
     function setGuiObject(guiObj){
         mGui_ = guiObj;
+    }
+
+    function renotifyItems(){
+        if(!mGui_) return;
+        foreach(i,c in mFoundItems_){
+            mGui_.notifyItemFound(c, i);
+        }
+    }
+
+    /*
+    * Either continue or reset the exploration, depending on whether it's finished or not.
+    */
+    function continueOrResetExploration(){
+        if(mExplorationFinished_){
+            resetExploration();
+            return;
+        }
+        continueExploration();
     }
 };

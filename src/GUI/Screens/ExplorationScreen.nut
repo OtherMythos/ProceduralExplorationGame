@@ -27,6 +27,7 @@
     };
 
     ExplorationProgressBar = class{
+        mParentScreen_ = null;
         mWindow_ = null;
         mPanel_ = null;
 
@@ -34,17 +35,53 @@
         mHeight_ = 60;
         mPadding_ = 8;
 
-        constructor(parentWin){
+        mOptionButtons_ = null;
+
+        function exploreAgainButton(widget, action){
+            mParentScreen_.mLogicInterface_.resetExploration();
+        }
+
+        function mainMenuButton(widget, action){
+            ::ScreenManager.transitionToScreen(GameplayMainMenuScreen());
+        }
+
+        constructor(parentWin, parentScreen){
+            mParentScreen_ = parentScreen;
             mWidth_ = _window.getWidth() * 0.9;
 
             mWindow_ = _gui.createWindow(parentWin);
             mWindow_.setSize(mWidth_, mHeight_);
             mWindow_.setClipBorders(0, 0, 0, 0);
 
-            mPanel_ = mWindow_.createPanel();
-            mPanel_.setSize(100, 100);
-            mPanel_.setPosition(mPadding_, mPadding_);
-            mPanel_.setDatablock("gui/explorationProgressBar");
+            {
+                mPanel_ = mWindow_.createPanel();
+                mPanel_.setSize(100, 100);
+                mPanel_.setPosition(mPadding_, mPadding_);
+                mPanel_.setDatablock("gui/explorationProgressBar");
+            }
+
+            { //Create buttons
+                local buttonLayout = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
+                mOptionButtons_ = [];
+
+                local buttonNames = ["Explore again", "Main Menu"]
+                local buttonFunctions = [exploreAgainButton, mainMenuButton];
+                foreach(c,i in buttonNames){
+                    local button = mWindow_.createButton();
+                    button.setText(i);
+                    button.attachListenerForEvent(buttonFunctions[c], _GUI_ACTION_PRESSED, this);
+                    button.setHidden(true);
+                    local cellId = buttonLayout.addCell(button);
+                    buttonLayout.setCellExpandHorizontal(cellId, true);
+                    buttonLayout.setCellExpandVertical(cellId, true);
+                    buttonLayout.setCellProportionHorizontal(cellId, 1);
+                    mOptionButtons_.append(button);
+                }
+
+                buttonLayout.setMarginForAllCells(10, 10);
+                buttonLayout.setSize(mWindow_.getSize());
+                buttonLayout.layout();
+            }
 
             setPercentage(0);
         }
@@ -53,6 +90,14 @@
             //*2 for both sides.
             local actualWidth = mWidth_ - mPadding_ * 2;
             mPanel_.setSize(actualWidth * (percentage.tofloat() / 100.0), mHeight_ - mPadding_ * 2);
+        }
+
+        function showButtons(show){
+            foreach(i in mOptionButtons_){
+                i.setHidden(!show);
+            }
+
+            mPanel_.setHidden(show);
         }
 
         function addToLayout(layoutLine){
@@ -153,7 +198,7 @@
         mExplorationItemsContainer_ = ExplorationItemsContainer(mWindow_);
         mExplorationItemsContainer_.addToLayout(layoutLine);
 
-        mExplorationProgressBar_ = ExplorationProgressBar(mWindow_);
+        mExplorationProgressBar_ = ExplorationProgressBar(mWindow_, this);
         mExplorationProgressBar_.addToLayout(layoutLine);
 
         layoutLine.setHardMaxSize(_window.getWidth() * 0.9, _window.getHeight());
@@ -165,7 +210,7 @@
 
         mExplorationItemsContainer_.sizeForButtons();
 
-        mLogicInterface_.resetExploration();
+        mLogicInterface_.continueOrResetExploration();
     }
 
     function update(){
@@ -182,5 +227,13 @@
 
     function notifyEnemyEncounter(enemy){
         ::ScreenManager.transitionToScreen(EncounterPopupScreen(), null, 2);
+    }
+
+    function notifyExplorationEnd(){
+        mExplorationProgressBar_.showButtons(true);
+    }
+
+    function notifyExplorationBegan(){
+        mExplorationProgressBar_.showButtons(false);
     }
 };
