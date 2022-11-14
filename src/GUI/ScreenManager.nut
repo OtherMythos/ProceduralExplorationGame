@@ -17,6 +17,8 @@
         }
         mActiveScreens_[layerId] = screenObject;
 
+        if(!screenObject) return;
+
         mActiveScreens_[layerId].setup();
     }
 

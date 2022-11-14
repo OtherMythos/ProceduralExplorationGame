@@ -66,7 +66,7 @@
     }
 
     function checkForEncounter(){
-        local foundSomething = _random.randInt(100) == 0;
+        local foundSomething = _random.randInt(200) == 0;
         if(foundSomething){
             //decide what was found.
             local enemy = _random.randInt(Enemy.NONE+1, Enemy.MAX-1);

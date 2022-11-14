@@ -3,12 +3,19 @@
     mCount_ = 0;
     mBackgroundColour_ = false;
 
+    mBackgroundWindow_ = null;
+
     constructor(){
 
     }
 
     function setup(){
         local winWidth = _window.getWidth() * 0.8;
+
+        //Create a window to block inputs for when the popup appears.
+        mBackgroundWindow_ = _gui.createWindow();
+        mBackgroundWindow_.setSize(_window.getWidth(), _window.getHeight());
+        mBackgroundWindow_.setVisualsEnabled(false);
 
         mWindow_ = _gui.createWindow();
         mWindow_.setSize(winWidth, _window.getHeight() * 0.333);
@@ -29,14 +36,24 @@
 
     function update(){
         mCount_++;
-        if(mCount_ % 50 == 0){
+        if(mCount_ % 25 == 0){
             mBackgroundColour_ = !mBackgroundColour_;
             setBackground(mBackgroundColour_);
+        }
+
+        if(mCount_ >= 150){
+            ::ScreenManager.transitionToScreen(null, null, 2);
+            ::ScreenManager.transitionToScreen(::CombatScreen(::CombatLogic()));
         }
     }
 
     function setBackground(background){
         if(background) mWindow_.setDatablock("gui/encounterWindowFirstColour");
         else mWindow_.setDatablock("gui/encounterWindowSecondColour");
+    }
+
+    function shutdown(){
+        _gui.destroy(mWindow_);
+        _gui.destroy(mBackgroundWindow_);
     }
 }
