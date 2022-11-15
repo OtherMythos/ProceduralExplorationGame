@@ -146,7 +146,7 @@
 
         function buttonPressed(widget, action){
             local id = widget.getUserId();
-            ::ScreenManager.transitionToScreen(ItemInfoScreen(mItems_[Item.SIMPLE_SHIELD]));
+            ::ScreenManager.transitionToScreen(ItemInfoScreen(mItems_[id]));
         }
 
         function addToLayout(layoutLine){
