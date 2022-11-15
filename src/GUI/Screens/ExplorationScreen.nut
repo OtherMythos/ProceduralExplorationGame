@@ -109,6 +109,7 @@
         mWindow_ = null;
         mPanel_ = null;
         mButtons_ = null;
+        mItems_ = null;
 
         mWidth_ = 0;
         mButtonSize_ = 0;
@@ -126,10 +127,14 @@
 
             mLayoutLine_ = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
             mButtons_ = array(mNumSlots_);
+            mItems_ = array(mNumSlots_, Item.NONE);
+
             for(local i = 0; i < mNumSlots_; i++){
                 local button = mWindow_.createButton();
                 button.setText("Empty");
                 button.setHidden(true);
+                button.setUserId(i);
+                button.attachListenerForEvent(buttonPressed, _GUI_ACTION_PRESSED, this);
                 local cellId = mLayoutLine_.addCell(button);
                 mLayoutLine_.setCellExpandHorizontal(cellId, true);
                 mLayoutLine_.setCellExpandVertical(cellId, true);
@@ -137,6 +142,11 @@
                 mButtons_[i] = button;
             }
             mLayoutLine_.setMarginForAllCells(10, 10);
+        }
+
+        function buttonPressed(widget, action){
+            local id = widget.getUserId();
+            ::ScreenManager.transitionToScreen(ItemInfoScreen(mItems_[Item.SIMPLE_SHIELD]));
         }
 
         function addToLayout(layoutLine){
@@ -153,8 +163,9 @@
                 button.setHidden(true);
                 return;
             }
-            button.setText(::ItemToName(item), false);
+            button.setText(::Items.itemToName(item), false);
             button.setHidden(false);
+            mItems_[index] = item;
         }
 
         function sizeForButtons(){

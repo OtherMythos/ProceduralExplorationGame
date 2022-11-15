@@ -88,13 +88,13 @@
         mFoundItems_[idx] = item;
         mNumFoundItems_++;
 
-        print(format("Found %s at index %i", ::ItemToName(item), idx));
+        print(format("Found %s at index %i", ::Items.itemToName(item), idx));
 
         mGui_.notifyItemFound(item, idx);
     }
 
     function processEncounter(enemy){
-        print("Encountered enemy " + ::EnemyToName(enemy));
+        print("Encountered enemy " + ::Items.enemyToName(enemy));
         mGui_.notifyEnemyEncounter(enemy);
         mEnemyEncountered_ = true;
     }

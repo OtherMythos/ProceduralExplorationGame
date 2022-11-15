@@ -30,22 +30,10 @@ enum ItemNames{
     MAX = "Max"
 };
 
-::ItemToName <- function(item){
-    switch(item){
-        case Item.NONE: return ItemNames.NONE;
-        case Item.HEALTH_POTION: return ItemNames.HEALTH_POTION;
-        case Item.SIMPLE_SWORD: return ItemNames.SIMPLE_SWORD;
-        case Item.SIMPLE_SHIELD: return ItemNames.SIMPLE_SHIELD;
-        default:
-            assert(false);
-    }
-}
+enum StatType{
+    RESTORATIVE_HEALTH,
+    ATTACK,
+    DEFENSE,
 
-::EnemyToName <- function(enemy){
-    switch(enemy){
-        case Enemy.NONE: return EnemyNames.NONE;
-        case Enemy.GOBLIN: return EnemyNames.GOBLIN;
-        default:
-            assert(false);
-    }
-}
+    MAX
+};
