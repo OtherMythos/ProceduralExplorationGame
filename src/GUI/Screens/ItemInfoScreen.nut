@@ -12,6 +12,9 @@
 
             mWindow_ = _gui.createWindow(parentWindow);
             mWindow_.setSize(100, 100);
+            mWindow_.setExpandVertical(true);
+            mWindow_.setExpandHorizontal(true);
+            mWindow_.setProportionVertical(2);
 
             local layoutLine = _gui.createLayoutLine();
 
@@ -35,10 +38,7 @@
         }
 
         function addToLayout(layoutLine){
-            local cellId = layoutLine.addCell(mWindow_);
-            layoutLine.setCellExpandHorizontal(cellId, true);
-            layoutLine.setCellExpandVertical(cellId, true);
-            layoutLine.setCellProportionVertical(cellId, 2);
+            layoutLine.addCell(mWindow_);
         }
     };
 
@@ -62,14 +62,14 @@
         title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
         title.setText(itemName, false);
         title.sizeToFit(_window.getWidth() * 0.9);
-        local cellId = layoutLine.addCell(title);
-        layoutLine.setCellExpandHorizontal(cellId, true);
+        title.setExpandHorizontal(true);
+        layoutLine.addCell(title);
 
         local description = mWindow_.createLabel();
         description.setText(itemDescription, false);
         description.sizeToFit(_window.getWidth() * 0.9);
-        local cellId = layoutLine.addCell(description);
-        layoutLine.setCellExpandHorizontal(cellId, true);
+        description.setExpandHorizontal(true);
+        layoutLine.addCell(description);
 
         local statsContainer = ItemStatsContainer(mWindow_, mItemType_);
         statsContainer.addToLayout(layoutLine);
@@ -89,9 +89,9 @@
             button.setDefaultFontSize(button.getDefaultFontSize() * 1.5);
             button.setText(c);
             button.attachListenerForEvent(buttonFunctions[i], _GUI_ACTION_PRESSED, this);
-            local cellId = layoutLine.addCell(button);
-            layoutLine.setCellExpandHorizontal(cellId, true);
-            layoutLine.setCellMinSize(cellId, Vec2(0, 100));
+            button.setExpandHorizontal(true);
+            button.setMinSize(0, 100);
+            layoutLine.addCell(button);
         }
 
         layoutLine.setMarginForAllCells(0, 5);

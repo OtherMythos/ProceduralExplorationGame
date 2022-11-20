@@ -32,9 +32,9 @@
             button.setText(format("Save %i", i));
             button.setUserId(i);
             button.attachListenerForEvent(saveSelectionCallback_, _GUI_ACTION_PRESSED, this);
-            local cellId = layoutLine.addCell(button);
-            layoutLine.setCellExpandHorizontal(cellId, true);
-            layoutLine.setCellMinSize(cellId, Vec2(0, 100));
+            button.setExpandHorizontal(true);
+            button.setMinSize(0, 100);
+            layoutLine.addCell(button);
         }
 
         layoutLine.setMarginForAllCells(0, 20);

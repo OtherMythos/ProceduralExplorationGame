@@ -19,10 +19,10 @@
         }
 
         function addToLayout(layoutLine){
-            local cellId = layoutLine.addCell(mWindow_);
-            layoutLine.setCellExpandHorizontal(cellId, true);
-            layoutLine.setCellExpandVertical(cellId, true);
-            layoutLine.setCellProportionVertical(cellId, 2);
+            layoutLine.addCell(mWindow_);
+            mWindow_.setExpandVertical(true);
+            mWindow_.setExpandHorizontal(true);
+            mWindow_.setProportionVertical(2);
         }
     };
 
@@ -71,10 +71,10 @@
                     button.setText(i);
                     button.attachListenerForEvent(buttonFunctions[c], _GUI_ACTION_PRESSED, this);
                     button.setHidden(true);
-                    local cellId = buttonLayout.addCell(button);
-                    buttonLayout.setCellExpandHorizontal(cellId, true);
-                    buttonLayout.setCellExpandVertical(cellId, true);
-                    buttonLayout.setCellProportionHorizontal(cellId, 1);
+                    buttonLayout.addCell(button);
+                    button.setExpandVertical(true);
+                    button.setExpandHorizontal(true);
+                    button.setProportionHorizontal(1);
                     mOptionButtons_.append(button);
                 }
 
@@ -135,10 +135,10 @@
                 button.setHidden(true);
                 button.setUserId(i);
                 button.attachListenerForEvent(buttonPressed, _GUI_ACTION_PRESSED, this);
-                local cellId = mLayoutLine_.addCell(button);
-                mLayoutLine_.setCellExpandHorizontal(cellId, true);
-                mLayoutLine_.setCellExpandVertical(cellId, true);
-                mLayoutLine_.setCellProportionHorizontal(cellId, 1);
+                button.setExpandVertical(true);
+                button.setExpandHorizontal(true);
+                button.setProportionHorizontal(1);
+                mLayoutLine_.addCell(button);
                 mButtons_[i] = button;
             }
             mLayoutLine_.setMarginForAllCells(10, 10);
@@ -150,10 +150,10 @@
         }
 
         function addToLayout(layoutLine){
-            local cellId = layoutLine.addCell(mWindow_);
-            layoutLine.setCellExpandHorizontal(cellId, true);
-            layoutLine.setCellExpandVertical(cellId, true);
-            layoutLine.setCellProportionVertical(cellId, 1);
+            layoutLine.addCell(mWindow_);
+            mWindow_.setExpandVertical(true);
+            mWindow_.setExpandHorizontal(true);
+            mWindow_.setProportionVertical(1);
         }
 
         function setItemForIndex(item, index){

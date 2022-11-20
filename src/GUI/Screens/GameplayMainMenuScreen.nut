@@ -39,9 +39,9 @@
             button.setText(c);
             button.setSize(_window.getWidth() * 0.9, button.getSize().y * 1.5);
             button.attachListenerForEvent(buttonFunctions[i], _GUI_ACTION_PRESSED, this);
-            local cellId = layoutLine.addCell(button);
-            layoutLine.setCellExpandHorizontal(cellId, true);
-            layoutLine.setCellMinSize(cellId, Vec2(0, 100));
+            button.setExpandHorizontal(true);
+            button.setMinSize(0, 100);
+            layoutLine.addCell(button);
         }
 
         layoutLine.setMarginForAllCells(0, 20);

@@ -21,14 +21,14 @@
         title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
         title.setText("Combat", false);
         title.sizeToFit(_window.getWidth() * 0.9);
-        local cellId = layoutLine.addCell(title);
-        layoutLine.setCellExpandHorizontal(cellId, true);
+        title.setExpandHorizontal(true);
+        layoutLine.addCell(title);
 
         local description = mWindow_.createLabel();
         description.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
         description.setText("Combat is not yet implemented.");
-        local cellId = layoutLine.addCell(description);
-        layoutLine.setCellExpandHorizontal(cellId, true);
+        description.setExpandHorizontal(true);
+        layoutLine.addCell(description);
 
         local button = mWindow_.createButton();
         button.setDefaultFontSize(button.getDefaultFontSize() * 1.5);
@@ -36,9 +36,9 @@
         button.attachListenerForEvent(function(widget, action){
             ::ScreenManager.transitionToScreen(ExplorationScreen(::Base.mExplorationLogic));
         }, _GUI_ACTION_PRESSED, this);
-        local cellId = layoutLine.addCell(button);
-        layoutLine.setCellExpandHorizontal(cellId, true);
-        layoutLine.setCellMinSize(cellId, Vec2(0, 100));
+        button.setExpandHorizontal(true);
+        button.setMinSize(0, 100)
+        layoutLine.addCell(button);
 
         layoutLine.setMarginForAllCells(0, 20);
         layoutLine.setPosition(_window.getWidth() * 0.05, 50);
