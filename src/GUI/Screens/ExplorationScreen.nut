@@ -186,12 +186,26 @@
         mWindow_.setVisualsEnabled(false);
         mWindow_.setClipBorders(0, 0, 0, 0);
 
-        local resetButton = mWindow_.createButton();
-        resetButton.setText("Restart exploration");
-        resetButton.setPosition(5, 5);
-        resetButton.attachListenerForEvent(function(widget, action){
-            mLogicInterface_.resetExploration();
-        }, _GUI_ACTION_PRESSED, this);
+        {
+            local helperButtonLayout = _gui.createLayoutLine();
+
+            local resetButton = mWindow_.createButton();
+            resetButton.setText("Restart exploration");
+            resetButton.attachListenerForEvent(function(widget, action){
+                mLogicInterface_.resetExploration();
+            }, _GUI_ACTION_PRESSED, this);
+            helperButtonLayout.addCell(resetButton);
+
+            local inventoryButton = mWindow_.createButton();
+            inventoryButton.setText("Inventory");
+            inventoryButton.attachListenerForEvent(function(widget, action){
+                ::ScreenManager.transitionToScreen(InventoryScreen(::Base.mInventory));
+            }, _GUI_ACTION_PRESSED, this);
+            helperButtonLayout.addCell(inventoryButton);
+
+            helperButtonLayout.setPosition(5, 5);
+            helperButtonLayout.layout();
+        }
 
         local layoutLine = _gui.createLayoutLine();
 

@@ -1,6 +1,8 @@
 function start(){
     _doFile("res://src/Constants.nut");
 
+    _gui.setScrollSpeed(5.0);
+
     _camera.setProjectionType(_PT_ORTHOGRAPHIC);
     _camera.setOrthoWindow(40, 40);
     _camera.setPosition(0, 0, 5);

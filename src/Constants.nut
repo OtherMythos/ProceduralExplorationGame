@@ -37,3 +37,7 @@ enum StatType{
 
     MAX
 };
+
+enum Event{
+    INVENTORY_CONTENTS_CHANGED = 1001,
+}

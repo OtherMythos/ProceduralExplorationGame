@@ -78,6 +78,7 @@
         local buttonOptions = ["Keep", "Scrap"];
         local buttonFunctions = [
             function(widget, action){
+                ::Base.mInventory.addToInventory(mItemType_);
                 closeScreen();
             },
             function(widget, action){
