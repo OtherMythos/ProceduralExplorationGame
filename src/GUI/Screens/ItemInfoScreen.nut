@@ -3,6 +3,7 @@
     mWindow_ = null;
 
     mItemType_ = Item.NONE;
+    mItemSlotIdx_ = 0;
 
     ItemStatsContainer = class{
         mWindow_ = null;
@@ -42,8 +43,9 @@
         }
     };
 
-    constructor(itemType){
+    constructor(itemType, itemSlotIdx = -1){
         mItemType_ = itemType;
+        mItemSlotIdx_ = itemSlotIdx;
     }
 
     function setup(){
@@ -79,6 +81,8 @@
         local buttonFunctions = [
             function(widget, action){
                 ::Base.mInventory.addToInventory(mItemType_);
+                //TODO would be nice to do these with events.
+                if(mItemSlotIdx_ >= 0) ::Base.mExplorationLogic.removeFoundItem(mItemSlotIdx_);
                 closeScreen();
             },
             function(widget, action){

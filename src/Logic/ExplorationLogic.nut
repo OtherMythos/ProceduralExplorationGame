@@ -9,7 +9,7 @@
     mExplorationCount_ = 0;
     mExplorationPercentage_ = 0;
 
-    EXPLORATION_MAX_LENGTH = 200;
+    EXPLORATION_MAX_LENGTH = 1000;
     EXPLORATION_MAX_FOUND_ITEMS = 4;
 
     mFoundItems_ = null;
@@ -17,6 +17,7 @@
 
     mEnemyEncountered_ = false;
     mExplorationFinished_ = false;
+    mExplorationPaused_ = false;
 
     mGui_ = null;
 
@@ -32,6 +33,7 @@
         mFoundItems_ = array(EXPLORATION_MAX_FOUND_ITEMS, Item.NONE);
         mEnemyEncountered_ = false;
         mExplorationFinished_ = false;
+        mExplorationPaused_ = false;
 
         renotifyItems();
         processExplorationBegan();
@@ -43,6 +45,7 @@
             return;
         }
         if(mExplorationCount_ == EXPLORATION_MAX_LENGTH) return;
+        if(mExplorationPaused_) return;
         if(mEnemyEncountered_) return;
         updatePercentage();
         checkForItem();
@@ -71,7 +74,7 @@
     }
 
     function checkForEncounter(){
-        local foundSomething = _random.randInt(200) == 0;
+        local foundSomething = _random.randInt(1000) == 0;
         if(foundSomething){
             //decide what was found.
             local enemy = _random.randInt(Enemy.NONE+1, Enemy.MAX-1);
@@ -93,6 +96,13 @@
         mGui_.notifyItemFound(item, idx);
     }
 
+    function removeFoundItem(idx){
+        print(format("Removing item: %i", idx));
+        mFoundItems_[idx] = Item.NONE;
+        mNumFoundItems_--;
+        assert(mNumFoundItems_ >= 0);
+    }
+
     function processEncounter(enemy){
         print("Encountered enemy " + ::Items.enemyToName(enemy));
         mGui_.notifyEnemyEncounter(enemy);
@@ -106,12 +116,14 @@
     function processExplorationEnd(){
         if(mExplorationFinished_) return;
         mExplorationFinished_ = true;
+        mExplorationPaused_ = false;
 
         if(mGui_) mGui_.notifyExplorationEnd();
     }
 
     function continueExploration(){
         mEnemyEncountered_ = false;
+        mExplorationPaused_ = false;
         renotifyItems();
     }
 
@@ -126,14 +138,30 @@
         }
     }
 
+    function pauseExploration(){
+        print("Pausing exploration");
+        mExplorationPaused_ = true;
+    }
+
     /*
     * Either continue or reset the exploration, depending on whether it's finished or not.
     */
     function continueOrResetExploration(){
+        if(mExplorationPaused_){
+            print("Unpausing exploration");
+            continueExploration();
+            return;
+        }
         if(mExplorationFinished_){
             resetExploration();
             return;
         }
         continueExploration();
+    }
+
+    function notifyLeaveExplorationScreen(){
+        if(mExplorationFinished_) return;
+        mExplorationPaused_ = true;
+        mGui_ = null;
     }
 };

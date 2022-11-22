@@ -146,7 +146,7 @@
 
         function buttonPressed(widget, action){
             local id = widget.getUserId();
-            ::ScreenManager.transitionToScreen(ItemInfoScreen(mItems_[id]));
+            ::ScreenManager.transitionToScreen(ItemInfoScreen(mItems_[id], id));
         }
 
         function addToLayout(layoutLine){
@@ -260,5 +260,10 @@
 
     function notifyExplorationBegan(){
         mExplorationProgressBar_.showButtons(false);
+    }
+
+    function shutdown(){
+        base.shutdown();
+        mLogicInterface_.notifyLeaveExplorationScreen();
     }
 };

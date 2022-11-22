@@ -27,6 +27,7 @@
             },
             function(widget, action){
                 print("Inventory");
+                ::ScreenManager.transitionToScreen(InventoryScreen(::Base.mInventory));
             },
             function(widget, action){
                 print("Visit");
