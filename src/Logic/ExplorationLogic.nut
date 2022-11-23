@@ -12,8 +12,8 @@
     EXPLORATION_MAX_LENGTH = 1000;
     EXPLORATION_MAX_FOUND_ITEMS = 4;
 
-    mFoundItems_ = null;
-    mNumFoundItems_ = 0;
+    mFoundObjects_ = null;
+    mNumFoundObjects_ = 0;
 
     mEnemyEncountered_ = false;
     mExplorationFinished_ = false;
@@ -29,8 +29,8 @@
         mExplorationCount_ = 0;
         mExplorationPercentage_ = 0;
 
-        mNumFoundItems_ = 0;
-        mFoundItems_ = array(EXPLORATION_MAX_FOUND_ITEMS, Item.NONE);
+        mNumFoundObjects_ = 0;
+        mFoundObjects_ = array(EXPLORATION_MAX_FOUND_ITEMS, null);
         mEnemyEncountered_ = false;
         mExplorationFinished_ = false;
         mExplorationPaused_ = false;
@@ -48,7 +48,7 @@
         if(mExplorationPaused_) return;
         if(mEnemyEncountered_) return;
         updatePercentage();
-        checkForItem();
+        checkForFoundObject();
         checkForEncounter();
     }
 
@@ -64,12 +64,22 @@
         mExplorationPercentage_ = newPercentage;
     }
 
-    function checkForItem(){
+    function checkForFoundObject(){
+        if(mNumFoundObjects_ >= EXPLORATION_MAX_FOUND_ITEMS) return;
+
         local foundSomething = _random.randInt(50) == 0;
-        if(foundSomething && mNumFoundItems_ < EXPLORATION_MAX_FOUND_ITEMS){
+        if(foundSomething){
             //decide what was found.
             local item = _random.randInt(Item.NONE+1, Item.MAX-1);
             processFoundItem(item);
+            return;
+        }
+
+        foundSomething = _random.randInt(100) == 0;
+        if(foundSomething){
+            local foundPlace = _random.randInt(Place.NONE+1, Place.MAX-1);
+            processFoundPlace(foundPlace);
+            return;
         }
     }
 
@@ -83,24 +93,41 @@
     }
 
     function processFoundItem(item){
+        //TODO could reduce duplication here.
         //Find the index of insertion.
-        local idx = mFoundItems_.find(Item.NONE);
+        local idx = mFoundObjects_.find(null);
         //Should have found something and there should be space if this function is being called.
         assert(idx != null);
 
-        mFoundItems_[idx] = item;
-        mNumFoundItems_++;
+        local foundObj = ::FoundObject(item, FoundObjectType.ITEM);
+        mFoundObjects_[idx] = foundObj;
+        mNumFoundObjects_++;
 
-        print(format("Found %s at index %i", ::Items.itemToName(item), idx));
+        print(format("Found item %s at index %i", ::Items.itemToName(item), idx));
 
-        mGui_.notifyItemFound(item, idx);
+        mGui_.notifyObjectFound(foundObj, idx);
+    }
+
+    function processFoundPlace(place){
+        //Find the index of insertion.
+        local idx = mFoundObjects_.find(null);
+        //Should have found something and there should be space if this function is being called.
+        assert(idx != null);
+
+        local foundObj = ::FoundObject(place, FoundObjectType.PLACE);
+        mFoundObjects_[idx] = foundObj;
+        mNumFoundObjects_++;
+
+        print(format("Found place %s at index %i", ::Places.placeToName(place), idx));
+
+        mGui_.notifyObjectFound(foundObj, idx);
     }
 
     function removeFoundItem(idx){
         print(format("Removing item: %i", idx));
-        mFoundItems_[idx] = Item.NONE;
-        mNumFoundItems_--;
-        assert(mNumFoundItems_ >= 0);
+        mFoundObjects_[idx] = null;
+        mNumFoundObjects_--;
+        assert(mNumFoundObjects_ >= 0);
     }
 
     function processEncounter(enemy){
@@ -133,8 +160,12 @@
 
     function renotifyItems(){
         if(!mGui_) return;
-        foreach(i,c in mFoundItems_){
-            mGui_.notifyItemFound(c, i);
+        foreach(i,c in mFoundObjects_){
+            local target = c;
+            if(!target){
+                target = ::FoundObject();
+            }
+            mGui_.notifyObjectFound(target, i);
         }
     }
 

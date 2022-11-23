@@ -41,4 +41,31 @@ enum StatType{
 enum Event{
     INVENTORY_CONTENTS_CHANGED = 1001,
     MONEY_CHANGED = 1002,
+    PLACE_VISITED = 1003,
 }
+
+enum Place{
+    NONE,
+    HAUNTED_WELL,
+    DARK_CAVE,
+    GOBLIN_VILLAGE,
+    WIND_SWEPT_BEACH,
+
+    MAX
+};
+
+enum PlaceNames{
+    NONE = "None",
+    HAUNTED_WELL = "Haunted Well",
+    DARK_CAVE = "Dark Cave",
+    GOBLIN_VILLAGE = "Goblin Village",
+    WIND_SWEPT_BEACH = "Wind Swept Beach",
+
+    MAX = "Max"
+};
+
+enum FoundObjectType{
+    NONE,
+    ITEM,
+    PLACE
+};

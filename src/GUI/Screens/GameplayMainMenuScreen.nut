@@ -31,6 +31,7 @@
             },
             function(widget, action){
                 print("Visit");
+                ::ScreenManager.transitionToScreen(VisitedPlacesScreen(::Base.mPlayerStats));
             }
         ]
 

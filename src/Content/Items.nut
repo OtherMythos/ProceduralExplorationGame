@@ -1,10 +1,5 @@
 ::Items <- {
 
-    /**
-     * Store item stats as a class rather than creating a new table each time.
-     * This should save the strings to identify the entries from being created each time like would happen in a table.
-     */
-
     function itemToStats(item){
         local stat = ItemStat();
 
@@ -72,6 +67,10 @@
     }
 };
 
+/**
+ * Store item stats as a class rather than creating a new table each time.
+ * This should save the strings to identify the entries from being created each time like would happen in a table.
+ */
 ::Items.ItemStat <- class{
     mRestorativeHealth = 0;
     mAttack = 0;

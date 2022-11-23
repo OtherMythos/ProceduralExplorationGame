@@ -110,7 +110,7 @@
         mWindow_ = null;
         mPanel_ = null;
         mButtons_ = null;
-        mItems_ = null;
+        mFoundObjects_ = null;
 
         mWidth_ = 0;
         mButtonSize_ = 0;
@@ -128,7 +128,7 @@
 
             mLayoutLine_ = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
             mButtons_ = array(mNumSlots_);
-            mItems_ = array(mNumSlots_, Item.NONE);
+            mFoundObjects_ = array(mNumSlots_, null);
 
             for(local i = 0; i < mNumSlots_; i++){
                 local button = mWindow_.createButton();
@@ -147,7 +147,15 @@
 
         function buttonPressed(widget, action){
             local id = widget.getUserId();
-            ::ScreenManager.transitionToScreen(ItemInfoScreen(mItems_[id], id));
+            local foundObj = mFoundObjects_[id];
+            if(foundObj.type == FoundObjectType.ITEM){
+                ::ScreenManager.transitionToScreen(ItemInfoScreen(foundObj.obj, id));
+            }
+            else if(foundObj.type == FoundObjectType.PLACE){
+                ::ScreenManager.transitionToScreen(::PlaceInfoScreen(foundObj.obj, id));
+            }else{
+                assert(false);
+            }
         }
 
         function addToLayout(layoutLine){
@@ -157,16 +165,16 @@
             mWindow_.setProportionVertical(1);
         }
 
-        function setItemForIndex(item, index){
+        function setObjectForIndex(object, index){
             assert(index < mButtons_.len());
             local button = mButtons_[index];
-            if(item == Item.NONE){
+            if(object.isNone()){
                 button.setHidden(true);
                 return;
             }
-            button.setText(::Items.itemToName(item), false);
+            button.setText(object.toName(), false);
             button.setHidden(false);
-            mItems_[index] = item;
+            mFoundObjects_[index] = object;
         }
 
         function sizeForButtons(){
@@ -252,8 +260,8 @@
         mExplorationProgressBar_.setPercentage(percentage);
     }
 
-    function notifyItemFound(item, idx){
-        mExplorationItemsContainer_.setItemForIndex(item, idx);
+    function notifyObjectFound(foundObject, idx){
+        mExplorationItemsContainer_.setObjectForIndex(foundObject, idx);
     }
 
     function notifyEnemyEncounter(enemy){
