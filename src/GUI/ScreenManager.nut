@@ -13,12 +13,14 @@
     function transitionToScreen(screenObject, transitionEffect = null, layerId = 0){
         assert(layerId < MAX_SCREENS);
         if(mActiveScreens_[layerId] != null){
+            print("Calling shutdown for layer " + layerId);
             mActiveScreens_[layerId].shutdown();
         }
         mActiveScreens_[layerId] = screenObject;
 
         if(!screenObject) return;
 
+        print("Setting up screen for layer " + layerId);
         mActiveScreens_[layerId].setup();
     }
 

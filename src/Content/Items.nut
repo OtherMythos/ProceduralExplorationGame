@@ -59,6 +59,17 @@
                 assert(false);
         }
     }
+
+    function getScrapValueForItem(item){
+        switch(item){
+            case Item.NONE: return 0;
+            case Item.HEALTH_POTION: return 5;
+            case Item.SIMPLE_SWORD: return 5;
+            case Item.SIMPLE_SHIELD: return 5;
+            default:
+                assert(false);
+        }
+    }
 };
 
 ::Items.ItemStat <- class{

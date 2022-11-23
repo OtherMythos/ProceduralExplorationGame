@@ -4,6 +4,7 @@
     mExplorationProgressBar_ = null;
     mLogicInterface_ = null;
     mExplorationItemsContainer_ = null;
+    mMoneyCounter_ = null;
 
     WorldMapDisplay = class{
         mWindow_ = null;
@@ -216,6 +217,9 @@
         title.sizeToFit(_window.getWidth() * 0.9);
         layoutLine.addCell(title);
 
+        mMoneyCounter_ = ::GuiWidgets.InventoryMoneyCounter(mWindow_);
+        mMoneyCounter_.addToLayout(layoutLine);
+
         //World map display
         mWorldMapDisplay_ = WorldMapDisplay(mWindow_);
         mWorldMapDisplay_.addToLayout(layoutLine);
@@ -231,6 +235,8 @@
         layoutLine.setMarginForAllCells(0, 20);
         layoutLine.setPosition(_window.getWidth() * 0.05, _window.getHeight() * 0.1);
         layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
+        mMoneyCounter_.mMoneyLabel_.setMargin(0, 0);
+        mMoneyCounter_.mMoneyLabel_.setGridLocation(_GRID_LOCATION_TOP_LEFT);
         layoutLine.layout();
 
         mExplorationItemsContainer_.sizeForButtons();
@@ -263,6 +269,7 @@
     }
 
     function shutdown(){
+        mMoneyCounter_.shutdown();
         base.shutdown();
         mLogicInterface_.notifyLeaveExplorationScreen();
     }

@@ -1,5 +1,6 @@
 ::Inventory <- class{
     mInventoryItems_ = null;
+    mMoney_ = 300;
 
     mInventorySize_ = 5;
 
@@ -25,5 +26,15 @@
 
     function contentsChanged(){
         _event.transmit(Event.INVENTORY_CONTENTS_CHANGED, null);
+    }
+
+    function addMoney(money){
+        print(format("Adding %i to %i money, new is %i", money, mMoney_, mMoney_+money));
+        mMoney_ += money;
+        _event.transmit(Event.MONEY_CHANGED, mMoney_);
+    }
+
+    function getMoney(){
+        return mMoney_;
     }
 };

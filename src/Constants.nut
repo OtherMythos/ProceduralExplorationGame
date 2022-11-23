@@ -40,4 +40,5 @@ enum StatType{
 
 enum Event{
     INVENTORY_CONTENTS_CHANGED = 1001,
+    MONEY_CHANGED = 1002,
 }

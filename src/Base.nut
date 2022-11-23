@@ -11,6 +11,8 @@
 
         mInventory = ::Inventory();
 
+        _doFile("res://src/GUI/Widgets/InventoryMoneyCounter.nut");
+
         _doFile("res://src/GUI/ScreenManager.nut");
         _doFile("res://src/GUI/Screens/Screen.nut");
         _doFile("res://src/GUI/Screens/MainMenuScreen.nut");

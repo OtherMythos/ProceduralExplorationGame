@@ -86,6 +86,8 @@
                 closeScreen();
             },
             function(widget, action){
+                ::Base.mInventory.addMoney(::Items.getScrapValueForItem(mItemType_));
+                if(mItemSlotIdx_ >= 0) ::Base.mExplorationLogic.removeFoundItem(mItemSlotIdx_);
                 closeScreen();
             }
         ];

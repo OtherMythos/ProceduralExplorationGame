@@ -2,6 +2,7 @@
 
     mWindow_ = null;
     mInventory_ = null;
+    mMoneyCounter_ = null;
 
     /**
      * An entry in the inventory screen.
@@ -63,7 +64,8 @@
             //mWindow_.sizeScrollToFit();
             //mWindow_.setMaxScroll(mWindow_.getSize());
 
-            mWindow_.setSize(mWindow_.getSize().x, 800);
+            //TODO make this sized programmatically.
+            mWindow_.setSize(mWindow_.getSize().x, 600);
             //mWindow_.setMaxScroll(0, 1200);
             //mWindow_.sizeScrollToFit();
         }
@@ -104,11 +106,11 @@
         title.setExpandHorizontal(true);
         layoutLine.addCell(title);
 
+        mMoneyCounter_ = ::GuiWidgets.InventoryMoneyCounter(mWindow_);
+        mMoneyCounter_.addToLayout(layoutLine);
+
         local container = InventoryContainer(mWindow_, mInventory_);
         container.addToLayout(layoutLine);
-        // local testButton = mWindow_.createButton();
-        // testButton.setText("some button");
-        // layoutLine.addCell(testButton);
 
         layoutLine.setMarginForAllCells(0, 5);
         layoutLine.setPosition(_window.getWidth() * 0.05, 50);
@@ -120,6 +122,7 @@
     }
 
     function shutdown(){
+        mMoneyCounter_.shutdown();
         base.shutdown();
         _event.unsubscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent);
     }
