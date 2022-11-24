@@ -41,8 +41,7 @@
             function(widget, action){
                 _event.transmit(Event.PLACE_VISITED, mPlaceId_);
                 if(mItemSlotIdx_ >= 0) ::Base.mExplorationLogic.removeFoundItem(mItemSlotIdx_);
-                //TODO really this would go to the vising screen.
-                ::ScreenManager.transitionToScreen(ExplorationScreen(::Base.mExplorationLogic));
+                ::ScreenManager.transitionToScreen(::StoryContentScreen(::StoryContentLogic(mPlaceId_)));
             },
             function(widget, action){
                 ::ScreenManager.transitionToScreen(ExplorationScreen(::Base.mExplorationLogic));

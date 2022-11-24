@@ -1,0 +1,10 @@
+<Dialog_Script>
+    <b id = "0">
+        <ts>This is some test dialog</ts>
+        <ts>There's not too much going on here</ts>
+        <option>
+            <ts id="1">First option</ts>
+            <ts id="2">Second option</ts>
+        </option>
+    </b>
+</Dialog_Script>

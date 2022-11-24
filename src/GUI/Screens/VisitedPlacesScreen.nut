@@ -11,6 +11,7 @@
 
         function buttonPressed(widget, action){
             print("Going to " + ::Places.placeToName(widget.getUserId()));
+            ::ScreenManager.transitionToScreen(::StoryContentScreen(::StoryContentLogic(widget.getUserId())));
         }
 
         constructor(parentWindow, stats){
