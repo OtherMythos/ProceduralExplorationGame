@@ -7,6 +7,8 @@
 
     function setup(){
 
+        _gui.loadSkins("res://assets/skins/ui.json");
+
         _doFile("res://src/Content/Items.nut");
         _doFile("res://src/Content/Places.nut");
         _doFile("res://src/Content/FoundObject.nut");

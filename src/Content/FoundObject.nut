@@ -26,4 +26,16 @@
             assert(false);
         }
     }
+
+    function getButtonSkinPack(){
+        if(type == FoundObjectType.ITEM){
+            return "ItemButton";
+        }
+        else if(type == FoundObjectType.PLACE){
+            return "PlaceButton";
+        }
+        else{
+            assert(false);
+        }
+    }
 };

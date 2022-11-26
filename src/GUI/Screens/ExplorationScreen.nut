@@ -174,6 +174,7 @@
             }
             button.setText(object.toName(), false);
             button.setHidden(false);
+            button.setSkinPack(object.getButtonSkinPack());
             mFoundObjects_[index] = object;
         }
 

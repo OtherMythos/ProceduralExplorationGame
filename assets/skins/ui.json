@@ -1,0 +1,80 @@
+{
+    "skins" :
+    {
+
+        "ItemButton_skin":
+        {
+            "material" : "gui/basicButton"
+        },
+        "ItemButton_idle" :
+        {
+            "copy_from" : "ItemButton_skin",
+            "colour": [0.2, 0.8, 0.2]
+        },
+        "ItemButton_disabled" :
+        {
+            "copy_from" : "ItemButton_idle"
+        },
+        "ItemButton_highlighted_cursor" :
+        {
+            "copy_from" : "ItemButton_idle",
+            "colour": [0.3, 1.0, 0.3]
+        },
+        "ItemButton_highlighted_button" :
+        {
+            "copy_from" : "ItemButton_highlighted_cursor"
+        },
+        "ItemButton_highlighted_button_and_cursor" :
+        {
+            "copy_from" : "ItemButton_highlighted_cursor"
+        },
+        "ItemButton_pressed" :
+        {
+            "copy_from" : "ItemButton_idle"
+        },
+
+
+        "PlaceButton_skin":
+        {
+            "material" : "gui/basicButton"
+        },
+        "PlaceButton_idle" :
+        {
+            "copy_from" : "PlaceButton_skin",
+            "colour": [0.8, 0.3, 0.0]
+        },
+        "PlaceButton_disabled" :
+        {
+            "copy_from" : "PlaceButton_idle"
+        },
+        "PlaceButton_highlighted_cursor" :
+        {
+            "copy_from" : "PlaceButton_idle",
+            "colour": [1.0, 0.3, 0.0]
+        },
+        "PlaceButton_highlighted_button" :
+        {
+            "copy_from" : "PlaceButton_highlighted_cursor"
+        },
+        "PlaceButton_highlighted_button_and_cursor" :
+        {
+            "copy_from" : "PlaceButton_highlighted_cursor"
+        },
+        "PlaceButton_pressed" :
+        {
+            "copy_from" : "PlaceButton_idle"
+        }
+    },
+
+    "skin_packs" :
+    {
+        "ItemButton" :
+        {
+            "auto" : "ItemButton"
+        },
+        "PlaceButton" :
+        {
+            "auto" : "PlaceButton"
+        }
+    }
+}
