@@ -1,10 +1,22 @@
 <Dialog_Script>
     <b id = "0">
-        <ts>This is some test dialog</ts>
-        <ts>There's not too much going on here</ts>
-        <option>
-            <ts id="1">First option</ts>
-            <ts id="2">Second option</ts>
-        </option>
+        <ts>On the approach to the haunted well, a piercing screach rings through the air.</ts>
+        <ts>Rounding the corner, passing the tangled dead wood that makes up the nearby forest covering, the sight of stone bricks and rotten wooden frames comes into view.</ts>
+        <ts>On edge, searching for the source of the sound, gradually you build up your courage to peer into the depths of the old well.</ts>
+        <ts>Aprehension builds, yet before you make out your reflection in the water, the grey, mangled body of a banshee jumps from the depth of the well.</ts>
+    </b>
+
+    <b id = "1">
+        <ts>The dim light of the evening does little to illuminate the cave.</ts>
+        <ts>Crouching and searching in the damp, your hands find their way around a hoard of wooden crates.</ts>
+    </b>
+
+    <b id = "2">
+        <ts>The grunts and swears of the resident goblins drifts over the valley.</ts>
+        <ts>While the goblins argue and bicker, you jut around the place, looting anything of value you can find.</ts>
+    </b>
+
+    <b id = "3">
+        <ts>On a particularly gray day, the slow crash of salt water hits the sandy shore.</ts>
     </b>
 </Dialog_Script>

@@ -9,6 +9,8 @@
     }
 
     function setup(){
+        _event.subscribe(Event.STORY_CONTENT_FINISHED, receiveStoryContentFinished, this);
+
         mWindow_ = _gui.createWindow();
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setVisualsEnabled(false);
@@ -24,5 +26,14 @@
 
     function update(){
         mLogicInterface_.tickUpdate();
+    }
+
+    function shutdown(){
+        base.shutdown();
+        _event.unsubscribe(Event.STORY_CONTENT_FINISHED, receiveStoryContentFinished, this);
+    }
+
+    function receiveStoryContentFinished(id, data){
+        ::ScreenManager.transitionToScreen(ExplorationScreen(::Base.mExplorationLogic));
     }
 };

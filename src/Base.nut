@@ -44,17 +44,15 @@
         mExplorationLogic = ExplorationLogic();
 
         //::ScreenManager.transitionToScreen(MainMenuScreen());
-        //::ScreenManager.transitionToScreen(ExplorationScreen(mExplorationLogic));
+        ::ScreenManager.transitionToScreen(ExplorationScreen(mExplorationLogic));
         //::ScreenManager.transitionToScreen(::CombatScreen(CombatLogic()));
         //::ScreenManager.transitionToScreen(EncounterPopupScreen(), null, 1);
         //::ScreenManager.transitionToScreen(ItemInfoScreen(Item.SIMPLE_SHIELD));
         //::ScreenManager.transitionToScreen(InventoryScreen(mInventory));
         //::ScreenManager.transitionToScreen(VisitedPlacesScreen(mPlayerStats));
         //::ScreenManager.transitionToScreen(::PlaceInfoScreen(Place.HAUNTED_WELL));
-        ::ScreenManager.transitionToScreen(::StoryContentScreen(::StoryContentLogic(Place.HAUNTED_WELL)));
-        ::ScreenManager.transitionToScreen(::DialogScreen(), null, 1);
+        //::ScreenManager.transitionToScreen(::StoryContentScreen(::StoryContentLogic(Place.GOBLIN_VILLAGE)));
 
-        mDialogManager.beginExecuting("res://assets/dialog/test.dialog");
     }
 
     function update(){

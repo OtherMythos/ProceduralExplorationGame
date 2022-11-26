@@ -17,7 +17,7 @@
     }
 
     function __DString(dialog, actorId){
-        print(dialog);
+        _event.transmit(Event.DIALOG_SPOKEN, dialog);
     }
 
     function __DOption(options){
@@ -25,11 +25,15 @@
     }
 
     function notifyDialogStart(){
-
+        ::ScreenManager.transitionToScreen(::DialogScreen(), null, 2);
+        _event.transmit(Event.DIALOG_META, { "started": true });
     }
 
     function notifyDialogEnd(){
+        _event.transmit(Event.DIALOG_META, { "ended": true });
+        ::ScreenManager.transitionToScreen(null, null, 2);
 
+        _event.transmit(Event.STORY_CONTENT_FINISHED, null);
     }
 
     function notifyProgress(){
