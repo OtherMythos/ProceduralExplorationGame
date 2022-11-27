@@ -12,6 +12,7 @@
         _doFile("res://src/Content/Items.nut");
         _doFile("res://src/Content/Places.nut");
         _doFile("res://src/Content/FoundObject.nut");
+        _doFile("res://src/Content/CombatData.nut");
 
         _doFile("res://src/System/DialogManager.nut");
         mDialogManager = DialogManager();
@@ -46,8 +47,8 @@
         mExplorationLogic = ExplorationLogic();
 
         //::ScreenManager.transitionToScreen(MainMenuScreen());
-        ::ScreenManager.transitionToScreen(ExplorationScreen(mExplorationLogic));
-        //::ScreenManager.transitionToScreen(::CombatScreen(CombatLogic()));
+        //::ScreenManager.transitionToScreen(ExplorationScreen(mExplorationLogic));
+        ::ScreenManager.transitionToScreen(::CombatScreen(CombatLogic()));
         //::ScreenManager.transitionToScreen(EncounterPopupScreen(), null, 1);
         //::ScreenManager.transitionToScreen(ItemInfoScreen(Item.SIMPLE_SHIELD));
         //::ScreenManager.transitionToScreen(InventoryScreen(mInventory));

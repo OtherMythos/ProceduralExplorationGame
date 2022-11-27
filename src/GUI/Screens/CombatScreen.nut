@@ -3,6 +3,62 @@
     mWindow_ = null;
     mLogicInterface_ = null;
 
+    CombatDisplay = class{
+        mWindow_ = null;
+
+        constructor(parentWin){
+            mWindow_ = _gui.createWindow(parentWin);
+            mWindow_.setClipBorders(0, 0, 0, 0);
+
+            local title = mWindow_.createLabel();
+            title.setText("Combat display");
+        }
+
+        function addToLayout(layoutLine){
+            layoutLine.addCell(mWindow_);
+            mWindow_.setExpandVertical(true);
+            mWindow_.setExpandHorizontal(true);
+            mWindow_.setProportionVertical(2);
+        }
+    };
+
+    CombatStatsDisplay = class{
+        mWindow_ = null;
+
+        constructor(parentWin, playerCombatStats){
+            mWindow_ = _gui.createWindow(parentWin);
+            mWindow_.setClipBorders(0, 0, 0, 0);
+
+            local title = mWindow_.createLabel();
+            title.setText("Health: " + playerCombatStats.mHealth);
+        }
+
+        function addToLayout(layoutLine){
+            layoutLine.addCell(mWindow_);
+            mWindow_.setExpandVertical(true);
+            mWindow_.setExpandHorizontal(true);
+            mWindow_.setProportionVertical(1);
+        }
+    };
+
+    CombatMovesDisplay = class{
+        mWindow_ = null;
+
+        constructor(parentWin){
+            mWindow_ = _gui.createWindow(parentWin);
+
+            local title = mWindow_.createButton();
+            title.setText("Fight");
+        }
+
+        function addToLayout(layoutLine){
+            layoutLine.addCell(mWindow_);
+            mWindow_.setExpandVertical(true);
+            mWindow_.setExpandHorizontal(true);
+            mWindow_.setProportionVertical(1);
+        }
+    };
+
     constructor(logicInterface){
         mLogicInterface_ = logicInterface;
         mLogicInterface_.setGuiObject(this);
@@ -16,33 +72,17 @@
 
         local layoutLine = _gui.createLayoutLine();
 
-        local title = mWindow_.createLabel();
-        title.setDefaultFontSize(title.getDefaultFontSize() * 2);
-        title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
-        title.setText("Combat", false);
-        title.sizeToFit(_window.getWidth() * 0.9);
-        title.setExpandHorizontal(true);
-        layoutLine.addCell(title);
+        local combatDisplay = CombatDisplay(mWindow_);
+        combatDisplay.addToLayout(layoutLine);
 
-        local description = mWindow_.createLabel();
-        description.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
-        description.setText("Combat is not yet implemented.");
-        description.setExpandHorizontal(true);
-        layoutLine.addCell(description);
+        local statsDisplay = CombatStatsDisplay(mWindow_, ::Base.mPlayerStats.mPlayerCombatStats);
+        statsDisplay.addToLayout(layoutLine);
 
-        local button = mWindow_.createButton();
-        button.setDefaultFontSize(button.getDefaultFontSize() * 1.5);
-        button.setText("End combat");
-        button.attachListenerForEvent(function(widget, action){
-            ::ScreenManager.transitionToScreen(ExplorationScreen(::Base.mExplorationLogic));
-        }, _GUI_ACTION_PRESSED, this);
-        button.setExpandHorizontal(true);
-        button.setMinSize(0, 100)
-        layoutLine.addCell(button);
+        local movesDisplay = CombatMovesDisplay(mWindow_);
+        movesDisplay.addToLayout(layoutLine);
 
-        layoutLine.setMarginForAllCells(0, 20);
-        layoutLine.setPosition(_window.getWidth() * 0.05, 50);
-        layoutLine.setSize(_window.getWidth() * 0.9, _window.getHeight());
+        layoutLine.setMarginForAllCells(20, 20);
+        layoutLine.setSize(_window.getWidth(), _window.getHeight());
         layoutLine.layout();
     }
 

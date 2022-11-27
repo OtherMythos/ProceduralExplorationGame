@@ -9,8 +9,6 @@
     WorldMapDisplay = class{
         mWindow_ = null;
 
-        mHeight_ = 300;
-
         constructor(parentWin){
             mWindow_ = _gui.createWindow(parentWin);
             mWindow_.setClipBorders(0, 0, 0, 0);

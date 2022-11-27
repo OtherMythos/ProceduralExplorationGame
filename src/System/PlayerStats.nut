@@ -4,12 +4,16 @@
     mPlacesVisited_ = null;
     mLeanPlacesVisited_ = null;
 
+    mPlayerCombatStats = null;
+
     constructor(){
         _event.subscribe(Event.PLACE_VISITED, receivePlaceVisitedEvent, this);
 
         mPlayerAchievements_ = {};
         mPlacesVisited_ = array(Place.MAX, false);
         mLeanPlacesVisited_ = [];
+
+        mPlayerCombatStats = ::Combat.CombatStats();
     }
 
     function notifyPlaceVisited(place){
