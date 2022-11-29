@@ -211,6 +211,13 @@
             }, _GUI_ACTION_PRESSED, this);
             helperButtonLayout.addCell(inventoryButton);
 
+            local exploreAgain = mWindow_.createButton();
+            exploreAgain.setText("Trigger encounter");
+            exploreAgain.attachListenerForEvent(function(widget, action){
+                mLogicInterface_.processEncounter(Enemy.GOBLIN);
+            }, _GUI_ACTION_PRESSED, this);
+            helperButtonLayout.addCell(exploreAgain);
+
             helperButtonLayout.setPosition(5, 5);
             helperButtonLayout.layout();
         }

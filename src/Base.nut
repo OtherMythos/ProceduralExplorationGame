@@ -50,8 +50,8 @@
 
         mExplorationLogic = ExplorationLogic();
         local enemyData = [
-            ::Combat.CombatStats(),
-            ::Combat.CombatStats()
+            ::Combat.CombatStats(Enemy.GOBLIN, 20),
+            ::Combat.CombatStats(Enemy.GOBLIN)
         ];
         mCurrentCombatData = ::Combat.CombatData(mPlayerStats.mPlayerCombatStats, enemyData);
         //TODO temporary to setup the logic. Really a new combatData would be pushed at the start of a new combat.

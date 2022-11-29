@@ -4,11 +4,13 @@
      */
     "CombatStats": class{
         mHealth = 10;
+        mEnemyType = Enemy.NONE;
 
         mDead = false;
 
-        constructor(){
-
+        constructor(enemyType = Enemy.NONE, health = 10){
+            mHealth = health;
+            mEnemyType = enemyType;
         }
 
         function alterHealth(amount){

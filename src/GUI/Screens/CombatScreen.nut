@@ -3,12 +3,31 @@
     CombatDisplay = class{
         mWindow_ = null;
 
-        constructor(parentWin){
-            mWindow_ = _gui.createWindow(parentWin);
-            mWindow_.setClipBorders(0, 0, 0, 0);
+        mCombatActors = null;
 
-            local title = mWindow_.createLabel();
-            title.setText("Combat display");
+        constructor(parentWin, combatData){
+            mCombatActors = [];
+
+            mWindow_ = _gui.createWindow(parentWin);
+            //mWindow_.setClipBorders(0, 0, 0, 0);
+
+            local layout = _gui.createLayoutLine();
+
+            foreach(i in combatData.mOpponentStats){
+                local enemyType = i.mEnemyType;
+
+                local enemyLabel = mWindow_.createLabel();
+                enemyLabel.setText(i.mDead ? " " : ::Items.enemyToName(enemyType));
+                layout.addCell(enemyLabel);
+
+                mCombatActors.append(enemyLabel);
+            }
+
+            layout.layout();
+        }
+
+        function removeForOpponent(opponentId){
+            _gui.destroy(mCombatActors[opponentId]);
         }
 
         function addToLayout(layoutLine){
@@ -59,7 +78,9 @@
         function notifyCombatChange(data){
             setStat_(data.mPlayerStats, mDataDisplays_[0]);
             for(local i = 0; i < data.mOpponentStats.len(); i++){
-                setStat_(data.mOpponentStats[i], mDataDisplays_[i+1]);
+                local stats = data.mOpponentStats[i];
+                if(stats.mDead) continue;
+                setStat_(stats, mDataDisplays_[i+1]);
             }
         }
 
@@ -194,6 +215,7 @@
 
     mWindow_ = null;
     mLogicInterface_ = null;
+    mCombatDisplay_ = null;
 
     mStatsDisplay_ = null;
 
@@ -210,8 +232,8 @@
 
         local layoutLine = _gui.createLayoutLine();
 
-        local combatDisplay = CombatDisplay(mWindow_);
-        combatDisplay.addToLayout(layoutLine);
+        mCombatDisplay_ = CombatDisplay(mWindow_, ::Base.mCurrentCombatData);
+        mCombatDisplay_.addToLayout(layoutLine);
 
         mStatsDisplay_ = CombatStatsDisplay(mWindow_, ::Base.mCurrentCombatData);
         mStatsDisplay_.addToLayout(layoutLine);
@@ -236,6 +258,7 @@
 
     function notifyOpponentDied(combatData){
         mStatsDisplay_.removeForOpponent(0);
+        mCombatDisplay_.removeForOpponent(0);
     }
 
 };
