@@ -1,5 +1,9 @@
 ::Base <- {
     "mExplorationLogic": null,
+    "mCombatLogic": null,
+
+    //TODO this will be created on encounter in the future.
+    "mCurrentCombatData": null,
 
     "mInventory": null,
     "mPlayerStats": null,
@@ -45,10 +49,17 @@
         _doFile("res://src/Logic/StoryContentLogic.nut");
 
         mExplorationLogic = ExplorationLogic();
+        local enemyData = [
+            ::Combat.CombatStats(),
+            ::Combat.CombatStats()
+        ];
+        mCurrentCombatData = ::Combat.CombatData(mPlayerStats.mPlayerCombatStats, enemyData);
+        //TODO temporary to setup the logic. Really a new combatData would be pushed at the start of a new combat.
+        mCombatLogic = CombatLogic(mCurrentCombatData);
 
         //::ScreenManager.transitionToScreen(MainMenuScreen());
         //::ScreenManager.transitionToScreen(ExplorationScreen(mExplorationLogic));
-        ::ScreenManager.transitionToScreen(::CombatScreen(CombatLogic()));
+        ::ScreenManager.transitionToScreen(::CombatScreen(mCombatLogic));
         //::ScreenManager.transitionToScreen(EncounterPopupScreen(), null, 1);
         //::ScreenManager.transitionToScreen(ItemInfoScreen(Item.SIMPLE_SHIELD));
         //::ScreenManager.transitionToScreen(InventoryScreen(mInventory));

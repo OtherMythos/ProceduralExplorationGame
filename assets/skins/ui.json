@@ -63,6 +63,37 @@
         "PlaceButton_pressed" :
         {
             "copy_from" : "PlaceButton_idle"
+        },
+
+        "ButtonRed_skin":
+        {
+            "material" : "gui/basicButton"
+        },
+        "ButtonRed_idle" :
+        {
+            "copy_from" : "ButtonRed_skin",
+            "colour": [0.8, 0.1, 0.1]
+        },
+        "ButtonRed_disabled" :
+        {
+            "copy_from" : "ButtonRed_idle"
+        },
+        "ButtonRed_highlighted_cursor" :
+        {
+            "copy_from" : "ButtonRed_idle",
+            "colour": [1.0, 0.2, 0.2]
+        },
+        "ButtonRed_highlighted_button" :
+        {
+            "copy_from" : "ButtonRed_highlighted_cursor"
+        },
+        "ButtonRed_highlighted_button_and_cursor" :
+        {
+            "copy_from" : "ButtonRed_highlighted_cursor"
+        },
+        "ButtonRed_pressed" :
+        {
+            "copy_from" : "ButtonRed_idle"
         }
     },
 
@@ -75,6 +106,10 @@
         "PlaceButton" :
         {
             "auto" : "PlaceButton"
+        },
+        "ButtonRed" :
+        {
+            "auto" : "ButtonRed"
         }
     }
 }

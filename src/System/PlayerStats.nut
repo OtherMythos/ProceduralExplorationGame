@@ -14,6 +14,7 @@
         mLeanPlacesVisited_ = [];
 
         mPlayerCombatStats = ::Combat.CombatStats();
+        mPlayerCombatStats.mHealth = 100;
     }
 
     function notifyPlaceVisited(place){

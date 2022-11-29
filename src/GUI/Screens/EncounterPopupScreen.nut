@@ -43,7 +43,8 @@
 
         if(mCount_ >= 150){
             ::ScreenManager.transitionToScreen(null, null, 2);
-            ::ScreenManager.transitionToScreen(::CombatScreen(::CombatLogic()));
+            //TODO would need to generate some new combat data here for the new encounter.
+            ::ScreenManager.transitionToScreen(::CombatScreen(::Base.mCombatLogic));
         }
     }
 
