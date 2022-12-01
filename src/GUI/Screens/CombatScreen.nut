@@ -1,33 +1,108 @@
+enum CombatScreenState{
+    PARENT_OPTIONS,
+    SELECT_MOVE,
+    SELECT_OPPONENT
+}
+
+enum CombatBusEvents{
+    STATE_CHANGE,
+    OPPONENT_SELECTED,
+    OPPONENT_DIED
+};
+
 ::CombatScreen <- class extends ::Screen{
+
+    /**
+     * A class to facilitate communication between the parts of the sections of the combat screen.
+     *
+     * Objects are provided this bus class which deals with facilitating callbacks.
+     * This object is more local than the global event system, as these events only effect the combat screen.
+     */
+    CombatInfoBus = class{
+        mLogicInterface = null;
+        mCombatData = null;
+
+        mCallbacks_ = null;
+
+        constructor(logicInterface){
+            mCallbacks_ = [];
+
+            mLogicInterface = logicInterface;
+            mCombatData = logicInterface.mData_;
+        }
+
+        function notifyEvent(busEvent, data){
+            foreach(i in mCallbacks_){
+                i(busEvent, data);
+            }
+        }
+
+        function registerCallback(callback, env=null){
+            local target = callback;
+            if(env){
+                target = callback.bindenv(env);
+            }
+            mCallbacks_.append(target);
+        }
+    };
 
     CombatDisplay = class{
         mWindow_ = null;
+        mCombatBus_ = null;
 
         mCombatActors = null;
 
-        constructor(parentWin, combatData){
+        function enemySelectedButton(widget, action){
+            local opponentId = widget.getUserId();
+            mCombatBus_.notifyEvent(CombatBusEvents.OPPONENT_SELECTED, opponentId);
+        }
+
+        constructor(parentWin, combatBus){
+            mCombatBus_ = combatBus;
+            combatBus.registerCallback(busCallback, this);
             mCombatActors = [];
 
             mWindow_ = _gui.createWindow(parentWin);
             //mWindow_.setClipBorders(0, 0, 0, 0);
 
             local layout = _gui.createLayoutLine();
+            local layoutButtons = _gui.createLayoutLine();
 
-            foreach(i in combatData.mOpponentStats){
+            foreach(c,i in combatBus.mCombatData.mOpponentStats){
                 local enemyType = i.mEnemyType;
 
+                local textItem = i.mDead ? " " : ::Items.enemyToName(enemyType);
                 local enemyLabel = mWindow_.createLabel();
-                enemyLabel.setText(i.mDead ? " " : ::Items.enemyToName(enemyType));
+                enemyLabel.setText(textItem);
                 layout.addCell(enemyLabel);
 
-                mCombatActors.append(enemyLabel);
+                local enemyButton = mWindow_.createButton();
+                enemyButton.setText(textItem);
+                enemyButton.setUserId(c);
+                enemyButton.attachListenerForEvent(enemySelectedButton, _GUI_ACTION_PRESSED, this);
+                layoutButtons.addCell(enemyButton);
+
+                mCombatActors.append([enemyLabel, enemyButton]);
             }
 
             layout.layout();
+            layoutButtons.layout();
+
+            setButtonsVisible(false);
+        }
+
+        function setButtonsVisible(visible){
+            foreach(i in mCombatActors){
+                i[0].setHidden(visible);
+                i[1].setHidden(!visible);
+            }
         }
 
         function removeForOpponent(opponentId){
-            _gui.destroy(mCombatActors[opponentId]);
+            local actors = mCombatActors[opponentId]
+            _gui.destroy(actors[0]);
+            _gui.destroy(actors[1]);
+            mCombatActors.clear();
         }
 
         function addToLayout(layoutLine){
@@ -36,6 +111,19 @@
             mWindow_.setExpandHorizontal(true);
             mWindow_.setProportionVertical(2);
         }
+
+        function _handleStateChange(event){
+            setButtonsVisible(event == CombatScreenState.SELECT_OPPONENT);
+        }
+
+        function busCallback(event, data){
+            switch(event){
+                case CombatBusEvents.STATE_CHANGE:{
+                    _handleStateChange(data);
+                    break;
+                }
+            }
+        }
     };
 
     CombatStatsDisplay = class{
@@ -43,7 +131,9 @@
 
         mDataDisplays_ = null;
 
-        constructor(parentWin, combatData){
+        constructor(parentWin, combatBus){
+            combatBus.registerCallback(busCallback, this);
+
             mWindow_ = _gui.createWindow(parentWin);
             mWindow_.setClipBorders(0, 0, 0, 0);
 
@@ -56,6 +146,7 @@
             layoutLine.addCell(title);
             mDataDisplays_.append(title);
 
+            local combatData = combatBus.mCombatData;
             foreach(i in combatData.mOpponentStats){
                 local second = mWindow_.createLabel();
                 second.setText(" ");
@@ -91,22 +182,28 @@
         function removeForOpponent(opponentId){
             _gui.destroy(mDataDisplays_[opponentId + 1]);
         }
+
+        function busCallback(event, data){
+        }
     };
 
     CombatMovesDisplay = class{
         mWindow_ = null;
-        mLogic_ = null;
+        mCombatBus_ = null;
 
         mParentOptionsWidgets_ = null;
         mParentOptionsLayout_ = null;
         mMovesOptionsWidgets_ = null;
         mMovesOptionsLayout_ = null;
+        mSelectEnemy = null;
 
-        constructor(parentWin, logic){
+        constructor(parentWin, combatBus){
+            combatBus.registerCallback(busCallback, this);
+
             mWindow_ = _gui.createWindow(parentWin);
             mWindow_.setClipBorders(0, 0, 0, 0);
 
-            mLogic_ = logic;
+            mCombatBus_ = combatBus;
 
             //Parent window options
             {
@@ -118,7 +215,7 @@
                 local buttonLabels = ["Fight", "Inventory", "Flee"];
                 local buttonFunctions = [
                     function(widget, action){
-                        setMovesVisible(true);
+                        setDialogState(CombatScreenState.SELECT_MOVE);
                     },
                     function(widget, action){
                         ::ScreenManager.transitionToScreen(InventoryScreen(::Base.mInventory));
@@ -150,13 +247,13 @@
 
                 local buttonLabels = ["Attack", "Special 1", "Special 2", "Special 3", "Special 4", "Back"];
                 local performSpecialAttack_ = function(id){
-                    mLogic_.playerSpecialAttack(id);
-                    setMovesVisible(false);
+                    mCombatBus_.mLogicInterface.playerSpecialAttack(id);
+                    setDialogState(CombatScreenState.SELECT_OPPONENT);
                 }
                 local buttonFunctions = [
                     function(widget, action){
-                        mLogic_.playerRegularAttack();
-                        setMovesVisible(false);
+                        mCombatBus_.mLogicInterface.playerRegularAttack();
+                        setDialogState(CombatScreenState.SELECT_OPPONENT);
                     },
                     //TODO do this with
                     function(widget, action){ performSpecialAttack_(0); },
@@ -164,7 +261,7 @@
                     function(widget, action){ performSpecialAttack_(2); },
                     function(widget, action){ performSpecialAttack_(3); },
                     function(widget, action){
-                        setMovesVisible(false);
+                        setDialogState(CombatScreenState.SELECT_MOVE);
                     },
                 ];
                 foreach(c,i in buttonLabels){
@@ -185,7 +282,12 @@
 
             }
 
-            setMovesVisible(false);
+            {
+                mSelectEnemy = mWindow_.createLabel();
+                mSelectEnemy.setText("Select an enemy");
+            }
+
+            setDialogState(CombatScreenState.PARENT_OPTIONS);
         }
 
         function addToLayout(layoutLine){
@@ -203,28 +305,46 @@
             mMovesOptionsLayout_.layout();
         }
 
-        function setMovesVisible(visible){
+        function setDialogState(state){
+            local parentOptions = (state == CombatScreenState.PARENT_OPTIONS);
+            local movesOptions = (state == CombatScreenState.SELECT_MOVE);
+            local selectEnemy = (state == CombatScreenState.SELECT_OPPONENT);
+
             foreach(i in mParentOptionsWidgets_){
-                i.setHidden(visible);
+                i.setHidden(!parentOptions);
             }
             foreach(i in mMovesOptionsWidgets_){
-                i.setHidden(!visible);
+                i.setHidden(!movesOptions);
             }
+            mSelectEnemy.setHidden(!selectEnemy);
+
+            mCombatBus_.notifyEvent(CombatBusEvents.STATE_CHANGE, state);
+        }
+
+        function busCallback(event, data){
+
         }
     };
 
     mWindow_ = null;
     mLogicInterface_ = null;
     mCombatDisplay_ = null;
-
     mStatsDisplay_ = null;
+    mMovesDisplay_ = null;
+
+    mCombatBus_ = null;
+
 
     constructor(logicInterface){
         mLogicInterface_ = logicInterface;
         mLogicInterface_.setGuiObject(this);
+
+        mCombatBus_ = CombatInfoBus(logicInterface);
     }
 
     function setup(){
+        mCombatBus_.registerCallback(busCallback, this);
+
         mWindow_ = _gui.createWindow();
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setVisualsEnabled(false);
@@ -232,21 +352,30 @@
 
         local layoutLine = _gui.createLayoutLine();
 
-        mCombatDisplay_ = CombatDisplay(mWindow_, ::Base.mCurrentCombatData);
+        mCombatDisplay_ = CombatDisplay(mWindow_, mCombatBus_);
         mCombatDisplay_.addToLayout(layoutLine);
 
-        mStatsDisplay_ = CombatStatsDisplay(mWindow_, ::Base.mCurrentCombatData);
+        mStatsDisplay_ = CombatStatsDisplay(mWindow_, mCombatBus_);
         mStatsDisplay_.addToLayout(layoutLine);
 
-        local movesDisplay = CombatMovesDisplay(mWindow_, mLogicInterface_);
-        movesDisplay.addToLayout(layoutLine);
+        mMovesDisplay_ = CombatMovesDisplay(mWindow_, mCombatBus_);
+        mMovesDisplay_.addToLayout(layoutLine);
 
         layoutLine.setMarginForAllCells(20, 20);
         layoutLine.setSize(_window.getWidth(), _window.getHeight());
         layoutLine.layout();
 
-        movesDisplay.notifyResize();
+        mMovesDisplay_.notifyResize();
     }
+
+    function busCallback(event, data){
+        if(event == CombatBusEvents.OPPONENT_SELECTED){
+            print("Opponent: " + data);
+            //TODO do this with the bus.
+            mMovesDisplay_.setDialogState(CombatScreenState.PARENT_OPTIONS);
+        }
+    }
+
 
     function update(){
         mLogicInterface_.tickUpdate();
@@ -257,6 +386,8 @@
     }
 
     function notifyOpponentDied(combatData){
+        mCombatBus_.notifyEvent(CombatBusEvents.OPPONENT_DIED, 0);
+        //TODO properly replace this with bus events, rather than direct calls.
         mStatsDisplay_.removeForOpponent(0);
         mCombatDisplay_.removeForOpponent(0);
     }
