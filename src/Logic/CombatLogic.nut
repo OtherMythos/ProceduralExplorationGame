@@ -20,26 +20,26 @@
         mGui_ = guiObj;
     }
 
-    function playerRegularAttack(){
+    function playerRegularAttack(opponentId){
         print("Doing regular attack");
 
-        local damageValue = ::Combat.DamageValue(-1);
-        attackLogic_(damageValue);
+        local damageValue = ::Combat.CombatMove(-1);
+        attackLogic_(damageValue, opponentId);
     }
 
-    function playerSpecialAttack(id){
+    function playerSpecialAttack(id, opponentId){
         print("Doing special attack " + id);
 
-        local damageValue = ::Combat.DamageValue(-8);
-        attackLogic_(damageValue);
+        local damageValue = ::Combat.CombatMove(-8);
+        attackLogic_(damageValue, opponentId);
     }
 
-    function attackLogic_(damageValue){
+    function attackLogic_(damageValue, opponentId){
         //TODO give this an actual id.
-        local died = mData_.performAttackOnOpponent(damageValue, 0);
+        local died = mData_.performAttackOnOpponent(damageValue, opponentId);
 
         if(died){
-            notifyOpponentDied_();
+            notifyOpponentDied_(opponentId);
         }
 
         notifyOpponentStatsChange_();
@@ -51,9 +51,9 @@
         mGui_.notifyOpponentStatsChange(mData_);
     }
 
-    function notifyOpponentDied_(){
+    function notifyOpponentDied_(opponentId){
         if(!mGui_) return;
 
-        mGui_.notifyOpponentDied(mData_);
+        mGui_.notifyOpponentDied(opponentId);
     }
 };

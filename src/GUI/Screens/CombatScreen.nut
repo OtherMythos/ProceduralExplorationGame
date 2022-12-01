@@ -7,7 +7,8 @@ enum CombatScreenState{
 enum CombatBusEvents{
     STATE_CHANGE,
     OPPONENT_SELECTED,
-    OPPONENT_DIED
+    OPPONENT_DIED,
+    QUEUE_PLAYER_ATTACK
 };
 
 ::CombatScreen <- class extends ::Screen{
@@ -93,6 +94,7 @@ enum CombatBusEvents{
 
         function setButtonsVisible(visible){
             foreach(i in mCombatActors){
+                if(i == null) continue;
                 i[0].setHidden(visible);
                 i[1].setHidden(!visible);
             }
@@ -102,7 +104,7 @@ enum CombatBusEvents{
             local actors = mCombatActors[opponentId]
             _gui.destroy(actors[0]);
             _gui.destroy(actors[1]);
-            mCombatActors.clear();
+            mCombatActors[opponentId] = null;
         }
 
         function addToLayout(layoutLine){
@@ -247,12 +249,12 @@ enum CombatBusEvents{
 
                 local buttonLabels = ["Attack", "Special 1", "Special 2", "Special 3", "Special 4", "Back"];
                 local performSpecialAttack_ = function(id){
-                    mCombatBus_.mLogicInterface.playerSpecialAttack(id);
+                    mCombatBus_.notifyEvent(CombatBusEvents.QUEUE_PLAYER_ATTACK, id);
                     setDialogState(CombatScreenState.SELECT_OPPONENT);
                 }
                 local buttonFunctions = [
                     function(widget, action){
-                        mCombatBus_.mLogicInterface.playerRegularAttack();
+                        mCombatBus_.notifyEvent(CombatBusEvents.QUEUE_PLAYER_ATTACK, -1);
                         setDialogState(CombatScreenState.SELECT_OPPONENT);
                     },
                     //TODO do this with
@@ -333,6 +335,7 @@ enum CombatBusEvents{
     mMovesDisplay_ = null;
 
     mCombatBus_ = null;
+    mQueuedAttack_ = null;
 
 
     constructor(logicInterface){
@@ -373,6 +376,19 @@ enum CombatBusEvents{
             print("Opponent: " + data);
             //TODO do this with the bus.
             mMovesDisplay_.setDialogState(CombatScreenState.PARENT_OPTIONS);
+
+            local opponentId = data;
+            //Actually perform the attack.
+            if(mQueuedAttack_ < 0){
+                mCombatBus_.mLogicInterface.playerRegularAttack(opponentId);
+            }else{
+                mCombatBus_.mLogicInterface.playerSpecialAttack(mQueuedAttack_, opponentId);
+            }
+            mQueuedAttack_ = null;
+        }else if(event == CombatBusEvents.QUEUE_PLAYER_ATTACK){
+            //TODO might want to separate this out into a designated logic component.
+            //This would have no actual gui, but would listen on the bus and coordinate what the gui is meant to be doing.
+            mQueuedAttack_ = data;
         }
     }
 
@@ -385,11 +401,11 @@ enum CombatBusEvents{
         mStatsDisplay_.notifyCombatChange(combatData);
     }
 
-    function notifyOpponentDied(combatData){
-        mCombatBus_.notifyEvent(CombatBusEvents.OPPONENT_DIED, 0);
+    function notifyOpponentDied(opponentId){
+        mCombatBus_.notifyEvent(CombatBusEvents.OPPONENT_DIED, opponentId);
         //TODO properly replace this with bus events, rather than direct calls.
-        mStatsDisplay_.removeForOpponent(0);
-        mCombatDisplay_.removeForOpponent(0);
+        mStatsDisplay_.removeForOpponent(opponentId);
+        mCombatDisplay_.removeForOpponent(opponentId);
     }
 
 };

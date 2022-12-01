@@ -27,10 +27,9 @@
     },
 
     /**
-     * Damage value contains a definition of an attacking move, for instance damage amount, status afflictions, etc.
-     * TODO could rename this to something like MoveValues?
+     * Contains a definition of an attacking move, for instance damage amount, status afflictions, etc.
      */
-    "DamageValue": class{
+    "CombatMove": class{
         mDamage = 0;
 
         constructor(damage){
