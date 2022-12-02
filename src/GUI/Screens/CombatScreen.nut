@@ -263,7 +263,7 @@ enum CombatBusEvents{
                     function(widget, action){ performSpecialAttack_(2); },
                     function(widget, action){ performSpecialAttack_(3); },
                     function(widget, action){
-                        setDialogState(CombatScreenState.SELECT_MOVE);
+                        setDialogState(CombatScreenState.PARENT_OPTIONS);
                     },
                 ];
                 foreach(c,i in buttonLabels){

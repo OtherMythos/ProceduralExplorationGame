@@ -130,8 +130,18 @@
         assert(mNumFoundObjects_ >= 0);
     }
 
+    function _setupDataForCombat(enemy){
+        local enemyData = [
+            ::Combat.CombatStats(enemy)
+        ];
+        ::Base.mCurrentCombatData = ::Combat.CombatData(::Base.mPlayerStats.mPlayerCombatStats, enemyData);
+        ::Base.mCombatLogic = CombatLogic(::Base.mCurrentCombatData);
+    }
+
     function processEncounter(enemy){
         print("Encountered enemy " + ::Items.enemyToName(enemy));
+
+        _setupDataForCombat(enemy);
         mGui_.notifyEnemyEncounter(enemy);
         mEnemyEncountered_ = true;
     }
