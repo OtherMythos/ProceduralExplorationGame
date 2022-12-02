@@ -58,13 +58,24 @@
             return mOpponentStats.len();
         }
 
-        /**
-         * Perform an attack on an opponent.
-         * -1 will apply to all opponents.
-         */
+        function getNumAliveOpponents(){
+            local count = 0;
+            foreach(i in mOpponentStats){
+                if(!i.mDead) count++;
+            }
+            return count;
+        }
+
         function performAttackOnOpponent(damage, opponentId){
             local stats = mOpponentStats[opponentId];
+            return _performAttackOnStats(damage, stats);
+        }
 
+        function performAttackOnPlayer(damage){
+            return _performAttackOnStats(damage, mPlayerStats);
+        }
+
+        function _performAttackOnStats(damage, stats){
             local dead = stats.mDead;
             stats.alterHealth(damage);
 

@@ -379,12 +379,15 @@ enum CombatBusEvents{
 
             local opponentId = data;
             //Actually perform the attack.
+            assert(mQueuedAttack_ != null);
             if(mQueuedAttack_ < 0){
                 mCombatBus_.mLogicInterface.playerRegularAttack(opponentId);
             }else{
                 mCombatBus_.mLogicInterface.playerSpecialAttack(mQueuedAttack_, opponentId);
             }
             mQueuedAttack_ = null;
+
+            mCombatBus_.mLogicInterface.performOpponentAttacks();
         }else if(event == CombatBusEvents.QUEUE_PLAYER_ATTACK){
             //TODO might want to separate this out into a designated logic component.
             //This would have no actual gui, but would listen on the bus and coordinate what the gui is meant to be doing.
@@ -397,7 +400,7 @@ enum CombatBusEvents{
         mLogicInterface_.tickUpdate();
     }
 
-    function notifyOpponentStatsChange(combatData){
+    function notifyStatsChange(combatData){
         mStatsDisplay_.notifyCombatChange(combatData);
     }
 
@@ -406,6 +409,17 @@ enum CombatBusEvents{
         //TODO properly replace this with bus events, rather than direct calls.
         mStatsDisplay_.removeForOpponent(opponentId);
         mCombatDisplay_.removeForOpponent(opponentId);
+    }
+
+    function notifyPlayerDied(){
+        print("player died");
+
+        _event.transmit(Event.PLAYER_DIED, null);
+        ::ScreenManager.transitionToScreen(MainMenuScreen());
+    }
+
+    function notifyAllOpponentsDied(){
+        ::ScreenManager.transitionToScreen(ExplorationScreen(::Base.mExplorationLogic));
     }
 
 };

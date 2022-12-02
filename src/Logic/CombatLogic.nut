@@ -20,6 +20,20 @@
         mGui_ = guiObj;
     }
 
+    function performOpponentAttacks(){
+        for(local i = 0; i < mData_.getNumOpponents(); i++){
+            local damageValue = ::Combat.CombatMove(-5);
+
+            local died = mData_.performAttackOnPlayer(damageValue);
+            if(died){
+                notifyPlayerDied_();
+                return;
+            }
+        }
+
+        notifyStatsChange_();
+    }
+
     function playerRegularAttack(opponentId){
         print("Doing regular attack");
 
@@ -30,30 +44,44 @@
     function playerSpecialAttack(id, opponentId){
         print("Doing special attack " + id);
 
-        local damageValue = ::Combat.CombatMove(-8);
+        local damageValue = ::Combat.CombatMove(-20);
         attackLogic_(damageValue, opponentId);
     }
 
     function attackLogic_(damageValue, opponentId){
-        //TODO give this an actual id.
         local died = mData_.performAttackOnOpponent(damageValue, opponentId);
 
         if(died){
             notifyOpponentDied_(opponentId);
+            if(mData_.getNumAliveOpponents() == 0){
+                notifyAllOpponentsDied_();
+            }
         }
 
-        notifyOpponentStatsChange_();
+        notifyStatsChange_();
     }
 
-    function notifyOpponentStatsChange_(){
+    function notifyStatsChange_(){
         if(!mGui_) return;
 
-        mGui_.notifyOpponentStatsChange(mData_);
+        mGui_.notifyStatsChange(mData_);
     }
 
     function notifyOpponentDied_(opponentId){
         if(!mGui_) return;
 
         mGui_.notifyOpponentDied(opponentId);
+    }
+
+    function notifyAllOpponentsDied_(){
+        if(!mGui_) return;
+
+        mGui_.notifyAllOpponentsDied();
+    }
+
+    function notifyPlayerDied_(){
+        if(!mGui_) return;
+
+        mGui_.notifyPlayerDied();
     }
 };

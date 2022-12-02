@@ -47,6 +47,7 @@ enum Event{
     DIALOG_META = 1005,
 
     STORY_CONTENT_FINISHED = 1006,
+    PLAYER_DIED = 1007,
 }
 
 enum Place{
