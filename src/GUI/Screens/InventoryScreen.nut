@@ -92,7 +92,7 @@
             inventoryButton.setText("Back");
             inventoryButton.setPosition(5, 25);
             inventoryButton.attachListenerForEvent(function(widget, action){
-                ::ScreenManager.transitionToScreen(ExplorationScreen(::Base.mExplorationLogic));
+                ::ScreenManager.backupScreen(0);
             }, _GUI_ACTION_PRESSED, this);
         }
 

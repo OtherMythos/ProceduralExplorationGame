@@ -185,10 +185,11 @@
 
     constructor(logicInterface){
         mLogicInterface_ = logicInterface;
-        mLogicInterface_.setGuiObject(this);
     }
 
     function setup(){
+        mLogicInterface_.setGuiObject(this);
+
         mWindow_ = _gui.createWindow();
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setVisualsEnabled(false);

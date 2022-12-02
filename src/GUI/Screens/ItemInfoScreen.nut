@@ -108,6 +108,6 @@
     }
 
     function closeScreen(){
-        ::ScreenManager.transitionToScreen(ExplorationScreen(::Base.mExplorationLogic));
+        ::ScreenManager.backupScreen(0);
     }
 };

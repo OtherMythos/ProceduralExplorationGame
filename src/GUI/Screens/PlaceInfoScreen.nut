@@ -44,7 +44,7 @@
                 ::ScreenManager.transitionToScreen(::StoryContentScreen(::StoryContentLogic(mPlaceId_)));
             },
             function(widget, action){
-                ::ScreenManager.transitionToScreen(ExplorationScreen(::Base.mExplorationLogic));
+                ::ScreenManager.backupScreen(0);
             }
         ];
         foreach(i,c in buttonOptions){

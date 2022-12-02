@@ -340,12 +340,22 @@ enum CombatBusEvents{
 
     constructor(logicInterface){
         mLogicInterface_ = logicInterface;
-        mLogicInterface_.setGuiObject(this);
+    }
 
-        mCombatBus_ = CombatInfoBus(logicInterface);
+    function shutdown(){
+        base.shutdown();
+
+        mCombatBus_ = null;
+        mQueuedAttack_ = null;
+        mCombatDisplay_ = null;
+        mStatsDisplay_ = null;
+        mMovesDisplay_ = null;
     }
 
     function setup(){
+        mLogicInterface_.setGuiObject(this);
+        mCombatBus_ = CombatInfoBus(mLogicInterface_);
+
         mCombatBus_.registerCallback(busCallback, this);
 
         mWindow_ = _gui.createWindow();
@@ -387,7 +397,7 @@ enum CombatBusEvents{
             }
             mQueuedAttack_ = null;
 
-            mCombatBus_.mLogicInterface.performOpponentAttacks();
+            //mCombatBus_.mLogicInterface.performOpponentAttacks();
         }else if(event == CombatBusEvents.QUEUE_PLAYER_ATTACK){
             //TODO might want to separate this out into a designated logic component.
             //This would have no actual gui, but would listen on the bus and coordinate what the gui is meant to be doing.
@@ -419,7 +429,7 @@ enum CombatBusEvents{
     }
 
     function notifyAllOpponentsDied(){
-        ::ScreenManager.transitionToScreen(ExplorationScreen(::Base.mExplorationLogic));
+        ::ScreenManager.queueTransition(ExplorationScreen(::Base.mExplorationLogic));
     }
 
 };

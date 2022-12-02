@@ -51,14 +51,13 @@
     function attackLogic_(damageValue, opponentId){
         local died = mData_.performAttackOnOpponent(damageValue, opponentId);
 
+        notifyStatsChange_();
         if(died){
             notifyOpponentDied_(opponentId);
             if(mData_.getNumAliveOpponents() == 0){
                 notifyAllOpponentsDied_();
             }
         }
-
-        notifyStatsChange_();
     }
 
     function notifyStatsChange_(){

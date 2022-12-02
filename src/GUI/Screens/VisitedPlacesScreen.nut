@@ -71,7 +71,7 @@
             backButton.setText("Back");
             backButton.setPosition(5, 25);
             backButton.attachListenerForEvent(function(widget, action){
-                ::ScreenManager.transitionToScreen(ExplorationScreen(::Base.mExplorationLogic));
+                ::ScreenManager.backupScreen(0);
             }, _GUI_ACTION_PRESSED, this);
         }
 

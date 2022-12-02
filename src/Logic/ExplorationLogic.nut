@@ -59,7 +59,7 @@
         local newPercentage = ((mExplorationCount_.tofloat() / EXPLORATION_MAX_LENGTH) * 100).tointeger();
 
         if(mExplorationPercentage_ != newPercentage){
-            mGui_.notifyExplorationPercentage(newPercentage);
+            if(mGui_) mGui_.notifyExplorationPercentage(newPercentage);
         }
         mExplorationPercentage_ = newPercentage;
     }
@@ -105,7 +105,7 @@
 
         print(format("Found item %s at index %i", ::Items.itemToName(item), idx));
 
-        mGui_.notifyObjectFound(foundObj, idx);
+        if(mGui_) mGui_.notifyObjectFound(foundObj, idx);
     }
 
     function processFoundPlace(place){
@@ -120,7 +120,7 @@
 
         print(format("Found place %s at index %i", ::Places.placeToName(place), idx));
 
-        mGui_.notifyObjectFound(foundObj, idx);
+        if(mGui_) mGui_.notifyObjectFound(foundObj, idx);
     }
 
     function removeFoundItem(idx){
@@ -142,7 +142,7 @@
         print("Encountered enemy " + ::Items.enemyToName(enemy));
 
         _setupDataForCombat(enemy);
-        mGui_.notifyEnemyEncounter(enemy);
+        if(mGui_) mGui_.notifyEnemyEncounter(enemy);
         mEnemyEncountered_ = true;
     }
 
