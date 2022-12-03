@@ -59,10 +59,10 @@
 
         //::ScreenManager.transitionToScreen(MainMenuScreen());
         //::ScreenManager.transitionToScreen(ExplorationScreen(mExplorationLogic));
-        ::ScreenManager.transitionToScreen(::CombatScreen(mCombatLogic));
+        //::ScreenManager.transitionToScreen(::CombatScreen(mCombatLogic));
         //::ScreenManager.transitionToScreen(EncounterPopupScreen(), null, 1);
         //::ScreenManager.transitionToScreen(ItemInfoScreen(Item.SIMPLE_SHIELD));
-        //::ScreenManager.transitionToScreen(InventoryScreen(mInventory));
+        ::ScreenManager.transitionToScreen(InventoryScreen(mInventory));
         //::ScreenManager.transitionToScreen(VisitedPlacesScreen(mPlayerStats));
         //::ScreenManager.transitionToScreen(::PlaceInfoScreen(Place.HAUNTED_WELL));
         //::ScreenManager.transitionToScreen(::StoryContentScreen(::StoryContentLogic(Place.GOBLIN_VILLAGE)));

@@ -1,17 +1,36 @@
+enum InventoryBusEvents{
+    ITEM_SELECTED,
+};
+
 ::InventoryScreen <- class extends ::Screen{
 
     mWindow_ = null;
     mInventory_ = null;
     mMoneyCounter_ = null;
 
+    mInventoryBus_ = null;
+
     /**
      * An entry in the inventory screen.
      */
     InventoryItem = class{
         mButtonObject_ = null;
-        constructor(parentWindow){
+        //TODO it's wasteful to keep a copy of this per instance.
+        //Unfortunately I can't do what I need with static variables.
+        //Find a way to improve this approach.
+        mBus_ = null;
+
+        constructor(parentWindow, id, bus){
+            mBus_ = bus;
+
             mButtonObject_ = parentWindow.createButton();
-            mButtonObject_.setText("Some test");
+            mButtonObject_.setText(" ");
+            mButtonObject_.setUserId(id);
+            mButtonObject_.attachListenerForEvent(buttonPressed, _GUI_ACTION_PRESSED, this);
+        }
+
+        function buttonPressed(widget, action){
+            mBus_.notifyEvent(InventoryBusEvents.ITEM_SELECTED, widget.getUserId());
         }
 
         function setItem(item){
@@ -34,7 +53,7 @@
         mLayoutTable_ = null;
         buttonThing = null;
 
-        constructor(parentWindow, inventory){
+        constructor(parentWindow, inventory, bus){
 
             mWindow_ = _gui.createWindow(parentWindow);
             mWindow_.setSize(100, 100);
@@ -42,7 +61,7 @@
             mLayoutTable_ = _gui.createLayoutLine();
 
             for(local i = 0; i < inventory.mInventoryItems_.len(); i++){
-                local item = ::InventoryScreen.InventoryItem(mWindow_);
+                local item = ::InventoryScreen.InventoryItem(mWindow_, i, bus);
                 item.setItem(inventory.mInventoryItems_[i]);
                 item.addToLayout(mLayoutTable_);
             }
@@ -71,6 +90,13 @@
         }
     };
 
+    InventoryInfoBus = class extends ::Screen.ScreenBus{
+        constructor(){
+            base.constructor();
+
+        }
+    };
+
     constructor(inventory){
         mInventory_ = inventory;
     }
@@ -81,6 +107,9 @@
 
     function setup(){
         _event.subscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent, this);
+
+        mInventoryBus_ = InventoryInfoBus();
+        mInventoryBus_.registerCallback(busCallback, this);
 
         mWindow_ = _gui.createWindow();
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
@@ -109,7 +138,7 @@
         mMoneyCounter_ = ::GuiWidgets.InventoryMoneyCounter(mWindow_);
         mMoneyCounter_.addToLayout(layoutLine);
 
-        local container = InventoryContainer(mWindow_, mInventory_);
+        local container = InventoryContainer(mWindow_, mInventory_, mInventoryBus_);
         container.addToLayout(layoutLine);
 
         layoutLine.setMarginForAllCells(0, 5);
@@ -119,6 +148,15 @@
         layoutLine.layout();
 
         container.sizeInner();
+    }
+
+    function busCallback(event, data){
+        print("Some data on the bus");
+
+        if(event == InventoryBusEvents.ITEM_SELECTED){
+            local item = mInventory_.getItemForIdx(data);
+            ::ScreenManager.queueTransition(ItemInfoScreen(item));
+        }
     }
 
     function shutdown(){

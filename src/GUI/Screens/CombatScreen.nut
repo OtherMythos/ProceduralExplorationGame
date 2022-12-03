@@ -13,37 +13,15 @@ enum CombatBusEvents{
 
 ::CombatScreen <- class extends ::Screen{
 
-    /**
-     * A class to facilitate communication between the parts of the sections of the combat screen.
-     *
-     * Objects are provided this bus class which deals with facilitating callbacks.
-     * This object is more local than the global event system, as these events only effect the combat screen.
-     */
-    CombatInfoBus = class{
+    CombatInfoBus = class extends ::Screen.ScreenBus{
         mLogicInterface = null;
         mCombatData = null;
 
-        mCallbacks_ = null;
-
         constructor(logicInterface){
-            mCallbacks_ = [];
+            base.constructor();
 
             mLogicInterface = logicInterface;
             mCombatData = logicInterface.mData_;
-        }
-
-        function notifyEvent(busEvent, data){
-            foreach(i in mCallbacks_){
-                i(busEvent, data);
-            }
-        }
-
-        function registerCallback(callback, env=null){
-            local target = callback;
-            if(env){
-                target = callback.bindenv(env);
-            }
-            mCallbacks_.append(target);
         }
     };
 

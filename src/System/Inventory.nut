@@ -6,6 +6,8 @@
 
     constructor(){
         mInventoryItems_ = array(mInventorySize_, Item.NONE);
+
+        mInventoryItems_[0] = Item.HEALTH_POTION;
     }
 
     /**
@@ -22,6 +24,10 @@
     function setItemForIdx(item, idx){
         mInventoryItems_[idx] = item;
         contentsChanged();
+    }
+
+    function getItemForIdx(idx){
+        return mInventoryItems_[idx];
     }
 
     function contentsChanged(){
