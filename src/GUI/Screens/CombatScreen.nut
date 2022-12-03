@@ -397,7 +397,7 @@ enum CombatBusEvents{
             }
             mQueuedAttack_ = null;
 
-            //mCombatBus_.mLogicInterface.performOpponentAttacks();
+            mCombatBus_.mLogicInterface.performOpponentAttacks();
         }else if(event == CombatBusEvents.QUEUE_PLAYER_ATTACK){
             //TODO might want to separate this out into a designated logic component.
             //This would have no actual gui, but would listen on the bus and coordinate what the gui is meant to be doing.
