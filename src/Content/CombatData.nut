@@ -13,8 +13,12 @@
             mEnemyType = enemyType;
         }
 
+        function alterHealthWithMove(move){
+            alterHealth(amount.getDamage());
+        }
+
         function alterHealth(amount){
-            setHealth(mHealth + amount.getDamage());
+            setHealth(mHealth + amount);
         }
 
         function setHealth(health){
@@ -77,7 +81,7 @@
 
         function _performAttackOnStats(damage, stats){
             local dead = stats.mDead;
-            stats.alterHealth(damage);
+            stats.alterHealthWithMove(damage);
 
             //The opponent died as a result of this attack.
             return (dead != stats.mDead);

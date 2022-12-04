@@ -1,6 +1,7 @@
 ::ItemInfoScreen <- class extends ::Screen{
 
     mWindow_ = null;
+    mInfoMode_ = null;
 
     mItemType_ = Item.NONE;
     mItemSlotIdx_ = 0;
@@ -43,7 +44,8 @@
         }
     };
 
-    constructor(itemType, itemSlotIdx = -1){
+    constructor(itemType, infoMode, itemSlotIdx = -1){
+        mInfoMode_ = infoMode;
         mItemType_ = itemType;
         mItemSlotIdx_ = itemSlotIdx;
     }
@@ -76,26 +78,12 @@
         local statsContainer = ItemStatsContainer(mWindow_, mItemType_);
         statsContainer.addToLayout(layoutLine);
 
-        //Add the buttons to either keep or scrap.
-        local buttonOptions = ["Keep", "Scrap"];
-        local buttonFunctions = [
-            function(widget, action){
-                ::Base.mInventory.addToInventory(mItemType_);
-                //TODO would be nice to do these with events.
-                if(mItemSlotIdx_ >= 0) ::Base.mExplorationLogic.removeFoundItem(mItemSlotIdx_);
-                closeScreen();
-            },
-            function(widget, action){
-                ::Base.mInventory.addMoney(::Items.getScrapValueForItem(mItemType_));
-                if(mItemSlotIdx_ >= 0) ::Base.mExplorationLogic.removeFoundItem(mItemSlotIdx_);
-                closeScreen();
-            }
-        ];
-        foreach(i,c in buttonOptions){
+        local buttonData = getButtonsForType(mInfoMode_);
+        foreach(i,c in buttonData[0]){
             local button = mWindow_.createButton();
             button.setDefaultFontSize(button.getDefaultFontSize() * 1.5);
             button.setText(c);
-            button.attachListenerForEvent(buttonFunctions[i], _GUI_ACTION_PRESSED, this);
+            button.attachListenerForEvent(buttonData[1][i], _GUI_ACTION_PRESSED, this);
             button.setExpandHorizontal(true);
             button.setMinSize(0, 100);
             layoutLine.addCell(button);
@@ -105,6 +93,51 @@
         layoutLine.setPosition(_window.getWidth() * 0.05, 50);
         layoutLine.setSize(_window.getWidth() * 0.9, _window.getHeight() * 0.9);
         layoutLine.layout();
+    }
+
+    function getButtonsForType(buttonType){
+        local buttonOptions = null;
+        local buttonFunctions = null;
+
+        if(mInfoMode_ == ItemInfoMode.KEEP_SCRAP){
+            buttonOptions = ["Keep", "Scrap"];
+            buttonFunctions = [
+                function(widget, action){
+                    ::Base.mInventory.addToInventory(mItemType_);
+                    //TODO would be nice to do these with events.
+                    if(mItemSlotIdx_ >= 0) ::Base.mExplorationLogic.removeFoundItem(mItemSlotIdx_);
+                    closeScreen();
+                },
+                function(widget, action){
+                    ::Base.mInventory.addMoney(::Items.getScrapValueForItem(mItemType_));
+                    if(mItemSlotIdx_ >= 0) ::Base.mExplorationLogic.removeFoundItem(mItemSlotIdx_);
+                    closeScreen();
+                }
+            ];
+        }
+        else if(mInfoMode_ == ItemInfoMode.USE){
+            buttonOptions = ["Use"];
+            buttonFunctions = [
+                function(widget, action){
+                    ::Base.mInventory.removeFromInventory(mItemSlotIdx_, mItemType_);
+                    ::Items.actuateItem(mItemType_);
+                    closeScreen();
+                }
+            ];
+        }
+        else{
+            assert(false);
+        }
+
+        //Include the back button in either option.
+        buttonOptions.append("Back");
+        buttonFunctions.append(
+            function(widget, action){
+                closeScreen();
+            }
+        );
+
+        return [buttonOptions, buttonFunctions];
     }
 
     function closeScreen(){

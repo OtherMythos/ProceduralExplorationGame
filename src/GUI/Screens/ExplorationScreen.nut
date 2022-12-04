@@ -147,7 +147,7 @@
             local id = widget.getUserId();
             local foundObj = mFoundObjects_[id];
             if(foundObj.type == FoundObjectType.ITEM){
-                ::ScreenManager.transitionToScreen(ItemInfoScreen(foundObj.obj, id));
+                ::ScreenManager.transitionToScreen(ItemInfoScreen(foundObj.obj, ItemInfoMode.KEEP_SCRAP, id));
             }
             else if(foundObj.type == FoundObjectType.PLACE){
                 ::ScreenManager.transitionToScreen(::PlaceInfoScreen(foundObj.obj, id));

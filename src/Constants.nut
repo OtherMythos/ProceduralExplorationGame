@@ -75,3 +75,8 @@ enum FoundObjectType{
     ITEM,
     PLACE
 };
+
+enum ItemInfoMode{
+    KEEP_SCRAP,
+    USE
+};

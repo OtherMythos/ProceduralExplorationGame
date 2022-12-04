@@ -17,6 +17,10 @@
         mPlayerCombatStats.mHealth = 100;
     }
 
+    function alterPlayerHealth(amount){
+        mPlayerCombatStats.alterHealth(amount);
+    }
+
     function notifyPlaceVisited(place){
         if(mPlacesVisited_[place]) return;
 

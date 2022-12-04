@@ -151,11 +151,9 @@ enum InventoryBusEvents{
     }
 
     function busCallback(event, data){
-        print("Some data on the bus");
-
         if(event == InventoryBusEvents.ITEM_SELECTED){
             local item = mInventory_.getItemForIdx(data);
-            ::ScreenManager.queueTransition(ItemInfoScreen(item));
+            ::ScreenManager.queueTransition(ItemInfoScreen(item, ItemInfoMode.USE, data));
         }
     }
 

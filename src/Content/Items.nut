@@ -24,6 +24,18 @@
         return stat;
     }
 
+    function actuateItem(item){
+        switch(item){
+            case Item.HEALTH_POTION:{
+                ::Base.mPlayerStats.alterPlayerHealth(10);
+                break;
+            }
+            default:{
+                assert(false);
+            }
+        }
+    }
+
     function itemToName(item){
         switch(item){
             case Item.NONE: return ItemNames.NONE;

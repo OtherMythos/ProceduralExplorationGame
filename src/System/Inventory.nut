@@ -21,6 +21,18 @@
         return true;
     }
 
+    /**
+     * Remove an item from the inventory based on slot idx.
+     * Pass expected type as well to perform a check that the index provided contains the expected item.
+     */
+    function removeFromInventory(slotIdx, expectedType = Item.NONE){
+        assert(slotIdx >= 0 && slotIdx < mInventoryItems_.len());
+        if(expectedType != Item.NONE){
+            assert(mInventoryItems_[slotIdx] == expectedType);
+        }
+        setItemForIdx(Item.NONE, slotIdx);
+    }
+
     function setItemForIdx(item, idx){
         mInventoryItems_[idx] = item;
         contentsChanged();
