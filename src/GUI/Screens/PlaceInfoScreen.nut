@@ -41,7 +41,7 @@
             function(widget, action){
                 _event.transmit(Event.PLACE_VISITED, mPlaceId_);
                 if(mItemSlotIdx_ >= 0) ::Base.mExplorationLogic.removeFoundItem(mItemSlotIdx_);
-                ::ScreenManager.transitionToScreen(::StoryContentScreen(::StoryContentLogic(mPlaceId_)));
+                ::ScreenManager.transitionToScreenForId(Screen.STORY_CONTENT_SCREEN);
             },
             function(widget, action){
                 ::ScreenManager.backupScreen(0);

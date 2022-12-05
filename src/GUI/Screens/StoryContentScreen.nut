@@ -34,6 +34,6 @@
     }
 
     function receiveStoryContentFinished(id, data){
-        ::ScreenManager.transitionToScreen(ExplorationScreen(::Base.mExplorationLogic));
+        ::ScreenManager.transitionToScreenForId(Screen.EXPLORATION_SCREEN);
     }
 };

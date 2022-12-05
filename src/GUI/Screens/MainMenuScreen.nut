@@ -24,7 +24,7 @@
         local buttonOptions = ["play", "help"];
         local buttonFunctions = [
             function(widget, action){
-                ::ScreenManager.transitionToScreen(SaveSelectionScreen());
+                ::ScreenManager.transitionToScreenForId(Screen.SAVE_SELECTION_SCREEN);
             },
             function(widget, action){
                 print("Help");

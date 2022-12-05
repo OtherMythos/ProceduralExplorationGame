@@ -25,7 +25,7 @@
     }
 
     function notifyDialogStart(){
-        ::ScreenManager.transitionToScreen(::DialogScreen(), null, 2);
+        ::ScreenManager.transitionToScreen(Screen.DIALOG_SCREEN, null, 2);
         _event.transmit(Event.DIALOG_META, { "started": true });
     }
 

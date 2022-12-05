@@ -198,11 +198,11 @@ enum CombatBusEvents{
                         setDialogState(CombatScreenState.SELECT_MOVE);
                     },
                     function(widget, action){
-                        ::ScreenManager.transitionToScreen(InventoryScreen(::Base.mInventory));
+                        ::ScreenManager.transitionToScreenForId(Screen.INVENTORY_SCREEN);
                     },
                     function(widget, action){
                         print("Fleeing");
-                        ::ScreenManager.transitionToScreen(ExplorationScreen(::Base.mExplorationLogic));
+                        ::ScreenManager.transitionToScreenForId(Screen.EXPLORATION_SCREEN);
                     },
                 ];
                 foreach(c,i in buttonLabels){
@@ -403,7 +403,7 @@ enum CombatBusEvents{
         print("player died");
 
         _event.transmit(Event.PLAYER_DIED, null);
-        ::ScreenManager.transitionToScreen(MainMenuScreen());
+        ::ScreenManager.transitionToScreenForId(Screen.MAIN_MENU_SCREEN);
     }
 
     function notifyAllOpponentsDied(){

@@ -57,15 +57,15 @@
         //TODO temporary to setup the logic. Really a new combatData would be pushed at the start of a new combat.
         mCombatLogic = CombatLogic(mCurrentCombatData);
 
-        ::ScreenManager.transitionToScreen(MainMenuScreen());
-        //::ScreenManager.transitionToScreen(ExplorationScreen(mExplorationLogic));
-        //::ScreenManager.transitionToScreen(::CombatScreen(mCombatLogic));
-        //::ScreenManager.transitionToScreen(EncounterPopupScreen(), null, 1);
-        //::ScreenManager.transitionToScreen(ItemInfoScreen(Item.SIMPLE_SHIELD, ItemInfoMode.USE));
-        //::ScreenManager.transitionToScreen(InventoryScreen(mInventory));
-        //::ScreenManager.transitionToScreen(VisitedPlacesScreen(mPlayerStats));
-        //::ScreenManager.transitionToScreen(::PlaceInfoScreen(Place.HAUNTED_WELL));
-        //::ScreenManager.transitionToScreen(::StoryContentScreen(::StoryContentLogic(Place.GOBLIN_VILLAGE)));
+        ::ScreenManager.transitionToScreenForId(Screen.MAIN_MENU_SCREEN);
+        //::ScreenManager.transitionToScreenForId(Screen.EXPLORATION_SCREEN);
+        //::ScreenManager.transitionToScreenForId(Screen.COMBAT_SCREEN);
+        //::ScreenManager.transitionToScreenForId(Screen.ENCOUNTER_POPUP_SCREEN, null, 1);
+        //::ScreenManager.transitionToScreenForId(Screen.ITEM_INFO_SCREEN);
+        //::ScreenManager.transitionToScreenForId(Screen.INVENTORY_SCREEN);
+        //::ScreenManager.transitionToScreenForId(Screen.VISITED_PLACES_SCREEN);
+        //::ScreenManager.transitionToScreenForId(Screen.PLACE_INFO_SCREEN);
+        //::ScreenManager.transitionToScreenForId(Screen.STORY_CONTENT_SCREEN);
 
     }
 

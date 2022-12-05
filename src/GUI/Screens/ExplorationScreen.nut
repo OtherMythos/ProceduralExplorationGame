@@ -41,7 +41,7 @@
         }
 
         function mainMenuButton(widget, action){
-            ::ScreenManager.transitionToScreen(GameplayMainMenuScreen());
+            ::ScreenManager.transitionToScreenForId(Screen.GAMEPLAY_MAIN_MENU_SCREEN);
         }
 
         constructor(parentWin, parentScreen){
@@ -147,10 +147,10 @@
             local id = widget.getUserId();
             local foundObj = mFoundObjects_[id];
             if(foundObj.type == FoundObjectType.ITEM){
-                ::ScreenManager.transitionToScreen(ItemInfoScreen(foundObj.obj, ItemInfoMode.KEEP_SCRAP, id));
+                ::ScreenManager.transitionToScreenForId(Screen.ITEM_INFO_SCREEN);
             }
             else if(foundObj.type == FoundObjectType.PLACE){
-                ::ScreenManager.transitionToScreen(::PlaceInfoScreen(foundObj.obj, id));
+                ::ScreenManager.transitionToScreenForId(Screen.PLACE_INFO_SCREEN);
             }else{
                 assert(false);
             }
@@ -208,7 +208,7 @@
             local inventoryButton = mWindow_.createButton();
             inventoryButton.setText("Inventory");
             inventoryButton.attachListenerForEvent(function(widget, action){
-                ::ScreenManager.transitionToScreen(InventoryScreen(::Base.mInventory));
+                ::ScreenManager.transitionToScreenForId(Screen.INVENTORY_SCREEN);
             }, _GUI_ACTION_PRESSED, this);
             helperButtonLayout.addCell(inventoryButton);
 
@@ -272,7 +272,7 @@
     }
 
     function notifyEnemyEncounter(enemy){
-        ::ScreenManager.transitionToScreen(EncounterPopupScreen(), null, 2);
+        ::ScreenManager.transitionToScreenForId(Screen.ENCOUNTER_POPUP_SCREEN);
     }
 
     function notifyExplorationEnd(){

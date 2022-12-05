@@ -23,15 +23,15 @@
         local buttonFunctions = [
             function(widget, action){
                 print("Explore");
-                ::ScreenManager.transitionToScreen(ExplorationScreen(::Base.mExplorationLogic));
+                ::ScreenManager.transitionToScreenForId(Screen.EXPLORATION_SCREEN);
             },
             function(widget, action){
                 print("Inventory");
-                ::ScreenManager.transitionToScreen(InventoryScreen(::Base.mInventory));
+                ::ScreenManager.transitionToScreenForId(Screen.INVENTORY_SCREEN);
             },
             function(widget, action){
                 print("Visit");
-                ::ScreenManager.transitionToScreen(VisitedPlacesScreen(::Base.mPlayerStats));
+                ::ScreenManager.transitionToScreenForId(Screen.VISITED_PLACES_SCREEN);
             }
         ]
 
