@@ -14,7 +14,7 @@
         }
 
         function alterHealthWithMove(move){
-            alterHealth(amount.getDamage());
+            alterHealth(move.getDamage());
         }
 
         function alterHealth(amount){
