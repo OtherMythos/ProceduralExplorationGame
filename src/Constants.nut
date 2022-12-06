@@ -5,6 +5,10 @@ enum Enemy{
     MAX
 };
 
+enum ObjectType{
+    SCREEN_DATA = "ScreenData"
+};
+
 enum EnemyNames{
     NONE = "None",
     GOBLIN = "Goblin",

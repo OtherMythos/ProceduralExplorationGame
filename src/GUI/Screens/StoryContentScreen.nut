@@ -3,12 +3,10 @@
     mWindow_ = null;
     mLogicInterface_ = null;
 
-    constructor(logicInterface){
-        mLogicInterface_ = logicInterface;
+    function setup(data){
+        mLogicInterface_ = data.logic;
         mLogicInterface_.setGuiObject(this);
-    }
 
-    function setup(){
         _event.subscribe(Event.STORY_CONTENT_FINISHED, receiveStoryContentFinished, this);
 
         mWindow_ = _gui.createWindow();
@@ -34,6 +32,6 @@
     }
 
     function receiveStoryContentFinished(id, data){
-        ::ScreenManager.transitionToScreenForId(Screen.EXPLORATION_SCREEN);
+        ::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
     }
 };

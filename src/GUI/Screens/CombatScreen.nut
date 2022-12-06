@@ -198,11 +198,11 @@ enum CombatBusEvents{
                         setDialogState(CombatScreenState.SELECT_MOVE);
                     },
                     function(widget, action){
-                        ::ScreenManager.transitionToScreenForId(Screen.INVENTORY_SCREEN);
+                        ::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, {"inventory": ::Base.mInventory}));
                     },
                     function(widget, action){
                         print("Fleeing");
-                        ::ScreenManager.transitionToScreenForId(Screen.EXPLORATION_SCREEN);
+                        ::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
                     },
                 ];
                 foreach(c,i in buttonLabels){
@@ -316,10 +316,6 @@ enum CombatBusEvents{
     mQueuedAttack_ = null;
 
 
-    constructor(logicInterface){
-        mLogicInterface_ = logicInterface;
-    }
-
     function shutdown(){
         base.shutdown();
 
@@ -330,7 +326,8 @@ enum CombatBusEvents{
         mMovesDisplay_ = null;
     }
 
-    function setup(){
+    function setup(data){
+        mLogicInterface_ = data.logic;
         mLogicInterface_.setGuiObject(this);
         mCombatBus_ = CombatInfoBus(mLogicInterface_);
 
@@ -407,7 +404,7 @@ enum CombatBusEvents{
     }
 
     function notifyAllOpponentsDied(){
-        ::ScreenManager.queueTransition(ExplorationScreen(::Base.mExplorationLogic));
+        ::ScreenManager.queueTransition(Screen.EXPLORATION_SCREEN);
     }
 
 };

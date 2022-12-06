@@ -2,11 +2,7 @@
 
     mWindow_ = null;
 
-    constructor(){
-
-    }
-
-    function setup(){
+    function setup(data){
         mWindow_ = _gui.createWindow();
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setVisualsEnabled(false);

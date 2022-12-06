@@ -25,13 +25,13 @@
     }
 
     function notifyDialogStart(){
-        ::ScreenManager.transitionToScreen(Screen.DIALOG_SCREEN, null, 2);
+        ::ScreenManager.transitionToScreenForId(Screen.DIALOG_SCREEN, null, 2);
         _event.transmit(Event.DIALOG_META, { "started": true });
     }
 
     function notifyDialogEnd(){
         _event.transmit(Event.DIALOG_META, { "ended": true });
-        ::ScreenManager.transitionToScreen(null, null, 2);
+        ::ScreenManager.transitionToScreenForId(null, null, 2);
 
         _event.transmit(Event.STORY_CONTENT_FINISHED, null);
     }

@@ -58,13 +58,15 @@
         mCombatLogic = CombatLogic(mCurrentCombatData);
 
         ::ScreenManager.transitionToScreenForId(Screen.MAIN_MENU_SCREEN);
-        //::ScreenManager.transitionToScreenForId(Screen.EXPLORATION_SCREEN);
-        //::ScreenManager.transitionToScreenForId(Screen.COMBAT_SCREEN);
-        //::ScreenManager.transitionToScreenForId(Screen.ENCOUNTER_POPUP_SCREEN, null, 1);
+        //::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
+        //::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.COMBAT_SCREEN, {"logic": mCombatLogic}));
+        //::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.ENCOUNTER_POPUP_SCREEN, null), null, 1);
         //::ScreenManager.transitionToScreenForId(Screen.ITEM_INFO_SCREEN);
+        //::ScreenManager.transitionToScreenForId(::screenmanager.screendata(Screen.INVENTORY_SCREEN, {"inventory": mInventory}));
         //::ScreenManager.transitionToScreenForId(Screen.INVENTORY_SCREEN);
-        //::ScreenManager.transitionToScreenForId(Screen.VISITED_PLACES_SCREEN);
-        //::ScreenManager.transitionToScreenForId(Screen.PLACE_INFO_SCREEN);
+        //::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.VISITED_PLACES_SCREEN, {"stats": mPlayerStats}));
+        //::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.PLACE_INFO_SCREEN, {"logic": ::StoryContentLogic(Place.HAUNTED_WELL)}));
+        //::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.STORY_CONTENT_SCREEN, {"logic": ::StoryContentLogic(Place.HAUNTED_WELL)}));
         //::ScreenManager.transitionToScreenForId(Screen.STORY_CONTENT_SCREEN);
 
     }

@@ -5,11 +5,7 @@
 
     mBackgroundWindow_ = null;
 
-    constructor(){
-
-    }
-
-    function setup(){
+    function setup(data){
         local winWidth = _window.getWidth() * 0.8;
 
         //Create a window to block inputs for when the popup appears.
@@ -42,9 +38,9 @@
         }
 
         if(mCount_ >= 150){
-            ::ScreenManager.transitionToScreen(null, null, 2);
+            ::ScreenManager.transitionToScreenForId(null, null, 2);
             //TODO would need to generate some new combat data here for the new encounter.
-            ::ScreenManager.transitionToScreenForId(Screen.COMBAT_SCREEN);
+            ::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.COMBAT_SCREEN, {"logic": ::Base.mCombatLogic}));
         }
     }
 

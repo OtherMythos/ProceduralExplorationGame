@@ -1,6 +1,7 @@
 //Base class
 ::Screen <- class{
     mWindow_ = null;
+    mScreenData_ = null;
 
     /**
      * A class to facilitate communication between the parts of the screen systems.
@@ -32,8 +33,12 @@
         }
     };
 
-    constructor(){
+    constructor(screenData){
+        mScreenData_ = screenData;
+    }
 
+    function getScreenData(){
+        return mScreenData_;
     }
 
     function start(){

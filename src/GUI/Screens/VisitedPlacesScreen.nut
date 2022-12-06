@@ -56,11 +56,9 @@
         }
     };
 
-    constructor(playerStats){
-        mPlayerStats_ = playerStats;
-    }
+    function setup(data){
+        mPlayerStats_ = data.stats;
 
-    function setup(){
         mWindow_ = _gui.createWindow();
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setVisualsEnabled(false);

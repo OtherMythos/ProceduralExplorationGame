@@ -3,10 +3,6 @@
     mTextContainer_ = null;
     mNextDialogButton_ = null;
 
-    constructor(){
-
-    }
-
     function receiveDialogSpokenEvent(id, data){
         setNewDialogText(data);
     }
@@ -25,7 +21,7 @@
         ::Base.mDialogManager.notifyProgress();
     }
 
-    function setup(){
+    function setup(data){
         _event.subscribe(Event.DIALOG_SPOKEN, receiveDialogSpokenEvent, this);
         _event.subscribe(Event.DIALOG_META, receiveDialogMetaEvent, this);
 

@@ -1,9 +1,5 @@
 ::SaveSelectionScreen <- class extends ::Screen{
 
-    constructor(){
-
-    }
-
     function saveSelectionCallback_(widget, action){
         print(format("Selected save %i", widget.getUserId()));
 
@@ -11,7 +7,7 @@
         ::ScreenManager.transitionToScreenForId(Screen.GAMEPLAY_MAIN_MENU_SCREEN);
     }
 
-    function setup(){
+    function setup(data){
         mWindow_ = _gui.createWindow();
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setVisualsEnabled(false);

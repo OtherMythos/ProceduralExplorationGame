@@ -44,13 +44,11 @@
         }
     };
 
-    constructor(itemType, infoMode, itemSlotIdx = -1){
-        mInfoMode_ = infoMode;
-        mItemType_ = itemType;
-        mItemSlotIdx_ = itemSlotIdx;
-    }
+    function setup(data){
+        mInfoMode_ = data.mode;
+        mItemType_ = data.item;
+        mItemSlotIdx_ = data.slotIdx;
 
-    function setup(){
         local itemName = ::Items.itemToName(mItemType_);
         local itemDescription = ::Items.itemToDescription(mItemType_);
 

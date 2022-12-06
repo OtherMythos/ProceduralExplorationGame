@@ -5,12 +5,10 @@
     mPlaceId_ = Item.NONE;
     mItemSlotIdx_ = 0;
 
-    constructor(place, itemSlotIdx = -1){
-        mPlaceId_ = place;
-        mItemSlotIdx_ = itemSlotIdx;
-    }
+    function setup(data){
+        mPlaceId_ = data.place;
+        mItemSlotIdx_ = data.slotIdx;
 
-    function setup(){
         local placeName = ::Places.placeToName(mPlaceId_);
         local placeDescription = ::Places.placeToDescription(mPlaceId_);
 
@@ -41,7 +39,7 @@
             function(widget, action){
                 _event.transmit(Event.PLACE_VISITED, mPlaceId_);
                 if(mItemSlotIdx_ >= 0) ::Base.mExplorationLogic.removeFoundItem(mItemSlotIdx_);
-                ::ScreenManager.transitionToScreenForId(Screen.STORY_CONTENT_SCREEN);
+                ::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.STORY_CONTENT_SCREEN, {"logic": ::StoryContentLogic(mPlaceId_)}));
             },
             function(widget, action){
                 ::ScreenManager.backupScreen(0);

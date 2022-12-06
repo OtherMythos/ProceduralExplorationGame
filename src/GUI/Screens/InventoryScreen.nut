@@ -97,16 +97,14 @@ enum InventoryBusEvents{
         }
     };
 
-    constructor(inventory){
-        mInventory_ = inventory;
-    }
-
     function receiveInventoryChangedEvent(id, data){
 
     }
 
-    function setup(){
+    function setup(data){
         _event.subscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent, this);
+
+        mInventory_ = data.inventory;
 
         mInventoryBus_ = InventoryInfoBus();
         mInventoryBus_.registerCallback(busCallback, this);
@@ -153,7 +151,9 @@ enum InventoryBusEvents{
     function busCallback(event, data){
         if(event == InventoryBusEvents.ITEM_SELECTED){
             local item = mInventory_.getItemForIdx(data);
-            ::ScreenManager.queueTransition(ItemInfoScreen(item, ItemInfoMode.USE, data));
+            //TODO fill out with whatever info needs to be passed.
+            ::ScreenManager.queueTransition(::ScreenManager.ScreenData(Screen.ITEM_INFO_SCREEN, {}));
+            //ItemInfoScreen(item, ItemInfoMode.USE, data));
         }
     }
 

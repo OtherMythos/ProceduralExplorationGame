@@ -1,10 +1,6 @@
 ::GameplayMainMenuScreen <- class extends ::Screen{
 
-    constructor(){
-
-    }
-
-    function setup(){
+    function setup(data){
         mWindow_ = _gui.createWindow();
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setVisualsEnabled(false);
@@ -23,15 +19,15 @@
         local buttonFunctions = [
             function(widget, action){
                 print("Explore");
-                ::ScreenManager.transitionToScreenForId(Screen.EXPLORATION_SCREEN);
+                ::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
             },
             function(widget, action){
                 print("Inventory");
-                ::ScreenManager.transitionToScreenForId(Screen.INVENTORY_SCREEN);
+                ::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, {"inventory": ::Base.mInventory}));
             },
             function(widget, action){
                 print("Visit");
-                ::ScreenManager.transitionToScreenForId(Screen.VISITED_PLACES_SCREEN);
+                ::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.VISITED_PLACES_SCREEN, {"stats": mPlayerStats}));
             }
         ]
 

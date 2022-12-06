@@ -1,11 +1,29 @@
 ::ScreenManager <- {
 
     "MAX_SCREENS": 3,
+    //Contains screen objects rather than construction data.
     "mActiveScreens_": null,
+    //Construction data for the previous screens the user has visited.
     "mPreviousScreens_": null,
 
     "mScreenQueued_": false,
     "mQueuedScreens_": null,
+
+    /**
+     * Class to wrap screen data for construction and transition.
+     * The id of the screen as well as its setup data are coupled to facilitate creation.
+     */
+    "ScreenData": class{
+        id = Screen.SCREEN;
+        data = null;
+        constructor(id, data){
+            this.id = id;
+            this.data = data;
+        }
+        function _typeof(){
+            return ObjectType.SCREEN_DATA;
+        }
+    },
 
     function setup(){
         mActiveScreens_ = array(MAX_SCREENS, null);
@@ -13,51 +31,63 @@
         mQueuedScreens_ = array(MAX_SCREENS, null);
     }
 
-    function _createScreenForId(screenId){
-        switch(screenId){
-            case Screen.SCREEN: return ::Screen();
-            case Screen.MAIN_MENU_SCREEN: return ::MainMenuScreen();
-            case Screen.SAVE_SELECTION_SCREEN: return ::SaveSelectionScreen();
-            case Screen.GAMEPLAY_MAIN_MENU_SCREEN: return ::GameplayMainMenuScreen();
-            case Screen.EXPLORATION_SCREEN: return ::ExplorationScreen(::Base.mExplorationLogic);
-            case Screen.ENCOUNTER_POPUP_SCREEN: return ::EncounterPopupScreen();
-            case Screen.COMBAT_SCREEN: return ::CombatScreen(::Base.mCombatLogic);
-            //TODO this will need to be populated with the item idx, otherwise it will assert.
-            case Screen.ITEM_INFO_SCREEN: return ::ItemInfoScreen(Item.SIMPLE_SHIELD, ItemInfoMode.USE);
-            case Screen.INVENTORY_SCREEN: return ::InventoryScreen(::Base.mInventory);
-            case Screen.VISITED_PLACES_SCREEN: return ::VisitedPlacesScreen(::Base.mPlayerStats);
-            case Screen.PLACE_INFO_SCREEN: return ::PlaceInfoScreen(Place.HAUNTED_WELL);
-            case Screen.STORY_CONTENT_SCREEN: return ::StoryContentScreen(::StoryContentLogic(Place.GOBLIN_VILLAGE));
-            case Screen.DIALOG_SCREEN: return ::DialogScreen();
+    function _createScreenForId(screenData){
+        if(screenData == null){
+            return null;
+        }
+        //TODO rather than doing it like this, get the screens to insert themselves into a table and construct based on that.
+        switch(screenData.id){
+            case Screen.SCREEN: return ::Screen(screenData);
+            case Screen.MAIN_MENU_SCREEN: return ::MainMenuScreen(screenData);
+            case Screen.SAVE_SELECTION_SCREEN: return ::SaveSelectionScreen(screenData);
+            case Screen.GAMEPLAY_MAIN_MENU_SCREEN: return ::GameplayMainMenuScreen(screenData);
+            case Screen.EXPLORATION_SCREEN: return ::ExplorationScreen(screenData);
+            case Screen.ENCOUNTER_POPUP_SCREEN: return ::EncounterPopupScreen(screenData);
+            case Screen.COMBAT_SCREEN: return ::CombatScreen(screenData);
+            case Screen.ITEM_INFO_SCREEN: return ::ItemInfoScreen(screenData);
+            case Screen.INVENTORY_SCREEN: return ::InventoryScreen(screenData);
+            case Screen.VISITED_PLACES_SCREEN: return ::VisitedPlacesScreen(screenData);
+            case Screen.PLACE_INFO_SCREEN: return ::PlaceInfoScreen(screenData);
+            case Screen.STORY_CONTENT_SCREEN: return ::StoryContentScreen(screenData);
+            case Screen.DIALOG_SCREEN: return ::DialogScreen(screenData);
             default:{
                 assert(false);
             }
         }
     }
 
+    function _wrapScreenData(data){
+        if(data == null) return data;
+        local screenData = data;
+        if(typeof screenData != ObjectType.SCREEN_DATA){
+            screenData = ScreenData(data, null);
+        }
+        return screenData;
+    }
+
     /**
      * Immediate transition to a new screen.
      */
-    //TODO now I have the enums for screen construction consider removing this.
-    function transitionToScreen(screenObject, transitionEffect = null, layerId = 0){
+    function transitionToScreenForId(screenId, transitionEffect = null, layerId = 0){
         assert(layerId < MAX_SCREENS);
         local current = mActiveScreens_[layerId];
         if(current != null){
             print("Calling shutdown for layer " + layerId);
             current.shutdown();
-            mPreviousScreens_[layerId] = current
+            //TODO actually stack the data in an array.
+            mPreviousScreens_[layerId] = current.getScreenData();
+            print("Setting previous");
         }
+
+        local screenData = _wrapScreenData(screenId);
+        local screenObject = _createScreenForId(screenData);
+
         mActiveScreens_[layerId] = screenObject;
 
         if(!screenObject) return;
 
         print("Setting up screen for layer " + layerId);
-        mActiveScreens_[layerId].setup();
-    }
-
-    function transitionToScreenForId(screenId, transitionEffect = null, layerId = 0){
-        local screen = _createScreenForId(screenId);
-        transitionToScreen(screen, transitionEffect, layerId);
+        mActiveScreens_[layerId].setup(screenData.data);
     }
 
     /**
@@ -65,8 +95,10 @@
      * This can help to ease issues if the transition happens deep in a callback stack.
      * i.e so the gui isn't deleted as part of its callback in an inconvenient way.
      */
-    function queueTransition(screenObject, transitionEffect = null, layerId = 0){
-        mQueuedScreens_[layerId] = screenObject;
+    function queueTransition(screenData, transitionEffect = null, layerId = 0){
+        //TODO transitionEffect isn't implemented yet as I don't use them.
+        local data = _wrapScreenData(screenData);
+        mQueuedScreens_[layerId] = data;
         mScreenQueued_ = true;
     }
 
@@ -76,15 +108,15 @@
     function backupScreen(layerId){
         local prev = mPreviousScreens_[layerId];
         if(prev == null) return;
-        transitionToScreen(prev, null, layerId);
+        transitionToScreenForId(prev, null, layerId);
     }
 
     function update(){
         if(mScreenQueued_){
             for(local i = 0; i < MAX_SCREENS; i++){
-                local screen = mQueuedScreens_[i];
-                if(!screen) continue;
-                transitionToScreen(screen, null, i);
+                local screenData = mQueuedScreens_[i];
+                if(!screenData) continue;
+                transitionToScreenForId(screenData, null, i);
                 mQueuedScreens_[i] = null;
             }
             mScreenQueued_ = false;
