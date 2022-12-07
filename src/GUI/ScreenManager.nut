@@ -9,6 +9,8 @@
     "mScreenQueued_": false,
     "mQueuedScreens_": null,
 
+    "Screens": array(Screen.MAX, null),
+
     /**
      * Class to wrap screen data for construction and transition.
      * The id of the screen as well as its setup data are coupled to facilitate creation.
@@ -35,25 +37,7 @@
         if(screenData == null){
             return null;
         }
-        //TODO rather than doing it like this, get the screens to insert themselves into a table and construct based on that.
-        switch(screenData.id){
-            case Screen.SCREEN: return ::Screen(screenData);
-            case Screen.MAIN_MENU_SCREEN: return ::MainMenuScreen(screenData);
-            case Screen.SAVE_SELECTION_SCREEN: return ::SaveSelectionScreen(screenData);
-            case Screen.GAMEPLAY_MAIN_MENU_SCREEN: return ::GameplayMainMenuScreen(screenData);
-            case Screen.EXPLORATION_SCREEN: return ::ExplorationScreen(screenData);
-            case Screen.ENCOUNTER_POPUP_SCREEN: return ::EncounterPopupScreen(screenData);
-            case Screen.COMBAT_SCREEN: return ::CombatScreen(screenData);
-            case Screen.ITEM_INFO_SCREEN: return ::ItemInfoScreen(screenData);
-            case Screen.INVENTORY_SCREEN: return ::InventoryScreen(screenData);
-            case Screen.VISITED_PLACES_SCREEN: return ::VisitedPlacesScreen(screenData);
-            case Screen.PLACE_INFO_SCREEN: return ::PlaceInfoScreen(screenData);
-            case Screen.STORY_CONTENT_SCREEN: return ::StoryContentScreen(screenData);
-            case Screen.DIALOG_SCREEN: return ::DialogScreen(screenData);
-            default:{
-                assert(false);
-            }
-        }
+        return Screens[screenData.id](screenData);
     }
 
     function _wrapScreenData(data){
@@ -68,7 +52,7 @@
     /**
      * Immediate transition to a new screen.
      */
-    function transitionToScreenForId(screenId, transitionEffect = null, layerId = 0){
+    function transitionToScreen(screenId, transitionEffect = null, layerId = 0){
         assert(layerId < MAX_SCREENS);
         local current = mActiveScreens_[layerId];
         if(current != null){
@@ -108,7 +92,7 @@
     function backupScreen(layerId){
         local prev = mPreviousScreens_[layerId];
         if(prev == null) return;
-        transitionToScreenForId(prev, null, layerId);
+        transitionToScreen(prev, null, layerId);
     }
 
     function update(){
@@ -116,7 +100,7 @@
             for(local i = 0; i < MAX_SCREENS; i++){
                 local screenData = mQueuedScreens_[i];
                 if(!screenData) continue;
-                transitionToScreenForId(screenData, null, i);
+                transitionToScreen(screenData, null, i);
                 mQueuedScreens_[i] = null;
             }
             mScreenQueued_ = false;

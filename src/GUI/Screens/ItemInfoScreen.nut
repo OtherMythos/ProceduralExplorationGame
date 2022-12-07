@@ -1,4 +1,4 @@
-::ItemInfoScreen <- class extends ::Screen{
+::ScreenManager.Screens[Screen.ITEM_INFO_SCREEN] = class extends ::Screen{
 
     mWindow_ = null;
     mInfoMode_ = null;

@@ -57,17 +57,17 @@
         //TODO temporary to setup the logic. Really a new combatData would be pushed at the start of a new combat.
         mCombatLogic = CombatLogic(mCurrentCombatData);
 
-        ::ScreenManager.transitionToScreenForId(Screen.MAIN_MENU_SCREEN);
-        //::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
-        //::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.COMBAT_SCREEN, {"logic": mCombatLogic}));
-        //::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.ENCOUNTER_POPUP_SCREEN, null), null, 1);
-        //::ScreenManager.transitionToScreenForId(Screen.ITEM_INFO_SCREEN);
-        //::ScreenManager.transitionToScreenForId(::screenmanager.screendata(Screen.INVENTORY_SCREEN, {"inventory": mInventory}));
-        //::ScreenManager.transitionToScreenForId(Screen.INVENTORY_SCREEN);
-        //::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.VISITED_PLACES_SCREEN, {"stats": mPlayerStats}));
-        //::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.PLACE_INFO_SCREEN, {"logic": ::StoryContentLogic(Place.HAUNTED_WELL)}));
-        //::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.STORY_CONTENT_SCREEN, {"logic": ::StoryContentLogic(Place.HAUNTED_WELL)}));
-        //::ScreenManager.transitionToScreenForId(Screen.STORY_CONTENT_SCREEN);
+        ::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
+        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
+        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COMBAT_SCREEN, {"logic": mCombatLogic}));
+        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.ENCOUNTER_POPUP_SCREEN, null), null, 1);
+        //::ScreenManager.transitionToScreen(Screen.ITEM_INFO_SCREEN);
+        //::ScreenManager.transitionToScreen(::screenmanager.screendata(Screen.INVENTORY_SCREEN, {"inventory": mInventory}));
+        //::ScreenManager.transitionToScreen(Screen.INVENTORY_SCREEN);
+        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.VISITED_PLACES_SCREEN, {"stats": mPlayerStats}));
+        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLACE_INFO_SCREEN, {"logic": ::StoryContentLogic(Place.HAUNTED_WELL)}));
+        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.STORY_CONTENT_SCREEN, {"logic": ::StoryContentLogic(Place.HAUNTED_WELL)}));
+        //::ScreenManager.transitionToScreen(Screen.STORY_CONTENT_SCREEN);
 
     }
 

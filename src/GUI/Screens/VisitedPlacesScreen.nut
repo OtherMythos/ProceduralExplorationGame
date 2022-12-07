@@ -1,4 +1,4 @@
-::VisitedPlacesScreen <- class extends ::Screen{
+::ScreenManager.Screens[Screen.VISITED_PLACES_SCREEN] = class extends ::Screen{
 
     mWindow_ = null;
     mPlayerStats_ = null;
@@ -11,7 +11,7 @@
 
         function buttonPressed(widget, action){
             print("Going to " + ::Places.placeToName(widget.getUserId()));
-            ::ScreenManager.transitionToScreenForId(Screen.STORY_CONTENT_SCREEN);
+            ::ScreenManager.transitionToScreen(Screen.STORY_CONTENT_SCREEN);
         }
 
         constructor(parentWindow, stats){

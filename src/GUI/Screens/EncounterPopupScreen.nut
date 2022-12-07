@@ -1,4 +1,4 @@
-::EncounterPopupScreen <- class extends ::Screen{
+::ScreenManager.Screens[Screen.ENCOUNTER_POPUP_SCREEN] = class extends ::Screen{
 
     mCount_ = 0;
     mBackgroundColour_ = false;
@@ -38,9 +38,9 @@
         }
 
         if(mCount_ >= 150){
-            ::ScreenManager.transitionToScreenForId(null, null, 2);
+            ::ScreenManager.transitionToScreen(null, null, 2);
             //TODO would need to generate some new combat data here for the new encounter.
-            ::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.COMBAT_SCREEN, {"logic": ::Base.mCombatLogic}));
+            ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COMBAT_SCREEN, {"logic": ::Base.mCombatLogic}));
         }
     }
 

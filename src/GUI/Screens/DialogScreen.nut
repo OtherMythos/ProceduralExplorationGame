@@ -1,4 +1,4 @@
-::DialogScreen <- class extends ::Screen{
+::ScreenManager.Screens[Screen.DIALOG_SCREEN] = class extends ::Screen{
 
     mTextContainer_ = null;
     mNextDialogButton_ = null;

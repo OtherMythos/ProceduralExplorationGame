@@ -1,4 +1,4 @@
-::ExplorationScreen <- class extends ::Screen{
+::ScreenManager.Screens[Screen.EXPLORATION_SCREEN] = class extends ::Screen{
 
     mWorldMapDisplay_ = null;
     mExplorationProgressBar_ = null;
@@ -41,7 +41,7 @@
         }
 
         function mainMenuButton(widget, action){
-            ::ScreenManager.transitionToScreenForId(Screen.GAMEPLAY_MAIN_MENU_SCREEN);
+            ::ScreenManager.transitionToScreen(Screen.GAMEPLAY_MAIN_MENU_SCREEN);
         }
 
         constructor(parentWin, parentScreen){
@@ -147,14 +147,14 @@
             local id = widget.getUserId();
             local foundObj = mFoundObjects_[id];
             if(foundObj.type == FoundObjectType.ITEM){
-                ::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.ITEM_INFO_SCREEN, {
+                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.ITEM_INFO_SCREEN, {
                     "item": foundObj.obj,
                     "slotIdx": id,
                     "mode": ItemInfoMode.KEEP_SCRAP
                 }));
             }
             else if(foundObj.type == FoundObjectType.PLACE){
-                ::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.PLACE_INFO_SCREEN, {
+                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLACE_INFO_SCREEN, {
                     "place": foundObj.obj,
                     "slotIdx": id
                 }));
@@ -213,7 +213,7 @@
             local inventoryButton = mWindow_.createButton();
             inventoryButton.setText("Inventory");
             inventoryButton.attachListenerForEvent(function(widget, action){
-                ::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, {"inventory": ::Base.mInventory}));
+                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, {"inventory": ::Base.mInventory}));
             }, _GUI_ACTION_PRESSED, this);
             helperButtonLayout.addCell(inventoryButton);
 
@@ -277,7 +277,7 @@
     }
 
     function notifyEnemyEncounter(enemy){
-        ::ScreenManager.transitionToScreenForId(Screen.ENCOUNTER_POPUP_SCREEN, null, 2);
+        ::ScreenManager.transitionToScreen(Screen.ENCOUNTER_POPUP_SCREEN, null, 2);
     }
 
     function notifyExplorationEnd(){

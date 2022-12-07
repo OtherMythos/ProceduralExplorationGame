@@ -1,4 +1,4 @@
-::PlaceInfoScreen <- class extends ::Screen{
+::ScreenManager.Screens[Screen.PLACE_INFO_SCREEN] = class extends ::Screen{
 
     mWindow_ = null;
 
@@ -39,7 +39,7 @@
             function(widget, action){
                 _event.transmit(Event.PLACE_VISITED, mPlaceId_);
                 if(mItemSlotIdx_ >= 0) ::Base.mExplorationLogic.removeFoundItem(mItemSlotIdx_);
-                ::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.STORY_CONTENT_SCREEN, {"logic": ::StoryContentLogic(mPlaceId_)}));
+                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.STORY_CONTENT_SCREEN, {"logic": ::StoryContentLogic(mPlaceId_)}));
             },
             function(widget, action){
                 ::ScreenManager.backupScreen(0);

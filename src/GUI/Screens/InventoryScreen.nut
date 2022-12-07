@@ -2,7 +2,7 @@ enum InventoryBusEvents{
     ITEM_SELECTED,
 };
 
-::InventoryScreen <- class extends ::Screen{
+::ScreenManager.Screens[Screen.INVENTORY_SCREEN] = class extends ::Screen{
 
     mWindow_ = null;
     mInventory_ = null;

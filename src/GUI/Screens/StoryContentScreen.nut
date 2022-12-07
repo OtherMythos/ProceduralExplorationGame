@@ -1,4 +1,4 @@
-::StoryContentScreen <- class extends ::Screen{
+::ScreenManager.Screens[Screen.STORY_CONTENT_SCREEN] = class extends ::Screen{
 
     mWindow_ = null;
     mLogicInterface_ = null;
@@ -32,6 +32,6 @@
     }
 
     function receiveStoryContentFinished(id, data){
-        ::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
+        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
     }
 };

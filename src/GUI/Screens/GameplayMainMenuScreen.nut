@@ -1,4 +1,4 @@
-::GameplayMainMenuScreen <- class extends ::Screen{
+::ScreenManager.Screens[Screen.GAMEPLAY_MAIN_MENU_SCREEN] = class extends ::Screen{
 
     function setup(data){
         mWindow_ = _gui.createWindow();
@@ -19,15 +19,15 @@
         local buttonFunctions = [
             function(widget, action){
                 print("Explore");
-                ::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
+                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
             },
             function(widget, action){
                 print("Inventory");
-                ::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, {"inventory": ::Base.mInventory}));
+                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, {"inventory": ::Base.mInventory}));
             },
             function(widget, action){
                 print("Visit");
-                ::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.VISITED_PLACES_SCREEN, {"stats": mPlayerStats}));
+                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.VISITED_PLACES_SCREEN, {"stats": mPlayerStats}));
             }
         ]
 

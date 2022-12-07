@@ -11,7 +11,7 @@ enum CombatBusEvents{
     QUEUE_PLAYER_ATTACK
 };
 
-::CombatScreen <- class extends ::Screen{
+::ScreenManager.Screens[Screen.COMBAT_SCREEN] = class extends ::Screen{
 
     CombatInfoBus = class extends ::Screen.ScreenBus{
         mLogicInterface = null;
@@ -198,11 +198,11 @@ enum CombatBusEvents{
                         setDialogState(CombatScreenState.SELECT_MOVE);
                     },
                     function(widget, action){
-                        ::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, {"inventory": ::Base.mInventory}));
+                        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, {"inventory": ::Base.mInventory}));
                     },
                     function(widget, action){
                         print("Fleeing");
-                        ::ScreenManager.transitionToScreenForId(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
+                        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
                     },
                 ];
                 foreach(c,i in buttonLabels){
@@ -400,7 +400,7 @@ enum CombatBusEvents{
         print("player died");
 
         _event.transmit(Event.PLAYER_DIED, null);
-        ::ScreenManager.transitionToScreenForId(Screen.MAIN_MENU_SCREEN);
+        ::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
     }
 
     function notifyAllOpponentsDied(){

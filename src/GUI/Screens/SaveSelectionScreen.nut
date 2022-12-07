@@ -1,10 +1,10 @@
-::SaveSelectionScreen <- class extends ::Screen{
+::ScreenManager.Screens[Screen.SAVE_SELECTION_SCREEN] = class extends ::Screen{
 
     function saveSelectionCallback_(widget, action){
         print(format("Selected save %i", widget.getUserId()));
 
         //There is no implementation for saves yet, so just switch the screen.
-        ::ScreenManager.transitionToScreenForId(Screen.GAMEPLAY_MAIN_MENU_SCREEN);
+        ::ScreenManager.transitionToScreen(Screen.GAMEPLAY_MAIN_MENU_SCREEN);
     }
 
     function setup(data){

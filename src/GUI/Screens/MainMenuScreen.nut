@@ -1,4 +1,4 @@
-::MainMenuScreen <- class extends ::Screen{
+::ScreenManager.Screens[Screen.MAIN_MENU_SCREEN] = class extends ::Screen{
 
     mWindow_ = null;
 
@@ -20,7 +20,7 @@
         local buttonOptions = ["play", "help"];
         local buttonFunctions = [
             function(widget, action){
-                ::ScreenManager.transitionToScreenForId(Screen.SAVE_SELECTION_SCREEN);
+                ::ScreenManager.transitionToScreen(Screen.SAVE_SELECTION_SCREEN);
             },
             function(widget, action){
                 print("Help");
