@@ -60,8 +60,9 @@ enum InventoryBusEvents{
 
             mLayoutTable_ = _gui.createLayoutLine();
 
+            local inventoryItem = ::ScreenManager.Screens[Screen.INVENTORY_SCREEN].InventoryItem;
             for(local i = 0; i < inventory.mInventoryItems_.len(); i++){
-                local item = ::InventoryScreen.InventoryItem(mWindow_, i, bus);
+                local item = inventoryItem(mWindow_, i, bus);
                 item.setItem(inventory.mInventoryItems_[i]);
                 item.addToLayout(mLayoutTable_);
             }
@@ -151,9 +152,11 @@ enum InventoryBusEvents{
     function busCallback(event, data){
         if(event == InventoryBusEvents.ITEM_SELECTED){
             local item = mInventory_.getItemForIdx(data);
-            //TODO fill out with whatever info needs to be passed.
-            ::ScreenManager.queueTransition(::ScreenManager.ScreenData(Screen.ITEM_INFO_SCREEN, {}));
-            //ItemInfoScreen(item, ItemInfoMode.USE, data));
+            ::ScreenManager.queueTransition(::ScreenManager.ScreenData(Screen.ITEM_INFO_SCREEN, {
+                "mode": ItemInfoMode.USE,
+                "item": item,
+                "slotIdx": data
+            }));
         }
     }
 

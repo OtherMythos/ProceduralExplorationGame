@@ -1,6 +1,7 @@
 ::ScreenManager <- {
 
     "MAX_SCREENS": 3,
+    "MAX_PREV_SCREENS": 3,
     //Contains screen objects rather than construction data.
     "mActiveScreens_": null,
     //Construction data for the previous screens the user has visited.
@@ -31,6 +32,10 @@
         mActiveScreens_ = array(MAX_SCREENS, null);
         mPreviousScreens_ = array(MAX_SCREENS, null);
         mQueuedScreens_ = array(MAX_SCREENS, null);
+
+        for(local i = 0; i < MAX_SCREENS; i++){
+            mPreviousScreens_[i] = [];
+        }
     }
 
     function _createScreenForId(screenData){
@@ -52,14 +57,13 @@
     /**
      * Immediate transition to a new screen.
      */
-    function transitionToScreen(screenId, transitionEffect = null, layerId = 0){
+    function transitionToScreen(screenId, transitionEffect = null, layerId = 0, effectPrevStack = true){
         assert(layerId < MAX_SCREENS);
         local current = mActiveScreens_[layerId];
         if(current != null){
             print("Calling shutdown for layer " + layerId);
             current.shutdown();
-            //TODO actually stack the data in an array.
-            mPreviousScreens_[layerId] = current.getScreenData();
+            if(effectPrevStack) _queuePrevScreen(layerId, current.getScreenData());
             print("Setting previous");
         }
 
@@ -72,6 +76,35 @@
 
         print("Setting up screen for layer " + layerId);
         mActiveScreens_[layerId].setup(screenData.data);
+    }
+
+    function _getPrevScreen(layerId){
+        local target = mPreviousScreens_[layerId];
+        if(target.len() == 0){
+            return null;
+        }
+        local screenData = target.top();
+        target.pop();
+        print("returning data " + screenData.id);
+        _debugPrintStack(layerId);
+        return screenData;
+    }
+
+    function _queuePrevScreen(layerId, screenData){
+        local target = mPreviousScreens_[layerId];
+        target.append(screenData);
+        if(target.len() > MAX_PREV_SCREENS){
+            target.remove(0);
+        }
+        print(screenData.id);
+        _debugPrintStack(layerId);
+    }
+
+    function _debugPrintStack(layerId){
+        local target = mPreviousScreens_[layerId];
+        foreach(c,i in target){
+            print(c.tostring() + ": " + i.id);
+        }
     }
 
     /**
@@ -90,9 +123,9 @@
      * Head back to the previous screen, stored in memory.
      */
     function backupScreen(layerId){
-        local prev = mPreviousScreens_[layerId];
+        local prev = _getPrevScreen(layerId);
         if(prev == null) return;
-        transitionToScreen(prev, null, layerId);
+        transitionToScreen(prev, null, layerId, false);
     }
 
     function update(){
