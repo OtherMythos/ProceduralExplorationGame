@@ -25,14 +25,34 @@
     }
 
     function actuateItem(item){
+        local itemType = getTypeForItem(item);
+        if(itemType == ItemType.EQUIPPABLE){
+            ::Base.mPlayerStats.equipItem(item, 0);
+        }
+        else if(itemType == ItemType.CONSUMABLE){
+            switch(item){
+                case Item.HEALTH_POTION:{
+                    ::Base.mPlayerStats.alterPlayerHealth(10);
+                    break;
+                }
+                default:{
+                    assert(false);
+                }
+            }
+        }else{
+            assert(false);
+        }
+    }
+
+    function getTypeForItem(item){
         switch(item){
-            case Item.HEALTH_POTION:{
-                ::Base.mPlayerStats.alterPlayerHealth(10);
-                break;
-            }
-            default:{
+            case Item.HEALTH_POTION:
+                return ItemType.CONSUMABLE;
+            case Item.SIMPLE_SWORD:
+            case Item.SIMPLE_SHIELD:
+                return ItemType.EQUIPPABLE;
+            default:
                 assert(false);
-            }
         }
     }
 

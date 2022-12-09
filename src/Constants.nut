@@ -16,6 +16,11 @@ enum EnemyNames{
     MAX = "Max"
 };
 
+enum ItemType{
+    EQUIPPABLE,
+    CONSUMABLE
+};
+
 enum Item{
     NONE,
     HEALTH_POTION,
@@ -99,6 +104,17 @@ enum Screen{
     PLACE_INFO_SCREEN,
     STORY_CONTENT_SCREEN,
     DIALOG_SCREEN,
+
+    MAX
+};
+
+enum EquippedSlotTypes{
+    HEAD,
+    BODY,
+    LEGS,
+    FEET,
+    ACCESSORY_1,
+    ACCESSORY_2,
 
     MAX
 };

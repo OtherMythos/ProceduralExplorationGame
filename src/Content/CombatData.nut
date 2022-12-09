@@ -1,16 +1,31 @@
 ::Combat <- {
+    "EquippedItems": class{
+        mItems = null;
+        constructor(){
+            mItems = array(EquippedSlotTypes.MAX, null);
+        }
+
+        function setEquipped(item, slot){
+            mItems[slot] = item;
+        }
+    },
+
     /**
      * CombatStats for a single combat actor, for instance an opponent or the player.
      */
     "CombatStats": class{
         mHealth = 10;
         mEnemyType = Enemy.NONE;
+        mEquippedItems = null;
 
         mDead = false;
 
-        constructor(enemyType = Enemy.NONE, health = 10){
+        constructor(enemyType = Enemy.NONE, health = 10, equippedItems = null){
             mHealth = health;
             mEnemyType = enemyType;
+            if(equippedItems == null){
+                mEquippedItems = ::Combat.EquippedItems();
+            }
         }
 
         function alterHealthWithMove(move){

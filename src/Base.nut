@@ -62,8 +62,7 @@
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COMBAT_SCREEN, {"logic": mCombatLogic}));
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.ENCOUNTER_POPUP_SCREEN, null), null, 1);
         //::ScreenManager.transitionToScreen(Screen.ITEM_INFO_SCREEN);
-        //::ScreenManager.transitionToScreen(::screenmanager.screendata(Screen.INVENTORY_SCREEN, {"inventory": mInventory}));
-        //::ScreenManager.transitionToScreen(Screen.INVENTORY_SCREEN);
+        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, {"inventory": mInventory, "equipStats": ::Base.mPlayerStats.mPlayerCombatStats.mEquippedItems}));
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.VISITED_PLACES_SCREEN, {"stats": mPlayerStats}));
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLACE_INFO_SCREEN, {"logic": ::StoryContentLogic(Place.HAUNTED_WELL)}));
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.STORY_CONTENT_SCREEN, {"logic": ::StoryContentLogic(Place.HAUNTED_WELL)}));

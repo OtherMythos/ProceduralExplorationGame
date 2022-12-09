@@ -213,7 +213,7 @@
             local inventoryButton = mWindow_.createButton();
             inventoryButton.setText("Inventory");
             inventoryButton.attachListenerForEvent(function(widget, action){
-                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, {"inventory": ::Base.mInventory}));
+                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, {"inventory": ::Base.mInventory, "equipStats": ::Base.mPlayerStats.mPlayerCombatStats.mEquippedItems}));
             }, _GUI_ACTION_PRESSED, this);
             helperButtonLayout.addCell(inventoryButton);
 

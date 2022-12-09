@@ -7,6 +7,7 @@ enum InventoryBusEvents{
     mWindow_ = null;
     mInventory_ = null;
     mMoneyCounter_ = null;
+    mPlayerStats_ = null;
 
     mInventoryBus_ = null;
 
@@ -73,7 +74,7 @@ enum InventoryBusEvents{
 
         function addToLayout(layoutLine){
             layoutLine.addCell(mWindow_);
-            mWindow_.setProportionVertical(1);
+            mWindow_.setProportionVertical(3);
             mWindow_.setExpandVertical(true);
             mWindow_.setExpandHorizontal(true);
         }
@@ -85,9 +86,51 @@ enum InventoryBusEvents{
             //mWindow_.setMaxScroll(mWindow_.getSize());
 
             //TODO make this sized programmatically.
-            mWindow_.setSize(mWindow_.getSize().x, 600);
+            //mWindow_.setSize(mWindow_.getSize().x, 600);
             //mWindow_.setMaxScroll(0, 1200);
             //mWindow_.sizeScrollToFit();
+        }
+    };
+
+    InventoryPlayerEquip = class{
+        mWindow_ = null;
+        mStats_ = null;
+
+        constructor(parentWindow, equipStats, bus){
+            mStats_ = equipStats;
+            mWindow_ = _gui.createWindow(parentWindow);
+            mWindow_.setSize(100, 100);
+
+            local layout = _gui.createLayoutLine();
+
+            local label = mWindow_.createLabel();
+            label.setText("Player equipped");
+            layout.addCell(label);
+
+            local names = [
+                "Head",
+                "Body",
+                "Legs",
+                "Feet",
+                "Accessory1",
+                "Accessory2"
+            ];
+            foreach(c,i in names){
+                local label = mWindow_.createLabel();
+                local itemType = mStats_.mItems[c];
+                local itemName = itemType == null ? "None" : ::Items.itemToName(itemType);
+                label.setText(i + ": " + itemName);
+                layout.addCell(label);
+            }
+
+            layout.layout();
+        }
+
+        function addToLayout(layoutLine){
+            layoutLine.addCell(mWindow_);
+            mWindow_.setProportionVertical(1);
+            mWindow_.setExpandVertical(true);
+            mWindow_.setExpandHorizontal(true);
         }
     };
 
@@ -106,6 +149,7 @@ enum InventoryBusEvents{
         _event.subscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent, this);
 
         mInventory_ = data.inventory;
+        mPlayerStats_ = data.equipStats;
 
         mInventoryBus_ = InventoryInfoBus();
         mInventoryBus_.registerCallback(busCallback, this);
@@ -136,6 +180,9 @@ enum InventoryBusEvents{
 
         mMoneyCounter_ = ::GuiWidgets.InventoryMoneyCounter(mWindow_);
         mMoneyCounter_.addToLayout(layoutLine);
+
+        local playerEquip = InventoryPlayerEquip(mWindow_, mPlayerStats_, mInventoryBus_);
+        playerEquip.addToLayout(layoutLine);
 
         local container = InventoryContainer(mWindow_, mInventory_, mInventoryBus_);
         container.addToLayout(layoutLine);

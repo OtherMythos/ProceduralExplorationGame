@@ -38,4 +38,9 @@
         notifyPlaceVisited(data);
     }
 
+    function equipItem(item, slot){
+        print("Equipping player item: " + ::Items.itemToName(item))
+        mPlayerCombatStats.mEquippedItems.setEquipped(item, slot);
+    }
+
 };
