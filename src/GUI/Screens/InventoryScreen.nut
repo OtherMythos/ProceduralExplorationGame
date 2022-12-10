@@ -110,6 +110,8 @@ enum InventoryBusEvents{
             local names = [
                 "Head",
                 "Body",
+                "Sword",
+                "Shield",
                 "Legs",
                 "Feet",
                 "Accessory1",

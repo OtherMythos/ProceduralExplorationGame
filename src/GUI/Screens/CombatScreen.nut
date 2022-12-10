@@ -404,7 +404,7 @@ enum CombatBusEvents{
     }
 
     function notifyAllOpponentsDied(){
-        ::ScreenManager.queueTransition(Screen.EXPLORATION_SCREEN);
+        ::ScreenManager.queueTransition(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
     }
 
 };

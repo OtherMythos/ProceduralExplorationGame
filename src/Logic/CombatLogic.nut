@@ -24,7 +24,7 @@
         for(local i = 0; i < mData_.getNumOpponents(); i++){
             local damageValue = ::Combat.CombatMove(-5);
 
-            local died = mData_.performAttackOnPlayer(damageValue);
+            local died = mData_.performAttackOnPlayer(damageValue, i);
             if(died){
                 notifyPlayerDied_();
                 return;

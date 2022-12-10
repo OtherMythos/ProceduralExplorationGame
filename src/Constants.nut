@@ -111,6 +111,8 @@ enum Screen{
 enum EquippedSlotTypes{
     HEAD,
     BODY,
+    SWORD,
+    SHIELD
     LEGS,
     FEET,
     ACCESSORY_1,

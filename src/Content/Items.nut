@@ -27,7 +27,8 @@
     function actuateItem(item){
         local itemType = getTypeForItem(item);
         if(itemType == ItemType.EQUIPPABLE){
-            ::Base.mPlayerStats.equipItem(item, 0);
+            local slotIdx = ::Items.itemToEquipableSlot(item);
+            ::Base.mPlayerStats.equipItem(item, slotIdx);
         }
         else if(itemType == ItemType.CONSUMABLE){
             switch(item){
@@ -62,6 +63,17 @@
             case Item.HEALTH_POTION: return ItemNames.HEALTH_POTION;
             case Item.SIMPLE_SWORD: return ItemNames.SIMPLE_SWORD;
             case Item.SIMPLE_SHIELD: return ItemNames.SIMPLE_SHIELD;
+            default:
+                assert(false);
+        }
+    }
+
+    function itemToEquipableSlot(item){
+        switch(item){
+            case Item.SIMPLE_SWORD:
+                return EquippedSlotTypes.SWORD;
+            case Item.SIMPLE_SHIELD:
+                return EquippedSlotTypes.SHIELD;
             default:
                 assert(false);
         }
@@ -142,5 +154,16 @@
             default:
                 assert(false);
         }
+    }
+
+    /**
+    * Add an item stat's values to this.
+    */
+    function _add(stat){
+        mRestorativeHealth += stat.mRestorativeHealth;
+        mAttack += stat.mAttack;
+        mDefense += stat.mDefense;
+
+        return this;
     }
 };

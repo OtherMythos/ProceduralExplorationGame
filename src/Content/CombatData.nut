@@ -8,6 +8,17 @@
         function setEquipped(item, slot){
             mItems[slot] = item;
         }
+
+        function getTotalStats(){
+            local stats = ::Items.ItemStat();
+            foreach(i in mItems){
+                if(i == null) continue;
+                local newStats = ::Items.itemToStats(i);
+                stats += newStats;
+            }
+
+            return stats;
+        }
     },
 
     /**
@@ -28,8 +39,18 @@
             }
         }
 
-        function alterHealthWithMove(move){
-            alterHealth(move.getDamage());
+        function alterHealthWithMove(move, dealerStats = null){
+            //Here, apply damage based on the equipped.
+            //Take both the recipient and dealer's equipped items into account.
+            local moveDamage = move.getDamage();
+
+            local dealerEquipped = dealerStats.mEquippedItems.getTotalStats();
+            local equipped = mEquippedItems.getTotalStats();
+
+            moveDamage -= dealerEquipped.mAttack;
+            moveDamage += equipped.mDefense;
+            print("Final damage in move: " + moveDamage);
+            alterHealth(moveDamage);
         }
 
         function alterHealth(amount){
@@ -87,16 +108,17 @@
 
         function performAttackOnOpponent(damage, opponentId){
             local stats = mOpponentStats[opponentId];
-            return _performAttackOnStats(damage, stats);
+            return _performAttackOnStats(damage, stats, mPlayerStats);
         }
 
-        function performAttackOnPlayer(damage){
-            return _performAttackOnStats(damage, mPlayerStats);
+        function performAttackOnPlayer(damage, opponentId){
+            local stats = mOpponentStats[opponentId];
+            return _performAttackOnStats(damage, mPlayerStats, stats);
         }
 
-        function _performAttackOnStats(damage, stats){
+        function _performAttackOnStats(damage, stats, dealerStats){
             local dead = stats.mDead;
-            stats.alterHealthWithMove(damage);
+            stats.alterHealthWithMove(damage, dealerStats);
 
             //The opponent died as a result of this attack.
             return (dead != stats.mDead);
