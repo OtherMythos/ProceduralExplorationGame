@@ -32,6 +32,7 @@
         local buttonFunctions = [
             function(widget, action){
                 print("Scrapping");
+                ::Base.mCombatLogic.scrapAllSpoils();
                 closeScreen();
             },
             function(widget, action){
@@ -50,7 +51,9 @@
             layoutLine.addCell(button);
         }
 
-        setObjectsForData(data);
+        local combatData = data.logic.mData_;
+        local spoils = combatData.mCombatSpoils;
+        setObjectsForData(spoils);
 
         layoutLine.setSize(mWindow_.getSizeAfterClipping());
         layoutLine.setHardMaxSize(mWindow_.getSizeAfterClipping());
@@ -58,19 +61,29 @@
         mItemsContainer.sizeForButtons();
 
         mBus_.registerCallback(busCallback, this);
+        _event.subscribe(Event.COMBAT_SPOILS_CHANGE, receiveSpoilsChange, this);
     }
 
     function setObjectsForData(data){
-        local combatData = data.logic.mData_;
-        local spoils = combatData.mCombatSpoils;
-        for(local i = 0; i < spoils.len(); i++){
-            if(spoils[i] == null) continue;
-            mItemsContainer.setObjectForIndex(spoils[i], i);
+        local populated = false;
+
+        for(local i = 0; i < data.len(); i++){
+            local obj = data[i];
+            if(obj == null){
+                obj = ::FoundObject();
+            }else{
+                populated = true;
+            }
+            mItemsContainer.setObjectForIndex(obj, i);
+        }
+
+        if(!populated){
+            closeScreen();
         }
     }
 
     function closeScreen(){
-        ::ScreenManager.transitionToScreen(null, null, 1);
+        ::ScreenManager.queueTransition(null, null, 1);
         //::ScreenManager.transitionToScreen(null, null, 0);
         ::ScreenManager.queueTransition(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
     }
@@ -78,18 +91,26 @@
     function shutdown(){
         _gui.destroy(mWindow_);
         _gui.destroy(mBackgroundWindow_);
+        _event.unsubscribe(Event.COMBAT_SPOILS_CHANGE, receiveSpoilsChange, this);
     }
 
     function busCallback(event, data){
         if(event == ExplorationBusEvents.TRIGGER_ITEM){
 
             if(data.type == FoundObjectType.ITEM){
+                data.mode <- ItemInfoMode.KEEP_SCRAP_SPOILS;
                 ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.ITEM_INFO_SCREEN, data), null, 3);
             }else{
                 //Items like places should not appear here.
                 assert(false);
             }
 
+        }
+    }
+
+    function receiveSpoilsChange(id, data){
+        if(id == Event.COMBAT_SPOILS_CHANGE){
+            setObjectsForData(data);
         }
     }
 }

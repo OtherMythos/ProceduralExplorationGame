@@ -97,7 +97,7 @@
         local buttonOptions = null;
         local buttonFunctions = null;
 
-        if(mInfoMode_ == ItemInfoMode.KEEP_SCRAP){
+        if(mInfoMode_ == ItemInfoMode.KEEP_SCRAP_EXPLORATION){
             buttonOptions = ["Keep", "Scrap"];
             buttonFunctions = [
                 function(widget, action){
@@ -109,6 +109,23 @@
                 function(widget, action){
                     ::Base.mInventory.addMoney(::Items.getScrapValueForItem(mItemType_));
                     if(mItemSlotIdx_ >= 0) ::Base.mExplorationLogic.removeFoundItem(mItemSlotIdx_);
+                    closeScreen();
+                }
+            ];
+        }
+        else if(mInfoMode_ == ItemInfoMode.KEEP_SCRAP_SPOILS){
+            buttonOptions = ["Keep", "Scrap"];
+            buttonFunctions = [
+                function(widget, action){
+                    //::Base.mInventory.addToInventory(mItemType_);
+                    //if(mItemSlotIdx_ >= 0) ::Base.mExplorationLogic.removeFoundItem(mItemSlotIdx_);
+                    ::Base.mCombatLogic.claimSpoil(mItemSlotIdx_);
+                    closeScreen();
+                },
+                function(widget, action){
+                    ///::Base.mInventory.addMoney(::Items.getScrapValueForItem(mItemType_));
+                    ///if(mItemSlotIdx_ >= 0) ::Base.mExplorationLogic.removeFoundItem(mItemSlotIdx_);
+                    ::Base.mCombatLogic.scrapSpoil(mItemSlotIdx_);
                     closeScreen();
                 }
             ];

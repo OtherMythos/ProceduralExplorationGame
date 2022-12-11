@@ -158,7 +158,6 @@ enum ExplorationBusEvents{
                 "slotIdx": id
             };
             if(foundObj.type == FoundObjectType.ITEM){
-                value.mode <- ItemInfoMode.KEEP_SCRAP;
                 value.item <- foundObj.obj;
             }
             else if(foundObj.type == FoundObjectType.PLACE){
@@ -308,6 +307,7 @@ enum ExplorationBusEvents{
         if(event == ExplorationBusEvents.TRIGGER_ITEM){
 
             if(data.type == FoundObjectType.ITEM){
+                data.mode <- ItemInfoMode.KEEP_SCRAP_EXPLORATION;
                 ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.ITEM_INFO_SCREEN, data));
             }
             else if(data.type == FoundObjectType.PLACE){

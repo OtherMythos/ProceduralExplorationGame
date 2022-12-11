@@ -119,6 +119,10 @@
     function queueTransition(screenData, transitionEffect = null, layerId = 0){
         //TODO transitionEffect isn't implemented yet as I don't use them.
         local data = _wrapScreenData(screenData);
+        //TODO this is a bit of a work around.
+        //For immediate transition null is fine, but here null means nothing waiting to be transitioned.
+        //This means I need to mark in some way which screen needs to be reset, if null is passed in (meaning destroy window).
+        if(data == null) data = ::ScreenManager.ScreenData(null, null);
         mQueuedScreens_[layerId] = data;
         mScreenQueued_ = true;
     }
@@ -136,6 +140,10 @@
             for(local i = 0; i < MAX_SCREENS; i++){
                 local screenData = mQueuedScreens_[i];
                 if(!screenData) continue;
+                print("Transitioning screen for layer " + i);
+                if(screenData.id == null && screenData.data == null){
+                    screenData = null;
+                }
                 transitionToScreen(screenData, null, i);
                 mQueuedScreens_[i] = null;
             }

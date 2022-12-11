@@ -57,6 +57,8 @@ enum Event{
 
     STORY_CONTENT_FINISHED = 1006,
     PLAYER_DIED = 1007,
+
+    COMBAT_SPOILS_CHANGE = 1008
 }
 
 enum Place{
@@ -86,8 +88,9 @@ enum FoundObjectType{
 };
 
 enum ItemInfoMode{
-    KEEP_SCRAP,
-    USE
+    KEEP_SCRAP_EXPLORATION,
+    USE,
+    KEEP_SCRAP_SPOILS,
 };
 
 enum Screen{
