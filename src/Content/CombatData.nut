@@ -89,9 +89,25 @@
         mPlayerStats = null;
         mOpponentStats = null;
 
+        mCombatSpoils = null;
+        mSpoilsAvailable = false;
+
         constructor(playerStats, opponentStats){
             mPlayerStats = playerStats;
             mOpponentStats = opponentStats;
+            mCombatSpoils = array(4, null);
+        }
+
+        function resetSpoils(){
+            for(local i = 0; i < mCombatSpoils.len(); i++){
+                mCombatSpoils[i] = null;
+            }
+            mSpoilsAvailable = false;
+        }
+
+        function setSpoilForIdx(spoil, idx){
+            mCombatSpoils[idx] = spoil;
+            mSpoilsAvailable = true;
         }
 
         function getNumOpponents(){

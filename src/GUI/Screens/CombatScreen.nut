@@ -8,7 +8,8 @@ enum CombatBusEvents{
     STATE_CHANGE,
     OPPONENT_SELECTED,
     OPPONENT_DIED,
-    QUEUE_PLAYER_ATTACK
+    QUEUE_PLAYER_ATTACK,
+    ALL_OPPONENTS_DIED
 };
 
 ::ScreenManager.Screens[Screen.COMBAT_SCREEN] = class extends ::Screen{
@@ -43,6 +44,15 @@ enum CombatBusEvents{
 
             mWindow_ = _gui.createWindow(parentWin);
             //mWindow_.setClipBorders(0, 0, 0, 0);
+
+            {
+                local victoryButton = mWindow_.createButton();
+                victoryButton.setText("Trigger victory");
+                victoryButton.setPosition(300, 0);
+                victoryButton.attachListenerForEvent(function(widget, action){
+                    mCombatBus_.notifyEvent(CombatBusEvents.ALL_OPPONENTS_DIED, null);
+                }, _GUI_ACTION_PRESSED, this);
+            }
 
             local layout = _gui.createLayoutLine();
             local layoutButtons = _gui.createLayoutLine();
@@ -377,6 +387,8 @@ enum CombatBusEvents{
             //TODO might want to separate this out into a designated logic component.
             //This would have no actual gui, but would listen on the bus and coordinate what the gui is meant to be doing.
             mQueuedAttack_ = data;
+        }else if(event == CombatBusEvents.ALL_OPPONENTS_DIED){
+            ::ScreenManager.queueTransition(::ScreenManager.ScreenData(Screen.COMBAT_SPOILS_POPUP_SCREEN, {"logic": mLogicInterface_}), null, 1);
         }
     }
 
@@ -404,7 +416,7 @@ enum CombatBusEvents{
     }
 
     function notifyAllOpponentsDied(){
-        ::ScreenManager.queueTransition(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
+        mCombatBus_.notifyEvent(CombatBusEvents.ALL_OPPONENTS_DIED, null);
     }
 
 };

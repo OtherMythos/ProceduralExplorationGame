@@ -75,6 +75,10 @@
     function notifyAllOpponentsDied_(){
         if(!mGui_) return;
 
+        //Fill with dropped items
+        mData_.resetSpoils();
+        mData_.setSpoilForIdx(::FoundObject(Item.SIMPLE_SWORD, FoundObjectType.ITEM), 0);
+
         mGui_.notifyAllOpponentsDied();
     }
 

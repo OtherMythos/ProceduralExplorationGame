@@ -2,6 +2,7 @@
 ::Screen <- class{
     mWindow_ = null;
     mScreenData_ = null;
+    mLayerIdx = 0;
 
     /**
      * A class to facilitate communication between the parts of the screen systems.
@@ -51,5 +52,13 @@
 
     function shutdown(){
         _gui.destroy(mWindow_);
+    }
+
+    function createBackgroundScreen_(){
+        local win = _gui.createWindow();
+        win.setSize(_window.getWidth(), _window.getHeight());
+        win.setVisualsEnabled(false);
+
+        return win;
     }
 };

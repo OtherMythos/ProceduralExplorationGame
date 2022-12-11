@@ -1,6 +1,6 @@
 ::ScreenManager <- {
 
-    "MAX_SCREENS": 3,
+    "MAX_SCREENS": 4,
     "MAX_PREV_SCREENS": 3,
     //Contains screen objects rather than construction data.
     "mActiveScreens_": null,
@@ -54,18 +54,21 @@
         return screenData;
     }
 
+    function _shutdownForLayer(layerId, effectPrevStack = false){
+        local current = mActiveScreens_[layerId];
+        if(current == null) return;
+
+        print("Calling shutdown for layer " + layerId);
+        current.shutdown();
+        if(effectPrevStack) _queuePrevScreen(layerId, current.getScreenData());
+    }
+
     /**
      * Immediate transition to a new screen.
      */
     function transitionToScreen(screenId, transitionEffect = null, layerId = 0, effectPrevStack = true){
         assert(layerId < MAX_SCREENS);
-        local current = mActiveScreens_[layerId];
-        if(current != null){
-            print("Calling shutdown for layer " + layerId);
-            current.shutdown();
-            if(effectPrevStack) _queuePrevScreen(layerId, current.getScreenData());
-            print("Setting previous");
-        }
+        _shutdownForLayer(layerId, effectPrevStack);
 
         local screenData = _wrapScreenData(screenId);
         local screenObject = _createScreenForId(screenData);
@@ -75,6 +78,7 @@
         if(!screenObject) return;
 
         print("Setting up screen for layer " + layerId);
+        screenObject.mLayerIdx = layerId;
         mActiveScreens_[layerId].setup(screenData.data);
     }
 
@@ -124,7 +128,6 @@
      */
     function backupScreen(layerId){
         local prev = _getPrevScreen(layerId);
-        if(prev == null) return;
         transitionToScreen(prev, null, layerId, false);
     }
 

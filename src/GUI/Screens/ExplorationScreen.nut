@@ -1,3 +1,7 @@
+enum ExplorationBusEvents{
+    TRIGGER_ITEM,
+};
+
 ::ScreenManager.Screens[Screen.EXPLORATION_SCREEN] = class extends ::Screen{
 
     mWorldMapDisplay_ = null;
@@ -5,6 +9,7 @@
     mLogicInterface_ = null;
     mExplorationItemsContainer_ = null;
     mMoneyCounter_ = null;
+    mExplorationBus_ = null;
 
     WorldMapDisplay = class{
         mWindow_ = null;
@@ -109,6 +114,7 @@
         mPanel_ = null;
         mButtons_ = null;
         mFoundObjects_ = null;
+        mBus_ = null;
 
         mWidth_ = 0;
         mButtonSize_ = 0;
@@ -117,9 +123,10 @@
 
         mLayoutLine_ = null;
 
-        constructor(parentWin){
+        constructor(parentWin, bus){
             mWidth_ = _window.getWidth() * 0.9;
             mButtonSize_ = mWidth_ / 5;
+            mBus_ = bus;
 
             mWindow_ = _gui.createWindow(parentWin);
             mWindow_.setClipBorders(0, 0, 0, 0);
@@ -146,21 +153,21 @@
         function buttonPressed(widget, action){
             local id = widget.getUserId();
             local foundObj = mFoundObjects_[id];
+            local value = {
+                "type": foundObj.type,
+                "slotIdx": id
+            };
             if(foundObj.type == FoundObjectType.ITEM){
-                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.ITEM_INFO_SCREEN, {
-                    "item": foundObj.obj,
-                    "slotIdx": id,
-                    "mode": ItemInfoMode.KEEP_SCRAP
-                }));
+                value.mode <- ItemInfoMode.KEEP_SCRAP;
+                value.item <- foundObj.obj;
             }
             else if(foundObj.type == FoundObjectType.PLACE){
-                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLACE_INFO_SCREEN, {
-                    "place": foundObj.obj,
-                    "slotIdx": id
-                }));
+                value.place <- foundObj.obj;
             }else{
                 assert(false);
             }
+
+            mBus_.notifyEvent(ExplorationBusEvents.TRIGGER_ITEM, value);
         }
 
         function addToLayout(layoutLine){
@@ -192,6 +199,7 @@
 
     function setup(data){
         mLogicInterface_ = data.logic;
+        mExplorationBus_ = ScreenBus();
 
         mLogicInterface_.setGuiObject(this);
 
@@ -244,7 +252,7 @@
         mWorldMapDisplay_ = WorldMapDisplay(mWindow_);
         mWorldMapDisplay_.addToLayout(layoutLine);
 
-        mExplorationItemsContainer_ = ExplorationItemsContainer(mWindow_);
+        mExplorationItemsContainer_ = ExplorationItemsContainer(mWindow_, mExplorationBus_);
         mExplorationItemsContainer_.addToLayout(layoutLine);
 
         mExplorationProgressBar_ = ExplorationProgressBar(mWindow_, this);
@@ -262,6 +270,8 @@
         mExplorationItemsContainer_.sizeForButtons();
 
         mLogicInterface_.continueOrResetExploration();
+
+        mExplorationBus_.registerCallback(busCallback, this);
     }
 
     function update(){
@@ -292,5 +302,20 @@
         mMoneyCounter_.shutdown();
         base.shutdown();
         mLogicInterface_.notifyLeaveExplorationScreen();
+    }
+
+    function busCallback(event, data){
+        if(event == ExplorationBusEvents.TRIGGER_ITEM){
+
+            if(data.type == FoundObjectType.ITEM){
+                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.ITEM_INFO_SCREEN, data));
+            }
+            else if(data.type == FoundObjectType.PLACE){
+                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLACE_INFO_SCREEN, data));
+            }else{
+                assert(false);
+            }
+
+        }
     }
 };

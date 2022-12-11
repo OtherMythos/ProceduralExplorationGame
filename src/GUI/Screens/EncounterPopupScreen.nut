@@ -9,9 +9,7 @@
         local winWidth = _window.getWidth() * 0.8;
 
         //Create a window to block inputs for when the popup appears.
-        mBackgroundWindow_ = _gui.createWindow();
-        mBackgroundWindow_.setSize(_window.getWidth(), _window.getHeight());
-        mBackgroundWindow_.setVisualsEnabled(false);
+        mBackgroundWindow_ = createBackgroundScreen_();
 
         mWindow_ = _gui.createWindow();
         mWindow_.setSize(winWidth, _window.getHeight() * 0.333);
