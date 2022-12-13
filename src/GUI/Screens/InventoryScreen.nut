@@ -119,7 +119,8 @@ enum InventoryBusEvents{
             ];
             foreach(c,i in names){
                 local label = mWindow_.createLabel();
-                local itemType = mStats_.mItems[c];
+                //To offset the None item.
+                local itemType = mStats_.mItems[c+1];
                 local itemName = itemType == null ? "None" : ::Items[itemType].getName();
                 label.setText(i + ": " + itemName);
                 layout.addCell(label);

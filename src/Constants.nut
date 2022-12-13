@@ -16,15 +16,6 @@ enum EnemyNames{
     MAX = "Max"
 };
 
-enum ItemNames{
-    NONE = "None",
-    HEALTH_POTION = "Health Potion",
-    SIMPLE_SWORD = "Simple Sword",
-    SIMPLE_SHIELD = "Simple Shield",
-
-    MAX = "Max"
-};
-
 enum StatType{
     RESTORATIVE_HEALTH,
     ATTACK,
