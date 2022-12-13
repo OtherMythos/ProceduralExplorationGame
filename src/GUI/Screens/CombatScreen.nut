@@ -60,7 +60,7 @@ enum CombatBusEvents{
             foreach(c,i in combatBus.mCombatData.mOpponentStats){
                 local enemyType = i.mEnemyType;
 
-                local textItem = i.mDead ? " " : ::Items.enemyToName(enemyType);
+                local textItem = i.mDead ? " " : ::ItemHelper.enemyToName(enemyType);
                 local enemyLabel = mWindow_.createLabel();
                 enemyLabel.setText(textItem);
                 layout.addCell(enemyLabel);

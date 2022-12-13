@@ -35,11 +35,11 @@ enum InventoryBusEvents{
         }
 
         function setItem(item){
-            if(item == Item.NONE){
+            if(item == ItemId.NONE){
                 mButtonObject_.setHidden(true);
                 return;
             }
-            mButtonObject_.setText(::Items.itemToName(item));
+            mButtonObject_.setText(::Items[item].getName());
             mButtonObject_.setHidden(false);
         }
 
@@ -120,7 +120,7 @@ enum InventoryBusEvents{
             foreach(c,i in names){
                 local label = mWindow_.createLabel();
                 local itemType = mStats_.mItems[c];
-                local itemName = itemType == null ? "None" : ::Items.itemToName(itemType);
+                local itemName = itemType == null ? "None" : ::Items[itemType].getName();
                 label.setText(i + ": " + itemName);
                 layout.addCell(label);
             }

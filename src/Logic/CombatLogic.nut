@@ -77,8 +77,8 @@
 
         //Fill with dropped items
         mData_.resetSpoils();
-        mData_.setSpoilForIdx(::FoundObject(Item.SIMPLE_SWORD, FoundObjectType.ITEM), 0);
-        mData_.setSpoilForIdx(::FoundObject(Item.SIMPLE_SHIELD, FoundObjectType.ITEM), 1);
+        mData_.setSpoilForIdx(::FoundObject(ItemId.SIMPLE_SWORD, FoundObjectType.ITEM), 0);
+        mData_.setSpoilForIdx(::FoundObject(ItemId.SIMPLE_SHIELD, FoundObjectType.ITEM), 1);
 
         mGui_.notifyAllOpponentsDied();
     }
@@ -94,7 +94,7 @@
         for(local i = 0; i < data.len(); i++){
             local item = data[i];
             if(item == null) continue;
-            ::Base.mInventory.addMoney(::Items.getScrapValueForItem(item.obj));
+            ::Base.mInventory.addMoney(::Items[item.obj].getScrapVal());
             data[i] = null;
         }
 
@@ -116,7 +116,7 @@
         mData_.mCombatSpoils[slotIdx] = null;
         assert(spoilItem.type == FoundObjectType.ITEM);
 
-        ::Base.mInventory.addMoney(::Items.getScrapValueForItem(spoilItem.obj));
+        ::Base.mInventory.addMoney(::Items[spoilItem.obj].getScrapVal());
 
         _event.transmit(Event.COMBAT_SPOILS_CHANGE, mData_.mCombatSpoils);
     }

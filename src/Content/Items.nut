@@ -1,19 +1,65 @@
-::Items <- {
+enum ItemId{
+    NONE,
+    HEALTH_POTION,
+    SIMPLE_SWORD,
+    SIMPLE_SHIELD,
 
+    MAX,
+};
+
+enum ItemType{
+    NONE,
+    EQUIPPABLE,
+    CONSUMABLE
+};
+
+::ItemDef <- class{
+    mName = null;
+    mDesc = null;
+    mType = ItemType.NONE;
+    mScrapVal = 0;
+    mEquippableSlot = EquippedSlotTypes.NONE;
+
+    constructor(name, desc, type, scrapVal, equippableSlot){
+        mName = name;
+        mDesc = desc;
+        mType = type;
+        mScrapVal = scrapVal;
+        mEquippableSlot = equippableSlot;
+
+        //Sanity checks.
+        if(mType == ItemType.CONSUMABLE){
+            assert(mEquippableSlot == EquippedSlotTypes.NONE);
+        }
+    }
+
+    function getType(){ return mType; }
+    function getName(){ return mName; }
+    function getDescription(){ return mDesc; }
+    function getEquippableSlot(){ return mEquippableSlot; }
+    function getScrapVal(){ return mScrapVal; }
+}
+::Items <- array(ItemId.MAX, null);
+
+::Items[ItemId.HEALTH_POTION] = ItemDef("Health Potion", "A potion of health. Bubbles gently inside a cast glass flask.", ItemType.CONSUMABLE, 5, EquippedSlotTypes.NONE);
+::Items[ItemId.SIMPLE_SWORD] = ItemDef("Simple Sword", "A cheap, weak sword. Relatively blunt for something claiming to be a sword.", ItemType.EQUIPPABLE, 5, EquippedSlotTypes.SWORD);
+::Items[ItemId.SIMPLE_SHIELD] = ItemDef("Simple Shield", "An un-interesting shield. Provides minimal protection.", ItemType.EQUIPPABLE, 5, EquippedSlotTypes.SHIELD);
+
+::ItemHelper <- {
     function itemToStats(item){
         local stat = ItemStat();
 
         switch(item){
-            case Item.NONE: return ItemStat();
-            case Item.HEALTH_POTION: {
+            case ItemId.NONE: return ItemStat();
+            case ItemId.HEALTH_POTION: {
                 stat.mRestorativeHealth = 10;
                 return stat;
             }
-            case Item.SIMPLE_SWORD: {
+            case ItemId.SIMPLE_SWORD: {
                 stat.mAttack = 5;
                 return stat;
             }
-            case Item.SIMPLE_SHIELD: {
+            case ItemId.SIMPLE_SHIELD: {
                 stat.mDefense = 5;
                 return stat;
             }
@@ -25,14 +71,16 @@
     }
 
     function actuateItem(item){
-        local itemType = getTypeForItem(item);
+        local itemDef = Items[item];
+
+        local itemType = itemDef.getType();
         if(itemType == ItemType.EQUIPPABLE){
-            local slotIdx = ::Items.itemToEquipableSlot(item);
+            local slotIdx = itemDef.getEquippableSlot();
             ::Base.mPlayerStats.equipItem(item, slotIdx);
         }
         else if(itemType == ItemType.CONSUMABLE){
             switch(item){
-                case Item.HEALTH_POTION:{
+                case ItemId.HEALTH_POTION:{
                     ::Base.mPlayerStats.alterPlayerHealth(10);
                     break;
                 }
@@ -45,66 +93,10 @@
         }
     }
 
-    function getTypeForItem(item){
-        switch(item){
-            case Item.HEALTH_POTION:
-                return ItemType.CONSUMABLE;
-            case Item.SIMPLE_SWORD:
-            case Item.SIMPLE_SHIELD:
-                return ItemType.EQUIPPABLE;
-            default:
-                assert(false);
-        }
-    }
-
-    function itemToName(item){
-        switch(item){
-            case Item.NONE: return ItemNames.NONE;
-            case Item.HEALTH_POTION: return ItemNames.HEALTH_POTION;
-            case Item.SIMPLE_SWORD: return ItemNames.SIMPLE_SWORD;
-            case Item.SIMPLE_SHIELD: return ItemNames.SIMPLE_SHIELD;
-            default:
-                assert(false);
-        }
-    }
-
-    function itemToEquipableSlot(item){
-        switch(item){
-            case Item.SIMPLE_SWORD:
-                return EquippedSlotTypes.SWORD;
-            case Item.SIMPLE_SHIELD:
-                return EquippedSlotTypes.SHIELD;
-            default:
-                assert(false);
-        }
-    }
-
     function enemyToName(enemy){
         switch(enemy){
             case Enemy.NONE: return EnemyNames.NONE;
             case Enemy.GOBLIN: return EnemyNames.GOBLIN;
-            default:
-                assert(false);
-        }
-    }
-
-    function itemToDescription(item){
-        switch(item){
-            case Item.NONE: return "None";
-            case Item.HEALTH_POTION: return "A potion of health. Bubbles gently inside a cast glass flask.";
-            case Item.SIMPLE_SWORD: return "A cheap, weak sword. Relatively blunt for something claiming to be a sword.";
-            case Item.SIMPLE_SHIELD: return "An un-interesting shield. Provides minimal protection.";
-            default:
-                assert(false);
-        }
-    }
-
-    function getScrapValueForItem(item){
-        switch(item){
-            case Item.NONE: return 0;
-            case Item.HEALTH_POTION: return 5;
-            case Item.SIMPLE_SWORD: return 5;
-            case Item.SIMPLE_SHIELD: return 5;
             default:
                 assert(false);
         }
@@ -115,7 +107,7 @@
  * Store item stats as a class rather than creating a new table each time.
  * This should save the strings to identify the entries from being created each time like would happen in a table.
  */
-::Items.ItemStat <- class{
+::ItemHelper.ItemStat <- class{
     mRestorativeHealth = 0;
     mAttack = 0;
     mDefense = 0;

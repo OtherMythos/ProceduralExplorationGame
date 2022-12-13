@@ -10,10 +10,10 @@
         }
 
         function getTotalStats(){
-            local stats = ::Items.ItemStat();
+            local stats = ::ItemHelper.ItemStat();
             foreach(i in mItems){
                 if(i == null) continue;
-                local newStats = ::Items.itemToStats(i);
+                local newStats = ::ItemHelper.itemToStats(i);
                 stats += newStats;
             }
 

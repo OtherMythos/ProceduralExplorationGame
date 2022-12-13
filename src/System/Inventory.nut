@@ -5,9 +5,9 @@
     mInventorySize_ = 5;
 
     constructor(){
-        mInventoryItems_ = array(mInventorySize_, Item.NONE);
+        mInventoryItems_ = array(mInventorySize_, ItemId.NONE);
 
-        mInventoryItems_[0] = Item.HEALTH_POTION;
+        mInventoryItems_[0] = ItemId.HEALTH_POTION;
     }
 
     /**
@@ -15,7 +15,7 @@
      * @returns true if the item could be added, false if not, for example the inventory is full.
      */
     function addToInventory(item){
-        local idx = mInventoryItems_.find(Item.NONE);
+        local idx = mInventoryItems_.find(ItemId.NONE);
         if(idx == null) return false;
         setItemForIdx(item, idx);
         return true;
@@ -23,14 +23,14 @@
 
     /**
      * Remove an item from the inventory based on slot idx.
-     * Pass expected type as well to perform a check that the index provided contains the expected item.
+     * Pass expected type as well to perform a check that the index provided contains the expected ItemId.
      */
-    function removeFromInventory(slotIdx, expectedType = Item.NONE){
+    function removeFromInventory(slotIdx, expectedType = ItemId.NONE){
         assert(slotIdx >= 0 && slotIdx < mInventoryItems_.len());
-        if(expectedType != Item.NONE){
+        if(expectedType != ItemId.NONE){
             assert(mInventoryItems_[slotIdx] == expectedType);
         }
-        setItemForIdx(Item.NONE, slotIdx);
+        setItemForIdx(ItemId.NONE, slotIdx);
     }
 
     function setItemForIdx(item, idx){

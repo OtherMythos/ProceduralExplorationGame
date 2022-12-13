@@ -27,7 +27,7 @@
             },
             function(widget, action){
                 print("Visit");
-                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.VISITED_PLACES_SCREEN, {"stats": mPlayerStats}));
+                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.VISITED_PLACES_SCREEN, {"stats": ::Base.mPlayerStats}));
             }
         ]
 

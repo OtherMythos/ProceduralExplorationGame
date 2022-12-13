@@ -70,7 +70,7 @@
         local foundSomething = _random.randInt(50) == 0;
         if(foundSomething){
             //decide what was found.
-            local item = _random.randInt(Item.NONE+1, Item.MAX-1);
+            local item = _random.randInt(ItemId.NONE+1, ItemId.MAX-1);
             processFoundItem(item);
             return;
         }
@@ -103,7 +103,7 @@
         mFoundObjects_[idx] = foundObj;
         mNumFoundObjects_++;
 
-        print(format("Found item %s at index %i", ::Items.itemToName(item), idx));
+        print(format("Found item %s at index %i", ::Items[item].getName(), idx));
 
         if(mGui_) mGui_.notifyObjectFound(foundObj, idx);
     }
@@ -139,7 +139,7 @@
     }
 
     function processEncounter(enemy){
-        print("Encountered enemy " + ::Items.enemyToName(enemy));
+        print("Encountered enemy " + ::ItemHelper.enemyToName(enemy));
 
         _setupDataForCombat(enemy);
         if(mGui_) mGui_.notifyEnemyEncounter(enemy);

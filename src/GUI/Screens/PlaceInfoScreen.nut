@@ -2,7 +2,7 @@
 
     mWindow_ = null;
 
-    mPlaceId_ = Item.NONE;
+    mPlaceId_ = ItemId.NONE;
     mItemSlotIdx_ = 0;
 
     function setup(data){

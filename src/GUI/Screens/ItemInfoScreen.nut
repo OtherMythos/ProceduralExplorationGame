@@ -3,14 +3,14 @@
     mWindow_ = null;
     mInfoMode_ = null;
 
-    mItemType_ = Item.NONE;
+    mItemType_ = ItemId.NONE;
     mItemSlotIdx_ = 0;
 
     ItemStatsContainer = class{
         mWindow_ = null;
 
         constructor(parentWindow, item){
-            print("Showing info for item: " + ::Items.itemToName(item));
+            print("Showing info for item: " + ::Items[item].getName());
 
             mWindow_ = _gui.createWindow(parentWindow);
             mWindow_.setSize(100, 100);
@@ -24,7 +24,7 @@
             text.setText("Stats:");
             layoutLine.addCell(text);
 
-            local stats = ::Items.itemToStats(item);
+            local stats = ::ItemHelper.itemToStats(item);
             for(local i = 0; i < StatType.MAX; i++){
                 if(!stats.hasStatType(i)) continue;
                 addStatLabel(i, stats, mWindow_, layoutLine);
@@ -49,8 +49,9 @@
         mItemType_ = data.item;
         mItemSlotIdx_ = data.slotIdx;
 
-        local itemName = ::Items.itemToName(mItemType_);
-        local itemDescription = ::Items.itemToDescription(mItemType_);
+        local itemDef = ::Items[mItemType_];
+        local itemName = itemDef.getName();
+        local itemDescription = itemDef.getDescription();
 
         mWindow_ = _gui.createWindow();
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
@@ -107,7 +108,7 @@
                     closeScreen();
                 },
                 function(widget, action){
-                    ::Base.mInventory.addMoney(::Items.getScrapValueForItem(mItemType_));
+                    ::Base.mInventory.addMoney(::Items[mItemType_].getScrapVal());
                     if(mItemSlotIdx_ >= 0) ::Base.mExplorationLogic.removeFoundItem(mItemSlotIdx_);
                     closeScreen();
                 }
@@ -117,14 +118,10 @@
             buttonOptions = ["Keep", "Scrap"];
             buttonFunctions = [
                 function(widget, action){
-                    //::Base.mInventory.addToInventory(mItemType_);
-                    //if(mItemSlotIdx_ >= 0) ::Base.mExplorationLogic.removeFoundItem(mItemSlotIdx_);
                     ::Base.mCombatLogic.claimSpoil(mItemSlotIdx_);
                     closeScreen();
                 },
                 function(widget, action){
-                    ///::Base.mInventory.addMoney(::Items.getScrapValueForItem(mItemType_));
-                    ///if(mItemSlotIdx_ >= 0) ::Base.mExplorationLogic.removeFoundItem(mItemSlotIdx_);
                     ::Base.mCombatLogic.scrapSpoil(mItemSlotIdx_);
                     closeScreen();
                 }
@@ -135,7 +132,7 @@
             buttonFunctions = [
                 function(widget, action){
                     ::Base.mInventory.removeFromInventory(mItemSlotIdx_, mItemType_);
-                    ::Items.actuateItem(mItemType_);
+                    ::ItemHelper.actuateItem(mItemType_);
                     closeScreen();
                 }
             ];

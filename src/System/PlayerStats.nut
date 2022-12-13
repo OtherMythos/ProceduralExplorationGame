@@ -39,7 +39,7 @@
     }
 
     function equipItem(item, slot){
-        print("Equipping player item: " + ::Items.itemToName(item))
+        print("Equipping player item: " + ::Items[item].getName())
         mPlayerCombatStats.mEquippedItems.setEquipped(item, slot);
     }
 
