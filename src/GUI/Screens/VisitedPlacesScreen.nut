@@ -10,7 +10,7 @@
         buttonThing = null;
 
         function buttonPressed(widget, action){
-            print("Going to " + ::Places.placeToName(widget.getUserId()));
+            print("Going to " + ::Places[widget.getUserId()].getName());
             ::ScreenManager.transitionToScreen(Screen.STORY_CONTENT_SCREEN);
         }
 
@@ -27,7 +27,7 @@
 
                 local button = mWindow_.createButton();
                 button.setUserId(c);
-                button.setText(::Places.placeToName(c));
+                button.setText(::Places[c].getName());
                 button.attachListenerForEvent(buttonPressed, _GUI_ACTION_PRESSED, this);
                 mLayoutTable_.addCell(button);
             }

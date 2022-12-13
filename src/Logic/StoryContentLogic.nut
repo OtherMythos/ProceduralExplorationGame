@@ -42,6 +42,13 @@
                 ::Base.mDialogManager.beginExecuting("res://assets/dialog/test.dialog", 3);
                 break;
             }
+            case Place.ROTHERFORD:{
+                ::Base.mDialogManager.beginExecuting("res://assets/dialog/test.dialog", 4);
+                break;
+            }
+            default:{
+                assert(false);
+            }
         }
     }
 };

@@ -1,26 +1,34 @@
-::Places <- {
+enum Place{
+    NONE,
+    HAUNTED_WELL,
+    DARK_CAVE,
+    GOBLIN_VILLAGE,
+    WIND_SWEPT_BEACH,
 
-    function placeToName(place){
-        switch(place){
-            case Place.NONE: return PlaceNames.NONE;
-            case Place.HAUNTED_WELL: return PlaceNames.HAUNTED_WELL;
-            case Place.DARK_CAVE: return PlaceNames.DARK_CAVE;
-            case Place.GOBLIN_VILLAGE: return PlaceNames.GOBLIN_VILLAGE;
-            case Place.WIND_SWEPT_BEACH: return PlaceNames.WIND_SWEPT_BEACH;
-            default:
-                assert(false);
-        }
-    }
+    ROTHERFORD,
 
-    function placeToDescription(place){
-        switch(place){
-            case Place.NONE: return "None";
-            case Place.HAUNTED_WELL: return "The old haunted well.";
-            case Place.DARK_CAVE: return "A dark opening to a secluded cave.";
-            case Place.GOBLIN_VILLAGE: return "The grotty and ramsacked goblin village.";
-            case Place.WIND_SWEPT_BEACH: return "Grey, damp, and sandy."
-            default:
-                assert(false);
-        }
-    }
+    MAX
 };
+
+::PlaceDef <- class{
+    mName = null;
+    mDesc = null;
+
+    constructor(name, desc){
+        mName = name;
+        mDesc = desc;
+    }
+
+    function getName(){ return mName; }
+    function getDescription(){ return mDesc; }
+}
+
+::Places <- array(Place.MAX, null);
+
+//-------------------------------
+::Places[Place.HAUNTED_WELL] = PlaceDef("Haunted Well", "The old haunted well.");
+::Places[Place.DARK_CAVE] = PlaceDef("Dark Cave", "A dark opening to a secluded cave.");
+::Places[Place.GOBLIN_VILLAGE] = PlaceDef("Goblin Village", "The grotty and ramsacked goblin village.");
+::Places[Place.WIND_SWEPT_BEACH] = PlaceDef("Wind Swept Beach", "Grey, damp, and sandy.");
+::Places[Place.ROTHERFORD] = PlaceDef("Rotherford", "The old town of rotherford");
+//-------------------------------

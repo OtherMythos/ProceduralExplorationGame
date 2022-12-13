@@ -17,7 +17,7 @@
         local title = mWindow_.createLabel();
         title.setDefaultFontSize(title.getDefaultFontSize() * 2);
         title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
-        title.setText("Story stuff for " + ::Places.placeToName(mLogicInterface_.mPlace_), false);
+        title.setText("Story stuff for " + ::Places[mLogicInterface_.mPlace_].getName(), false);
         title.sizeToFit(_window.getWidth() * 0.9);
         title.setExpandHorizontal(true);
     }

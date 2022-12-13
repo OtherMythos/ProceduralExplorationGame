@@ -24,7 +24,7 @@
     function notifyPlaceVisited(place){
         if(mPlacesVisited_[place]) return;
 
-        print("Registering visited place " + ::Places.placeToName(place))
+        print("Registering visited place " + ::Places[place].getName())
         mPlacesVisited_[place] = true;
         assert(mLeanPlacesVisited_.find(place) == null);
         mLeanPlacesVisited_.append(place);

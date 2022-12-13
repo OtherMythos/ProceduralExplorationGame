@@ -20,7 +20,7 @@
             return ::Items[obj].getName();
         }
         else if(type == FoundObjectType.PLACE){
-            return ::Places.placeToName(obj);
+            return ::Places[obj].getName();
         }
         else{
             assert(false);

@@ -9,8 +9,9 @@
         mPlaceId_ = data.place;
         mItemSlotIdx_ = data.slotIdx;
 
-        local placeName = ::Places.placeToName(mPlaceId_);
-        local placeDescription = ::Places.placeToDescription(mPlaceId_);
+        local placeDef = ::Places[mPlaceId_]; 
+        local placeName = placeDef.getName();
+        local placeDescription = placeDef.getDescription();
 
         mWindow_ = _gui.createWindow();
         mWindow_.setSize(_window.getWidth(), _window.getHeight());

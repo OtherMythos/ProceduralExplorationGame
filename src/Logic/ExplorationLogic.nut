@@ -118,7 +118,7 @@
         mFoundObjects_[idx] = foundObj;
         mNumFoundObjects_++;
 
-        print(format("Found place %s at index %i", ::Places.placeToName(place), idx));
+        print(format("Found place %s at index %i", ::Places[place].getName(), idx));
 
         if(mGui_) mGui_.notifyObjectFound(foundObj, idx);
     }
