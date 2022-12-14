@@ -1,5 +1,3 @@
-::GuiWidgets <- {};
-
 ::GuiWidgets.InventoryMoneyCounter <- class{
     mMoneyLabel_ = null;
 

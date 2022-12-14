@@ -125,26 +125,19 @@ enum CombatBusEvents{
             combatBus.registerCallback(busCallback, this);
 
             mWindow_ = _gui.createWindow(parentWin);
-            mWindow_.setClipBorders(0, 0, 0, 0);
 
             mDataDisplays_ = [];
 
-            local layoutLine = _gui.createLayoutLine();
-
-            local title = mWindow_.createLabel();
-            title.setText(" ");
-            layoutLine.addCell(title);
-            mDataDisplays_.append(title);
+            local playerHealthBar = ::GuiWidgets.ProgressBar(mWindow_);
+            playerHealthBar.setLabel("Player");
+            mDataDisplays_.append(playerHealthBar);
 
             local combatData = combatBus.mCombatData;
             foreach(i in combatData.mOpponentStats){
-                local second = mWindow_.createLabel();
-                second.setText(" ");
-                layoutLine.addCell(second);
-                mDataDisplays_.append(second);
+                local healthBar = ::GuiWidgets.ProgressBar(mWindow_);
+                healthBar.setLabel(::ItemHelper.enemyToName(i.mEnemyType));
+                mDataDisplays_.append(healthBar);
             }
-
-            layoutLine.layout();
 
             notifyCombatChange(combatData);
         }
@@ -157,20 +150,31 @@ enum CombatBusEvents{
         }
 
         function notifyCombatChange(data){
-            setStat_(data.mPlayerStats, mDataDisplays_[0]);
+            setStat_(data.mPlayerStats, mDataDisplays_[0], 0);
             for(local i = 0; i < data.mOpponentStats.len(); i++){
                 local stats = data.mOpponentStats[i];
                 if(stats.mDead) continue;
-                setStat_(stats, mDataDisplays_[i+1]);
+                local idx = i+1;
+                setStat_(stats, mDataDisplays_[idx], idx);
             }
         }
 
-        function setStat_(statObj, guiStat){
-            guiStat.setText("Health: " + statObj.mHealth);
+        function setStat_(statObj, guiStat, idx){
+            guiStat.setPercentage(statObj.mHealth.tofloat() / statObj.mMaxHealth.tofloat());
+            guiStat.setPosition(0, idx * (guiStat.getSize().y * 1.1));
         }
 
         function removeForOpponent(opponentId){
-            _gui.destroy(mDataDisplays_[opponentId + 1]);
+            local idx = opponentId + 1;
+            mDataDisplays_[idx].destroy();
+            mDataDisplays_[idx] = null;
+        }
+
+        function notifyResize(){
+            local winSize = mWindow_.getSizeAfterClipping();
+            foreach(i in mDataDisplays_){
+                i.setSize(winSize.x, i.getSize().y);
+            }
         }
 
         function busCallback(event, data){
@@ -364,6 +368,7 @@ enum CombatBusEvents{
         layoutLine.layout();
 
         mMovesDisplay_.notifyResize();
+        mStatsDisplay_.notifyResize();
     }
 
     function busCallback(event, data){

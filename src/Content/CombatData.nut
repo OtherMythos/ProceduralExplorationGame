@@ -26,13 +26,14 @@
      */
     "CombatStats": class{
         mHealth = 10;
+        mMaxHealth = 10;
         mEnemyType = Enemy.NONE;
         mEquippedItems = null;
 
         mDead = false;
 
         constructor(enemyType = Enemy.NONE, health = 10, equippedItems = null){
-            mHealth = health;
+            mHealth = mMaxHealth = health;
             mEnemyType = enemyType;
             if(equippedItems == null){
                 mEquippedItems = ::Combat.EquippedItems();
