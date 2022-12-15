@@ -194,15 +194,9 @@ enum ItemType{
             ::Base.mPlayerStats.equipItem(item, slotIdx);
         }
         else if(itemType == ItemType.CONSUMABLE){
-            switch(item){
-                case ItemId.HEALTH_POTION:{
-                    ::Base.mPlayerStats.alterPlayerHealth(10);
-                    break;
-                }
-                default:{
-                    assert(false);
-                }
-            }
+            local itemStats = ::ItemHelper.itemToStats(item);
+            assert(itemStats.mRestorativeHealth != 0);
+            ::Base.mPlayerStats.alterPlayerHealth(itemStats.mRestorativeHealth);
         }else{
             assert(false);
         }
