@@ -64,6 +64,9 @@
                 mHealth = 0;
                 mDead = true;
             }
+            if(mHealth > mMaxHealth){
+                mHealth = mMaxHealth;
+            }
         }
     },
 
