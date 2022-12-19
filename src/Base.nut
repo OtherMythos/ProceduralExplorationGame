@@ -32,6 +32,11 @@
         _doFile("res://src/GUI/Widgets/InventoryMoneyCounter.nut");
         _doFile("res://src/GUI/Widgets/ProgressBar.nut");
 
+        _doFile("res://src/GUI/PopupManager.nut");
+        _doFile("res://src/GUI/Popups/Popup.nut");
+        _doFile("res://src/GUI/Popups/BottomOfScreenPopup.nut");
+        ::PopupManager.setup();
+
         _doFile("res://src/GUI/ScreenManager.nut");
         _doFile("res://src/GUI/Screens/Screen.nut");
         _doFile("res://src/GUI/Screens/MainMenuScreen.nut");
@@ -47,6 +52,7 @@
         _doFile("res://src/GUI/Screens/StoryContentScreen.nut");
         _doFile("res://src/GUI/Screens/DialogScreen.nut");
         _doFile("res://src/GUI/Screens/CombatSpoilsPopupScreen.nut");
+        _doFile("res://src/GUI/Screens/TestScreen.nut");
 
         _doFile("res://src/Logic/ExplorationLogic.nut");
         _doFile("res://src/Logic/CombatLogic.nut");
@@ -63,7 +69,8 @@
 
         //::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
-        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COMBAT_SCREEN, {"logic": mCombatLogic}));
+        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COMBAT_SCREEN, {"logic": mCombatLogic}));
+        ::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.ENCOUNTER_POPUP_SCREEN, null), null, 1);
         //::ScreenManager.transitionToScreen(Screen.ITEM_INFO_SCREEN);
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, {"inventory": mInventory, "equipStats": ::Base.mPlayerStats.mPlayerCombatStats.mEquippedItems}));
@@ -76,5 +83,6 @@
 
     function update(){
         ::ScreenManager.update();
+        ::PopupManager.update();
     }
 };

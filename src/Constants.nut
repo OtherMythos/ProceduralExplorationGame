@@ -6,7 +6,8 @@ enum Enemy{
 };
 
 enum ObjectType{
-    SCREEN_DATA = "ScreenData"
+    SCREEN_DATA = "ScreenData",
+    POPUP_DATA = "PopupData"
 };
 
 enum EnemyNames{
@@ -65,6 +66,14 @@ enum Screen{
     STORY_CONTENT_SCREEN,
     DIALOG_SCREEN,
     COMBAT_SPOILS_POPUP_SCREEN,
+    TEST_SCREEN,
+
+    MAX
+};
+
+enum Popup{
+    POPUP,
+    BOTTOM_OF_SCREEN,
 
     MAX
 };

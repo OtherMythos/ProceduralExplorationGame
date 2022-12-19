@@ -2,12 +2,13 @@
     mInventoryItems_ = null;
     mMoney_ = 300;
 
-    mInventorySize_ = 5;
+    mInventorySize_ = 30;
 
     constructor(){
         mInventoryItems_ = array(mInventorySize_, ItemId.NONE);
 
         mInventoryItems_[0] = ItemId.HEALTH_POTION;
+        mInventoryItems_[1] = ItemId.LARGE_HEALTH_POTION;
     }
 
     /**
