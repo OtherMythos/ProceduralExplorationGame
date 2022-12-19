@@ -1,15 +1,18 @@
-# avEngine Project Template
-A bare-bones example of an avEngine project.
+# Turn based game
+An un-named project for the avEngine.
 
-This project can be used as a starting point for any work with the avEngine.
-This project contains
+This game is based on RPG mechanics and built around the idea of exploration.
+The gameplay loop focuses on the player exploring the world, finding items, places and combat encounters.
+I hope to have a large number of collectables and a variety of content in this game.
 
- * An avSetup.cfg file.
- * An OgreResources.cfg file, to describe resource locations.
- * A SquirrelEntry.nut file, where script execution takes place.
- * resBuild.cfg, used to trigger a build of the asset pipeline.
+Expected features include:
+ * Voxel graphics for character models, scenes, items, etc.
+ * Turn based combat system.
+ * Copious amounts of collectables.
+ * Quest and task system.
+ * Designed around mobile, i.e quick bursts of play sessions.
 
-## Building
+## Building project
 Assets for this project need to be built before they can be used.
 This project uses the avEngine asset pipeline, which is based on docker.
 Docker must be installed to be able to build this project.
