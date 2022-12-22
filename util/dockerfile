@@ -1,0 +1,16 @@
+FROM asset-builder-image
+
+RUN apt-get update && apt-get install -y \
+    scons \
+    libglfw3-dev \
+    libgtk-3-dev \
+    unzip
+
+#Build it here to avoid any discrepancies between x86 and arm.
+RUN mkdir /goxelBuild
+RUN wget https://github.com/guillaumechereau/goxel/archive/refs/tags/v0.11.0.zip -P /goxelBuild/
+RUN cd /goxelBuild/ && unzip *.zip
+RUN cd /goxelBuild/goxel-0.11.0 && make release && make install
+
+COPY voxelConverter.py /builder/voxelConverter.py
+COPY AssetModuleGox.py /scripts/assetPipeline/assetModules/AssetModuleGox.py

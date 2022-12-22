@@ -73,7 +73,7 @@ class XMLWriter:
         submesh.attrib["name"] = materialName
 
         tree = ET.ElementTree(root)
-        ET.indent(tree, space="    ", level=0)
+        #ET.indent(tree, space="    ", level=0)
         tree.write(str(filePath))
 
 class CompleteData:
