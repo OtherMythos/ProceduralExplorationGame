@@ -23,8 +23,8 @@ class XMLWriter:
             v = self.data.verts[i]
             pos = ET.SubElement(vert, "position")
             pos.attrib["x"] = str(float(v[0]))
-            pos.attrib["y"] = str(float(v[1]))
-            pos.attrib["z"] = str(float(v[2]))
+            pos.attrib["y"] = str(float(v[2]))
+            pos.attrib["z"] = str(float(v[1]))
 
             normal = ET.SubElement(vert, "normal")
             normal.attrib["x"] = "1.0"
@@ -37,7 +37,7 @@ class XMLWriter:
             texcoord.attrib["v"] = "0.5"
 
     def writeToFile(self, filePath):
-        materialName = "matName"
+        materialName = "baseVoxelMaterial"
 
         root = ET.Element("mesh")
 
@@ -146,8 +146,8 @@ class CompleteData:
     def resolveFaces(self):
         newFaces = []
         for i in self.faces:
-            newFaces.append([i[0][0] - 1, i[2][0] - 1, i[3][0] - 1])
-            newFaces.append([i[1][0] - 1, i[2][0] - 1, i[0][0] - 1])
+            newFaces.append([i[3][0] - 1, i[2][0] - 1, i[1][0] - 1])
+            newFaces.append([i[1][0] - 1, i[0][0] - 1, i[3][0] - 1])
 
         self.faces = newFaces
 
