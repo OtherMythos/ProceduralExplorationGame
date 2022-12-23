@@ -21,15 +21,17 @@ class XMLWriter:
             vert = ET.SubElement(container, "vertex")
 
             v = self.data.verts[i]
+            #Order of y and z flipped for Ogre's coordinate system.
             pos = ET.SubElement(vert, "position")
             pos.attrib["x"] = str(float(v[0]))
             pos.attrib["y"] = str(float(v[2]))
             pos.attrib["z"] = str(float(v[1]))
 
+            n = self.data.vertNormals[i]
             normal = ET.SubElement(vert, "normal")
-            normal.attrib["x"] = "1.0"
-            normal.attrib["y"] = "0.0"
-            normal.attrib["z"] = "0.0"
+            normal.attrib["x"] = str(float(n[0]))
+            normal.attrib["y"] = str(float(n[2]))
+            normal.attrib["z"] = str(float(n[1]))
 
             t = self.data.texCoords[self.data.vertColours[i]]
             texcoord = ET.SubElement(vert, "texcoord")
@@ -194,13 +196,51 @@ class CompleteData:
         #print(self.vertNormals)
         #print(newNorms)
 
+    '''
+    .obj files specify vertices and normals separately, and then match them up in the face definition.
+    OgreXML expects there to be an entry for each vertice, even when they have the same position but different normals.
+    So I have to match up vertex definitions with normal definitions to check if that combination has been specified before.
+    If not, duplicate and push the values, change whatever is needed, register the new id and return it.
+    '''
+    def checkResolveFace(self, entries, face, newNorms):
+        faceVertId = face[0] - 1
+        faceNormId = face[1] - 1
+
+        #Populate the norms regardless, each vertice needs a normal.
+        newNorms[faceVertId] = self.vertNormals[faceNormId]
+
+        if face in entries:
+            return entries[face]
+
+        newId = len(self.verts)
+        self.verts.append(self.verts[faceVertId])
+        self.vertColours.append(self.vertColours[faceVertId])
+        self.texCoords.append(self.texCoords[faceVertId])
+        newNorms.append(self.vertNormals[faceNormId])
+
+        entries[face] = newId
+
+        return newId
+
     def resolveFaces(self):
+        entries = {}
+        newNorms = [None] * len(self.verts)
+
+        #Determine if this combination of vertices and normal values has been created for each vertice used.
+        #If not then they need to be created
         newFaces = []
         for i in self.faces:
-            newFaces.append([i[3][0] - 1, i[2][0] - 1, i[1][0] - 1])
-            newFaces.append([i[1][0] - 1, i[0][0] - 1, i[3][0] - 1])
+            f0 = self.checkResolveFace(entries, i[0], newNorms)
+            f1 = self.checkResolveFace(entries, i[1], newNorms)
+            f2 = self.checkResolveFace(entries, i[2], newNorms)
+            f3 = self.checkResolveFace(entries, i[3], newNorms)
+
+            newFaces.append([f3, f2, f1])
+            newFaces.append([f1, f0, f3])
 
         self.faces = newFaces
+        self.vertNormals = newNorms
+        assert len(self.vertNormals) == len(self.verts)
 
     def reduce(self):
         #self.resolveNormals()
