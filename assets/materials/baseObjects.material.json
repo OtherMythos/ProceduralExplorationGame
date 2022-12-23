@@ -1,0 +1,14 @@
+{
+    "pbs" :
+    {
+        "baseVoxelMaterial" :
+        {
+            "workflow": "metallic",
+
+            "diffuse" :
+            {
+                "texture" : "voxelPalette.png"
+            }
+        }
+    }
+}
