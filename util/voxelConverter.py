@@ -25,13 +25,13 @@ class XMLWriter:
             pos = ET.SubElement(vert, "position")
             pos.attrib["x"] = str(float(v[0]))
             pos.attrib["y"] = str(float(v[2]))
-            pos.attrib["z"] = str(float(v[1]))
+            pos.attrib["z"] = str(float(-v[1]))
 
             n = self.data.vertNormals[i]
             normal = ET.SubElement(vert, "normal")
             normal.attrib["x"] = str(float(n[0]))
             normal.attrib["y"] = str(float(n[2]))
-            normal.attrib["z"] = str(float(n[1]))
+            normal.attrib["z"] = str(float(-n[1]))
 
             t = self.data.texCoords[self.data.vertColours[i]]
             texcoord = ET.SubElement(vert, "texcoord")
@@ -235,8 +235,8 @@ class CompleteData:
             f2 = self.checkResolveFace(entries, i[2], newNorms)
             f3 = self.checkResolveFace(entries, i[3], newNorms)
 
-            newFaces.append([f3, f2, f1])
-            newFaces.append([f1, f0, f3])
+            newFaces.append([f1, f2, f3])
+            newFaces.append([f3, f0, f1])
 
         self.faces = newFaces
         self.vertNormals = newNorms
