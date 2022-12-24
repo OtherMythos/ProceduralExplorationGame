@@ -32,6 +32,9 @@ enum CombatBusEvents{
 
         mCombatActors = null;
 
+        mCombatScenePanel_ = null;
+        mCompositorId_ = null;
+
         function enemySelectedButton(widget, action){
             local opponentId = widget.getUserId();
             mCombatBus_.notifyEvent(CombatBusEvents.OPPONENT_SELECTED, opponentId);
@@ -43,7 +46,7 @@ enum CombatBusEvents{
             mCombatActors = [];
 
             mWindow_ = _gui.createWindow(parentWin);
-            //mWindow_.setClipBorders(0, 0, 0, 0);
+            mWindow_.setClipBorders(0, 0, 0, 0);
 
             {
                 local victoryButton = mWindow_.createButton();
@@ -53,6 +56,9 @@ enum CombatBusEvents{
                     mCombatBus_.notifyEvent(CombatBusEvents.ALL_OPPONENTS_DIED, null);
                 }, _GUI_ACTION_PRESSED, this);
             }
+
+            mCombatScenePanel_ = mWindow_.createPanel();
+            mCombatScenePanel_.setPosition(0, 0);
 
             local layout = _gui.createLayoutLine();
             local layoutButtons = _gui.createLayoutLine();
@@ -78,6 +84,27 @@ enum CombatBusEvents{
             layoutButtons.layout();
 
             setButtonsVisible(false);
+        }
+
+        function shutdown(){
+            mCombatScenePanel_.setDatablock("unlitEmpty");
+            shutdownCompositor_();
+        }
+
+        function shutdownCompositor_(){
+            if(mCompositorId_ == null) return;
+            ::CompositorManager.destroyCompositorWorkspace(mCompositorId_);
+            mCompositorId_ = null;
+        }
+
+        function notifyResize(){
+            local winSize = mWindow_.getSize();
+            mCombatScenePanel_.setSize(winSize);
+
+            local compId = ::CompositorManager.createCompositorWorkspace("renderTextureWorkspace", 0, 100, winSize);
+            local datablock = ::CompositorManager.getDatablockForCompositor(compId);
+            mCompositorId_ = compId;
+            mCombatScenePanel_.setDatablock(datablock);
         }
 
         function setButtonsVisible(visible){
@@ -333,6 +360,8 @@ enum CombatBusEvents{
     function shutdown(){
         base.shutdown();
 
+        mCombatDisplay_.shutdown();
+
         mCombatBus_ = null;
         mQueuedAttack_ = null;
         mCombatDisplay_ = null;
@@ -369,6 +398,7 @@ enum CombatBusEvents{
 
         mMovesDisplay_.notifyResize();
         mStatsDisplay_.notifyResize();
+        mCombatDisplay_.notifyResize();
     }
 
     function busCallback(event, data){

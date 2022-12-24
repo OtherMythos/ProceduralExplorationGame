@@ -1,0 +1,40 @@
+
+compositor_node renderTextureNode
+{
+    in 0 renderTexture
+    target renderTexture
+    {
+        pass clear
+        {
+            colour_value 0.1 0.1 0.1 1
+        }
+        pass render_scene
+        {
+        }
+    }
+}
+
+compositor_node renderWindowNode
+{
+    in 0 renderWindowTexture
+    target renderWindowTexture
+    {
+        pass clear
+        {
+            colour_value 0 0 0 0
+        }
+        pass custom colibri_gui
+        {
+        }
+    }
+}
+
+workspace renderTextureWorkspace
+{
+    connect_output renderTextureNode 0
+}
+
+workspace renderWindowWorkspace
+{
+    connect_output renderWindowNode 0
+}

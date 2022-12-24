@@ -37,6 +37,11 @@
         "gui/progressBarRed" :
         {
             "diffuse" : [0.9, 0.1, 0.1, 1.0]
+        },
+
+        "unlitEmpty" :
+        {
+            "diffuse": [1, 1, 1, 1]
         }
     }
 }
