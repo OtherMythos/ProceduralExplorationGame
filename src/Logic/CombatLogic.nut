@@ -5,15 +5,17 @@
 ::CombatLogic <- class{
 
     mGui_ = null;
+    mSceneLogic_ = null;
 
     mData_ = null;
 
     constructor(combatData){
         mData_ = combatData;
+        mSceneLogic_ = CombatSceneLogic(combatData);
     }
 
-    function tickUpdate(){
-
+    function update(){
+        mSceneLogic_.update();
     }
 
     function setGuiObject(guiObj){

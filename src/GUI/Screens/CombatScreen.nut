@@ -429,7 +429,7 @@ enum CombatBusEvents{
 
 
     function update(){
-        mLogicInterface_.tickUpdate();
+        mLogicInterface_.update();
     }
 
     function notifyStatsChange(combatData){
