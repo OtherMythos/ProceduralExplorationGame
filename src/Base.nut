@@ -86,4 +86,14 @@
         ::ScreenManager.update();
         ::PopupManager.update();
     }
+
+    function notifyEncounter(combatData){
+        mCurrentCombatData = combatData;
+        mCombatLogic = ::CombatLogic(combatData);
+    }
+
+    function notifyEncounterEnded(){
+        mCombatLogic.shutdown();
+    }
+
 };

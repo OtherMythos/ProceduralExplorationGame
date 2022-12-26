@@ -367,6 +367,8 @@ enum CombatBusEvents{
         mCombatDisplay_ = null;
         mStatsDisplay_ = null;
         mMovesDisplay_ = null;
+
+        ::Base.notifyEncounterEnded();
     }
 
     function setup(data){

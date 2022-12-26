@@ -91,3 +91,10 @@ enum EquippedSlotTypes{
 
     MAX
 };
+
+enum CombatOpponentAnims{
+    NONE,
+
+    HOPPING,
+    DYING
+};

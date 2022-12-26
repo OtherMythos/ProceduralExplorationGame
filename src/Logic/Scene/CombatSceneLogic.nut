@@ -12,20 +12,51 @@
         mParent_ = null;
         mAnim_ = null;
 
-        mAnimCount = 0.0;
+        mAnimCount_ = 0.0;
+        mCurrentAnim_ = CombatOpponentAnims.NONE;
 
         constructor(parentNode, childNode){
             mParent_ = parentNode;
             mAnim_ = childNode;
 
+            setAnim(CombatOpponentAnims.HOPPING);
             #Seed with a random value for some variation.
-            mAnimCount = _random.rand();
+            mAnimCount_ = _random.rand();
         }
 
         function updateAnim(){
-            mAnimCount += 0.15;
-            local nodePos = Vec3(0, fabs(sin(mAnimCount)), 0);
-            mAnim_.setPosition(nodePos);
+            mAnimCount_ += 0.01;
+            switch(mCurrentAnim_){
+                case CombatOpponentAnims.HOPPING:{
+                    local anim = mAnimCount_ * 15;
+                    local nodePos = Vec3(0, fabs(sin(anim)), 0);
+                    mAnim_.setPosition(nodePos);
+                    return;
+                }
+                case CombatOpponentAnims.DYING:{
+                    local anim = mAnimCount_ * 8;
+                    if(anim < 1.5){
+                        local newOrientation = Quat(-anim, Vec3(0, 0, 1));
+                        mAnim_.setOrientation(newOrientation);
+                    }else{
+                        setAnim(CombatOpponentAnims.NONE)
+                    }
+                    return;
+                }
+                case CombatOpponentAnims.NONE:
+                default:{
+                    return;
+                }
+            }
+        }
+
+        function setAnim(anim){
+            mCurrentAnim_ = anim;
+            mAnimCount_ = 0;
+        }
+
+        function notifyDeath(){
+            setAnim(CombatOpponentAnims.DYING)
         }
     }
 
@@ -47,6 +78,11 @@
 
     function update(){
         animateEnemies();
+    }
+
+    function notifyOpponentDied(opponentId){
+        local enemy = mEnemyEntries[opponentId];
+        enemy.notifyDeath();
     }
 
     function createScene(){

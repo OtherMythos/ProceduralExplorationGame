@@ -134,8 +134,8 @@
         local enemyData = [
             ::Combat.CombatStats(enemy)
         ];
-        ::Base.mCurrentCombatData = ::Combat.CombatData(::Base.mPlayerStats.mPlayerCombatStats, enemyData);
-        ::Base.mCombatLogic = CombatLogic(::Base.mCurrentCombatData);
+        local currentCombatData = ::Combat.CombatData(::Base.mPlayerStats.mPlayerCombatStats, enemyData);
+        ::Base.notifyEncounter(currentCombatData)
     }
 
     function processEncounter(enemy){

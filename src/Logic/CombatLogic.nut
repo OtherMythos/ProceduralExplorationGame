@@ -14,6 +14,10 @@
         mSceneLogic_ = CombatSceneLogic(combatData);
     }
 
+    function shutdown(){
+        mSceneLogic_.shutdown();
+    }
+
     function update(){
         mSceneLogic_.update();
     }
@@ -72,6 +76,7 @@
         if(!mGui_) return;
 
         mGui_.notifyOpponentDied(opponentId);
+        mSceneLogic_.notifyOpponentDied(opponentId);
     }
 
     function notifyAllOpponentsDied_(){
