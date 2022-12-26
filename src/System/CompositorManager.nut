@@ -41,6 +41,8 @@
         //Add some uniqueness to the names.
         mTotalCompositors_++;
 
+        print("Added compositor with id " + id)
+
         return id;
     }
 

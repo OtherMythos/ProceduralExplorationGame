@@ -7,8 +7,11 @@
 
     mParentNode_ = null;
     mEnemyEntries = null;
+    mPlayerEntry = null;
 
-    SceneEnemyEntry = class{
+    mPlayerParentNode_ = null;
+
+    SceneActorEntry = class{
         mParent_ = null;
         mAnim_ = null;
 
@@ -70,19 +73,33 @@
         mEnemyEntries = [];
 
         createScene();
+        createPlayerScene();
     }
 
     function shutdown(){
         mParentNode_.destroyNodeAndChildren();
+        mPlayerParentNode_.destroyNodeAndChildren();
     }
 
     function update(){
         animateEnemies();
+        mPlayerEntry.updateAnim();
     }
 
     function notifyOpponentDied(opponentId){
         local enemy = mEnemyEntries[opponentId];
         enemy.notifyDeath();
+    }
+
+    function createPlayerScene(){
+        mPlayerParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
+
+        local animNode = mPlayerParentNode_.createChildSceneNode();
+        local item = _scene.createItem("player.mesh");
+        item.setRenderQueueGroup(25);
+        animNode.attachObject(item);
+
+        mPlayerEntry = SceneActorEntry(mPlayerParentNode_, animNode);
     }
 
     function createScene(){
@@ -105,7 +122,7 @@
             sceneNode.setPosition(totalRadius, 0, 0);
             totalRadius += radius * 1.8;
 
-            local entry = SceneEnemyEntry(sceneNode, animNode);
+            local entry = SceneActorEntry(sceneNode, animNode);
             mEnemyEntries.append(entry);
         }
         #TODO clean this up.
@@ -132,6 +149,7 @@
 
     function createEnemy_(parentNode, combatStats){
         local item = _scene.createItem("goblin.mesh");
+        item.setRenderQueueGroup(20);
         parentNode.attachObject(item);
         return item.getLocalRadius();
     }

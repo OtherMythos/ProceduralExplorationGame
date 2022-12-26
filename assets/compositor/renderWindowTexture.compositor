@@ -10,6 +10,25 @@ compositor_node renderTextureNode
         }
         pass render_scene
         {
+            rq_first 20
+            rq_last 21
+        }
+    }
+}
+
+compositor_node renderTexture25Node
+{
+    in 0 renderTexture
+    target renderTexture
+    {
+        pass clear
+        {
+            colour_value 0.1 0.1 0.1 1
+        }
+        pass render_scene
+        {
+            rq_first 25
+            rq_last 26
         }
     }
 }
@@ -32,6 +51,10 @@ compositor_node renderWindowNode
 workspace renderTextureWorkspace
 {
     connect_output renderTextureNode 0
+}
+workspace renderTexture25Workspace
+{
+    connect_output renderTexture25Node 0
 }
 
 workspace renderWindowWorkspace

@@ -57,6 +57,8 @@
         foreach(i in mDataDisplays_){
             i.setSize(winSize.x, i.getSize().y);
         }
+
+        mWindow_.setPosition(200, mWindow_.getPosition().y);
     }
 
     function busCallback(event, data){

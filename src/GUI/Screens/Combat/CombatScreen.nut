@@ -31,6 +31,7 @@ enum CombatBusEvents{
     mCombatDisplay_ = null;
     mStatsDisplay_ = null;
     mMovesDisplay_ = null;
+    mPlayerDialog_ = null;
 
     mCombatBus_ = null;
     mQueuedAttack_ = null;
@@ -46,6 +47,7 @@ enum CombatBusEvents{
         mCombatDisplay_ = null;
         mStatsDisplay_ = null;
         mMovesDisplay_ = null;
+        mPlayerDialog_ = null;
 
         ::Base.notifyEncounterEnded();
     }
@@ -67,8 +69,13 @@ enum CombatBusEvents{
         mCombatDisplay_ = CombatDisplay(mWindow_, mCombatBus_);
         mCombatDisplay_.addToLayout(layoutLine);
 
+        local playerStatsLayout = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
+        mPlayerDialog_ = CombatPlayerDialog(mWindow_, mCombatBus_);
+        mPlayerDialog_.addToLayout(playerStatsLayout);
         mStatsDisplay_ = CombatStatsDisplay(mWindow_, mCombatBus_);
-        mStatsDisplay_.addToLayout(layoutLine);
+        mStatsDisplay_.addToLayout(playerStatsLayout);
+
+        layoutLine.addCell(playerStatsLayout);
 
         mMovesDisplay_ = CombatMovesDisplay(mWindow_, mCombatBus_);
         mMovesDisplay_.addToLayout(layoutLine);
@@ -79,6 +86,7 @@ enum CombatBusEvents{
 
         mMovesDisplay_.notifyResize();
         mStatsDisplay_.notifyResize();
+        mPlayerDialog_.notifyResize();
         mCombatDisplay_.notifyResize();
     }
 
@@ -140,3 +148,4 @@ enum CombatBusEvents{
 _doFile("res://src/GUI/Screens/Combat/CombatDisplay.nut");
 _doFile("res://src/GUI/Screens/Combat/CombatMovesDisplay.nut");
 _doFile("res://src/GUI/Screens/Combat/CombatStatsDisplay.nut");
+_doFile("res://src/GUI/Screens/Combat/CombatPlayerDialog.nut");
