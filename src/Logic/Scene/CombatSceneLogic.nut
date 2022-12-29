@@ -65,13 +65,11 @@
 
     constructor(combatData){
         mCombatData_ = combatData;
-
-        setup();
     }
 
     function setup(){
         mEnemyEntries = [];
-
+        print("Creating combat scene");
         createScene();
         createPlayerScene();
     }
@@ -79,6 +77,11 @@
     function shutdown(){
         mParentNode_.destroyNodeAndChildren();
         mPlayerParentNode_.destroyNodeAndChildren();
+        mParentNode_ = null;
+        mPlayerParentNode_ = null;
+
+        mEnemyEntries.clear();
+        mPlayerEntry = null;
     }
 
     function update(){

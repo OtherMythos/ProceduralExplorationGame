@@ -22,8 +22,9 @@
         mSceneLogic_.update();
     }
 
-    function setGuiObject(guiObj){
+    function setupForScreen(guiObj){
         mGui_ = guiObj;
+        mSceneLogic_.setup();
     }
 
     function performOpponentAttacks(){

@@ -54,7 +54,7 @@ enum CombatBusEvents{
 
     function setup(data){
         mLogicInterface_ = data.logic;
-        mLogicInterface_.setGuiObject(this);
+        mLogicInterface_.setupForScreen(this);
         mCombatBus_ = CombatInfoBus(mLogicInterface_);
 
         mCombatBus_.registerCallback(busCallback, this);
