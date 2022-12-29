@@ -1,5 +1,5 @@
 
-compositor_node renderTextureNode
+compositor_node renderTexture20Node
 {
     in 0 renderTexture
     target renderTexture
@@ -48,9 +48,9 @@ compositor_node renderWindowNode
     }
 }
 
-workspace renderTextureWorkspace
+workspace renderTexture20Workspace
 {
-    connect_output renderTextureNode 0
+    connect_output renderTexture20Node 0
 }
 workspace renderTexture25Workspace
 {

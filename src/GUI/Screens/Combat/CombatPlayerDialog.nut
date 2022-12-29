@@ -34,7 +34,7 @@
         mWindow_.setSize(winSize);
         mCombatScenePanel_.setSize(winSize);
 
-        local compId = ::CompositorManager.createCompositorWorkspace("renderTexture25Workspace", 25, 25, winSize);
+        local compId = ::CompositorManager.createCompositorWorkspace("renderTexture25Workspace", winSize, CompositorSceneType.COMBAT_PLAYER);
         local datablock = ::CompositorManager.getDatablockForCompositor(compId);
         mCompositorId_ = compId;
         mCombatScenePanel_.setDatablock(datablock);

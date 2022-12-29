@@ -61,6 +61,11 @@
         function notifyDeath(){
             setAnim(CombatOpponentAnims.DYING)
         }
+
+        function getCentre(){
+            local item = mAnim_.getAttachedObject(0)
+            return item.getLocalRadius();
+        }
     }
 
     constructor(combatData){
@@ -103,6 +108,15 @@
         animNode.attachObject(item);
 
         mPlayerEntry = SceneActorEntry(mPlayerParentNode_, animNode);
+
+        {
+            local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.COMBAT_PLAYER)
+            assert(camera != null);
+            local parentNode = camera.getParentNode();
+            local centre = mPlayerEntry.getCentre();
+            parentNode.setPosition(0, centre, 25);
+            camera.lookAt(0, centre, 0);
+        }
     }
 
     function createScene(){
@@ -110,6 +124,14 @@
 
         createLights_();
         createEnemies_();
+
+        {
+            local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.COMBAT)
+            assert(camera != null);
+            local parentNode = camera.getParentNode();
+            parentNode.setPosition(5, 10, 30);
+            camera.lookAt(0, 0, 0);
+        }
     }
 
     function createEnemies_(){

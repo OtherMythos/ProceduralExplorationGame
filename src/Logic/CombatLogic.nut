@@ -18,13 +18,16 @@
         mSceneLogic_.shutdown();
     }
 
+    function setup(){
+        mSceneLogic_.setup();
+    }
+
     function update(){
         mSceneLogic_.update();
     }
 
-    function setupForScreen(guiObj){
+    function setGuiObject(guiObj){
         mGui_ = guiObj;
-        mSceneLogic_.setup();
     }
 
     function performOpponentAttacks(){

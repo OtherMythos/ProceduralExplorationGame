@@ -54,7 +54,7 @@ enum CombatBusEvents{
 
     function setup(data){
         mLogicInterface_ = data.logic;
-        mLogicInterface_.setupForScreen(this);
+        mLogicInterface_.setGuiObject(this);
         mCombatBus_ = CombatInfoBus(mLogicInterface_);
 
         mCombatBus_.registerCallback(busCallback, this);
@@ -88,6 +88,8 @@ enum CombatBusEvents{
         mStatsDisplay_.notifyResize();
         mPlayerDialog_.notifyResize();
         mCombatDisplay_.notifyResize();
+
+        mLogicInterface_.setup();
     }
 
     function busCallback(event, data){
