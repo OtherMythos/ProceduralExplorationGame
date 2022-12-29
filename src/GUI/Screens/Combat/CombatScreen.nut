@@ -38,9 +38,9 @@ enum CombatBusEvents{
 
 
     function shutdown(){
-        base.shutdown();
-
         mCombatDisplay_.shutdown();
+
+        base.shutdown();
 
         mCombatBus_ = null;
         mQueuedAttack_ = null;
