@@ -4,6 +4,7 @@ enum CompositorSceneType{
     NONE,
     COMBAT,
     COMBAT_PLAYER,
+    EXPLORATION,
 
     MAX
 };

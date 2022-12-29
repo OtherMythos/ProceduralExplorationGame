@@ -82,10 +82,12 @@ enum ExplorationBusEvents{
         layoutLine.layout();
 
         mExplorationItemsContainer_.sizeForButtons();
+        mWorldMapDisplay_.notifyResize();
 
         mLogicInterface_.continueOrResetExploration();
 
         mExplorationBus_.registerCallback(busCallback, this);
+        mLogicInterface_.setup();
     }
 
     function update(){
@@ -113,6 +115,7 @@ enum ExplorationBusEvents{
     }
 
     function shutdown(){
+        mLogicInterface_.shutdown();
         mMoneyCounter_.shutdown();
         base.shutdown();
         mLogicInterface_.notifyLeaveExplorationScreen();

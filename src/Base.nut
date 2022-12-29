@@ -10,6 +10,7 @@
     "mDialogManager": null,
 
     function setup(){
+        createLights();
 
         _gui.loadSkins("res://assets/skins/ui.json");
 
@@ -55,6 +56,7 @@
         _doFile("res://src/GUI/Screens/TestScreen.nut");
 
         _doFile("res://src/Logic/ExplorationLogic.nut");
+        _doFile("res://src/Logic/Scene/ExplorationSceneLogic.nut");
         _doFile("res://src/Logic/CombatLogic.nut");
         _doFile("res://src/Logic/Scene/CombatSceneLogic.nut");
         _doFile("res://src/Logic/StoryContentLogic.nut");
@@ -69,8 +71,8 @@
         mCombatLogic = CombatLogic(mCurrentCombatData);
 
         //::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
-        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
-        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COMBAT_SCREEN, {"logic": mCombatLogic}));
+        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
+        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COMBAT_SCREEN, {"logic": mCombatLogic}));
         //::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.ENCOUNTER_POPUP_SCREEN, null), null, 1);
         //::ScreenManager.transitionToScreen(Screen.ITEM_INFO_SCREEN);
@@ -94,6 +96,19 @@
 
     function notifyEncounterEnded(){
         mCombatLogic.shutdown();
+    }
+
+    function createLights(){
+        //Create lighting upfront so all objects can share it.
+        local light = _scene.createLight();
+        local lightNode = _scene.getRootSceneNode().createChildSceneNode();
+        lightNode.attachObject(light);
+
+        light.setType(_LIGHT_DIRECTIONAL);
+        light.setDirection(-1, -1, -1);
+        light.setPowerScale(PI);
+
+        _scene.setAmbientLight(0xffffffff, 0xffffffff, Vec3(0, 1, 0));
     }
 
 };

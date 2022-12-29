@@ -6,6 +6,8 @@
  */
 ::ExplorationLogic <- class{
 
+    mSceneLogic_ = null;
+
     mExplorationCount_ = 0;
     mExplorationPercentage_ = 0;
 
@@ -23,6 +25,16 @@
 
     constructor(){
         resetExploration();
+
+        mSceneLogic_ = ExplorationSceneLogic();
+    }
+
+    function shutdown(){
+        mSceneLogic_.shutdown();
+    }
+
+    function setup(){
+        mSceneLogic_.setup();
     }
 
     function resetExploration(){
@@ -50,6 +62,8 @@
         updatePercentage();
         checkForFoundObject();
         checkForEncounter();
+
+        mSceneLogic_.updatePercentage(mExplorationPercentage_);
     }
 
     function updatePercentage(){

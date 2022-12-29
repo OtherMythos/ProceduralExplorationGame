@@ -122,7 +122,6 @@
     function createScene(){
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
 
-        createLights_();
         createEnemies_();
 
         {
@@ -158,18 +157,6 @@
         foreach(i in mEnemyEntries){
             i.updateAnim();
         }
-    }
-
-    function createLights_(){
-        local light = _scene.createLight();
-        local lightNode = mParentNode_.createChildSceneNode();
-        lightNode.attachObject(light);
-
-        light.setType(_LIGHT_DIRECTIONAL);
-        light.setDirection(-1, -1, -1);
-        light.setPowerScale(PI);
-
-        _scene.setAmbientLight(0xffffffff, 0xffffffff, Vec3(0, 1, 0));
     }
 
     function createEnemy_(parentNode, combatStats){
