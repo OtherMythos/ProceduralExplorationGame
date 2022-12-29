@@ -42,7 +42,7 @@
         _doFile("res://src/GUI/Screens/MainMenuScreen.nut");
         _doFile("res://src/GUI/Screens/SaveSelectionScreen.nut");
         _doFile("res://src/GUI/Screens/GameplayMainMenuScreen.nut");
-        _doFile("res://src/GUI/Screens/ExplorationScreen.nut");
+        _doFile("res://src/GUI/Screens/Exploration/ExplorationScreen.nut");
         _doFile("res://src/GUI/Screens/EncounterPopupScreen.nut");
         _doFile("res://src/GUI/Screens/Combat/CombatScreen.nut");
         _doFile("res://src/GUI/Screens/ItemInfoScreen.nut");
