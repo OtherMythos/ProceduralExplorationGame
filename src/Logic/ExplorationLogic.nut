@@ -49,6 +49,7 @@
 
         renotifyItems();
         processExplorationBegan();
+        if(mSceneLogic_) mSceneLogic_.resetExploration();
     }
 
     function tickUpdate(){
