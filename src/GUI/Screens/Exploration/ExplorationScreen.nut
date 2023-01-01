@@ -46,6 +46,13 @@ enum ExplorationBusEvents{
             }, _GUI_ACTION_PRESSED, this);
             helperButtonLayout.addCell(exploreAgain);
 
+            local worldScene = mWindow_.createButton();
+            worldScene.setText("World scene");
+            worldScene.attachListenerForEvent(function(widget, action){
+                ::ScreenManager.transitionToScreen(Screen.WORLD_SCENE_SCREEN);
+            }, _GUI_ACTION_PRESSED, this);
+            helperButtonLayout.addCell(worldScene);
+
             helperButtonLayout.setPosition(5, 5);
             helperButtonLayout.layout();
         }

@@ -9,6 +9,8 @@
     "mPlayerStats": null,
     "mDialogManager": null,
 
+    mCurrentWorld_ = null
+
     function setup(){
         createLights();
 
@@ -18,6 +20,9 @@
         _doFile("res://src/Content/Places.nut");
         _doFile("res://src/Content/FoundObject.nut");
         _doFile("res://src/Content/CombatData.nut");
+
+        _doFile("res://src/World/EntityFactory.nut");
+        _doFile("res://src/World/World.nut");
 
         _doFile("res://src/System/DialogManager.nut");
         mDialogManager = DialogManager();
@@ -54,6 +59,7 @@
         _doFile("res://src/GUI/Screens/DialogScreen.nut");
         _doFile("res://src/GUI/Screens/CombatSpoilsPopupScreen.nut");
         _doFile("res://src/GUI/Screens/TestScreen.nut");
+        _doFile("res://src/GUI/Screens/WorldSceneScreen.nut");
 
         _doFile("res://src/Logic/ExplorationLogic.nut");
         _doFile("res://src/Logic/Scene/ExplorationSceneLogic.nut");
@@ -74,6 +80,7 @@
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COMBAT_SCREEN, {"logic": mCombatLogic}));
         //::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);
+        //::ScreenManager.transitionToScreen(Screen.WORLD_SCENE_SCREEN);
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.ENCOUNTER_POPUP_SCREEN, null), null, 1);
         //::ScreenManager.transitionToScreen(Screen.ITEM_INFO_SCREEN);
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, {"inventory": mInventory, "equipStats": ::Base.mPlayerStats.mPlayerCombatStats.mEquippedItems}));
@@ -87,6 +94,10 @@
     function update(){
         ::ScreenManager.update();
         ::PopupManager.update();
+        if(mCurrentWorld_) mCurrentWorld_.update();
+    }
+    function sceneSafeUpdate(){
+        if(mCurrentWorld_) mCurrentWorld_.sceneSafeUpdate();
     }
 
     function notifyEncounter(combatData){
@@ -109,6 +120,17 @@
         light.setPowerScale(PI);
 
         _scene.setAmbientLight(0xffffffff, 0xffffffff, Vec3(0, 1, 0));
+    }
+
+    function setupWorld(mapName){
+        mCurrentWorld_ = World(mapName);
+        mCurrentWorld_.setup();
+    }
+
+    function shutdownWorld(){
+        if(mCurrentWorld_ == null) return;
+        mCurrentWorld_.shutdown();
+        mCurrentWorld_ = null;
     }
 
 };
