@@ -1,3 +1,5 @@
+const TRIGGER = 0;
+
 enum Enemy{
     NONE,
     GOBLIN,
