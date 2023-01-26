@@ -99,6 +99,7 @@ enum ExplorationBusEvents{
 
     function update(){
         mLogicInterface_.tickUpdate();
+        mExplorationItemsContainer_.update();
     }
 
     function notifyExplorationPercentage(percentage){
