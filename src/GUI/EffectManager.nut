@@ -15,9 +15,11 @@
     "Effects": array(Screen.MAX, null),
 
     mActiveEffects_ = null
+    mQueuedDestructionEffects_ = null
 
     function setup(){
         mActiveEffects_ = [];
+        mQueuedDestructionEffects_ = [];
     }
 
     function _wrapEffectData(data){
@@ -52,9 +54,40 @@
         effectObject.setup(effectData.data);
     }
 
+    function endEffect(idx){
+        mQueuedDestructionEffects_.append(idx);
+    }
+
+    function processEndedEffects(){
+        foreach(i in mQueuedDestructionEffects_){
+            mActiveEffects_[i].destroy();
+            mActiveEffects_[i] = null;
+        }
+        mQueuedDestructionEffects_.clear();
+
+        purgeOldEffects_();
+    }
+    function purgeOldEffects_(){
+        while(true){
+            local idx = mActiveEffects_.find(null);
+            if(idx == null) return
+
+            mActiveEffects_.remove(idx);
+        }
+    }
+
     function update(){
-        foreach(i in mActiveEffects_){
-            i.update();
+        local destroyed = false;
+        foreach(c,i in mActiveEffects_){
+            local result = i.update();
+            if(!result){
+                endEffect(c);
+                destroyed = true;
+            }
+        }
+
+        if(destroyed){
+            processEndedEffects();
         }
     }
 };

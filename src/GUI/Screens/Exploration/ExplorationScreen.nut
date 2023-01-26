@@ -110,7 +110,7 @@ enum ExplorationBusEvents{
     }
 
     function notifyEnemyEncounter(enemy){
-        ::ScreenManager.transitionToScreen(Screen.ENCOUNTER_POPUP_SCREEN, null, 2);
+        ::ScreenManager.transitionToScreen(Screen.ENCOUNTER_POPUP_SCREEN, null, 3);
     }
 
     function notifyExplorationEnd(){

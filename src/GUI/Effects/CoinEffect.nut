@@ -3,32 +3,44 @@ enum CoinEffectStages{
     INITIAL_EXPAND,
     IDLE,
     MERGE_TO_FINISH,
+    SHRINK_TO_FINISH,
 
     MAX
 }
 ::EffectManager.Effects[Effect.COIN_EFFECT] = class extends ::Popup{
 
+    mParentNode_ = null;
     mCoinPos_ = null;
     mCoins_ = null;
     static CELL_WIDTH = 4;
     static CELL_HEIGHT = 4;
     mAnimStage_ = CoinEffectStages.NONE;
 
+    mNumCoins_ = 10;
+    mStartPos_ = Vec2(0, 0);
+    mEndPos_ = Vec2(0, 0);
+
     mAnimStages_ = array(CoinEffectStages.MAX);
 
     function setup(data){
+        mNumCoins_ = data.numCoins;
+        mStartPos_ = data.start;
+        mEndPos_ = data.end;
+
         mAnimStages_[CoinEffectStages.INITIAL_EXPAND] = {
             mCurrent_ = 0
-            mTotal_ = 50
+            mTotal_ = 30
             function start(coins, positions){
                 foreach(i in coins){
                     i.setPosition(0, 0, 0);
                 }
             }
-            function update(coins, positions){
+            function update(coins, positions, start, end){
                 local currentPercentage = mCurrent_.tofloat() / mTotal_.tofloat()
+                //local animPercentage = sin((currentPercentage * PI) / 2);
+                local animPercentage = 1 - pow(1 - currentPercentage, 4);
                 for(local i = 0; i < coins.len(); i++){
-                    local newPos = positions[i] * currentPercentage;
+                    local newPos = start + (positions[i] * animPercentage);
                     coins[i].setPosition(newPos.x, newPos.y, 0);
                 }
                 mCurrent_++;
@@ -38,20 +50,75 @@ enum CoinEffectStages{
                 return CoinEffectStages.INITIAL_EXPAND;
             }
         };
+        mAnimStages_[CoinEffectStages.IDLE] = {
+            mCurrent_ = 0
+            mTotal_ = 20
+            function start(coins, positions){ }
+            function update(coins, positions, start, end){
+                mCurrent_++;
+                if(mCurrent_ >= mTotal_) return CoinEffectStages.IDLE;
+                return CoinEffectStages.MERGE_TO_FINISH;
+            }
+        };
+        mAnimStages_[CoinEffectStages.MERGE_TO_FINISH] = {
+            mCurrent_ = 0
+            mTotal_ = 50
+            function start(coins, positions){ }
+            function update(coins, positions, start, end){
+                local p = mCurrent_.tofloat() / mTotal_.tofloat()
+                //local animPercentage = sin((currentPercentage * PI) / 2);
+                local animPercentage = p * p * p * p * p;
+                for(local i = 0; i < coins.len(); i++){
+                    local coinStart = start + positions[i];
+                    local newPos = (coinStart - (coinStart - end) * animPercentage) ;
+                    coins[i].setPosition(newPos.x, newPos.y, 0);
+                    //Apply some scale on the way in.
+                    local scaleNode = coins[i].getChild(0);
+                    local newScale = (1.0 - animPercentage) * 0.3 + 0.2;
+                    scaleNode.setScale(newScale, newScale, newScale);
+                }
+
+                mCurrent_++;
+                if(mCurrent_ >= mTotal_) return CoinEffectStages.SHRINK_TO_FINISH;
+                return CoinEffectStages.MERGE_TO_FINISH;
+            }
+        };
+        mAnimStages_[CoinEffectStages.SHRINK_TO_FINISH] = {
+            mCurrent_ = 0
+            mTotal_ = 8
+            function start(coins, positions){ }
+            function update(coins, positions, start, end){
+                local p = mCurrent_.tofloat() / mTotal_.tofloat()
+                for(local i = 0; i < coins.len(); i++){
+                    //Apply some scale on the way in.
+                    local scaleNode = coins[i].getChild(0);
+                    local newScale = (1.0 - p) * 0.2
+                    scaleNode.setScale(newScale, newScale, newScale);
+                }
+
+                mCurrent_++;
+                if(mCurrent_ >= mTotal_) return CoinEffectStages.MAX;
+                return CoinEffectStages.SHRINK_TO_FINISH;
+            }
+        };
 
         local cellSize = 5;
-        local numCoins = 20;
 
-        local parentNode = _scene.getRootSceneNode().createChildSceneNode();
+        mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
 
         setupCameras();
-        mCoins_ = createInitialCoins(numCoins, parentNode);
-        mCoinPos_ = setupCoinPositions(numCoins, Vec2(-cellSize * CELL_WIDTH / 2, -cellSize * CELL_HEIGHT / 2), cellSize);
+        mCoins_ = createInitialCoins(mNumCoins_, mParentNode_, mStartPos_);
+        mCoinPos_ = setupCoinPositions(mNumCoins_, Vec2(-cellSize * CELL_WIDTH / 2, -cellSize * CELL_HEIGHT / 2), cellSize);
 
         setAnimStage(CoinEffectStages.INITIAL_EXPAND)
     }
 
-    function createInitialCoins(numCoins, parentNode){
+    function destroy(){
+        mCoins_.clear();
+        mParentNode_.destroyNodeAndChildren();
+    }
+
+    function createInitialCoins(numCoins, parentNode, startPos){
         local retVals = array(numCoins, null);
 
         local quat = Quat(1, 0, 0, 1);
@@ -59,13 +126,15 @@ enum CoinEffectStages{
         local coinSize = 0.5;
         for(local i = 0; i < numCoins; i++){
             local newNode = parentNode.createChildSceneNode();
+            local animNode = newNode.createChildSceneNode();
             local coinItem = _scene.createItem("coin.mesh");
             coinItem.setRenderQueueGroup(65);
-            newNode.attachObject(coinItem);
-            newNode.setScale(coinSize, coinSize, coinSize);
+            animNode.attachObject(coinItem);
+            animNode.setScale(coinSize, coinSize, coinSize);
+            animNode.setPosition(startPos.x, startPos.y, 0);
             //TODO will want to animate the coin rotation as well.
             local newQuat = Quat(_random.rand()*1.0, Vec3(0.1, 1, 0))
-            newNode.setOrientation(quat * newQuat);
+            animNode.setOrientation(quat * newQuat);
 
             retVals[i] = newNode;
         }
@@ -100,7 +169,6 @@ enum CoinEffectStages{
                     chosenPos += gridStart;
                     chosenPos += _random.randVec2() * cellSize;
                     outPos.append(chosenPos);
-                    print("Placing coin " + i + " in " + idx);
                     if(usedCells == totalCells){
                         //Each cell is saturated, so reset the array
                         coinCells = array(totalCells, false);
@@ -116,8 +184,9 @@ enum CoinEffectStages{
     function update(){
         local entry = mAnimStages_[mAnimStage_];
         if(entry != null){
-            local finishedState = entry.update(mCoins_, mCoinPos_);
+            local finishedState = entry.update(mCoins_, mCoinPos_, mStartPos_, mEndPos_);
             if(finishedState != mAnimStage_){
+                if(finishedState == CoinEffectStages.MAX) return false;
                 setAnimStage(finishedState);
             }
         }
