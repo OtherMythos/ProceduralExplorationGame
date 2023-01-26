@@ -9,7 +9,8 @@ enum Enemy{
 
 enum ObjectType{
     SCREEN_DATA = "ScreenData",
-    POPUP_DATA = "PopupData"
+    POPUP_DATA = "PopupData",
+    EFFECT_DATA = "EffectData",
 };
 
 enum EnemyNames{
@@ -77,6 +78,13 @@ enum Screen{
 enum Popup{
     POPUP,
     BOTTOM_OF_SCREEN,
+
+    MAX
+};
+
+enum Effect{
+    EFFECT,
+    COIN_EFFECT,
 
     MAX
 };

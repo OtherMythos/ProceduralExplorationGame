@@ -5,7 +5,9 @@ enum CompositorSceneType{
     COMBAT,
     COMBAT_PLAYER,
     EXPLORATION,
-    WORLD_SCENE
+    WORLD_SCENE,
+    BG_EFFECT,
+    FG_EFFECT,
 
     MAX
 };
@@ -53,7 +55,10 @@ enum CompositorSceneType{
 
         local newWorkspace = _compositor.addWorkspace([newTex], newCamera, workspaceName, true);
 
-        local datablock = _hlms.unlit.createDatablock("renderTextureDatablock" + mTotalCompositors_);
+        local blendBlock = _hlms.getBlendblock({
+            "dst_blend_factor": _HLMS_SBF_ONE_MINUS_SOURCE_ALPHA
+        });
+        local datablock = _hlms.unlit.createDatablock("renderTextureDatablock" + mTotalCompositors_, blendBlock);
         datablock.setTexture(0, newTex);
 
         local compDef = CompositorDef(newWorkspace, newTex, datablock, compositorSceneType, newCamera);

@@ -61,4 +61,8 @@
 
         return win;
     }
+
+    function setZOrder(idx){
+        mWindow_.setZOrder(idx);
+    }
 };

@@ -99,6 +99,7 @@
     }
 
     function checkForEncounter(){
+        return;
         local foundSomething = _random.randInt(2000) == 0;
         if(foundSomething){
             //decide what was found.

@@ -10,10 +10,13 @@
 
         local layoutLine = _gui.createLayoutLine();
 
-        local buttonOptions = ["Trigger popup"];
+        local buttonOptions = ["Trigger popup", "Trigger coin effect"];
         local buttonFunctions = [
             function(widget, action){
                 ::PopupManager.displayPopup(Popup.BOTTOM_OF_SCREEN);
+            },
+            function(widget, action){
+                ::EffectManager.displayEffect(Effect.COIN_EFFECT);
             }
         ]
 

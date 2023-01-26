@@ -33,6 +33,39 @@ compositor_node renderTexture25Node
     }
 }
 
+compositor_node renderTexture60_65Node
+{
+    in 0 renderTexture
+    target renderTexture
+    {
+        pass clear
+        {
+            colour_value 0 0 0 0
+        }
+        pass render_scene
+        {
+            rq_first 60
+            rq_last 65
+        }
+    }
+}
+compositor_node renderTexture65_70Node
+{
+    in 0 renderTexture
+    target renderTexture
+    {
+        pass clear
+        {
+            colour_value 0 0 0 0
+        }
+        pass render_scene
+        {
+            rq_first 65
+            rq_last 70
+        }
+    }
+}
+
 compositor_node renderTexture30Node
 {
     in 0 renderTexture
@@ -97,6 +130,14 @@ workspace renderTexture30Workspace
 workspace renderTexture50_60Workspace
 {
     connect_output renderTexture50_60Node 0
+}
+workspace renderTexture60_65Workspace
+{
+    connect_output renderTexture60_65Node 0
+}
+workspace renderTexture65_70Workspace
+{
+    connect_output renderTexture65_70Node 0
 }
 
 workspace renderWindowWorkspace

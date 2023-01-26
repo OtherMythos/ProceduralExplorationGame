@@ -10,6 +10,11 @@
     "mScreenQueued_": false,
     "mQueuedScreens_": null,
 
+    mBGEffectRenderWindow = null
+    mFGEffectRenderWindow = null
+
+    mScreensZOrder = 40
+
     "Screens": array(Screen.MAX, null),
 
     /**
@@ -33,9 +38,16 @@
         mPreviousScreens_ = array(MAX_SCREENS, null);
         mQueuedScreens_ = array(MAX_SCREENS, null);
 
+        local order = mScreensZOrder;
+        mBGEffectRenderWindow = EffectAnimationRenderWindow(CompositorSceneType.BG_EFFECT);
+        mBGEffectRenderWindow.setZOrder(mScreensZOrder);
+
         for(local i = 0; i < MAX_SCREENS; i++){
             mPreviousScreens_[i] = [];
         }
+
+        mFGEffectRenderWindow = EffectAnimationRenderWindow(CompositorSceneType.FG_EFFECT);
+        mFGEffectRenderWindow.setZOrder(mScreensZOrder + MAX_SCREENS + 1);
     }
 
     function _createScreenForId(screenData){
@@ -79,7 +91,8 @@
 
         print("Setting up screen for layer " + layerId);
         screenObject.mLayerIdx = layerId;
-        mActiveScreens_[layerId].setup(screenData.data);
+        screenObject.setup(screenData.data);
+        screenObject.setZOrder(mScreensZOrder + layerId + 1);
     }
 
     function _getPrevScreen(layerId){
@@ -155,5 +168,3 @@
         }
     }
 };
-
-::ScreenManager.setup();
