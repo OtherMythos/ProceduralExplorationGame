@@ -106,8 +106,9 @@ enum ExplorationBusEvents{
         mExplorationProgressBar_.setPercentage(percentage);
     }
 
-    function notifyObjectFound(foundObject, idx){
-        mExplorationItemsContainer_.setObjectForIndex(foundObject, idx);
+    function notifyObjectFound(foundObject, idx, position = null){
+        local screenPos = position != null ? mWorldMapDisplay_.getWorldPositionInScreenSpace(position) : null;
+        mExplorationItemsContainer_.setObjectForIndex(foundObject, idx, screenPos);
     }
 
     function notifyEnemyEncounter(enemy){

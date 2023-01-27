@@ -119,9 +119,11 @@
         mFoundObjects_[idx] = foundObj;
         mNumFoundObjects_++;
 
+        local foundPosition = mSceneLogic_.getFoundPositionForItem(item);
+
         print(format("Found item %s at index %i", ::Items[item].getName(), idx));
 
-        if(mGui_) mGui_.notifyObjectFound(foundObj, idx);
+        if(mGui_) mGui_.notifyObjectFound(foundObj, idx, foundPosition);
     }
 
     function processFoundPlace(place){

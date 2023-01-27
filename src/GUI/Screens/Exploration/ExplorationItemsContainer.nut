@@ -16,7 +16,7 @@
     mLayoutLine_ = null;
 
     constructor(parentWin, bus){
-        mAnimator_ = ExplorationItemsContainerAnimator(this);
+        mAnimator_ = ExplorationItemsContainerAnimator(this, mNumSlots_);
 
         mWidth_ = _window.getWidth() * 0.9;
         mButtonSize_ = mWidth_ / 5;
@@ -83,7 +83,7 @@
         mWindow_.setProportionVertical(1);
     }
 
-    function setObjectForIndex(object, index){
+    function setObjectForIndex(object, index, screenStart){
         assert(index < mButtons_.len());
         local button = mButtons_[index];
         if(object.isNone()){
@@ -91,14 +91,19 @@
             return;
         }
         local sizerButton = mSizerPanels_[index];
-        button.setPosition(mWindow_.getPosition() + sizerButton.getPosition());
+        local buttonPos = mWindow_.getPosition() + sizerButton.getCentre();
+        local buttonSize = sizerButton.getSize();
+        button.setCentre(buttonPos);
+        button.setSize(buttonSize);
         button.setZOrder(200);
-        button.setSize(sizerButton.getSize());
 
         button.setText(object.toName(), false);
         button.setHidden(false);
         button.setSkinPack(object.getButtonSkinPack());
         mFoundObjects_[index] = object;
+
+        //If null is passed to "start" then the initial animation is not performed.
+        mAnimator_.startAnimForItem(::ExplorationGuiAnimation(button, {"start": screenStart, "end": buttonPos, "endSize": buttonSize}), index);
     }
 
     function update(){

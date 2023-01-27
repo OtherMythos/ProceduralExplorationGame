@@ -1,22 +1,18 @@
 ::ScreenManager.Screens[Screen.EXPLORATION_SCREEN].WorldMapDisplay <- class{
-    mWindow_ = null;
 
     mExplorationScenePanel_ = null;
     mCompositorId_ = null;
 
     constructor(parentWin){
-        mWindow_ = _gui.createWindow(parentWin);
-        mWindow_.setClipBorders(0, 0, 0, 0);
-
-        mExplorationScenePanel_ = mWindow_.createPanel();
+        mExplorationScenePanel_ = parentWin.createPanel();
         mExplorationScenePanel_.setPosition(0, 0);
     }
 
     function addToLayout(layoutLine){
-        layoutLine.addCell(mWindow_);
-        mWindow_.setExpandVertical(true);
-        mWindow_.setExpandHorizontal(true);
-        mWindow_.setProportionVertical(2);
+        layoutLine.addCell(mExplorationScenePanel_);
+        mExplorationScenePanel_.setExpandVertical(true);
+        mExplorationScenePanel_.setExpandHorizontal(true);
+        mExplorationScenePanel_.setProportionVertical(2);
     }
 
     function shutdownCompositor_(){
@@ -26,12 +22,28 @@
     }
 
     function notifyResize(){
-        local winSize = mWindow_.getSize();
-        mExplorationScenePanel_.setSize(winSize);
+        local winSize = mExplorationScenePanel_.getSize();
 
         local compId = ::CompositorManager.createCompositorWorkspace("renderTexture30Workspace", winSize, CompositorSceneType.EXPLORATION);
         local datablock = ::CompositorManager.getDatablockForCompositor(compId);
         mCompositorId_ = compId;
         mExplorationScenePanel_.setDatablock(datablock);
+    }
+
+    function getPosition(){
+        return mExplorationScenePanel_.getPosition();
+    }
+
+    function getWorldPositionInScreenSpace(pos){
+        local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
+        local worldPos = camera.getWorldPosInWindow(pos);
+
+        local winSize = mExplorationScenePanel_.getSize();
+        local width = winSize.x / 2;
+        local height = winSize.y / 2;
+        local posX = width + (width * worldPos.x);
+        local posY = height + (height * -worldPos.y);
+
+        return mExplorationScenePanel_.getPosition() + Vec2(posX, posY);
     }
 };

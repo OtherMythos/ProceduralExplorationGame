@@ -153,4 +153,11 @@
         mLandGenCounter_++;
         return vals;
     }
+
+    function getFoundPositionForItem(item){
+        //TODO in future might create an item in the scene for the found object.
+        local landPiece = mLandPieces_.top();
+
+        return landPiece.mNode_.getPosition();
+    }
 };
