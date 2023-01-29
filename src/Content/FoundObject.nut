@@ -1,10 +1,10 @@
 ::FoundObject <- class{
     type = FoundObjectType.NONE;
-    obj = ItemId.NONE;
+    obj = null;
 
     constructor(object=ItemId.NONE, objectType=FoundObjectType.NONE){
         type = objectType;
-        obj = object;
+        obj = object == ItemId.NONE ? Item() : object;
     }
 
     function valid(){
@@ -12,12 +12,15 @@
     }
 
     function isNone(){
-        return obj == ItemId.NONE;
+        if(type == FoundObjectType.PLACE){
+            return obj == Place.NONE;
+        }
+        return obj.isNone();
     }
 
     function toName(){
         if(type == FoundObjectType.ITEM){
-            return ::Items[obj].getName();
+            return obj.getName();
         }
         else if(type == FoundObjectType.PLACE){
             return ::Places[obj].getName();

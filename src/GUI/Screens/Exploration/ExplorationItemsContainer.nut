@@ -83,7 +83,7 @@
         mWindow_.setProportionVertical(1);
     }
 
-    function setObjectForIndex(object, index, screenStart){
+    function setObjectForIndex(object, index, screenStart=null){
         assert(index < mButtons_.len());
         local button = mButtons_[index];
         if(object.isNone()){

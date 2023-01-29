@@ -33,15 +33,42 @@ enum ItemId{
     STEEL_BATTLEAXE,
     STEEL_DAGGER,
 
+
+
     MAX,
 };
 
 enum ItemType{
     NONE,
     EQUIPPABLE,
-    CONSUMABLE
+    CONSUMABLE,
+    MONEY
 };
 
+/**
+ * Item objects.
+ * This separates items from itemDefs.
+ * ItemDefs are static and should not change.
+ * However, certain items might have effects such as curses, buffs, etc.
+ * This wrapper contains that information while also storing a reference to the item def.
+ */
+::Item <- class{
+    mItem_ = null;
+    constructor(item=ItemId.NONE){
+        mItem_ = ::Items[item];
+    }
+
+    function isNone() { return getType() == ItemId.NONE; }
+    function getDef(){ return mItem_; }
+    function getType(){ return mItem_.getType(); }
+    function getName(){ return mItem_.getName(); }
+    function getDescription(){ return mItem_.getDescription(); }
+    function getEquippableSlot(){ return mItem_.getEquippableSlot(); }
+    function getScrapVal(){ return mItem_.getScrapVal(); }
+    function toStats(){
+        return ::ItemHelper.itemToStats(getType());
+    }
+}
 ::ItemDef <- class{
     mName = null;
     mDesc = null;
@@ -71,6 +98,8 @@ enum ItemType{
 ::Items <- array(ItemId.MAX, null);
 
 //-------------------------------
+::Items[ItemId.NONE] = ItemDef("None", "None", ItemType.NONE, 1, EquippedSlotTypes.NONE);
+
 ::Items[ItemId.HEALTH_POTION] = ItemDef("Health Potion", "A potion of health. Bubbles gently inside a cast glass flask.", ItemType.CONSUMABLE, 5, EquippedSlotTypes.NONE);
 ::Items[ItemId.LARGE_HEALTH_POTION] = ItemDef("Large Health Potion", "A large potion of health.", ItemType.CONSUMABLE, 5, EquippedSlotTypes.NONE);
 
@@ -186,15 +215,13 @@ enum ItemType{
     }
 
     function actuateItem(item){
-        local itemDef = Items[item];
-
-        local itemType = itemDef.getType();
+        local itemType = item.getType();
         if(itemType == ItemType.EQUIPPABLE){
-            local slotIdx = itemDef.getEquippableSlot();
+            local slotIdx = item.getEquippableSlot();
             ::Base.mPlayerStats.equipItem(item, slotIdx);
         }
         else if(itemType == ItemType.CONSUMABLE){
-            local itemStats = ::ItemHelper.itemToStats(item);
+            local itemStats = item.toStats();
             assert(itemStats.mRestorativeHealth != 0);
             ::Base.mPlayerStats.alterPlayerHealth(itemStats.mRestorativeHealth);
         }else{

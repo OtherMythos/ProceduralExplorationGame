@@ -35,11 +35,12 @@ enum InventoryBusEvents{
         }
 
         function setItem(item){
-            if(item == ItemId.NONE){
+            //NONE is still used to reduce memory and allow easy searching for holes in the array.
+            if(item == ItemId.NONE || item.isNone()){
                 mButtonObject_.setHidden(true);
                 return;
             }
-            mButtonObject_.setText(::Items[item].getName());
+            mButtonObject_.setText(item.getName());
             mButtonObject_.setHidden(false);
         }
 
@@ -120,8 +121,8 @@ enum InventoryBusEvents{
             foreach(c,i in names){
                 local label = mWindow_.createLabel();
                 //To offset the None item.
-                local itemType = mStats_.mItems[c+1];
-                local itemName = itemType == null ? "None" : ::Items[itemType].getName();
+                local item = mStats_.mItems[c+1];
+                local itemName = item == null ? "None" : item.getName();
                 label.setText(i + ": " + itemName);
                 layout.addCell(label);
             }

@@ -13,7 +13,7 @@
             local stats = ::ItemHelper.ItemStat();
             foreach(i in mItems){
                 if(i == null) continue;
-                local newStats = ::ItemHelper.itemToStats(i);
+                local newStats = i.toStats();
                 stats += newStats;
             }
 

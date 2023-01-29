@@ -7,8 +7,8 @@
     constructor(){
         mInventoryItems_ = array(mInventorySize_, ItemId.NONE);
 
-        mInventoryItems_[0] = ItemId.HEALTH_POTION;
-        mInventoryItems_[1] = ItemId.LARGE_HEALTH_POTION;
+        mInventoryItems_[0] = ::Item(ItemId.HEALTH_POTION);
+        mInventoryItems_[1] = ::Item(ItemId.LARGE_HEALTH_POTION);
     }
 
     /**

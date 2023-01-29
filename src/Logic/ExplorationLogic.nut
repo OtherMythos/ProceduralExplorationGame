@@ -86,7 +86,7 @@
         if(foundSomething){
             //decide what was found.
             local item = _random.randInt(ItemId.NONE+1, ItemId.MAX-1);
-            processFoundItem(item);
+            processFoundItem(::Item(item));
             return;
         }
 
@@ -121,7 +121,7 @@
 
         local foundPosition = mSceneLogic_.getFoundPositionForItem(item);
 
-        print(format("Found item %s at index %i", ::Items[item].getName(), idx));
+        print(format("Found item %s at index %i", item.getName(), idx));
 
         if(mGui_) mGui_.notifyObjectFound(foundObj, idx, foundPosition);
     }

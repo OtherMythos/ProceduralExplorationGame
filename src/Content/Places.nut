@@ -1,3 +1,5 @@
+//TODO This should be PlaceId to match items.
+//Consider wrapping defs around a mutable wrapper same as items.
 enum Place{
     NONE,
     HAUNTED_WELL,

@@ -3,14 +3,14 @@
     mWindow_ = null;
     mInfoMode_ = null;
 
-    mItemType_ = ItemId.NONE;
+    mItem_ = null;
     mItemSlotIdx_ = 0;
 
     ItemStatsContainer = class{
         mWindow_ = null;
 
         constructor(parentWindow, item){
-            print("Showing info for item: " + ::Items[item].getName());
+            print("Showing info for item: " + item.getName());
 
             mWindow_ = _gui.createWindow(parentWindow);
             mWindow_.setSize(100, 100);
@@ -24,7 +24,7 @@
             text.setText("Stats:");
             layoutLine.addCell(text);
 
-            local stats = ::ItemHelper.itemToStats(item);
+            local stats = item.toStats();
             for(local i = 0; i < StatType.MAX; i++){
                 if(!stats.hasStatType(i)) continue;
                 addStatLabel(i, stats, mWindow_, layoutLine);
@@ -46,12 +46,11 @@
 
     function setup(data){
         mInfoMode_ = data.mode;
-        mItemType_ = data.item;
+        mItem_ = data.item;
         mItemSlotIdx_ = data.slotIdx;
 
-        local itemDef = ::Items[mItemType_];
-        local itemName = itemDef.getName();
-        local itemDescription = itemDef.getDescription();
+        local itemName = mItem_.getName();
+        local itemDescription = mItem_.getDescription();
 
         mWindow_ = _gui.createWindow();
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
@@ -74,7 +73,7 @@
         description.setExpandHorizontal(true);
         layoutLine.addCell(description);
 
-        local statsContainer = ItemStatsContainer(mWindow_, mItemType_);
+        local statsContainer = ItemStatsContainer(mWindow_, mItem_);
         statsContainer.addToLayout(layoutLine);
 
         local buttonData = getButtonsForType(mInfoMode_);
@@ -102,13 +101,13 @@
             buttonOptions = ["Keep", "Scrap"];
             buttonFunctions = [
                 function(widget, action){
-                    ::Base.mInventory.addToInventory(mItemType_);
+                    ::Base.mInventory.addToInventory(mItem_);
                     //TODO would be nice to do these with events.
                     if(mItemSlotIdx_ >= 0) ::Base.mExplorationLogic.removeFoundItem(mItemSlotIdx_);
                     closeScreen();
                 },
                 function(widget, action){
-                    ::Base.mInventory.addMoney(::Items[mItemType_].getScrapVal());
+                    ::Base.mInventory.addMoney(mItem_.getScrapVal());
                     if(mItemSlotIdx_ >= 0) ::Base.mExplorationLogic.removeFoundItem(mItemSlotIdx_);
                     closeScreen();
                 }
@@ -131,8 +130,8 @@
             buttonOptions = ["Use"];
             buttonFunctions = [
                 function(widget, action){
-                    ::Base.mInventory.removeFromInventory(mItemSlotIdx_, mItemType_);
-                    ::ItemHelper.actuateItem(mItemType_);
+                    ::Base.mInventory.removeFromInventory(mItemSlotIdx_, mItem_);
+                    ::ItemHelper.actuateItem(mItem_);
                     closeScreen();
                 }
             ];
