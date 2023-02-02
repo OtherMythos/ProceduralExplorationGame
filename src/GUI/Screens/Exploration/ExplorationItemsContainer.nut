@@ -62,7 +62,8 @@
         local foundObj = mFoundObjects_[id];
         local value = {
             "type": foundObj.type,
-            "slotIdx": id
+            "slotIdx": id,
+            "buttonCentre": widget.getCentre()
         };
         if(foundObj.type == FoundObjectType.ITEM){
             value.item <- foundObj.obj;

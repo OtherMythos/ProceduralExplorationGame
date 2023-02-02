@@ -17,9 +17,12 @@
     mActiveEffects_ = null
     mQueuedDestructionEffects_ = null
 
+    mTestPlane_ = null
+
     function setup(){
         mActiveEffects_ = [];
         mQueuedDestructionEffects_ = [];
+        mTestPlane_ = Plane(Vec3(0, 0, 1), Vec3());
     }
 
     function _wrapEffectData(data){
@@ -89,5 +92,18 @@
         if(destroyed){
             processEndedEffects();
         }
+    }
+
+    function getWorldPositionForWindowPos(winPos){
+        local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.FG_EFFECT);
+
+        local posX = winPos.x / _window.getWidth();
+        local posY = winPos.y / _window.getHeight();
+
+        local ray = _camera.getCameraToViewportRay(posX, posY);
+        local point = ray.intersects(mTestPlane_);
+        local windowPoint = ray.getPoint(point);
+
+        return (windowPoint.xy()) / 4;
     }
 };

@@ -79,6 +79,20 @@
         mExplorationPercentage_ = newPercentage;
     }
 
+    function wrapDataForFoundItem(item){
+        local data = null;
+        switch(item){
+            case ItemId.LARGE_BAG_OF_COINS:{
+                data = {"money": _random.randInt(50, 100)};
+                break;
+            }
+            default:{
+                break;
+            }
+        }
+        return ::Item(item, data);
+    }
+
     function checkForFoundObject(){
         if(mNumFoundObjects_ >= EXPLORATION_MAX_FOUND_ITEMS) return;
 
@@ -86,7 +100,8 @@
         if(foundSomething){
             //decide what was found.
             local item = _random.randInt(ItemId.NONE+1, ItemId.MAX-1);
-            processFoundItem(::Item(item));
+            local wrapped = wrapDataForFoundItem(item)
+            processFoundItem(wrapped);
             return;
         }
 

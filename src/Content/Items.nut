@@ -33,7 +33,7 @@ enum ItemId{
     STEEL_BATTLEAXE,
     STEEL_DAGGER,
 
-
+    LARGE_BAG_OF_COINS,
 
     MAX,
 };
@@ -54,10 +54,13 @@ enum ItemType{
  */
 ::Item <- class{
     mItem_ = null;
-    constructor(item=ItemId.NONE){
+    mData_ = null;
+    constructor(item=ItemId.NONE, data=null){
         mItem_ = ::Items[item];
+        mData_ = data;
     }
 
+    function getData() { return mData_; }
     function isNone() { return getType() == ItemId.NONE; }
     function getDef(){ return mItem_; }
     function getType(){ return mItem_.getType(); }
@@ -132,6 +135,8 @@ enum ItemType{
 ::Items[ItemId.STEEL_BOOTS] = ItemDef("Steel Boots", "A pair of boots made from steel.", ItemType.EQUIPPABLE, 30, EquippedSlotTypes.FEET);
 ::Items[ItemId.STEEL_BATTLEAXE] = ItemDef("Steel Battleaxe", "A battleaxe made from steel.", ItemType.EQUIPPABLE, 10, EquippedSlotTypes.SWORD);
 ::Items[ItemId.STEEL_DAGGER] = ItemDef("Steel Dagger", "A dagger made from steel.", ItemType.EQUIPPABLE, 10, EquippedSlotTypes.SWORD);
+
+::Items[ItemId.LARGE_BAG_OF_COINS] = ItemDef("Large bag of coins", "A hefty bag of coins", ItemType.MONEY, 20, EquippedSlotTypes.NONE);
 //-------------------------------
 
 ::ItemHelper <- {
@@ -224,6 +229,10 @@ enum ItemType{
             local itemStats = item.toStats();
             assert(itemStats.mRestorativeHealth != 0);
             ::Base.mPlayerStats.alterPlayerHealth(itemStats.mRestorativeHealth);
+        }
+        else if(itemType == ItemType.MONEY){
+            local data = item.getData();
+            ::Base.mInventory.addMoney(data.money);
         }else{
             assert(false);
         }

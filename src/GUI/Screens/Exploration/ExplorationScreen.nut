@@ -134,8 +134,19 @@ enum ExplorationBusEvents{
         if(event == ExplorationBusEvents.TRIGGER_ITEM){
 
             if(data.type == FoundObjectType.ITEM){
-                data.mode <- ItemInfoMode.KEEP_SCRAP_EXPLORATION;
-                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.ITEM_INFO_SCREEN, data));
+                if(data.item.getType() == ItemType.MONEY){
+                    //Just claim money immediately, no screen switching.
+                    local itemData = data.item.getData();
+                    ::ItemHelper.actuateItem(data.item);
+                    ::Base.mExplorationLogic.removeFoundItem(data.slotIdx);
+
+                    local worldPos = ::EffectManager.getWorldPositionForWindowPos(data.buttonCentre);
+                    ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.COIN_EFFECT, {"numCoins": itemData.money / 8, "start": worldPos, "end": Vec2(-4, 8)}));
+                }else{
+                    //Switch to the item info screen.
+                    data.mode <- ItemInfoMode.KEEP_SCRAP_EXPLORATION;
+                    ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.ITEM_INFO_SCREEN, data));
+                }
             }
             else if(data.type == FoundObjectType.PLACE){
                 ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLACE_INFO_SCREEN, data));
