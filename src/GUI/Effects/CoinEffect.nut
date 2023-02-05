@@ -44,7 +44,7 @@ enum CoinEffectStages{
                     coins[i].setPosition(newPos.x, newPos.y, 0);
                 }
                 mCurrent_++;
-                if(mCurrent_ >= mTotal_){
+                if(mCurrent_ >= mTotal_+1){
                     return CoinEffectStages.IDLE;
                 }
                 return CoinEffectStages.INITIAL_EXPAND;
@@ -66,7 +66,6 @@ enum CoinEffectStages{
             function start(coins, positions){ }
             function update(coins, positions, start, end){
                 local p = mCurrent_.tofloat() / mTotal_.tofloat()
-                //local animPercentage = sin((currentPercentage * PI) / 2);
                 local animPercentage = p * p * p * p * p;
                 for(local i = 0; i < coins.len(); i++){
                     local coinStart = start + positions[i];
@@ -79,7 +78,7 @@ enum CoinEffectStages{
                 }
 
                 mCurrent_++;
-                if(mCurrent_ >= mTotal_) return CoinEffectStages.SHRINK_TO_FINISH;
+                if(mCurrent_ >= mTotal_+1) return CoinEffectStages.SHRINK_TO_FINISH;
                 return CoinEffectStages.MERGE_TO_FINISH;
             }
         };
@@ -106,7 +105,6 @@ enum CoinEffectStages{
 
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
 
-        setupCameras();
         mCoins_ = createInitialCoins(mNumCoins_, mParentNode_, mStartPos_);
         mCoinPos_ = setupCoinPositions(mNumCoins_, Vec2(-cellSize * CELL_WIDTH / 2, -cellSize * CELL_HEIGHT / 2), cellSize);
 
@@ -131,7 +129,6 @@ enum CoinEffectStages{
             coinItem.setRenderQueueGroup(65);
             animNode.attachObject(coinItem);
             animNode.setScale(coinSize, coinSize, coinSize);
-            animNode.setPosition(startPos.x, startPos.y, 0);
             //TODO will want to animate the coin rotation as well.
             local newQuat = Quat(_random.rand()*1.0, Vec3(0.1, 1, 0))
             animNode.setOrientation(quat * newQuat);
@@ -192,18 +189,6 @@ enum CoinEffectStages{
         }
 
         return true;
-    }
-
-    function setupCameras(){
-        foreach(i in [CompositorSceneType.BG_EFFECT, CompositorSceneType.FG_EFFECT]){
-            local camera = ::CompositorManager.getCameraForSceneType(i);
-            assert(camera);
-            local node = camera.getParentNode();
-            node.setPosition(0, 0, 10);
-            camera.lookAt(0, 0, 0);
-            camera.setProjectionType(_PT_ORTHOGRAPHIC);
-            camera.setOrthoWindow(20, 20);
-        }
     }
 
     function setAnimStage(stage){

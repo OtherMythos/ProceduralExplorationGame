@@ -22,7 +22,7 @@
     function setup(){
         mActiveEffects_ = [];
         mQueuedDestructionEffects_ = [];
-        mTestPlane_ = Plane(Vec3(0, 0, 1), Vec3());
+        mTestPlane_ = Plane(Vec3(0, 0, 1), Vec3(0, 0, 0));
     }
 
     function _wrapEffectData(data){
@@ -100,10 +100,11 @@
         local posX = winPos.x / _window.getWidth();
         local posY = winPos.y / _window.getHeight();
 
-        local ray = _camera.getCameraToViewportRay(posX, posY);
+        local ray = camera.getCameraToViewportRay(posX, posY);
         local point = ray.intersects(mTestPlane_);
+        assert(point != false);
         local windowPoint = ray.getPoint(point);
 
-        return (windowPoint.xy()) / 4;
+        return (windowPoint.xy());
     }
 };

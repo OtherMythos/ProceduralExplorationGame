@@ -99,7 +99,8 @@
         local foundSomething = _random.randInt(50) == 0;
         if(foundSomething){
             //decide what was found.
-            local item = _random.randInt(ItemId.NONE+1, ItemId.MAX-1);
+            //local item = _random.randInt(ItemId.NONE+1, ItemId.MAX-1);
+            local item = ItemId.LARGE_BAG_OF_COINS;
             local wrapped = wrapDataForFoundItem(item)
             processFoundItem(wrapped);
             return;

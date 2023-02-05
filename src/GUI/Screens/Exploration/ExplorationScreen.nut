@@ -141,7 +141,8 @@ enum ExplorationBusEvents{
                     ::Base.mExplorationLogic.removeFoundItem(data.slotIdx);
 
                     local worldPos = ::EffectManager.getWorldPositionForWindowPos(data.buttonCentre);
-                    ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.COIN_EFFECT, {"numCoins": itemData.money / 8, "start": worldPos, "end": Vec2(-4, 8)}));
+                    local endPos = mMoneyCounter_.getPosition();
+                    ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.COIN_EFFECT, {"numCoins": itemData.money / 8, "start": worldPos, "end": endPos}));
                 }else{
                     //Switch to the item info screen.
                     data.mode <- ItemInfoMode.KEEP_SCRAP_EXPLORATION;

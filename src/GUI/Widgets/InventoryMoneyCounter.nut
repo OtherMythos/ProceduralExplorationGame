@@ -23,4 +23,8 @@
     function addToLayout(layout){
         layout.addCell(mMoneyLabel_);
     }
+
+    function getPosition(){
+        return ::EffectManager.getWorldPositionForWindowPos(mMoneyLabel_.getCentre())
+    }
 };

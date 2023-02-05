@@ -23,7 +23,7 @@
 
         //Create compositor
         setupCompositor();
-
+        setupCamera();
     }
 
     function shutdown(){
@@ -55,6 +55,19 @@
         local datablock = ::CompositorManager.getDatablockForCompositor(compId);
         mCompositorId_ = compId;
         mCompositorPanel_.setDatablock(datablock);
+    }
+
+    function setupCamera(){
+        //TODO there will likely be a better place to put this.
+        //The problem is that different effects might need different camera settings.
+        local camera = ::CompositorManager.getCameraForSceneType(mCompositorType_);
+        assert(camera);
+        local node = camera.getParentNode();
+        node.setPosition(0, 0, 10);
+        camera.lookAt(0, 0, 0);
+        camera.setAspectRatio(_window.getWidth().tofloat() / _window.getHeight().tofloat());
+        camera.setProjectionType(_PT_ORTHOGRAPHIC);
+        camera.setOrthoWindow(20, 20);
     }
 
     function setZOrder(idx){
