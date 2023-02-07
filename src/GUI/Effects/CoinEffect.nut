@@ -16,6 +16,7 @@ enum CoinEffectStages{
     static CELL_HEIGHT = 4;
     mAnimStage_ = CoinEffectStages.NONE;
 
+    mMoneyAdding_ = 0;
     mNumCoins_ = 10;
     mStartPos_ = Vec2(0, 0);
     mEndPos_ = Vec2(0, 0);
@@ -26,6 +27,7 @@ enum CoinEffectStages{
         mNumCoins_ = data.numCoins;
         mStartPos_ = data.start;
         mEndPos_ = data.end;
+        mMoneyAdding_ = data.money;
 
         mAnimStages_[CoinEffectStages.INITIAL_EXPAND] = {
             mCurrent_ = 0
@@ -114,6 +116,8 @@ enum CoinEffectStages{
     function destroy(){
         mCoins_.clear();
         mParentNode_.destroyNodeAndChildren();
+
+        _event.transmit(Event.MONEY_ADDED, mMoneyAdding_);
     }
 
     function createInitialCoins(numCoins, parentNode, startPos){

@@ -100,6 +100,7 @@ enum ExplorationBusEvents{
     function update(){
         mLogicInterface_.tickUpdate();
         mExplorationItemsContainer_.update();
+        mMoneyCounter_.update();
     }
 
     function notifyExplorationPercentage(percentage){
@@ -142,7 +143,7 @@ enum ExplorationBusEvents{
 
                     local worldPos = ::EffectManager.getWorldPositionForWindowPos(data.buttonCentre);
                     local endPos = mMoneyCounter_.getPosition();
-                    ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.COIN_EFFECT, {"numCoins": itemData.money / 8, "start": worldPos, "end": endPos}));
+                    ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.COIN_EFFECT, {"numCoins": itemData.money / 8, "start": worldPos, "end": endPos, "money": itemData.money}));
                 }else{
                     //Switch to the item info screen.
                     data.mode <- ItemInfoMode.KEEP_SCRAP_EXPLORATION;

@@ -16,7 +16,7 @@
                 ::PopupManager.displayPopup(Popup.BOTTOM_OF_SCREEN);
             },
             function(widget, action){
-                ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.COIN_EFFECT, {"numCoins": 10, "start": Vec2(0, 0), "end": Vec2(-2, 0)}));
+                ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.COIN_EFFECT, {"numCoins": 10, "start": Vec2(0, 0), "end": Vec2(-2, 0), "money": 10}));
             }
         ]
 

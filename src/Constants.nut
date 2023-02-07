@@ -40,6 +40,7 @@ enum Event{
     PLAYER_DIED = 1007,
 
     COMBAT_SPOILS_CHANGE = 1008
+    MONEY_ADDED = 1009,
 }
 
 enum FoundObjectType{
