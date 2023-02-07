@@ -1,6 +1,7 @@
 ::ScreenManager.Screens[Screen.ENCOUNTER_POPUP_SCREEN] = class extends ::Screen{
 
     mCount_ = 0;
+    mMaxCount_ = 150;
     mBackgroundColour_ = false;
 
     mBackgroundWindow_ = null;
@@ -35,11 +36,11 @@
             setBackground(mBackgroundColour_);
         }
 
-        if(mCount_ >= 150){
-            ::ScreenManager.transitionToScreen(null, null, 2);
-            //TODO would need to generate some new combat data here for the new encounter.
+        if(mCount_ == mMaxCount_){
+            ::ScreenManager.transitionToScreen(null, null, mLayerIdx);
             ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COMBAT_SCREEN, {"logic": ::Base.mCombatLogic}));
         }
+        assert(mCount_ <= mMaxCount_);
     }
 
     function setBackground(background){

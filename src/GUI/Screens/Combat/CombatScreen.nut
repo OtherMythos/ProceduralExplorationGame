@@ -38,6 +38,8 @@ enum CombatBusEvents{
 
 
     function shutdown(){
+        print("Destroying combat screen");
+
         mCombatDisplay_.shutdown();
 
         base.shutdown();
