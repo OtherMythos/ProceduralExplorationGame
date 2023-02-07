@@ -20,14 +20,14 @@ enum CoinEffectStages{
     mNumCoins_ = 10;
     mStartPos_ = Vec2(0, 0);
     mEndPos_ = Vec2(0, 0);
-
-    mAnimStages_ = array(CoinEffectStages.MAX);
+    mAnimStages_ = null;
 
     function setup(data){
         mNumCoins_ = data.numCoins;
         mStartPos_ = data.start;
         mEndPos_ = data.end;
         mMoneyAdding_ = data.money;
+        mAnimStages_ = array(CoinEffectStages.MAX);
 
         mAnimStages_[CoinEffectStages.INITIAL_EXPAND] = {
             mCurrent_ = 0
