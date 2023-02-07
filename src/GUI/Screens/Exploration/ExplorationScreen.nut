@@ -124,6 +124,10 @@ enum ExplorationBusEvents{
         mExplorationProgressBar_.showButtons(false);
     }
 
+    function notifyFoundItemRemoved(idx){
+        mExplorationItemsContainer_.setObjectForIndex(FoundObject(), idx, null);
+    }
+
     function shutdown(){
         mLogicInterface_.shutdown();
         mMoneyCounter_.shutdown();

@@ -162,6 +162,7 @@
         mFoundObjects_[idx] = null;
         mNumFoundObjects_--;
         assert(mNumFoundObjects_ >= 0);
+        if(mGui_) mGui_.notifyFoundItemRemoved(idx);
     }
 
     function _setupDataForCombat(enemy){
