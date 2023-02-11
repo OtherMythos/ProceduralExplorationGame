@@ -4,6 +4,8 @@ function start(){
     _doFile("res://src/System/CompositorManager.nut");
     ::CompositorManager.setup();
 
+    _doFile("res://src/Util/StateMachine.nut");
+
     _gui.setScrollSpeed(5.0);
 
     local winSize = Vec2(_window.getWidth(), _window.getHeight());
