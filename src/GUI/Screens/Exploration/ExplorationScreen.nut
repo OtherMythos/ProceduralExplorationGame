@@ -112,8 +112,12 @@ enum ExplorationBusEvents{
         mExplorationItemsContainer_.setObjectForIndex(foundObject, idx, screenPos);
     }
 
-    function notifyEnemyEncounter(enemy){
-        ::ScreenManager.transitionToScreen(Screen.ENCOUNTER_POPUP_SCREEN, null, 3);
+    function notifyEnemyEncounter(combatData, position){
+        local screenPos = ::EffectManager.getWorldPositionForWindowPos(mWorldMapDisplay_.getWorldPositionInScreenSpace(position));
+        local endPos = ::EffectManager.getWorldPositionForWindowPos(Vec2(_window.getWidth() / 2, _window.getHeight() / 2));
+
+        local data = {"combatData": combatData, "start": screenPos, "end": endPos};
+        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.ENCOUNTER_POPUP_SCREEN, data), null, 3);
     }
 
     function notifyExplorationEnd(){

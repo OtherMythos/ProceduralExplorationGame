@@ -24,7 +24,6 @@ local CoinEffectStateMachine = class extends ::Util.StateMachine{
         function update(p, data){
             local animPercentage = 1 - pow(1 - p, 4);
             for(local i = 0; i < data.coins.len(); i++){
-                print(data.pos[i]);
                 local newPos = data.start + (data.pos[i] * animPercentage);
                 data.coins[i].setPosition(newPos.x, newPos.y, 0);
             }

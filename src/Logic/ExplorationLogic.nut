@@ -171,13 +171,16 @@
         ];
         local currentCombatData = ::Combat.CombatData(::Base.mPlayerStats.mPlayerCombatStats, enemyData);
         ::Base.notifyEncounter(currentCombatData)
+        return currentCombatData;
     }
 
     function processEncounter(enemy){
         print("Encountered enemy " + ::ItemHelper.enemyToName(enemy));
 
-        _setupDataForCombat(enemy);
-        if(mGui_) mGui_.notifyEnemyEncounter(enemy);
+        local foundPosition = mSceneLogic_.getFoundPositionForEncounter(enemy);
+
+        local combatData = _setupDataForCombat(enemy);
+        if(mGui_) mGui_.notifyEnemyEncounter(combatData, foundPosition);
         mEnemyEncountered_ = true;
     }
 

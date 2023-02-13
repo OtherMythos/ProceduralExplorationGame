@@ -160,4 +160,10 @@
 
         return landPiece.mNode_.getPosition();
     }
+
+    function getFoundPositionForEncounter(enemy){
+        local landPiece = mLandPieces_.top();
+
+        return landPiece.mNode_.getPosition();
+    }
 };
