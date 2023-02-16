@@ -6,6 +6,8 @@ enum EncounterPopupScreenStages{
 
     MAX
 }
+const ENCOUNTER_EFFECT_ENEMY_Z = 50;
+
 local EncounterPopupScreenStateMachine = class extends ::Util.StateMachine{
     mStates_ = array(EncounterPopupScreenStages.MAX);
 };
@@ -28,7 +30,7 @@ local EncounterPopupScreenStateMachine = class extends ::Util.StateMachine{
             local val = 1 + c3 * pow(p - 1, 3) + c1 * pow(p - 1, 2);
 
             local animY = computePoint(data, val);
-            data.node.setPosition(animX.x, animY.y, 0);
+            data.node.setPosition(animX.x, animY.y, ENCOUNTER_EFFECT_ENEMY_Z);
         }
         function computePoint(data, v){
             return data.start + ((data.end - data.start) * v);
@@ -163,7 +165,7 @@ local EncounterPopupScreenStateMachine = class extends ::Util.StateMachine{
         animNode.attachObject(opponentItem);
 
         newNode.setScale(0.5, 0.5, 0.5);
-        newNode.setPosition(Vec3(mEnemyStart_.x, mEnemyStart_.y, 0));
+        newNode.setPosition(Vec3(mEnemyStart_.x, mEnemyStart_.y, ENCOUNTER_EFFECT_ENEMY_Z));
 
         mObjectNode_ = newNode;
         mAnimNode_ = animNode;

@@ -63,7 +63,7 @@
         local camera = ::CompositorManager.getCameraForSceneType(mCompositorType_);
         assert(camera);
         local node = camera.getParentNode();
-        node.setPosition(0, 0, 10);
+        node.setPosition(0, 0, EFFECT_WINDOW_CAMERA_Z);
         camera.lookAt(0, 0, 0);
         camera.setAspectRatio(_window.getWidth().tofloat() / _window.getHeight().tofloat());
         camera.setProjectionType(_PT_ORTHOGRAPHIC);

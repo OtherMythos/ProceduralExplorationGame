@@ -7,6 +7,7 @@ enum CoinEffectStages{
 
     MAX
 }
+const COIN_EFFECT_COIN_Z = 10;
 
 local CoinEffectStateMachine = class extends ::Util.StateMachine{
     mStates_ = array(CoinEffectStages.MAX);
@@ -18,14 +19,14 @@ local CoinEffectStateMachine = class extends ::Util.StateMachine{
         mNextState_ = CoinEffectStages.IDLE;
         function start(data){
             foreach(i in data.coins){
-                i.setPosition(0, 0, 0);
+                i.setPosition(0, 0, COIN_EFFECT_COIN_Z);
             }
         }
         function update(p, data){
             local animPercentage = 1 - pow(1 - p, 4);
             for(local i = 0; i < data.coins.len(); i++){
                 local newPos = data.start + (data.pos[i] * animPercentage);
-                data.coins[i].setPosition(newPos.x, newPos.y, 0);
+                data.coins[i].setPosition(newPos.x, newPos.y, COIN_EFFECT_COIN_Z);
             }
         }
     };
@@ -44,7 +45,7 @@ local CoinEffectStateMachine = class extends ::Util.StateMachine{
             for(local i = 0; i < data.coins.len(); i++){
                 local coinStart = data.start + data.pos[i];
                 local newPos = (coinStart - (coinStart - data.end) * animPercentage);
-                data.coins[i].setPosition(newPos.x, newPos.y, 0);
+                data.coins[i].setPosition(newPos.x, newPos.y, COIN_EFFECT_COIN_Z);
                 //Apply some scale on the way in.
                 local scaleNode = data.coins[i].getChild(0);
                 local newScale = (1.0 - animPercentage) * 0.3 + 0.2;

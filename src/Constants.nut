@@ -1,5 +1,7 @@
 const TRIGGER = 0;
 
+const EFFECT_WINDOW_CAMERA_Z = 100;
+
 enum Enemy{
     NONE,
     GOBLIN,
