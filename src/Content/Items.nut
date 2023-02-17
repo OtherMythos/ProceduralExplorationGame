@@ -53,15 +53,17 @@ enum ItemType{
  * This wrapper contains that information while also storing a reference to the item def.
  */
 ::Item <- class{
+    mItemId_ = ItemId.NONE;
     mItem_ = null;
     mData_ = null;
     constructor(item=ItemId.NONE, data=null){
+        mItemId_ = item;
         mItem_ = ::Items[item];
         mData_ = data;
     }
 
     function getData() { return mData_; }
-    function isNone() { return getType() == ItemId.NONE; }
+    function isNone() { return mItemId_ == ItemId.NONE; }
     function getDef(){ return mItem_; }
     function getType(){ return mItem_.getType(); }
     function getName(){ return mItem_.getName(); }
@@ -70,6 +72,9 @@ enum ItemType{
     function getScrapVal(){ return mItem_.getScrapVal(); }
     function toStats(){
         return ::ItemHelper.itemToStats(getType());
+    }
+    function _tostring(){
+        return ::wrapToString(::Item, "Item", getName());
     }
 }
 ::ItemDef <- class{

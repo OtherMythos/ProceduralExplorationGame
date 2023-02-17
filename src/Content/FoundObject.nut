@@ -25,9 +25,16 @@
         else if(type == FoundObjectType.PLACE){
             return ::Places[obj].getName();
         }
+        else if(type == FoundObjectType.NONE){
+            return "None";
+        }
         else{
             assert(false);
         }
+    }
+
+    function _tostring(){
+        return ::wrapToString(::FoundObject, "FoundObject", toName());
     }
 
     function getButtonSkinPack(){
