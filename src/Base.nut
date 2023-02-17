@@ -74,6 +74,9 @@
         _doFile("res://src/Logic/Scene/CombatSceneLogic.nut");
         _doFile("res://src/Logic/StoryContentLogic.nut");
 
+        _doFile("res://src/GUI/RenderIconManager.nut");
+        ::RenderIconManager.setup();
+
         mExplorationLogic = ExplorationLogic();
         local enemyData = [
             ::Combat.CombatStats(Enemy.GOBLIN, 20),
