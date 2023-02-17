@@ -2,6 +2,9 @@ const TRIGGER = 0;
 
 const EFFECT_WINDOW_CAMERA_Z = 100;
 
+const SCREENS_START_Z = 40;
+const POPUPS_START_Z = 60;
+
 enum Enemy{
     NONE,
     GOBLIN,
@@ -63,7 +66,6 @@ enum Screen{
     SAVE_SELECTION_SCREEN,
     GAMEPLAY_MAIN_MENU_SCREEN,
     EXPLORATION_SCREEN,
-    ENCOUNTER_POPUP_SCREEN,
     COMBAT_SCREEN,
     ITEM_INFO_SCREEN,
     INVENTORY_SCREEN,
@@ -81,6 +83,7 @@ enum Screen{
 enum Popup{
     POPUP,
     BOTTOM_OF_SCREEN,
+    ENCOUNTER,
 
     MAX
 };

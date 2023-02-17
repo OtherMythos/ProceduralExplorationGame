@@ -117,7 +117,7 @@ enum ExplorationBusEvents{
         local endPos = ::EffectManager.getWorldPositionForWindowPos(Vec2(_window.getWidth() / 2, _window.getHeight() / 2));
 
         local data = {"combatData": combatData, "start": screenPos, "end": endPos};
-        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.ENCOUNTER_POPUP_SCREEN, data), null, 3);
+        ::PopupManager.displayPopup(::PopupManager.PopupData(Popup.ENCOUNTER, data));
     }
 
     function notifyExplorationEnd(){

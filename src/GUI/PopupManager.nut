@@ -23,7 +23,7 @@
     function _wrapPopupData(data){
         if(data == null) return data;
         local popupData = data;
-        if(typeof popupData != ObjectType.SCREEN_DATA){
+        if(typeof popupData != ObjectType.POPUP_DATA){
             popupData = PopupData(data, null);
         }
         return popupData;
@@ -44,6 +44,8 @@
 
         popupObject.setup(popupData.data);
         mActivePopups_.append(popupObject);
+
+        popupObject.setZOrder(POPUPS_START_Z);
     }
 
     function purgeOldPopups_(){
@@ -61,6 +63,7 @@
         foreach(c,i in mActivePopups_){
             local alive = i.update();
             if(!alive){
+                print("Shutting down popup " + c);
                 i.shutdown();
                 mActivePopups_[c] = null;
                 popupFinished = true;

@@ -48,7 +48,7 @@ local EncounterPopupScreenStateMachine = class extends ::Util.StateMachine{
     };
 }
 
-::ScreenManager.Screens[Screen.ENCOUNTER_POPUP_SCREEN] = class extends ::Screen{
+::PopupManager.Popups[Popup.ENCOUNTER] = class extends ::Popup{
 
     mCombatData_ = null;
     mEnemyStart_ = null;
@@ -77,26 +77,26 @@ local EncounterPopupScreenStateMachine = class extends ::Util.StateMachine{
         mBackgroundWindow_ = createBackgroundScreen_();
         mBackgroundWindow_.setZOrder(60);
 
-        mWindow_ = _gui.createWindow();
-        mWindow_.setSize(winWidth, _window.getHeight() * 0.333);
-        mWindow_.setPosition(_window.getWidth() * 0.1, _window.getHeight() * 0.333);
-        mWindow_.setClipBorders(10, 10, 10, 10);
+        mPopupWin_ = _gui.createWindow();
+        mPopupWin_.setSize(winWidth, _window.getHeight() * 0.333);
+        mPopupWin_.setPosition(_window.getWidth() * 0.1, _window.getHeight() * 0.333);
+        mPopupWin_.setClipBorders(10, 10, 10, 10);
 
-        local title = mWindow_.createLabel();
+        local title = mPopupWin_.createLabel();
         title.setDefaultFontSize(title.getDefaultFontSize() * 2);
         title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
         title.setText("Encounter");
         title.setSize(winWidth, title.getSize().y);
         title.setTextColour(0, 0, 0, 1);
 
-        local enemyName = mWindow_.createLabel();
+        local enemyName = mPopupWin_.createLabel();
         enemyName.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
         enemyName.setText(getNameForEnemies(mCombatData_));
         enemyName.setSize(winWidth, enemyName.getSize().y);
         enemyName.setTextColour(0, 0, 0, 1);
 
-        mWindow_.setSize(winWidth, title.getSize().y + 10*2);
-        mWindow_.setHidden(true);
+        mPopupWin_.setSize(winWidth, title.getSize().y + 10*2);
+        mPopupWin_.setHidden(true);
 
         setBackground(mBackgroundColour_);
 
@@ -110,7 +110,7 @@ local EncounterPopupScreenStateMachine = class extends ::Util.StateMachine{
             "end": targetPos,
             "node": mObjectNode_,
             "animNode": mAnimNode_,
-            "win": mWindow_
+            "win": mPopupWin_
         };
         mStateMachine_ = EncounterPopupScreenStateMachine(machineData);
         mStateMachine_.setState(EncounterPopupScreenStages.INITIAL_APPEAR);
@@ -135,21 +135,24 @@ local EncounterPopupScreenStateMachine = class extends ::Util.StateMachine{
         }
 
         if(mCount_ == mMaxCount_){
-            ::ScreenManager.transitionToScreen(null, null, mLayerIdx);
+            //::ScreenManager.transitionToScreen(null, null, mLayerIdx);
             ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COMBAT_SCREEN, {"logic": ::Base.mCombatLogic}));
+            return false;
         }
         assert(mCount_ <= mMaxCount_);
 
         mStateMachine_.update();
+
+        return true;
     }
 
     function setBackground(background){
-        if(background) mWindow_.setDatablock("gui/encounterWindowFirstColour");
-        else mWindow_.setDatablock("gui/encounterWindowSecondColour");
+        if(background) mPopupWin_.setDatablock("gui/encounterWindowFirstColour");
+        else mPopupWin_.setDatablock("gui/encounterWindowSecondColour");
     }
 
     function shutdown(){
-        _gui.destroy(mWindow_);
+        _gui.destroy(mPopupWin_);
         _gui.destroy(mBackgroundWindow_);
 
         mParentNode_.destroyNodeAndChildren();

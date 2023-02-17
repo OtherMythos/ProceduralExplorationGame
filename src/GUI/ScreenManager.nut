@@ -13,7 +13,7 @@
     mBGEffectRenderWindow = null
     mFGEffectRenderWindow = null
 
-    mScreensZOrder = 40
+    mScreensZOrder = SCREENS_START_Z
 
     "Screens": array(Screen.MAX, null),
 
@@ -38,7 +38,6 @@
         mPreviousScreens_ = array(MAX_SCREENS, null);
         mQueuedScreens_ = array(MAX_SCREENS, null);
 
-        local order = mScreensZOrder;
         mBGEffectRenderWindow = EffectAnimationRenderWindow(CompositorSceneType.BG_EFFECT);
         mBGEffectRenderWindow.setZOrder(mScreensZOrder);
 
