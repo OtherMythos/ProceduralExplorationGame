@@ -51,14 +51,14 @@
             layoutLine.addCell(button);
         }
 
-        local combatData = data.logic.mData_;
-        local spoils = combatData.mCombatSpoils;
-        setObjectsForData(spoils);
-
         layoutLine.setSize(mWindow_.getSizeAfterClipping());
         layoutLine.setHardMaxSize(mWindow_.getSizeAfterClipping());
         layoutLine.layout();
         mItemsContainer.sizeForButtons();
+
+        local combatData = data.logic.mData_;
+        local spoils = combatData.mCombatSpoils;
+        setObjectsForData(spoils);
 
         mBus_.registerCallback(busCallback, this);
         _event.subscribe(Event.COMBAT_SPOILS_CHANGE, receiveSpoilsChange, this);
