@@ -23,9 +23,9 @@ class XMLWriter:
             v = self.data.verts[i]
             #Order of y and z flipped for Ogre's coordinate system.
             pos = ET.SubElement(vert, "position")
-            pos.attrib["x"] = str(float(v[0]))
-            pos.attrib["y"] = str(float(v[2]))
-            pos.attrib["z"] = str(float(-v[1]))
+            pos.attrib["x"] = str(float(v[0]-0.5))
+            pos.attrib["y"] = str(float(v[2]-0.5))
+            pos.attrib["z"] = str(float(-(v[1]-0.5)))
 
             n = self.data.vertNormals[i]
             normal = ET.SubElement(vert, "normal")
