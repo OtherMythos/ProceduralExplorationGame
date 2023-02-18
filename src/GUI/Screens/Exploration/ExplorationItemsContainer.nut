@@ -2,10 +2,7 @@
     mWindow_ = null;
     mPanel_ = null;
     mSizerPanels_ = null;
-    mButtons_ = null;
-    mRenderedIcons_ = null;
     mFoundWidgetButtons_ = null;
-    mFoundObjects_ = null;
     mBus_ = null;
     mBackground_ = null;
     mAnimator_ = null;
@@ -34,54 +31,24 @@
         mBackground_.setSkin("internal/WindowSkin");
 
         mLayoutLine_ = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
-        mButtons_ = array(mNumSlots_);
-        mRenderedIcons_ = array(mNumSlots_);
         mSizerPanels_ = array(mNumSlots_);
-        mFoundObjects_ = array(mNumSlots_, null);
         mFoundWidgetButtons_ = array(mNumSlots_, null);
 
         //These widgets just leverage the sizer functionality to position the parent buttons.
         for(local i = 0; i < mNumSlots_; i++){
-            local button = mWindow_.createPanel();
-            button.setClickable(false);
-            button.setExpandVertical(true);
-            button.setExpandHorizontal(true);
-            button.setProportionHorizontal(1);
-            mLayoutLine_.addCell(button);
-            mSizerPanels_[i] = button;
+            local panel = mWindow_.createPanel();
+            panel.setClickable(false);
+            panel.setExpandVertical(true);
+            panel.setExpandHorizontal(true);
+            panel.setProportionHorizontal(1);
+            mLayoutLine_.addCell(panel);
+            mSizerPanels_[i] = panel;
         }
         for(local i = 0; i < mNumSlots_; i++){
-            local button = parentWin.createButton();
-            button.setText("Empty");
-            button.setHidden(true);
-            button.setUserId(i);
-            button.attachListenerForEvent(buttonPressed, _GUI_ACTION_PRESSED, this);
-            mButtons_[i] = button;
-
-            local newWidget = ExplorationFoundItemWidget(parentWin);
+            local newWidget = ExplorationFoundItemWidget(parentWin, i, mBus_);
             mFoundWidgetButtons_[i] = newWidget;
         }
         mLayoutLine_.setMarginForAllCells(10, 10);
-    }
-
-    function buttonPressed(widget, action){
-        local id = widget.getUserId();
-        local foundObj = mFoundObjects_[id];
-        local value = {
-            "type": foundObj.type,
-            "slotIdx": id,
-            "buttonCentre": widget.getCentre()
-        };
-        if(foundObj.type == FoundObjectType.ITEM){
-            value.item <- foundObj.obj;
-        }
-        else if(foundObj.type == FoundObjectType.PLACE){
-            value.place <- foundObj.obj;
-        }else{
-            assert(false);
-        }
-
-        mBus_.notifyEvent(ExplorationBusEvents.TRIGGER_ITEM, value);
     }
 
     function addToLayout(layoutLine){
@@ -92,33 +59,22 @@
     }
 
     function setObjectForIndex(object, index, screenStart=null){
-        assert(index < mButtons_.len());
-        local button = mButtons_[index];
+        assert(index < mFoundWidgetButtons_.len());
         local widget = mFoundWidgetButtons_[index];
         if(object.isNone()){
-            button.setHidden(true);
             widget.deactivate();
             return;
         }
         local sizerButton = mSizerPanels_[index];
         local buttonPos = mWindow_.getPosition() + sizerButton.getCentre();
         local buttonSize = sizerButton.getSize();
-        button.setCentre(buttonPos);
-        button.setSize(buttonSize);
-        button.setZOrder(200);
 
-        button.setText(object.toName(), false);
-        button.setHidden(false);
-        button.setSkinPack(object.getButtonSkinPack());
-        mFoundObjects_[index] = object;
+        widget.setObject(object);
+        widget.setSize(buttonSize);
+        widget.setCentre(buttonPos);
 
         //If null is passed to "start" then the initial animation is not performed.
-        mAnimator_.startAnimForItem(::ExplorationGuiAnimation(button, {"start": screenStart, "end": buttonPos, "endSize": buttonSize}), index);
-
-        //TODO merge the buttons into this object as well.
-        widget.setObject(object);
-        widget.setCentre(buttonPos);
-        widget.setSize(buttonSize);
+        //mAnimator_.startAnimForItem(::ExplorationGuiAnimation(button, {"start": screenStart, "end": buttonPos, "endSize": buttonSize}), index);
     }
 
     function update(){
