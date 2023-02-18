@@ -3,6 +3,8 @@
     mPanel_ = null;
     mSizerPanels_ = null;
     mButtons_ = null;
+    mRenderedIcons_ = null;
+    mFoundWidgetButtons_ = null;
     mFoundObjects_ = null;
     mBus_ = null;
     mBackground_ = null;
@@ -33,8 +35,10 @@
 
         mLayoutLine_ = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
         mButtons_ = array(mNumSlots_);
+        mRenderedIcons_ = array(mNumSlots_);
         mSizerPanels_ = array(mNumSlots_);
         mFoundObjects_ = array(mNumSlots_, null);
+        mFoundWidgetButtons_ = array(mNumSlots_, null);
 
         //These widgets just leverage the sizer functionality to position the parent buttons.
         for(local i = 0; i < mNumSlots_; i++){
@@ -53,6 +57,9 @@
             button.setUserId(i);
             button.attachListenerForEvent(buttonPressed, _GUI_ACTION_PRESSED, this);
             mButtons_[i] = button;
+
+            local newWidget = ExplorationFoundItemWidget(parentWin);
+            mFoundWidgetButtons_[i] = newWidget;
         }
         mLayoutLine_.setMarginForAllCells(10, 10);
     }
@@ -87,8 +94,10 @@
     function setObjectForIndex(object, index, screenStart=null){
         assert(index < mButtons_.len());
         local button = mButtons_[index];
+        local widget = mFoundWidgetButtons_[index];
         if(object.isNone()){
             button.setHidden(true);
+            widget.deactivate();
             return;
         }
         local sizerButton = mSizerPanels_[index];
@@ -105,10 +114,15 @@
 
         //If null is passed to "start" then the initial animation is not performed.
         mAnimator_.startAnimForItem(::ExplorationGuiAnimation(button, {"start": screenStart, "end": buttonPos, "endSize": buttonSize}), index);
+
+        //TODO merge the buttons into this object as well.
+        widget.setObject(object);
+        widget.setCentre(buttonPos);
+        widget.setSize(buttonSize);
     }
 
     function update(){
-        mAnimator_.update(mButtons_, mFoundObjects_);
+        mAnimator_.update();
     }
 
     function sizeForButtons(){

@@ -1,21 +1,34 @@
 ::RenderIconManager <- {
 
     RenderIcon = class{
+        mParentNode_ = null;
         mMesh_ = null;
         mMeshItem_ = null;
         mNode_ = null;
 
         mCurrentScreenPos_ = null;
 
-        constructor(parentNode, mesh){
+        constructor(parentNode){
+            mParentNode_ = parentNode;
+        }
+
+        function setMesh(mesh){
             mMesh_ = mesh;
             mCurrentScreenPos_ = Vec2();
 
-            mNode_ = parentNode.createChildSceneNode();
+            mNode_ = mParentNode_.createChildSceneNode();
             local item = _scene.createItem(mesh);
             item.setRenderQueueGroup(66);
             mNode_.attachObject(item);
             mMeshItem_ = item;
+        }
+
+        function destroy(){
+            mNode_.destroyNodeAndChildren();
+
+            mNode_ = null;
+            mMesh_ = null;
+            mMeshItem_ = null;
         }
 
         function setPosition(pos){
@@ -35,10 +48,15 @@
             local posDiff = foundPos - mNode_.getPositionVec3().xy();
             local percentage = posDiff / sizeVec.xy();
 
-            local scaleVec = mNode_.getScale();
-            local newScale = scaleVec * percentage.x;
+            //local scaleVec = mNode_.getScale();
+            //local scaleVec = Vec3(1, 1, 1);
+            local newScale = percentage.x;
 
-            mNode_.setScale(newScale);
+            mNode_.setScale(newScale, newScale, newScale);
+        }
+
+        function setOrientation(orientation){
+            mNode_.setOrientation(orientation);
         }
 
         function _tostring(){
@@ -57,8 +75,11 @@
 
     }
 
-    function createIcon(mesh){
-        local newIcon = RenderIcon(mParentNode_, mesh);
+    function createIcon(mesh = null){
+        local newIcon = RenderIcon(mParentNode_);
+        if(mesh != null){
+            newIcon.setMesh(mesh);
+        }
         mActiveIcons_.append(newIcon);
         return newIcon;
     }

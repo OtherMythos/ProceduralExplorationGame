@@ -10,7 +10,7 @@
         mActiveAnimations_ = array(numSlots);
     }
 
-    function update(mButtons_, mFoundObjects_){
+    function update(){
         foreach(i in mActiveAnimations_){
             if(i == null) continue;
             i.update();

@@ -171,3 +171,4 @@ enum ExplorationBusEvents{
 _doFile("res://src/GUI/Screens/Exploration/ExplorationItemsContainer.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationProgressBar.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationWorldMapDisplay.nut");
+_doFile("res://src/GUI/Screens/Exploration/ExplorationFoundItemWidget.nut");
