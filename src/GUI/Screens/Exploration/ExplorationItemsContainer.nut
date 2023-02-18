@@ -51,6 +51,12 @@
         mLayoutLine_.setMarginForAllCells(10, 10);
     }
 
+    function shutdown(){
+        foreach(i in mFoundWidgetButtons_){
+            i.shutdown();
+        }
+    }
+
     function addToLayout(layoutLine){
         layoutLine.addCell(mWindow_);
         mWindow_.setExpandVertical(true);

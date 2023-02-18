@@ -1,7 +1,7 @@
 ::ScreenManager.Screens[Screen.COMBAT_SPOILS_POPUP_SCREEN] = class extends ::Screen{
 
     mBackgroundWindow_ = null;
-    mItemsContainer = null;
+    mItemsContainer_ = null;
     mBus_ = null;
 
     function setup(data){
@@ -25,8 +25,8 @@
         title.setSize(winWidth, title.getSize().y);
         layoutLine.addCell(title);
 
-        mItemsContainer = ::ScreenManager.Screens[Screen.EXPLORATION_SCREEN].ExplorationItemsContainer(mWindow_, mBus_);
-        mItemsContainer.addToLayout(layoutLine);
+        mItemsContainer_ = ::ScreenManager.Screens[Screen.EXPLORATION_SCREEN].ExplorationItemsContainer(mWindow_, mBus_);
+        mItemsContainer_.addToLayout(layoutLine);
 
         local buttonNames = ["Scrap All", "Finish"];
         local buttonFunctions = [
@@ -54,7 +54,7 @@
         layoutLine.setSize(mWindow_.getSizeAfterClipping());
         layoutLine.setHardMaxSize(mWindow_.getSizeAfterClipping());
         layoutLine.layout();
-        mItemsContainer.sizeForButtons();
+        mItemsContainer_.sizeForButtons();
 
         local combatData = data.logic.mData_;
         local spoils = combatData.mCombatSpoils;
@@ -74,7 +74,7 @@
             }else{
                 populated = true;
             }
-            mItemsContainer.setObjectForIndex(obj, i);
+            mItemsContainer_.setObjectForIndex(obj, i);
         }
 
         if(!populated){
@@ -83,12 +83,12 @@
     }
 
     function closeScreen(){
-        ::ScreenManager.queueTransition(null, null, 1);
-        //::ScreenManager.transitionToScreen(null, null, 0);
+        ::ScreenManager.queueTransition(null, null, mLayerIdx);
         ::ScreenManager.queueTransition(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
     }
 
     function shutdown(){
+        mItemsContainer_.shutdown();
         _gui.destroy(mWindow_);
         _gui.destroy(mBackgroundWindow_);
         _event.unsubscribe(Event.COMBAT_SPOILS_CHANGE, receiveSpoilsChange, this);

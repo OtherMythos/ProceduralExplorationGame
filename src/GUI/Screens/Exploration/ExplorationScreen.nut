@@ -137,6 +137,7 @@ enum ExplorationBusEvents{
         mMoneyCounter_.shutdown();
         base.shutdown();
         mLogicInterface_.notifyLeaveExplorationScreen();
+        mExplorationItemsContainer_.shutdown();
     }
 
     function busCallback(event, data){

@@ -13,6 +13,7 @@
         mPosition_ = Vec2();
         mSize_ = Vec2(100, 100);
         mBus_ = bus;
+        mObject_ = ::FoundObject();
 
         local button = parentWin.createButton();
         button.setText("Empty");
@@ -23,20 +24,28 @@
     }
 
     function deactivate(){
-        if(mRenderedIcon_ == null) return;
-
-        mRenderedIcon_.destroy();
-        mRenderedIcon_ = null;
+        if(mRenderedIcon_ != null){
+            mRenderedIcon_.destroy();
+            mRenderedIcon_ = null;
+        }
 
         mButton_.setHidden(true);
 
-        mObject_ = null;
+        mObject_ = ::FoundObject();
     }
 
     function setObject(object){
+        if(object.isNone()){
+            deactivate();
+            return;
+        }
         mObject_ = object;
 
-        local renIcon = ::RenderIconManager.createIcon("coinBag.mesh");
+        local renIcon = mRenderedIcon_;
+        if(renIcon == null){
+            renIcon = ::RenderIconManager.createIcon();
+        }
+        renIcon.setMesh("coinBag.mesh");
         renIcon.setPosition(mPosition_);
         renIcon.setSize(mSize_.x);
         mRenderedIcon_ = renIcon;
@@ -59,11 +68,11 @@
     }
 
     function setCentre_(pos){
-        mRenderedIcon_.setPosition(pos);
+        if(mRenderedIcon_) mRenderedIcon_.setPosition(pos);
         mButton_.setCentre(pos);
     }
     function setSize_(size){
-        mRenderedIcon_.setSize((mSize_.x / 2) * 0.8);
+        if(mRenderedIcon_) mRenderedIcon_.setSize((mSize_.x / 2) * 0.8);
         mButton_.setSize(size);
     }
 
@@ -86,6 +95,12 @@
         }
 
         mBus_.notifyEvent(ExplorationBusEvents.TRIGGER_ITEM, value);
+    }
+
+    function shutdown(){
+        if(mRenderedIcon_ != null){
+            mRenderedIcon_.destroy();
+        }
     }
 
 };

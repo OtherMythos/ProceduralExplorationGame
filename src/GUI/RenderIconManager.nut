@@ -16,7 +16,13 @@
             mMesh_ = mesh;
             mCurrentScreenPos_ = Vec2();
 
-            mNode_ = mParentNode_.createChildSceneNode();
+            if(mNode_){
+                //The node already exists, so re-create only the item.
+                mNode_.recursiveDestroyAttachedObjects();
+            }else{
+                mNode_ = mParentNode_.createChildSceneNode();
+            }
+
             local item = _scene.createItem(mesh);
             item.setRenderQueueGroup(66);
             mNode_.attachObject(item);
@@ -60,7 +66,7 @@
         }
 
         function _tostring(){
-            return ::wrapToString(RenderIcon, "RenderIcon", mMesh_);
+            return ::wrapToString(::RenderIconManager.RenderIcon, "RenderIcon", mMesh_);
         }
     }
 
