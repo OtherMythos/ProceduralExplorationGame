@@ -52,5 +52,6 @@
         local percentage = 0.98 + 0.02 * anim;
         mWidget_.setSize(mData_.endSize * percentage);
         mWidget_.setCentre(mData_.end)
+        mWidget_.updateIconOrientation();
     }
 }

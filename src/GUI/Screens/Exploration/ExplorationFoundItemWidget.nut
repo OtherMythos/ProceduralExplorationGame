@@ -78,6 +78,12 @@
         mButton_.setSize(size);
     }
 
+    function updateIconOrientation(){
+        if(!mRenderedIcon_) return;
+        mCount_ += 0.02;
+        mRenderedIcon_.setOrientation(Quat(mCount_, Vec3(0, 1, 0)));
+    }
+
     function buttonPressed(widget, action){
         local id = widget.getUserId();
         local foundObj = mObject_;
