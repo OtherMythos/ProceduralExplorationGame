@@ -68,8 +68,10 @@
     }
 
     function setCentre_(pos){
-        if(mRenderedIcon_) mRenderedIcon_.setPosition(pos);
         mButton_.setCentre(pos);
+        if(mRenderedIcon_){
+            mRenderedIcon_.setPosition(mButton_.getDerivedCentre());
+        }
     }
     function setSize_(size){
         if(mRenderedIcon_) mRenderedIcon_.setSize((mSize_.x / 2) * 0.8);
