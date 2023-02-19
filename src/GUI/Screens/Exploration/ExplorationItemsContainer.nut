@@ -80,7 +80,7 @@
         widget.setCentre(buttonPos);
 
         //If null is passed to "start" then the initial animation is not performed.
-        //mAnimator_.startAnimForItem(::ExplorationGuiAnimation(button, {"start": screenStart, "end": buttonPos, "endSize": buttonSize}), index);
+        mAnimator_.startAnimForItem(::ExplorationGuiAnimation(widget, {"start": screenStart, "end": buttonPos, "endSize": buttonSize}), index);
     }
 
     function update(){
