@@ -47,12 +47,11 @@
         if(renIcon == null){
             renIcon = ::RenderIconManager.createIcon();
         }
-        renIcon.setMesh("coinBag.mesh");
+        renIcon.setMesh(mObject_.getMesh());
         renIcon.setPosition(mPosition_);
         renIcon.setSize(mSize_.x);
         mRenderedIcon_ = renIcon;
 
-        mButton_.setHidden(false);
         mButton_.setText(object.toName(), false);
         mButton_.setHidden(false);
         mButton_.setSkinPack(object.getButtonSkinPack());
@@ -90,7 +89,7 @@
     function updateIconOrientation(){
         if(!mRenderedIcon_) return;
         mCount_ += 0.02;
-        mRenderedIcon_.setOrientation(Quat(mCount_, Vec3(0, 1, 0)));
+        mRenderedIcon_.setOrientation(Quat(mCount_, Vec3((sin(mCount_) * 0.1), 1, 0)));
     }
 
     function buttonPressed(widget, action){

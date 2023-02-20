@@ -15,6 +15,10 @@
         function setMesh(mesh){
             mMesh_ = mesh;
             mCurrentScreenPos_ = Vec2();
+            if(mMesh_ == null){
+                if(mNode_) mNode_.destroyNodeAndChildren();
+                return;
+            }
 
             if(mNode_){
                 //The node already exists, so re-create only the item.
@@ -30,7 +34,7 @@
         }
 
         function destroy(){
-            mNode_.destroyNodeAndChildren();
+            if(mNode_) mNode_.destroyNodeAndChildren();
 
             mNode_ = null;
             mMesh_ = null;
@@ -38,6 +42,7 @@
         }
 
         function setPosition(pos){
+            if(!mNode_) return;
             mCurrentScreenPos_ = pos;
             local objectPos = ::EffectManager.getWorldPositionForWindowPos(mCurrentScreenPos_);
             mNode_.setPosition(objectPos.x, objectPos.y, 70);
@@ -47,6 +52,7 @@
          * Set the size of the render icon, only width is allowed so the object will always be in proportion.
          */
         function setSize(width){
+            if(!mNode_) return;
             local aabb = mMeshItem_.getLocalAabb();
             local sizeVec = aabb.getHalfSize();
             local intended = mCurrentScreenPos_ + Vec2(width, 0);
@@ -62,6 +68,7 @@
         }
 
         function setOrientation(orientation){
+            if(!mNode_) return;
             mNode_.setOrientation(orientation);
         }
 

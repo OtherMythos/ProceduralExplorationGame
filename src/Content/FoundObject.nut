@@ -33,6 +33,13 @@
         }
     }
 
+    function getMesh(){
+        if(type == FoundObjectType.ITEM){
+            return obj.getMesh();
+        }
+        return null;
+    }
+
     function _tostring(){
         return ::wrapToString(::FoundObject, "FoundObject", toName());
     }

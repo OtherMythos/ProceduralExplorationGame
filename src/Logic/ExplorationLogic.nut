@@ -99,8 +99,7 @@
         local foundSomething = _random.randInt(50) == 0;
         if(foundSomething){
             //decide what was found.
-            //local item = _random.randInt(ItemId.NONE+1, ItemId.MAX-1);
-            local item = ItemId.LARGE_BAG_OF_COINS;
+            local item = _random.randInt(ItemId.NONE+1, ItemId.MAX-1);
             local wrapped = wrapDataForFoundItem(item)
             processFoundItem(wrapped);
             return;
@@ -115,7 +114,6 @@
     }
 
     function checkForEncounter(){
-        return;
         local foundSomething = _random.randInt(2000) == 0;
         if(foundSomething){
             //decide what was found.
