@@ -91,6 +91,7 @@ enum Popup{
 enum Effect{
     EFFECT,
     COIN_EFFECT,
+    FOUND_ITEM_EFFECT,
 
     MAX
 };

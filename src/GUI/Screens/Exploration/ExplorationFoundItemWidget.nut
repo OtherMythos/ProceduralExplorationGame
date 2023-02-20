@@ -8,6 +8,8 @@
     mBus_ = null;
     mObject_ = null;
 
+    mCount_ = 0.0;
+
     constructor(parentWin, buttonId, bus){
         mParent_ = parentWin;
         mPosition_ = Vec2();
@@ -65,6 +67,13 @@
     function setSize(buttonSize){
         mSize_ = buttonSize;
         setSize_(buttonSize);
+    }
+
+    function getCentre(){
+        return mButton_.getCentre();
+    }
+    function getSize(){
+        return mButton_.getSize();
     }
 
     function setCentre_(pos){

@@ -68,7 +68,7 @@ local CoinEffectStateMachine = class extends ::Util.StateMachine{
     };
 }
 
-::EffectManager.Effects[Effect.COIN_EFFECT] = class{
+::EffectManager.Effects[Effect.COIN_EFFECT] = class extends ::Effect{
 
     mParentNode_ = null;
     mCoinPos_ = null;
@@ -119,7 +119,7 @@ local CoinEffectStateMachine = class extends ::Util.StateMachine{
             local newNode = parentNode.createChildSceneNode();
             local animNode = newNode.createChildSceneNode();
             local coinItem = _scene.createItem("coin.mesh");
-            coinItem.setRenderQueueGroup(65);
+            coinItem.setRenderQueueGroup(60);
             animNode.attachObject(coinItem);
             animNode.setScale(coinSize, coinSize, coinSize);
             //TODO will want to animate the coin rotation as well.
@@ -174,13 +174,4 @@ local CoinEffectStateMachine = class extends ::Util.StateMachine{
     function update(){
         return mStateMachine_.update();
     }
-
-    function setAnimStage(stage){
-        local entry = mAnimStages_[stage];
-        if(entry != null){
-            entry.start(mCoins_, mCoinPos_);
-        }
-        mAnimStage_ = stage;
-    }
-
 };

@@ -21,6 +21,16 @@
 
     function performBasicArrival(){
         mCount_++;
+        if(mCount_ == mTotalCount_){
+            //Trigger the object arrival animation.
+            local buttonCentre = mWidget_.getCentre();
+            local size = mWidget_.getSize() / 2;
+
+            local worldPos = ::EffectManager.getWorldPositionForWindowPos(buttonCentre);
+            local worldPosExtends = ::EffectManager.getWorldPositionForWindowPos(buttonCentre + size);
+
+            ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.FOUND_ITEM_EFFECT, {"centre": worldPos, "extents": worldPosExtends}));
+        }
         if(mCount_ > mTotalCount_ || mData_.start == null){
             mCount_--;
             performBasicIdle();
