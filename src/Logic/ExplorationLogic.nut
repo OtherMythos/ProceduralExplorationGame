@@ -61,10 +61,18 @@
         if(mExplorationPaused_) return;
         if(mEnemyEncountered_) return;
         updatePercentage();
-        checkForFoundObject();
-        checkForEncounter();
+        checkExploration();
 
         mSceneLogic_.updatePercentage(mExplorationPercentage_);
+    }
+
+    function checkExploration(){
+        checkForFoundObject();
+
+        local disableEncounters = _settings.getUserSetting("disableEncounters");
+        if(!disableEncounters){
+            checkForEncounter();
+        }
     }
 
     function updatePercentage(){
