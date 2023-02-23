@@ -49,7 +49,7 @@
         }
         renIcon.setMesh(mObject_.getMesh());
         renIcon.setPosition(mPosition_);
-        renIcon.setSize(mSize_.x);
+        renIcon.setSize(mSize_.x, mSize_.y);
         mRenderedIcon_ = renIcon;
 
         mButton_.setText(object.toName(), false);
@@ -82,7 +82,10 @@
         }
     }
     function setSize_(size){
-        if(mRenderedIcon_) mRenderedIcon_.setSize((mSize_.x / 2) * 0.8);
+        if(mRenderedIcon_){
+            local newSize = (size / 2) * 0.8;
+            mRenderedIcon_.setSize(newSize.x, newSize.y);
+        }
         mButton_.setSize(size);
     }
 

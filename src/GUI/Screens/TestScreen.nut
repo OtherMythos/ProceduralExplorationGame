@@ -22,7 +22,7 @@
             function(widget, action){
                 local renderIcon = ::RenderIconManager.createIcon("cube");
                 renderIcon.setPosition(Vec2(100, 100));
-                renderIcon.setSize(50);
+                renderIcon.setSize(50, 50);
                 mTestRenderIcon_ = renderIcon;
 
                 //Add some example panels to show how to screen coordinate systems match up.

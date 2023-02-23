@@ -49,20 +49,20 @@
         }
 
         /**
-         * Set the size of the render icon, only width is allowed so the object will always be in proportion.
+         * Set the size of the render icon.
+         * The icon will be scaled in its aspect ratio according to fit within the bounds.
          */
-        function setSize(width){
+        function setSize(width, height){
             if(!mNode_) return;
             local aabb = mMeshItem_.getLocalAabb();
             local sizeVec = aabb.getHalfSize();
-            local intended = mCurrentScreenPos_ + Vec2(width, 0);
+            local y = sizeVec.y > sizeVec.x;
+            local intended = mCurrentScreenPos_ + Vec2(width, height);
             local foundPos = ::EffectManager.getWorldPositionForWindowPos(intended);
             local posDiff = foundPos - mNode_.getPositionVec3().xy();
             local percentage = posDiff / sizeVec.xy();
 
-            //local scaleVec = mNode_.getScale();
-            //local scaleVec = Vec3(1, 1, 1);
-            local newScale = percentage.x;
+            local newScale = y ? -percentage.y : percentage.x;
 
             mNode_.setScale(newScale, newScale, newScale);
         }
