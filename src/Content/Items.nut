@@ -255,6 +255,16 @@ enum ItemType{
                 assert(false);
         }
     }
+
+    function nameToItemId(itemName){
+        foreach(c,i in ::Items){
+            if(i.getName() == itemName){
+                return c;
+            }
+        }
+
+        return ItemId.NONE;
+    }
 };
 
 /**

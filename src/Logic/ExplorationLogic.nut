@@ -21,12 +21,27 @@
     mExplorationFinished_ = false;
     mExplorationPaused_ = false;
 
+    mDebugForceItem_ = ItemId.NONE;
+
     mGui_ = null;
 
     constructor(){
         resetExploration();
+        processDebug_();
 
         mSceneLogic_ = ExplorationSceneLogic();
+    }
+
+    //Check for debug flags
+    function processDebug_(){
+        local forceItem = _settings.getUserSetting("forceFoundItem");
+        if(forceItem){
+            local result = ::ItemHelper.nameToItemId(forceItem);
+            if(result == ItemId.NONE){
+                assert(false); //If an item is requested and not found better to just error out.
+            }
+            mDebugForceItem_ = result;
+        }
     }
 
     function shutdown(){
@@ -107,7 +122,12 @@
         local foundSomething = _random.randInt(50) == 0;
         if(foundSomething){
             //decide what was found.
-            local item = _random.randInt(ItemId.NONE+1, ItemId.MAX-1);
+            local item = ItemId.NONE;
+            if(mDebugForceItem_){
+                item = mDebugForceItem_;
+            }else{
+                item = _random.randInt(ItemId.NONE+1, ItemId.MAX-1);
+            }
             local wrapped = wrapDataForFoundItem(item)
             processFoundItem(wrapped);
             return;
