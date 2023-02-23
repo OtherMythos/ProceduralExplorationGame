@@ -5,6 +5,7 @@
     mPosition_ = null;
     mSize_ = null;
     mButton_ = null;
+    mLabel_ = null;
     mBus_ = null;
     mObject_ = null;
 
@@ -23,6 +24,11 @@
         button.setUserId(buttonId);
         button.attachListenerForEvent(buttonPressed, _GUI_ACTION_PRESSED, this);
         mButton_ = button;
+
+        local label = parentWin.createLabel();
+        label.setText("something");
+        label.setHidden(false);
+        mLabel_ = label;
     }
 
     function deactivate(){
@@ -32,6 +38,7 @@
         }
 
         mButton_.setHidden(true);
+        mLabel_.setHidden(true);
 
         mObject_ = ::FoundObject();
     }
@@ -52,10 +59,17 @@
         renIcon.setSize(mSize_.x, mSize_.y);
         mRenderedIcon_ = renIcon;
 
-        mButton_.setText(object.toName(), false);
+        //mButton_.setText(object.toName(), false);
+        mButton_.setText(" ");
+        mButton_.setVisualsEnabled(false);
         mButton_.setHidden(false);
         mButton_.setSkinPack(object.getButtonSkinPack());
         mButton_.setZOrder(200);
+
+        mLabel_.setSize(mButton_.getSize());
+        mLabel_.setText(object.toName(), false);
+        mLabel_.setCentre(mPosition_);
+        mLabel_.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
     }
 
     function setCentre(buttonPos){
@@ -78,12 +92,15 @@
     function setCentre_(pos){
         mButton_.setCentre(pos);
         if(mRenderedIcon_){
-            mRenderedIcon_.setPosition(mButton_.getDerivedCentre());
+            local newCentre = mButton_.getDerivedCentre();
+            local buttonSize = mButton_.getSize();
+            newCentre.y -= buttonSize.y * 0.1;
+            mRenderedIcon_.setPosition(newCentre);
         }
     }
     function setSize_(size){
         if(mRenderedIcon_){
-            local newSize = (size / 2) * 0.8;
+            local newSize = (size / 2) * 0.7;
             mRenderedIcon_.setSize(newSize.x, newSize.y);
         }
         mButton_.setSize(size);
@@ -120,6 +137,15 @@
         if(mRenderedIcon_ != null){
             mRenderedIcon_.destroy();
         }
+    }
+
+    function notifyStationary(){
+        mLabel_.setHidden(false);
+        mLabel_.setSize(mButton_.getSize());
+        mLabel_.setText(mObject_.toName(), false);
+        local targetPos = Vec2(mPosition_.x, mPosition_.y);
+        targetPos.y += mSize_.y * 0.8;
+        mLabel_.setCentre(targetPos);
     }
 
 };

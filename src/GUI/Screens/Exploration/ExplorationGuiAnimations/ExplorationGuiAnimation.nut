@@ -12,7 +12,9 @@
     }
 
     function start(){
-
+        if(mData_.start == null){
+            mWidget_.notifyStationary();
+        }
     }
 
     function update(){
@@ -30,6 +32,8 @@
             local worldPosExtends = ::EffectManager.getWorldPositionForWindowPos(buttonCentre + size);
 
             ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.FOUND_ITEM_EFFECT, {"centre": worldPos, "extents": worldPosExtends}));
+
+            mWidget_.notifyStationary();
         }
         if(mCount_ > mTotalCount_ || mData_.start == null){
             mCount_--;
