@@ -112,8 +112,8 @@ enum ItemType{
 //-------------------------------
 ::Items[ItemId.NONE] = ItemDef("None", "None", null, ItemType.NONE, 1, EquippedSlotTypes.NONE);
 
-::Items[ItemId.HEALTH_POTION] = ItemDef("Health Potion", "A potion of health. Bubbles gently inside a cast glass flask.", null, ItemType.CONSUMABLE, 5, EquippedSlotTypes.NONE);
-::Items[ItemId.LARGE_HEALTH_POTION] = ItemDef("Large Health Potion", "A large potion of health.", null, ItemType.CONSUMABLE, 5, EquippedSlotTypes.NONE);
+::Items[ItemId.HEALTH_POTION] = ItemDef("Health Potion", "A potion of health. Bubbles gently inside a cast glass flask.", "smallPotion.mesh", ItemType.CONSUMABLE, 5, EquippedSlotTypes.NONE);
+::Items[ItemId.LARGE_HEALTH_POTION] = ItemDef("Large Health Potion", "A large potion of health.", "largePotion.mesh", ItemType.CONSUMABLE, 5, EquippedSlotTypes.NONE);
 
 ::Items[ItemId.SIMPLE_SWORD] = ItemDef("Simple Sword", "A cheap, weak sword. Relatively blunt for something claiming to be a sword.", null, ItemType.EQUIPPABLE, 5, EquippedSlotTypes.SWORD);
 ::Items[ItemId.SIMPLE_SHIELD] = ItemDef("Simple Shield", "An un-interesting shield. Provides minimal protection.", null, ItemType.EQUIPPABLE, 5, EquippedSlotTypes.SHIELD);
