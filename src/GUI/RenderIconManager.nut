@@ -10,6 +10,7 @@
 
         constructor(parentNode){
             mParentNode_ = parentNode;
+            //this.mParentNode_.setVisible(false);
         }
 
         function setMesh(mesh){

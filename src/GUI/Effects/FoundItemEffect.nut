@@ -53,7 +53,8 @@ const FOUND_ITEM_EFFECT_Z = 11;
 
         local boxExtents = mBoxHalfSize_ - mBoxCentre_;
         local topLeft = mBoxCentre_ - boxExtents;
-        local bottomLeft = mBoxCentre_;
+        //TODO improve this with an engine function to copy vectors.
+        local bottomLeft = Vec2(mBoxCentre_.x, mBoxCentre_.y);
         bottomLeft.x -= mBoxCentre_.x;
         bottomLeft.y += mBoxCentre_.y;
 

@@ -47,6 +47,7 @@
         _doFile("res://src/GUI/Effects/Effect.nut");
         _doFile("res://src/GUI/Effects/CoinEffect.nut");
         _doFile("res://src/GUI/Effects/FoundItemEffect.nut");
+        _doFile("res://src/GUI/Effects/FoundItemEffectIdle.nut");
         ::EffectManager.setup();
 
         _doFile("res://src/GUI/ScreenManager.nut");

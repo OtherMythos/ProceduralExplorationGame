@@ -33,6 +33,9 @@
 
             ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.FOUND_ITEM_EFFECT, {"centre": worldPos, "extents": worldPosExtends}));
 
+            //Start the idle animation as well.
+            ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.FOUND_ITEM_IDLE_EFFECT_Z, {"centre": worldPos, "extents": worldPosExtends}));
+
             mWidget_.notifyStationary();
         }
         if(mCount_ > mTotalCount_ || mData_.start == null){
