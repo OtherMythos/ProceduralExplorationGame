@@ -1,6 +1,6 @@
 const FOUND_ITEM_IDLE_EFFECT_Z = 12;
 
-::EffectManager.Effects[Effect.FOUND_ITEM_IDLE_EFFECT_Z] = class extends ::Effect{
+::EffectManager.Effects[Effect.FOUND_ITEM_IDLE_EFFECT] = class extends ::Effect{
 
     mParentNode_ = null;
     mParticles_ = null;

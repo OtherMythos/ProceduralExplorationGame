@@ -93,7 +93,7 @@ enum Effect{
     EFFECT,
     COIN_EFFECT,
     FOUND_ITEM_EFFECT,
-    FOUND_ITEM_IDLE_EFFECT_Z,
+    FOUND_ITEM_IDLE_EFFECT,
 
     MAX
 };
