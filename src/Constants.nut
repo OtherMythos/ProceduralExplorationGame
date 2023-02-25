@@ -46,6 +46,7 @@ enum Event{
 
     COMBAT_SPOILS_CHANGE = 1008
     MONEY_ADDED = 1009,
+    SCREEN_CHANGED = 1010
 }
 
 enum FoundObjectType{

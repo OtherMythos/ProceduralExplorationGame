@@ -12,7 +12,7 @@
         }
     }
 
-    "Effects": array(Screen.MAX, null),
+    "Effects": array(Effect.MAX, null),
 
     mActiveEffects_ = null
     mQueuedDestructionEffects_ = null
@@ -23,6 +23,10 @@
         mActiveEffects_ = [];
         mQueuedDestructionEffects_ = [];
         mTestPlane_ = Plane(Vec3(0, 0, 1), Vec3(0, 0, 0));
+
+        _event.subscribe(Event.SCREEN_CHANGED, function(id, data){
+            destroyAllEffects();
+        }, this);
     }
 
     function _wrapEffectData(data){
@@ -41,11 +45,17 @@
         return Effects[effectData.id](effectData);
     }
 
+    function destroyAllEffects(){
+        for(local i = 0; i < mActiveEffects_.len(); i++){
+            shutdownEffect_(i);
+        }
+        mActiveEffects_.clear();
+    }
+
     /**
-     * Display and effect and set it to alive.
+     * Display an effect and set it to alive.
      * 
      * @param1:effectId: The id of the effect to create.
-     * @param2:effectData: wrapped EffectData for both the effect to create as well as its data.
      */
     function displayEffect(effectId){
         local effectData = _wrapEffectData(effectId);
@@ -63,8 +73,7 @@
 
     function processEndedEffects(){
         foreach(i in mQueuedDestructionEffects_){
-            mActiveEffects_[i].destroy();
-            mActiveEffects_[i] = null;
+            shutdownEffect_(i);
         }
         mQueuedDestructionEffects_.clear();
 
@@ -77,6 +86,10 @@
 
             mActiveEffects_.remove(idx);
         }
+    }
+    function shutdownEffect_(i){
+        mActiveEffects_[i].destroy();
+        mActiveEffects_[i] = null;
     }
 
     function update(){

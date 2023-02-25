@@ -67,11 +67,14 @@
 
     function _shutdownForLayer(layerId, effectPrevStack = false){
         local current = mActiveScreens_[layerId];
-        if(current == null) return;
+        if(current == null) return null;
+        local currentIdx = current.getScreenData().id;
 
         print("Calling shutdown for layer " + layerId);
         current.shutdown();
         if(effectPrevStack) _queuePrevScreen(layerId, current.getScreenData());
+
+        return currentIdx;
     }
 
     /**
@@ -79,7 +82,7 @@
      */
     function transitionToScreen(screenId, transitionEffect = null, layerId = 0, effectPrevStack = true){
         assert(layerId < MAX_SCREENS);
-        _shutdownForLayer(layerId, effectPrevStack);
+        local oldId = _shutdownForLayer(layerId, effectPrevStack);
 
         local screenData = _wrapScreenData(screenId);
         local screenObject = _createScreenForId(screenData);
@@ -92,6 +95,8 @@
         screenObject.mLayerIdx = layerId;
         screenObject.setup(screenData.data);
         screenObject.setZOrder(mScreensZOrder + layerId + 1);
+
+        _event.transmit(Event.SCREEN_CHANGED, {"old": oldId, "new": screenId});
     }
 
     function _getPrevScreen(layerId){
