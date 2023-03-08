@@ -1,0 +1,24 @@
+
+compositor_node renderTextureNode
+{
+    in 0 renderTexture
+    in 1 noiseTexture
+    target renderTexture
+    {
+        pass clear
+        {
+            colour_value 0.2 0.2 0.2 1
+        }
+        pass render_quad
+        {
+            material worldGenToolViewer
+            input 0 noiseTexture
+        }
+    }
+}
+
+workspace renderTextureWorkspace
+{
+    connect_external 1 renderTextureNode 1
+    connect_output renderTextureNode 0
+}

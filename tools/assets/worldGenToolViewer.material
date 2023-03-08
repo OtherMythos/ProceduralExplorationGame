@@ -1,0 +1,63 @@
+fragment_program worldGenToolViewer_ps_GLSL glsl
+{
+    source worldGenToolViewer_ps.glsl
+    default_params
+    {
+        param_named Image int 0
+    }
+}
+
+fragment_program worldGenToolViewer_ps_VK glslvk
+{
+    source worldGenToolViewer_ps.glsl
+}
+
+fragment_program worldGenToolViewer_ps_HLSL hlsl
+{
+    source worldGenToolViewer_ps.hlsl
+    target ps_5_0 ps_4_0 ps_4_0_level_9_1 ps_4_0_level_9_3
+    entry_point main
+}
+
+fragment_program worldGenToolViewer_ps_Metal metal
+{
+    source worldGenToolViewer_ps.metal
+    shader_reflection_pair_hint Ogre/Compositor/Quad_vs
+}
+
+fragment_program worldGenToolViewer_ps unified
+{
+    delegate worldGenToolViewer_ps_GLSL
+    delegate worldGenToolViewer_ps_VK
+    delegate worldGenToolViewer_ps_HLSL
+    delegate worldGenToolViewer_ps_Metal
+}
+
+material worldGenToolViewer
+{
+    technique
+    {
+        pass
+        {
+            depth_check off
+            depth_write off
+
+            cull_hardware none
+
+            vertex_program_ref Ogre/Compositor/Quad_vs
+            {
+            }
+
+            fragment_program_ref worldGenToolViewer_ps
+            {
+            }
+
+            texture_unit
+            {
+                tex_coord_set 0
+                tex_address_mode clamp
+                filtering linear linear linear
+            }
+        }
+    }
+}
