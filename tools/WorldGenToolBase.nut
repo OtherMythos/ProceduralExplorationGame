@@ -67,8 +67,8 @@
         local gen = ::MapGen();
         local data = {
             "seed": _random.randInt(0, 100000),
-            "width": 500,
-            "height": 500,
+            "width": 400,
+            "height": 400,
         };
         local outData = gen.generate(data);
         mSeedLabel_.setText("Seed: " + data.seed.tostring());

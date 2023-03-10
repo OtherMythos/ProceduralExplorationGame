@@ -22,6 +22,8 @@
         local fragmentParams = material.getFragmentProgramParameters(0, 0);
 
         fragmentParams.setNamedConstant("testBuffer", outData.voxelBuffer);
+        fragmentParams.setNamedConstant("width", outData.width);
+        fragmentParams.setNamedConstant("height", outData.height);
     }
 
     function setupCompositor(){
@@ -39,7 +41,7 @@
         datablock.setTexture(0, newTex);
         mCompositorDatablock_ = datablock;
 
-        //TODO might want to make this not auto update. 
+        //TODO might want to make this not auto update.
         mCompositorWorkspace_ = _compositor.addWorkspace([mCompositorTexture_], mCompositorCamera_, "mapViewer/renderTextureWorkspace", true);
     }
 

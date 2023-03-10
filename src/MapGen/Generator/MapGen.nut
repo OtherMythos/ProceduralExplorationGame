@@ -14,7 +14,7 @@
         curvedOffset = 1.0 - curvedOffset;
         // curvedOffset *= 1;
         // //float val = curvedOffset;
-        local val = (1-centreOffset) * input;   
+        local val = (1-centreOffset) * input;
         val *= 1.5;
 
         val += curvedOffset*0.8;
@@ -55,7 +55,9 @@
         designateLandmass(noiseBlob, data);
 
         local outData = {
-            "voxelBuffer": noiseBlob
+            "voxelBuffer": noiseBlob,
+            "width": data.width,
+            "height": data.height
         };
         return outData;
     }
