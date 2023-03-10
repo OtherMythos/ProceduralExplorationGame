@@ -33,7 +33,7 @@ fragment_program worldGenToolViewer_ps unified
     delegate worldGenToolViewer_ps_Metal
 }
 
-material worldGenToolViewer
+material mapViewer/mapMaterial
 {
     technique
     {

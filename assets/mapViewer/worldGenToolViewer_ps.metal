@@ -51,11 +51,6 @@ fragment float4 main_metal
 
    float val = p.testBuffer[xVox + yVox * boxesWidth];
    return float4(val, val, val, 1);
-
-
-
-
-	return float4(1, 1, 1, 1);
 	/*
 	if(p.testBuffer[0] == 1) return float4(1, 1, 1, 1);
 

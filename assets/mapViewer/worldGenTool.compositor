@@ -1,5 +1,5 @@
 
-compositor_node renderTextureNode
+compositor_node mapViewer/renderTextureNode
 {
     in 0 renderTexture
     target renderTexture
@@ -10,12 +10,12 @@ compositor_node renderTextureNode
         }
         pass render_quad
         {
-            material worldGenToolViewer
+            material mapViewer/mapMaterial
         }
     }
 }
 
-workspace renderTextureWorkspace
+workspace mapViewer/renderTextureWorkspace
 {
-    connect_output renderTextureNode 0
+    connect_output mapViewer/renderTextureNode 0
 }
