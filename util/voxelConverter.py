@@ -409,7 +409,6 @@ class CompleteData:
             self.vertColours[i] = entries[val]
 
     def hash(self, cols):
-        #return self.cantor(cols[0], self.cantor(cols[1], cols[2]))
         finished = 0
         for i in range(len(cols)):
             intVal = int(cols[i] * 255)

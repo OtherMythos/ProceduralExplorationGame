@@ -5,6 +5,9 @@
     mCompositorWorkspace_ = null
     mCompositorCamera_ = null
     mCompositorTexture_ = null
+    mSeedLabel_ = null
+
+    mMapViewer_ = null
 
     mPerlinTexture_ = null
 
@@ -12,7 +15,6 @@
     mWinHeight_ = 1080
 
     function setup(){
-        setupCompositor();
         setupGui();
 
         generate();
@@ -22,23 +24,9 @@
 
     }
 
-    function setupCompositor(){
-        local newTex = _graphics.createTexture("compositor/renderTexture");
-        newTex.setResolution(1920, 1080);
-        newTex.scheduleTransitionTo(_GPU_RESIDENCY_RESIDENT);
-        mCompositorTexture_ = newTex;
-
-        local newCamera = _scene.createCamera("compositor/camera");
-        local cameraNode = _scene.getRootSceneNode().createChildSceneNode();
-        cameraNode.attachObject(newCamera);
-        mCompositorCamera_ = newCamera;
-
-        local datablock = _hlms.unlit.createDatablock("renderTextureDatablock");
-        datablock.setTexture(0, newTex);
-        mCompositorDatablock_ = datablock;
-    }
-
     function setupGui(){
+        mMapViewer_ = ::MapViewer();
+
         local winWidth = 0.4;
 
         mControlsWindow_ = _gui.createWindow();
@@ -49,6 +37,11 @@
         local title = mControlsWindow_.createLabel();
         title.setText("World Gen Tool");
         layout.addCell(title);
+
+        local seedLabel = mControlsWindow_.createLabel();
+        seedLabel.setText("Seed");
+        layout.addCell(seedLabel);
+        mSeedLabel_ = seedLabel;
 
         local newGenButton = mControlsWindow_.createButton();
         newGenButton.setText("Generate")
@@ -67,31 +60,19 @@
         local renderPanel = renderWindow.createPanel();
         renderPanel.setPosition(0, 0);
         renderPanel.setSize(renderWindow.getSize());
-        renderPanel.setDatablock(mCompositorDatablock_);
+        renderPanel.setDatablock(mMapViewer_.getDatablock());
     }
 
     function generate(){
-        _random.seedPatternGenerator(_random.randInt(0, 100000));
+        local gen = ::MapGen();
+        local data = {
+            "seed": _random.randInt(0, 100000),
+            "width": 500,
+            "height": 500,
+        };
+        local outData = gen.generate(data);
+        mSeedLabel_.setText("Seed: " + data.seed.tostring());
 
-        local width = 200;
-        local height = 200;
-
-        if(mPerlinTexture_ != null){
-            _graphics.destroyTexture(mPerlinTexture_);
-            mPerlinTexture_ = null;
-        }
-        mPerlinTexture_ = _graphics.genPerlinNoiseTexture("perlinNoiseTexture", width, height);
-
-        if(mCompositorWorkspace_ != null){
-            _compositor.removeWorkspace(mCompositorWorkspace_);
-            mCompositorWorkspace_ = null;
-        }
-        //Re-generate the compositor so I can pass the new textures to it.
-        mCompositorWorkspace_ = _compositor.addWorkspace([mCompositorTexture_, mPerlinTexture_], mCompositorCamera_, "renderTextureWorkspace", true);
-
-
-
-        //I will want the actual rendering code to live in the main source.
-        //Potentially even the viewer workspace should live somewhere else so I can use it in the game itself.
+        mMapViewer_.displayMapData(outData);
     }
 };

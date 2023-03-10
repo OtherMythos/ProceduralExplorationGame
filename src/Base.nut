@@ -16,6 +16,9 @@
 
         _gui.loadSkins("res://assets/skins/ui.json");
 
+        _doFile("res://src/MapGen/Viewer/MapViewer.nut");
+        _doFile("res://src/MapGen/Generator/MapGen.nut");
+
         _doFile("res://src/Content/Items.nut");
         _doFile("res://src/Content/Places.nut");
         _doFile("res://src/Content/FoundObject.nut");

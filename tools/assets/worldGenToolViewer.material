@@ -51,13 +51,6 @@ material worldGenToolViewer
             fragment_program_ref worldGenToolViewer_ps
             {
             }
-
-            texture_unit
-            {
-                tex_coord_set 0
-                tex_address_mode clamp
-                filtering linear linear linear
-            }
         }
     }
 }
