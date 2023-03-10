@@ -1,3 +1,10 @@
+
+enum MapVoxelTypes{
+    SAND,
+    DIRT,
+    SNOW
+};
+
 /**
  * Provides logic to construct a generated map for exploration.
  */
@@ -19,7 +26,7 @@
 
         val += curvedOffset*0.8;
 
-        return val;
+        return val > 1.0 ? 1.0 : val;
     }
     function reduceNoise(blob, data){
         blob.seek(0);
@@ -36,14 +43,46 @@
         }
     }
 
-    function designateLandmass(blob, data){
+    function determineAltitude(blob, data){
         blob.seek(0);
         for(local i = 0; i < data.width * data.height; i++){
             local pos = blob.tell();
             local val = blob.readn('f');
-            val = val <= 0.5 ? 0.0 : 1.0;
+            val = (val * 0xFF).tointeger();
+            assert(val <= 0xFF);
             blob.seek(pos);
-            blob.writen(val, 'f');
+            blob.writen(val, 'i');
+        }
+    }
+
+    function designateLandmass(blob, data){
+        blob.seek(0);
+        for(local i = 0; i < data.width * data.height; i++){
+            local pos = blob.tell();
+            local val = blob.readn('i');
+            if(val < 100){
+                val = val / 2;
+            }
+            blob.seek(pos);
+            blob.writen(val, 'i');
+        }
+    }
+
+    function determineVoxelTypes(blob, data){
+        blob.seek(0);
+        for(local i = 0; i < data.width * data.height; i++){
+            local pos = blob.tell();
+            local val = blob.readn('i');
+
+            local out = MapVoxelTypes.DIRT;
+            if(val >= 0 && val <= 99) out = MapVoxelTypes.SAND;
+            else if(val >= 100 && val <= 199) out = MapVoxelTypes.DIRT;
+            else if(val >= 200 && val <= 255) out = MapVoxelTypes.SNOW;
+
+            out = val | (out << 8);
+
+            blob.seek(pos);
+            blob.writen(out, 'i');
         }
     }
 
@@ -52,7 +91,9 @@
 
         local noiseBlob = _random.genPerlinNoise(data.width, data.height);
         reduceNoise(noiseBlob, data);
+        determineAltitude(noiseBlob, data);
         designateLandmass(noiseBlob, data);
+        determineVoxelTypes(noiseBlob, data);
 
         local outData = {
             "voxelBuffer": noiseBlob,

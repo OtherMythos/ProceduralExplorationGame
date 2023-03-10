@@ -21,7 +21,8 @@
         local material = _graphics.getMaterialByName("mapViewer/mapMaterial");
         local fragmentParams = material.getFragmentProgramParameters(0, 0);
 
-        fragmentParams.setNamedConstant("testBuffer", outData.voxelBuffer);
+        //fragmentParams.setNamedConstant("floatBuffer", outData.voxelBuffer);
+        fragmentParams.setNamedConstant("intBuffer", outData.voxelBuffer);
         fragmentParams.setNamedConstant("width", outData.width);
         fragmentParams.setNamedConstant("height", outData.height);
     }

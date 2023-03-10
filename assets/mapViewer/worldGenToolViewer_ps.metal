@@ -9,7 +9,8 @@ struct PS_INPUT
 struct Params
 {
    //Make it a bit bigger than needed to test things.
-   float testBuffer[1000*1000];
+   float floatBuffer[1000*1000];
+   unsigned int intBuffer[1000*1000];
    int width;
    int height;
 };
@@ -26,6 +27,10 @@ fragment float4 main_metal
    int xVox = (int)(uv.x * p.width);
    int yVox = (int)(uv.y * p.height);
 
-   float val = p.testBuffer[xVox + yVox * p.width];
+   int voxVal = p.intBuffer[xVox + yVox * p.width];
+   //float val = (float)(voxVal & 0xFF) / 0xFF;
+   //float val = (float)((voxVal >> 0) & 0xFF) / 0xFF;
+   float val = (float)((voxVal >> 8) & 0xFF) / 3;
+   //float val = (float)(voxVal) / 0xFF;
    return float4(val, val, val, 1);
 }
