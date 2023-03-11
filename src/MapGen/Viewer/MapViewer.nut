@@ -1,3 +1,8 @@
+enum drawMasks{
+    WATER,
+    GROUND_TYPE
+};
+
 ::MapViewer <- class{
 
     mMapData_ = null;
@@ -6,6 +11,12 @@
     mCompositorWorkspace_ = null
     mCompositorCamera_ = null
     mCompositorTexture_ = null
+
+    mFragmentParams_ = null
+
+    mDrawWater_ = false;
+    mDrawGroundType_ = false;
+    mDrawFlags_ = 0;
 
     constructor(){
         setupCompositor();
@@ -25,6 +36,27 @@
         fragmentParams.setNamedConstant("intBuffer", outData.voxelBuffer);
         fragmentParams.setNamedConstant("width", outData.width);
         fragmentParams.setNamedConstant("height", outData.height);
+        mFragmentParams_ = fragmentParams;
+    }
+
+    function resubmitDrawFlags_(){
+        local f = 0;
+        if(mDrawWater_) f = f | (1 << drawMasks.WATER);
+        if(mDrawGroundType_) f = f | (1 << drawMasks.GROUND_TYPE);
+
+        mDrawFlags_ = f;
+        print("new draw flags " + mDrawFlags_);
+        mFragmentParams_.setNamedConstant("drawFlags", mDrawFlags_);
+    }
+
+    function setDrawWater(water){
+        mDrawWater_ = water;
+        resubmitDrawFlags_();
+    }
+
+    function setDrawGroundVoxels(ground){
+        mDrawGroundType_ = ground;
+        resubmitDrawFlags_();
     }
 
     function setupCompositor(){

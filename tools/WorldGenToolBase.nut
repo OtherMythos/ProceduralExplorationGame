@@ -50,6 +50,22 @@
         }, _GUI_ACTION_PRESSED);
         layout.addCell(newGenButton);
 
+        local waterCheckbox = mControlsWindow_.createCheckbox();
+        waterCheckbox.setText("Draw water");
+        waterCheckbox.setValue(false);
+        waterCheckbox.attachListenerForEvent(function(widget, action){
+            mMapViewer_.setDrawWater(widget.getValue());
+        }, _GUI_ACTION_RELEASED, this);
+        layout.addCell(waterCheckbox);
+
+        local showGroundVoxelCheckbox = mControlsWindow_.createCheckbox();
+        showGroundVoxelCheckbox.setText("Draw ground voxels");
+        showGroundVoxelCheckbox.setValue(false);
+        showGroundVoxelCheckbox.attachListenerForEvent(function(widget, action){
+            mMapViewer_.setDrawGroundVoxels(widget.getValue());
+        }, _GUI_ACTION_RELEASED, this);
+        layout.addCell(showGroundVoxelCheckbox);
+
         layout.layout();
 
 

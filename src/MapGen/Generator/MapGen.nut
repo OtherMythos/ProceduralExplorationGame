@@ -17,14 +17,21 @@ enum MapVoxelTypes{
     function reduceNoise_getHeightForPoint(input, x, y){
         local origin = 0.5;
         local centreOffset = (sqrt(pow(origin - x, 2) + pow(origin - y, 2)) + 0.1);
-        local curvedOffset = centreOffset == 1 ? 1 : 1 - pow(2, -10 * centreOffset);
-        curvedOffset = 1.0 - curvedOffset;
+        local curvedOffset = 1 - pow(2, -10 * centreOffset*1.8);
+        //curvedOffset *= 0.5;
+        //curvedOffset = 1.0 - curvedOffset;
         // curvedOffset *= 1;
         // //float val = curvedOffset;
         local val = (1-centreOffset) * input;
-        val *= 1.5;
+        //local val = (1-curvedOffset) * input;
+        //local mul = centreOffset*1.8;
+        //local val = (1-(curvedOffset > 1.0 ? 1.0 : curvedOffset)) * input;
+        //val *= 2;
+        //val += 0.4;
 
-        val += curvedOffset*0.8;
+        //val *= 1.2;
+
+        //val += curvedOffset*0.8;
 
         return val > 1.0 ? 1.0 : val;
     }
@@ -75,8 +82,8 @@ enum MapVoxelTypes{
             local val = blob.readn('i');
 
             local out = MapVoxelTypes.DIRT;
-            if(val >= 0 && val <= 99) out = MapVoxelTypes.SAND;
-            else if(val >= 100 && val <= 199) out = MapVoxelTypes.DIRT;
+            if(val >= 0 && val <= 109) out = MapVoxelTypes.SAND;
+            else if(val >= 110 && val <= 199) out = MapVoxelTypes.DIRT;
             else if(val >= 200 && val <= 255) out = MapVoxelTypes.SNOW;
 
             out = val | (out << 8);
@@ -92,7 +99,7 @@ enum MapVoxelTypes{
         local noiseBlob = _random.genPerlinNoise(data.width, data.height);
         reduceNoise(noiseBlob, data);
         determineAltitude(noiseBlob, data);
-        designateLandmass(noiseBlob, data);
+        //designateLandmass(noiseBlob, data);
         determineVoxelTypes(noiseBlob, data);
 
         local outData = {
