@@ -146,6 +146,115 @@ enum MapVoxelTypes{
         return seedWaterVals;
     }
 
+    function determineRiverOrigins(voxBlob, data){
+        local origins = array(data.numRivers);
+        //local riversBlob = blob(data.numRivers*4);
+        for(local i = 0; i < data.numRivers; i++){
+            local landPoint = findPointOnLand_(voxBlob, data, 150);
+            origins[i] = landPoint;
+            //riversBlob.writen(landPoint, 'i');
+        }
+
+        return origins;
+    }
+
+    function findMinNeighbourAltitude_(x, y, voxBlob, data, outCoords, foundData){
+        local storage = [];
+        if(!(wrapWorldPos_(x-1, y) in foundData)) storage.append(readAltitude_(voxBlob, x-1, y, data.width));
+        if(!(wrapWorldPos_(x+1, y) in foundData)) storage.append(readAltitude_(voxBlob, x+1, y, data.width));
+        if(!(wrapWorldPos_(x, y-1) in foundData)) storage.append(readAltitude_(voxBlob, x, y-1, data.width));
+        if(!(wrapWorldPos_(x, y+1) in foundData)) storage.append(readAltitude_(voxBlob, x, y+1, data.width));
+
+        local min = 0xFF;
+        local minIdx = -1;
+        foreach(c,i in storage){
+            if(i < min){
+                min = i;
+                minIdx = c;
+            }
+        }
+        assert(min != 0xFF);
+        //eww
+        switch(minIdx){
+            case 0:{
+                outCoords[0] = x-1;
+                outCoords[1] = y;
+                break;
+            }
+            case 1:{
+                outCoords[0] = x+1;
+                outCoords[1] = y;
+                break;
+            }
+            case 2:{
+                outCoords[0] = x;
+                outCoords[1] = y-1;
+                break;
+            }
+            case 3:{
+                outCoords[0] = x;
+                outCoords[1] = y+1;
+                break;
+            }
+            default:{
+                assert(false);
+            }
+        }
+
+    }
+    function calculateRivers(origins, voxBlob, data){
+        local outData = [];
+        local foundData = {};
+        local outCoords = [0, 0];
+        for(local river = 0; river < origins.len(); river++){
+            local originX = (origins[river] >> 16) & 0xFF;
+            local originY = origins[river] & 0xFF;
+            outData.append(wrapWorldPos_(originX, originY));
+
+            local currentX = originX;
+            local currentY = originY;
+            for(local i = 0; i < 50; i++){
+                //Trace the river down to some other body of water.
+                findMinNeighbourAltitude_(currentX, currentY, voxBlob, data, outCoords, foundData);
+                currentX = outCoords[0];
+                currentY = outCoords[1];
+                local totalId = wrapWorldPos_(currentX, currentY);
+                outData.append(totalId);
+                foundData[totalId] <- river;
+            }
+            outData.append(0xFFFFFFFF);
+        }
+        outData.append(0xFFFFFFFF);
+
+
+        //Copy values to a blob.
+        local riverData = blob(outData.len() * 4);
+        foreach(i in outData){
+            riverData.writen(i, 'i');
+        }
+
+        return riverData;
+    }
+
+    function findPointOnLand_(voxBlob, data, minAltitude){
+        local x = 0;
+        local y = 0;
+        //Just to avoid infinite loops.
+        //TODO find a better way than this.
+        for(local i = 0; i < 500; i++){
+            x = _random.randInt(data.width);
+            y = _random.randInt(data.height);
+            local altitude = readAltitude_(voxBlob, x, y, data.width);
+            if(altitude >= minAltitude) break;
+        }
+        local out = wrapWorldPos_(x, y);
+        return out;
+    }
+
+    function wrapWorldPos_(x, y){
+        return ((x & 0xFFFF) << 16) | (y & 0xFFFF);
+    }
+
     function readVoxel_(blob, x, y, width){
     }
     function readAltitude_(blob, x, y, width){
@@ -164,12 +273,15 @@ enum MapVoxelTypes{
         //designateLandmass(noiseBlob, data);
         determineVoxelTypes(noiseBlob, data);
         local waterSeeds = floodFillWater(noiseBlob, data);
+        local riverOrigins = determineRiverOrigins(noiseBlob, data);
+        local riverBuffer = calculateRivers(riverOrigins, noiseBlob, data);
 
         local outData = {
             "voxelBuffer": noiseBlob,
             "width": data.width,
             "height": data.height,
-            "waterSeeds": waterSeeds
+            "waterSeeds": waterSeeds,
+            "riverBuffer": riverBuffer
         };
         return outData;
     }

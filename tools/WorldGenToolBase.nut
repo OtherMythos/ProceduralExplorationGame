@@ -74,6 +74,14 @@
         }, _GUI_ACTION_RELEASED, this);
         layout.addCell(showWaterGroupCheckbox);
 
+        local showRiverDataCheckbox = mControlsWindow_.createCheckbox();
+        showRiverDataCheckbox.setText("Show river data");
+        showRiverDataCheckbox.setValue(false);
+        showRiverDataCheckbox.attachListenerForEvent(function(widget, action){
+            mMapViewer_.setDrawRiverData(widget.getValue());
+        }, _GUI_ACTION_RELEASED, this);
+        layout.addCell(showRiverDataCheckbox);
+
         layout.layout();
 
 
@@ -93,6 +101,7 @@
             "seed": _random.randInt(0, 100000),
             "width": 400,
             "height": 400,
+            "numRivers": 4
         };
         local outData = gen.generate(data);
         mSeedLabel_.setText("Seed: " + data.seed.tostring());

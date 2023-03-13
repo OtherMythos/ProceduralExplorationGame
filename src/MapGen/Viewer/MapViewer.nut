@@ -1,7 +1,8 @@
 enum drawMasks{
     WATER,
     GROUND_TYPE,
-    WATER_GROUPS
+    WATER_GROUPS,
+    RIVER_DATA
 };
 
 ::MapViewer <- class{
@@ -18,6 +19,7 @@ enum drawMasks{
     mDrawWater_ = true;
     mDrawGroundType_ = true;
     mDrawWaterGroups_ = 0;
+    mDrawRiverData_ = 0;
     mDrawFlags_ = 0;
 
     constructor(){
@@ -35,6 +37,7 @@ enum drawMasks{
         local fragmentParams = material.getFragmentProgramParameters(0, 0);
 
         fragmentParams.setNamedConstant("intBuffer", outData.voxelBuffer);
+        fragmentParams.setNamedConstant("riverBuffer", outData.riverBuffer);
         fragmentParams.setNamedConstant("width", outData.width);
         fragmentParams.setNamedConstant("height", outData.height);
         fragmentParams.setNamedConstant("numWaterSeeds", outData.waterSeeds.len());
@@ -48,6 +51,7 @@ enum drawMasks{
         if(mDrawWater_) f = f | (1 << drawMasks.WATER);
         if(mDrawGroundType_) f = f | (1 << drawMasks.GROUND_TYPE);
         if(mDrawWaterGroups_) f = f | (1 << drawMasks.WATER_GROUPS);
+        if(mDrawRiverData_) f = f | (1 << drawMasks.RIVER_DATA);
 
         mDrawFlags_ = f;
         print("new draw flags " + mDrawFlags_);
@@ -66,6 +70,11 @@ enum drawMasks{
 
     function setDrawWaterGroups(waterGroups){
         mDrawWaterGroups_ = waterGroups;
+        resubmitDrawFlags_();
+    }
+
+    function setDrawRiverData(riverData){
+        mDrawRiverData_ = riverData;
         resubmitDrawFlags_();
     }
 

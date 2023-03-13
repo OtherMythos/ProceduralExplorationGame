@@ -10,6 +10,7 @@ struct Params
 {
    //Make it a bit bigger than needed to test things.
    unsigned int intBuffer[1000*1000];
+   unsigned int riverBuffer[1000];
    int width;
    int height;
    unsigned int drawFlags;
@@ -26,7 +27,8 @@ fragment float4 main_metal
 
    int WATER_MASK = 1 << 0;
    int GROUND_MASK = 1 << 1;
-   int WATER_GROUPS = 1 << 2;
+   int WATER_GROUPS_MASK = 1 << 2;
+   int RIVER_DATA_MASK = 1 << 3;
 
    float4 voxelColours[] = {
       float4(0.84, 0.87, 0.29, 1),
@@ -61,9 +63,30 @@ fragment float4 main_metal
          }
       }
    }
-   if(p.drawFlags & WATER_GROUPS){
+   if(p.drawFlags & WATER_GROUPS_MASK){
       float valGroup = (float)waterGroup / p.numWaterSeeds;
       drawVal = float4(valGroup, valGroup, valGroup, 1);
+   }
+   if(p.drawFlags & RIVER_DATA_MASK){
+      //for(int i = 0; i < 4; i++){
+      int i = 0;
+      bool first = true;
+      while(true){
+         unsigned int riverVal = p.riverBuffer[i];
+         if(first && riverVal == 0xFFFFFFFF){
+            break;
+         }
+         unsigned int x = (riverVal >> 16) & 0xFFFF;
+         unsigned int y = riverVal & 0xFFFF;
+         if(xVox == x && yVox == y){
+            drawVal = first ? float4(1, 0, 1, 1) : float4(0, 0, 0, 1);
+         }
+         first = false;
+         i++;
+         if(riverVal == 0xFFFFFFFF){
+            first = true;
+         }
+      }
    }
 
    return drawVal;
