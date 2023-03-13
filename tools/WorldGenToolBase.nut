@@ -66,6 +66,14 @@
         }, _GUI_ACTION_RELEASED, this);
         layout.addCell(showGroundVoxelCheckbox);
 
+        local showWaterGroupCheckbox = mControlsWindow_.createCheckbox();
+        showWaterGroupCheckbox.setText("Show water group");
+        showWaterGroupCheckbox.setValue(false);
+        showWaterGroupCheckbox.attachListenerForEvent(function(widget, action){
+            mMapViewer_.setDrawWaterGroups(widget.getValue());
+        }, _GUI_ACTION_RELEASED, this);
+        layout.addCell(showWaterGroupCheckbox);
+
         layout.layout();
 
 

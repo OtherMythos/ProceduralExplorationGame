@@ -93,19 +93,83 @@ enum MapVoxelTypes{
         }
     }
 
+    function floodFillWaterEntry_(x, y, width, height, vals, blob, currentIdx){
+        if(x < 0 || y < 0 || x >= width || y >= height) return;
+        local idx = x+y*width;
+        if(vals[idx] != 0xFF) return;
+
+        local altitude = readAltitude_(blob, x, y, width);
+        if(altitude >= 100){
+            //This bit isn't water.
+            return;
+        }
+
+        vals[idx] = currentIdx;
+        floodFillWaterEntry_(x-1, y, width, height, vals, blob, currentIdx);
+        floodFillWaterEntry_(x+1, y, width, height, vals, blob, currentIdx);
+        floodFillWaterEntry_(x, y-1, width, height, vals, blob, currentIdx);
+        floodFillWaterEntry_(x, y+1, width, height, vals, blob, currentIdx);
+    }
+    function floodFillWater(blob, data){
+        local vals = array(data.width*data.height, 0xFF);
+        local seedWaterVals = [];
+        local currentIdx = 0;
+
+        for(local y = 0; y < data.height; y++){
+            for(local x = 0; x < data.width; x++){
+                local altitude = readAltitude_(blob, x, y, data.width);
+                if(altitude < 100){
+                    //Designate this as water.
+                    if(vals[x + y * data.width] == 0xFF){
+                        floodFillWaterEntry_(x, y, data.width, data.height, vals, blob, currentIdx);
+                        seedWaterVals.append([x, y]);
+                        currentIdx++;
+                    }
+                }
+            }
+        }
+
+        //Ensure sizes match up.
+        assert(blob.len() == vals.len() * 4);
+        //Commit the values to the blob.
+        blob.seek(0);
+        for(local i = 0; i < vals.len(); i++){
+            local pos = blob.tell();
+            local current = blob.readn('i');
+            current = current | ((vals[i] & 0xFF) << 16);
+
+            blob.seek(pos);
+            blob.writen(current, 'i');
+        }
+
+        assert(seedWaterVals.len() < 0xFF);
+        return seedWaterVals;
+    }
+
+    function readVoxel_(blob, x, y, width){
+    }
+    function readAltitude_(blob, x, y, width){
+        blob.seek((x + y * width) * 4);
+        local val = blob.readn('i');
+        return val & 0xFF;
+    }
+
     function generate(data){
         _random.seedPatternGenerator(data.seed);
 
-        local noiseBlob = _random.genPerlinNoise(data.width, data.height);
+        local noiseBlob = _random.genPerlinNoise(data.width, data.height, 0.05, 4);
+        assert(noiseBlob.len() == data.width*data.height*4);
         reduceNoise(noiseBlob, data);
         determineAltitude(noiseBlob, data);
         //designateLandmass(noiseBlob, data);
         determineVoxelTypes(noiseBlob, data);
+        local waterSeeds = floodFillWater(noiseBlob, data);
 
         local outData = {
             "voxelBuffer": noiseBlob,
             "width": data.width,
-            "height": data.height
+            "height": data.height,
+            "waterSeeds": waterSeeds
         };
         return outData;
     }
