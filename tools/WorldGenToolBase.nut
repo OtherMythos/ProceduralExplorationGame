@@ -50,45 +50,24 @@
         }, _GUI_ACTION_PRESSED);
         layout.addCell(newGenButton);
 
-        local waterCheckbox = mControlsWindow_.createCheckbox();
-        waterCheckbox.setText("Draw water");
-        waterCheckbox.setValue(false);
-        waterCheckbox.attachListenerForEvent(function(widget, action){
-            mMapViewer_.setDrawWater(widget.getValue());
-        }, _GUI_ACTION_RELEASED, this);
-        layout.addCell(waterCheckbox);
-
-        local showGroundVoxelCheckbox = mControlsWindow_.createCheckbox();
-        showGroundVoxelCheckbox.setText("Draw ground voxels");
-        showGroundVoxelCheckbox.setValue(false);
-        showGroundVoxelCheckbox.attachListenerForEvent(function(widget, action){
-            mMapViewer_.setDrawGroundVoxels(widget.getValue());
-        }, _GUI_ACTION_RELEASED, this);
-        layout.addCell(showGroundVoxelCheckbox);
-
-        local showWaterGroupCheckbox = mControlsWindow_.createCheckbox();
-        showWaterGroupCheckbox.setText("Show water group");
-        showWaterGroupCheckbox.setValue(false);
-        showWaterGroupCheckbox.attachListenerForEvent(function(widget, action){
-            mMapViewer_.setDrawWaterGroups(widget.getValue());
-        }, _GUI_ACTION_RELEASED, this);
-        layout.addCell(showWaterGroupCheckbox);
-
-        local showRiverDataCheckbox = mControlsWindow_.createCheckbox();
-        showRiverDataCheckbox.setText("Show river data");
-        showRiverDataCheckbox.setValue(false);
-        showRiverDataCheckbox.attachListenerForEvent(function(widget, action){
-            mMapViewer_.setDrawRiverData(widget.getValue());
-        }, _GUI_ACTION_RELEASED, this);
-        layout.addCell(showRiverDataCheckbox);
-
-        local showLandGroupCheckbox = mControlsWindow_.createCheckbox();
-        showLandGroupCheckbox.setText("Show land group");
-        showLandGroupCheckbox.setValue(false);
-        showLandGroupCheckbox.attachListenerForEvent(function(widget, action){
-            mMapViewer_.setDrawLandGroups(widget.getValue());
-        }, _GUI_ACTION_RELEASED, this);
-        layout.addCell(showLandGroupCheckbox);
+        local checkboxes = [
+            "Draw water",
+            "Draw ground voxels",
+            "Show water group",
+            "Show river data",
+            "Show land group",
+        ];
+        local checkboxListener = function(widget, action){
+            mMapViewer_.setDrawOption(widget.getUserId(), widget.getValue());
+        };
+        foreach(c,i in checkboxes){
+            local checkbox = mControlsWindow_.createCheckbox();
+            checkbox.setText(i);
+            checkbox.setValue(mMapViewer_.getDrawOption(c));
+            checkbox.setUserId(c);
+            checkbox.attachListenerForEvent(checkboxListener, _GUI_ACTION_RELEASED, this);
+            layout.addCell(checkbox);
+        }
 
         layout.layout();
 

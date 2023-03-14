@@ -1,14 +1,19 @@
-enum drawMasks{
+enum DrawOptions{
     WATER,
     GROUND_TYPE,
     WATER_GROUPS,
     RIVER_DATA,
-    LAND_GROUPS
+    LAND_GROUPS,
+
+    MAX
 };
 
 ::MapViewer <- class{
 
     mMapData_ = null;
+
+    mDrawOptions_ = null;
+    mDrawFlags_ = 0;
 
     mCompositorDatablock_ = null
     mCompositorWorkspace_ = null
@@ -17,14 +22,11 @@ enum drawMasks{
 
     mFragmentParams_ = null
 
-    mDrawWater_ = true;
-    mDrawGroundType_ = true;
-    mDrawWaterGroups_ = false;
-    mDrawRiverData_ = false;
-    mDrawLandGroups_ = false;
-    mDrawFlags_ = 0;
-
     constructor(){
+        mDrawOptions_ = array(DrawOptions.MAX, false);
+        mDrawOptions_[DrawOptions.WATER] = true;
+        mDrawOptions_[DrawOptions.GROUND_TYPE] = true;
+
         setupCompositor();
     }
 
@@ -53,40 +55,24 @@ enum drawMasks{
 
     function resubmitDrawFlags_(){
         local f = 0;
-        if(mDrawWater_) f = f | (1 << drawMasks.WATER);
-        if(mDrawGroundType_) f = f | (1 << drawMasks.GROUND_TYPE);
-        if(mDrawWaterGroups_) f = f | (1 << drawMasks.WATER_GROUPS);
-        if(mDrawRiverData_) f = f | (1 << drawMasks.RIVER_DATA);
-        if(mDrawLandGroups_) f = f | (1 << drawMasks.LAND_GROUPS);
+        for(local i = 0; i < DrawOptions.MAX; i++){
+            if(mDrawOptions_[i]){
+                f = f | (1 << i);
+            }
+        }
 
         mDrawFlags_ = f;
         print("new draw flags " + mDrawFlags_);
         mFragmentParams_.setNamedConstant("drawFlags", mDrawFlags_);
     }
 
-    function setDrawWater(water){
-        mDrawWater_ = water;
+    function setDrawOption(option, value){
+        mDrawOptions_[option] = value;
         resubmitDrawFlags_();
     }
 
-    function setDrawGroundVoxels(ground){
-        mDrawGroundType_ = ground;
-        resubmitDrawFlags_();
-    }
-
-    function setDrawWaterGroups(waterGroups){
-        mDrawWaterGroups_ = waterGroups;
-        resubmitDrawFlags_();
-    }
-
-    function setDrawRiverData(riverData){
-        mDrawRiverData_ = riverData;
-        resubmitDrawFlags_();
-    }
-
-    function setDrawLandGroups(landGroups){
-        mDrawLandGroups_ = landGroups;
-        resubmitDrawFlags_();
+    function getDrawOption(option){
+        return mDrawOptions_[option];
     }
 
     function setupCompositor(){
