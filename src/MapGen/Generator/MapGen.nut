@@ -10,6 +10,8 @@ enum MapVoxelTypes{
  */
 ::MapGen <- class{
 
+    mData_ = null;
+
     constructor(){
 
     }
@@ -97,36 +99,35 @@ enum MapVoxelTypes{
         }
     }
 
-    function floodFillWaterEntry_(x, y, width, height, seaLevel, vals, blob, currentIdx){
+
+    function floodFill_(x, y, width, height, comparisonFunction, vals, blob, currentIdx){
         if(x < 0 || y < 0 || x >= width || y >= height) return;
         local idx = x+y*width;
         if(vals[idx] != 0xFF) return;
 
         local altitude = readAltitude_(blob, x, y, width);
-        if(altitude >= seaLevel){
-            //This bit isn't water.
-            return;
-        }
+        if(!comparisonFunction(altitude)) return;
 
         vals[idx] = currentIdx;
-        floodFillWaterEntry_(x-1, y, width, height, seaLevel, vals, blob, currentIdx);
-        floodFillWaterEntry_(x+1, y, width, height, seaLevel, vals, blob, currentIdx);
-        floodFillWaterEntry_(x, y-1, width, height, seaLevel, vals, blob, currentIdx);
-        floodFillWaterEntry_(x, y+1, width, height, seaLevel, vals, blob, currentIdx);
+        floodFill_(x-1, y, width, height, comparisonFunction, vals, blob, currentIdx);
+        floodFill_(x+1, y, width, height, comparisonFunction, vals, blob, currentIdx);
+        floodFill_(x, y-1, width, height, comparisonFunction, vals, blob, currentIdx);
+        floodFill_(x, y+1, width, height, comparisonFunction, vals, blob, currentIdx);
     }
-    function floodFillWater(blob, data){
+
+    function floodFill(comparisonFunction, blob, data){
         local vals = array(data.width*data.height, 0xFF);
-        local seedWaterVals = [];
+        local seedVals = [];
         local currentIdx = 0;
 
         for(local y = 0; y < data.height; y++){
             for(local x = 0; x < data.width; x++){
                 local altitude = readAltitude_(blob, x, y, data.width);
-                if(altitude < data.seaLevel){
+                if(comparisonFunction(altitude)){
                     //Designate this as water.
                     if(vals[x + y * data.width] == 0xFF){
-                        floodFillWaterEntry_(x, y, data.width, data.height, data.seaLevel, vals, blob, currentIdx);
-                        seedWaterVals.append([x, y]);
+                        floodFill_(x, y, data.width, data.height, comparisonFunction, vals, blob, currentIdx);
+                        seedVals.append([x, y]);
                         currentIdx++;
                     }
                 }
@@ -146,8 +147,15 @@ enum MapVoxelTypes{
             blob.writen(current, 'i');
         }
 
-        assert(seedWaterVals.len() < 0xFF);
-        return seedWaterVals;
+        assert(seedVals.len() < 0xFF);
+        return seedVals;
+    }
+
+    function floodFillWaterComparisonFunction_(altitude){
+        return altitude < mData_.seaLevel;
+    }
+    function floodFillWater(blob, data){
+        return floodFill(floodFillWaterComparisonFunction_, blob, data);
     }
 
     function determineRiverOrigins(voxBlob, data){
@@ -268,6 +276,7 @@ enum MapVoxelTypes{
     }
 
     function generate(data){
+        mData_ = data;
         _random.seedPatternGenerator(data.seed);
 
         local noiseBlob = _random.genPerlinNoise(data.width, data.height, 0.05, 4);
