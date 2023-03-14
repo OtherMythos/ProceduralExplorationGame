@@ -82,6 +82,14 @@
         }, _GUI_ACTION_RELEASED, this);
         layout.addCell(showRiverDataCheckbox);
 
+        local showLandGroupCheckbox = mControlsWindow_.createCheckbox();
+        showLandGroupCheckbox.setText("Show land group");
+        showLandGroupCheckbox.setValue(false);
+        showLandGroupCheckbox.attachListenerForEvent(function(widget, action){
+            mMapViewer_.setDrawLandGroups(widget.getValue());
+        }, _GUI_ACTION_RELEASED, this);
+        layout.addCell(showLandGroupCheckbox);
+
         layout.layout();
 
 

@@ -100,7 +100,7 @@ enum MapVoxelTypes{
     }
 
 
-    function floodFill_(x, y, width, height, comparisonFunction, vals, blob, currentIdx){
+    function floodFill_(x, y, width, height, comparisonFunction, vals, blob, currentIdx, floodData){
         if(x < 0 || y < 0 || x >= width || y >= height) return;
         local idx = x+y*width;
         if(vals[idx] != 0xFF) return;
@@ -108,16 +108,21 @@ enum MapVoxelTypes{
         local altitude = readAltitude_(blob, x, y, width);
         if(!comparisonFunction(altitude)) return;
 
+        if(x == 0 || y == 0 || x == width-1 || y == height-1){
+            floodData.nextToEdge = true;
+        }
+
         vals[idx] = currentIdx;
-        floodFill_(x-1, y, width, height, comparisonFunction, vals, blob, currentIdx);
-        floodFill_(x+1, y, width, height, comparisonFunction, vals, blob, currentIdx);
-        floodFill_(x, y-1, width, height, comparisonFunction, vals, blob, currentIdx);
-        floodFill_(x, y+1, width, height, comparisonFunction, vals, blob, currentIdx);
+        floodData.total++;
+        floodFill_(x-1, y, width, height, comparisonFunction, vals, blob, currentIdx, floodData);
+        floodFill_(x+1, y, width, height, comparisonFunction, vals, blob, currentIdx, floodData);
+        floodFill_(x, y-1, width, height, comparisonFunction, vals, blob, currentIdx, floodData);
+        floodFill_(x, y+1, width, height, comparisonFunction, vals, blob, currentIdx, floodData);
     }
 
-    function floodFill(comparisonFunction, blob, data){
+    function floodFill(comparisonFunction, shiftVal, blob, data){
         local vals = array(data.width*data.height, 0xFF);
-        local seedVals = [];
+        local outData = [];
         local currentIdx = 0;
 
         for(local y = 0; y < data.height; y++){
@@ -126,8 +131,14 @@ enum MapVoxelTypes{
                 if(comparisonFunction(altitude)){
                     //Designate this as water.
                     if(vals[x + y * data.width] == 0xFF){
-                        floodFill_(x, y, data.width, data.height, comparisonFunction, vals, blob, currentIdx);
-                        seedVals.append([x, y]);
+                        local floodData = {
+                            "total": 0,
+                            "seedX": x,
+                            "seedY": y,
+                            "nextToEdge": false
+                        };
+                        floodFill_(x, y, data.width, data.height, comparisonFunction, vals, blob, currentIdx, floodData);
+                        outData.append(floodData);
                         currentIdx++;
                     }
                 }
@@ -141,21 +152,28 @@ enum MapVoxelTypes{
         for(local i = 0; i < vals.len(); i++){
             local pos = blob.tell();
             local current = blob.readn('i');
-            current = current | ((vals[i] & 0xFF) << 16);
+            current = current | ((vals[i] & 0xFF) << shiftVal);
 
             blob.seek(pos);
             blob.writen(current, 'i');
         }
 
-        assert(seedVals.len() < 0xFF);
-        return seedVals;
+        assert(outData.len() < 0xFF);
+        return outData;
     }
 
     function floodFillWaterComparisonFunction_(altitude){
         return altitude < mData_.seaLevel;
     }
     function floodFillWater(blob, data){
-        return floodFill(floodFillWaterComparisonFunction_, blob, data);
+        return floodFill(floodFillWaterComparisonFunction_, 16, blob, data);
+    }
+
+    function floodFillLandComparisonFunction_(altitude){
+        return altitude >= mData_.seaLevel;
+    }
+    function floodFillLand(blob, data){
+        return floodFill(floodFillLandComparisonFunction_, 24, blob, data);
     }
 
     function determineRiverOrigins(voxBlob, data){
@@ -275,6 +293,18 @@ enum MapVoxelTypes{
         return val & 0xFF;
     }
 
+    function printFloodFillData_(title, data){
+        print("============" + title + "============");
+        foreach(c,i in data){
+            print("== Entry: " + c + " ==");
+            print("total: " + i.total);
+            print("seedX: " + i.seedX);
+            print("seedY: " + i.seedY);
+            print("nextToEdge: " + i.nextToEdge);
+        }
+        print("==================================");
+    }
+
     function generate(data){
         mData_ = data;
         _random.seedPatternGenerator(data.seed);
@@ -285,15 +315,20 @@ enum MapVoxelTypes{
         determineAltitude(noiseBlob, data);
         //designateLandmass(noiseBlob, data);
         determineVoxelTypes(noiseBlob, data);
-        local waterSeeds = floodFillWater(noiseBlob, data);
+        local waterData = floodFillWater(noiseBlob, data);
+        local landData = floodFillLand(noiseBlob, data);
         local riverOrigins = determineRiverOrigins(noiseBlob, data);
         local riverBuffer = calculateRivers(riverOrigins, noiseBlob, data);
+
+        printFloodFillData_("water", waterData);
+        printFloodFillData_("land", landData);
 
         local outData = {
             "voxelBuffer": noiseBlob,
             "width": data.width,
             "height": data.height,
-            "waterSeeds": waterSeeds,
+            "waterData": waterData,
+            "landData": landData,
             "riverBuffer": riverBuffer,
             "seaLevel": data.seaLevel
         };

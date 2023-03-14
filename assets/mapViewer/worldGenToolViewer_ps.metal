@@ -15,6 +15,7 @@ struct Params
    int height;
    unsigned int drawFlags;
    unsigned int numWaterSeeds;
+   unsigned int numLandSeeds;
    unsigned int seaLevel;
 };
 
@@ -30,6 +31,7 @@ fragment float4 main_metal
    int GROUND_MASK = 1 << 1;
    int WATER_GROUPS_MASK = 1 << 2;
    int RIVER_DATA_MASK = 1 << 3;
+   int LAND_GROUPS_MASK = 1 << 4;
 
    float4 voxelColours[] = {
       float4(0.84, 0.87, 0.29, 1),
@@ -45,6 +47,7 @@ fragment float4 main_metal
    short altitude = voxVal & 0xFF;
    short voxelMeta = (voxVal >> 8) & 0xFF;
    short waterGroup = (voxVal >> 16) & 0xFF;
+   short landGroup = (voxVal >> 24) & 0xFF;
 
    float4 drawVal(0, 0, 0, 1);
 
@@ -88,6 +91,10 @@ fragment float4 main_metal
             first = true;
          }
       }
+   }
+   if(p.drawFlags & LAND_GROUPS_MASK){
+      float valGroup = (float)landGroup / p.numLandSeeds;
+      drawVal = float4(valGroup, valGroup, valGroup, 1);
    }
 
    return drawVal;

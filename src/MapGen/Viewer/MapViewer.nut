@@ -2,7 +2,8 @@ enum drawMasks{
     WATER,
     GROUND_TYPE,
     WATER_GROUPS,
-    RIVER_DATA
+    RIVER_DATA,
+    LAND_GROUPS
 };
 
 ::MapViewer <- class{
@@ -18,8 +19,9 @@ enum drawMasks{
 
     mDrawWater_ = true;
     mDrawGroundType_ = true;
-    mDrawWaterGroups_ = 0;
-    mDrawRiverData_ = 0;
+    mDrawWaterGroups_ = false;
+    mDrawRiverData_ = false;
+    mDrawLandGroups_ = false;
     mDrawFlags_ = 0;
 
     constructor(){
@@ -40,7 +42,8 @@ enum drawMasks{
         fragmentParams.setNamedConstant("riverBuffer", outData.riverBuffer);
         fragmentParams.setNamedConstant("width", outData.width);
         fragmentParams.setNamedConstant("height", outData.height);
-        fragmentParams.setNamedConstant("numWaterSeeds", outData.waterSeeds.len());
+        fragmentParams.setNamedConstant("numWaterSeeds", outData.waterData.len());
+        fragmentParams.setNamedConstant("numLandSeeds", outData.landData.len());
         fragmentParams.setNamedConstant("seaLevel", outData.seaLevel);
 
         mFragmentParams_ = fragmentParams;
@@ -54,6 +57,7 @@ enum drawMasks{
         if(mDrawGroundType_) f = f | (1 << drawMasks.GROUND_TYPE);
         if(mDrawWaterGroups_) f = f | (1 << drawMasks.WATER_GROUPS);
         if(mDrawRiverData_) f = f | (1 << drawMasks.RIVER_DATA);
+        if(mDrawLandGroups_) f = f | (1 << drawMasks.LAND_GROUPS);
 
         mDrawFlags_ = f;
         print("new draw flags " + mDrawFlags_);
@@ -77,6 +81,11 @@ enum drawMasks{
 
     function setDrawRiverData(riverData){
         mDrawRiverData_ = riverData;
+        resubmitDrawFlags_();
+    }
+
+    function setDrawLandGroups(landGroups){
+        mDrawLandGroups_ = landGroups;
         resubmitDrawFlags_();
     }
 
