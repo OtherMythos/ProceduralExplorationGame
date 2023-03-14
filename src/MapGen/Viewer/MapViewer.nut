@@ -41,6 +41,8 @@ enum drawMasks{
         fragmentParams.setNamedConstant("width", outData.width);
         fragmentParams.setNamedConstant("height", outData.height);
         fragmentParams.setNamedConstant("numWaterSeeds", outData.waterSeeds.len());
+        fragmentParams.setNamedConstant("seaLevel", outData.seaLevel);
+
         mFragmentParams_ = fragmentParams;
 
         resubmitDrawFlags_();

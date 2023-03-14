@@ -15,6 +15,7 @@ struct Params
    int height;
    unsigned int drawFlags;
    unsigned int numWaterSeeds;
+   unsigned int seaLevel;
 };
 
 fragment float4 main_metal
@@ -55,7 +56,7 @@ fragment float4 main_metal
       drawVal = voxelColours[voxelMeta];
    }
    if(p.drawFlags & WATER_MASK){
-      if(altitude < 100){
+      if(altitude < p.seaLevel){
          if(waterGroup == 0){
             drawVal = float4(0, 0, 1.0, 1.0);
          }else{

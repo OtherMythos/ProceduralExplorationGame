@@ -67,7 +67,7 @@ enum MapVoxelTypes{
         for(local i = 0; i < data.width * data.height; i++){
             local pos = blob.tell();
             local val = blob.readn('i');
-            if(val < 100){
+            if(val < data.seaLevel){
                 val = val / 2;
             }
             blob.seek(pos);
@@ -77,14 +77,18 @@ enum MapVoxelTypes{
 
     function determineVoxelTypes(blob, data){
         blob.seek(0);
+
+        local biomeSand = data.seaLevel + data.altitudeBiomes[0];
+        local biomeGround = data.seaLevel + data.altitudeBiomes[1];
+
         for(local i = 0; i < data.width * data.height; i++){
             local pos = blob.tell();
             local val = blob.readn('i');
 
             local out = MapVoxelTypes.DIRT;
-            if(val >= 0 && val <= 109) out = MapVoxelTypes.SAND;
-            else if(val >= 110 && val <= 199) out = MapVoxelTypes.DIRT;
-            else if(val >= 200 && val <= 255) out = MapVoxelTypes.SNOW;
+            if(val >= 0 && val < biomeSand) out = MapVoxelTypes.SAND;
+            else if(val >= biomeSand && val < biomeGround) out = MapVoxelTypes.DIRT;
+            else if(val >= biomeGround && val <= 255) out = MapVoxelTypes.SNOW;
 
             out = val | (out << 8);
 
@@ -93,22 +97,22 @@ enum MapVoxelTypes{
         }
     }
 
-    function floodFillWaterEntry_(x, y, width, height, vals, blob, currentIdx){
+    function floodFillWaterEntry_(x, y, width, height, seaLevel, vals, blob, currentIdx){
         if(x < 0 || y < 0 || x >= width || y >= height) return;
         local idx = x+y*width;
         if(vals[idx] != 0xFF) return;
 
         local altitude = readAltitude_(blob, x, y, width);
-        if(altitude >= 100){
+        if(altitude >= seaLevel){
             //This bit isn't water.
             return;
         }
 
         vals[idx] = currentIdx;
-        floodFillWaterEntry_(x-1, y, width, height, vals, blob, currentIdx);
-        floodFillWaterEntry_(x+1, y, width, height, vals, blob, currentIdx);
-        floodFillWaterEntry_(x, y-1, width, height, vals, blob, currentIdx);
-        floodFillWaterEntry_(x, y+1, width, height, vals, blob, currentIdx);
+        floodFillWaterEntry_(x-1, y, width, height, seaLevel, vals, blob, currentIdx);
+        floodFillWaterEntry_(x+1, y, width, height, seaLevel, vals, blob, currentIdx);
+        floodFillWaterEntry_(x, y-1, width, height, seaLevel, vals, blob, currentIdx);
+        floodFillWaterEntry_(x, y+1, width, height, seaLevel, vals, blob, currentIdx);
     }
     function floodFillWater(blob, data){
         local vals = array(data.width*data.height, 0xFF);
@@ -118,10 +122,10 @@ enum MapVoxelTypes{
         for(local y = 0; y < data.height; y++){
             for(local x = 0; x < data.width; x++){
                 local altitude = readAltitude_(blob, x, y, data.width);
-                if(altitude < 100){
+                if(altitude < data.seaLevel){
                     //Designate this as water.
                     if(vals[x + y * data.width] == 0xFF){
-                        floodFillWaterEntry_(x, y, data.width, data.height, vals, blob, currentIdx);
+                        floodFillWaterEntry_(x, y, data.width, data.height, data.seaLevel, vals, blob, currentIdx);
                         seedWaterVals.append([x, y]);
                         currentIdx++;
                     }
@@ -281,7 +285,8 @@ enum MapVoxelTypes{
             "width": data.width,
             "height": data.height,
             "waterSeeds": waterSeeds,
-            "riverBuffer": riverBuffer
+            "riverBuffer": riverBuffer,
+            "seaLevel": data.seaLevel
         };
         return outData;
     }

@@ -101,7 +101,9 @@
             "seed": _random.randInt(0, 100000),
             "width": 400,
             "height": 400,
-            "numRivers": 4
+            "numRivers": 4,
+            "seaLevel": 100,
+            "altitudeBiomes": [10, 100]
         };
         local outData = gen.generate(data);
         mSeedLabel_.setText("Seed: " + data.seed.tostring());
