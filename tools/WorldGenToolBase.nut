@@ -6,10 +6,11 @@
     mCompositorCamera_ = null
     mCompositorTexture_ = null
     mSeedLabel_ = null
+    mSeedEditbox_ = null
 
     mMapViewer_ = null
 
-    mPerlinTexture_ = null
+    mSeed_ = 0
 
     mWinWidth_ = 1920
     mWinHeight_ = 1080
@@ -17,6 +18,7 @@
     function setup(){
         setupGui();
 
+        setRandomSeed();
         generate();
     }
 
@@ -43,9 +45,26 @@
         layout.addCell(seedLabel);
         mSeedLabel_ = seedLabel;
 
+        local seedEditbox = mControlsWindow_.createEditbox();
+        seedEditbox.setSize(300, 50);
+        layout.addCell(seedEditbox);
+        mSeedEditbox_ = seedEditbox;
+
+        local generateButton = mControlsWindow_.createButton();
+        generateButton.setText("Generate")
+        generateButton.attachListenerForEvent(function(widget, action){
+            local text = mSeedEditbox_.getText();
+            print("Input text: " + text.tostring());
+            local intText = text.tointeger();
+            ::WorldGenTool.setSeed(intText);
+            ::WorldGenTool.generate();
+        }, _GUI_ACTION_PRESSED, this);
+        layout.addCell(generateButton);
+
         local newGenButton = mControlsWindow_.createButton();
-        newGenButton.setText("Generate")
+        newGenButton.setText("Random Seed")
         newGenButton.attachListenerForEvent(function(widget, action){
+            ::WorldGenTool.setRandomSeed();
             ::WorldGenTool.generate();
         }, _GUI_ACTION_PRESSED);
         layout.addCell(newGenButton);
@@ -71,7 +90,6 @@
 
         layout.layout();
 
-
         local renderWindow = _gui.createWindow();
         renderWindow.setSize(mWinWidth_ * (1.0 - winWidth), mWinHeight_);
         renderWindow.setPosition(mWinWidth_ * winWidth, 0);
@@ -82,10 +100,21 @@
         renderPanel.setDatablock(mMapViewer_.getDatablock());
     }
 
+    function setRandomSeed(){
+        local seed = _random.randInt(0, 100000);
+        setSeed(seed);
+    }
+
+    function setSeed(seedValue){
+        mSeedLabel_.setText("Seed: " + seedValue.tostring());
+        mSeedEditbox_.setText(seedValue.tostring());
+        mSeed_ = seedValue;
+    }
+
     function generate(){
         local gen = ::MapGen();
         local data = {
-            "seed": _random.randInt(0, 100000),
+            "seed": mSeed_,
             "width": 400,
             "height": 400,
             "numRivers": 4,
@@ -93,7 +122,6 @@
             "altitudeBiomes": [10, 100]
         };
         local outData = gen.generate(data);
-        mSeedLabel_.setText("Seed: " + data.seed.tostring());
 
         mMapViewer_.displayMapData(outData);
     }
