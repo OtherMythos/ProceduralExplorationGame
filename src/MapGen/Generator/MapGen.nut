@@ -64,19 +64,6 @@ enum MapVoxelTypes{
         }
     }
 
-    function designateLandmass(blob, data){
-        blob.seek(0);
-        for(local i = 0; i < data.width * data.height; i++){
-            local pos = blob.tell();
-            local val = blob.readn('i');
-            if(val < data.seaLevel){
-                val = val / 2;
-            }
-            blob.seek(pos);
-            blob.writen(val, 'i');
-        }
-    }
-
     function determineVoxelTypes(blob, data){
         blob.seek(0);
 
@@ -85,14 +72,18 @@ enum MapVoxelTypes{
 
         for(local i = 0; i < data.width * data.height; i++){
             local pos = blob.tell();
-            local val = blob.readn('i');
+            local originalVal = blob.readn('i');
+            local val = originalVal & 0xFF;
 
             local out = MapVoxelTypes.DIRT;
             if(val >= 0 && val < biomeSand) out = MapVoxelTypes.SAND;
             else if(val >= biomeSand && val < biomeGround) out = MapVoxelTypes.DIRT;
             else if(val >= biomeGround && val <= 255) out = MapVoxelTypes.SNOW;
+            else{
+                assert(false);
+            }
 
-            out = val | (out << 8);
+            out = originalVal | (out << 8);
 
             blob.seek(pos);
             blob.writen(out, 'i');
@@ -174,6 +165,44 @@ enum MapVoxelTypes{
     }
     function floodFillLand(blob, data){
         return floodFill(floodFillLandComparisonFunction_, 24, blob, data);
+    }
+
+
+    function floodFillLand_(x, y, width, height, comparisonFunction, blob, checked){
+        if(x < 0 || y < 0 || x >= width || y >= height) return;
+        local id = x | (y << 32);
+        if(id in checked) return;
+
+        local altitude = readAltitude_(blob, x, y, width);
+        if(!comparisonFunction(altitude)) return;
+        clearLandMass_(blob, x, y, width, mData_.seaLevel-1);
+        checked[id] <- true;
+
+        floodFillLand_(x-1, y, width, height, comparisonFunction, blob, checked);
+        floodFillLand_(x+1, y, width, height, comparisonFunction, blob, checked);
+        floodFillLand_(x, y-1, width, height, comparisonFunction, blob, checked);
+        floodFillLand_(x, y+1, width, height, comparisonFunction, blob, checked);
+    }
+    function removeRedundantIslands(noiseBlob, data, landData){
+        for(local i = 0; i < landData.len(); i++){
+            local e = landData[i];
+            local size = e.total;
+            if(size <= 10){
+                local checked = {};
+                floodFillLand_(e.seedX, e.seedY, data.width, data.height, floodFillLandComparisonFunction_, noiseBlob, checked);
+                landData[i] = null;
+            }
+        }
+
+        //Clear all the nulls.
+        local i = 0;
+        while(i < landData.len()){
+            if(landData[i] == null){
+                landData.remove(i);
+                continue;
+            }
+            i++;
+        }
     }
 
     function determineRiverOrigins(voxBlob, data){
@@ -285,12 +314,19 @@ enum MapVoxelTypes{
         return ((x & 0xFFFF) << 16) | (y & 0xFFFF);
     }
 
-    function readVoxel_(blob, x, y, width){
-    }
     function readAltitude_(blob, x, y, width){
         blob.seek((x + y * width) * 4);
         local val = blob.readn('i');
         return val & 0xFF;
+    }
+    function clearLandMass_(blob, x, y, width, val){
+        local pos = (x + y * width) * 4;
+        blob.seek(pos);
+        local original = blob.readn('i');
+        local newVal = original & 0x0000FF00;
+        newVal = newVal | val;
+        blob.seek(pos);
+        blob.writen(newVal, 'i');
     }
 
     function printFloodFillData_(title, data){
@@ -313,10 +349,10 @@ enum MapVoxelTypes{
         assert(noiseBlob.len() == data.width*data.height*4);
         reduceNoise(noiseBlob, data);
         determineAltitude(noiseBlob, data);
-        //designateLandmass(noiseBlob, data);
-        determineVoxelTypes(noiseBlob, data);
         local waterData = floodFillWater(noiseBlob, data);
         local landData = floodFillLand(noiseBlob, data);
+        removeRedundantIslands(noiseBlob, data, landData);
+        determineVoxelTypes(noiseBlob, data);
         local riverOrigins = determineRiverOrigins(noiseBlob, data);
         local riverBuffer = calculateRivers(riverOrigins, noiseBlob, data);
 
