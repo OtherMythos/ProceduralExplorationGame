@@ -4,6 +4,7 @@ enum DrawOptions{
     WATER_GROUPS,
     RIVER_DATA,
     LAND_GROUPS,
+    EDGE_VALS,
 
     MAX
 };

@@ -75,6 +75,7 @@
             "Show water group",
             "Show river data",
             "Show land group",
+            "Show edge vals",
         ];
         local checkboxListener = function(widget, action){
             mMapViewer_.setDrawOption(widget.getUserId(), widget.getValue());

@@ -92,23 +92,30 @@ enum MapVoxelTypes{
 
 
     function floodFill_(x, y, width, height, comparisonFunction, vals, blob, currentIdx, floodData){
-        if(x < 0 || y < 0 || x >= width || y >= height) return;
+        if(x < 0 || y < 0 || x >= width || y >= height) return 0;
         local idx = x+y*width;
-        if(vals[idx] != 0xFF) return;
+        if(vals[idx] != 0xFF) return 0;
 
         local altitude = readAltitude_(blob, x, y, width);
-        if(!comparisonFunction(altitude)) return;
+        if(!comparisonFunction(altitude)) return 1;
 
         if(x == 0 || y == 0 || x == width-1 || y == height-1){
-            floodData.nextToEdge = true;
+            floodData.nextToWorldEdge = true;
         }
 
         vals[idx] = currentIdx;
         floodData.total++;
-        floodFill_(x-1, y, width, height, comparisonFunction, vals, blob, currentIdx, floodData);
-        floodFill_(x+1, y, width, height, comparisonFunction, vals, blob, currentIdx, floodData);
-        floodFill_(x, y-1, width, height, comparisonFunction, vals, blob, currentIdx, floodData);
-        floodFill_(x, y+1, width, height, comparisonFunction, vals, blob, currentIdx, floodData);
+        local isEdge = 0;
+        isEdge = isEdge | floodFill_(x-1, y, width, height, comparisonFunction, vals, blob, currentIdx, floodData);
+        isEdge = isEdge | floodFill_(x+1, y, width, height, comparisonFunction, vals, blob, currentIdx, floodData);
+        isEdge = isEdge | floodFill_(x, y-1, width, height, comparisonFunction, vals, blob, currentIdx, floodData);
+        isEdge = isEdge | floodFill_(x, y+1, width, height, comparisonFunction, vals, blob, currentIdx, floodData);
+
+        if(isEdge){
+            floodData.edges.append(wrapWorldPos_(x, y));
+        }
+
+        return 0;
     }
 
     function floodFill(comparisonFunction, shiftVal, blob, data){
@@ -126,7 +133,8 @@ enum MapVoxelTypes{
                             "total": 0,
                             "seedX": x,
                             "seedY": y,
-                            "nextToEdge": false
+                            "nextToWorldEdge": false,
+                            "edges": []
                         };
                         floodFill_(x, y, data.width, data.height, comparisonFunction, vals, blob, currentIdx, floodData);
                         outData.append(floodData);
@@ -295,6 +303,26 @@ enum MapVoxelTypes{
         return riverData;
     }
 
+    function outlineEdges_(data, blob){
+        foreach(d in data){
+            local edges = d.edges;
+            for(local i = 0; i < edges.len(); i++){
+                local x = (edges[i] >> 16) & 0xFFFF;
+                local y = (edges[i]) & 0xFFFF;
+                local pos = (x + y * mData_.width) * 4;
+                blob.seek(pos);
+                local val = blob.readn('i');
+                val = val | 1 << 15;
+                blob.seek(pos);
+                blob.writen(val, 'i');
+            }
+        }
+    }
+    function outlineEdges(noiseBlob, waterData, landData){
+        outlineEdges_(landData, noiseBlob);
+        outlineEdges_(waterData, noiseBlob);
+    }
+
     function findPointOnLand_(voxBlob, data, minAltitude){
         local x = 0;
         local y = 0;
@@ -336,7 +364,8 @@ enum MapVoxelTypes{
             print("total: " + i.total);
             print("seedX: " + i.seedX);
             print("seedY: " + i.seedY);
-            print("nextToEdge: " + i.nextToEdge);
+            print("nextToWorldEdge: " + i.nextToWorldEdge);
+            print("numEdges: " + i.edges.len());
         }
         print("==================================");
     }
@@ -353,6 +382,7 @@ enum MapVoxelTypes{
         local landData = floodFillLand(noiseBlob, data);
         removeRedundantIslands(noiseBlob, data, landData);
         determineVoxelTypes(noiseBlob, data);
+        outlineEdges(noiseBlob, waterData, landData)
         local riverOrigins = determineRiverOrigins(noiseBlob, data);
         local riverBuffer = calculateRivers(riverOrigins, noiseBlob, data);
 

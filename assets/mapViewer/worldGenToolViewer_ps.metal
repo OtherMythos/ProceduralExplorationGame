@@ -32,6 +32,7 @@ fragment float4 main_metal
    int WATER_GROUPS_MASK = 1 << 2;
    int RIVER_DATA_MASK = 1 << 3;
    int LAND_GROUPS_MASK = 1 << 4;
+   int EDGE_VALS = 1 << 5;
 
    float4 voxelColours[] = {
       float4(0.84, 0.87, 0.29, 1),
@@ -45,7 +46,8 @@ fragment float4 main_metal
 
    int voxVal = p.intBuffer[xVox + yVox * p.width];
    short altitude = voxVal & 0xFF;
-   short voxelMeta = (voxVal >> 8) & 0xFF;
+   short voxelMeta = (voxVal >> 8) & 0x7F;
+   short edgeVox = (voxVal >> 8) & 0x80;
    short waterGroup = (voxVal >> 16) & 0xFF;
    short landGroup = (voxVal >> 24) & 0xFF;
 
@@ -95,6 +97,11 @@ fragment float4 main_metal
    if(p.drawFlags & LAND_GROUPS_MASK){
       float valGroup = (float)landGroup / p.numLandSeeds;
       drawVal = float4(valGroup, valGroup, valGroup, 1);
+   }
+   if(p.drawFlags & EDGE_VALS){
+      if(edgeVox){
+         drawVal = float4(0, 0, 0, 1);
+      }
    }
 
    return drawVal;
