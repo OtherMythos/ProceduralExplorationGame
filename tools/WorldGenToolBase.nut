@@ -118,7 +118,7 @@
             "seed": mSeed_,
             "width": 400,
             "height": 400,
-            "numRivers": 4,
+            "numRivers": 24,
             "seaLevel": 100,
             "altitudeBiomes": [10, 100]
         };

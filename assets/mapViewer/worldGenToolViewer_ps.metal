@@ -10,7 +10,7 @@ struct Params
 {
    //Make it a bit bigger than needed to test things.
    unsigned int intBuffer[1000*1000];
-   unsigned int riverBuffer[1000];
+   unsigned int riverBuffer[3000];
    int width;
    int height;
    unsigned int drawFlags;

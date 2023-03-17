@@ -130,6 +130,7 @@ enum MapVoxelTypes{
                     //Designate this as water.
                     if(vals[x + y * data.width] == 0xFF){
                         local floodData = {
+                            "id": currentIdx,
                             "total": 0,
                             "seedX": x,
                             "seedY": y,
@@ -213,33 +214,37 @@ enum MapVoxelTypes{
         }
     }
 
-    function determineRiverOrigins(voxBlob, data){
+    function determineRiverOrigins(voxBlob, landData, data){
         local origins = array(data.numRivers);
-        //local riversBlob = blob(data.numRivers*4);
         for(local i = 0; i < data.numRivers; i++){
-            local landPoint = findPointOnLand_(voxBlob, data, 150);
+            local landPoint = findPointOnCoast_(landData);
             origins[i] = landPoint;
-            //riversBlob.writen(landPoint, 'i');
         }
 
         return origins;
     }
 
-    function findMinNeighbourAltitude_(x, y, voxBlob, data, outCoords, foundData){
+    function findMinNeighbourAltitude_(x, y, voxBlob, data, outCoords){
         local storage = [];
-        if(!(wrapWorldPos_(x-1, y) in foundData)) storage.append(readAltitude_(voxBlob, x-1, y, data.width));
-        if(!(wrapWorldPos_(x+1, y) in foundData)) storage.append(readAltitude_(voxBlob, x+1, y, data.width));
-        if(!(wrapWorldPos_(x, y-1) in foundData)) storage.append(readAltitude_(voxBlob, x, y-1, data.width));
-        if(!(wrapWorldPos_(x, y+1) in foundData)) storage.append(readAltitude_(voxBlob, x, y+1, data.width));
+        storage.append(readAltitude_(voxBlob, x-1, y, data.width));
+        storage.append(readAltitude_(voxBlob, x+1, y, data.width));
+        storage.append(readAltitude_(voxBlob, x, y-1, data.width));
+        storage.append(readAltitude_(voxBlob, x, y+1, data.width));
 
-        local min = 0xFF;
+        storage.append(readAltitude_(voxBlob, x-1, y-1, data.width));
+        storage.append(readAltitude_(voxBlob, x+1, y+1, data.width));
+        storage.append(readAltitude_(voxBlob, x-1, y+1, data.width));
+        storage.append(readAltitude_(voxBlob, x+1, y-1, data.width));
+
+        local min = 0;
         local minIdx = -1;
         foreach(c,i in storage){
-            if(i < min){
+            if(i > min){
                 min = i;
                 minIdx = c;
             }
         }
+        assert(storage.len() != 0);
         assert(min != 0xFF);
         //eww
         switch(minIdx){
@@ -263,7 +268,30 @@ enum MapVoxelTypes{
                 outCoords[1] = y+1;
                 break;
             }
+
+            case 4:{
+                outCoords[0] = x-1;
+                outCoords[1] = y-1;
+                break;
+            }
+            case 5:{
+                outCoords[0] = x+1;
+                outCoords[1] = y+1;
+                break;
+            }
+            case 6:{
+                outCoords[0] = x-1;
+                outCoords[1] = y+1;
+                break;
+            }
+            case 7:{
+                outCoords[0] = x+1;
+                outCoords[1] = y-1;
+                break;
+            }
+
             default:{
+                print(minIdx);
                 assert(false);
             }
         }
@@ -271,28 +299,25 @@ enum MapVoxelTypes{
     }
     function calculateRivers(origins, voxBlob, data){
         local outData = [];
-        local foundData = {};
         local outCoords = [0, 0];
         for(local river = 0; river < origins.len(); river++){
-            local originX = (origins[river] >> 16) & 0xFF;
-            local originY = origins[river] & 0xFF;
+            local originX = (origins[river] >> 16) & 0xFFFF;
+            local originY = origins[river] & 0xFFFF;
             outData.append(wrapWorldPos_(originX, originY));
 
             local currentX = originX;
             local currentY = originY;
-            for(local i = 0; i < 50; i++){
+            for(local i = 0; i < 100; i++){
                 //Trace the river down to some other body of water.
-                findMinNeighbourAltitude_(currentX, currentY, voxBlob, data, outCoords, foundData);
+                findMinNeighbourAltitude_(currentX, currentY, voxBlob, data, outCoords);
                 currentX = outCoords[0];
                 currentY = outCoords[1];
                 local totalId = wrapWorldPos_(currentX, currentY);
                 outData.append(totalId);
-                foundData[totalId] <- river;
             }
             outData.append(0xFFFFFFFF);
         }
         outData.append(0xFFFFFFFF);
-
 
         //Copy values to a blob.
         local riverData = blob(outData.len() * 4);
@@ -323,12 +348,17 @@ enum MapVoxelTypes{
         outlineEdges_(waterData, noiseBlob);
     }
 
+    function findPointOnCoast_(landData, land=0){
+        local edges = landData[land].edges;
+        local randIndex = _random.randIndex(edges);
+        return edges[randIndex];
+    }
+
     function findPointOnLand_(voxBlob, data, minAltitude){
         local x = 0;
         local y = 0;
         //Just to avoid infinite loops.
-        //TODO find a better way than this.
-        for(local i = 0; i < 500; i++){
+        for(local i = 0; i < 100; i++){
             x = _random.randInt(data.width);
             y = _random.randInt(data.height);
             local altitude = readAltitude_(voxBlob, x, y, data.width);
@@ -336,6 +366,15 @@ enum MapVoxelTypes{
         }
         local out = wrapWorldPos_(x, y);
         return out;
+    }
+
+
+    function sortLandmassesBySize(landData){
+        landData.sort(function(a,b){
+            if(a.total<b.total) return 1;
+            else if(a.total>b.total) return -1;
+            return 0;
+        });
     }
 
     function wrapWorldPos_(x, y){
@@ -361,6 +400,7 @@ enum MapVoxelTypes{
         print("============" + title + "============");
         foreach(c,i in data){
             print("== Entry: " + c + " ==");
+            print("id: " + i.id);
             print("total: " + i.total);
             print("seedX: " + i.seedX);
             print("seedY: " + i.seedY);
@@ -381,9 +421,10 @@ enum MapVoxelTypes{
         local waterData = floodFillWater(noiseBlob, data);
         local landData = floodFillLand(noiseBlob, data);
         removeRedundantIslands(noiseBlob, data, landData);
+        sortLandmassesBySize(landData);
         determineVoxelTypes(noiseBlob, data);
         outlineEdges(noiseBlob, waterData, landData)
-        local riverOrigins = determineRiverOrigins(noiseBlob, data);
+        local riverOrigins = determineRiverOrigins(noiseBlob, landData, data);
         local riverBuffer = calculateRivers(riverOrigins, noiseBlob, data);
 
         printFloodFillData_("water", waterData);
