@@ -113,6 +113,7 @@
         renderPanel.setPosition(0, 0);
         renderPanel.setSize(renderWindow.getSize());
         renderPanel.setDatablock(mMapViewer_.getDatablock());
+        mMapViewer_.setLabelWindow(renderWindow);
     }
 
     function setRandomSeed(){
@@ -140,7 +141,8 @@
             "height": 400,
             "numRivers": 24,
             "seaLevel": 100,
-            "altitudeBiomes": [10, 100]
+            "altitudeBiomes": [10, 100],
+            "placeFrequency": [1, 4, 4, 10]
         };
         local outData = gen.generate(data);
 

@@ -16,6 +16,8 @@
 
         _gui.loadSkins("res://assets/skins/ui.json");
 
+        _doFile("res://src/Helpers.nut");
+
         _doFile("res://src/MapGen/Viewer/MapViewer.nut");
         _doFile("res://src/MapGen/Generator/MapGen.nut");
 
@@ -150,7 +152,3 @@
     }
 
 };
-
-::wrapToString <- function(obj, name, desc){
-    return format("(%s '%s: %s')", typeof obj, name, desc);
-}

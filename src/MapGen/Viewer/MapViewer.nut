@@ -23,10 +23,45 @@ enum DrawOptions{
 
     mFragmentParams_ = null
 
+    mPlaceMarkers_ = null;
+    mLabelWindow_ = null;
+
+    PlaceMarker = class{
+
+        mParentWin_ = null;
+        mX_ = 0;
+        mY_ = 0;
+        mWidth_ = 0;
+        mHeight_ = 0;
+        mPlace_ = null;
+
+        mLabel_ = null;
+
+        constructor(window, x, y, width, height, place){
+            mParentWin_ = window;
+            mX_ = x;
+            mY_ = y;
+            mWidth_ = width;
+            mHeight_ = height;
+            mPlace_ = place;
+
+            mLabel_ = mParentWin_.createLabel();
+            mLabel_.setText(::Places[mPlace_].getName());
+            local pos = Vec2(x.tofloat() / width.tofloat(), y.tofloat() / height.tofloat());
+            mLabel_.setCentre(pos * window.getSize());
+        }
+
+        function shutdown(){
+            _gui.destroy(mLabel_);
+        }
+    };
+
     constructor(){
         mDrawOptions_ = array(DrawOptions.MAX, false);
         mDrawOptions_[DrawOptions.WATER] = true;
         mDrawOptions_[DrawOptions.GROUND_TYPE] = true;
+
+        mPlaceMarkers_ = [];
 
         setupCompositor();
     }
@@ -40,6 +75,8 @@ enum DrawOptions{
 
         local material = _graphics.getMaterialByName("mapViewer/mapMaterial");
         local fragmentParams = material.getFragmentProgramParameters(0, 0);
+
+        setupPlaceMarkers(outData);
 
         fragmentParams.setNamedConstant("intBuffer", outData.voxelBuffer);
         fragmentParams.setNamedConstant("riverBuffer", outData.riverBuffer);
@@ -65,6 +102,19 @@ enum DrawOptions{
         mDrawFlags_ = f;
         print("new draw flags " + mDrawFlags_);
         mFragmentParams_.setNamedConstant("drawFlags", mDrawFlags_);
+    }
+
+
+    function setupPlaceMarkers(outData){
+        for(local i = 0; i < mPlaceMarkers_.len(); i++){
+            mPlaceMarkers_[i].shutdown();
+        }
+
+        mPlaceMarkers_.clear();
+        foreach(c,i in outData.placeData){
+            local placeMarker = PlaceMarker(mLabelWindow_, i.originX, i.originY, outData.width, outData.height, i.placeId);
+            mPlaceMarkers_.append(placeMarker);
+        }
     }
 
     function setDrawOption(option, value){
@@ -97,6 +147,10 @@ enum DrawOptions{
 
     function getDatablock(){
         return mCompositorDatablock_;
+    }
+
+    function setLabelWindow(renderWindow){
+        mLabelWindow_ = renderWindow;
     }
 
 }

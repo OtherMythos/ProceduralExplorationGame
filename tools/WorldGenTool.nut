@@ -1,4 +1,6 @@
 function start(){
+    _doFile("res://../src/Helpers.nut");
+    _doFile("res://../src/Content/Places.nut");
     _doFile("res://../src/MapGen/Viewer/MapViewer.nut");
     _doFile("res://../src/MapGen/Generator/MapGen.nut");
 

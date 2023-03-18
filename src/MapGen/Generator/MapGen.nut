@@ -402,6 +402,52 @@ enum MapVoxelTypes{
         });
     }
 
+    function findRandomPointInLandmass(landData){
+        local randIndex = _random.randIndex(landData.edges);
+        return landData.edges[randIndex];
+    }
+
+
+    function determinePlaces_determineLandmassForPlace(landData, place){
+        local placeType = place.getType();
+        if(placeType == PlaceType.CITY){
+            //This being the largest landmass, place the city there.
+            return 0;
+        }
+
+        return 0;
+    }
+    function determinePlaces_place(noiseBlob, landData, place, placeId){
+        local landmassId = determinePlaces_determineLandmassForPlace(landData, place);
+        local landmass = landData[landmassId];
+        local point = findRandomPointInLandmass(landmass);
+
+        print("Added " + point);
+        local placeData = {
+            "originX": (point >> 16) & 0xFFFF,
+            "originY": point & 0xFFFF,
+            "placeId": placeId
+        };
+        return placeData;
+    }
+    function determinePlaces(noiseBlob, landData, data){
+        local placeData = [];
+
+        foreach(c,freq in data.placeFrequency){
+            //To get around the NONE.
+            local placeId = c+1;
+
+            local totalPlaces = ::PlacesByType[placeId];
+            if(totalPlaces.len() == 0) continue;
+            local targetPlace = totalPlaces[_random.randIndex(totalPlaces)];
+            local place = ::Places[targetPlace];
+            local addedPlace = determinePlaces_place(noiseBlob, landData, place, targetPlace);
+            placeData.append(addedPlace);
+        }
+
+        return placeData;
+    }
+
     function wrapWorldPos_(x, y){
         return ((x & 0xFFFF) << 16) | (y & 0xFFFF);
     }
@@ -435,6 +481,17 @@ enum MapVoxelTypes{
         print("==================================");
     }
 
+    function printPlaceData(data){
+        print("============Place============");
+        foreach(c,i in data){
+            print("== Entry: " + c + " ==");
+            print("originX " + i.originX);
+            print("originY " + i.originY);
+            print("placeId " + i.placeId);
+        }
+        print("=============================");
+    }
+
     function generate(data){
         mData_ = data;
         _random.seedPatternGenerator(data.seed);
@@ -453,9 +510,12 @@ enum MapVoxelTypes{
         local riverOrigins = determineRiverOrigins(noiseBlob, landData, data);
         local riverBuffer = calculateRivers(riverOrigins, noiseBlob, data);
         carveRivers(noiseBlob, riverBuffer);
+        local placeData = determinePlaces(noiseBlob, landData, data);
 
-        printFloodFillData_("water", waterData);
-        printFloodFillData_("land", landData);
+        //printFloodFillData_("water", waterData);
+        //printFloodFillData_("land", landData);
+
+        printPlaceData(placeData);
 
         local outData = {
             "voxelBuffer": noiseBlob,
@@ -464,7 +524,8 @@ enum MapVoxelTypes{
             "waterData": waterData,
             "landData": landData,
             "riverBuffer": riverBuffer,
-            "seaLevel": data.seaLevel
+            "seaLevel": data.seaLevel,
+            "placeData": placeData
         };
 
         //Reset the seed
