@@ -328,6 +328,31 @@ enum MapVoxelTypes{
         return riverData;
     }
 
+    function carveRivers(voxelBlob, riverBlob){
+        riverBlob.seek(0);
+        local first = true;
+        while(true){
+            local wrappedPos = riverBlob.readn('i');
+            if(wrappedPos < 0){
+                if(first == true){
+                    break;
+                }
+                first = true;
+                continue;
+            }
+            first = false;
+            local xPos = (wrappedPos >> 16) & 0xFFFF;
+            local yPos = wrappedPos & 0xFFFF;
+
+            clearLandMass_(voxelBlob, xPos, yPos, mData_.width, mData_.seaLevel-1);
+            //Add a bit of a circle around it.
+            clearLandMass_(voxelBlob, xPos-1, yPos, mData_.width, mData_.seaLevel-1);
+            clearLandMass_(voxelBlob, xPos+1, yPos, mData_.width, mData_.seaLevel-1);
+            clearLandMass_(voxelBlob, xPos, yPos-1, mData_.width, mData_.seaLevel-1);
+            clearLandMass_(voxelBlob, xPos, yPos+1, mData_.width, mData_.seaLevel-1);
+        }
+    }
+
     function outlineEdges_(data, blob){
         foreach(d in data){
             local edges = d.edges;
@@ -426,6 +451,7 @@ enum MapVoxelTypes{
         outlineEdges(noiseBlob, waterData, landData)
         local riverOrigins = determineRiverOrigins(noiseBlob, landData, data);
         local riverBuffer = calculateRivers(riverOrigins, noiseBlob, data);
+        carveRivers(noiseBlob, riverBuffer);
 
         printFloodFillData_("water", waterData);
         printFloodFillData_("land", landData);
