@@ -438,6 +438,7 @@ enum MapVoxelTypes{
     function generate(data){
         mData_ = data;
         _random.seedPatternGenerator(data.seed);
+        _random.seed(data.variation);
 
         local noiseBlob = _random.genPerlinNoise(data.width, data.height, 0.05, 4);
         assert(noiseBlob.len() == data.width*data.height*4);
@@ -465,6 +466,9 @@ enum MapVoxelTypes{
             "riverBuffer": riverBuffer,
             "seaLevel": data.seaLevel
         };
+
+        //Reset the seed
+        _random.seed(_system.time());
         return outData;
     }
 

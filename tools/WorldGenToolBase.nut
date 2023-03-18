@@ -7,10 +7,12 @@
     mCompositorTexture_ = null
     mSeedLabel_ = null
     mSeedEditbox_ = null
+    mVariationSeedEditbox_ = null
 
     mMapViewer_ = null
 
     mSeed_ = 0
+    mVariation_ = 0
 
     mWinWidth_ = 1920
     mWinHeight_ = 1080
@@ -19,6 +21,7 @@
         setupGui();
 
         setRandomSeed();
+        setVariation(0);
         generate();
     }
 
@@ -50,6 +53,11 @@
         layout.addCell(seedEditbox);
         mSeedEditbox_ = seedEditbox;
 
+        local variationSeedEditbox = mControlsWindow_.createEditbox();
+        variationSeedEditbox.setSize(300, 50);
+        layout.addCell(variationSeedEditbox);
+        mVariationSeedEditbox_ = variationSeedEditbox;
+
         local generateButton = mControlsWindow_.createButton();
         generateButton.setText("Generate")
         generateButton.attachListenerForEvent(function(widget, action){
@@ -57,6 +65,12 @@
             print("Input text: " + text.tostring());
             local intText = text.tointeger();
             ::WorldGenTool.setSeed(intText);
+
+            local variationText = mVariationSeedEditbox_.getText();
+            print("Variation text: " + variationText.tostring());
+            local varIntText = variationText.tointeger();
+            ::WorldGenTool.setVariation(varIntText);
+
             ::WorldGenTool.generate();
         }, _GUI_ACTION_PRESSED, this);
         layout.addCell(generateButton);
@@ -112,10 +126,16 @@
         mSeed_ = seedValue;
     }
 
+    function setVariation(variation){
+        mVariationSeedEditbox_.setText(variation.tostring());
+        mVariation_ = variation;
+    }
+
     function generate(){
         local gen = ::MapGen();
         local data = {
             "seed": mSeed_,
+            "variation": mVariation_,
             "width": 400,
             "height": 400,
             "numRivers": 24,
