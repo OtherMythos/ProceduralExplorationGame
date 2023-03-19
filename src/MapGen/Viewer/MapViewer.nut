@@ -47,6 +47,7 @@ enum DrawOptions{
 
             mLabel_ = mParentWin_.createLabel();
             mLabel_.setText(::Places[mPlace_].getName());
+            mLabel_.setShadowOutline(true, ColourValue(0, 0, 0), Vec2(2, 2));
             local pos = Vec2(x.tofloat() / width.tofloat(), y.tofloat() / height.tofloat());
             mLabel_.setCentre(pos * window.getSize());
         }
