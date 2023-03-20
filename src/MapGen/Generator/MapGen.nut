@@ -434,15 +434,15 @@ enum MapVoxelTypes{
         local placeData = [];
 
         foreach(c,freq in data.placeFrequency){
-            //To get around the NONE.
-            local placeId = c+1;
-
-            local totalPlaces = ::PlacesByType[placeId];
-            if(totalPlaces.len() == 0) continue;
-            local targetPlace = totalPlaces[_random.randIndex(totalPlaces)];
-            local place = ::Places[targetPlace];
-            local addedPlace = determinePlaces_place(noiseBlob, landData, place, targetPlace);
-            placeData.append(addedPlace);
+            for(local i = 0; i < freq; i++){
+                //To get around the NONE.
+                local totalPlaces = ::PlacesByType[c];
+                if(totalPlaces.len() == 0) break;
+                local targetPlace = totalPlaces[_random.randIndex(totalPlaces)];
+                local place = ::Places[targetPlace];
+                local addedPlace = determinePlaces_place(noiseBlob, landData, place, targetPlace);
+                placeData.append(addedPlace);
+            }
         }
 
         return placeData;

@@ -4,8 +4,23 @@ enum PlaceId{
     DARK_CAVE,
     GOBLIN_VILLAGE,
     WIND_SWEPT_BEACH,
-
     ROTHERFORD,
+
+    CITY_1,
+    CITY_2,
+    CITY_3,
+
+    TOWN_1,
+    TOWN_2,
+    TOWN_3,
+
+    VILLAGE_1,
+    VILLAGE_2,
+    VILLAGE_3,
+
+    LOCATION_1,
+    LOCATION_2,
+    LOCATION_3,
 
     MAX
 };
@@ -82,6 +97,22 @@ enum PlaceNecessaryFeatures{
 ::Places[PlaceId.GOBLIN_VILLAGE] = PlaceDef("Goblin Village", "The grotty and ramsacked goblin village.", PlaceType.VILLAGE, 0.1, 10);
 ::Places[PlaceId.WIND_SWEPT_BEACH] = PlaceDef("Wind Swept Beach", "Grey, damp, and sandy.", PlaceType.LOCATION, 0.1, 10, PlaceNecessaryFeatures.OCEAN);
 ::Places[PlaceId.ROTHERFORD] = PlaceDef("Rotherford", "The old town of rotherford", PlaceType.TOWN, 0.1, 10, PlaceNecessaryFeatures.RIVER | PlaceNecessaryFeatures.OCEAN);
+
+::Places[PlaceId.CITY_1] = PlaceDef("City1", "City1", PlaceType.CITY, 0.1, 50);
+::Places[PlaceId.CITY_2] = PlaceDef("City2", "City2", PlaceType.CITY, 0.1, 50);
+::Places[PlaceId.CITY_3] = PlaceDef("City3", "City3", PlaceType.CITY, 0.1, 50);
+
+::Places[PlaceId.TOWN_1] = PlaceDef("Town1", "Town1", PlaceType.TOWN, 0.1, 30);
+::Places[PlaceId.TOWN_2] = PlaceDef("Town1", "Town1", PlaceType.TOWN, 0.1, 30);
+::Places[PlaceId.TOWN_3] = PlaceDef("Town1", "Town1", PlaceType.TOWN, 0.1, 30);
+
+::Places[PlaceId.VILLAGE_1] = PlaceDef("Village1", "Village1", PlaceType.VILLAGE, 0.1, 30);
+::Places[PlaceId.VILLAGE_2] = PlaceDef("Village2", "Village2", PlaceType.VILLAGE, 0.1, 30);
+::Places[PlaceId.VILLAGE_3] = PlaceDef("Village3", "Village3", PlaceType.VILLAGE, 0.1, 30);
+
+::Places[PlaceId.LOCATION_1] = PlaceDef("Location1", "Location1", PlaceType.LOCATION, 0.1, 10);
+::Places[PlaceId.LOCATION_2] = PlaceDef("Location2", "Location2", PlaceType.LOCATION, 0.1, 10);
+::Places[PlaceId.LOCATION_3] = PlaceDef("Location3", "Location3", PlaceType.LOCATION, 0.1, 10);
 //-------------------------------
 
 ::PlacesByType <- {};

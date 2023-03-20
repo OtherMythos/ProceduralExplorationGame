@@ -167,7 +167,7 @@
             "numRivers": 24,
             "seaLevel": 100,
             "altitudeBiomes": [10, 100],
-            "placeFrequency": [1, 4, 4, 10]
+            "placeFrequency": [0, 1, 4, 4, 10]
         };
         local outData = gen.generate(data);
 

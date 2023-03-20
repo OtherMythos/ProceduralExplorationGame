@@ -38,6 +38,17 @@ enum DrawOptions{
         mPlace_ = null;
 
         mLabel_ = null;
+        mTypeSizes_ = [
+            0, 30, 20, 15, 10
+        ];
+        mTypeColours_ = [
+            null,
+            ColourValue(1, 1, 1),
+            ColourValue(0.8, 0.8, 0.8),
+            ColourValue(0.7, 0.7, 0.7),
+            ColourValue(0.65, 0.65, 0.65),
+            ColourValue(0.55, 0.55, 0.55),
+        ];
 
         constructor(window, x, y, width, height, place){
             mParentWin_ = window;
@@ -48,10 +59,17 @@ enum DrawOptions{
             mPlace_ = place;
 
             mLabel_ = mParentWin_.createLabel();
-            mLabel_.setText(::Places[mPlace_].getName());
-            mLabel_.setShadowOutline(true, ColourValue(0, 0, 0), Vec2(2, 2));
+            local placeDef = ::Places[mPlace_];
+            styleLabelForPlaceType(mLabel_, placeDef.getType());
+            mLabel_.setText(placeDef.getName());
             local pos = Vec2(x.tofloat() / width.tofloat(), y.tofloat() / height.tofloat());
             mLabel_.setCentre(pos * window.getSize());
+        }
+
+        function styleLabelForPlaceType(label, type){
+            label.setDefaultFontSize(mTypeSizes_[type]);
+            label.setTextColour(mTypeColours_[type]);
+            label.setShadowOutline(true, ColourValue(0, 0, 0), Vec2(2, 2));
         }
 
         function shutdown(){
@@ -74,9 +92,10 @@ enum DrawOptions{
         mDrawOptions_ = array(DrawOptions.MAX, false);
         mDrawOptions_[DrawOptions.WATER] = true;
         mDrawOptions_[DrawOptions.GROUND_TYPE] = true;
-        mDrawLocationOptions_ = array(PlaceType.MAX, false);
+        mDrawLocationOptions_ = array(PlaceType.MAX, true);
         mDrawLocationOptions_[PlaceType.CITY] = true;
         mDrawLocationOptions_[PlaceType.TOWN] = true;
+        mDrawLocationOptions_[PlaceType.NONE] = false;
 
         mPlaceMarkers_ = [];
 
