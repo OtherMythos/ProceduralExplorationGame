@@ -13,7 +13,7 @@
 
     function isNone(){
         if(type == FoundObjectType.PLACE){
-            return obj == Place.NONE;
+            return obj == PlaceId.NONE;
         }
         return obj.isNone();
     }

@@ -23,7 +23,7 @@
 
             //for(local i = 0; i < stats.mPlacesVisited_.len(); i++){
             foreach(i,c in stats.mLeanPlacesVisited_){
-                if(c == Place.NONE) continue;
+                if(c == PlaceId.NONE) continue;
 
                 local button = mWindow_.createButton();
                 button.setUserId(c);

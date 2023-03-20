@@ -135,7 +135,7 @@
 
         foundSomething = _random.randInt(500) == 0;
         if(foundSomething){
-            local foundPlace = _random.randInt(Place.NONE+1, Place.MAX-1);
+            local foundPlace = _random.randInt(PlaceId.NONE+1, PlaceId.MAX-1);
             processFoundPlace(foundPlace);
             return;
         }

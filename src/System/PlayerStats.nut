@@ -10,7 +10,7 @@
         _event.subscribe(Event.PLACE_VISITED, receivePlaceVisitedEvent, this);
 
         mPlayerAchievements_ = {};
-        mPlacesVisited_ = array(Place.MAX, false);
+        mPlacesVisited_ = array(PlaceId.MAX, false);
         mLeanPlacesVisited_ = [];
 
         mPlayerCombatStats = ::Combat.CombatStats(Enemy.NONE, 100);

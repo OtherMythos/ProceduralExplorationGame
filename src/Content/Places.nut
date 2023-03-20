@@ -1,6 +1,4 @@
-//TODO This should be PlaceId to match items.
-//Consider wrapping defs around a mutable wrapper same as items.
-enum Place{
+enum PlaceId{
     NONE,
     HAUNTED_WELL,
     DARK_CAVE,
@@ -28,6 +26,23 @@ enum PlaceNecessaryFeatures{
     OCEAN = 0x2,
     LAKE = 0x4,
 };
+
+::Place <- class{
+    mPlaceId_ = PlaceId.NONE;
+    mPlace_ = null;
+    mData_ = null;
+
+    function getData() { return mData_; }
+    function isNone() { return mPlaceId_ == PlaceId.NONE; }
+    function getDef(){ return mItem_; }
+
+    function getName(){ return mPlace.getName(); }
+    function getDescription(){ return mPlace.getDescription(); }
+    function getType(){ return mPlace.getType(); }
+    function getRarity(){ return mPlace.getRarity(); }
+    function getMinLandmass(){ return mPlace.getMinLandmass(); }
+    function getNecessaryFeatures(){ return mPlace.getNecessaryFeatures(); }
+}
 
 ::PlaceDef <- class{
     mName = null;
@@ -58,15 +73,15 @@ enum PlaceNecessaryFeatures{
     }
 }
 
-::Places <- array(Place.MAX, null);
+::Places <- array(PlaceId.MAX, null);
 
 //-------------------------------
-::Places[Place.NONE] = PlaceDef("None", "None", PlaceType.NONE, 0.0, 0);
-::Places[Place.HAUNTED_WELL] = PlaceDef("Haunted Well", "The old haunted well.", PlaceType.LOCATION, 0.1, 10);
-::Places[Place.DARK_CAVE] = PlaceDef("Dark Cave", "A dark opening to a secluded cave.", PlaceType.LOCATION, 0.1, 10);
-::Places[Place.GOBLIN_VILLAGE] = PlaceDef("Goblin Village", "The grotty and ramsacked goblin village.", PlaceType.VILLAGE, 0.1, 10);
-::Places[Place.WIND_SWEPT_BEACH] = PlaceDef("Wind Swept Beach", "Grey, damp, and sandy.", PlaceType.LOCATION, 0.1, 10, PlaceNecessaryFeatures.OCEAN);
-::Places[Place.ROTHERFORD] = PlaceDef("Rotherford", "The old town of rotherford", PlaceType.TOWN, 0.1, 10, PlaceNecessaryFeatures.RIVER | PlaceNecessaryFeatures.OCEAN);
+::Places[PlaceId.NONE] = PlaceDef("None", "None", PlaceType.NONE, 0.0, 0);
+::Places[PlaceId.HAUNTED_WELL] = PlaceDef("Haunted Well", "The old haunted well.", PlaceType.LOCATION, 0.1, 10);
+::Places[PlaceId.DARK_CAVE] = PlaceDef("Dark Cave", "A dark opening to a secluded cave.", PlaceType.LOCATION, 0.1, 10);
+::Places[PlaceId.GOBLIN_VILLAGE] = PlaceDef("Goblin Village", "The grotty and ramsacked goblin village.", PlaceType.VILLAGE, 0.1, 10);
+::Places[PlaceId.WIND_SWEPT_BEACH] = PlaceDef("Wind Swept Beach", "Grey, damp, and sandy.", PlaceType.LOCATION, 0.1, 10, PlaceNecessaryFeatures.OCEAN);
+::Places[PlaceId.ROTHERFORD] = PlaceDef("Rotherford", "The old town of rotherford", PlaceType.TOWN, 0.1, 10, PlaceNecessaryFeatures.RIVER | PlaceNecessaryFeatures.OCEAN);
 //-------------------------------
 
 ::PlacesByType <- {};
@@ -81,3 +96,9 @@ function initialisePlacesLists(){
 }
 
 initialisePlacesLists();
+
+/*
+Mortford
+Garriton - the capitol
+
+*/

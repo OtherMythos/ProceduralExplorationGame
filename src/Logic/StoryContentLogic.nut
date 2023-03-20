@@ -5,7 +5,7 @@
 ::StoryContentLogic <- class{
 
     mGui_ = null;
-    mPlace_ = Place.NONE;
+    mPlace_ = PlaceId.NONE;
 
     constructor(placeId){
         mPlace_ = placeId;
@@ -26,23 +26,23 @@
 
     function determineStoryContent(){
         switch(mPlace_){
-            case Place.HAUNTED_WELL:{
+            case PlaceId.HAUNTED_WELL:{
                 ::Base.mDialogManager.beginExecuting("res://assets/dialog/test.dialog", 0);
                 break;
             }
-            case Place.DARK_CAVE:{
+            case PlaceId.DARK_CAVE:{
                 ::Base.mDialogManager.beginExecuting("res://assets/dialog/test.dialog", 1);
                 break;
             }
-            case Place.GOBLIN_VILLAGE:{
+            case PlaceId.GOBLIN_VILLAGE:{
                 ::Base.mDialogManager.beginExecuting("res://assets/dialog/test.dialog", 2);
                 break;
             }
-            case Place.WIND_SWEPT_BEACH:{
+            case PlaceId.WIND_SWEPT_BEACH:{
                 ::Base.mDialogManager.beginExecuting("res://assets/dialog/test.dialog", 3);
                 break;
             }
-            case Place.ROTHERFORD:{
+            case PlaceId.ROTHERFORD:{
                 ::Base.mDialogManager.beginExecuting("res://assets/dialog/test.dialog", 4);
                 break;
             }
