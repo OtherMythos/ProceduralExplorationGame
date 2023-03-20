@@ -90,6 +90,7 @@
             "Show river data",
             "Show land group",
             "Show edge vals",
+            "Show place locations",
         ];
         local checkboxListener = function(widget, action){
             mMapViewer_.setDrawOption(widget.getUserId(), widget.getValue());

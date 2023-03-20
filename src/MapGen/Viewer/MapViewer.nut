@@ -5,6 +5,7 @@ enum DrawOptions{
     RIVER_DATA,
     LAND_GROUPS,
     EDGE_VALS,
+    PLACE_LOCATIONS,
 
     MAX
 };
@@ -116,6 +117,7 @@ enum DrawOptions{
 
         fragmentParams.setNamedConstant("intBuffer", outData.voxelBuffer);
         fragmentParams.setNamedConstant("riverBuffer", outData.riverBuffer);
+        fragmentParams.setNamedConstant("placeBuffer", generatePlaceBuffer_(outData.placeData));
         fragmentParams.setNamedConstant("width", outData.width);
         fragmentParams.setNamedConstant("height", outData.height);
         fragmentParams.setNamedConstant("numWaterSeeds", outData.waterData.len());
@@ -126,6 +128,16 @@ enum DrawOptions{
 
         resubmitDrawFlags_();
         resubmitDrawLocationFlags_();
+    }
+
+    function generatePlaceBuffer_(placeData){
+        local b = blob(placeData.len() * 4);
+        foreach(i in placeData){
+            b.writen(i.originWrapped, 'i');
+        }
+        b.writen(0xFFFFFFFF, 'i');
+
+        return b;
     }
 
     function resubmitDrawFlags_(){

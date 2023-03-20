@@ -11,6 +11,7 @@ struct Params
    //Make it a bit bigger than needed to test things.
    unsigned int intBuffer[1000*1000];
    unsigned int riverBuffer[3000];
+   unsigned int placeBuffer[1000];
    int width;
    int height;
    unsigned int drawFlags;
@@ -33,6 +34,7 @@ fragment float4 main_metal
    int RIVER_DATA_MASK = 1 << 3;
    int LAND_GROUPS_MASK = 1 << 4;
    int EDGE_VALS = 1 << 5;
+   int PLACE_LOCATIONS = 1 << 6;
 
    float4 voxelColours[] = {
       float4(0.84, 0.87, 0.29, 1),
@@ -41,8 +43,8 @@ fragment float4 main_metal
    };
 
    float2 uv = inPs.uv0;
-   int xVox = (int)(uv.x * p.width);
-   int yVox = (int)(uv.y * p.height);
+   unsigned int xVox = (int)(uv.x * p.width);
+   unsigned int yVox = (int)(uv.y * p.height);
 
    int voxVal = p.intBuffer[xVox + yVox * p.width];
    short altitude = voxVal & 0xFF;
@@ -101,6 +103,21 @@ fragment float4 main_metal
    if(p.drawFlags & EDGE_VALS){
       if(edgeVox){
          drawVal = float4(0, 0, 0, 1);
+      }
+   }
+   if(p.drawFlags & PLACE_LOCATIONS){
+      int i = 0;
+      while(true){
+         unsigned int placeVal = p.placeBuffer[i];
+         if(placeVal == 0xFFFFFFFF) break;
+
+         unsigned int x = (placeVal >> 16) & 0xFFFF;
+         unsigned int y = placeVal & 0xFFFF;
+         if(xVox == x && yVox == y){
+            drawVal = float4(0, 0, 0, 1);
+            break;
+         }
+         i++;
       }
    }
 

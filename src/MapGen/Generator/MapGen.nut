@@ -426,6 +426,7 @@ enum MapVoxelTypes{
         local placeData = {
             "originX": (point >> 16) & 0xFFFF,
             "originY": point & 0xFFFF,
+            "originWrapped": point,
             "placeId": placeId
         };
         return placeData;
