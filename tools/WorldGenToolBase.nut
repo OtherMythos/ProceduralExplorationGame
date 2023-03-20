@@ -103,6 +103,31 @@
             layout.addCell(checkbox);
         }
 
+        local locationTitle = mControlsWindow_.createLabel();
+        locationTitle.setText("Show Location Types");
+        layout.addCell(locationTitle);
+
+        local locationCheckboxListener = function(widget, action){
+            mMapViewer_.setLocationDrawOption(widget.getUserId(), widget.getValue());
+        };
+        local placeTypeNames = [
+            "None",
+            "City",
+            "Town",
+            "Village",
+            "Location",
+            "MAX"
+        ];
+        assert(placeTypeNames.len() == PlaceType.MAX+1);
+        for(local i = 0; i < PlaceType.MAX; i++){
+            local checkbox = mControlsWindow_.createCheckbox();
+            checkbox.setText(placeTypeNames[i]);
+            checkbox.setValue(mMapViewer_.getLocationDrawOption(i));
+            checkbox.setUserId(i);
+            checkbox.attachListenerForEvent(locationCheckboxListener, _GUI_ACTION_RELEASED, this);
+            layout.addCell(checkbox);
+        }
+
         layout.layout();
 
         local renderWindow = _gui.createWindow();

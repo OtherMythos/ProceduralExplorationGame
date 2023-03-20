@@ -15,6 +15,8 @@ enum DrawOptions{
 
     mDrawOptions_ = null;
     mDrawFlags_ = 0;
+    mDrawLocationOptions_ = null;
+    mDrawLocationFlags_ = 0;
 
     mCompositorDatablock_ = null
     mCompositorWorkspace_ = null
@@ -55,12 +57,26 @@ enum DrawOptions{
         function shutdown(){
             _gui.destroy(mLabel_);
         }
+
+        function updateForLocationFlags(flag){
+            if(flag & 0x1){
+                //Use none just to hide everything.
+                mLabel_.setHidden(true);
+                return;
+            }
+            local t = ::Places[mPlace_].getType();
+            local visible = (flag >> t) & 0x1;
+            mLabel_.setHidden(!visible);
+        }
     };
 
     constructor(){
         mDrawOptions_ = array(DrawOptions.MAX, false);
         mDrawOptions_[DrawOptions.WATER] = true;
         mDrawOptions_[DrawOptions.GROUND_TYPE] = true;
+        mDrawLocationOptions_ = array(PlaceType.MAX, false);
+        mDrawLocationOptions_[PlaceType.CITY] = true;
+        mDrawLocationOptions_[PlaceType.TOWN] = true;
 
         mPlaceMarkers_ = [];
 
@@ -90,6 +106,7 @@ enum DrawOptions{
         mFragmentParams_ = fragmentParams;
 
         resubmitDrawFlags_();
+        resubmitDrawLocationFlags_();
     }
 
     function resubmitDrawFlags_(){
@@ -105,6 +122,22 @@ enum DrawOptions{
         mFragmentParams_.setNamedConstant("drawFlags", mDrawFlags_);
     }
 
+    function resubmitDrawLocationFlags_(){
+        local f = 0;
+        for(local i = 0; i < PlaceType.MAX; i++){
+            print(mDrawLocationOptions_[i]);
+            if(mDrawLocationOptions_[i]){
+                f = f | (1 << i);
+            }
+        }
+
+        mDrawLocationFlags_ = f;
+        print("new draw location flags " + mDrawLocationFlags_);
+
+        foreach(i in mPlaceMarkers_){
+            i.updateForLocationFlags(mDrawLocationFlags_);
+        }
+    }
 
     function setupPlaceMarkers(outData){
         for(local i = 0; i < mPlaceMarkers_.len(); i++){
@@ -123,8 +156,17 @@ enum DrawOptions{
         resubmitDrawFlags_();
     }
 
+    function setLocationDrawOption(option, value){
+        mDrawLocationOptions_[option] = value;
+        resubmitDrawLocationFlags_();
+    }
+
     function getDrawOption(option){
         return mDrawOptions_[option];
+    }
+
+    function getLocationDrawOption(option){
+        return mDrawLocationOptions_[option];
     }
 
     function setupCompositor(){
