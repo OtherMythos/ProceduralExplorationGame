@@ -105,6 +105,8 @@ enum MapVoxelTypes{
 
         vals[idx] = currentIdx;
         floodData.total++;
+        local wrappedPos = wrapWorldPos_(x, y);
+        floodData.coords.append(wrappedPos);
         local isEdge = 0;
         isEdge = isEdge | floodFill_(x-1, y, width, height, comparisonFunction, vals, blob, currentIdx, floodData);
         isEdge = isEdge | floodFill_(x+1, y, width, height, comparisonFunction, vals, blob, currentIdx, floodData);
@@ -112,7 +114,7 @@ enum MapVoxelTypes{
         isEdge = isEdge | floodFill_(x, y+1, width, height, comparisonFunction, vals, blob, currentIdx, floodData);
 
         if(isEdge){
-            floodData.edges.append(wrapWorldPos_(x, y));
+            floodData.edges.append(wrappedPos);
         }
 
         return 0;
@@ -135,7 +137,8 @@ enum MapVoxelTypes{
                             "seedX": x,
                             "seedY": y,
                             "nextToWorldEdge": false,
-                            "edges": []
+                            "edges": [],
+                            "coords": []
                         };
                         floodFill_(x, y, data.width, data.height, comparisonFunction, vals, blob, currentIdx, floodData);
                         outData.append(floodData);
@@ -379,21 +382,6 @@ enum MapVoxelTypes{
         return edges[randIndex];
     }
 
-    function findPointOnLand_(voxBlob, data, minAltitude){
-        local x = 0;
-        local y = 0;
-        //Just to avoid infinite loops.
-        for(local i = 0; i < 100; i++){
-            x = _random.randInt(data.width);
-            y = _random.randInt(data.height);
-            local altitude = readAltitude_(voxBlob, x, y, data.width);
-            if(altitude >= minAltitude) break;
-        }
-        local out = wrapWorldPos_(x, y);
-        return out;
-    }
-
-
     function sortLandmassesBySize(landData){
         landData.sort(function(a,b){
             if(a.total<b.total) return 1;
@@ -403,19 +391,31 @@ enum MapVoxelTypes{
     }
 
     function findRandomPointInLandmass(landData){
-        local randIndex = _random.randIndex(landData.edges);
-        return landData.edges[randIndex];
+        local randIndex = _random.randIndex(landData.coords);
+        return landData.coords[randIndex];
     }
 
 
+    function determinePlaces_findRandomLandmassForSize(landData, size){
+        //To avoid infinite loops.
+        for(local i = 0; i < 100; i++){
+            local randIndex = _random.randIndex(landData);
+            local data = landData[randIndex];
+            if(data.total >= size){
+                return randIndex;
+            }
+        }
+        return 0;
+    }
     function determinePlaces_determineLandmassForPlace(landData, place){
         local placeType = place.getType();
         if(placeType == PlaceType.CITY){
             //This being the largest landmass, place the city there.
             return 0;
         }
+        local retLandmass = determinePlaces_findRandomLandmassForSize(landData, place.getMinLandmass());
 
-        return 0;
+        return retLandmass;
     }
     function determinePlaces_place(noiseBlob, landData, place, placeId){
         local landmassId = determinePlaces_determineLandmassForPlace(landData, place);
