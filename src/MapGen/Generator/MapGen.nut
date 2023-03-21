@@ -222,7 +222,9 @@ enum MapVoxelTypes{
         for(local i = 0; i < data.numRivers; i++){
             local landId = findRandomLandmassForSize(landData, landWeighted, 20);
             local landPoint = findPointOnCoast_(landData, landId);
-            origins[i] = landPoint;
+            origins[i] = {
+                "origin": landPoint
+            }
         }
 
         return origins;
@@ -301,13 +303,13 @@ enum MapVoxelTypes{
         }
 
     }
-    function calculateRivers(origins, voxBlob, data){
-        local outData = [];
+    function calculateRivers(riverData, voxBlob, data){
         local outCoords = [0, 0];
-        for(local river = 0; river < origins.len(); river++){
-            local originX = (origins[river] >> 16) & 0xFFFF;
-            local originY = origins[river] & 0xFFFF;
-            outData.append(wrapWorldPos_(originX, originY));
+        for(local river = 0; river < riverData.len(); river++){
+            local outData = [];
+            local rData = riverData[river];
+            local originX = (rData.origin >> 16) & 0xFFFF;
+            local originY = rData.origin & 0xFFFF;
 
             local currentX = originX;
             local currentY = originY;
@@ -319,17 +321,22 @@ enum MapVoxelTypes{
                 local totalId = wrapWorldPos_(currentX, currentY);
                 outData.append(totalId);
             }
-            outData.append(0xFFFFFFFF);
+            rData.points <- outData;
         }
-        outData.append(0xFFFFFFFF);
+    }
 
-        //Copy values to a blob.
-        local riverData = blob(outData.len() * 4);
-        foreach(i in outData){
-            riverData.writen(i, 'i');
+    function riverDataToBlob(riverData){
+        local b = blob(3000*4);
+        foreach(i in riverData){
+            b.writen(i.origin, 'i');
+            foreach(y in i.points){
+                b.writen(y, 'i');
+            }
+            b.writen(0xFFFFFFFF, 'i');
         }
+        b.writen(0xFFFFFFFF, 'i');
 
-        return riverData;
+        return b;
     }
 
     function carveRivers(voxelBlob, riverBlob){
@@ -454,7 +461,6 @@ enum MapVoxelTypes{
         local landmass = landData[landmassId];
         local point = findRandomPointInLandmass(landmass);
 
-        print("Added " + point);
         local placeData = {
             "originX": (point >> 16) & 0xFFFF,
             "originY": point & 0xFFFF,
@@ -541,8 +547,9 @@ enum MapVoxelTypes{
         local landWeighted = generateLandWeightedAverage(landData);
         determineVoxelTypes(noiseBlob, data);
         outlineEdges(noiseBlob, waterData, landData)
-        local riverOrigins = determineRiverOrigins(noiseBlob, landData, landWeighted, data);
-        local riverBuffer = calculateRivers(riverOrigins, noiseBlob, data);
+        local riverData = determineRiverOrigins(noiseBlob, landData, landWeighted, data);
+        calculateRivers(riverData, noiseBlob, data);
+        local riverBuffer = riverDataToBlob(riverData);
         carveRivers(noiseBlob, riverBuffer);
         local placeData = determinePlaces(noiseBlob, landData, landWeighted, data);
 

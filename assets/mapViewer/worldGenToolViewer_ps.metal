@@ -87,7 +87,7 @@ fragment float4 main_metal
          unsigned int x = (riverVal >> 16) & 0xFFFF;
          unsigned int y = riverVal & 0xFFFF;
          if(xVox == x && yVox == y){
-            drawVal = first ? float4(1, 0, 1, 1) : float4(0, 0, 0, 1);
+            drawVal = first ? float4(1, 0, 1, 1) : float4(1, 1, 1, 1);
          }
          first = false;
          i++;
