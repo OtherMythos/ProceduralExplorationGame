@@ -395,30 +395,62 @@ enum MapVoxelTypes{
         return landData.coords[randIndex];
     }
 
+    /**
+     * Generate a list with 100 entries, where each entry is a value in the land data list.
+     * Values are weighted based on their total size in the total landmasses.
+     */
+    function generateLandWeightedAverage(landData){
+        local totalLand = 0;
+        foreach(i in landData){
+            totalLand += i.total;
+        }
+        local weighted = array(100, 0);
+        local count = 0;
+        //Head through the list backwards.
+        //Smaller landmasses should be at the back, ensure that each piece of land gets one entry in the list.
+        //In this case the smaller landmasses will steal from the largest landmass.
+        for(local i = landData.len()-1; i >= 0; i--){
+            local weightFloat = (landData[i].total.tofloat() / totalLand) * 100;
+            local weight = weightFloat >= 1.0 ? weightFloat.tointeger() : 1;
+            for(local y = 0; y < weight; y++){
+                print(i);
+                weighted[count] = i;
+                count++;
+                //Drop out if the array is populated.
+                if(count >= 100){
+                    //Assuming we stop on the largest landmass.
+                    assert(i == 0);
+                    return weighted;
+                }
+            }
+        }
 
-    function determinePlaces_findRandomLandmassForSize(landData, size){
+        return weighted;
+    }
+
+    function determinePlaces_findRandomLandmassForSize(landData, landWeighted, size){
         //To avoid infinite loops.
         for(local i = 0; i < 100; i++){
-            local randIndex = _random.randIndex(landData);
-            local data = landData[randIndex];
-            if(data.total >= size){
-                return randIndex;
+            local randIndex = _random.randIndex(landWeighted);
+            local idx = landWeighted[randIndex];
+            if(landData[idx].total >= size){
+                return idx;
             }
         }
         return 0;
     }
-    function determinePlaces_determineLandmassForPlace(landData, place){
+    function determinePlaces_determineLandmassForPlace(landData, landWeighted, place){
         local placeType = place.getType();
         if(placeType == PlaceType.CITY){
             //This being the largest landmass, place the city there.
             return 0;
         }
-        local retLandmass = determinePlaces_findRandomLandmassForSize(landData, place.getMinLandmass());
+        local retLandmass = determinePlaces_findRandomLandmassForSize(landData, landWeighted, place.getMinLandmass());
 
         return retLandmass;
     }
-    function determinePlaces_place(noiseBlob, landData, place, placeId){
-        local landmassId = determinePlaces_determineLandmassForPlace(landData, place);
+    function determinePlaces_place(noiseBlob, landData, landWeighted, place, placeId){
+        local landmassId = determinePlaces_determineLandmassForPlace(landData, landWeighted, place);
         local landmass = landData[landmassId];
         local point = findRandomPointInLandmass(landmass);
 
@@ -431,7 +463,7 @@ enum MapVoxelTypes{
         };
         return placeData;
     }
-    function determinePlaces(noiseBlob, landData, data){
+    function determinePlaces(noiseBlob, landData, landWeighted, data){
         local placeData = [];
 
         foreach(c,freq in data.placeFrequency){
@@ -441,7 +473,7 @@ enum MapVoxelTypes{
                 if(totalPlaces.len() == 0) break;
                 local targetPlace = totalPlaces[_random.randIndex(totalPlaces)];
                 local place = ::Places[targetPlace];
-                local addedPlace = determinePlaces_place(noiseBlob, landData, place, targetPlace);
+                local addedPlace = determinePlaces_place(noiseBlob, landData, landWeighted, place, targetPlace);
                 placeData.append(addedPlace);
             }
         }
@@ -511,7 +543,8 @@ enum MapVoxelTypes{
         local riverOrigins = determineRiverOrigins(noiseBlob, landData, data);
         local riverBuffer = calculateRivers(riverOrigins, noiseBlob, data);
         carveRivers(noiseBlob, riverBuffer);
-        local placeData = determinePlaces(noiseBlob, landData, data);
+        local landWeighted = generateLandWeightedAverage(landData);
+        local placeData = determinePlaces(noiseBlob, landData, landWeighted, data);
 
         //printFloodFillData_("water", waterData);
         //printFloodFillData_("land", landData);
