@@ -217,10 +217,11 @@ enum MapVoxelTypes{
         }
     }
 
-    function determineRiverOrigins(voxBlob, landData, data){
+    function determineRiverOrigins(voxBlob, landData, landWeighted, data){
         local origins = array(data.numRivers);
         for(local i = 0; i < data.numRivers; i++){
-            local landPoint = findPointOnCoast_(landData);
+            local landId = findRandomLandmassForSize(landData, landWeighted, 20);
+            local landPoint = findPointOnCoast_(landData, landId);
             origins[i] = landPoint;
         }
 
@@ -376,8 +377,8 @@ enum MapVoxelTypes{
         outlineEdges_(waterData, noiseBlob);
     }
 
-    function findPointOnCoast_(landData, land=0){
-        local edges = landData[land].edges;
+    function findPointOnCoast_(landData, landId){
+        local edges = landData[landId].edges;
         local randIndex = _random.randIndex(edges);
         return edges[randIndex];
     }
@@ -413,7 +414,6 @@ enum MapVoxelTypes{
             local weightFloat = (landData[i].total.tofloat() / totalLand) * 100;
             local weight = weightFloat >= 1.0 ? weightFloat.tointeger() : 1;
             for(local y = 0; y < weight; y++){
-                print(i);
                 weighted[count] = i;
                 count++;
                 //Drop out if the array is populated.
@@ -428,7 +428,7 @@ enum MapVoxelTypes{
         return weighted;
     }
 
-    function determinePlaces_findRandomLandmassForSize(landData, landWeighted, size){
+    function findRandomLandmassForSize(landData, landWeighted, size){
         //To avoid infinite loops.
         for(local i = 0; i < 100; i++){
             local randIndex = _random.randIndex(landWeighted);
@@ -445,7 +445,7 @@ enum MapVoxelTypes{
             //This being the largest landmass, place the city there.
             return 0;
         }
-        local retLandmass = determinePlaces_findRandomLandmassForSize(landData, landWeighted, place.getMinLandmass());
+        local retLandmass = findRandomLandmassForSize(landData, landWeighted, place.getMinLandmass());
 
         return retLandmass;
     }
@@ -538,12 +538,12 @@ enum MapVoxelTypes{
         local landData = floodFillLand(noiseBlob, data);
         removeRedundantIslands(noiseBlob, data, landData);
         sortLandmassesBySize(landData);
+        local landWeighted = generateLandWeightedAverage(landData);
         determineVoxelTypes(noiseBlob, data);
         outlineEdges(noiseBlob, waterData, landData)
-        local riverOrigins = determineRiverOrigins(noiseBlob, landData, data);
+        local riverOrigins = determineRiverOrigins(noiseBlob, landData, landWeighted, data);
         local riverBuffer = calculateRivers(riverOrigins, noiseBlob, data);
         carveRivers(noiseBlob, riverBuffer);
-        local landWeighted = generateLandWeightedAverage(landData);
         local placeData = determinePlaces(noiseBlob, landData, landWeighted, data);
 
         //printFloodFillData_("water", waterData);
