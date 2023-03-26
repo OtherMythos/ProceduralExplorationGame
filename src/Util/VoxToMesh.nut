@@ -133,13 +133,9 @@
         outMesh.setBounds(bounds);
         outMesh.setBoundingSphereRadius(1.732);
 
-        //TODO don't keep this here.
-        local item = _scene.createItem(outMesh);
-        item.setDatablock("baseVoxelMaterial");
-        local newNode = _scene.getRootSceneNode().createChildSceneNode();
-        newNode.attachObject(item);
+        subMesh.setMaterialName("baseVoxelMaterial");
 
-        return newNode;
+        return outMesh;
     }
 
     function readVoxelFromData_(data, x, y, z, width, height){

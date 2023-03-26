@@ -19,7 +19,11 @@ function start(){
     voxData[0 + (5*width) + (0*width*height)] = 254;
     voxData[4 + (5*width) + (0*width*height)] = 254;
 
-    ::meshObj <- voxMesh.createMeshForVoxelData("testVox", voxData, width, height, depth);
+    local meshObj = voxMesh.createMeshForVoxelData("testVox", voxData, width, height, depth);
+
+    local item = _scene.createItem(meshObj);
+    local newNode = _scene.getRootSceneNode().createChildSceneNode();
+    newNode.attachObject(item);
 
     _camera.setPosition(0, 0, 20);
     _camera.lookAt(0, 0, 0);
