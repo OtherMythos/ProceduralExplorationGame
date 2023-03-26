@@ -1,4 +1,11 @@
 {
+
+    "macroblocks":{
+        "polyBlock":{
+            "polygon_mode" : "wireframe"
+        }
+    },
+
     "pbs" :
     {
         "baseVoxelMaterial" :

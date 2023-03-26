@@ -129,9 +129,10 @@
 
         subMesh.pushMeshVAO(vao, _VP_NORMAL);
 
-        local bounds = AABB(Vec3(), Vec3());
+        local halfBounds = Vec3(width/2, height/2, depth/2);
+        local bounds = AABB(halfBounds, halfBounds);
         outMesh.setBounds(bounds);
-        outMesh.setBoundingSphereRadius(1.732);
+        outMesh.setBoundingSphereRadius(bounds.getRadius());
 
         subMesh.setMaterialName("baseVoxelMaterial");
 

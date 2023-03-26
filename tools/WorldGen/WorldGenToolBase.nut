@@ -11,6 +11,16 @@
 
     mMapViewer_ = null
 
+    mModelViewWindow_ = null
+    mModelViewPanel_ = null
+    mModelViewDatablock_ = null
+    mModelViewCamera_ = null
+    mModelViewTexture_ = null
+    mModelViewWorkspace_ = null
+    mModelFPSCamera_ = null
+
+    mCurrentMapData_ = null
+
     mSeed_ = 0
     mVariation_ = 0
 
@@ -26,7 +36,7 @@
     }
 
     function update(){
-
+        if(mModelFPSCamera_) mModelFPSCamera_.update();
     }
 
     function setupGui(){
@@ -129,6 +139,17 @@
             layout.addCell(checkbox);
         }
 
+        local viewModel = mControlsWindow_.createLabel();
+        viewModel.setText("Visualisation");
+        layout.addCell(viewModel);
+
+        local viewAsModelButton = mControlsWindow_.createButton();
+        viewAsModelButton.setText("View as model")
+        viewAsModelButton.attachListenerForEvent(function(widget, action){
+            ::WorldGenTool.viewCurrentMapAsModel();
+        }, _GUI_ACTION_PRESSED);
+        layout.addCell(viewAsModelButton);
+
         layout.layout();
 
         local renderWindow = _gui.createWindow();
@@ -139,6 +160,7 @@
         renderPanel.setPosition(0, 0);
         renderPanel.setSize(renderWindow.getSize());
         renderPanel.setDatablock(mMapViewer_.getDatablock());
+        renderPanel.setClipBorders(0, 0, 0, 0);
         mMapViewer_.setLabelWindow(renderWindow);
     }
 
@@ -158,6 +180,64 @@
         mVariation_ = variation;
     }
 
+    function viewCurrentMapAsModel_setup(){
+        mModelViewWindow_ = _gui.createWindow();
+        mModelViewWindow_.setZOrder(100);
+        mModelViewWindow_.setPosition(0, 0);
+        mModelViewWindow_.setSize(1920, 1080);
+
+        mModelViewPanel_ = mModelViewWindow_.createPanel();
+        mModelViewPanel_.setPosition(0, 0);
+        mModelViewPanel_.setSize(mModelViewWindow_.getSize());
+
+        local newTex = _graphics.createTexture("mapViewer/modelViewerRenderTexture");
+        newTex.setResolution(1920, 1080);
+        newTex.scheduleTransitionTo(_GPU_RESIDENCY_RESIDENT);
+        mModelViewTexture_ = newTex;
+
+        local newCamera = _scene.createCamera("mapViewer/modelViewerCamera");
+        local cameraNode = _scene.getRootSceneNode().createChildSceneNode();
+        cameraNode.attachObject(newCamera);
+        mModelViewCamera_ = newCamera;
+
+        mModelViewWorkspace_ = _compositor.addWorkspace([mModelViewTexture_], mModelViewCamera_, "mapViewer/modelViewerWorkspace", true);
+
+        mModelViewDatablock_ = _hlms.unlit.createDatablock("mapViewer/modelViewerRenderDatablock");
+        mModelViewDatablock_.setTexture(0, newTex);
+
+        mModelViewPanel_.setDatablock(mModelViewDatablock_);
+
+        cameraNode.setPosition(0, 50, 200);
+        mModelViewCamera_.lookAt(0, 0, 0);
+        mModelFPSCamera_ = ::fpsCamera(mModelViewCamera_);
+    }
+    function viewCurrentMapAsModel(){
+        viewCurrentMapAsModel_setup();
+
+        local width = mCurrentMapData_.width;
+        local height = mCurrentMapData_.height;
+        local depth = 10;
+        local voxData = array(width * height * depth, null);
+        local buf = mCurrentMapData_.voxelBuffer;
+        buf.seek(0);
+        for(local y = 0; y < 4; y++){
+            for(local x = 0; x < width; x++){
+                local vox = buf.readn('i')
+                local altitude = (((vox & 0xFF).tofloat() / 0xFF) * depth).tointeger();
+                //voxData[x + (y * width) + (altitude*width*height)] = 1;
+                voxData[x + (y * width)] = x;
+                //print(altitude);
+            }
+        }
+        //voxData[0] = 1;
+        local vox = VoxToMesh();
+        local meshObj = vox.createMeshForVoxelData("testVox", voxData, width, height, depth);
+
+        local item = _scene.createItem(meshObj);
+        local newNode = _scene.getRootSceneNode().createChildSceneNode();
+        newNode.attachObject(item);
+    }
+
     function generate(){
         local gen = ::MapGen();
         local data = {
@@ -171,6 +251,7 @@
             "placeFrequency": [0, 1, 4, 4, 30]
         };
         local outData = gen.generate(data);
+        mCurrentMapData_ = outData;
 
         mMapViewer_.displayMapData(outData);
     }

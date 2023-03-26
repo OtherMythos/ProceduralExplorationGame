@@ -32,7 +32,6 @@ function start(){
 }
 
 function update(){
-    return;
     ::count += 0.01;
     _camera.setPosition(sin(count) * 20, 0, cos(count) * 20);
     _camera.lookAt(0, 0, 0);

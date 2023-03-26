@@ -17,6 +17,7 @@
         _gui.loadSkins("res://assets/skins/ui.json");
 
         _doFile("res://src/Helpers.nut");
+        _doFile("res://src/Util/VoxToMesh.nut");
 
         _doFile("res://src/MapGen/Viewer/MapViewer.nut");
         _doFile("res://src/MapGen/Generator/MapGen.nut");

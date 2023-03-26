@@ -1,0 +1,20 @@
+
+compositor_node mapViewer/modelViewer
+{
+    in 0 renderTexture
+    target renderTexture
+    {
+        pass clear
+        {
+            colour_value 0 0 0 1
+        }
+        pass render_scene
+        {
+        }
+    }
+}
+
+workspace mapViewer/modelViewerWorkspace
+{
+    connect_output mapViewer/modelViewer 0
+}
