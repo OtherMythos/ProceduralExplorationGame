@@ -216,16 +216,25 @@
 
         local width = mCurrentMapData_.width;
         local height = mCurrentMapData_.height;
-        local depth = 10;
+        local depth = 40;
         local voxData = array(width * height * depth, null);
         local buf = mCurrentMapData_.voxelBuffer;
         buf.seek(0);
-        for(local y = 0; y < 4; y++){
+        local voxVals = [
+            2, 112, 0, 192
+        ]
+        for(local y = 0; y < height; y++){
             for(local x = 0; x < width; x++){
                 local vox = buf.readn('i')
-                local altitude = (((vox & 0xFF).tofloat() / 0xFF) * depth).tointeger();
-                //voxData[x + (y * width) + (altitude*width*height)] = 1;
-                voxData[x + (y * width)] = x;
+                local voxFloat = (vox & 0xFF).tofloat();
+                local altitude = ((voxFloat / 0xFF) * depth).tointeger();
+                local voxelMeta = (vox >> 8) & 0x7F;
+                if(voxFloat <= mCurrentMapData_.seaLevel) voxelMeta = 3;
+                for(local i = 0; i < altitude; i++){
+                    voxData[x + (y * width) + (i*width*height)] = voxVals[voxelMeta];
+                    //voxData[x + (y * width) + (altitude*width*height)] = voxVals[voxelMeta];
+                }
+                //voxData[x + (y * width)] = x;
                 //print(altitude);
             }
         }
@@ -236,6 +245,7 @@
         local item = _scene.createItem(meshObj);
         local newNode = _scene.getRootSceneNode().createChildSceneNode();
         newNode.attachObject(item);
+        newNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
     }
 
     function generate(){

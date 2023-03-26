@@ -116,14 +116,16 @@
         foreach(i in verts){
             b.writen(i, 'f');
         }
-        local bb = blob(indices.len() * 2);
+        local indiceStride = index + 4 >= 0xFFFF ? 4 : 2;
+        local bb = blob(indices.len() * indiceStride);
         bb.seek(0);
+        local stideVal = indiceStride == 2 ? 'w' : 'i';
         foreach(i in indices){
-            bb.writen(i, 'w');
+            bb.writen(i, 'i');
         }
 
         local buffer = _graphics.createVertexBuffer(mVertexElemVec_, numVerts, numVerts, b);
-        local indexBuffer = _graphics.createIndexBuffer(_IT_16BIT, bb, indices.len());
+        local indexBuffer = _graphics.createIndexBuffer(indiceStride == 2 ? _IT_16BIT : _IT_32BIT, bb, indices.len());
 
         local vao = _graphics.createVertexArrayObject(buffer, indexBuffer, _OT_TRIANGLE_LIST);
 
@@ -144,6 +146,7 @@
     }
 
     function getNeighbourMask(data, x, y, z, width, height, depth){
+        return 0;
         local ret = 0;
         local i = 0;
         for(local zz = -1; zz <= 1; zz++){
