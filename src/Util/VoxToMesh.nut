@@ -5,11 +5,19 @@
 
     MASKS = null;
     FACES_VERTICES = null;
+    FACES_NORMALS = null;
     VERTICES_POSITIONS = null;
+
+    static COLS_WIDTH = 16;
+    static COLS_HEIGHT = 16;
+    TILE_WIDTH = null;
+    TILE_HEIGHT = null;
 
     mVertexElemVec_ = null;
 
     constructor(){
+        TILE_WIDTH = (1.0 / COLS_WIDTH) / 2.0;
+        TILE_HEIGHT = (1.0 / COLS_HEIGHT) / 2.0;
 
         MASKS = array(6);
         local M = function(x, y, z){
@@ -40,12 +48,20 @@
             1.0, 1.0, 1.0,
             0.0, 1.0, 1.0
         ];
+        FACES_NORMALS = [
+            0, -1,  0,
+            0,  1,  0,
+            0,  0, -1,
+            0,  0,  1,
+            1,  0,  0,
+            1,  0,  0,
+        ];
 
 
         mVertexElemVec_ = _graphics.createVertexElemVec();
         mVertexElemVec_.pushVertexElement(_VET_FLOAT3, _VES_POSITION);
-        //vertexElemVec.pushVertexElement(_VET_FLOAT2, _VES_TEXTURE_COORDINATES);
-
+        mVertexElemVec_.pushVertexElement(_VET_FLOAT3, _VES_NORMAL);
+        mVertexElemVec_.pushVertexElement(_VET_FLOAT2, _VES_TEXTURE_COORDINATES);
     }
 
 
@@ -67,17 +83,21 @@
         for(local y = 0; y < height; y++)
         for(local x = 0; x < width; x++){
             local v = readVoxelFromData_(voxData, x, y, z, width, height);
-            if(v == 0) continue;
+            if(v == null) continue;
+            local texCoordX = ((v % COLS_WIDTH).tofloat() / COLS_WIDTH) + TILE_WIDTH;
+            local texCoordY = ((v.tofloat() / COLS_WIDTH) / COLS_HEIGHT) + TILE_HEIGHT;
             local neighbourMask = getNeighbourMask(voxData, x, y, z, width, height, depth);
-            //printf("drawing voxel %i %i %i", x, y, z);
-            //printf("Neighbour mask %i", neighbourMask);
             for(local f = 0; f < 6; f++){
                 if(!blockIsFaceVisible(neighbourMask, f)) continue;
-                //printf("Drawing face %i", f);
                 for(local i = 0; i < 4; i++){
                     verts.append(VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3] + x);
                     verts.append(VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 1] + y);
                     verts.append(VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 2] + z);
+                    verts.append(FACES_NORMALS[f * 3]);
+                    verts.append(FACES_NORMALS[f * 3 + 1]);
+                    verts.append(FACES_NORMALS[f * 3 + 2]);
+                    verts.append(texCoordX);
+                    verts.append(texCoordY);
                     numVerts++;
                 }
                 indices.append(index + 0);
@@ -89,7 +109,7 @@
                 index += 4;
             }
         }
-        assert(numVerts == verts.len() / 3);
+        assert(numVerts == verts.len() / 8);
 
         local b = blob(verts.len() * 4);
         b.seek(0);
@@ -115,7 +135,7 @@
 
         //TODO don't keep this here.
         local item = _scene.createItem(outMesh);
-        //item.setDatablock("textureUnlit");
+        item.setDatablock("baseVoxelMaterial");
         local newNode = _scene.getRootSceneNode().createChildSceneNode();
         newNode.attachObject(item);
 
@@ -139,7 +159,7 @@
                     local xPos = x + xx;
                     if(xPos < 0 || xPos >= width) continue;
                     local v = readVoxelFromData_(data, xPos, yPos, zPos, width, height);
-                    if(v != 0) ret = ret | (1 << i)
+                    if(v != null) ret = ret | (1 << i)
                     i++;
                 }
             }

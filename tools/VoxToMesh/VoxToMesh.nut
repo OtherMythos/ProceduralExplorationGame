@@ -8,14 +8,16 @@ function start(){
     local width = 10;
     local height = 10;
     local depth = 10;
-    local voxData = array(width * height * depth, 0);
-    //voxData[5 + (1*width) + (1*width*height)] = 1;
-    voxData[0] = 1;
-    voxData[1] = 1;
-    voxData[3] = 1;
-    //voxData[5 + (2*width) + (1*width*height)] = 1;
-    //voxData[5 + (3*width) + (1*width*height)] = 1;
-    //voxData[5 + (4*width) + (1*width*height)] = 1;
+    local voxData = array(width * height * depth, null);
+
+    voxData[4 + (1*width) + (0*width*height)] = 1;
+    voxData[3 + (0*width) + (0*width*height)] = 1;
+    voxData[2 + (0*width) + (0*width*height)] = 1;
+    voxData[1 + (0*width) + (0*width*height)] = 1;
+    voxData[0 + (1*width) + (0*width*height)] = 1;
+
+    voxData[0 + (5*width) + (0*width*height)] = 254;
+    voxData[4 + (5*width) + (0*width*height)] = 254;
 
     ::meshObj <- voxMesh.createMeshForVoxelData("testVox", voxData, width, height, depth);
 
@@ -26,8 +28,10 @@ function start(){
 }
 
 function update(){
+    return;
     ::count += 0.01;
-    meshObj.setOrientation(Quat(count, Vec3(0, 1, 0)));
+    _camera.setPosition(sin(count) * 20, 0, cos(count) * 20);
+    _camera.lookAt(0, 0, 0);
 }
 
 function end(){
