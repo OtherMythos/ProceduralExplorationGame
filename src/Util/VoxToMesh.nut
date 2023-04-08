@@ -19,17 +19,14 @@
         TILE_WIDTH = (1.0 / COLS_WIDTH) / 2.0;
         TILE_HEIGHT = (1.0 / COLS_HEIGHT) / 2.0;
 
-        MASKS = array(6);
-        local M = function(x, y, z){
-            return (1 << ((x + 1) + (y + 1) * 3 + (z + 1) * 9))
-        }
-        MASKS[0] = M(0, -1, 0);
-        MASKS[1] = M(0, 1, 0);
-        MASKS[2] = M(0, 0, -1);
-        MASKS[3] = M(0, 0, 1);
-        MASKS[4] = M(1, 0, 0);
-        MASKS[5] = M(-1, 0, 0);
-
+        MASKS = [
+            0, -1, 0,
+            0, 1, 0,
+            0, 0, -1,
+            0, 0, 1,
+            1, 0, 0,
+            -1, 0, 0,
+        ];
         FACES_VERTICES = [
             0, 1, 2, 3,
             5, 4, 7, 6,
@@ -119,9 +116,9 @@
         local indiceStride = index + 4 >= 0xFFFF ? 4 : 2;
         local bb = blob(indices.len() * indiceStride);
         bb.seek(0);
-        local stideVal = indiceStride == 2 ? 'w' : 'i';
+        local strideVal = indiceStride == 2 ? 'w' : 'i';
         foreach(i in indices){
-            bb.writen(i, 'i');
+            bb.writen(i, strideVal);
         }
 
         local buffer = _graphics.createVertexBuffer(mVertexElemVec_, numVerts, numVerts, b);
@@ -146,29 +143,31 @@
     }
 
     function getNeighbourMask(data, x, y, z, width, height, depth){
-        return 0;
         local ret = 0;
         local i = 0;
-        for(local zz = -1; zz <= 1; zz++){
+        for(local v = 0; v < 6; v++){
+            local xx = MASKS[v * 3];
+            local yy = MASKS[v * 3 + 1];
+            local zz = MASKS[v * 3 + 2];
+
+            local xPos = x + xx;
+            if(xPos < 0 || xPos >= width) continue;
+            local yPos = y + yy;
+            if(yPos < 0 || yPos >= height) continue;
             local zPos = z + zz;
             if(zPos < 0 || zPos >= depth) continue;
-            for(local yy = -1; yy <= 1; yy++){
-                local yPos = y + yy;
-                if(yPos < 0 || yPos >= height) continue;
-                for(local xx = -1; xx <= 1; xx++) {
-                    local xPos = x + xx;
-                    if(xPos < 0 || xPos >= width) continue;
-                    local v = readVoxelFromData_(data, xPos, yPos, zPos, width, height);
-                    if(v != null) ret = ret | (1 << i)
-                    i++;
-                }
+
+            local vox = readVoxelFromData_(data, xPos, yPos, zPos, width, height);
+            if(vox != null){
+                ret = ret | (1 << v)
             }
+            i++;
         }
         return ret;
     }
 
     function blockIsFaceVisible(mask, f){
-        return !(MASKS[f] & mask);
+        return 0 == ((1 << f) & mask);
     }
 
 };
