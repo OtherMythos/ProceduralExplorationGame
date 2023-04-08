@@ -14,8 +14,14 @@
     TILE_HEIGHT = null;
 
     mVertexElemVec_ = null;
+    mFaceExclusionMask_ = 0;
 
-    constructor(){
+    /**
+     * @param exclusionMask Allows for certain faces to always be rejected, for instance not drawing the bottom face in a terrain.
+     */
+    constructor(exclusionMask = 0){
+        mFaceExclusionMask_ = exclusionMask;
+
         TILE_WIDTH = (1.0 / COLS_WIDTH) / 2.0;
         TILE_HEIGHT = (1.0 / COLS_HEIGHT) / 2.0;
 
@@ -86,6 +92,7 @@
             local neighbourMask = getNeighbourMask(voxData, x, y, z, width, height, depth);
             for(local f = 0; f < 6; f++){
                 if(!blockIsFaceVisible(neighbourMask, f)) continue;
+                if((1 << f) & mFaceExclusionMask_) continue;
                 for(local i = 0; i < 4; i++){
                     verts.append(VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3] + x);
                     verts.append(VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 1] + y);

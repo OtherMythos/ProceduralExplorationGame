@@ -239,7 +239,7 @@
             }
         }
         //voxData[0] = 1;
-        local vox = VoxToMesh();
+        local vox = VoxToMesh(1 << 2);
         local meshObj = vox.createMeshForVoxelData("testVox", voxData, width, height, depth);
 
         local item = _scene.createItem(meshObj);
