@@ -20,6 +20,7 @@
     mModelFPSCamera_ = null
 
     mCurrentMapData_ = null
+    mTimerLabel_ = null
 
     mSeed_ = 0
     mVariation_ = 0
@@ -139,9 +140,9 @@
             layout.addCell(checkbox);
         }
 
-        local viewModel = mControlsWindow_.createLabel();
-        viewModel.setText("Visualisation");
-        layout.addCell(viewModel);
+        local visualisationLabel = mControlsWindow_.createLabel();
+        visualisationLabel.setText("Visualisation");
+        layout.addCell(visualisationLabel);
 
         local viewAsModelButton = mControlsWindow_.createButton();
         viewAsModelButton.setText("View as model")
@@ -149,6 +150,14 @@
             ::WorldGenTool.viewCurrentMapAsModel();
         }, _GUI_ACTION_PRESSED);
         layout.addCell(viewAsModelButton);
+
+        local timingLabel = mControlsWindow_.createLabel();
+        timingLabel.setText("Timing");
+        layout.addCell(timingLabel);
+
+        mTimerLabel_ = mControlsWindow_.createLabel();
+        mTimerLabel_.setText("first ");
+        layout.addCell(mTimerLabel_);
 
         layout.layout();
 
@@ -248,6 +257,10 @@
         newNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
     }
 
+    function updateTimeData(mapData){
+        mTimerLabel_.setText(format("total seconds: %.5f", mapData.stats.totalSeconds));
+    }
+
     function generate(){
         local gen = ::MapGen();
         local data = {
@@ -264,5 +277,6 @@
         mCurrentMapData_ = outData;
 
         mMapViewer_.displayMapData(outData);
+        updateTimeData(outData);
     }
 };

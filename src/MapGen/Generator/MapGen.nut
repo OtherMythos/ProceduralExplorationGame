@@ -11,9 +11,10 @@ enum MapVoxelTypes{
 ::MapGen <- class{
 
     mData_ = null;
+    mTimer_ = null;
 
     constructor(){
-
+        mTimer_ = Timer();
     }
 
     function reduceNoise_getHeightForPoint(input, x, y){
@@ -532,6 +533,8 @@ enum MapVoxelTypes{
     }
 
     function generate(data){
+        mTimer_.start();
+
         mData_ = data;
         _random.seedPatternGenerator(data.seed);
         _random.seed(data.variation);
@@ -553,6 +556,8 @@ enum MapVoxelTypes{
         carveRivers(noiseBlob, riverBuffer);
         local placeData = determinePlaces(noiseBlob, landData, landWeighted, data);
 
+        mTimer_.stop();
+
         //printFloodFillData_("water", waterData);
         //printFloodFillData_("land", landData);
 
@@ -567,6 +572,9 @@ enum MapVoxelTypes{
             "riverBuffer": riverBuffer,
             "seaLevel": data.seaLevel,
             "placeData": placeData
+            "stats": {
+                "totalSeconds": mTimer_.getSeconds()
+            }
         };
 
         //Reset the seed
