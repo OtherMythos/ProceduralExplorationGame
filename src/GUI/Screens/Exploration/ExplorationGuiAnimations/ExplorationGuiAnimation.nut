@@ -54,7 +54,7 @@
 
         local c1 = 1.70158;
         local c2 = c1 * 1.525;
-        
+
         local x = currentPercentage;
         local val = x < 0.5
           ? (pow(2 * x, 2) * ((c2 + 1) * 2 * x - c2)) / 2

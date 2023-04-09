@@ -13,8 +13,45 @@
     TILE_WIDTH = null;
     TILE_HEIGHT = null;
 
+    MASKS = [
+        0, -1, 0,
+        0, 1, 0,
+        0, 0, -1,
+        0, 0, 1,
+        1, 0, 0,
+        -1, 0, 0,
+    ];
+    FACES_VERTICES = [
+        0, 1, 2, 3,
+        5, 4, 7, 6,
+        0, 4, 5, 1,
+        2, 6, 7, 3,
+        1, 5, 6, 2,
+        0, 3, 7, 4
+    ];
+    VERTICES_POSITIONS = [
+        0.0, 0.0, 0.0,
+        1.0, 0.0, 0.0,
+        1.0, 0.0, 1.0,
+        0.0, 0.0, 1.0,
+        0.0, 1.0, 0.0,
+        1.0, 1.0, 0.0,
+        1.0, 1.0, 1.0,
+        0.0, 1.0, 1.0
+    ];
+    FACES_NORMALS = [
+        0, -1,  0,
+        0,  1,  0,
+        0,  0, -1,
+        0,  0,  1,
+        1,  0,  0,
+        1,  0,  0,
+    ];
+
     mVertexElemVec_ = null;
     mFaceExclusionMask_ = 0;
+
+    mNumTris_ = 0;
 
     /**
      * @param exclusionMask Allows for certain faces to always be rejected, for instance not drawing the bottom face in a terrain.
@@ -24,42 +61,6 @@
 
         TILE_WIDTH = (1.0 / COLS_WIDTH) / 2.0;
         TILE_HEIGHT = (1.0 / COLS_HEIGHT) / 2.0;
-
-        MASKS = [
-            0, -1, 0,
-            0, 1, 0,
-            0, 0, -1,
-            0, 0, 1,
-            1, 0, 0,
-            -1, 0, 0,
-        ];
-        FACES_VERTICES = [
-            0, 1, 2, 3,
-            5, 4, 7, 6,
-            0, 4, 5, 1,
-            2, 6, 7, 3,
-            1, 5, 6, 2,
-            0, 3, 7, 4
-        ];
-        VERTICES_POSITIONS = [
-            0.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,
-            1.0, 0.0, 1.0,
-            0.0, 0.0, 1.0,
-            0.0, 1.0, 0.0,
-            1.0, 1.0, 0.0,
-            1.0, 1.0, 1.0,
-            0.0, 1.0, 1.0
-        ];
-        FACES_NORMALS = [
-            0, -1,  0,
-            0,  1,  0,
-            0,  0, -1,
-            0,  0,  1,
-            1,  0,  0,
-            1,  0,  0,
-        ];
-
 
         mVertexElemVec_ = _graphics.createVertexElemVec();
         mVertexElemVec_.pushVertexElement(_VET_FLOAT3, _VES_POSITION);
@@ -111,6 +112,7 @@
                 indices.append(index + 3);
                 indices.append(index + 0);
                 index += 4;
+                mNumTris_ += 2;
             }
         }
         assert(numVerts == verts.len() / 8);
@@ -175,6 +177,12 @@
 
     function blockIsFaceVisible(mask, f){
         return 0 == ((1 << f) & mask);
+    }
+
+    function getStats(){
+        return{
+            "numTris": mNumTris_
+        }
     }
 
 };

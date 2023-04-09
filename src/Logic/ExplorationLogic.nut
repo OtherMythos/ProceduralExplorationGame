@@ -21,15 +21,17 @@
     mExplorationFinished_ = false;
     mExplorationPaused_ = false;
 
+    mCurrentMapData_ = null;
+
     mDebugForceItem_ = ItemId.NONE;
 
     mGui_ = null;
 
     constructor(){
-        resetExploration();
-        processDebug_();
-
         mSceneLogic_ = ExplorationSceneLogic();
+
+        resetExploration_();
+        processDebug_();
     }
 
     //Check for debug flags
@@ -49,10 +51,11 @@
     }
 
     function setup(){
-        mSceneLogic_.setup();
+        resetGenMap_();
+        //mSceneLogic_.setup();
     }
 
-    function resetExploration(){
+    function resetExploration_(){
         mExplorationCount_ = 0;
         mExplorationPercentage_ = 0;
 
@@ -64,7 +67,29 @@
 
         renotifyItems();
         processExplorationBegan();
-        if(mSceneLogic_) mSceneLogic_.resetExploration();
+    }
+    function resetGenMap_(){
+        resetExplorationGenMap_();
+        mSceneLogic_.resetExploration(mCurrentMapData_);
+    }
+    function resetExploration(){
+        resetExploration_();
+        resetGenMap_();
+    }
+    function resetExplorationGenMap_(){
+        local gen = ::MapGen();
+        local data = {
+            "seed": _random.randInt(0, 1000),
+            "variation": _random.randInt(0, 1000),
+            "width": 100,
+            "height": 100,
+            "numRivers": 12,
+            "seaLevel": 100,
+            "altitudeBiomes": [10, 100],
+            "placeFrequency": [0, 1, 4, 4, 30]
+        };
+        local outData = gen.generate(data);
+        mCurrentMapData_ = outData;
     }
 
     function tickUpdate(){

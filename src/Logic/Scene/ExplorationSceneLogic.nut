@@ -1,115 +1,89 @@
+::ExplorationCount <- 0;
 ::ExplorationSceneLogic <- class{
 
-    mPrevPercentage_ = 0;
     mParentNode_ = null;
-    mLandPieces_ = null;
-
-    mLandGenCounter_ = 0;
-
-    LandEntry = class{
-        static scale = 0.5;
-        static objSize = 32 * 0.5;
-
-        mDatablock_ = null;
-        mId_ = 0;
-        mNode_ = null;
-
-        constructor(id, x, y, parentNode){
-            print("Creating exploration land at " + x + "  " + y);
-            mId_ = id;
-            local scale = Vec3(0.5, 0.5, 0.5);
-            local objSize = Vec3(32, 0, 32) * scale;
-
-            mNode_ = parentNode.createChildSceneNode();
-
-            local item = _scene.createItem("grasslands1.mesh");
-            item.setRenderQueueGroup(30);
-            mNode_.attachObject(item);
-            mNode_.setScale(scale);
-            mNode_.setPosition(objSize.x * x, 0, objSize.z * y);
-
-            //Create custom datablock for animation.
-            local originalDatablock = _hlms.getDatablock("baseVoxelMaterial");
-            mDatablock_ = originalDatablock.cloneBlock("materialExplorationLand" + id);
-            mDatablock_.setTransparency(0.0);
-            item.setDatablock(mDatablock_)
-
-            //Apply some rotation to give variation.
-            local randVal = _random.randInt(0, 3);
-            local orientation = Quat((PI*2) / 4 * randVal, Vec3(0, 1, 0));
-            mNode_.setOrientation(orientation);
-
-            placeTrees(mNode_, 4);
-        }
-
-        function shutdown(){
-            print("shutting down with id " + mId_)
-            _hlms.destroyDatablock(mDatablock_);
-            mDatablock_ = null;
-        }
-
-        function placeTrees(parentNode, num){
-            for(local i = 0; i < num; i++){
-                local node = parentNode.createChildSceneNode();
-                local posVal = _random.randVec3();
-                local actualPos = posVal * objSize - objSize / 2;
-                actualPos.y = 3;
-                node.setPosition(actualPos);
-                node.setScale(2, 2, 2);
-                local item = _scene.createItem("tree.mesh");
-                item.setRenderQueueGroup(30);
-                node.attachObject(item);
-                item.setDatablock(mDatablock_);
-            }
-        }
-
-        function update(progress){
-            print(progress);
-            mDatablock_.setTransparency(progress);
-        }
-    };
+    mWorldData_ = null;
+    mVoxMesh_ = null;
 
     constructor(){
-        mLandPieces_ = [];
     }
 
     function setup(){
-        print("Creating exploration scene");
         createScene();
+        voxeliseMap();
     }
 
     function shutdown(){
         if(mParentNode_) mParentNode_.destroyNodeAndChildren();
-
-        foreach(i in mLandPieces_){
-            i.shutdown();
+        if(mVoxMesh_ == null){
         }
-        mLandPieces_.clear();
 
-        mLandGenCounter_ = 0;
         mParentNode_ = null;
     }
 
-    function resetExploration(){
-        print("Resetting exploration scene");
+    function resetExploration(worldData){
         shutdown();
+        mWorldData_ = worldData;
         setup();
     }
 
-    function updatePercentage(percentage){
-        if(percentage == 100) return;
-
-        local currentUpdateCount = 0;
-        if(mPrevPercentage_ != percentage){
-            mPrevPercentage_ = percentage;
-
-            local counter = percentage - (percentage / 10) * 10
-            currentUpdateCount = counter.tofloat() / 10.0;
-            if(percentage % 10 == 0 || percentage == 0){
-                createLandPiece(mParentNode_);
+    function voxeliseMap(){
+        assert(mWorldData_ != null);
+        local width = mWorldData_.width;
+        local height = mWorldData_.height;
+        local depth = 40;
+        local voxData = array(width * height * depth, null);
+        local buf = mWorldData_.voxelBuffer;
+        buf.seek(0);
+        local voxVals = [
+            2, 112, 0, 192
+        ]
+        for(local y = 0; y < height; y++){
+            for(local x = 0; x < width; x++){
+                local vox = buf.readn('i')
+                local voxFloat = (vox & 0xFF).tofloat();
+                local altitude = ((voxFloat / 0xFF) * depth).tointeger();
+                local voxelMeta = (vox >> 8) & 0x7F;
+                if(voxFloat <= mWorldData_.seaLevel) voxelMeta = 3;
+                for(local i = 0; i < altitude; i++){
+                    voxData[x + (y * width) + (i*width*height)] = voxVals[voxelMeta];
+                }
             }
+        }
+        local vox = VoxToMesh(1 << 2);
+        //TODO get rid of this with the proper function to destory meshes.
+        ::ExplorationCount++;
+        local meshObj = vox.createMeshForVoxelData("worldVox" + ::ExplorationCount, voxData, width, height, depth);
+        mVoxMesh_ = meshObj;
 
-            mLandPieces_.top().update(currentUpdateCount);
+        local item = _scene.createItem(meshObj);
+        item.setRenderQueueGroup(30);
+        mParentNode_.attachObject(item);
+        mParentNode_.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
+
+        local stats = vox.getStats();
+        printf("Stats %i", stats.numTris);
+    }
+
+
+    function updatePercentage(percentage){
+        if(_input.getMouseButton(0)){
+            local width = _window.getWidth();
+            local height = _window.getHeight();
+
+            local posX = _input.getMouseX().tofloat() / width;
+            local posY = _input.getMouseY().tofloat() / height;
+
+            local dir = (Vec2(posX, posY) - Vec2(0.5, 0.5));
+            dir.normalise();
+            dir /= 2;
+
+            {
+                local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
+                assert(camera != null);
+                local parentNode = camera.getParentNode();
+                parentNode.move(Vec3(dir.x, 0, dir.y));
+            }
         }
     }
 
@@ -120,50 +94,15 @@
             local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
             assert(camera != null);
             local parentNode = camera.getParentNode();
-            parentNode.setPosition(0, 20, 30);
+            parentNode.setPosition(0, 60, 90);
             camera.lookAt(0, 0, 0);
         }
-
-        createLandPiece(mParentNode_);
-    }
-
-    function createLandPiece(parentNode){
-        local landPiece = getFreeLandPiece();
-
-        local piece = LandEntry(mLandGenCounter_, landPiece[0], landPiece[1], parentNode);
-        mLandPieces_.append(piece);
-    }
-
-    function getFreeLandPiece(){
-        //TODO in future make this smarter.
-
-        local valsX = [
-            0, 1, 0, -1, -1, 1, 0, 1, -1, 0, 1
-        ];
-        local valsY = [
-            0, -1, -1, -1, 0, 0, 1, 1, 1, -2, -2
-        ];
-
-        //TODO this should not be needed later on.
-        if(mLandGenCounter_ >= valsX.len()){
-            return [0, 0];
-        }
-
-        local vals = [valsX[mLandGenCounter_], valsY[mLandGenCounter_]];
-        mLandGenCounter_++;
-        return vals;
     }
 
     function getFoundPositionForItem(item){
-        //TODO in future might create an item in the scene for the found object.
-        local landPiece = mLandPieces_.top();
-
-        return landPiece.mNode_.getPosition();
+        return Vec3(0, 0, 0);
     }
-
-    function getFoundPositionForEncounter(enemy){
-        local landPiece = mLandPieces_.top();
-
-        return landPiece.mNode_.getPosition();
+    function getFoundPositionForEncounter(item){
+        return Vec3(0, 0, 0);
     }
 };

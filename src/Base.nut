@@ -19,9 +19,6 @@
         _doFile("res://src/Helpers.nut");
         _doFile("res://src/Util/VoxToMesh.nut");
 
-        _doFile("res://src/MapGen/Viewer/MapViewer.nut");
-        _doFile("res://src/MapGen/Generator/MapGen.nut");
-
         _doFile("res://src/Content/Items.nut");
         _doFile("res://src/Content/Places.nut");
         _doFile("res://src/Content/FoundObject.nut");
@@ -39,6 +36,8 @@
         _doFile("res://src/System/PlayerStats.nut");
         mPlayerStats = ::PlayerStats();
 
+        _doFile("res://src/MapGen/Viewer/MapViewer.nut");
+        _doFile("res://src/MapGen/Generator/MapGen.nut");
 
         ::GuiWidgets <- {};
         _doFile("res://src/GUI/Widgets/InventoryMoneyCounter.nut");
@@ -74,6 +73,7 @@
         _doFile("res://src/GUI/Screens/DialogScreen.nut");
         _doFile("res://src/GUI/Screens/CombatSpoilsPopupScreen.nut");
         _doFile("res://src/GUI/Screens/TestScreen.nut");
+        _doFile("res://src/GUI/Screens/ExplorationTestScreen.nut");
         _doFile("res://src/GUI/Screens/WorldSceneScreen.nut");
 
         _doFile("res://src/Logic/ExplorationLogic.nut");
@@ -98,6 +98,7 @@
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COMBAT_SCREEN, {"logic": mCombatLogic}));
         //::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);
+        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_TEST_SCREEN, {"logic": mExplorationLogic}));
         //::ScreenManager.transitionToScreen(Screen.WORLD_SCENE_SCREEN);
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.ENCOUNTER_POPUP_SCREEN, null), null, 1);
         //::ScreenManager.transitionToScreen(Screen.ITEM_INFO_SCREEN);
