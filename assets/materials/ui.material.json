@@ -42,6 +42,10 @@
         "unlitEmpty" :
         {
             "diffuse": [1, 1, 1, 1]
+        },
+        "oceanUnlit" :
+        {
+            "diffuse": [0.1, 0.1, 1, 1]
         }
     }
 }

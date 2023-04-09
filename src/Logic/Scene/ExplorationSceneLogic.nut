@@ -31,20 +31,22 @@
         assert(mWorldData_ != null);
         local width = mWorldData_.width;
         local height = mWorldData_.height;
-        local depth = 40;
+        local depth = 20;
         local voxData = array(width * height * depth, null);
         local buf = mWorldData_.voxelBuffer;
         buf.seek(0);
         local voxVals = [
             2, 112, 0, 192
-        ]
+        ];
+        local aboveGround = 0xFF - mWorldData_.seaLevel;
         for(local y = 0; y < height; y++){
             for(local x = 0; x < width; x++){
                 local vox = buf.readn('i')
                 local voxFloat = (vox & 0xFF).tofloat();
-                local altitude = ((voxFloat / 0xFF) * depth).tointeger();
+                if(voxFloat <= mWorldData_.seaLevel) continue;
+                local altitude = (((voxFloat - mWorldData_.seaLevel) / aboveGround) * depth).tointeger();
                 local voxelMeta = (vox >> 8) & 0x7F;
-                if(voxFloat <= mWorldData_.seaLevel) voxelMeta = 3;
+                //if(voxFloat <= mWorldData_.seaLevel) voxelMeta = 3;
                 for(local i = 0; i < altitude; i++){
                     voxData[x + (y * width) + (i*width*height)] = voxVals[voxelMeta];
                 }
@@ -94,9 +96,19 @@
             local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
             assert(camera != null);
             local parentNode = camera.getParentNode();
-            parentNode.setPosition(0, 60, 90);
+            parentNode.setPosition(0, 20, 30);
             camera.lookAt(0, 0, 0);
+            //TODO This negative coordinate is incorrect.
+            parentNode.setPosition(200, 20, -200);
         }
+
+        //Create the ocean plane
+        local oceanNode = mParentNode_.createChildSceneNode();
+        local oceanItem = _scene.createItem("plane");
+        oceanItem.setRenderQueueGroup(30);
+        oceanItem.setDatablock("oceanUnlit");
+        oceanNode.attachObject(oceanItem);
+        oceanNode.setScale(500, 500, 500)
     }
 
     function getFoundPositionForItem(item){

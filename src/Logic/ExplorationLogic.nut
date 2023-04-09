@@ -81,8 +81,8 @@
         local data = {
             "seed": _random.randInt(0, 1000),
             "variation": _random.randInt(0, 1000),
-            "width": 100,
-            "height": 100,
+            "width": 400,
+            "height": 400,
             "numRivers": 12,
             "seaLevel": 100,
             "altitudeBiomes": [10, 100],
