@@ -11,6 +11,8 @@
     static WORLD_DEPTH = 20;
     ABOVE_GROUND = null;
 
+    mCollisionShapes_ = null;
+
     constructor(){
     }
 
@@ -18,6 +20,11 @@
         ABOVE_GROUND = 0xFF - mWorldData_.seaLevel;
         createScene();
         voxeliseMap();
+
+        mCollisionShapes_ = [];
+
+        _world.createWorld();
+        _developer.setRenderQueueForMeshGroup(30);
     }
 
     function shutdown(){
@@ -26,6 +33,8 @@
         }
 
         mParentNode_ = null;
+
+        _world.destroyWorld();
     }
 
     function resetExploration(worldData){
@@ -78,7 +87,7 @@
         //Move somewhere else.
 
         local x = pos.x.tointeger();
-        local y = -pos.y.tointeger();
+        local y = -pos.z.tointeger();
 
         local buf = mWorldData_.voxelBuffer;
         buf.seek((x + y * mWorldData_.width) * 4);
@@ -98,10 +107,29 @@
         enemyItem.setRenderQueueGroup(30);
         enemyNode.attachObject(enemyItem);
         local zPos = getZForPos(enemy.mPos_);
-        local pos = Vec3(enemy.mPos_.x, zPos, enemy.mPos_.y);
+        local pos = Vec3(enemy.mPos_.x, zPos, enemy.mPos_.z);
         enemyNode.setPosition(pos);
         enemyNode.setScale(mMobScale_);
-        print("Adding " + pos);
+
+        local senderTable = {
+            "func" : "receivePlayerSpotted",
+            "path" : "res://src/Logic/Scene/ExplorationSceneEntityScript.nut"
+            "id" : 100,
+            "type" : _COLLISION_PLAYER,
+            "event" : _COLLISION_ENTER | _COLLISION_LEAVE | _COLLISION_INSIDE
+        };
+        local shape = _physics.getCubeShape(8, 4, 8);
+        local collisionObject = _physics.collision[TRIGGER].createSender(senderTable, shape, pos);
+        _physics.collision[TRIGGER].addObject(collisionObject);
+
+        senderTable["func"] = "receivePlayerInner";
+        local innerShape = _physics.getCubeShape(1, 1, 1);
+        local innerCollisionObject = _physics.collision[TRIGGER].createSender(senderTable, innerShape, pos);
+        _physics.collision[TRIGGER].addObject(innerCollisionObject);
+
+        enemy.setCollisionShapes(innerCollisionObject, collisionObject);
+        enemy.setEnemyNode(enemyNode);
+        enemy.setPosition(pos);
     }
 
     function createScene(){
@@ -118,6 +146,7 @@
         }
 
         //Create the ocean plane
+        /*
         local oceanNode = mParentNode_.createChildSceneNode();
         local oceanItem = _scene.createItem("plane");
         oceanItem.setRenderQueueGroup(30);
@@ -125,24 +154,36 @@
         oceanNode.attachObject(oceanItem);
         oceanNode.setScale(500, 500, 500)
         oceanNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
+        */
+
+    }
+
+    function constructPlayer(){
+        local playerEntry = ::ExplorationLogic.ActiveEnemyEntry(Enemy.NONE, Vec2(0, 0));
 
         mPlayerNode_ = mParentNode_.createChildSceneNode();
         local playerItem = _scene.createItem("player.mesh");
         playerItem.setRenderQueueGroup(30);
         mPlayerNode_.attachObject(playerItem);
         mPlayerNode_.setScale(mMobScale_);
+
+        playerEntry.setEnemyNode(mPlayerNode_);
+
+        return playerEntry;
     }
 
     function updatePlayerPos(playerPos){
-        local zPos = getZForPos(playerPos);
+        //local zPos = getZForPos(playerPos);
+        local zPos = 0;
+        print(playerPos);
 
         local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
         assert(camera != null);
         local parentNode = camera.getParentNode();
-        parentNode.setPosition(Vec3(playerPos.x, zPos + 20, playerPos.y + 20));
-        camera.lookAt(playerPos.x, 0, playerPos.y);
+        parentNode.setPosition(Vec3(playerPos.x, zPos + 20, playerPos.z + 20));
+        camera.lookAt(playerPos.x, 0, playerPos.z);
 
-        mPlayerNode_.setPosition(Vec3(playerPos.x, zPos, playerPos.y));
+        //mPlayerNode_.setPosition(Vec3(playerPos.x, zPos, playerPos.y));
     }
 
     function getFoundPositionForItem(item){

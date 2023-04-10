@@ -9,9 +9,28 @@
     ActiveEnemyEntry = class{
         mEnemy_ = Enemy.NONE;
         mPos_ = null;
+        mPhysicsInner_ = null;
+        mPhysicsOuter_ = null;
+        mNode_ = null;
         constructor(enemyType, enemyPos){
             mEnemy_ = enemyType;
             mPos_ = enemyPos;
+        }
+        function setCollisionShapes(inner, outer){
+            mPhysicsInner_ = inner;
+            mPhysicsOuter_ = outer;
+        }
+        function setEnemyNode(node){
+            mNode_ = node;
+        }
+        function setPosition(pos){
+            mPos_ = pos;
+            if(mNode_) mNode_.setPosition(pos);
+            if(mPhysicsInner_) mPhysicsInner_.setPosition(pos);
+            if(mPhysicsOuter_) mPhysicsOuter_.setPosition(pos);
+        }
+        function move(amount){
+            setPosition(mPos_ + amount);
         }
     }
 
@@ -31,7 +50,7 @@
     mExplorationPaused_ = false;
 
     mCurrentMapData_ = null;
-    mPlayerPosition_ = null;
+    mPlayerEntry_ = null;
     mActiveEnemies_ = null;
 
     mDebugForceItem_ = ItemId.NONE;
@@ -41,7 +60,6 @@
     constructor(){
         mSceneLogic_ = ExplorationSceneLogic();
 
-        mPlayerPosition_ = Vec2();
         mActiveEnemies_ = [];
 
         resetExploration_();
@@ -84,9 +102,10 @@
     }
     function resetGenMap_(){
         resetExplorationGenMap_();
-        mPlayerPosition_ = Vec2(mCurrentMapData_.width / 2, -mCurrentMapData_.height / 2);
         mSceneLogic_.resetExploration(mCurrentMapData_);
-        mSceneLogic_.updatePlayerPos(mPlayerPosition_);
+        mPlayerEntry_ = mSceneLogic_.constructPlayer();
+        mPlayerEntry_.setPosition(Vec3(mCurrentMapData_.width / 2, 0, -mCurrentMapData_.height / 2));
+        //mSceneLogic_.updatePlayerPos(mPlayerEntry_.mPos_);
     }
     function resetExploration(){
         resetExploration_();
@@ -145,8 +164,9 @@
             dir.normalise();
             dir /= 8;
 
-            mPlayerPosition_ += Vec2(dir.x, dir.y);
-            mSceneLogic_.updatePlayerPos(mPlayerPosition_);
+            //mPlayerEntry_.mPos_ += Vec2(dir.x, dir.y);
+            mPlayerEntry_.move(Vec3(dir.x, 0, dir.y));
+            mSceneLogic_.updatePlayerPos(Vec3(mPlayerEntry_.mPos_.x, 0, mPlayerEntry_.mPos_.z));
 
             /*
             {
@@ -219,7 +239,9 @@
     }
 
     function appearEnemy(enemyType){
-        local entry = ActiveEnemyEntry(enemyType, mPlayerPosition_ + _random.randVec2() * 20);
+        local randVec = _random.randVec2();
+        local targetPos = mPlayerEntry_.mPos_ + Vec3(randVec.x, 0, randVec.y) * 20;
+        local entry = ActiveEnemyEntry(enemyType, Vec3(targetPos.x, 0, targetPos.z));
         mActiveEnemies_.append(entry);
         if(mSceneLogic_) mSceneLogic_.appearEnemy(entry);
     }
