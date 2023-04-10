@@ -92,14 +92,14 @@
     function createScene(){
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
 
-        {
+        if(mWorldData_){
             local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
             assert(camera != null);
             local parentNode = camera.getParentNode();
-            parentNode.setPosition(0, 20, 30);
+            parentNode.setPosition(0, 40, 60);
             camera.lookAt(0, 0, 0);
             //TODO This negative coordinate is incorrect.
-            parentNode.setPosition(200, 20, -200);
+            parentNode.setPosition(mWorldData_.width / 2, 40, -mWorldData_.height / 2);
         }
 
         //Create the ocean plane

@@ -22,7 +22,7 @@ enum ExplorationBusEvents{
         mWindow_.setVisualsEnabled(false);
         mWindow_.setClipBorders(0, 0, 0, 0);
 
-        {
+        if(false){
             local helperButtonLayout = _gui.createLayoutLine();
 
             local resetButton = mWindow_.createButton();
@@ -59,15 +59,8 @@ enum ExplorationBusEvents{
 
         local layoutLine = _gui.createLayoutLine();
 
-        local title = mWindow_.createLabel();
-        title.setDefaultFontSize(title.getDefaultFontSize() * 2);
-        title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
-        title.setText("Exploring", false);
-        title.sizeToFit(_window.getWidth() * 0.9);
-        layoutLine.addCell(title);
-
         mMoneyCounter_ = ::GuiWidgets.InventoryMoneyCounter(mWindow_);
-        mMoneyCounter_.addToLayout(layoutLine);
+        //mMoneyCounter_.addToLayout(layoutLine);
 
         //World map display
         mWorldMapDisplay_ = WorldMapDisplay(mWindow_);
@@ -76,13 +69,14 @@ enum ExplorationBusEvents{
         mExplorationItemsContainer_ = ExplorationItemsContainer(mWindow_, mExplorationBus_);
         mExplorationItemsContainer_.addToLayout(layoutLine);
 
-        mExplorationProgressBar_ = ExplorationProgressBar(mWindow_, this);
-        mExplorationProgressBar_.addToLayout(layoutLine);
+        //mExplorationProgressBar_ = ExplorationProgressBar(mWindow_, this);
+        //mExplorationProgressBar_.addToLayout(layoutLine);
 
-        layoutLine.setHardMaxSize(_window.getWidth() * 0.9, _window.getHeight());
-        layoutLine.setSize(_window.getWidth() * 0.9, _window.getHeight() * 0.9);
-        layoutLine.setMarginForAllCells(0, 20);
-        layoutLine.setPosition(_window.getWidth() * 0.05, _window.getHeight() * 0.1);
+        local layoutSize = _window.getSize();
+        layoutLine.setHardMaxSize(layoutSize);
+        layoutLine.setSize(layoutSize);
+        //layoutLine.setMarginForAllCells(0, 20);
+        //layoutLine.setPosition(_window.getWidth() * 0.05, 0);
         layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
         mMoneyCounter_.mMoneyLabel_.setMargin(0, 0);
         mMoneyCounter_.mMoneyLabel_.setGridLocation(_GRID_LOCATION_TOP_LEFT);
@@ -104,7 +98,7 @@ enum ExplorationBusEvents{
     }
 
     function notifyExplorationPercentage(percentage){
-        mExplorationProgressBar_.setPercentage(percentage);
+        //mExplorationProgressBar_.setPercentage(percentage);
     }
 
     function notifyObjectFound(foundObject, idx, position = null){
@@ -121,11 +115,11 @@ enum ExplorationBusEvents{
     }
 
     function notifyExplorationEnd(){
-        mExplorationProgressBar_.showButtons(true);
+        //mExplorationProgressBar_.showButtons(true);
     }
 
     function notifyExplorationBegan(){
-        mExplorationProgressBar_.showButtons(false);
+        //mExplorationProgressBar_.showButtons(false);
     }
 
     function notifyFoundItemRemoved(idx){
