@@ -8,10 +8,14 @@
     mPlayerNode_ = null;
     mMobScale_ = Vec3(0.2, 0.2, 0.2);
 
+    static WORLD_DEPTH = 20;
+    ABOVE_GROUND = null;
+
     constructor(){
     }
 
     function setup(){
+        ABOVE_GROUND = 0xFF - mWorldData_.seaLevel;
         createScene();
         voxeliseMap();
     }
@@ -34,20 +38,18 @@
         assert(mWorldData_ != null);
         local width = mWorldData_.width;
         local height = mWorldData_.height;
-        local depth = 20;
-        local voxData = array(width * height * depth, null);
+        local voxData = array(width * height * WORLD_DEPTH, null);
         local buf = mWorldData_.voxelBuffer;
         buf.seek(0);
         local voxVals = [
             2, 112, 0, 192
         ];
-        local aboveGround = 0xFF - mWorldData_.seaLevel;
         for(local y = 0; y < height; y++){
             for(local x = 0; x < width; x++){
                 local vox = buf.readn('i')
                 local voxFloat = (vox & 0xFF).tofloat();
                 if(voxFloat <= mWorldData_.seaLevel) continue;
-                local altitude = (((voxFloat - mWorldData_.seaLevel) / aboveGround) * depth).tointeger();
+                local altitude = (((voxFloat - mWorldData_.seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger();
                 local voxelMeta = (vox >> 8) & 0x7F;
                 //if(voxFloat <= mWorldData_.seaLevel) voxelMeta = 3;
                 for(local i = 0; i < altitude; i++){
@@ -58,7 +60,7 @@
         local vox = VoxToMesh(1 << 2);
         //TODO get rid of this with the proper function to destory meshes.
         ::ExplorationCount++;
-        local meshObj = vox.createMeshForVoxelData("worldVox" + ::ExplorationCount, voxData, width, height, depth);
+        local meshObj = vox.createMeshForVoxelData("worldVox" + ::ExplorationCount, voxData, width, height, WORLD_DEPTH);
         mVoxMesh_ = meshObj;
 
         local item = _scene.createItem(meshObj);
@@ -72,6 +74,20 @@
         printf("Stats %i", stats.numTris);
     }
 
+    function getZForPos(pos){
+        //Move somewhere else.
+
+        local x = pos.x.tointeger();
+        local y = -pos.y.tointeger();
+
+        local buf = mWorldData_.voxelBuffer;
+        buf.seek((x + y * mWorldData_.width) * 4);
+        local voxFloat = (buf.readn('i') & 0xFF).tofloat();
+        local altitude = (((voxFloat - mWorldData_.seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger();
+        local clampedAltitude = altitude < 0 ? 0 : altitude;
+
+        return clampedAltitude;
+    }
 
     function updatePercentage(percentage){
     }
@@ -81,7 +97,8 @@
         local enemyItem = _scene.createItem("goblin.mesh");
         enemyItem.setRenderQueueGroup(30);
         enemyNode.attachObject(enemyItem);
-        local pos = Vec3(enemy.mPos_.x, 0, enemy.mPos_.y);
+        local zPos = getZForPos(enemy.mPos_);
+        local pos = Vec3(enemy.mPos_.x, zPos, enemy.mPos_.y);
         enemyNode.setPosition(pos);
         enemyNode.setScale(mMobScale_);
         print("Adding " + pos);
@@ -117,13 +134,15 @@
     }
 
     function updatePlayerPos(playerPos){
+        local zPos = getZForPos(playerPos);
+
         local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
         assert(camera != null);
         local parentNode = camera.getParentNode();
-        parentNode.setPosition(Vec3(playerPos.x, 20, playerPos.y + 20));
+        parentNode.setPosition(Vec3(playerPos.x, zPos + 20, playerPos.y + 20));
         camera.lookAt(playerPos.x, 0, playerPos.y);
 
-        mPlayerNode_.setPosition(Vec3(playerPos.x, 0, playerPos.y));
+        mPlayerNode_.setPosition(Vec3(playerPos.x, zPos, playerPos.y));
     }
 
     function getFoundPositionForItem(item){
