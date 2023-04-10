@@ -149,8 +149,12 @@ enum ExplorationBusEvents{
                     ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.COIN_EFFECT, {"numCoins": itemData.money / 8, "start": worldPos, "end": endPos, "money": itemData.money}));
                 }else{
                     //Switch to the item info screen.
-                    data.mode <- ItemInfoMode.KEEP_SCRAP_EXPLORATION;
-                    ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.ITEM_INFO_SCREEN, data));
+                    //data.mode <- ItemInfoMode.KEEP_SCRAP_EXPLORATION;
+                    //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.ITEM_INFO_SCREEN, data));
+                    //TODO temp, just scrap the item.
+                    local itemData = data.item.getData();
+                    ::ItemHelper.actuateItem(data.item);
+                    ::Base.mExplorationLogic.removeFoundItem(data.slotIdx);
                 }
             }
             else if(data.type == FoundObjectType.PLACE){

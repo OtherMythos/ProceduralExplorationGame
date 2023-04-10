@@ -5,6 +5,9 @@
     mWorldData_ = null;
     mVoxMesh_ = null;
 
+    mPlayerNode_ = null;
+    mMobScale_ = Vec3(0.2, 0.2, 0.2);
+
     constructor(){
     }
 
@@ -60,8 +63,10 @@
 
         local item = _scene.createItem(meshObj);
         item.setRenderQueueGroup(30);
-        mParentNode_.attachObject(item);
-        mParentNode_.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
+        local landNode = mParentNode_.createChildSceneNode();
+        landNode.attachObject(item);
+        //landNode.setScale(2, 2, 2);
+        landNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
 
         local stats = vox.getStats();
         printf("Stats %i", stats.numTris);
@@ -69,24 +74,17 @@
 
 
     function updatePercentage(percentage){
-        if(_input.getMouseButton(0)){
-            local width = _window.getWidth();
-            local height = _window.getHeight();
+    }
 
-            local posX = _input.getMouseX().tofloat() / width;
-            local posY = _input.getMouseY().tofloat() / height;
-
-            local dir = (Vec2(posX, posY) - Vec2(0.5, 0.5));
-            dir.normalise();
-            dir /= 2;
-
-            {
-                local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
-                assert(camera != null);
-                local parentNode = camera.getParentNode();
-                parentNode.move(Vec3(dir.x, 0, dir.y));
-            }
-        }
+    function appearEnemy(enemy){
+        local enemyNode = mParentNode_.createChildSceneNode();
+        local enemyItem = _scene.createItem("goblin.mesh");
+        enemyItem.setRenderQueueGroup(30);
+        enemyNode.attachObject(enemyItem);
+        local pos = Vec3(enemy.mPos_.x, 0, enemy.mPos_.y);
+        enemyNode.setPosition(pos);
+        enemyNode.setScale(mMobScale_);
+        print("Adding " + pos);
     }
 
     function createScene(){
@@ -99,7 +97,7 @@
             parentNode.setPosition(0, 40, 60);
             camera.lookAt(0, 0, 0);
             //TODO This negative coordinate is incorrect.
-            parentNode.setPosition(mWorldData_.width / 2, 40, -mWorldData_.height / 2);
+            //parentNode.setPosition(mWorldData_.width / 2, 40, -mWorldData_.height / 2);
         }
 
         //Create the ocean plane
@@ -109,6 +107,23 @@
         oceanItem.setDatablock("oceanUnlit");
         oceanNode.attachObject(oceanItem);
         oceanNode.setScale(500, 500, 500)
+        oceanNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
+
+        mPlayerNode_ = mParentNode_.createChildSceneNode();
+        local playerItem = _scene.createItem("player.mesh");
+        playerItem.setRenderQueueGroup(30);
+        mPlayerNode_.attachObject(playerItem);
+        mPlayerNode_.setScale(mMobScale_);
+    }
+
+    function updatePlayerPos(playerPos){
+        local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
+        assert(camera != null);
+        local parentNode = camera.getParentNode();
+        parentNode.setPosition(Vec3(playerPos.x, 20, playerPos.y + 20));
+        camera.lookAt(playerPos.x, 0, playerPos.y);
+
+        mPlayerNode_.setPosition(Vec3(playerPos.x, 0, playerPos.y));
     }
 
     function getFoundPositionForItem(item){

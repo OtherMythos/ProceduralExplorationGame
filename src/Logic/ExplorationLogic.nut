@@ -6,6 +6,15 @@
  */
 ::ExplorationLogic <- class{
 
+    ActiveEnemyEntry = class{
+        mEnemy_ = Enemy.NONE;
+        mPos_ = null;
+        constructor(enemyType, enemyPos){
+            mEnemy_ = enemyType;
+            mPos_ = enemyPos;
+        }
+    }
+
     mSceneLogic_ = null;
 
     mExplorationCount_ = 0;
@@ -22,6 +31,8 @@
     mExplorationPaused_ = false;
 
     mCurrentMapData_ = null;
+    mPlayerPosition_ = null;
+    mActiveEnemies_ = null;
 
     mDebugForceItem_ = ItemId.NONE;
 
@@ -29,6 +40,9 @@
 
     constructor(){
         mSceneLogic_ = ExplorationSceneLogic();
+
+        mPlayerPosition_ = Vec2();
+        mActiveEnemies_ = [];
 
         resetExploration_();
         processDebug_();
@@ -70,7 +84,9 @@
     }
     function resetGenMap_(){
         resetExplorationGenMap_();
+        mPlayerPosition_ = Vec2(mCurrentMapData_.width / 2, -mCurrentMapData_.height / 2);
         mSceneLogic_.resetExploration(mCurrentMapData_);
+        mSceneLogic_.updatePlayerPos(mPlayerPosition_);
     }
     function resetExploration(){
         resetExploration_();
@@ -100,8 +116,9 @@
         if(mExplorationCount_ == EXPLORATION_MAX_LENGTH) return;
         if(mExplorationPaused_) return;
         if(mEnemyEncountered_) return;
-        updatePercentage();
+        //updatePercentage();
         checkExploration();
+        checkPlayerMove();
 
         mSceneLogic_.updatePercentage(mExplorationPercentage_);
     }
@@ -109,9 +126,36 @@
     function checkExploration(){
         checkForFoundObject();
 
+        checkForEnemyAppear();
         local disableEncounters = _settings.getUserSetting("disableEncounters");
         if(!disableEncounters){
-            checkForEncounter();
+            //checkForEncounter();
+        }
+    }
+
+    function checkPlayerMove(){
+        if(_input.getMouseButton(0)){
+            local width = _window.getWidth();
+            local height = _window.getHeight();
+
+            local posX = _input.getMouseX().tofloat() / width;
+            local posY = _input.getMouseY().tofloat() / height;
+
+            local dir = (Vec2(posX, posY) - Vec2(0.5, 0.5));
+            dir.normalise();
+            dir /= 8;
+
+            mPlayerPosition_ += Vec2(dir.x, dir.y);
+            mSceneLogic_.updatePlayerPos(mPlayerPosition_);
+
+            /*
+            {
+                local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
+                assert(camera != null);
+                local parentNode = camera.getParentNode();
+                parentNode.move(Vec3(dir.x, 0, dir.y));
+            }
+            */
         }
     }
 
@@ -158,12 +202,26 @@
             return;
         }
 
+        /*
         foundSomething = _random.randInt(500) == 0;
         if(foundSomething){
             local foundPlace = _random.randInt(PlaceId.NONE+1, PlaceId.MAX-1);
             processFoundPlace(foundPlace);
             return;
         }
+        */
+    }
+
+    function checkForEnemyAppear(){
+        local foundSomething = _random.randInt(100) == 0;
+        if(!foundSomething) return;
+        appearEnemy(Enemy.GOBLIN);
+    }
+
+    function appearEnemy(enemyType){
+        local entry = ActiveEnemyEntry(enemyType, mPlayerPosition_ + _random.randVec2() * 20);
+        mActiveEnemies_.append(entry);
+        if(mSceneLogic_) mSceneLogic_.appearEnemy(entry);
     }
 
     function checkForEncounter(){

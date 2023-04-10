@@ -54,7 +54,8 @@
         if(renIcon == null){
             renIcon = ::RenderIconManager.createIcon();
         }
-        renIcon.setMesh(mObject_.getMesh());
+        local targetMesh = mObject_.getMesh();
+        renIcon.setMesh(targetMesh == null ? "simpleSword.mesh" : targetMesh);
         renIcon.setPosition(mPosition_);
         renIcon.setSize(mSize_.x, mSize_.y);
         mRenderedIcon_ = renIcon;
