@@ -32,6 +32,11 @@
         function move(amount){
             setPosition(mPos_ + amount);
         }
+        function moveQueryZ(amount, sceneLogic){
+            local zQuery = sceneLogic.getZForPos(mPos_ + amount);
+            mPos_.y = zQuery;
+            move(amount);
+        }
     }
 
     mSceneLogic_ = null;
@@ -165,7 +170,7 @@
             dir /= 8;
 
             //mPlayerEntry_.mPos_ += Vec2(dir.x, dir.y);
-            mPlayerEntry_.move(Vec3(dir.x, 0, dir.y));
+            mPlayerEntry_.moveQueryZ(Vec3(dir.x, 0, dir.y), mSceneLogic_);
             mSceneLogic_.updatePlayerPos(Vec3(mPlayerEntry_.mPos_.x, 0, mPlayerEntry_.mPos_.z));
 
             /*

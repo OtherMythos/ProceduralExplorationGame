@@ -169,13 +169,22 @@
 
         playerEntry.setEnemyNode(mPlayerNode_);
 
+
+        local receiverInfo = {
+            "type" : _COLLISION_PLAYER
+        };
+        local shape = _physics.getSphereShape(2);
+
+        local collisionObject = _physics.collision[TRIGGER].createReceiver(receiverInfo, shape);
+        _physics.collision[TRIGGER].addObject(collisionObject);
+        playerEntry.setCollisionShapes(collisionObject, null);
+
         return playerEntry;
     }
 
     function updatePlayerPos(playerPos){
         //local zPos = getZForPos(playerPos);
         local zPos = 0;
-        print(playerPos);
 
         local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
         assert(camera != null);
