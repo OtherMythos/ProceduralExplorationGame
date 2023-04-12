@@ -114,7 +114,7 @@
         local senderTable = {
             "func" : "receivePlayerSpotted",
             "path" : "res://src/Logic/Scene/ExplorationSceneEntityScript.nut"
-            "id" : 100,
+            "id" : enemy.mId_,
             "type" : _COLLISION_PLAYER,
             "event" : _COLLISION_ENTER | _COLLISION_LEAVE | _COLLISION_INSIDE
         };
@@ -178,6 +178,8 @@
         local collisionObject = _physics.collision[TRIGGER].createReceiver(receiverInfo, shape);
         _physics.collision[TRIGGER].addObject(collisionObject);
         playerEntry.setCollisionShapes(collisionObject, null);
+
+        playerEntry.setId(-1);
 
         return playerEntry;
     }

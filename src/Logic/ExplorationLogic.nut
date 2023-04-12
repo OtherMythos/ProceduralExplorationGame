@@ -12,6 +12,7 @@
         mPhysicsInner_ = null;
         mPhysicsOuter_ = null;
         mNode_ = null;
+        mId_ = null;
         constructor(enemyType, enemyPos){
             mEnemy_ = enemyType;
             mPos_ = enemyPos;
@@ -36,6 +37,12 @@
             local zQuery = sceneLogic.getZForPos(mPos_ + amount);
             mPos_.y = zQuery;
             move(amount);
+        }
+        function setId(id){
+            mId_ = id;
+        }
+        function getId(){
+            return mId_;
         }
     }
 
@@ -158,6 +165,7 @@
     }
 
     function checkPlayerMove(){
+        if(mEnemyEncountered_) return;
         if(_input.getMouseButton(0)){
             local width = _window.getWidth();
             local height = _window.getHeight();
@@ -240,6 +248,10 @@
     function checkForEnemyAppear(){
         local foundSomething = _random.randInt(100) == 0;
         if(!foundSomething) return;
+        if(mActiveEnemies_.len() >= 20){
+            print("can't add any more enemies");
+            return;
+        }
         appearEnemy(Enemy.GOBLIN);
     }
 
@@ -247,8 +259,19 @@
         local randVec = _random.randVec2();
         local targetPos = mPlayerEntry_.mPos_ + Vec3(randVec.x, 0, randVec.y) * 20;
         local entry = ActiveEnemyEntry(enemyType, Vec3(targetPos.x, 0, targetPos.z));
-        mActiveEnemies_.append(entry);
+        registerEnemyEntry(entry);
         if(mSceneLogic_) mSceneLogic_.appearEnemy(entry);
+    }
+
+    function registerEnemyEntry(entry){
+        local idx = mActiveEnemies_.find(null);
+        if(idx == null){
+            entry.setId(mActiveEnemies_.len());
+            mActiveEnemies_.append(entry);
+            return;
+        }
+        entry.setId(idx);
+        mActiveEnemies_[idx] = entry;
     }
 
     function checkForEncounter(){
@@ -271,7 +294,8 @@
         mFoundObjects_[idx] = foundObj;
         mNumFoundObjects_++;
 
-        local foundPosition = mSceneLogic_.getFoundPositionForItem(item);
+        //local foundPosition = mSceneLogic_.getFoundPositionForItem(item);
+        local foundPosition = mPlayerEntry_.mPos_;
 
         print(format("Found item %s at index %i", item.getName(), idx));
 
@@ -313,7 +337,8 @@
     function processEncounter(enemy){
         print("Encountered enemy " + ::ItemHelper.enemyToName(enemy));
 
-        local foundPosition = mSceneLogic_.getFoundPositionForEncounter(enemy);
+        //local foundPosition = mSceneLogic_.getFoundPositionForEncounter(enemy);
+        local foundPosition = mPlayerEntry_.mPos_;
 
         local combatData = _setupDataForCombat(enemy);
         if(mGui_) mGui_.notifyEnemyEncounter(combatData, foundPosition);
@@ -378,5 +403,19 @@
         if(mExplorationFinished_) return;
         mExplorationPaused_ = true;
         mGui_ = null;
+    }
+
+    function moveEnemyToPlayer(enemyId){
+        if(mEnemyEncountered_) return;
+        local enemyEntry = mActiveEnemies_[enemyId];
+        local dir = mPlayerEntry_.mPos_ - enemyEntry.mPos_;
+        dir.normalise();
+        dir *= 0.05;
+        enemyEntry.move(dir);
+    }
+
+    function notifyEncounter(enemyData){
+        //TODO get this to be correct.
+        processEncounter(Enemy.GOBLIN);
     }
 };
