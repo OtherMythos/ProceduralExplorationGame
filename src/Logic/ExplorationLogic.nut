@@ -66,6 +66,8 @@
     mActiveEnemies_ = null;
     mActivePlaces_ = null;
 
+    mMoveInputHandle_ = null;
+
     mDebugForceItem_ = ItemId.NONE;
 
     mGui_ = null;
@@ -78,6 +80,8 @@
 
         resetExploration_();
         processDebug_();
+
+        mMoveInputHandle_ = _input.getAxisActionHandle("LeftMove");
     }
 
     //Check for debug flags
@@ -168,29 +172,33 @@
 
     function checkPlayerMove(){
         if(mEnemyEncountered_) return;
+
+        //TODO ewww clean this up.
+        local moved = false;
+        local xVal = _input.getAxisActionX(mMoveInputHandle_, _INPUT_ANY);
+        local yVal = _input.getAxisActionY(mMoveInputHandle_, _INPUT_ANY);
+
+        local dir = Vec2(xVal, yVal);
+        moved = (xVal != 0 || yVal != 0);
+        if(moved){
+            dir /= 4;
+        }
+
         if(_input.getMouseButton(0)){
+            moved = true;
             local width = _window.getWidth();
             local height = _window.getHeight();
 
             local posX = _input.getMouseX().tofloat() / width;
             local posY = _input.getMouseY().tofloat() / height;
 
-            local dir = (Vec2(posX, posY) - Vec2(0.5, 0.5));
+            dir = (Vec2(posX, posY) - Vec2(0.5, 0.5));
             dir.normalise();
             dir /= 4;
-
-            //mPlayerEntry_.mPos_ += Vec2(dir.x, dir.y);
+        }
+        if(moved){
             mPlayerEntry_.moveQueryZ(Vec3(dir.x, 0, dir.y), mSceneLogic_);
             mSceneLogic_.updatePlayerPos(Vec3(mPlayerEntry_.mPos_.x, 0, mPlayerEntry_.mPos_.z));
-
-            /*
-            {
-                local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
-                assert(camera != null);
-                local parentNode = camera.getParentNode();
-                parentNode.move(Vec3(dir.x, 0, dir.y));
-            }
-            */
         }
     }
 
