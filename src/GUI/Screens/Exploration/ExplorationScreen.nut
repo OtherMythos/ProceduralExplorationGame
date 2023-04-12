@@ -10,6 +10,9 @@ enum ExplorationBusEvents{
     mExplorationItemsContainer_ = null;
     mMoneyCounter_ = null;
     mExplorationBus_ = null;
+    mPlaceHelperLabel_ = null;
+    mPlaceHelperButton_ = null;
+    mCurrentPlace_ = null;
 
     function setup(data){
         mLogicInterface_ = data.logic;
@@ -85,6 +88,21 @@ enum ExplorationBusEvents{
         mExplorationItemsContainer_.sizeForButtons();
         mWorldMapDisplay_.notifyResize();
 
+        mPlaceHelperLabel_ = mWindow_.createLabel();
+        mPlaceHelperLabel_.setPosition(0, 0);
+        mPlaceHelperLabel_.setText(" ");
+        mPlaceHelperButton_ = mWindow_.createButton();
+        mPlaceHelperButton_.setText("Visit");
+        mPlaceHelperButton_.setPosition(0, 40);
+        mPlaceHelperButton_.setHidden(true);
+        mPlaceHelperButton_.attachListenerForEvent(function(widget, action){
+            local data = {
+                "place": mCurrentPlace_,
+                "slotIdx": -1
+            };
+            ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLACE_INFO_SCREEN, data));
+        }, _GUI_ACTION_PRESSED, this);
+
         mLogicInterface_.continueOrResetExploration();
 
         mExplorationBus_.registerCallback(busCallback, this);
@@ -124,6 +142,16 @@ enum ExplorationBusEvents{
 
     function notifyFoundItemRemoved(idx){
         mExplorationItemsContainer_.setObjectForIndex(FoundObject(), idx, null);
+    }
+
+    function notifyPlaceEnterState(id, entered){
+        local text = "";
+        if(entered){
+            text = ::Places[id].getName();
+        }
+        mPlaceHelperLabel_.setText(text);
+        mPlaceHelperButton_.setHidden(!entered);
+        mCurrentPlace_ = entered ? id : null;
     }
 
     function shutdown(){

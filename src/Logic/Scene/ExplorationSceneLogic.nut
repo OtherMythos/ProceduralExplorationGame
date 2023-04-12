@@ -8,10 +8,11 @@
     mPlayerNode_ = null;
     mMobScale_ = Vec3(0.2, 0.2, 0.2);
 
+    mPlaceNode_ = null;
+    mActivePlaces_ = null;
+
     static WORLD_DEPTH = 20;
     ABOVE_GROUND = null;
-
-    mCollisionShapes_ = null;
 
     constructor(){
     }
@@ -21,10 +22,48 @@
         createScene();
         voxeliseMap();
 
-        mCollisionShapes_ = [];
-
         _world.createWorld();
         _developer.setRenderQueueForMeshGroup(30);
+
+        setupPlaces();
+    }
+
+    function setupPlaces(){
+        mActivePlaces_ = [];
+        mPlaceNode_ = mParentNode_.createChildSceneNode();
+        foreach(i in mWorldData_.placeData){
+            local placeEntry = setupPlace_(mPlaceNode_, i);
+            mActivePlaces_.append(placeEntry);
+        }
+    }
+    function setupPlace_(parent, placeData){
+        local targetPos = Vec3(placeData.originX, 0, -placeData.originY);
+        targetPos.y = getZForPos(targetPos);
+
+        local entry = ::ExplorationLogic.ActiveEnemyEntry(placeData.placeId, targetPos);
+
+        local placeNode = mPlaceNode_.createChildSceneNode();
+        placeNode.setPosition(targetPos);
+        local item = _scene.createItem("cube");
+        item.setRenderQueueGroup(30);
+        placeNode.attachObject(item);
+        placeNode.setScale(0.5, 0.5, 0.5);
+
+        entry.setEnemyNode(placeNode);
+
+        local senderTable = {
+            "func" : "receivePlayerEntered",
+            "path" : "res://src/Logic/Scene/ExplorationScenePlaceScript.nut"
+            "id" : placeData.placeId,
+            "type" : _COLLISION_PLAYER,
+            "event" : _COLLISION_ENTER | _COLLISION_LEAVE
+        };
+        local shape = _physics.getCubeShape(2, 8, 2);
+        local collisionObject = _physics.collision[TRIGGER].createSender(senderTable, shape, targetPos);
+        _physics.collision[TRIGGER].addObject(collisionObject);
+        entry.setCollisionShapes(collisionObject, null);
+
+        return entry;
     }
 
     function shutdown(){

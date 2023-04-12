@@ -64,6 +64,7 @@
     mCurrentMapData_ = null;
     mPlayerEntry_ = null;
     mActiveEnemies_ = null;
+    mActivePlaces_ = null;
 
     mDebugForceItem_ = ItemId.NONE;
 
@@ -73,6 +74,7 @@
         mSceneLogic_ = ExplorationSceneLogic();
 
         mActiveEnemies_ = [];
+        mActivePlaces_ = [];
 
         resetExploration_();
         processDebug_();
@@ -175,7 +177,7 @@
 
             local dir = (Vec2(posX, posY) - Vec2(0.5, 0.5));
             dir.normalise();
-            dir /= 8;
+            dir /= 4;
 
             //mPlayerEntry_.mPos_ += Vec2(dir.x, dir.y);
             mPlayerEntry_.moveQueryZ(Vec3(dir.x, 0, dir.y), mSceneLogic_);
@@ -257,7 +259,7 @@
 
     function appearEnemy(enemyType){
         local randVec = _random.randVec2();
-        local targetPos = mPlayerEntry_.mPos_ + Vec3(randVec.x, 0, randVec.y) * 20;
+        local targetPos = mPlayerEntry_.mPos_ + Vec3(5, 0, 5) + (Vec3(randVec.x, 0, randVec.y) * 20);
         local entry = ActiveEnemyEntry(enemyType, Vec3(targetPos.x, 0, targetPos.z));
         registerEnemyEntry(entry);
         if(mSceneLogic_) mSceneLogic_.appearEnemy(entry);
@@ -417,5 +419,9 @@
     function notifyEncounter(enemyData){
         //TODO get this to be correct.
         processEncounter(Enemy.GOBLIN);
+    }
+
+    function notifyPlaceEnterState(id, entered){
+        if(mGui_) mGui_.notifyPlaceEnterState(id, entered);
     }
 };
