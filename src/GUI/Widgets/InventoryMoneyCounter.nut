@@ -11,6 +11,8 @@
         mMoneyAnimTo_ = mMoneyCurrentAnim_;
         setLabelTo(mMoneyCurrentAnim_);
 
+        mMoneyLabel_.setZOrder(100);
+
         _event.subscribe(Event.MONEY_ADDED, receiveMoneyAnimFinished, this);
     }
 
@@ -20,6 +22,8 @@
 
     function setLabelTo(moneyVal){
         mMoneyLabel_.setText(format("money: %i", moneyVal));
+        //TODO do this properly with layouts.
+        mMoneyLabel_.setPosition(_window.getWidth() - mMoneyLabel_.getSize().x, mMoneyLabel_.getPosition().y);
     }
 
     function shutdown(){

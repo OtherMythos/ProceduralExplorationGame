@@ -65,6 +65,10 @@
         mWindow_.setProportionVertical(1);
     }
 
+    function getPosition(){
+        return mWindow_.getPosition();
+    }
+
     function setObjectForIndex(object, index, screenStart=null){
         assert(index < mFoundWidgetButtons_.len());
         local widget = mFoundWidgetButtons_[index];

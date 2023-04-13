@@ -13,6 +13,7 @@ enum ExplorationBusEvents{
     mPlaceHelperLabel_ = null;
     mPlaceHelperButton_ = null;
     mCurrentPlace_ = null;
+    mScrapAllButton_ = null;
 
     function setup(data){
         mLogicInterface_ = data.logic;
@@ -101,6 +102,13 @@ enum ExplorationBusEvents{
                 "slotIdx": -1
             };
             ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLACE_INFO_SCREEN, data));
+        }, _GUI_ACTION_PRESSED, this);
+
+        mScrapAllButton_ = mWindow_.createButton();
+        mScrapAllButton_.setText("Scrap all");
+        mScrapAllButton_.setPosition(0, mExplorationItemsContainer_.getPosition().y - mScrapAllButton_.getSize().y);
+        mScrapAllButton_.attachListenerForEvent(function(widget, action){
+            mLogicInterface_.scrapAllFoundObjects();
         }, _GUI_ACTION_PRESSED, this);
 
         mLogicInterface_.continueOrResetExploration();
