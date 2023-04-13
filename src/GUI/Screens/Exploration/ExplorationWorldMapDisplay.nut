@@ -34,6 +34,9 @@
     function getPosition(){
         return mExplorationScenePanel_.getPosition();
     }
+    function getSize(){
+        return mExplorationScenePanel_.getSize();
+    }
 
     function getWorldPositionInScreenSpace(pos){
         local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)

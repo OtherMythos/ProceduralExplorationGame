@@ -30,6 +30,9 @@
             if(mPhysicsInner_) mPhysicsInner_.setPosition(pos);
             if(mPhysicsOuter_) mPhysicsOuter_.setPosition(pos);
         }
+        function getPosition(){
+            return mPos_;
+        }
         function move(amount){
             setPosition(mPos_ + amount);
         }
@@ -56,6 +59,9 @@
 
     EXPLORATION_ITEM_LIFE = 400.0;
 
+    NUM_PLAYER_QUEUED_FLAGS = 4;
+    mQueuedFlags_ = null;
+
     mFoundObjects_ = null;
     mFoundObjectsLife_ = null;
     mNumFoundObjects_ = 0;
@@ -80,6 +86,7 @@
 
         mActiveEnemies_ = [];
         mActivePlaces_ = [];
+        mQueuedFlags_ = array(NUM_PLAYER_QUEUED_FLAGS, null);
 
         resetExploration_();
         processDebug_();
@@ -190,6 +197,7 @@
         }
 
         if(_input.getMouseButton(0)){
+            /*
             moved = true;
             local width = _window.getWidth();
             local height = _window.getHeight();
@@ -200,10 +208,55 @@
             dir = (Vec2(posX, posY) - Vec2(0.5, 0.5));
             dir.normalise();
             dir /= 4;
+            */
+            if(mGui_){
+                local inWindow = mGui_.checkPlayerInputPosition(_input.getMouseX(), _input.getMouseY());
+                if(inWindow != null){
+                    queuePlayerFlagForWindowTouch(inWindow);
+                }
+            }
         }
         if(moved){
             mPlayerEntry_.moveQueryZ(Vec3(dir.x, 0, dir.y), mSceneLogic_);
             mSceneLogic_.updatePlayerPos(Vec3(mPlayerEntry_.mPos_.x, 0, mPlayerEntry_.mPos_.z));
+        }
+
+        foreach(c,i in mQueuedFlags_){
+            print("Flag " + c + " : " + i);
+        }
+
+        //Try and walk to the queued position.
+        local targetIdx = -1;
+        local targetPos = null;
+        for(local i = 0; i < NUM_PLAYER_QUEUED_FLAGS; i++){
+            if(mQueuedFlags_[i] != null){
+                targetPos = mQueuedFlags_[i];
+                targetIdx = i;
+            }
+        }
+        if(targetPos != null){
+            local original = (targetPos - mPlayerEntry_.getPosition());
+            //local dir = original.normalisedCopy();
+            //dir /= 4;
+            local dir = Vec3();
+            if(original.x > 0) dir.x = 0.1;
+            if(original.x < 0) dir.x = -0.1;
+            if(original.z > 0) dir.z = 0.1;
+            if(original.z < 0) dir.z = -0.1;
+
+            print(original);
+            mPlayerEntry_.moveQueryZ(dir, mSceneLogic_);
+            mSceneLogic_.updatePlayerPos(Vec3(mPlayerEntry_.mPos_.x, 0, mPlayerEntry_.mPos_.z));
+
+            local checkMargin = 0.2;
+            if(original.x < checkMargin && original.z < checkMargin
+                &&
+                original.x >= -checkMargin && original.z >= -checkMargin
+                ){
+                //Remove the queued item.
+                print(original.x);
+                mQueuedFlags_[targetIdx] = null;
+            }
         }
     }
 
@@ -218,6 +271,32 @@
                 ::Base.mExplorationLogic.removeFoundItem(i);
             }
         }
+    }
+
+    function queuePlayerFlagForWindowTouch(touchCoords){
+        local inWindow = mGui_.checkPlayerInputPosition(_input.getMouseX(), _input.getMouseY());
+        if(inWindow != null){
+            local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
+            assert(camera != null);
+            local mTestPlane_ = Plane(Vec3(0, 1, 0), Vec3(0, 0, 0));
+            local ray = camera.getCameraToViewportRay(touchCoords.x, touchCoords.y);
+            local point = ray.intersects(mTestPlane_);
+            assert(point != false);
+            local worldPoint = ray.getPoint(point);
+            print("World point " + worldPoint);
+
+            queuePlayerFlag(worldPoint);
+        }
+    }
+    function queuePlayerFlag(worldPos){
+        local firstNull = mQueuedFlags_.find(null);
+        if(firstNull == null){
+            //There are no spaces in the list, so shift them all to the right.
+            mQueuedFlags_.pop();
+        }else{
+            mQueuedFlags_.remove(firstNull);
+        }
+        mQueuedFlags_.insert(0, worldPos);
     }
 
     function updatePercentage(){

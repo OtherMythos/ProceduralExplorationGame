@@ -123,6 +123,16 @@ enum ExplorationBusEvents{
         mMoneyCounter_.update();
     }
 
+
+    function checkPlayerInputPosition(x, y){
+        local start = mWorldMapDisplay_.getPosition();
+        local end = mWorldMapDisplay_.getSize();
+        if(x >= start.x && y >= start.y && x < end.x && y < end.y){
+            return Vec2(x / end.x, y / end.y);
+        }
+        return null;
+    }
+
     function notifyExplorationPercentage(percentage){
         //mExplorationProgressBar_.setPercentage(percentage);
     }
