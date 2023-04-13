@@ -8,6 +8,7 @@
     mLabel_ = null;
     mBus_ = null;
     mObject_ = null;
+    mTimeBar_ = null;
 
     mCount_ = 0.0;
 
@@ -25,6 +26,10 @@
         button.attachListenerForEvent(buttonPressed, _GUI_ACTION_PRESSED, this);
         mButton_ = button;
 
+        mTimeBar_ = ::GuiWidgets.ProgressBar(this.mParent_);
+        mTimeBar_.setPercentage(1.0);
+        mTimeBar_.setVisible(false);
+
         local label = parentWin.createLabel();
         label.setText("something");
         label.setHidden(false);
@@ -39,6 +44,7 @@
 
         mButton_.setHidden(true);
         mLabel_.setHidden(true);
+        mTimeBar_.setVisible(false);
 
         mObject_ = ::FoundObject();
     }
@@ -147,6 +153,13 @@
         local targetPos = Vec2(mPosition_.x, mPosition_.y);
         targetPos.y += mSize_.y * 0.8;
         mLabel_.setCentre(targetPos);
+        mTimeBar_.setVisible(true);
+        mTimeBar_.setSize(mButton_.getSize().x * 0.8, mTimeBar_.getSize().y);
+        mTimeBar_.setCentre(targetPos.x, targetPos.y*0.9);
+    }
+
+    function setLifetime(lifetime){
+        mTimeBar_.setPercentage(lifetime);
     }
 
 };

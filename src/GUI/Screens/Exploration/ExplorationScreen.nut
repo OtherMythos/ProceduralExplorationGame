@@ -154,6 +154,10 @@ enum ExplorationBusEvents{
         mCurrentPlace_ = entered ? id : null;
     }
 
+    function notifyFoundItemLifetime(idx, lifetime){
+        mExplorationItemsContainer_.setLifetimeForIndex(idx, lifetime);
+    }
+
     function shutdown(){
         mLogicInterface_.shutdown();
         mMoneyCounter_.shutdown();

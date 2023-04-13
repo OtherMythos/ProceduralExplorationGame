@@ -66,6 +66,9 @@
         positionLabel_();
         mPos_ = pos;
     }
+    function setCentre(x, y){
+        setPosition(x - mSize_.x / 2, y - mSize_.y / 2);
+    }
 
     function setSize(x, y){
         mSize_ = Vec2(x, y);
@@ -81,6 +84,11 @@
         local intendedSize = mSize_ - Vec2(mBorder_ * 2, mBorder_ * 2);
         mChildBar_.setSize(intendedSize.x * mPercentage_, intendedSize.y);
         positionLabel_();
+    }
+
+    function setVisible(visible){
+        mParentContainer_.setHidden(!visible);
+        mChildBar_.setHidden(!visible);
     }
 
     function setPercentage(percentage){

@@ -224,14 +224,14 @@
     }
 
     function updatePlayerPos(playerPos){
-        //local zPos = getZForPos(playerPos);
-        local zPos = 0;
+        local zPos = getZForPos(playerPos);
+        //local zPos = 0;
 
         local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
         assert(camera != null);
         local parentNode = camera.getParentNode();
         parentNode.setPosition(Vec3(playerPos.x, zPos + 20, playerPos.z + 20));
-        camera.lookAt(playerPos.x, 0, playerPos.z);
+        camera.lookAt(playerPos.x, zPos, playerPos.z);
 
         //mPlayerNode_.setPosition(Vec3(playerPos.x, zPos, playerPos.y));
     }

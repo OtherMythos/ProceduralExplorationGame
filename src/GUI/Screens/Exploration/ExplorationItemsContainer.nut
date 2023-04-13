@@ -84,6 +84,12 @@
         mAnimator_.startAnimForItem(::ExplorationGuiAnimation(widget, {"start": screenStart, "end": buttonPos, "endSize": buttonSize}), index);
     }
 
+    function setLifetimeForIndex(index, lifetime){
+        assert(index < mFoundWidgetButtons_.len());
+        local widget = mFoundWidgetButtons_[index];
+        widget.setLifetime(lifetime);
+    }
+
     function update(){
         mAnimator_.update();
     }

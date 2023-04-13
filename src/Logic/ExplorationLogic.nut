@@ -54,7 +54,10 @@
     EXPLORATION_MAX_LENGTH = 1000;
     EXPLORATION_MAX_FOUND_ITEMS = 4;
 
+    EXPLORATION_ITEM_LIFE = 400.0;
+
     mFoundObjects_ = null;
+    mFoundObjectsLife_ = null;
     mNumFoundObjects_ = 0;
 
     mEnemyEncountered_ = false;
@@ -111,6 +114,7 @@
 
         mNumFoundObjects_ = 0;
         mFoundObjects_ = array(EXPLORATION_MAX_FOUND_ITEMS, null);
+        mFoundObjectsLife_ = array(EXPLORATION_MAX_FOUND_ITEMS, 0);
         mEnemyEncountered_ = false;
         mExplorationFinished_ = false;
         mExplorationPaused_ = false;
@@ -156,6 +160,7 @@
         //updatePercentage();
         checkExploration();
         checkPlayerMove();
+        ageItems();
 
         mSceneLogic_.updatePercentage(mExplorationPercentage_);
     }
@@ -199,6 +204,19 @@
         if(moved){
             mPlayerEntry_.moveQueryZ(Vec3(dir.x, 0, dir.y), mSceneLogic_);
             mSceneLogic_.updatePlayerPos(Vec3(mPlayerEntry_.mPos_.x, 0, mPlayerEntry_.mPos_.z));
+        }
+    }
+
+    function ageItems(){
+        for(local i = 0; i < mFoundObjects_.len(); i++){
+            if(mFoundObjects_[i] == null || mFoundObjects_[i] == ItemId.NONE) continue;
+            mFoundObjectsLife_[i]--;
+            if(mGui_) mGui_.notifyFoundItemLifetime(i, mFoundObjectsLife_[i].tofloat() / EXPLORATION_ITEM_LIFE);
+            if(mFoundObjectsLife_[i] <= 0){
+                //Scrap the item.
+                printf("Item at slot %i got too old", i);
+                ::Base.mExplorationLogic.removeFoundItem(i);
+            }
         }
     }
 
@@ -302,6 +320,7 @@
 
         local foundObj = ::FoundObject(item, FoundObjectType.ITEM);
         mFoundObjects_[idx] = foundObj;
+        mFoundObjectsLife_[idx] = EXPLORATION_ITEM_LIFE;
         mNumFoundObjects_++;
 
         //local foundPosition = mSceneLogic_.getFoundPositionForItem(item);
