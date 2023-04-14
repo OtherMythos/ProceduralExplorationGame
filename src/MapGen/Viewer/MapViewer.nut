@@ -24,6 +24,8 @@ enum DrawOptions{
     mCompositorCamera_ = null
     mCompositorTexture_ = null
 
+    mPlayerLocationPanel_ = null;
+
     mFragmentParams_ = null
 
     mPlaceMarkers_ = null;
@@ -107,13 +109,15 @@ enum DrawOptions{
 
     }
 
-    function displayMapData(outData){
+    function displayMapData(outData, showPlaceMarkers=true){
         mMapData_ = outData;
 
         local material = _graphics.getMaterialByName("mapViewer/mapMaterial");
         local fragmentParams = material.getFragmentProgramParameters(0, 0);
 
-        setupPlaceMarkers(outData);
+        if(showPlaceMarkers){
+            setupPlaceMarkers(outData);
+        }
 
         fragmentParams.setNamedConstant("intBuffer", outData.voxelBuffer);
         fragmentParams.setNamedConstant("riverBuffer", outData.riverBuffer);
@@ -128,6 +132,8 @@ enum DrawOptions{
 
         resubmitDrawFlags_();
         resubmitDrawLocationFlags_();
+
+        setPlayerPosition(0.5, 0.5);
     }
 
     function generatePlaceBuffer_(placeData){
@@ -226,6 +232,20 @@ enum DrawOptions{
 
     function setLabelWindow(renderWindow){
         mLabelWindow_ = renderWindow;
+    }
+
+    function setPlayerPosition(x, y){
+        if(mPlayerLocationPanel_ == null && mLabelWindow_){
+            mPlayerLocationPanel_ = mLabelWindow_.createPanel();
+            mPlayerLocationPanel_.setSize(5, 5);
+            mPlayerLocationPanel_.setPosition(0, 0);
+            mPlayerLocationPanel_.setDatablock("playerMapIndicator");
+        }
+
+        local intendedPos = Vec2(x.tofloat() / mMapData_.width.tofloat(), y.tofloat() / mMapData_.height.tofloat());
+        intendedPos *= mLabelWindow_.getSize();
+        print("intended " + intendedPos.x);
+        mPlayerLocationPanel_.setCentre(intendedPos.x, -intendedPos.y);
     }
 
 }

@@ -5,13 +5,16 @@
 
     mMapViewerPanel_ = null;
     mMapViewer_ = null;
+    mMapViewerWindow_ = null;
 
     constructor(parentWin){
         mExplorationScenePanel_ = parentWin.createPanel();
         mExplorationScenePanel_.setPosition(0, 0);
 
-        mMapViewerPanel_ = parentWin.createPanel();
+        mMapViewerWindow_ = parentWin.createWindow();
+        mMapViewerPanel_ = mMapViewerWindow_.createPanel();
         mMapViewer_ = MapViewer();
+        mMapViewer_.setLabelWindow(mMapViewerWindow_);
     }
 
     function addToLayout(layoutLine){
@@ -30,7 +33,7 @@
 
 
     function notifyNewMapData(data){
-        mMapViewer_.displayMapData(data);
+        mMapViewer_.displayMapData(data, false);
     }
 
     function notifyResize(){
@@ -42,8 +45,11 @@
         mExplorationScenePanel_.setDatablock(datablock);
 
         local basePos = mExplorationScenePanel_.getPosition();
-        mMapViewerPanel_.setSize(winSize * 0.3);
-        mMapViewerPanel_.setPosition((basePos.x + winSize.x) - mMapViewerPanel_.getSize().x, basePos.y);
+        local targetSize = winSize * 0.3
+        mMapViewerWindow_.setClipBorders(0, 0, 0, 0);
+        mMapViewerWindow_.setSize(targetSize);
+        mMapViewerWindow_.setPosition((basePos.x + winSize.x) - mMapViewerWindow_.getSize().x, basePos.y);
+        mMapViewerPanel_.setSize(targetSize);
         mMapViewerPanel_.setDatablock(mMapViewer_.getDatablock());
     }
 

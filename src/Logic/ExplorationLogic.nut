@@ -218,8 +218,7 @@
             }
         }
         if(moved){
-            mPlayerEntry_.moveQueryZ(Vec3(dir.x, 0, dir.y), mSceneLogic_);
-            mSceneLogic_.updatePlayerPos(Vec3(mPlayerEntry_.mPos_.x, 0, mPlayerEntry_.mPos_.z));
+            movePlayer(dir);
         }
 
         foreach(c,i in mQueuedFlags_){
@@ -246,8 +245,7 @@
             if(original.z < 0) dir.z = -0.1;
 
             print(original);
-            mPlayerEntry_.moveQueryZ(dir, mSceneLogic_);
-            mSceneLogic_.updatePlayerPos(Vec3(mPlayerEntry_.mPos_.x, 0, mPlayerEntry_.mPos_.z));
+            movePlayer(dir);
 
             local checkMargin = 0.2;
             if(original.x < checkMargin && original.z < checkMargin
@@ -259,6 +257,14 @@
                 mQueuedFlags_[targetIdx] = null;
             }
         }
+    }
+
+    function movePlayer(dir){
+        mPlayerEntry_.moveQueryZ(Vec3(dir.x, 0, dir.y), mSceneLogic_);
+        local playerPos = Vec3(mPlayerEntry_.mPos_.x, 0, mPlayerEntry_.mPos_.z);
+        mSceneLogic_.updatePlayerPos(playerPos);
+        //TODO remove direct access.
+        mGui_.mWorldMapDisplay_.mMapViewer_.setPlayerPosition(playerPos.x, playerPos.z);
     }
 
     function ageItems(){
