@@ -134,6 +134,7 @@
         mSceneLogic_.resetExploration(mCurrentMapData_);
         mPlayerEntry_ = mSceneLogic_.constructPlayer();
         mPlayerEntry_.setPosition(Vec3(mCurrentMapData_.width / 2, 0, -mCurrentMapData_.height / 2));
+        if(mGui_) mGui_.notifyNewMapData(mCurrentMapData_);
         //mSceneLogic_.updatePlayerPos(mPlayerEntry_.mPos_);
     }
     function resetExploration(){

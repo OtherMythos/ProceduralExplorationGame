@@ -158,6 +158,10 @@ enum ExplorationBusEvents{
         //mExplorationProgressBar_.showButtons(false);
     }
 
+    function notifyNewMapData(data){
+        mWorldMapDisplay_.notifyNewMapData(data);
+    }
+
     function notifyFoundItemRemoved(idx){
         mExplorationItemsContainer_.setObjectForIndex(FoundObject(), idx, null);
     }

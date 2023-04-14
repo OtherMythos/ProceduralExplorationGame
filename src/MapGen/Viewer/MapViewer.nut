@@ -171,6 +171,7 @@ enum DrawOptions{
     }
 
     function setupPlaceMarkers(outData){
+        if(mLabelWindow_ == null) return;
         for(local i = 0; i < mPlaceMarkers_.len(); i++){
             mPlaceMarkers_[i].shutdown();
         }

@@ -3,9 +3,15 @@
     mExplorationScenePanel_ = null;
     mCompositorId_ = null;
 
+    mMapViewerPanel_ = null;
+    mMapViewer_ = null;
+
     constructor(parentWin){
         mExplorationScenePanel_ = parentWin.createPanel();
         mExplorationScenePanel_.setPosition(0, 0);
+
+        mMapViewerPanel_ = parentWin.createPanel();
+        mMapViewer_ = MapViewer();
     }
 
     function addToLayout(layoutLine){
@@ -22,6 +28,11 @@
         mCompositorId_ = null;
     }
 
+
+    function notifyNewMapData(data){
+        mMapViewer_.displayMapData(data);
+    }
+
     function notifyResize(){
         local winSize = mExplorationScenePanel_.getSize();
 
@@ -29,6 +40,11 @@
         local datablock = ::CompositorManager.getDatablockForCompositor(compId);
         mCompositorId_ = compId;
         mExplorationScenePanel_.setDatablock(datablock);
+
+        local basePos = mExplorationScenePanel_.getPosition();
+        mMapViewerPanel_.setSize(winSize * 0.3);
+        mMapViewerPanel_.setPosition((basePos.x + winSize.x) - mMapViewerPanel_.getSize().x, basePos.y);
+        mMapViewerPanel_.setDatablock(mMapViewer_.getDatablock());
     }
 
     function getPosition(){
