@@ -97,7 +97,8 @@
                 local vox = buf.readn('i')
                 local voxFloat = (vox & 0xFF).tofloat();
                 if(voxFloat <= mWorldData_.seaLevel) continue;
-                local altitude = (((voxFloat - mWorldData_.seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger();
+                //+1 because vox values at 0 still need to be drawn.
+                local altitude = (((voxFloat - mWorldData_.seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger() + 1;
                 local voxelMeta = (vox >> 8) & 0x7F;
                 //if(voxFloat <= mWorldData_.seaLevel) voxelMeta = 3;
                 for(local i = 0; i < altitude; i++){
@@ -131,7 +132,7 @@
         local buf = mWorldData_.voxelBuffer;
         buf.seek((x + y * mWorldData_.width) * 4);
         local voxFloat = (buf.readn('i') & 0xFF).tofloat();
-        local altitude = (((voxFloat - mWorldData_.seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger();
+        local altitude = (((voxFloat - mWorldData_.seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger() + 1;
         local clampedAltitude = altitude < 0 ? 0 : altitude;
 
         return clampedAltitude;
@@ -185,7 +186,6 @@
         }
 
         //Create the ocean plane
-        /*
         local oceanNode = mParentNode_.createChildSceneNode();
         local oceanItem = _scene.createItem("plane");
         oceanItem.setRenderQueueGroup(30);
@@ -193,7 +193,6 @@
         oceanNode.attachObject(oceanItem);
         oceanNode.setScale(500, 500, 500)
         oceanNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
-        */
 
     }
 
