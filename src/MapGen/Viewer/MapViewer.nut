@@ -98,7 +98,7 @@ enum DrawOptions{
         mDrawOptions_ = array(DrawOptions.MAX, false);
         mDrawOptions_[DrawOptions.WATER] = true;
         mDrawOptions_[DrawOptions.GROUND_TYPE] = true;
-        mDrawOptions_[DrawOptions.VISIBLE_PLACES_MASK] = true;
+        mDrawOptions_[DrawOptions.VISIBLE_PLACES_MASK] = false;
         mDrawLocationOptions_ = array(PlaceType.MAX, true);
         mDrawLocationOptions_[PlaceType.CITY] = true;
         mDrawLocationOptions_[PlaceType.TOWN] = true;
@@ -142,7 +142,7 @@ enum DrawOptions{
 
         setPlayerPosition(0.5, 0.5);
 
-        setAreaVisible(200, 200, 10);
+        //setAreaVisible(100, 100, 10, 10);
     }
 
     function setupVisiblePlacesBuffer(width, height){
@@ -157,10 +157,20 @@ enum DrawOptions{
         return buf;
     }
     function setAreaVisible(x, y, radius, feather){
+        /*
         mVisiblePlacesBuffer_.seek(0);
         for(local i = 0; i < 1000; i++){
             mVisiblePlacesBuffer_.writen(0xFF, 'b');
         }
+        */
+        local idx = (x + y * mMapData_.width) * 2;
+        local byteIdx = (idx / 8).tointeger();
+        local bitIdx = (idx % 8).tointeger();
+        mVisiblePlacesBuffer_.seek(byteIdx);
+        local val = mVisiblePlacesBuffer_.readn('b');
+        local newVal = val | (0x3 << bitIdx * 2);
+        mVisiblePlacesBuffer_.seek(byteIdx);
+        mVisiblePlacesBuffer_.writen(newVal, 'b');
 
         mFragmentParams_.setNamedConstant("visiblePlaceBuffer", mVisiblePlacesBuffer_);
     }
@@ -275,6 +285,8 @@ enum DrawOptions{
         intendedPos *= mLabelWindow_.getSize();
         print("intended " + intendedPos.x);
         mPlayerLocationPanel_.setCentre(intendedPos.x, -intendedPos.y);
+
+        //setAreaVisible(x, y, 10, 10);
     }
 
 }
