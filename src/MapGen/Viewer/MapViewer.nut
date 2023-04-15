@@ -6,6 +6,7 @@ enum DrawOptions{
     LAND_GROUPS,
     EDGE_VALS,
     PLACE_LOCATIONS,
+    VISIBLE_PLACES_MASK,
 
     MAX
 };
@@ -30,6 +31,8 @@ enum DrawOptions{
 
     mPlaceMarkers_ = null;
     mLabelWindow_ = null;
+
+    mVisiblePlacesBuffer_ = null;
 
     PlaceMarker = class{
 
@@ -95,6 +98,7 @@ enum DrawOptions{
         mDrawOptions_ = array(DrawOptions.MAX, false);
         mDrawOptions_[DrawOptions.WATER] = true;
         mDrawOptions_[DrawOptions.GROUND_TYPE] = true;
+        mDrawOptions_[DrawOptions.VISIBLE_PLACES_MASK] = true;
         mDrawLocationOptions_ = array(PlaceType.MAX, true);
         mDrawLocationOptions_[PlaceType.CITY] = true;
         mDrawLocationOptions_[PlaceType.TOWN] = true;
@@ -119,6 +123,8 @@ enum DrawOptions{
             setupPlaceMarkers(outData);
         }
 
+        mVisiblePlacesBuffer_ = setupVisiblePlacesBuffer(outData.width, outData.height);
+
         fragmentParams.setNamedConstant("intBuffer", outData.voxelBuffer);
         fragmentParams.setNamedConstant("riverBuffer", outData.riverBuffer);
         fragmentParams.setNamedConstant("placeBuffer", generatePlaceBuffer_(outData.placeData));
@@ -127,6 +133,7 @@ enum DrawOptions{
         fragmentParams.setNamedConstant("numWaterSeeds", outData.waterData.len());
         fragmentParams.setNamedConstant("numLandSeeds", outData.landData.len());
         fragmentParams.setNamedConstant("seaLevel", outData.seaLevel);
+        fragmentParams.setNamedConstant("visiblePlaceBuffer", mVisiblePlacesBuffer_);
 
         mFragmentParams_ = fragmentParams;
 
@@ -134,6 +141,28 @@ enum DrawOptions{
         resubmitDrawLocationFlags_();
 
         setPlayerPosition(0.5, 0.5);
+
+        setAreaVisible(200, 200, 10);
+    }
+
+    function setupVisiblePlacesBuffer(width, height){
+        //Using 2 bits to represent each voxel.
+        local totalSize = ceil(((width * height) * 2).tofloat() / 8.0).tointeger();
+        print("blob size " + totalSize);
+        local buf = blob(totalSize);
+        buf.seek(0);
+        for(local i = 0; i < totalSize; i++){
+            buf.writen(0, 'b')
+        }
+        return buf;
+    }
+    function setAreaVisible(x, y, radius, feather){
+        mVisiblePlacesBuffer_.seek(0);
+        for(local i = 0; i < 1000; i++){
+            mVisiblePlacesBuffer_.writen(0xFF, 'b');
+        }
+
+        mFragmentParams_.setNamedConstant("visiblePlaceBuffer", mVisiblePlacesBuffer_);
     }
 
     function generatePlaceBuffer_(placeData){

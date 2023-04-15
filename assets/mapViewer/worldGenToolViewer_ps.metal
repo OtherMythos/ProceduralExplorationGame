@@ -9,9 +9,10 @@ struct PS_INPUT
 struct Params
 {
    //Make it a bit bigger than needed to test things.
-   unsigned int intBuffer[1000*1000];
+   unsigned int intBuffer[400*400];
    unsigned int riverBuffer[3000];
    unsigned int placeBuffer[1000];
+   unsigned int visiblePlaceBuffer[2500];
    int width;
    int height;
    unsigned int drawFlags;
@@ -35,6 +36,7 @@ fragment float4 main_metal
    int LAND_GROUPS_MASK = 1 << 4;
    int EDGE_VALS = 1 << 5;
    int PLACE_LOCATIONS = 1 << 6;
+   int VISIBLE_PLACES_MASK = 1 << 7;
 
    float4 voxelColours[] = {
       float4(0.84, 0.87, 0.29, 1),
@@ -119,6 +121,18 @@ fragment float4 main_metal
          }
          i++;
       }
+   }
+   if(p.drawFlags & VISIBLE_PLACES_MASK){
+      unsigned int idx = (xVox + yVox * p.width) * 2;
+      int byteIdx = int(idx / 32);
+      int bitIdx = idx % 32;
+      unsigned int val = (p.visiblePlaceBuffer[byteIdx] >> (bitIdx)) & 0x3;
+
+      float4 col = float4(0, 0, 0, 1);
+      if(val & 0x2) col = drawVal;
+      else if(val & 0x1) col = float4(0.4, 0.4, 0.4, 1);
+
+      drawVal = col;
    }
 
    return drawVal;
