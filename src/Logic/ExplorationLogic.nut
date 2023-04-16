@@ -61,6 +61,7 @@
 
     NUM_PLAYER_QUEUED_FLAGS = 4;
     mQueuedFlags_ = null;
+    mDeterminedFlag_ = null;
 
     mFoundObjects_ = null;
     mFoundObjectsLife_ = null;
@@ -235,28 +236,35 @@
             }
         }
         if(targetPos != null){
-            local original = (targetPos - mPlayerEntry_.getPosition());
-            //local dir = original.normalisedCopy();
-            //dir /= 4;
-            local dir = Vec3();
-            if(original.x > 0) dir.x = 0.1;
-            if(original.x < 0) dir.x = -0.1;
-            if(original.z > 0) dir.z = 0.1;
-            if(original.z < 0) dir.z = -0.1;
-
-            print(original);
-            movePlayer(dir);
-
-            local checkMargin = 0.2;
-            if(original.x < checkMargin && original.z < checkMargin
-                &&
-                original.x >= -checkMargin && original.z >= -checkMargin
-                ){
+            local finished = movePlayerToPos(targetPos);
+            if(finished){
                 //Remove the queued item.
-                print(original.x);
                 mQueuedFlags_[targetIdx] = null;
             }
         }
+    }
+
+    function movePlayerToPos(targetPos){
+        local original = (targetPos - mPlayerEntry_.getPosition());
+        //local dir = original.normalisedCopy();
+        //dir /= 4;
+        local dir = Vec2();
+        if(original.x > 0) dir.x = 0.1;
+        if(original.x < 0) dir.x = -0.1;
+        if(original.z > 0) dir.y = 0.1;
+        if(original.z < 0) dir.y = -0.1;
+
+        print(original);
+        movePlayer(dir);
+
+        local checkMargin = 0.2;
+        if(original.x < checkMargin && original.z < checkMargin
+            &&
+            original.x >= -checkMargin && original.z >= -checkMargin
+            ){
+            return true;
+        }
+        return false;
     }
 
     function movePlayer(dir){

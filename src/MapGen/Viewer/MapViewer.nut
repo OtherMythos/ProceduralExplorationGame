@@ -133,7 +133,7 @@ enum DrawOptions{
         fragmentParams.setNamedConstant("numWaterSeeds", outData.waterData.len());
         fragmentParams.setNamedConstant("numLandSeeds", outData.landData.len());
         fragmentParams.setNamedConstant("seaLevel", outData.seaLevel);
-        fragmentParams.setNamedConstant("visiblePlaceBuffer", mVisiblePlacesBuffer_);
+        //fragmentParams.setNamedConstant("visiblePlaceBuffer", mVisiblePlacesBuffer_);
 
         mFragmentParams_ = fragmentParams;
 
@@ -172,7 +172,7 @@ enum DrawOptions{
         mVisiblePlacesBuffer_.seek(byteIdx);
         mVisiblePlacesBuffer_.writen(newVal, 'b');
 
-        mFragmentParams_.setNamedConstant("visiblePlaceBuffer", mVisiblePlacesBuffer_);
+        //mFragmentParams_.setNamedConstant("visiblePlaceBuffer", mVisiblePlacesBuffer_);
     }
 
     function generatePlaceBuffer_(placeData){
