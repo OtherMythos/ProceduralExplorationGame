@@ -9,7 +9,7 @@ struct PS_INPUT
 struct Params
 {
    //Make it a bit bigger than needed to test things.
-   unsigned int intBuffer[400*400];
+   unsigned int intBuffer[200*200];
    unsigned int riverBuffer[3000];
    unsigned int placeBuffer[1000];
    unsigned int visiblePlaceBuffer[2500];

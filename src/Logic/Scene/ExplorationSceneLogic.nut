@@ -35,30 +35,34 @@
     function setupPlaces(){
         mActivePlaces_ = [];
         mPlaceNode_ = mParentNode_.createChildSceneNode();
-        foreach(i in mWorldData_.placeData){
-            local placeEntry = setupPlace_(mPlaceNode_, i);
+        foreach(c,i in mWorldData_.placeData){
+            local placeEntry = setupPlace_(mPlaceNode_, i, c);
             mActivePlaces_.append(placeEntry);
         }
     }
-    function setupPlace_(parent, placeData){
+    function setupPlace_(parent, placeData, idx){
         local targetPos = Vec3(placeData.originX, 0, -placeData.originY);
         targetPos.y = getZForPos(targetPos);
 
         local entry = ::ExplorationLogic.ActiveEnemyEntry(placeData.placeId, targetPos);
 
         local placeNode = mPlaceNode_.createChildSceneNode();
+        local placeType = ::Places[placeData.placeId].getType();
+        local meshTarget = "overworldVillage.mesh";
+        if(placeType == PlaceType.TOWN && placeType == PlaceType.CITY) meshTarget = "overworldTown.mesh";
+
         placeNode.setPosition(targetPos);
-        local item = _scene.createItem("cube");
+        local item = _scene.createItem(meshTarget);
         item.setRenderQueueGroup(30);
         placeNode.attachObject(item);
-        placeNode.setScale(0.5, 0.5, 0.5);
+        placeNode.setScale(0.3, 0.3, 0.3);
 
         entry.setEnemyNode(placeNode);
 
         local senderTable = {
             "func" : "receivePlayerEntered",
             "path" : "res://src/Logic/Scene/ExplorationScenePlaceScript.nut"
-            "id" : placeData.placeId,
+            "id" : idx,
             "type" : _COLLISION_PLAYER,
             "event" : _COLLISION_ENTER | _COLLISION_LEAVE
         };
@@ -251,6 +255,7 @@
         local flagItem = _scene.createItem("locationFlag.mesh");
         flagItem.setRenderQueueGroup(30);
         flagNode.attachObject(flagItem);
+        pos.y = getZForPos(pos);
         flagNode.setPosition(pos);
         flagNode.setScale(0.5, 0.5, 0.5);
         local idx = (mLocationFlagIds_++).tostring();

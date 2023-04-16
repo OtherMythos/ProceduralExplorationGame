@@ -48,7 +48,7 @@ local CoinEffectStateMachine = class extends ::Util.StateMachine{
                 data.coins[i].setPosition(newPos.x, newPos.y, COIN_EFFECT_COIN_Z);
                 //Apply some scale on the way in.
                 local scaleNode = data.coins[i].getChild(0);
-                local newScale = (1.0 - animPercentage) * 0.3 + 0.2;
+                local newScale = (1.0 - animPercentage) * data.halfScale + data.halfScale;
                 scaleNode.setScale(newScale, newScale, newScale);
             }
         }
@@ -61,7 +61,7 @@ local CoinEffectStateMachine = class extends ::Util.StateMachine{
             for(local i = 0; i < data.coins.len(); i++){
                 //Apply some scale on the way in.
                 local scaleNode = data.coins[i].getChild(0);
-                local newScale = (1.0 - p) * 0.2
+                local newScale = (1.0 - p) * data.halfScale;
                 scaleNode.setScale(newScale, newScale, newScale);
             }
         }
@@ -81,6 +81,8 @@ local CoinEffectStateMachine = class extends ::Util.StateMachine{
     mStartPos_ = Vec2(0, 0);
     mEndPos_ = Vec2(0, 0);
     mAnimStages_ = null;
+    mScale_ = 0.5;
+    mCellSize_ = 5;
 
     mStateMachine_ = null;
 
@@ -89,15 +91,19 @@ local CoinEffectStateMachine = class extends ::Util.StateMachine{
         mStartPos_ = data.start;
         mEndPos_ = data.end;
         mMoneyAdding_ = data.money;
-
-        local cellSize = 5;
+        if("coinScale" in data){
+            mScale_ = data.coinScale;
+        }
+        if("cellSize" in data){
+            mCellSize_ = data.cellSize;
+        }
 
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
 
-        mCoins_ = createInitialCoins(mNumCoins_, mParentNode_, mStartPos_);
-        mCoinPos_ = setupCoinPositions(mNumCoins_, Vec2(-cellSize * CELL_WIDTH / 2, -cellSize * CELL_HEIGHT / 2), cellSize);
+        mCoins_ = createInitialCoins(mNumCoins_, mParentNode_, mStartPos_, mScale_);
+        mCoinPos_ = setupCoinPositions(mNumCoins_, Vec2(-mCellSize_ * CELL_WIDTH / 2, -mCellSize_ * CELL_HEIGHT / 2), mCellSize_);
 
-        mStateMachine_ = CoinEffectStateMachine({"coins": mCoins_, "pos": mCoinPos_, "start": mStartPos_, "end": mEndPos_});
+        mStateMachine_ = CoinEffectStateMachine({"coins": mCoins_, "pos": mCoinPos_, "start": mStartPos_, "end": mEndPos_, "scale": mScale_, "halfScale": mScale_ / 2});
         mStateMachine_.setState(CoinEffectStages.INITIAL_EXPAND);
 
     }
@@ -109,19 +115,19 @@ local CoinEffectStateMachine = class extends ::Util.StateMachine{
         _event.transmit(Event.MONEY_ADDED, mMoneyAdding_);
     }
 
-    function createInitialCoins(numCoins, parentNode, startPos){
+    function createInitialCoins(numCoins, parentNode, startPos, scale){
         local retVals = array(numCoins, null);
 
         local quat = Quat(1, 0, 0, 1);
         local variation = Vec3(20, 20, 1);
-        local coinSize = 0.5;
+        local coinSize = 0.1;
         for(local i = 0; i < numCoins; i++){
             local newNode = parentNode.createChildSceneNode();
             local animNode = newNode.createChildSceneNode();
             local coinItem = _scene.createItem("coin.mesh");
-            coinItem.setRenderQueueGroup(60);
+            coinItem.setRenderQueueGroup(65);
             animNode.attachObject(coinItem);
-            animNode.setScale(coinSize, coinSize, coinSize);
+            animNode.setScale(scale, scale, scale);
             //TODO will want to animate the coin rotation as well.
             local newQuat = Quat(_random.rand()*1.0, Vec3(0.1, 1, 0))
             animNode.setOrientation(quat * newQuat);

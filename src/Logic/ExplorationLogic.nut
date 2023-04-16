@@ -13,6 +13,7 @@
         mPhysicsOuter_ = null;
         mNode_ = null;
         mId_ = null;
+        mEncountered_ = false;
         constructor(enemyType, enemyPos){
             mEnemy_ = enemyType;
             mPos_ = enemyPos;
@@ -74,7 +75,6 @@
     mCurrentMapData_ = null;
     mPlayerEntry_ = null;
     mActiveEnemies_ = null;
-    mActivePlaces_ = null;
 
     mMoveInputHandle_ = null;
 
@@ -86,7 +86,6 @@
         mSceneLogic_ = ExplorationSceneLogic();
 
         mActiveEnemies_ = [];
-        mActivePlaces_ = [];
         mQueuedFlags_ = array(NUM_PLAYER_QUEUED_FLAGS, null);
 
         resetExploration_();
@@ -220,6 +219,7 @@
         }
         if(moved){
             movePlayer(dir);
+            return;
         }
 
         /*
@@ -574,6 +574,24 @@
     }
 
     function notifyPlaceEnterState(id, entered){
-        if(mGui_) mGui_.notifyPlaceEnterState(id, entered);
+        local placeEntry = mSceneLogic_.mActivePlaces_[id];
+        if(!placeEntry.mEncountered_){
+            //Add the flag to the place.
+            local childNode = placeEntry.mNode_.createChildSceneNode();
+            childNode.setPosition(0.5, 0, 0);
+            childNode.setScale(1.5, 1.5, 1.5);
+            local item = _scene.createItem("locationFlag.mesh");
+            item.setRenderQueueGroup(30);
+            childNode.attachObject(item);
+
+            //Do a coin effect.
+            local worldPos = ::EffectManager.getWorldPositionForWindowPos(mGui_.mWorldMapDisplay_.getPosition() + mGui_.mWorldMapDisplay_.getSize() / 2);
+            local endPos = mGui_.mMoneyCounter_.getPosition();
+            ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.COIN_EFFECT, {"cellSize": 2, "coinScale": 0.1, "numCoins": 5, "start": worldPos, "end": endPos, "money": 100}));
+        }
+        placeEntry.mEncountered_ = true;
+
+        //TODO will want to rename this from enemy at some point.
+        if(mGui_) mGui_.notifyPlaceEnterState(placeEntry.mEnemy_, entered);
     }
 };
