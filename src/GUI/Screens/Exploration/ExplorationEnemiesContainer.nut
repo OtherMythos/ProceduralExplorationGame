@@ -1,4 +1,4 @@
-::ScreenManager.Screens[Screen.EXPLORATION_SCREEN].ExplorationItemsContainer <- class{
+::ScreenManager.Screens[Screen.EXPLORATION_SCREEN].ExplorationEnemiesContainer <- class{
     mWindow_ = null;
     mPanel_ = null;
     mSizerPanels_ = null;
@@ -15,7 +15,7 @@
     mLayoutLine_ = null;
 
     constructor(parentWin, bus){
-        mAnimator_ = ExplorationItemsContainerAnimator(this, mNumSlots_);
+        mAnimator_ = ::ScreenManager.Screens[Screen.EXPLORATION_SCREEN].ExplorationItemsContainer.ExplorationItemsContainerAnimator(this, mNumSlots_);
 
         mWidth_ = _window.getWidth() * 0.9;
         mButtonSize_ = mWidth_ / 5;
@@ -45,7 +45,7 @@
             mSizerPanels_[i] = panel;
         }
         for(local i = 0; i < mNumSlots_; i++){
-            local newWidget = ExplorationFoundItemWidget(parentWin, i, mBus_);
+            local newWidget = ExplorationFoundEnemyWidget(parentWin, i, mBus_);
             mFoundWidgetButtons_[i] = newWidget;
         }
         mLayoutLine_.setMarginForAllCells(10, 10);
@@ -68,6 +68,9 @@
     function getPosition(){
         return mWindow_.getPosition();
     }
+    function setPosition(pos){
+        mWindow_.setPosition(pos);
+    }
     function setSize(width, height){
         mWindow_.setSize(width, height);
     }
@@ -78,7 +81,7 @@
     function setObjectForIndex(object, index, screenStart=null){
         assert(index < mFoundWidgetButtons_.len());
         local widget = mFoundWidgetButtons_[index];
-        if(object.isNone()){
+        if(object == null){
             widget.deactivate();
             return;
         }
@@ -111,6 +114,11 @@
 
         mBackground_.setPosition(mWindow_.getPosition());
         mBackground_.setSize(mWindow_.getSize());
+
+        for(local i = 0; i < mNumSlots_; i++){
+            setObjectForIndex(null, i, null);
+        }
+        setObjectForIndex(Enemy.GOBLIN, 0, null);
     }
 };
 

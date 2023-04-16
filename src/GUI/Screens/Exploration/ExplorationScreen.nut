@@ -8,6 +8,7 @@ enum ExplorationBusEvents{
     mExplorationProgressBar_ = null;
     mLogicInterface_ = null;
     mExplorationItemsContainer_ = null;
+    mExplorationEnemiesContainer_ = null;
     mMoneyCounter_ = null;
     mExplorationBus_ = null;
     mPlaceHelperLabel_ = null;
@@ -73,6 +74,8 @@ enum ExplorationBusEvents{
         mExplorationItemsContainer_ = ExplorationItemsContainer(mWindow_, mExplorationBus_);
         mExplorationItemsContainer_.addToLayout(layoutLine);
 
+        mExplorationEnemiesContainer_ = ExplorationEnemiesContainer(mWindow_, mExplorationBus_);
+
         //mExplorationProgressBar_ = ExplorationProgressBar(mWindow_, this);
         //mExplorationProgressBar_.addToLayout(layoutLine);
 
@@ -86,8 +89,14 @@ enum ExplorationBusEvents{
         mMoneyCounter_.mMoneyLabel_.setGridLocation(_GRID_LOCATION_TOP_LEFT);
         layoutLine.layout();
 
+        local targetSize = mExplorationItemsContainer_.getSize();
+        mExplorationItemsContainer_.setSize(targetSize.x, targetSize.y/2);
         mExplorationItemsContainer_.sizeForButtons();
         mWorldMapDisplay_.notifyResize();
+
+        mExplorationEnemiesContainer_.setSize(targetSize.x, targetSize.y/2);
+        mExplorationEnemiesContainer_.setPosition(Vec2(mExplorationItemsContainer_.getPosition().x, 5 + mExplorationItemsContainer_.getPosition().y + mExplorationItemsContainer_.getSize().y));
+        mExplorationEnemiesContainer_.sizeForButtons();
 
         mPlaceHelperLabel_ = mWindow_.createLabel();
         mPlaceHelperLabel_.setPosition(0, 0);
@@ -120,6 +129,7 @@ enum ExplorationBusEvents{
     function update(){
         mLogicInterface_.tickUpdate();
         mExplorationItemsContainer_.update();
+        mExplorationEnemiesContainer_.update();
         mMoneyCounter_.update();
     }
 
@@ -222,6 +232,8 @@ enum ExplorationBusEvents{
 };
 
 _doFile("res://src/GUI/Screens/Exploration/ExplorationItemsContainer.nut");
+_doFile("res://src/GUI/Screens/Exploration/ExplorationEnemiesContainer.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationProgressBar.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationWorldMapDisplay.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationFoundItemWidget.nut");
+_doFile("res://src/GUI/Screens/Exploration/ExplorationFoundEnemyWidget.nut");
