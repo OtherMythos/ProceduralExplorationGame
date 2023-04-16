@@ -14,7 +14,11 @@
     static WORLD_DEPTH = 20;
     ABOVE_GROUND = null;
 
+    mLocationFlagIds_ = 0;
+    mLocationFlagNodes_ = null;
+
     constructor(){
+        mLocationFlagNodes_ = {};
     }
 
     function setup(){
@@ -241,4 +245,21 @@
     function getFoundPositionForEncounter(item){
         return Vec3(0, 0, 0);
     }
+
+    function queueLocationFlag(pos){
+        local flagNode = mParentNode_.createChildSceneNode();
+        local flagItem = _scene.createItem("locationFlag.mesh");
+        flagItem.setRenderQueueGroup(30);
+        flagNode.attachObject(flagItem);
+        flagNode.setPosition(pos);
+        flagNode.setScale(0.5, 0.5, 0.5);
+        local idx = (mLocationFlagIds_++).tostring();
+        mLocationFlagNodes_[idx] <- flagNode;
+        return idx;
+    }
+    function removeLocationFlag(idx){
+        mLocationFlagNodes_[idx].destroyNodeAndChildren();
+        mLocationFlagNodes_[idx] = null;
+    }
+
 };

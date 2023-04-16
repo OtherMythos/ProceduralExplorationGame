@@ -222,26 +222,47 @@
             movePlayer(dir);
         }
 
+        /*
         foreach(c,i in mQueuedFlags_){
             print("Flag " + c + " : " + i);
         }
+        */
 
         //Try and walk to the queued position.
         local targetIdx = -1;
         local targetPos = null;
         for(local i = 0; i < NUM_PLAYER_QUEUED_FLAGS; i++){
             if(mQueuedFlags_[i] != null){
-                targetPos = mQueuedFlags_[i];
+                targetPos = mQueuedFlags_[i][0];
                 targetIdx = i;
             }
+        }
+        if(targetPos == null){
+            //If no queued flags were found use the system intended location.
+            targetPos = getSystemDeterminedFlag();
         }
         if(targetPos != null){
             local finished = movePlayerToPos(targetPos);
             if(finished){
                 //Remove the queued item.
-                mQueuedFlags_[targetIdx] = null;
+                if(targetIdx < 0){
+                    mDeterminedFlag_ = null;
+                }else{
+                    mSceneLogic_.removeLocationFlag(mQueuedFlags_[targetIdx][1]);
+                    mQueuedFlags_[targetIdx] = null;
+                }
             }
         }
+    }
+
+    function getSystemDeterminedFlag(){
+        if(mDeterminedFlag_ == null){
+            //Generate a new location.
+            local placeData = mCurrentMapData_.placeData;
+            local place = placeData[_random.randIndex(placeData)];
+            mDeterminedFlag_ = Vec3(place.originX, 0, -place.originY);
+        }
+        return mDeterminedFlag_;
     }
 
     function movePlayerToPos(targetPos){
@@ -307,11 +328,13 @@
         local firstNull = mQueuedFlags_.find(null);
         if(firstNull == null){
             //There are no spaces in the list, so shift them all to the right.
-            mQueuedFlags_.pop();
+            local queuedFlag = mQueuedFlags_.pop();
+            mSceneLogic_.removeLocationFlag(queuedFlag[1]);
         }else{
             mQueuedFlags_.remove(firstNull);
         }
-        mQueuedFlags_.insert(0, worldPos);
+        local flagId = mSceneLogic_.queueLocationFlag(worldPos);
+        mQueuedFlags_.insert(0, [worldPos, flagId]);
     }
 
     function updatePercentage(){
