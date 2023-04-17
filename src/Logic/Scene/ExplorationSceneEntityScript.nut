@@ -9,6 +9,6 @@ function receivePlayerInner(id, type, internal, sender, receiver){
         local enemyData = [
             ::Combat.CombatStats(Enemy.GOBLIN)
         ];
-        ::Base.mExplorationLogic.notifyEncounter(enemyData);
+        ::Base.mExplorationLogic.notifyEncounter(id, enemyData);
     }
 }

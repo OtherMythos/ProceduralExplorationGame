@@ -161,7 +161,7 @@
 
         local senderTable = {
             "func" : "receivePlayerSpotted",
-            "path" : "res://src/Logic/Scene/ExplorationSceneEntityScript.nut"
+            "path" : "res://src/Logic/Scene/ExplorationSceneEntityScript.nut",
             "id" : enemy.mId_,
             "type" : _COLLISION_PLAYER,
             "event" : _COLLISION_ENTER | _COLLISION_LEAVE | _COLLISION_INSIDE

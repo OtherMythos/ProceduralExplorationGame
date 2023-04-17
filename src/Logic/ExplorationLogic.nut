@@ -48,6 +48,18 @@
         function getId(){
             return mId_;
         }
+        function destroy(){
+            //TODO work around, for some reason destroying the collision object as part of the callback crashes the engine.
+            //if(mNode_) mNode_.destroyNodeAndChildren();
+            if(mNode_){
+                mNode_.destroyNodeAndChildren();
+                mNode_ = null;
+            }
+            setPosition(Vec3(-100, 0, -100));
+            //The physics objects should just destroy themselves.
+            //if(mPhysicsInner_) _physics.collision[TRIGGER].removeObject(mPhysicsInner_);
+            //if(mPhysicsOuter_) _physics.collision[TRIGGER].removeObject(mPhysicsOuter_);
+        }
     }
 
     mSceneLogic_ = null;
@@ -75,6 +87,7 @@
     mCurrentMapData_ = null;
     mPlayerEntry_ = null;
     mActiveEnemies_ = null;
+    mQueuedEnemyEncounters_ = null;
 
     mMoveInputHandle_ = null;
 
@@ -87,6 +100,7 @@
 
         mActiveEnemies_ = [];
         mQueuedFlags_ = array(NUM_PLAYER_QUEUED_FLAGS, null);
+        mQueuedEnemyEncounters_ = [];
 
         resetExploration_();
         processDebug_();
@@ -562,15 +576,23 @@
     function moveEnemyToPlayer(enemyId){
         if(mEnemyEncountered_) return;
         local enemyEntry = mActiveEnemies_[enemyId];
+        if(enemyEntry == null) return;
         local dir = mPlayerEntry_.mPos_ - enemyEntry.mPos_;
         dir.normalise();
         dir *= 0.05;
         enemyEntry.move(dir);
     }
 
-    function notifyEncounter(enemyData){
+    function notifyEncounter(idx, enemyData){
         //TODO get this to be correct.
-        processEncounter(Enemy.GOBLIN);
+        //processEncounter(Enemy.GOBLIN);
+        local numEncounters = mQueuedEnemyEncounters_.len();
+        mQueuedEnemyEncounters_.append(Enemy.GOBLIN);
+        mActiveEnemies_[idx].destroy();
+        //mActiveEnemies_[idx] = null;
+
+        local foundPosition = mPlayerEntry_.mPos_;
+        if(mGui_) mGui_.notifyEnemyEncounter(numEncounters, enemyData, foundPosition);
     }
 
     function notifyPlaceEnterState(id, entered){

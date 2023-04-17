@@ -186,6 +186,11 @@ enum ExplorationBusEvents{
         mCurrentPlace_ = entered ? id : null;
     }
 
+    function notifyEnemyEncounter(idx, enemy, position=null){
+        local screenPos = position != null ? mWorldMapDisplay_.getWorldPositionInScreenSpace(position) : null;
+        mExplorationEnemiesContainer_.setObjectForIndex(enemy, idx, screenPos);
+    }
+
     function notifyFoundItemLifetime(idx, lifetime){
         mExplorationItemsContainer_.setLifetimeForIndex(idx, lifetime);
     }

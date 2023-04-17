@@ -118,7 +118,7 @@
         for(local i = 0; i < mNumSlots_; i++){
             setObjectForIndex(null, i, null);
         }
-        setObjectForIndex(Enemy.GOBLIN, 0, null);
+        //setObjectForIndex(Enemy.GOBLIN, 0, null);
     }
 };
 
