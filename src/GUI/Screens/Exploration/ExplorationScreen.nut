@@ -17,6 +17,8 @@ enum ExplorationBusEvents{
     mCurrentPlace_ = null;
     mScrapAllButton_ = null;
 
+    mInsideGateway_ = false;
+
     function setup(data){
         mLogicInterface_ = data.logic;
         mExplorationBus_ = ScreenBus();
@@ -181,7 +183,24 @@ enum ExplorationBusEvents{
         mExplorationEnemiesContainer_.setObjectForIndex(null, idx, null);
     }
 
+    function notifyGatewayStatsChange(gatewayPercentage){
+        print("Current gateway " + gatewayPercentage);
+    }
+
     function notifyPlaceEnterState(id, entered){
+        if(id == PlaceId.GATEWAY){
+            mInsideGateway_ = entered;
+            local text = "";
+            if(entered){
+                local gatewayReady = mLogicInterface_.isGatewayReady();
+                text = gatewayReady ? "Gateway is ready" : "Gateway is not ready yet"
+            }
+            mPlaceHelperLabel_.setText(text);
+            return;
+        }
+        //Make sure if the player has entered the gateway box that overrides everything else.
+        if(mInsideGateway_) return;
+
         local text = "";
         if(entered){
             text = ::Places[id].getName();

@@ -50,6 +50,7 @@
         local placeType = ::Places[placeData.placeId].getType();
         local meshTarget = "overworldVillage.mesh";
         if(placeType == PlaceType.TOWN && placeType == PlaceType.CITY) meshTarget = "overworldTown.mesh";
+        else if(placeType == PlaceType.GATEWAY) meshTarget = "overworldGateway.mesh";
 
         placeNode.setPosition(targetPos);
         local item = _scene.createItem(meshTarget);

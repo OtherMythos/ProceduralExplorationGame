@@ -93,6 +93,9 @@
     mQueuedEnemyEncountersLife_ = null;
     mNumQueuedEnemies_ = 0;
 
+    mExplorationStats_ = null;
+    mGatewayPercentage_ = 0.0;
+
     mMoveInputHandle_ = null;
 
     mDebugForceItem_ = ItemId.NONE;
@@ -106,6 +109,11 @@
         mQueuedFlags_ = array(NUM_PLAYER_QUEUED_FLAGS, null);
         mQueuedEnemyEncounters_ = [];
         mQueuedEnemyEncountersLife_ = [];
+
+        mExplorationStats_ = {
+            "totalFoundItems": 0,
+            "totalDiscoveredPlaces": 0,
+        };
 
         resetExploration_();
         processDebug_();
@@ -478,6 +486,9 @@
         print(format("Found item %s at index %i", item.getName(), idx));
 
         if(mGui_) mGui_.notifyObjectFound(foundObj, idx, foundPosition);
+
+        mExplorationStats_.totalFoundItems++;
+        notifyGatewayStatsChange();
     }
 
     function processFoundPlace(place){
@@ -493,6 +504,13 @@
         print(format("Found place %s at index %i", ::Places[place].getName(), idx));
 
         if(mGui_) mGui_.notifyObjectFound(foundObj, idx);
+    }
+
+    function notifyGatewayStatsChange(){
+        //TODO for now calculate this stat on the fly for now.
+        local gatewayStat = mExplorationStats_.totalDiscoveredPlaces.tofloat() / 20;
+        mGatewayPercentage_ = gatewayStat > 1.0 ? 1.0 : gatewayStat;
+        if(mGui_) mGui_.notifyGatewayStatsChange(mGatewayPercentage_);
     }
 
     function removeFoundItem(idx){
@@ -636,9 +654,13 @@
         }
     }
 
+    function isGatewayReady(){
+        return mGatewayPercentage_ >= 1.0;
+    }
+
     function notifyPlaceEnterState(id, entered){
         local placeEntry = mSceneLogic_.mActivePlaces_[id];
-        if(!placeEntry.mEncountered_){
+        if(!placeEntry.mEncountered_ && placeEntry.mEnemy_ != PlaceId.GATEWAY){
             //Add the flag to the place.
             local childNode = placeEntry.mNode_.createChildSceneNode();
             childNode.setPosition(0.5, 0, 0);
@@ -651,6 +673,9 @@
             local worldPos = ::EffectManager.getWorldPositionForWindowPos(mGui_.mWorldMapDisplay_.getPosition() + mGui_.mWorldMapDisplay_.getSize() / 2);
             local endPos = mGui_.mMoneyCounter_.getPosition();
             ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.COIN_EFFECT, {"cellSize": 2, "coinScale": 0.1, "numCoins": 5, "start": worldPos, "end": endPos, "money": 100}));
+
+            mExplorationStats_.totalDiscoveredPlaces++;
+            notifyGatewayStatsChange();
         }
         placeEntry.mEncountered_ = true;
 

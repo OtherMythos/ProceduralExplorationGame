@@ -449,7 +449,7 @@ enum MapVoxelTypes{
     }
     function determinePlaces_determineLandmassForPlace(landData, landWeighted, place){
         local placeType = place.getType();
-        if(placeType == PlaceType.CITY){
+        if(placeType == PlaceType.CITY || placeType == PlaceType.GATEWAY){
             //This being the largest landmass, place the city there.
             return 0;
         }

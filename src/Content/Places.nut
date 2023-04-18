@@ -1,5 +1,7 @@
 enum PlaceId{
     NONE,
+    GATEWAY,
+
     HAUNTED_WELL,
     DARK_CAVE,
     GOBLIN_VILLAGE,
@@ -27,6 +29,7 @@ enum PlaceId{
 
 enum PlaceType{
     NONE,
+    GATEWAY,
     CITY,
     TOWN,
     VILLAGE,
@@ -92,6 +95,9 @@ enum PlaceNecessaryFeatures{
 
 //-------------------------------
 ::Places[PlaceId.NONE] = PlaceDef("None", "None", PlaceType.NONE, 0.0, 0);
+
+::Places[PlaceId.GATEWAY] = PlaceDef("Gateway", "Gateway", PlaceType.GATEWAY, 1.0, 0);
+
 ::Places[PlaceId.HAUNTED_WELL] = PlaceDef("Haunted Well", "The old haunted well.", PlaceType.LOCATION, 0.1, 10);
 ::Places[PlaceId.DARK_CAVE] = PlaceDef("Dark Cave", "A dark opening to a secluded cave.", PlaceType.LOCATION, 0.1, 10);
 ::Places[PlaceId.GOBLIN_VILLAGE] = PlaceDef("Goblin Village", "The grotty and ramsacked goblin village.", PlaceType.VILLAGE, 0.1, 10);
