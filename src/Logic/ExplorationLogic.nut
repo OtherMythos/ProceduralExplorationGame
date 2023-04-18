@@ -69,8 +69,10 @@
 
     EXPLORATION_MAX_LENGTH = 1000;
     EXPLORATION_MAX_FOUND_ITEMS = 4;
+    EXPLORATION_MAX_QUEUED_ENCOUNTERS = 4;
 
     EXPLORATION_ITEM_LIFE = 400.0;
+    EXPLORATION_ENEMY_LIFE = 800.0;
 
     NUM_PLAYER_QUEUED_FLAGS = 4;
     mQueuedFlags_ = null;
@@ -88,6 +90,8 @@
     mPlayerEntry_ = null;
     mActiveEnemies_ = null;
     mQueuedEnemyEncounters_ = null;
+    mQueuedEnemyEncountersLife_ = null;
+    mNumQueuedEnemies_ = 0;
 
     mMoveInputHandle_ = null;
 
@@ -101,6 +105,7 @@
         mActiveEnemies_ = [];
         mQueuedFlags_ = array(NUM_PLAYER_QUEUED_FLAGS, null);
         mQueuedEnemyEncounters_ = [];
+        mQueuedEnemyEncountersLife_ = [];
 
         resetExploration_();
         processDebug_();
@@ -136,6 +141,7 @@
         mNumFoundObjects_ = 0;
         mFoundObjects_ = array(EXPLORATION_MAX_FOUND_ITEMS, null);
         mFoundObjectsLife_ = array(EXPLORATION_MAX_FOUND_ITEMS, 0);
+        mQueuedEnemyEncountersLife_ = array(EXPLORATION_MAX_QUEUED_ENCOUNTERS, 0);
         mEnemyEncountered_ = false;
         mExplorationFinished_ = false;
         mExplorationPaused_ = false;
@@ -318,7 +324,19 @@
             if(mFoundObjectsLife_[i] <= 0){
                 //Scrap the item.
                 printf("Item at slot %i got too old", i);
-                ::Base.mExplorationLogic.removeFoundItem(i);
+                removeFoundItem(i);
+            }
+        }
+
+        //Age the enemies.
+        for(local i = 0; i < mQueuedEnemyEncounters_.len(); i++){
+            if(mQueuedEnemyEncounters_[i] == null || mQueuedEnemyEncounters_[i] == Enemy.NONE) continue;
+            mQueuedEnemyEncountersLife_[i]--;
+            if(mGui_) mGui_.notifyQueuedEnemyLifetime(i, mQueuedEnemyEncountersLife_[i].tofloat() / EXPLORATION_ENEMY_LIFE);
+            if(mQueuedEnemyEncountersLife_[i] <= 0){
+                //Remove the enemy.
+                printf("Item at slot %i got too old", i);
+                removeQueuedEnemy(i);
             }
         }
     }
@@ -438,7 +456,7 @@
         if(foundSomething){
             //decide what was found.
             local enemy = _random.randInt(Enemy.NONE+1, Enemy.MAX-1);
-            processEncounter(enemy);
+            //processEncounter(enemy);
         }
     }
 
@@ -493,23 +511,23 @@
         }
     }
 
-    function _setupDataForCombat(enemy){
-        local enemyData = [
-            ::Combat.CombatStats(enemy)
-        ];
+    function _setupDataForCombat(){
+        local enemyData = [];
+        for(local i = 0; i < EXPLORATION_MAX_QUEUED_ENCOUNTERS; i++){
+            //local newStats = ::Combat.CombatStats();
+            enemyData.append(mQueuedEnemyEncounters_[i]);
+        }
         local currentCombatData = ::Combat.CombatData(::Base.mPlayerStats.mPlayerCombatStats, enemyData);
         ::Base.notifyEncounter(currentCombatData)
         return currentCombatData;
     }
 
-    function processEncounter(enemy){
-        print("Encountered enemy " + ::ItemHelper.enemyToName(enemy));
-
+    function processEncounter(){
         //local foundPosition = mSceneLogic_.getFoundPositionForEncounter(enemy);
         local foundPosition = mPlayerEntry_.mPos_;
 
-        local combatData = _setupDataForCombat(enemy);
-        if(mGui_) mGui_.notifyEnemyEncounter(combatData, foundPosition);
+        local combatData = _setupDataForCombat();
+        if(mGui_) mGui_.notifyEnemyCombatBegan(combatData, foundPosition);
         mEnemyEncountered_ = true;
     }
 
@@ -583,16 +601,36 @@
         enemyEntry.move(dir);
     }
 
-    function notifyEncounter(idx, enemyData){
-        //TODO get this to be correct.
-        //processEncounter(Enemy.GOBLIN);
-        local numEncounters = mQueuedEnemyEncounters_.len();
-        mQueuedEnemyEncounters_.append(Enemy.GOBLIN);
-        mActiveEnemies_[idx].destroy();
-        //mActiveEnemies_[idx] = null;
+    function removeQueuedEnemy(idx){
+        print(format("Removing queued enemy: %i", idx));
+        mQueuedEnemyEncounters_[idx] = null;
+        mNumQueuedEnemies_--;
+        assert(mNumQueuedEnemies_ >= 0);
+        if(mGui_) mGui_.notifyQueuedEnemyRemoved(idx);
+    }
+    function addEncounter_(encounter){
+        local holeIdx = mQueuedEnemyEncounters_.find(null);
+        if(holeIdx == null){
+            holeIdx = mQueuedEnemyEncounters_.len();
+            mQueuedEnemyEncounters_.append(encounter);
+        }else{
+            mQueuedEnemyEncounters_[holeIdx] = encounter;
+        }
+        return holeIdx;
+    }
+    function notifyEncounter(enemyIdx, enemyData){
+        local listIdx = addEncounter_(enemyData);
+        mNumQueuedEnemies_++;
+
+        mActiveEnemies_[enemyIdx].destroy();
+        mQueuedEnemyEncountersLife_[listIdx] = EXPLORATION_ENEMY_LIFE;
 
         local foundPosition = mPlayerEntry_.mPos_;
-        if(mGui_) mGui_.notifyEnemyEncounter(numEncounters, enemyData, foundPosition);
+        if(mGui_) mGui_.notifyEnemyEncounter(listIdx, enemyData, foundPosition);
+
+        if(mNumQueuedEnemies_ >= EXPLORATION_MAX_QUEUED_ENCOUNTERS){
+            processEncounter();
+        }
     }
 
     function notifyPlaceEnterState(id, entered){

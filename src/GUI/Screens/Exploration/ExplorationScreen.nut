@@ -153,7 +153,7 @@ enum ExplorationBusEvents{
         mExplorationItemsContainer_.setObjectForIndex(foundObject, idx, screenPos);
     }
 
-    function notifyEnemyEncounter(combatData, position){
+    function notifyEnemyCombatBegan(combatData, position){
         local screenPos = ::EffectManager.getWorldPositionForWindowPos(mWorldMapDisplay_.getWorldPositionInScreenSpace(position));
         local endPos = ::EffectManager.getWorldPositionForWindowPos(Vec2(_window.getWidth() / 2, _window.getHeight() / 2));
 
@@ -176,6 +176,9 @@ enum ExplorationBusEvents{
     function notifyFoundItemRemoved(idx){
         mExplorationItemsContainer_.setObjectForIndex(FoundObject(), idx, null);
     }
+    function notifyQueuedEnemyRemoved(idx){
+        mExplorationEnemiesContainer_.setObjectForIndex(null, idx, null);
+    }
 
     function notifyPlaceEnterState(id, entered){
         local text = "";
@@ -195,6 +198,9 @@ enum ExplorationBusEvents{
     function notifyFoundItemLifetime(idx, lifetime){
         mExplorationItemsContainer_.setLifetimeForIndex(idx, lifetime);
     }
+    function notifyQueuedEnemyLifetime(idx, lifetime){
+        mExplorationEnemiesContainer_.setLifetimeForIndex(idx, lifetime);
+    }
 
     function shutdown(){
         mLogicInterface_.shutdown();
@@ -202,6 +208,7 @@ enum ExplorationBusEvents{
         base.shutdown();
         mLogicInterface_.notifyLeaveExplorationScreen();
         mExplorationItemsContainer_.shutdown();
+        mExplorationEnemiesContainer_.shutdown();
     }
 
     function busCallback(event, data){

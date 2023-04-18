@@ -283,7 +283,7 @@ enum DrawOptions{
 
         local intendedPos = Vec2(x.tofloat() / mMapData_.width.tofloat(), y.tofloat() / mMapData_.height.tofloat());
         intendedPos *= mLabelWindow_.getSize();
-        print("intended " + intendedPos.x);
+        //print("intended " + intendedPos.x);
         mPlayerLocationPanel_.setCentre(intendedPos.x, -intendedPos.y);
 
         //setAreaVisible(x, y, 10, 10);

@@ -157,7 +157,7 @@
         targetPos.y += mSize_.y * 0.8;
         mLabel_.setCentre(targetPos);
         //TODO will probably want to get rid of that permanently.
-        mTimeBar_.setVisible(false);
+        mTimeBar_.setVisible(true);
         mTimeBar_.setSize(mButton_.getSize().x * 0.8, mTimeBar_.getSize().y);
         mTimeBar_.setCentre(targetPos.x, targetPos.y*0.9);
     }
