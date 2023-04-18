@@ -1,5 +1,6 @@
 enum ExplorationBusEvents{
     TRIGGER_ITEM,
+    TRIGGER_ENCOUNTER
 };
 
 ::ScreenManager.Screens[Screen.EXPLORATION_SCREEN] = class extends ::Screen{
@@ -240,6 +241,9 @@ enum ExplorationBusEvents{
                 assert(false);
             }
 
+        }
+        else if(event == ExplorationBusEvents.TRIGGER_ENCOUNTER){
+            mLogicInterface_.triggerCombatEarly();
         }
     }
 

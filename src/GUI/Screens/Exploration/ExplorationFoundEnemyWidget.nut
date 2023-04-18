@@ -121,26 +121,12 @@
     }
 
     function buttonPressed(widget, action){
-        assert(false);
-
-        local id = widget.getUserId();
-        local foundObj = mObject_;
-        assert(foundObj != null);
         local value = {
-            "type": foundObj.type,
-            "slotIdx": id,
+            "slotIdx": widget.getUserId(),
             "buttonCentre": widget.getCentre()
         };
-        if(foundObj.type == FoundObjectType.ITEM){
-            value.item <- foundObj.obj;
-        }
-        else if(foundObj.type == FoundObjectType.PLACE){
-            value.place <- foundObj.obj;
-        }else{
-            assert(false);
-        }
 
-        mBus_.notifyEvent(ExplorationBusEvents.TRIGGER_ITEM, value);
+        mBus_.notifyEvent(ExplorationBusEvents.TRIGGER_ENCOUNTER, value);
     }
 
     function shutdown(){

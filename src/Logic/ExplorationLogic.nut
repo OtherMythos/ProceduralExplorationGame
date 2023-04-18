@@ -513,13 +513,16 @@
 
     function _setupDataForCombat(){
         local enemyData = [];
-        for(local i = 0; i < EXPLORATION_MAX_QUEUED_ENCOUNTERS; i++){
-            //local newStats = ::Combat.CombatStats();
-            enemyData.append(mQueuedEnemyEncounters_[i]);
+        foreach(i in mQueuedEnemyEncounters_){
+            enemyData.append(i);
         }
         local currentCombatData = ::Combat.CombatData(::Base.mPlayerStats.mPlayerCombatStats, enemyData);
         ::Base.notifyEncounter(currentCombatData)
         return currentCombatData;
+    }
+    function triggerCombatEarly(){
+        assert(mNumQueuedEnemies_ > 0);
+        processEncounter();
     }
 
     function processEncounter(){
