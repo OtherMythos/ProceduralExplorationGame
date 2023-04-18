@@ -117,7 +117,8 @@ enum ExplorationBusEvents{
         mScrapAllButton_.setText("Scrap all");
         mScrapAllButton_.setPosition(0, mExplorationItemsContainer_.getPosition().y - mScrapAllButton_.getSize().y);
         mScrapAllButton_.attachListenerForEvent(function(widget, action){
-            mLogicInterface_.scrapAllFoundObjects();
+            //mLogicInterface_.scrapAllFoundObjects();
+            scrapAllObjects();
         }, _GUI_ACTION_PRESSED, this);
 
         mLogicInterface_.continueOrResetExploration();
@@ -213,9 +214,6 @@ enum ExplorationBusEvents{
                     ::ItemHelper.actuateItem(data.item);
                     ::Base.mExplorationLogic.removeFoundItem(data.slotIdx);
 
-                    local worldPos = ::EffectManager.getWorldPositionForWindowPos(data.buttonCentre);
-                    local endPos = mMoneyCounter_.getPosition();
-                    ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.COIN_EFFECT, {"numCoins": itemData.money / 8, "start": worldPos, "end": endPos, "money": itemData.money}));
                 }else{
                     //Switch to the item info screen.
                     //data.mode <- ItemInfoMode.KEEP_SCRAP_EXPLORATION;
@@ -225,6 +223,9 @@ enum ExplorationBusEvents{
                     ::ItemHelper.actuateItem(data.item);
                     ::Base.mExplorationLogic.removeFoundItem(data.slotIdx);
                 }
+                local worldPos = ::EffectManager.getWorldPositionForWindowPos(data.buttonCentre);
+                local endPos = mMoneyCounter_.getPosition();
+                ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.COIN_EFFECT, {"cellSize": 2, "coinScale": 0.1, "numCoins": 2, "start": worldPos, "end": endPos, "money": 100}));
             }
             else if(data.type == FoundObjectType.PLACE){
                 ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLACE_INFO_SCREEN, data));
@@ -233,6 +234,18 @@ enum ExplorationBusEvents{
             }
 
         }
+    }
+
+    function scrapAllObjects(){
+        for(local i = 0; i < mExplorationItemsContainer_.mNumSlots_; i++){
+            if(mLogicInterface_.mFoundObjects_[i] == null) continue;
+            local targetButton = mExplorationItemsContainer_.mFoundWidgetButtons_[i];
+            local worldPos = ::EffectManager.getWorldPositionForWindowPos(targetButton.mPosition_);
+            local endPos = mMoneyCounter_.getPosition();
+            ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.COIN_EFFECT, {"cellSize": 2, "coinScale": 0.1, "numCoins": 2, "start": worldPos, "end": endPos, "money": 100}));
+        }
+
+        mLogicInterface_.scrapAllFoundObjects();
     }
 };
 

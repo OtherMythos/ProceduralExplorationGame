@@ -486,10 +486,10 @@
     }
 
     function scrapAllFoundObjects(){
-        //TODO move this to logic. Make sure it actually gives you the money!
+        //TODO Make sure it actually gives you the money!
         for(local i = 0; i < ::ExplorationLogic.EXPLORATION_MAX_FOUND_ITEMS; i++){
             if(mFoundObjects_[i] == null) continue;
-            ::Base.mExplorationLogic.removeFoundItem(i);
+            removeFoundItem(i);
         }
     }
 
