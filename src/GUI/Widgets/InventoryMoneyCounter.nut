@@ -23,7 +23,7 @@
     function setLabelTo(moneyVal){
         mMoneyLabel_.setText(format("money: %i", moneyVal));
         //TODO do this properly with layouts.
-        mMoneyLabel_.setPosition(_window.getWidth() - mMoneyLabel_.getSize().x, mMoneyLabel_.getPosition().y);
+        mMoneyLabel_.setPosition(_window.getWidth() - mMoneyLabel_.getSize().x, 200);
     }
 
     function shutdown(){
@@ -45,7 +45,10 @@
 
     function update(){
         if(mMoneyAnimTo_ > mMoneyCurrentAnim_){
-            mMoneyCurrentAnim_++;
+            mMoneyCurrentAnim_+=4;
+            if(mMoneyCurrentAnim_ > mMoneyAnimTo_){
+                mMoneyCurrentAnim_ = mMoneyAnimTo_;
+            }
             setLabelTo(mMoneyCurrentAnim_);
         }
     }
