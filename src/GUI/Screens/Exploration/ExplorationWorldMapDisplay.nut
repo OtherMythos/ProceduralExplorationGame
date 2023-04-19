@@ -31,6 +31,15 @@
         mCompositorId_ = null;
     }
 
+    function shutdown(){
+        mMapViewerPanel_.setDatablock("playerMapIndicator");
+        mExplorationScenePanel_.setDatablock("playerMapIndicator");
+        //_gui.destroy(mMapViewerPanel_);
+        //_gui.destroy(mExplorationScenePanel_);
+        shutdownCompositor_();
+        mMapViewer_.shutdown();
+    }
+
 
     function notifyNewMapData(data){
         mMapViewer_.displayMapData(data, false);

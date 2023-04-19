@@ -110,7 +110,10 @@ enum DrawOptions{
     }
 
     function shutdown(){
-
+        _compositor.removeWorkspace(mCompositorWorkspace_);
+        _hlms.destroyDatablock(mCompositorDatablock_);
+        mCompositorCamera_.getParentNode().destroyNodeAndChildren();
+        _graphics.destroyTexture(mCompositorTexture_);
     }
 
     function displayMapData(outData, showPlaceMarkers=true){

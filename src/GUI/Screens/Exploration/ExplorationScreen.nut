@@ -229,6 +229,7 @@ enum ExplorationBusEvents{
         mLogicInterface_.notifyLeaveExplorationScreen();
         mExplorationItemsContainer_.shutdown();
         mExplorationEnemiesContainer_.shutdown();
+        mWorldMapDisplay_.shutdown();
     }
 
     function busCallback(event, data){

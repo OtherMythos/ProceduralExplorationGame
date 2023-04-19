@@ -271,7 +271,7 @@
             "numRivers": 24,
             "seaLevel": 100,
             "altitudeBiomes": [10, 100],
-            "placeFrequency": [0, 1, 4, 4, 30]
+            "placeFrequency": [0, 1, 1, 4, 4, 30]
         };
         local outData = gen.generate(data);
         mCurrentMapData_ = outData;
