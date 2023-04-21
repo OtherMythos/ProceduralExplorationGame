@@ -215,6 +215,7 @@
 
     function checkPlayerMove(){
         if(mEnemyEncountered_) return;
+        if(mExplorationPaused_) return;
 
         //TODO ewww clean this up.
         local moved = false;
@@ -297,25 +298,17 @@
 
     function movePlayerToPos(targetPos){
         local original = (targetPos - mPlayerEntry_.getPosition());
-        //local dir = original.normalisedCopy();
-        //dir /= 4;
-        local dir = Vec2();
-        if(original.x > 0) dir.x = 0.1;
-        if(original.x < 0) dir.x = -0.1;
-        if(original.z > 0) dir.y = 0.1;
-        if(original.z < 0) dir.y = -0.1;
+        local dir = original.normalisedCopy() * 0.2;
+        local target = Vec2(dir.x, dir.z);
 
-        print(original);
-        movePlayer(dir);
+        movePlayer(target);
 
-        local checkMargin = 0.2;
-        if(original.x < checkMargin && original.z < checkMargin
-            &&
-            original.x >= -checkMargin && original.z >= -checkMargin
-            ){
-            return true;
-        }
-        return false;
+        local newPos = mPlayerEntry_.mPos_.copy();
+        local newTarget = targetPos.copy();
+        newPos.y = 0;
+        newTarget.y = 0;
+        local distance = newTarget.distance(newPos);
+        return distance < 0.4;
     }
 
     function movePlayer(dir){
