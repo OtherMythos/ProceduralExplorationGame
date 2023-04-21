@@ -94,8 +94,8 @@
         //TODO temporary to setup the logic. Really a new combatData would be pushed at the start of a new combat.
         mCombatLogic = CombatLogic(mCurrentCombatData);
 
-        ::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
-        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
+        //::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
+        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COMBAT_SCREEN, {"logic": mCombatLogic}));
         //::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_TEST_SCREEN, {"logic": mExplorationLogic}));
@@ -107,6 +107,7 @@
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLACE_INFO_SCREEN, {"logic": ::StoryContentLogic(PlaceId.HAUNTED_WELL)}));
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.STORY_CONTENT_SCREEN, {"logic": ::StoryContentLogic(PlaceId.HAUNTED_WELL)}));
         //::ScreenManager.transitionToScreen(Screen.STORY_CONTENT_SCREEN);
+        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_END_SCREEN, {"totalFoundItems": 5, "totalDiscoveredPlaces": 4, "totalEncountered": 2, "totalDefeated": 1}), null, 1);
 
     }
 

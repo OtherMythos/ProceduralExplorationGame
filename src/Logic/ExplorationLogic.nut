@@ -110,11 +110,6 @@
         mQueuedEnemyEncounters_ = [];
         mQueuedEnemyEncountersLife_ = [];
 
-        mExplorationStats_ = {
-            "totalFoundItems": 0,
-            "totalDiscoveredPlaces": 0,
-        };
-
         resetExploration_();
         processDebug_();
 
@@ -153,6 +148,13 @@
         mEnemyEncountered_ = false;
         mExplorationFinished_ = false;
         mExplorationPaused_ = false;
+
+        mExplorationStats_ = {
+            "totalFoundItems": 0,
+            "totalDiscoveredPlaces": 0,
+            "totalEncountered": 0,
+            "totalDefeated": 0,
+        };
 
         renotifyItems();
         processExplorationBegan();
@@ -681,5 +683,10 @@
 
         //TODO will want to rename this from enemy at some point.
         if(mGui_) mGui_.notifyPlaceEnterState(placeEntry.mEnemy_, entered);
+    }
+
+    function gatewayEndExploration(){
+        pauseExploration();
+        if(mGui_) mGui_.notifyGatewayEnd(mExplorationStats_);
     }
 };

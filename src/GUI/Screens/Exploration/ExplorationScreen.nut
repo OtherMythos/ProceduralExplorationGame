@@ -108,13 +108,7 @@ enum ExplorationBusEvents{
         mPlaceHelperButton_.setText("Visit");
         mPlaceHelperButton_.setPosition(0, 40);
         mPlaceHelperButton_.setHidden(true);
-        mPlaceHelperButton_.attachListenerForEvent(function(widget, action){
-            local data = {
-                "place": mCurrentPlace_,
-                "slotIdx": -1
-            };
-            ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLACE_INFO_SCREEN, data));
-        }, _GUI_ACTION_PRESSED, this);
+        mPlaceHelperButton_.attachListenerForEvent(notifyPlaceVisitButton, _GUI_ACTION_PRESSED);
 
         mScrapAllButton_ = mWindow_.createButton();
         mScrapAllButton_.setText("Scrap all");
@@ -187,15 +181,29 @@ enum ExplorationBusEvents{
         print("Current gateway " + gatewayPercentage);
     }
 
+    function notifyPlaceVisitButton(widget, action){
+        local data = {
+            "place": mCurrentPlace_,
+            "slotIdx": -1
+        };
+        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLACE_INFO_SCREEN, data));
+    }
+    function notifyPlaceGatewayButton(widget, action){
+        ::Base.mExplorationLogic.gatewayEndExploration();
+    }
+
     function notifyPlaceEnterState(id, entered){
         if(id == PlaceId.GATEWAY){
             mInsideGateway_ = entered;
             local text = "";
+            local gatewayReady = mLogicInterface_.isGatewayReady();
             if(entered){
-                local gatewayReady = mLogicInterface_.isGatewayReady();
                 text = gatewayReady ? "Gateway is ready" : "Gateway is not ready yet"
             }
             mPlaceHelperLabel_.setText(text);
+            mPlaceHelperButton_.setText("End exploration");
+            mPlaceHelperButton_.setHidden(!entered || !gatewayReady);
+            mPlaceHelperButton_.attachListenerForEvent(notifyPlaceGatewayButton, _GUI_ACTION_PRESSED);
             return;
         }
         //Make sure if the player has entered the gateway box that overrides everything else.
@@ -206,7 +214,9 @@ enum ExplorationBusEvents{
             text = ::Places[id].getName();
         }
         mPlaceHelperLabel_.setText(text);
+        mPlaceHelperButton_.setText("Visit");
         mPlaceHelperButton_.setHidden(!entered);
+        mPlaceHelperButton_.attachListenerForEvent(notifyPlaceVisitButton, _GUI_ACTION_PRESSED);
         mCurrentPlace_ = entered ? id : null;
     }
 
@@ -278,6 +288,11 @@ enum ExplorationBusEvents{
 
         mLogicInterface_.scrapAllFoundObjects();
     }
+
+
+    function notifyGatewayEnd(explorationStats){
+        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_END_SCREEN, explorationStats), null, 1);
+    }
 };
 
 _doFile("res://src/GUI/Screens/Exploration/ExplorationItemsContainer.nut");
@@ -286,3 +301,4 @@ _doFile("res://src/GUI/Screens/Exploration/ExplorationProgressBar.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationWorldMapDisplay.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationFoundItemWidget.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationFoundEnemyWidget.nut");
+_doFile("res://src/GUI/Screens/Exploration/ExplorationEndScreen.nut");

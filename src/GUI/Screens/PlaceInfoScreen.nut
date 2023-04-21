@@ -9,7 +9,7 @@
         mPlaceId_ = data.place;
         mItemSlotIdx_ = data.slotIdx;
 
-        local placeDef = ::Places[mPlaceId_]; 
+        local placeDef = ::Places[mPlaceId_];
         local placeName = placeDef.getName();
         local placeDescription = placeDef.getDescription();
 
@@ -52,7 +52,7 @@
             button.setText(c);
             button.attachListenerForEvent(buttonFunctions[i], _GUI_ACTION_PRESSED, this);
             button.setExpandHorizontal(true);
-            button.setMinSize(0, 100);
+            button.setMinSize(0, 80);
             layoutLine.addCell(button);
         }
 
