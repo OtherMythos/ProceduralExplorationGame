@@ -655,7 +655,8 @@
 
     function notifyPlaceEnterState(id, entered){
         local placeEntry = mSceneLogic_.mActivePlaces_[id];
-        if(!placeEntry.mEncountered_ && placeEntry.mEnemy_ != PlaceId.GATEWAY){
+        local firstTime = !placeEntry.mEncountered_;
+        if(firstTime && placeEntry.mEnemy_ != PlaceId.GATEWAY){
             //Add the flag to the place.
             local childNode = placeEntry.mNode_.createChildSceneNode();
             childNode.setPosition(0.5, 0, 0);
@@ -675,7 +676,7 @@
         placeEntry.mEncountered_ = true;
 
         //TODO will want to rename this from enemy at some point.
-        if(mGui_) mGui_.notifyPlaceEnterState(placeEntry.mEnemy_, entered);
+        if(mGui_) mGui_.notifyPlaceEnterState(placeEntry.mEnemy_, entered, firstTime, placeEntry.mPos_);
     }
 
     function gatewayEndExploration(){

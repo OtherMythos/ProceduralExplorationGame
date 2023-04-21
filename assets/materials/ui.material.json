@@ -50,6 +50,14 @@
         "playerMapIndicator" :
         {
             "diffuse": [1, 0, 0, 1]
+        },
+        "placeMapIndicator" :
+        {
+            "diffuse": [0.8, 0.2, 0.2, 1]
+        },
+        "placeMapGateway" :
+        {
+            "diffuse": [0.2, 0.2, 1, 1]
         }
     }
 }

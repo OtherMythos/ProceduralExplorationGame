@@ -192,7 +192,10 @@ enum ExplorationBusEvents{
         ::Base.mExplorationLogic.gatewayEndExploration();
     }
 
-    function notifyPlaceEnterState(id, entered){
+    function notifyPlaceEnterState(id, entered, firstTime, placeEnteredPos){
+        if(firstTime){
+            mWorldMapDisplay_.mMapViewer_.notifyNewPlaceFound(id, placeEnteredPos);
+        }
         if(id == PlaceId.GATEWAY){
             mInsideGateway_ = entered;
             local text = "";

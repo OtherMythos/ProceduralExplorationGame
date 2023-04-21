@@ -34,6 +34,32 @@ enum DrawOptions{
 
     mVisiblePlacesBuffer_ = null;
 
+    PlaceMarkerIcon = class{
+        mPanel_ = null;
+        mParent_ = null;
+        mMapData_ = null;
+        constructor(parentWin, mapData, size=5){
+            mParent_ = parentWin;
+            mMapData_ = mapData;
+
+            mPanel_ = parentWin.createPanel();
+            mPanel_.setSize(size, size);
+            mPanel_.setPosition(0, 0);
+            setDatablock("placeMapIndicator");
+        }
+        function setCentre(x, y){
+            local intendedPos = Vec2(x.tofloat() / mMapData_.width.tofloat(), y.tofloat() / mMapData_.height.tofloat());
+            intendedPos *= mParent_.getSize();
+            mPanel_.setCentre(intendedPos.x, -intendedPos.y);
+        }
+        function setDatablock(datablock){
+            mPanel_.setDatablock(datablock);
+        }
+        function setZOrder(zOrder){
+            mPanel_.setZOrder(zOrder);
+        }
+    };
+
     PlaceMarker = class{
 
         mParentWin_ = null;
@@ -278,18 +304,22 @@ enum DrawOptions{
 
     function setPlayerPosition(x, y){
         if(mPlayerLocationPanel_ == null && mLabelWindow_){
-            mPlayerLocationPanel_ = mLabelWindow_.createPanel();
-            mPlayerLocationPanel_.setSize(5, 5);
-            mPlayerLocationPanel_.setPosition(0, 0);
+            mPlayerLocationPanel_ = PlaceMarkerIcon(mLabelWindow_, mMapData_);
             mPlayerLocationPanel_.setDatablock("playerMapIndicator");
         }
+        mPlayerLocationPanel_.setCentre(x, y);
+    }
 
-        local intendedPos = Vec2(x.tofloat() / mMapData_.width.tofloat(), y.tofloat() / mMapData_.height.tofloat());
-        intendedPos *= mLabelWindow_.getSize();
-        //print("intended " + intendedPos.x);
-        mPlayerLocationPanel_.setCentre(intendedPos.x, -intendedPos.y);
-
-        //setAreaVisible(x, y, 10, 10);
+    function notifyNewPlaceFound(id, pos){
+        local placeMarker = null;
+        if(id == PlaceId.GATEWAY){
+            placeMarker = PlaceMarkerIcon(mLabelWindow_, mMapData_, 5);
+            placeMarker.setDatablock("placeMapGateway");
+            placeMarker.setZOrder(100);
+        }else{
+            placeMarker = PlaceMarkerIcon(mLabelWindow_, mMapData_, 3);
+        }
+        placeMarker.setCentre(pos.x, pos.z);
     }
 
 }
