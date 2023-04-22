@@ -286,12 +286,25 @@
         }
     }
 
+    function getNearestPlaceData_(playerPos){
+        local idx = 0;
+        local smallestDist = 1000000.0;
+        local activePlaces = mSceneLogic_.mActivePlaces_
+        foreach(c,i in activePlaces){
+            if(i.mEncountered_) continue;
+            local distance = playerPos.distance(i.mPos_);
+            if(distance < smallestDist){
+                idx = c;
+                smallestDist = distance;
+            }
+        }
+        return activePlaces[idx];
+    }
     function getSystemDeterminedFlag(){
         if(mDeterminedFlag_ == null){
             //Generate a new location.
-            local placeData = mCurrentMapData_.placeData;
-            local place = placeData[_random.randIndex(placeData)];
-            mDeterminedFlag_ = Vec3(place.originX, 0, -place.originY);
+            local place = getNearestPlaceData_(mPlayerEntry_.mPos_);
+            mDeterminedFlag_ = place.mPos_;
         }
         return mDeterminedFlag_;
     }
