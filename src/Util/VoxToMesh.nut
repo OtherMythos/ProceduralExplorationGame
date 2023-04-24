@@ -13,6 +13,8 @@
     TILE_WIDTH = null;
     TILE_HEIGHT = null;
 
+    mTimer_ = null;
+
     MASKS = [
         0, -1, 0,
         0, 1, 0,
@@ -56,8 +58,9 @@
     /**
      * @param exclusionMask Allows for certain faces to always be rejected, for instance not drawing the bottom face in a terrain.
      */
-    constructor(exclusionMask = 0){
+    constructor(timer = null, exclusionMask = 0){
         mFaceExclusionMask_ = exclusionMask;
+        mTimer_ = timer;
 
         TILE_WIDTH = (1.0 / COLS_WIDTH) / 2.0;
         TILE_HEIGHT = (1.0 / COLS_HEIGHT) / 2.0;
@@ -74,12 +77,15 @@
      * @param voxData A three dimensional blob containing voxel definitions from top to bottom, left to right. A single voxel is a byte and the size must match up with the provided dimensions.
      */
     function createMeshForVoxelData(meshName, voxData, width, height, depth){
+        if(mTimer_) mTimer_.start();
         assert(voxData.len() == width * height * depth);
         local outMesh = _graphics.createManualMesh(meshName);
         local subMesh = outMesh.createSubMesh();
 
         local verts = [];
         local indices = [];
+
+        local yMult = 0.4;
 
         local index = 0;
         local numVerts = 0;
@@ -97,7 +103,7 @@
                 for(local i = 0; i < 4; i++){
                     verts.append(VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3] + x);
                     verts.append(VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 1] + y);
-                    verts.append(VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 2] + z);
+                    verts.append(VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 2]*yMult + z*yMult);
                     verts.append(FACES_NORMALS[f * 3]);
                     verts.append(FACES_NORMALS[f * 3 + 1]);
                     verts.append(FACES_NORMALS[f * 3 + 2]);
@@ -144,6 +150,8 @@
 
         subMesh.setMaterialName("baseVoxelMaterial");
 
+        if(mTimer_) mTimer_.stop();
+
         return outMesh;
     }
 
@@ -180,9 +188,22 @@
     }
 
     function getStats(){
-        return{
+        local results = {
             "numTris": mNumTris_
         }
+        if(mTimer_){
+            results.totalSeconds <- mTimer_.getSeconds()
+        }
+
+        return results
+    }
+    function printStats(){
+        local stats = getStats();
+
+        print("==Voxeliser Stats==");
+        printf("Num tris: %i", stats.numTris);
+        if("totalSeconds" in stats) printf("Seconds: %f", stats.totalSeconds);
+        print("=============================");
     }
 
 };

@@ -2,6 +2,11 @@
 
 function start(){
     _doFile("res://../../src/Util/VoxToMesh.nut");
+    _doFile("res://fpsCamera.nut");
+
+
+    //::mFpsCam <- ::fpsCamera();
+    fpsCamera.start(Vec3());
 
     local voxMesh = VoxToMesh();
 
@@ -32,9 +37,12 @@ function start(){
 }
 
 function update(){
-    ::count += 0.01;
-    _camera.setPosition(sin(count) * 20, 0, cos(count) * 20);
-    _camera.lookAt(0, 0, 0);
+//    ::count += 0.01;
+//    _camera.setPosition(sin(count) * 20, 0, cos(count) * 20);
+//    _camera.lookAt(0, 0, 0);
+
+    //if(mModelFPSCamera_) mModelFPSCamera_.update();
+    fpsCamera.update();
 }
 
 function end(){

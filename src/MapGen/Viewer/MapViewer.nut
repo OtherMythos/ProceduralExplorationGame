@@ -71,10 +71,11 @@ enum DrawOptions{
 
         mLabel_ = null;
         mTypeSizes_ = [
-            0, 30, 20, 15, 10
+            0, 20, 30, 20, 15, 10
         ];
         mTypeColours_ = [
             null,
+            ColourValue(0.2, 0.2, 1),
             ColourValue(1, 1, 1),
             ColourValue(0.8, 0.8, 0.8),
             ColourValue(0.7, 0.7, 0.7),

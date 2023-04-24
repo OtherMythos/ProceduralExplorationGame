@@ -115,7 +115,7 @@
                 }
             }
         }
-        local vox = VoxToMesh(1 << 2);
+        local vox = VoxToMesh(Timer(), 1 << 2);
         //TODO get rid of this with the proper function to destory meshes.
         ::ExplorationCount++;
         local meshObj = vox.createMeshForVoxelData("worldVox" + ::ExplorationCount, voxData, width, height, WORLD_DEPTH);
@@ -128,8 +128,7 @@
         //landNode.setScale(2, 2, 2);
         landNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
 
-        local stats = vox.getStats();
-        printf("Stats %i", stats.numTris);
+        vox.printStats();
     }
 
     function getZForPos(pos){

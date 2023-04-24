@@ -124,6 +124,7 @@
         };
         local placeTypeNames = [
             "None",
+            "Gateway",
             "City",
             "Town",
             "Village",
@@ -241,20 +242,18 @@
                 if(voxFloat <= mCurrentMapData_.seaLevel) voxelMeta = 3;
                 for(local i = 0; i < altitude; i++){
                     voxData[x + (y * width) + (i*width*height)] = voxVals[voxelMeta];
-                    //voxData[x + (y * width) + (altitude*width*height)] = voxVals[voxelMeta];
                 }
-                //voxData[x + (y * width)] = x;
-                //print(altitude);
             }
         }
-        //voxData[0] = 1;
-        local vox = VoxToMesh(1 << 2);
+        local vox = VoxToMesh(Timer(), 1 << 2);
         local meshObj = vox.createMeshForVoxelData("testVox", voxData, width, height, depth);
 
         local item = _scene.createItem(meshObj);
         local newNode = _scene.getRootSceneNode().createChildSceneNode();
         newNode.attachObject(item);
         newNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
+
+        vox.printStats();
     }
 
     function updateTimeData(mapData){
@@ -266,8 +265,8 @@
         local data = {
             "seed": mSeed_,
             "variation": mVariation_,
-            "width": 400,
-            "height": 400,
+            "width": 200,
+            "height": 200,
             "numRivers": 24,
             "seaLevel": 100,
             "altitudeBiomes": [10, 100],
