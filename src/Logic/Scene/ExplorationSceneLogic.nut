@@ -143,7 +143,7 @@
         local altitude = (((voxFloat - mWorldData_.seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger() + 1;
         local clampedAltitude = altitude < 0 ? 0 : altitude;
 
-        return clampedAltitude;
+        return clampedAltitude * 0.4;
     }
 
     function updatePercentage(percentage){

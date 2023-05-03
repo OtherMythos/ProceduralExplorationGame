@@ -49,16 +49,13 @@
             return mId_;
         }
         function destroy(){
-            //TODO work around, for some reason destroying the collision object as part of the callback crashes the engine.
-            //if(mNode_) mNode_.destroyNodeAndChildren();
             if(mNode_){
                 mNode_.destroyNodeAndChildren();
                 mNode_ = null;
             }
-            setPosition(Vec3(-100, 0, -100));
             //The physics objects should just destroy themselves.
-            //if(mPhysicsInner_) _physics.collision[TRIGGER].removeObject(mPhysicsInner_);
-            //if(mPhysicsOuter_) _physics.collision[TRIGGER].removeObject(mPhysicsOuter_);
+            if(mPhysicsInner_) mPhysicsInner_ = null;
+            if(mPhysicsOuter_) mPhysicsOuter_ = null;
         }
     }
 
