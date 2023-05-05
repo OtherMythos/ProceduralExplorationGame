@@ -175,6 +175,18 @@
         local innerCollisionObject = _physics.collision[TRIGGER].createSender(senderTable, innerShape, pos);
         _physics.collision[TRIGGER].addObject(innerCollisionObject);
 
+        {
+            local receiverInfo = {
+                "type" : _COLLISION_ENEMY
+            };
+            local shape = _physics.getSphereShape(2);
+
+            local collisionObject = _physics.collision[DAMAGE].createReceiver(receiverInfo, shape);
+            _physics.collision[DAMAGE].addObject(collisionObject);
+
+            enemy.setDamageShape(collisionObject);
+        }
+
         enemy.setCollisionShapes(innerCollisionObject, collisionObject);
         enemy.setEnemyNode(enemyNode);
         enemy.setPosition(pos);
@@ -226,6 +238,19 @@
         playerEntry.setCollisionShapes(collisionObject, null);
 
         playerEntry.setId(-1);
+
+        {
+            local senderTable = {
+                "func" : "baseDamage",
+                "path" : "res://src/Content/DamageCallback.nut"
+                "type" : _COLLISION_ENEMY,
+                "event" : _COLLISION_ENTER
+            };
+            local shape = _physics.getCubeShape(1, 1, 1);
+            local collisionObject = _physics.collision[DAMAGE].createSender(senderTable, shape);
+            _physics.collision[DAMAGE].addObject(collisionObject);
+            playerEntry.setDamageShape(collisionObject);
+        }
 
         return playerEntry;
     }

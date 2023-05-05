@@ -11,6 +11,7 @@
         mPos_ = null;
         mPhysicsInner_ = null;
         mPhysicsOuter_ = null;
+        mPhysicsDamage_ = null;
         mNode_ = null;
         mId_ = null;
         mEncountered_ = false;
@@ -22,6 +23,9 @@
             mPhysicsInner_ = inner;
             mPhysicsOuter_ = outer;
         }
+        function setDamageShape(obj){
+            mPhysicsDamage_ = obj;
+        }
         function setEnemyNode(node){
             mNode_ = node;
         }
@@ -30,6 +34,7 @@
             if(mNode_) mNode_.setPosition(pos);
             if(mPhysicsInner_) mPhysicsInner_.setPosition(pos);
             if(mPhysicsOuter_) mPhysicsOuter_.setPosition(pos);
+            if(mPhysicsDamage_) mPhysicsDamage_.setPosition(pos);
         }
         function getPosition(){
             return mPos_;
@@ -56,6 +61,7 @@
             //The physics objects should just destroy themselves.
             if(mPhysicsInner_) mPhysicsInner_ = null;
             if(mPhysicsOuter_) mPhysicsOuter_ = null;
+            if(mPhysicsDamage_) mPhysicsDamage_ = null;
         }
     }
 

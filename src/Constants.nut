@@ -1,4 +1,5 @@
 const TRIGGER = 0;
+const DAMAGE = 1;
 
 const EFFECT_WINDOW_CAMERA_Z = 100;
 
