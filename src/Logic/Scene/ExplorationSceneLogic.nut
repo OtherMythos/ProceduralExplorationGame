@@ -81,6 +81,7 @@
         }
 
         mParentNode_ = null;
+        ::ExplorationEntityFactory.mBaseSceneNode_ = null;
 
         _world.destroyWorld();
     }
@@ -149,51 +150,9 @@
     function updatePercentage(percentage){
     }
 
-    function appearEnemy(enemy){
-        local enemyNode = mParentNode_.createChildSceneNode();
-        local enemyItem = _scene.createItem("goblin.mesh");
-        enemyItem.setRenderQueueGroup(30);
-        enemyNode.attachObject(enemyItem);
-        local zPos = getZForPos(enemy.mPos_);
-        local pos = Vec3(enemy.mPos_.x, zPos, enemy.mPos_.z);
-        enemyNode.setPosition(pos);
-        enemyNode.setScale(mMobScale_);
-
-        local senderTable = {
-            "func" : "receivePlayerSpotted",
-            "path" : "res://src/Logic/Scene/ExplorationSceneEntityScript.nut",
-            "id" : enemy.mId_,
-            "type" : _COLLISION_PLAYER,
-            "event" : _COLLISION_ENTER | _COLLISION_LEAVE | _COLLISION_INSIDE
-        };
-        local shape = _physics.getCubeShape(8, 4, 8);
-        local collisionObject = _physics.collision[TRIGGER].createSender(senderTable, shape, pos);
-        _physics.collision[TRIGGER].addObject(collisionObject);
-
-        senderTable["func"] = "receivePlayerInner";
-        local innerShape = _physics.getCubeShape(1, 1, 1);
-        local innerCollisionObject = _physics.collision[TRIGGER].createSender(senderTable, innerShape, pos);
-        _physics.collision[TRIGGER].addObject(innerCollisionObject);
-
-        {
-            local receiverInfo = {
-                "type" : _COLLISION_ENEMY
-            };
-            local shape = _physics.getSphereShape(2);
-
-            local collisionObject = _physics.collision[DAMAGE].createReceiver(receiverInfo, shape);
-            _physics.collision[DAMAGE].addObject(collisionObject);
-
-            enemy.setDamageShape(collisionObject);
-        }
-
-        enemy.setCollisionShapes(innerCollisionObject, collisionObject);
-        enemy.setEnemyNode(enemyNode);
-        enemy.setPosition(pos);
-    }
-
     function createScene(){
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
+        ::ExplorationEntityFactory.mBaseSceneNode_ = mParentNode_;
 
         if(mWorldData_){
             local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
@@ -214,45 +173,6 @@
         oceanNode.setScale(500, 500, 500)
         oceanNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
 
-    }
-
-    function constructPlayer(){
-        local playerEntry = ::ExplorationLogic.ActiveEnemyEntry(Enemy.NONE, Vec2(0, 0));
-
-        mPlayerNode_ = mParentNode_.createChildSceneNode();
-        local playerItem = _scene.createItem("player.mesh");
-        playerItem.setRenderQueueGroup(30);
-        mPlayerNode_.attachObject(playerItem);
-        mPlayerNode_.setScale(mMobScale_);
-
-        playerEntry.setEnemyNode(mPlayerNode_);
-
-
-        local receiverInfo = {
-            "type" : _COLLISION_PLAYER
-        };
-        local shape = _physics.getSphereShape(2);
-
-        local collisionObject = _physics.collision[TRIGGER].createReceiver(receiverInfo, shape);
-        _physics.collision[TRIGGER].addObject(collisionObject);
-        playerEntry.setCollisionShapes(collisionObject, null);
-
-        playerEntry.setId(-1);
-
-        {
-            local senderTable = {
-                "func" : "baseDamage",
-                "path" : "res://src/Content/DamageCallback.nut"
-                "type" : _COLLISION_ENEMY,
-                "event" : _COLLISION_ENTER
-            };
-            local shape = _physics.getCubeShape(1, 1, 1);
-            local collisionObject = _physics.collision[DAMAGE].createSender(senderTable, shape);
-            _physics.collision[DAMAGE].addObject(collisionObject);
-            playerEntry.setDamageShape(collisionObject);
-        }
-
-        return playerEntry;
     }
 
     function updatePlayerPos(playerPos){

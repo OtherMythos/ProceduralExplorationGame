@@ -165,7 +165,7 @@
     function resetGenMap_(){
         resetExplorationGenMap_();
         mSceneLogic_.resetExploration(mCurrentMapData_);
-        mPlayerEntry_ = mSceneLogic_.constructPlayer();
+        mPlayerEntry_ = ::ExplorationEntityFactory.constructPlayer();
         mPlayerEntry_.setPosition(Vec3(mCurrentMapData_.width / 2, 0, -mCurrentMapData_.height / 2));
         if(mGui_) mGui_.notifyNewMapData(mCurrentMapData_);
         //mSceneLogic_.updatePlayerPos(mPlayerEntry_.mPos_);
@@ -452,11 +452,11 @@
     }
 
     function appearEnemy(enemyType){
+        assert(mSceneLogic_ != null);
         local randVec = _random.randVec2();
         local targetPos = mPlayerEntry_.mPos_ + Vec3(5, 0, 5) + (Vec3(randVec.x, 0, randVec.y) * 20);
-        local entry = ActiveEnemyEntry(enemyType, Vec3(targetPos.x, 0, targetPos.z));
-        registerEnemyEntry(entry);
-        if(mSceneLogic_) mSceneLogic_.appearEnemy(entry);
+        local enemyEntry = ::ExplorationEntityFactory.constructEnemy(enemyType, targetPos);
+        registerEnemyEntry(enemyEntry);
     }
 
     function registerEnemyEntry(entry){
