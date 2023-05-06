@@ -8,7 +8,6 @@
     mPlayerNode_ = null;
     mMobScale_ = Vec3(0.2, 0.2, 0.2);
 
-    mPlaceNode_ = null;
     mActivePlaces_ = null;
 
     static WORLD_DEPTH = 20;
@@ -34,45 +33,10 @@
 
     function setupPlaces(){
         mActivePlaces_ = [];
-        mPlaceNode_ = mParentNode_.createChildSceneNode();
         foreach(c,i in mWorldData_.placeData){
-            local placeEntry = setupPlace_(mPlaceNode_, i, c);
+            local placeEntry = ::ExplorationEntityFactory.constructPlace(i, c);
             mActivePlaces_.append(placeEntry);
         }
-    }
-    function setupPlace_(parent, placeData, idx){
-        local targetPos = Vec3(placeData.originX, 0, -placeData.originY);
-        targetPos.y = getZForPos(targetPos);
-
-        local entry = ::ExplorationLogic.ActiveEnemyEntry(placeData.placeId, targetPos);
-
-        local placeNode = mPlaceNode_.createChildSceneNode();
-        local placeType = ::Places[placeData.placeId].getType();
-        local meshTarget = "overworldVillage.mesh";
-        if(placeType == PlaceType.TOWN && placeType == PlaceType.CITY) meshTarget = "overworldTown.mesh";
-        else if(placeType == PlaceType.GATEWAY) meshTarget = "overworldGateway.mesh";
-
-        placeNode.setPosition(targetPos);
-        local item = _scene.createItem(meshTarget);
-        item.setRenderQueueGroup(30);
-        placeNode.attachObject(item);
-        placeNode.setScale(0.3, 0.3, 0.3);
-
-        entry.setEnemyNode(placeNode);
-
-        local senderTable = {
-            "func" : "receivePlayerEntered",
-            "path" : "res://src/Logic/Scene/ExplorationScenePlaceScript.nut"
-            "id" : idx,
-            "type" : _COLLISION_PLAYER,
-            "event" : _COLLISION_ENTER | _COLLISION_LEAVE
-        };
-        local shape = _physics.getCubeShape(2, 8, 2);
-        local collisionObject = _physics.collision[TRIGGER].createSender(senderTable, shape, targetPos);
-        _physics.collision[TRIGGER].addObject(collisionObject);
-        entry.setCollisionShapes(collisionObject, null);
-
-        return entry;
     }
 
     function shutdown(){

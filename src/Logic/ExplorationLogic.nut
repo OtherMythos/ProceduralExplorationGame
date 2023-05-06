@@ -9,32 +9,27 @@
     ActiveEnemyEntry = class{
         mEnemy_ = Enemy.NONE;
         mPos_ = null;
-        mPhysicsInner_ = null;
-        mPhysicsOuter_ = null;
-        mPhysicsDamage_ = null;
-        mNode_ = null;
         mId_ = null;
         mEncountered_ = false;
-        constructor(enemyType, enemyPos){
+
+        mEntity_ = null;
+
+        constructor(enemyType, enemyPos, entity){
             mEnemy_ = enemyType;
             mPos_ = enemyPos;
-        }
-        function setCollisionShapes(inner, outer){
-            mPhysicsInner_ = inner;
-            mPhysicsOuter_ = outer;
-        }
-        function setDamageShape(obj){
-            mPhysicsDamage_ = obj;
-        }
-        function setEnemyNode(node){
-            mNode_ = node;
+            mEntity_ = entity;
         }
         function setPosition(pos){
             mPos_ = pos;
-            if(mNode_) mNode_.setPosition(pos);
-            if(mPhysicsInner_) mPhysicsInner_.setPosition(pos);
-            if(mPhysicsOuter_) mPhysicsOuter_.setPosition(pos);
-            if(mPhysicsDamage_) mPhysicsDamage_.setPosition(pos);
+            //if(mNode_) mNode_.setPosition(pos);
+            //if(mPhysicsInner_) mPhysicsInner_.setPosition(pos);
+            //if(mPhysicsOuter_) mPhysicsOuter_.setPosition(pos);
+            //if(mPhysicsDamage_) mPhysicsDamage_.setPosition(pos);
+
+            if(mEntity_) mEntity_.setPosition(SlotPosition(pos));
+        }
+        function getSceneNode(){
+            return _component.sceneNode.getNode(mEntity_);
         }
         function getPosition(){
             return mPos_;
@@ -54,14 +49,7 @@
             return mId_;
         }
         function destroy(){
-            if(mNode_){
-                mNode_.destroyNodeAndChildren();
-                mNode_ = null;
-            }
-            //The physics objects should just destroy themselves.
-            if(mPhysicsInner_) mPhysicsInner_ = null;
-            if(mPhysicsOuter_) mPhysicsOuter_ = null;
-            if(mPhysicsDamage_) mPhysicsDamage_ = null;
+            _entity.destroy(mEntity_);
         }
     }
 
@@ -255,6 +243,7 @@
             movePlayer(dir);
             return;
         }
+        return;
 
         /*
         foreach(c,i in mQueuedFlags_){
@@ -455,19 +444,24 @@
         assert(mSceneLogic_ != null);
         local randVec = _random.randVec2();
         local targetPos = mPlayerEntry_.mPos_ + Vec3(5, 0, 5) + (Vec3(randVec.x, 0, randVec.y) * 20);
-        local enemyEntry = ::ExplorationEntityFactory.constructEnemy(enemyType, targetPos);
-        registerEnemyEntry(enemyEntry);
+        //Claim the id. TODO Improve this.
+        local enemyId = registerEnemyEntry(null);
+        local enemyEntry = ::ExplorationEntityFactory.constructEnemy(enemyId, enemyType, targetPos);
+        mActiveEnemies_[enemyId] = enemyEntry;
+        //registerEnemyEntry(enemyEntry);
     }
 
     function registerEnemyEntry(entry){
         local idx = mActiveEnemies_.find(null);
         if(idx == null){
-            entry.setId(mActiveEnemies_.len());
+            //entry.setId(mActiveEnemies_.len());
+            idx = mActiveEnemies_.len();
             mActiveEnemies_.append(entry);
-            return;
+            return idx;
         }
-        entry.setId(idx);
+        //entry.setId(idx);
         mActiveEnemies_[idx] = entry;
+        return idx;
     }
 
     function checkForEncounter(){
@@ -674,7 +668,7 @@
         local firstTime = !placeEntry.mEncountered_;
         if(firstTime && placeEntry.mEnemy_ != PlaceId.GATEWAY){
             //Add the flag to the place.
-            local childNode = placeEntry.mNode_.createChildSceneNode();
+            local childNode = placeEntry.getSceneNode().createChildSceneNode();
             childNode.setPosition(0.5, 0, 0);
             childNode.setScale(1.5, 1.5, 1.5);
             local item = _scene.createItem("locationFlag.mesh");
