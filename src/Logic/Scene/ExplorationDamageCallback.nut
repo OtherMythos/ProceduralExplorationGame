@@ -1,10 +1,16 @@
 function baseDamage(id, type, internalId, sender, receiver){
     if(type != _COLLISION_ENTER) return;
 
-    _applyDamage(null, 5);
+    _applyDamage(receiver, 5);
 }
 
-function _applyDamage(entityId, damage){
-    //::Base.mExplorationLogic.
-    print("Applying 5 damage");
+::_applyDamage <- function(entity, damage){
+    if(!entity.valid()) return;
+    print("Applying damage " + damage);
+    local newHealth = _component.user[Component.HEALTH].get(entity, 0) - damage;
+    _component.user[Component.HEALTH].set(entity, 0, newHealth);
+    print("new health " + newHealth);
+    if(newHealth <= 0){
+        _entity.destroy(entity);
+    }
 }

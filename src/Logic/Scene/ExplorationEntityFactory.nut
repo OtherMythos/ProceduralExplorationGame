@@ -89,6 +89,9 @@
 
         entry.setPosition(targetPos);
 
+        _component.user[Component.HEALTH].add(en);
+        _component.user[Component.HEALTH].set(en, 0, 10);
+
         return entry;
     }
 
