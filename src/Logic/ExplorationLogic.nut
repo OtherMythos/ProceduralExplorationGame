@@ -84,6 +84,7 @@
     mQueuedEnemyEncountersLife_ = null;
     mNumQueuedEnemies_ = 0;
 
+    mProjectileManager_ = null;
     mExplorationStats_ = null;
     mGatewayPercentage_ = 0.0;
 
@@ -95,6 +96,7 @@
 
     constructor(){
         mSceneLogic_ = ExplorationSceneLogic();
+        mProjectileManager_ = ExplorationProjectileManager();
 
         mActiveEnemies_ = [];
         mQueuedFlags_ = array(NUM_PLAYER_QUEUED_FLAGS, null);
@@ -192,6 +194,7 @@
         ageItems();
 
         mSceneLogic_.updatePercentage(mExplorationPercentage_);
+        mProjectileManager_.update();
     }
 
     function checkExploration(){

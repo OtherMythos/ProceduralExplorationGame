@@ -23,6 +23,7 @@
         _doFile("res://src/Content/Places.nut");
         _doFile("res://src/Content/FoundObject.nut");
         _doFile("res://src/Content/CombatData.nut");
+        _doFile("res://src/Content/Projectiles.nut");
 
         _doFile("res://src/World/EntityFactory.nut");
         _doFile("res://src/World/World.nut");
@@ -78,6 +79,7 @@
 
         _doFile("res://src/Logic/ExplorationLogic.nut");
         _doFile("res://src/Logic/Scene/ExplorationSceneLogic.nut");
+        _doFile("res://src/Logic/ExplorationProjectileManager.nut");
         _doFile("res://src/Logic/Scene/ExplorationEntityFactory.nut");
         _doFile("res://src/Logic/CombatLogic.nut");
         _doFile("res://src/Logic/Scene/CombatSceneLogic.nut");

@@ -30,6 +30,10 @@
     function buttonPressed(widget, action){
         mMoveCooldown_ = TOTAL_COOLDOWN;
         widget.setDisabled(true);
+
+        local explorationLogic = ::Base.mExplorationLogic;
+        local playerPos = explorationLogic.mPlayerEntry_.mPos_.copy();
+        explorationLogic.mProjectileManager_.spawnProjectile(ProjectileId.AREA, playerPos, Vec3(0, 0, 0));
     }
 
     function setPosition(pos){
@@ -52,7 +56,6 @@
     function updateMoveCover(){
         local newPercent = mMoveCooldown_.tofloat() / TOTAL_COOLDOWN.tofloat()
         local newSize = Vec2(mSize_.x, mSize_.y * newPercent);
-        print(newSize);
         mMoveCover_.setSize(newSize);
         mMoveCover_.setHidden(newPercent <= 0);
         mButton_.setDisabled(newPercent > 0);

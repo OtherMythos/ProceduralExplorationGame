@@ -28,19 +28,7 @@
 
         playerEntry.setId(-1);
 
-        //
-            local senderTable = {
-                "func" : "baseDamage",
-                "path" : "res://src/Logic/Scene/ExplorationDamageCallback.nut"
-                "type" : _COLLISION_ENEMY,
-                "event" : _COLLISION_ENTER
-            };
-            local shape = _physics.getCubeShape(1, 1, 1);
-            local damageSender = _physics.collision[DAMAGE].createSender(senderTable, shape);
-            _physics.collision[DAMAGE].addObject(damageSender);
-        //
-
-        _component.collision.add(en, collisionObject, damageSender);
+        _component.collision.add(en, collisionObject);
 
         return playerEntry;
     }
