@@ -696,4 +696,13 @@
         pauseExploration();
         if(mGui_) mGui_.notifyGatewayEnd(mExplorationStats_);
     }
+
+    function performPlayerMove(moveId){
+        local playerPos = mPlayerEntry_.mPos_.copy();
+        local moveDef = ::Moves[moveId];
+        local targetProjectile = moveDef.getProjectile();
+        if(targetProjectile != null){
+            mProjectileManager_.spawnProjectile(targetProjectile, playerPos, Vec3(0, 0, 0));
+        }
+    }
 };

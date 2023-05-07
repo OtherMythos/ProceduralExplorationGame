@@ -24,6 +24,7 @@
         _doFile("res://src/Content/FoundObject.nut");
         _doFile("res://src/Content/CombatData.nut");
         _doFile("res://src/Content/Projectiles.nut");
+        _doFile("res://src/Content/Moves.nut");
 
         _doFile("res://src/World/EntityFactory.nut");
         _doFile("res://src/World/World.nut");

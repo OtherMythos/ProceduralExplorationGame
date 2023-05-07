@@ -7,8 +7,15 @@
     mMoveCover_ = null;
     mSize_ = null;
 
-    static TOTAL_COOLDOWN = 100;
+    mTotalCooldown_ = 100;
     mMoveCooldown_ = 0;
+
+    mMoves = [
+        MoveId.AREA,
+        MoveId.FIREBALL,
+        MoveId.AREA,
+        MoveId.AREA
+    ];
 
     constructor(parentWin, buttonId, bus){
         mParent_ = parentWin;
@@ -16,7 +23,7 @@
         mSize_ = Vec2(10, 10);
 
         local button = parentWin.createButton();
-        button.setText("Move");
+        button.setText(::Moves[mMoves[buttonId]].getName());
         button.setHidden(false);
         button.setUserId(buttonId);
         button.attachListenerForEvent(buttonPressed, _GUI_ACTION_PRESSED, this);
@@ -28,12 +35,13 @@
     }
 
     function buttonPressed(widget, action){
-        mMoveCooldown_ = TOTAL_COOLDOWN;
+        local targetMoveId = mMoves[widget.getUserId()];
+
+        mTotalCooldown_ = ::Moves[targetMoveId].getCooldown();
+        mMoveCooldown_ = mTotalCooldown_;
         widget.setDisabled(true);
 
-        local explorationLogic = ::Base.mExplorationLogic;
-        local playerPos = explorationLogic.mPlayerEntry_.mPos_.copy();
-        explorationLogic.mProjectileManager_.spawnProjectile(ProjectileId.AREA, playerPos, Vec3(0, 0, 0));
+        local explorationLogic = ::Base.mExplorationLogic.performPlayerMove(targetMoveId);
     }
 
     function setPosition(pos){
@@ -54,7 +62,7 @@
     }
 
     function updateMoveCover(){
-        local newPercent = mMoveCooldown_.tofloat() / TOTAL_COOLDOWN.tofloat()
+        local newPercent = mMoveCooldown_.tofloat() / mTotalCooldown_.tofloat()
         local newSize = Vec2(mSize_.x, mSize_.y * newPercent);
         mMoveCover_.setSize(newSize);
         mMoveCover_.setHidden(newPercent <= 0);

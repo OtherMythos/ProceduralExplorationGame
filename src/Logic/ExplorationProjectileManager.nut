@@ -38,9 +38,11 @@
     }
 
     function spawnProjectile(projId, pos, dir){
+        local projData = ::Projectiles[projId];
+
         local mesh = _mesh.create("cube");
         mesh.setPosition(pos);
-        mesh.setScale(0.1, 0.1, 0.1);
+        mesh.setScale(projData.mSize);
 
         local senderInfo = {
             "func" : "baseDamage",
@@ -49,7 +51,7 @@
             "type" : _COLLISION_ENEMY,
             "event" : _COLLISION_ENTER
         };
-        local shape = _physics.getCubeShape(1.1, 1.1, 1.1);
+        local shape = _physics.getCubeShape(projData.mSize);
 
         local damageSender = _physics.collision[DAMAGE].createSender(senderInfo, shape, pos);
         _physics.collision[DAMAGE].addObject(damageSender);
