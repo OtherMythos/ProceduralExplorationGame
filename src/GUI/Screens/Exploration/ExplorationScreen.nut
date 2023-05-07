@@ -10,6 +10,7 @@ enum ExplorationBusEvents{
     mLogicInterface_ = null;
     mExplorationItemsContainer_ = null;
     mExplorationEnemiesContainer_ = null;
+    mExplorationMovesContainer_ = null;
     mMoneyCounter_ = null;
     mExplorationBus_ = null;
     mPlaceHelperLabel_ = null;
@@ -77,7 +78,8 @@ enum ExplorationBusEvents{
         mExplorationItemsContainer_ = ExplorationItemsContainer(mWindow_, mExplorationBus_);
         mExplorationItemsContainer_.addToLayout(layoutLine);
 
-        mExplorationEnemiesContainer_ = ExplorationEnemiesContainer(mWindow_, mExplorationBus_);
+        //mExplorationEnemiesContainer_ = ExplorationEnemiesContainer(mWindow_, mExplorationBus_);
+        mExplorationMovesContainer_ = ExplorationMovesContainer(mWindow_, mExplorationBus_);
 
         //mExplorationProgressBar_ = ExplorationProgressBar(mWindow_, this);
         //mExplorationProgressBar_.addToLayout(layoutLine);
@@ -97,9 +99,14 @@ enum ExplorationBusEvents{
         mExplorationItemsContainer_.sizeForButtons();
         mWorldMapDisplay_.notifyResize();
 
-        mExplorationEnemiesContainer_.setSize(targetSize.x, targetSize.y/2);
-        mExplorationEnemiesContainer_.setPosition(Vec2(mExplorationItemsContainer_.getPosition().x, 5 + mExplorationItemsContainer_.getPosition().y + mExplorationItemsContainer_.getSize().y));
-        mExplorationEnemiesContainer_.sizeForButtons();
+        //mExplorationEnemiesContainer_.setSize(targetSize.x, targetSize.y/2);
+        //mExplorationEnemiesContainer_.setPosition(Vec2(mExplorationItemsContainer_.getPosition().x, 5 + mExplorationItemsContainer_.getPosition().y + mExplorationItemsContainer_.getSize().y));
+        //mExplorationEnemiesContainer_.sizeForButtons();
+
+        mExplorationMovesContainer_.setSize(targetSize.x, targetSize.y/2);
+        mExplorationMovesContainer_.setPosition(Vec2(mExplorationItemsContainer_.getPosition().x, 5 + mExplorationItemsContainer_.getPosition().y + mExplorationItemsContainer_.getSize().y));
+        mExplorationMovesContainer_.sizeForButtons();
+
 
         mPlaceHelperLabel_ = mWindow_.createLabel();
         mPlaceHelperLabel_.setPosition(0, 0);
@@ -127,7 +134,8 @@ enum ExplorationBusEvents{
     function update(){
         mLogicInterface_.tickUpdate();
         mExplorationItemsContainer_.update();
-        mExplorationEnemiesContainer_.update();
+        //mExplorationEnemiesContainer_.update();
+        mExplorationMovesContainer_.update();
         mMoneyCounter_.update();
     }
 
@@ -304,4 +312,5 @@ _doFile("res://src/GUI/Screens/Exploration/ExplorationProgressBar.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationWorldMapDisplay.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationFoundItemWidget.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationFoundEnemyWidget.nut");
+_doFile("res://src/GUI/Screens/Exploration/ExplorationMovesContainer.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationEndScreen.nut");
