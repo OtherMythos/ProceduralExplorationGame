@@ -79,6 +79,11 @@
         }
     }
 
+    function notifyPlayerMove(moveId){
+        assert(moveId >= 0 && moveId < mMoveButtons_.len());
+        return mMoveButtons_[moveId].notifyMovePerformed();
+    }
+
     function sizeForButtons(){
         //Actually sizing up the buttons has to be delayed until the window has its size.
         mLayoutLine_.setSize(mWindow_.getSize());

@@ -53,6 +53,13 @@
         }
     }
 
+    mPlayerMoves = [
+        MoveId.AREA,
+        MoveId.FIREBALL,
+        MoveId.AREA,
+        MoveId.AREA
+    ];
+
     mSceneLogic_ = null;
 
     mExplorationCount_ = 0;
@@ -88,7 +95,7 @@
     mExplorationStats_ = null;
     mGatewayPercentage_ = 0.0;
 
-    mMoveInputHandle_ = null;
+    mInputs_ = null;
 
     mDebugForceItem_ = ItemId.NONE;
 
@@ -106,7 +113,15 @@
         resetExploration_();
         processDebug_();
 
-        mMoveInputHandle_ = _input.getAxisActionHandle("LeftMove");
+        mInputs_ = {
+            "move": _input.getAxisActionHandle("Move"),
+            "playerMoves": [
+                _input.getButtonActionHandle("PerformMove1"),
+                _input.getButtonActionHandle("PerformMove2"),
+                _input.getButtonActionHandle("PerformMove3"),
+                _input.getButtonActionHandle("PerformMove4")
+            ]
+        };
     }
 
     //Check for debug flags
@@ -191,6 +206,7 @@
         //updatePercentage();
         checkExploration();
         checkPlayerMove();
+        checkPlayerCombatMoves();
         ageItems();
 
         mSceneLogic_.updatePercentage(mExplorationPercentage_);
@@ -207,14 +223,23 @@
         }
     }
 
+    function checkPlayerCombatMoves(){
+        foreach(c,i in mInputs_.playerMoves){
+            local buttonState = _input.getButtonAction(i, _INPUT_PRESSED);
+            if(buttonState){
+                triggerPlayerMove(c);
+            }
+        }
+    }
+
     function checkPlayerMove(){
         if(mEnemyEncountered_) return;
         if(mExplorationPaused_) return;
 
         //TODO ewww clean this up.
         local moved = false;
-        local xVal = _input.getAxisActionX(mMoveInputHandle_, _INPUT_ANY);
-        local yVal = _input.getAxisActionY(mMoveInputHandle_, _INPUT_ANY);
+        local xVal = _input.getAxisActionX(mInputs_.move, _INPUT_ANY);
+        local yVal = _input.getAxisActionY(mInputs_.move, _INPUT_ANY);
 
         local dir = Vec2(xVal, yVal);
         moved = (xVal != 0 || yVal != 0);
@@ -704,5 +729,19 @@
         if(targetProjectile != null){
             mProjectileManager_.spawnProjectile(targetProjectile, playerPos, Vec3(0, 0, 0));
         }
+    }
+
+    function triggerPlayerMove(moveId){
+        assert(moveId >= 0 && moveId < mPlayerMoves.len());
+        local targetMoveId = mPlayerMoves[moveId];
+
+        if(mGui_){
+            //TODO in future store the cooldown data in the logic and communicate with the bus.
+            local result = mGui_.notifyPlayerMove(moveId);
+            if(result){
+                performPlayerMove(targetMoveId);
+            }
+        }
+
     }
 };

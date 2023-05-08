@@ -300,6 +300,10 @@ enum ExplorationBusEvents{
         mLogicInterface_.scrapAllFoundObjects();
     }
 
+    function notifyPlayerMove(moveId){
+        return mExplorationMovesContainer_.notifyPlayerMove(moveId);
+    }
+
 
     function notifyGatewayEnd(explorationStats){
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_END_SCREEN, explorationStats), null, 1);

@@ -9,21 +9,16 @@
 
     mTotalCooldown_ = 100;
     mMoveCooldown_ = 0;
-
-    mMoves = [
-        MoveId.AREA,
-        MoveId.FIREBALL,
-        MoveId.AREA,
-        MoveId.AREA
-    ];
+    mTargetMoveId_ = MoveId.NONE;
 
     constructor(parentWin, buttonId, bus){
         mParent_ = parentWin;
         mBus_ = bus;
         mSize_ = Vec2(10, 10);
+        mTargetMoveId_ = ::Base.mExplorationLogic.mPlayerMoves[buttonId];
 
         local button = parentWin.createButton();
-        button.setText(::Moves[mMoves[buttonId]].getName());
+        button.setText(::Moves[mTargetMoveId_].getName());
         button.setHidden(false);
         button.setUserId(buttonId);
         button.attachListenerForEvent(buttonPressed, _GUI_ACTION_PRESSED, this);
@@ -35,13 +30,16 @@
     }
 
     function buttonPressed(widget, action){
-        local targetMoveId = mMoves[widget.getUserId()];
+        ::Base.mExplorationLogic.triggerPlayerMove(widget.getUserId());
+    }
 
-        mTotalCooldown_ = ::Moves[targetMoveId].getCooldown();
+    function notifyMovePerformed(){
+        if(mMoveCooldown_ > 0) return false;
+        mTotalCooldown_ = ::Moves[mTargetMoveId_].getCooldown();
         mMoveCooldown_ = mTotalCooldown_;
-        widget.setDisabled(true);
+        mButton_.setDisabled(true);
 
-        local explorationLogic = ::Base.mExplorationLogic.performPlayerMove(targetMoveId);
+        return true;
     }
 
     function setPosition(pos){

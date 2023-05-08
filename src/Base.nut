@@ -8,6 +8,7 @@
     "mInventory": null,
     "mPlayerStats": null,
     "mDialogManager": null,
+    mInputManager = null
 
     mCurrentWorld_ = null
 
@@ -17,6 +18,7 @@
         _gui.loadSkins("res://assets/skins/ui.json");
 
         _doFile("res://src/Helpers.nut");
+        _doFile("res://src/System/InputManager.nut");
         _doFile("res://src/Util/VoxToMesh.nut");
 
         _doFile("res://src/Content/Items.nut");
@@ -88,6 +90,8 @@
 
         _doFile("res://src/GUI/RenderIconManager.nut");
         ::RenderIconManager.setup();
+
+        ::InputManager.setup();
 
         mExplorationLogic = ExplorationLogic();
         local enemyData = [
