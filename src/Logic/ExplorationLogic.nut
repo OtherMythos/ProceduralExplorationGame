@@ -271,7 +271,6 @@
             movePlayer(dir);
             return;
         }
-        return;
 
         /*
         foreach(c,i in mQueuedFlags_){
@@ -289,8 +288,11 @@
             }
         }
         if(targetPos == null){
-            //If no queued flags were found use the system intended location.
-            targetPos = getSystemDeterminedFlag();
+            local disableAutoMove = _settings.getUserSetting("disableAutoMove");
+            if(!disableAutoMove){
+                //If no queued flags were found use the system intended location.
+                targetPos = getSystemDeterminedFlag();
+            }
         }
         if(targetPos != null){
             local finished = movePlayerToPos(targetPos);
