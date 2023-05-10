@@ -47,6 +47,8 @@
         _doFile("res://src/GUI/Widgets/InventoryMoneyCounter.nut");
         _doFile("res://src/GUI/Widgets/ProgressBar.nut");
 
+        _doFile("res://src/GUI/Billboard/BillboardManager.nut");
+
         _doFile("res://src/GUI/PopupManager.nut");
         _doFile("res://src/GUI/Popups/Popup.nut");
         _doFile("res://src/GUI/Popups/BottomOfScreenPopup.nut");

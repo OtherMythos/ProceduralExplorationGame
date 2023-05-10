@@ -22,6 +22,7 @@
         button.setHidden(false);
         button.setUserId(buttonId);
         button.attachListenerForEvent(buttonPressed, _GUI_ACTION_PRESSED, this);
+        //button.setKeyboardNavigable(false);
         mButton_ = button;
 
         mMoveCover_ = parentWin.createPanel();

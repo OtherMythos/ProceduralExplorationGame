@@ -31,41 +31,6 @@ enum ExplorationBusEvents{
         mWindow_.setVisualsEnabled(false);
         mWindow_.setClipBorders(0, 0, 0, 0);
 
-        if(false){
-            local helperButtonLayout = _gui.createLayoutLine();
-
-            local resetButton = mWindow_.createButton();
-            resetButton.setText("Restart exploration");
-            resetButton.attachListenerForEvent(function(widget, action){
-                mLogicInterface_.resetExploration();
-            }, _GUI_ACTION_PRESSED, this);
-            helperButtonLayout.addCell(resetButton);
-
-            local inventoryButton = mWindow_.createButton();
-            inventoryButton.setText("Inventory");
-            inventoryButton.attachListenerForEvent(function(widget, action){
-                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, {"inventory": ::Base.mInventory, "equipStats": ::Base.mPlayerStats.mPlayerCombatStats.mEquippedItems}));
-            }, _GUI_ACTION_PRESSED, this);
-            helperButtonLayout.addCell(inventoryButton);
-
-            local exploreAgain = mWindow_.createButton();
-            exploreAgain.setText("Trigger encounter");
-            exploreAgain.attachListenerForEvent(function(widget, action){
-                mLogicInterface_.processEncounter(Enemy.GOBLIN);
-            }, _GUI_ACTION_PRESSED, this);
-            helperButtonLayout.addCell(exploreAgain);
-
-            local worldScene = mWindow_.createButton();
-            worldScene.setText("World scene");
-            worldScene.attachListenerForEvent(function(widget, action){
-                ::ScreenManager.transitionToScreen(Screen.WORLD_SCENE_SCREEN);
-            }, _GUI_ACTION_PRESSED, this);
-            helperButtonLayout.addCell(worldScene);
-
-            helperButtonLayout.setPosition(5, 5);
-            helperButtonLayout.layout();
-        }
-
         local layoutLine = _gui.createLayoutLine();
 
         mMoneyCounter_ = ::GuiWidgets.InventoryMoneyCounter(mWindow_);
@@ -137,6 +102,7 @@ enum ExplorationBusEvents{
         //mExplorationEnemiesContainer_.update();
         mExplorationMovesContainer_.update();
         mMoneyCounter_.update();
+        mWorldMapDisplay_.update();
     }
 
 

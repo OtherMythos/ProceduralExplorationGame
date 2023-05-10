@@ -476,7 +476,7 @@
         local targetPos = mPlayerEntry_.mPos_ + Vec3(5, 0, 5) + (Vec3(randVec.x, 0, randVec.y) * 20);
         //Claim the id. TODO Improve this.
         local enemyId = registerEnemyEntry(null);
-        local enemyEntry = ::ExplorationEntityFactory.constructEnemy(enemyId, enemyType, targetPos);
+        local enemyEntry = ::ExplorationEntityFactory.constructEnemy(enemyId, enemyType, targetPos, mGui_);
         mActiveEnemies_[enemyId] = enemyEntry;
         //registerEnemyEntry(enemyEntry);
     }

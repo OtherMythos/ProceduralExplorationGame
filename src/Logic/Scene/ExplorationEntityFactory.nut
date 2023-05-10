@@ -33,7 +33,7 @@
         return playerEntry;
     }
 
-    function constructEnemy(enemyId, enemyType, pos){
+    function constructEnemy(enemyId, enemyType, pos, explorationScreen){
         local en = _entity.create(SlotPosition());
         if(!en.valid()) throw "Error creating entity";
         local zPos = getZForPos(pos);
@@ -79,6 +79,8 @@
 
         _component.user[Component.HEALTH].add(en);
         _component.user[Component.HEALTH].set(en, 0, 10);
+
+        explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(enemyNode, ::BillboardManager.Billboard(explorationScreen.mWindow_));
 
         return entry;
     }

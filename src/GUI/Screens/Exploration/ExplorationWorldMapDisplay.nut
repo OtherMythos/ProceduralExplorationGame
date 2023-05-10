@@ -7,6 +7,8 @@
     mMapViewer_ = null;
     mMapViewerWindow_ = null;
 
+    mBillboardManager_ = null;
+
     constructor(parentWin){
         mExplorationScenePanel_ = parentWin.createPanel();
         mExplorationScenePanel_.setPosition(0, 0);
@@ -26,6 +28,7 @@
     }
 
     function shutdownCompositor_(){
+        mBillboardManager_.shutdown();
         if(mCompositorId_ == null) return;
         ::CompositorManager.destroyCompositorWorkspace(mCompositorId_);
         mCompositorId_ = null;
@@ -39,13 +42,7 @@
         shutdownCompositor_();
         mMapViewer_.shutdown();
     }
-
-
-    function notifyNewMapData(data){
-        mMapViewer_.displayMapData(data, false);
-    }
-
-    function notifyResize(){
+    function setupCompositor(){
         local winSize = mExplorationScenePanel_.getSize();
 
         local compId = ::CompositorManager.createCompositorWorkspace("renderTexture30Workspace", winSize, CompositorSceneType.EXPLORATION);
@@ -53,6 +50,23 @@
         mCompositorId_ = compId;
         mExplorationScenePanel_.setDatablock(datablock);
 
+        local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION);
+        mBillboardManager_ = ::BillboardManager(camera, winSize);
+    }
+
+    function update(){
+        mBillboardManager_.update();
+    }
+
+
+    function notifyNewMapData(data){
+        mMapViewer_.displayMapData(data, false);
+    }
+
+    function notifyResize(){
+        setupCompositor();
+
+        local winSize = mExplorationScenePanel_.getSize();
         local basePos = mExplorationScenePanel_.getPosition();
         local targetSize = winSize * 0.3;
         mMapViewerWindow_.setClipBorders(0, 0, 0, 0);
