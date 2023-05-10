@@ -54,7 +54,7 @@
 
     /**
      * Display an effect and set it to alive.
-     * 
+     *
      * @param1:effectId: The id of the effect to create.
      */
     function displayEffect(effectId){

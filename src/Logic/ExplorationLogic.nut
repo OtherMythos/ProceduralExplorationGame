@@ -143,11 +143,20 @@
 
     function shutdown(){
         mSceneLogic_.shutdown();
+
+        _event.unsubscribe(Event.PLAYER_DIED, processPlayerDeath, this);
     }
 
     function setup(){
         resetGenMap_();
         //mSceneLogic_.setup();
+
+        _event.subscribe(Event.PLAYER_DIED, processPlayerDeath, this);
+    }
+
+    function processPlayerDeath(id, data){
+        print("Received player death");
+        if(mGui_) mGui_.notifyPlayerDeath();
     }
 
     function resetExploration_(){
@@ -175,7 +184,7 @@
     function resetGenMap_(){
         resetExplorationGenMap_();
         mSceneLogic_.resetExploration(mCurrentMapData_);
-        mPlayerEntry_ = ::ExplorationEntityFactory.constructPlayer();
+        mPlayerEntry_ = ::ExplorationEntityFactory.constructPlayer(mGui_);
         mPlayerEntry_.setPosition(Vec3(mCurrentMapData_.width / 2, 0, -mCurrentMapData_.height / 2));
         if(mGui_) mGui_.notifyNewMapData(mCurrentMapData_);
         //mSceneLogic_.updatePlayerPos(mPlayerEntry_.mPos_);
@@ -716,10 +725,14 @@
 
     function performPlayerMove(moveId){
         local playerPos = mPlayerEntry_.mPos_.copy();
+        performMove(moveId, playerPos, null, _COLLISION_ENEMY)
+    }
+
+    function performMove(moveId, pos, dir, collisionType){
         local moveDef = ::Moves[moveId];
         local targetProjectile = moveDef.getProjectile();
         if(targetProjectile != null){
-            mProjectileManager_.spawnProjectile(targetProjectile, playerPos, Vec3(0, 0, 0));
+            mProjectileManager_.spawnProjectile(targetProjectile, pos, dir, collisionType);
         }
     }
 

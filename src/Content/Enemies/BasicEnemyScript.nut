@@ -1,6 +1,8 @@
 enum BasicEnemyEvents{
     PLAYER_SPOTTED,
-    PLAYER_NOT_SPOTTED
+    PLAYER_NOT_SPOTTED,
+    PLAYER_IN_ATTACK_RANGE,
+    PLAYER_OUT_ATTACK_RANGE,
 };
 
 function receivePlayerSpotted(id, type, internal, sender, receiver){
@@ -13,10 +15,11 @@ function receivePlayerSpotted(id, type, internal, sender, receiver){
     }
 }
 function receivePlayerInner(id, type, internal, sender, receiver){
-    return;
     if(type == _COLLISION_ENTER){
-        local enemyData = ::Combat.CombatStats(Enemy.GOBLIN);
-        ::Base.mExplorationLogic.notifyEncounter(id, enemyData);
+        ::w.e[sender.getId()].notify(BasicEnemyEvents.PLAYER_IN_ATTACK_RANGE, sender);
+    }
+    else if(type == _COLLISION_LEAVE){
+        ::w.e[sender.getId()].notify(BasicEnemyEvents.PLAYER_OUT_ATTACK_RANGE, sender);
     }
 }
 
@@ -29,6 +32,10 @@ function destroyed(eid){
 }
 
 ::BasicEnemyMachine <- class extends ::CombatStateMachine{
+    attacking = false;
+    maxAttackCooldown = 30;
+    attackCooldown = 30;
+
     idleState = {
         "update": function(ctx, e, data) {},
         "notify": function(ctx, id, e, data){
@@ -40,10 +47,26 @@ function destroyed(eid){
     chasingPlayerState = {
         "update": function(ctx, e, data) {
             ::Base.mExplorationLogic.moveEnemyToPlayer(e.getId());
+
+            if(ctx.attacking){
+                ctx.attackCooldown--;
+                if(ctx.attackCooldown <= 0){
+                    ctx.attackCooldown = ctx.maxAttackCooldown;
+
+                    ::Base.mExplorationLogic.performMove(MoveId.AREA, e.getPosition().toVector3(), null, _COLLISION_PLAYER);
+                }
+            }
         },
         "notify": function(ctx, id, e, data){
             if(id == BasicEnemyEvents.PLAYER_NOT_SPOTTED){
                 ctx.switchState(ctx.idleState);
+            }
+
+            else if(id == BasicEnemyEvents.PLAYER_IN_ATTACK_RANGE){
+                ctx.attacking = true;
+            }
+            else if(id == BasicEnemyEvents.PLAYER_OUT_ATTACK_RANGE){
+                ctx.attacking = false;
             }
         }
     };

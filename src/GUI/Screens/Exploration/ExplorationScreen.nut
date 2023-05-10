@@ -274,6 +274,10 @@ enum ExplorationBusEvents{
     function notifyGatewayEnd(explorationStats){
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_END_SCREEN, explorationStats), null, 1);
     }
+
+    function notifyPlayerDeath(){
+        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLAYER_DEATH_SCREEN, null), null, 1);
+    }
 };
 
 _doFile("res://src/GUI/Screens/Exploration/ExplorationItemsContainer.nut");
@@ -284,3 +288,4 @@ _doFile("res://src/GUI/Screens/Exploration/ExplorationFoundItemWidget.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationFoundEnemyWidget.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationMovesContainer.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationEndScreen.nut");
+_doFile("res://src/GUI/Screens/Exploration/ExplorationPlayerDeathScreen.nut");

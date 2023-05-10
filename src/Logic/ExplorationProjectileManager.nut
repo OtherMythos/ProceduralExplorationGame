@@ -37,7 +37,7 @@
         mQueuedDestructionProjectiles_.clear();
     }
 
-    function spawnProjectile(projId, pos, dir){
+    function spawnProjectile(projId, pos, dir, collisionType=_COLLISION_ENEMY){
         local projData = ::Projectiles[projId];
 
         local mesh = _mesh.create("cube");
@@ -48,7 +48,7 @@
             "func" : "baseDamage",
             "path" : "res://src/Logic/Scene/ExplorationDamageCallback.nut"
             "id" : mCurrentProjectileId_,
-            "type" : _COLLISION_ENEMY,
+            "type" : collisionType,
             "event" : _COLLISION_ENTER
         };
         local shape = _physics.getCubeShape(projData.mSize);

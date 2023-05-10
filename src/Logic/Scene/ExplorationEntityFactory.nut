@@ -6,7 +6,7 @@
         return ::Base.mExplorationLogic.mSceneLogic_.getZForPos(pos);
     }
 
-    function constructPlayer(){
+    function constructPlayer(explorationScreen){
         local en = _entity.create(SlotPosition());
         if(!en.valid()) throw "Error creating entity";
         local playerEntry = ::ExplorationLogic.ActiveEnemyEntry(Enemy.NONE, Vec2(0, 0), en);
@@ -26,9 +26,30 @@
         local collisionObject = _physics.collision[TRIGGER].createReceiver(receiverInfo, shape);
         _physics.collision[TRIGGER].addObject(collisionObject);
 
+        //
+            local receiverInfo = {
+                "type" : _COLLISION_PLAYER
+            };
+            local shape = _physics.getSphereShape(2.1);
+
+            local damageReceiver = _physics.collision[DAMAGE].createReceiver(receiverInfo, shape);
+            _physics.collision[DAMAGE].addObject(damageReceiver);
+        //
+
         playerEntry.setId(-1);
 
-        _component.collision.add(en, collisionObject);
+        _component.collision.add(en, collisionObject, damageReceiver);
+
+        local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(playerNode, ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_));
+        _component.user[Component.MISC].add(en);
+        _component.user[Component.MISC].set(en, 0, billboardIdx);
+
+        local totalHealth = 100;
+        _component.user[Component.HEALTH].add(en);
+        _component.user[Component.HEALTH].set(en, 0, totalHealth);
+        _component.user[Component.HEALTH].set(en, 1, totalHealth);
+
+        _component.script.add(en, "res://src/Content/Enemies/PlayerScript.nut");
 
         return playerEntry;
     }
@@ -58,7 +79,7 @@
         _physics.collision[TRIGGER].addObject(collisionObject);
 
         senderTable["func"] = "receivePlayerInner";
-        local innerShape = _physics.getCubeShape(1, 1, 1);
+        local innerShape = _physics.getCubeShape(3, 3, 3);
         local innerCollisionObject = _physics.collision[TRIGGER].createSender(senderTable, innerShape, pos);
         _physics.collision[TRIGGER].addObject(innerCollisionObject);
 
