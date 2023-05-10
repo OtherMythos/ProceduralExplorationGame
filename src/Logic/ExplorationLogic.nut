@@ -1,3 +1,8 @@
+::w <- {
+}
+::w.e <- {
+}
+
 /**
  * Logic interface for exploration.
  *
@@ -105,7 +110,7 @@
         mSceneLogic_ = ExplorationSceneLogic();
         mProjectileManager_ = ExplorationProjectileManager();
 
-        mActiveEnemies_ = [];
+        mActiveEnemies_ = {};
         mQueuedFlags_ = array(NUM_PLAYER_QUEUED_FLAGS, null);
         mQueuedEnemyEncounters_ = [];
         mQueuedEnemyEncountersLife_ = [];
@@ -350,6 +355,7 @@
         mPlayerEntry_.moveQueryZ(Vec3(dir.x, 0, dir.y), mSceneLogic_);
         local playerPos = Vec3(mPlayerEntry_.mPos_.x, 0, mPlayerEntry_.mPos_.z);
         mSceneLogic_.updatePlayerPos(playerPos);
+        _world.setPlayerPosition(SlotPosition(playerPos));
         //TODO remove direct access.
         mGui_.mWorldMapDisplay_.mMapViewer_.setPlayerPosition(playerPos.x, playerPos.z);
     }
@@ -474,24 +480,8 @@
         assert(mSceneLogic_ != null);
         local randVec = _random.randVec2();
         local targetPos = mPlayerEntry_.mPos_ + Vec3(5, 0, 5) + (Vec3(randVec.x, 0, randVec.y) * 20);
-        //Claim the id. TODO Improve this.
-        local enemyId = registerEnemyEntry(null);
-        local enemyEntry = ::ExplorationEntityFactory.constructEnemy(enemyId, enemyType, targetPos, mGui_);
-        mActiveEnemies_[enemyId] = enemyEntry;
-        //registerEnemyEntry(enemyEntry);
-    }
-
-    function registerEnemyEntry(entry){
-        local idx = mActiveEnemies_.find(null);
-        if(idx == null){
-            //entry.setId(mActiveEnemies_.len());
-            idx = mActiveEnemies_.len();
-            mActiveEnemies_.append(entry);
-            return idx;
-        }
-        //entry.setId(idx);
-        mActiveEnemies_[idx] = entry;
-        return idx;
+        local enemyEntry = ::ExplorationEntityFactory.constructEnemy(enemyType, targetPos, mGui_);
+        mActiveEnemies_.rawset(enemyEntry.mEntity_.getId(), enemyEntry);
     }
 
     function checkForEncounter(){

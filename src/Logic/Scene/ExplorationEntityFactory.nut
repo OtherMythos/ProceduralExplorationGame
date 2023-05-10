@@ -33,7 +33,7 @@
         return playerEntry;
     }
 
-    function constructEnemy(enemyId, enemyType, pos, explorationScreen){
+    function constructEnemy(enemyType, pos, explorationScreen){
         local en = _entity.create(SlotPosition());
         if(!en.valid()) throw "Error creating entity";
         local zPos = getZForPos(pos);
@@ -49,8 +49,7 @@
 
         local senderTable = {
             "func" : "receivePlayerSpotted",
-            "path" : "res://src/Logic/Scene/ExplorationSceneEntityScript.nut",
-            "id" : enemyId,
+            "path" : "res://src/Content/Enemies/BasicEnemyScript.nut",
             "type" : _COLLISION_PLAYER,
             "event" : _COLLISION_ENTER | _COLLISION_LEAVE | _COLLISION_INSIDE
         };
@@ -85,6 +84,11 @@
         local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(enemyNode, ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_));
         _component.user[Component.MISC].add(en);
         _component.user[Component.MISC].set(en, 0, billboardIdx);
+
+        _component.script.add(en, "res://src/Content/Enemies/BasicEnemyScript.nut");
+
+        local machine = ::BasicEnemyMachine();
+        ::w.e.rawset(en.getId(), machine);
 
         return entry;
     }

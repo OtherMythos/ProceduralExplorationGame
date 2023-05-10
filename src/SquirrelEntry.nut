@@ -5,6 +5,7 @@ function start(){
     ::CompositorManager.setup();
 
     _doFile("res://src/Util/StateMachine.nut");
+    _doFile("res://src/Util/CombatStateMachine.nut");
 
     _gui.setScrollSpeed(5.0);
 
