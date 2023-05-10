@@ -30,5 +30,5 @@ enum MoveId{
 ::Moves <- array(MoveId.MAX, null);
 
 ::Moves[MoveId.NONE] = MoveDef("None");
-::Moves[MoveId.AREA] = MoveDef("Area", 100, ProjectileId.AREA);
+::Moves[MoveId.AREA] = MoveDef("Area", 5, ProjectileId.AREA);
 ::Moves[MoveId.FIREBALL] = MoveDef("Fireball", 50, ProjectileId.FIREBALL);

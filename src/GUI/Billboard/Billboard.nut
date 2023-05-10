@@ -1,13 +1,13 @@
 ::BillboardManager.Billboard <- class{
 
     mPanel_ = null;
+    mSize_ = null;
 
     constructor(parent){
-        local panel = parent.createPanel();
-        panel.setHidden(false);
-        panel.setSize(10, 10);
+    }
 
-        mPanel_ = panel;
+    function destroy(){
+
     }
 
     function posVisible(pos){

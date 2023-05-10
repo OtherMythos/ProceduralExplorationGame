@@ -77,10 +77,14 @@
 
         entry.setPosition(targetPos);
 
+        local totalHealth = 10;
         _component.user[Component.HEALTH].add(en);
-        _component.user[Component.HEALTH].set(en, 0, 10);
+        _component.user[Component.HEALTH].set(en, 0, totalHealth);
+        _component.user[Component.HEALTH].set(en, 1, totalHealth);
 
-        explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(enemyNode, ::BillboardManager.Billboard(explorationScreen.mWindow_));
+        local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(enemyNode, ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_));
+        _component.user[Component.MISC].add(en);
+        _component.user[Component.MISC].set(en, 0, billboardIdx);
 
         return entry;
     }

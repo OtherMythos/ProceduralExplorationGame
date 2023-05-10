@@ -7,7 +7,8 @@ const SCREENS_START_Z = 40;
 const POPUPS_START_Z = 60;
 
 enum Component{
-    HEALTH = 0
+    HEALTH = 0,
+    MISC = 1
 }
 
 enum Enemy{
