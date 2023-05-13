@@ -1,4 +1,4 @@
-enum CoinEffectStages{
+enum SpreadCoinEffectStages{
     NONE,
     INITIAL_EXPAND,
     IDLE,
@@ -9,14 +9,14 @@ enum CoinEffectStages{
 }
 const COIN_EFFECT_COIN_Z = 10;
 
-local CoinEffectStateMachine = class extends ::Util.StateMachine{
-    mStates_ = array(CoinEffectStages.MAX);
+local SpreadCoinEffectStateMachine = class extends ::Util.StateMachine{
+    mStates_ = array(SpreadCoinEffectStages.MAX);
 };
 
 {
-    CoinEffectStateMachine.mStates_[CoinEffectStages.INITIAL_EXPAND] = class extends ::Util.State{
+    SpreadCoinEffectStateMachine.mStates_[SpreadCoinEffectStages.INITIAL_EXPAND] = class extends ::Util.State{
         mTotalCount_ = 30
-        mNextState_ = CoinEffectStages.IDLE;
+        mNextState_ = SpreadCoinEffectStages.IDLE;
         function start(data){
             foreach(i in data.coins){
                 i.setPosition(0, 0, COIN_EFFECT_COIN_Z);
@@ -30,15 +30,15 @@ local CoinEffectStateMachine = class extends ::Util.StateMachine{
             }
         }
     };
-    CoinEffectStateMachine.mStates_[CoinEffectStages.IDLE] = class extends ::Util.State{
+    SpreadCoinEffectStateMachine.mStates_[SpreadCoinEffectStages.IDLE] = class extends ::Util.State{
         mTotalCount_ = 20
-        mNextState_ = CoinEffectStages.MERGE_TO_FINISH;
+        mNextState_ = SpreadCoinEffectStages.MERGE_TO_FINISH;
         function start(data){ }
         function update(p, data){ }
     };
-    CoinEffectStateMachine.mStates_[CoinEffectStages.MERGE_TO_FINISH] = class extends ::Util.State{
+    SpreadCoinEffectStateMachine.mStates_[SpreadCoinEffectStages.MERGE_TO_FINISH] = class extends ::Util.State{
         mTotalCount_ = 50
-        mNextState_ = CoinEffectStages.SHRINK_TO_FINISH;
+        mNextState_ = SpreadCoinEffectStages.SHRINK_TO_FINISH;
         function start(data){ }
         function update(p, data){
             local animPercentage = p * p * p * p * p;
@@ -53,9 +53,9 @@ local CoinEffectStateMachine = class extends ::Util.StateMachine{
             }
         }
     };
-    CoinEffectStateMachine.mStates_[CoinEffectStages.SHRINK_TO_FINISH] = class extends ::Util.State{
+    SpreadCoinEffectStateMachine.mStates_[SpreadCoinEffectStages.SHRINK_TO_FINISH] = class extends ::Util.State{
         mTotalCount_ = 8
-        mNextState_ = CoinEffectStages.NONE;
+        mNextState_ = SpreadCoinEffectStages.NONE;
         function start(data){ }
         function update(p, data){
             for(local i = 0; i < data.coins.len(); i++){
@@ -68,7 +68,7 @@ local CoinEffectStateMachine = class extends ::Util.StateMachine{
     };
 }
 
-::EffectManager.Effects[Effect.COIN_EFFECT] = class extends ::Effect{
+::EffectManager.Effects[Effect.SPREAD_COIN_EFFECT] = class extends ::Effect{
 
     mParentNode_ = null;
     mCoinPos_ = null;
@@ -103,8 +103,8 @@ local CoinEffectStateMachine = class extends ::Util.StateMachine{
         mCoins_ = createInitialCoins(mNumCoins_, mParentNode_, mStartPos_, mScale_);
         mCoinPos_ = setupCoinPositions(mNumCoins_, Vec2(-mCellSize_ * CELL_WIDTH / 2, -mCellSize_ * CELL_HEIGHT / 2), mCellSize_);
 
-        mStateMachine_ = CoinEffectStateMachine({"coins": mCoins_, "pos": mCoinPos_, "start": mStartPos_, "end": mEndPos_, "scale": mScale_, "halfScale": mScale_ / 2});
-        mStateMachine_.setState(CoinEffectStages.INITIAL_EXPAND);
+        mStateMachine_ = SpreadCoinEffectStateMachine({"coins": mCoins_, "pos": mCoinPos_, "start": mStartPos_, "end": mEndPos_, "scale": mScale_, "halfScale": mScale_ / 2});
+        mStateMachine_.setState(SpreadCoinEffectStages.INITIAL_EXPAND);
 
     }
 

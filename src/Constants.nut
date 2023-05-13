@@ -100,7 +100,8 @@ enum Popup{
 
 enum Effect{
     EFFECT,
-    COIN_EFFECT,
+    SPREAD_COIN_EFFECT,
+    LINEAR_COIN_EFFECT,
     FOUND_ITEM_EFFECT,
     FOUND_ITEM_IDLE_EFFECT,
 

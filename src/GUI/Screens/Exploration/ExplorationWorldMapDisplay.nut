@@ -16,6 +16,7 @@
         mMapViewerWindow_ = parentWin.createWindow();
         mMapViewerPanel_ = mMapViewerWindow_.createPanel();
         mMapViewer_ = MapViewer();
+        mMapViewerWindow_.setHidden(true);
         mMapViewer_.setLabelWindow(mMapViewerWindow_);
     }
 

@@ -11,13 +11,16 @@
 
         local layoutLine = _gui.createLayoutLine();
 
-        local buttonOptions = ["Trigger popup", "Trigger coin effect", "Generate render icon"];
+        local buttonOptions = ["Trigger popup", "Trigger spread coin effect", "Trigger linear coin effect", "Generate render icon"];
         local buttonFunctions = [
             function(widget, action){
                 ::PopupManager.displayPopup(Popup.BOTTOM_OF_SCREEN);
             },
             function(widget, action){
-                ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.COIN_EFFECT, {"numCoins": 10, "start": Vec2(0, 0), "end": Vec2(-2, 0), "money": 10}));
+                ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"numCoins": 10, "start": Vec2(0, 0), "end": Vec2(-2, 0), "money": 10}));
+            },
+            function(widget, action){
+                ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": 10, "start": Vec2(0, 0), "end": Vec2(-4, -4), "money": 10, "coinScale": 0.1}));
             },
             function(widget, action){
                 local renderIcon = ::RenderIconManager.createIcon("cube");

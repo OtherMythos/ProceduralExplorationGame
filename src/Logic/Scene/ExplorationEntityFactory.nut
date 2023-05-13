@@ -74,7 +74,7 @@
             "type" : _COLLISION_PLAYER,
             "event" : _COLLISION_ENTER | _COLLISION_LEAVE | _COLLISION_INSIDE
         };
-        local shape = _physics.getCubeShape(8, 4, 8);
+        local shape = _physics.getCubeShape(32, 4, 32);
         local collisionObject = _physics.collision[TRIGGER].createSender(senderTable, shape, pos);
         _physics.collision[TRIGGER].addObject(collisionObject);
 
