@@ -39,7 +39,7 @@
         mMoneyAnimating_ = true;
     }
 
-    function getPosition(){
+    function getPositionWindowPos(){
         return ::EffectManager.getWorldPositionForWindowPos(mMoneyLabel_.getCentre());
     }
 

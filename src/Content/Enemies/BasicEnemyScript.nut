@@ -7,7 +7,8 @@ enum BasicEnemyEvents{
 
 function receivePlayerSpotted(id, type, internal, sender, receiver){
     if(type == _COLLISION_ENTER){
-        ::w.e[sender.getId()].notify(BasicEnemyEvents.PLAYER_SPOTTED, sender);
+        local t = sender.getId();
+        if(::w.e.rawin(t)) ::w.e[sender.getId()].notify(BasicEnemyEvents.PLAYER_SPOTTED, sender);
     }
     else if(type == _COLLISION_LEAVE){
         local t = sender.getId();
@@ -16,10 +17,12 @@ function receivePlayerSpotted(id, type, internal, sender, receiver){
 }
 function receivePlayerInner(id, type, internal, sender, receiver){
     if(type == _COLLISION_ENTER){
-        ::w.e[sender.getId()].notify(BasicEnemyEvents.PLAYER_IN_ATTACK_RANGE, sender);
+        local t = sender.getId();
+        if(::w.e.rawin(t)) ::w.e[sender.getId()].notify(BasicEnemyEvents.PLAYER_IN_ATTACK_RANGE, sender);
     }
     else if(type == _COLLISION_LEAVE){
-        ::w.e[sender.getId()].notify(BasicEnemyEvents.PLAYER_OUT_ATTACK_RANGE, sender);
+        local t = sender.getId();
+        if(::w.e.rawin(t)) ::w.e[sender.getId()].notify(BasicEnemyEvents.PLAYER_OUT_ATTACK_RANGE, sender);
     }
 }
 
@@ -28,6 +31,10 @@ function update(eid){
 }
 
 function destroyed(eid){
+    local worldPos = ::EffectManager.getWorldPositionForWindowPos(::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getPosition() + ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getSize() / 2);
+    local endPos = ::Base.mExplorationLogic.mGui_.mMoneyCounter_.getPositionWindowPos();
+    ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": 10, "start": worldPos, "end": endPos, "money": 10, "coinScale": 0.1}));
+
     ::w.e.rawdelete(eid.getId());
 }
 

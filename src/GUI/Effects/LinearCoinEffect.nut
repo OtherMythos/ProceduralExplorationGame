@@ -23,18 +23,22 @@ local LinearCoinEffectStateMachine = class extends ::Util.StateMachine{
         }
         function update(p, data){
             local diff = data.end - data.start;
+            local dir = diff.normalisedCopy();
+            local perpDir = dir.perpendicular();
 
             local c1 = 1.70158;
             local c3 = c1 + 1;
             local animPercentage = 1 + c3 * pow(p - 1, 3) + c1 * pow(p - 1, 2);
 
-            //local animPercentage = 1 - pow(1 - p, 4);
-            for(local i = 0; i < data.coins.len(); i++){
-                local xAnim = diff.x * animPercentage;
-                local xAnimBase = diff.x * p;
-                local xAnimDiff = xAnim - xAnimBase;
+            local anim = diff * animPercentage;
+            local animBase = diff * p;
+            local animDiff = anim - animBase;
 
-                data.coins[i].setPosition(data.start.x + diff.x * p + xAnimDiff * data.offsets[i], data.start.y + diff.y * p, COIN_EFFECT_COIN_Z);
+            for(local i = 0; i < data.coins.len(); i++){
+
+                //data.coins[i].setPosition(data.start.x + diff.x * p + xAnimDiff * data.offsets[i], data.start.y + yAnimDiff * p, COIN_EFFECT_COIN_Z);
+                local test = perpDir * animDiff * data.offsets[i];
+                data.coins[i].setPosition(data.start.x + diff.x * p + test.x, data.start.y + diff.y * p + test.y, COIN_EFFECT_COIN_Z);
             }
         }
     };

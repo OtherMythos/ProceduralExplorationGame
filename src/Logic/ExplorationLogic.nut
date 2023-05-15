@@ -706,7 +706,7 @@
 
             //Do a coin effect.
             local worldPos = ::EffectManager.getWorldPositionForWindowPos(mGui_.mWorldMapDisplay_.getPosition() + mGui_.mWorldMapDisplay_.getSize() / 2);
-            local endPos = mGui_.mMoneyCounter_.getPosition();
+            local endPos = mGui_.mMoneyCounter_.getPositionWindowPos();
             ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"cellSize": 2, "coinScale": 0.1, "numCoins": 5, "start": worldPos, "end": endPos, "money": 100}));
 
             mExplorationStats_.totalDiscoveredPlaces++;

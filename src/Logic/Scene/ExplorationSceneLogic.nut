@@ -146,7 +146,7 @@
         local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
         assert(camera != null);
         local parentNode = camera.getParentNode();
-        parentNode.setPosition(Vec3(playerPos.x, zPos + 10, playerPos.z + 20));
+        parentNode.setPosition(Vec3(playerPos.x, zPos + 20, playerPos.z + 20));
         camera.lookAt(playerPos.x, zPos, playerPos.z);
 
         //mPlayerNode_.setPosition(Vec3(playerPos.x, zPos, playerPos.y));
