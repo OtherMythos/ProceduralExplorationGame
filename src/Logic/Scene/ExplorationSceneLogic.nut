@@ -117,6 +117,7 @@
     function createScene(){
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
         ::ExplorationEntityFactory.mBaseSceneNode_ = mParentNode_;
+        ::ExplorationEntityFactory.mCharacterGenerator_ = ::CharacterGenerator();
 
         if(mWorldData_){
             local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)

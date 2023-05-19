@@ -23,7 +23,7 @@ local ModelType = class{
     }
 };
 
-::CharacterGenerator.mModelTypes_[CharacterModelType.HUMANOID] = ModelType("res://../../assets/characterAnimations/humanoidAnimation.xml",
+::CharacterGenerator.mModelTypes_[CharacterModelType.HUMANOID] = ModelType("res://assets/characterAnimations/humanoidAnimation.xml",
     [
     //Head
     Entry(

@@ -1,5 +1,6 @@
 ::ExplorationEntityFactory <- {
     mBaseSceneNode_ = null,
+    mCharacterGenerator_ = null,
     mMobScale_ = Vec3(0.2, 0.2, 0.2),
 
     function getZForPos(pos){
@@ -12,11 +13,11 @@
         local playerEntry = ::ExplorationLogic.ActiveEnemyEntry(Enemy.NONE, Vec2(0, 0), en);
 
         local playerNode = mBaseSceneNode_.createChildSceneNode();
-        local playerItem = _scene.createItem("player.mesh");
-        playerItem.setRenderQueueGroup(30);
-        playerNode.attachObject(playerItem);
-        playerNode.setScale(mMobScale_);
-        _component.sceneNode.add(en, playerNode, true);
+        local playerModel = mCharacterGenerator_.createCharacterModel(playerNode, null, 30);
+        playerModel.equipToNode(::Items[ItemId.SIMPLE_SWORD], CharacterModelEquipNodeType.LEFT_HAND);
+        playerNode.setScale(0.5, 0.5, 0.5);
+        _component.sceneNode.add(en, playerNode);
+        playerEntry.setModel(playerModel);
 
         local receiverInfo = {
             "type" : _COLLISION_PLAYER
@@ -40,9 +41,9 @@
 
         _component.collision.add(en, collisionObject, damageReceiver);
 
-        local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(playerNode, ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_));
-        _component.user[Component.MISC].add(en);
-        _component.user[Component.MISC].set(en, 0, billboardIdx);
+        //local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(playerNode, ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_));
+        //_component.user[Component.MISC].add(en);
+        //_component.user[Component.MISC].set(en, 0, billboardIdx);
 
         local totalHealth = 100;
         _component.user[Component.HEALTH].add(en);

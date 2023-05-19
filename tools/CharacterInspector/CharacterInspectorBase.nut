@@ -42,7 +42,7 @@
             local item = ::Items[ItemId.SIMPLE_SWORD];
             mInspectedModel_.equipToNode(item, CharacterModelEquipNodeType.LEFT_HAND);
         }else{
-            mInspectedModel_.stopAnimation(testVals[widget.getUserId()]);
+            mInspectedModel_.equipToNode(null, CharacterModelEquipNodeType.LEFT_HAND);
         }
     }
 

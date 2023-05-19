@@ -2,13 +2,15 @@
     mNode_ = null;
     mAnimInfo_ = null;
     mEquipNodes_ = null;
+    mRenderQueue_ = 0;
 
     mCurrentAnimations_ = null;
 
-    constructor(node, animationInfo, equipNodes){
+    constructor(node, animationInfo, equipNodes, renderQueue=0){
         mNode_ = node;
         mAnimInfo_ = animationInfo;
         mEquipNodes_ = equipNodes;
+        mRenderQueue_ = renderQueue;
 
         mCurrentAnimations_ = {};
     }
@@ -25,10 +27,6 @@
         foreach(c,i in mCurrentAnimations_){
             i.setTime(0);
         }
-    }
-
-    function setAnimationTime(){
-
     }
 
     function equipToNode(item, targetNode){
@@ -50,6 +48,7 @@
             attachNode = childNode;
         }
 
+        model.setRenderQueueGroup(mRenderQueue_);
         attachNode.attachObject(model);
     }
 };

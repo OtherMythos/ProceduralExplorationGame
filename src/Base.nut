@@ -31,6 +31,10 @@
         _doFile("res://src/World/EntityFactory.nut");
         _doFile("res://src/World/World.nut");
 
+        _doFile("res://src/Character/CharacterModel.nut");
+        _doFile("res://src/Character/CharacterGenerator.nut");
+        _doFile("res://src/Character/CharacterModelTypes.nut");
+
         _doFile("res://src/System/DialogManager.nut");
         mDialogManager = DialogManager();
 

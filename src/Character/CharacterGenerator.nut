@@ -19,7 +19,7 @@ enum CharacterModelEquipNodeType{
     constructor(){
     }
 
-    function createCharacterModel(parentNode, constructionData){
+    function createCharacterModel(parentNode, constructionData, renderQueue=0){
 
         local modelDef = mModelTypes_[CharacterModelType.HUMANOID];
 
@@ -27,10 +27,10 @@ enum CharacterModelEquipNodeType{
         _animation.loadAnimationFile(modelDef.mAnimFile);
 
         local modelNode = parentNode.createChildSceneNode();
-        local nodes = populateSceneNodeWithModel_(modelNode, modelDef);
+        local nodes = populateSceneNodeWithModel_(modelNode, modelDef, renderQueue);
         local animationInfo = _animation.createAnimationInfo(nodes[0]);
 
-        local model = CharacterModel(modelNode, animationInfo, nodes[1]);
+        local model = CharacterModel(modelNode, animationInfo, nodes[1], renderQueue);
         modelNode.setScale(0.3, 0.3, 0.3);
 
         //model.startAnimation("HumanoidFeetWalk");
@@ -39,7 +39,7 @@ enum CharacterModelEquipNodeType{
         return model;
     }
 
-    function populateSceneNodeWithModel_(parentNode, modelDef){
+    function populateSceneNodeWithModel_(parentNode, modelDef, renderQueue){
         local model = modelDef.mNodes;
         local outNodes = array(model.len(), null);
         local equipNodes = {};
@@ -47,6 +47,7 @@ enum CharacterModelEquipNodeType{
             local modelNode = parentNode.createChildSceneNode();
             if(i.mMesh){
                 local item = _scene.createItem(i.mMesh);
+                item.setRenderQueueGroup(renderQueue);
                 modelNode.attachObject(item);
             }
             if(i.mPos) modelNode.setPosition(i.mPos);

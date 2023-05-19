@@ -16,6 +16,8 @@
         mPos_ = null;
         mId_ = null;
         mEncountered_ = false;
+        mModel_ = null;
+        mMoving_ = 0;
 
         mEntity_ = null;
 
@@ -26,11 +28,6 @@
         }
         function setPosition(pos){
             mPos_ = pos;
-            //if(mNode_) mNode_.setPosition(pos);
-            //if(mPhysicsInner_) mPhysicsInner_.setPosition(pos);
-            //if(mPhysicsOuter_) mPhysicsOuter_.setPosition(pos);
-            //if(mPhysicsDamage_) mPhysicsDamage_.setPosition(pos);
-
             if(mEntity_) mEntity_.setPosition(SlotPosition(pos));
         }
         function getSceneNode(){
@@ -39,8 +36,18 @@
         function getPosition(){
             return mPos_;
         }
+        function setModel(model){
+            mModel_ = model;
+        }
         function move(amount){
             setPosition(mPos_ + amount);
+            if(mMoving_ == 0){
+                if(mModel_){
+                    mModel_.startAnimation("HumanoidFeetWalk");
+                    mModel_.startAnimation("HumanoidUpperWalk");
+                }
+            }
+            mMoving_ = 10;
         }
         function moveQueryZ(amount, sceneLogic){
             local zQuery = sceneLogic.getZForPos(mPos_ + amount);
@@ -55,6 +62,18 @@
         }
         function destroy(){
             _entity.destroy(mEntity_);
+        }
+
+        function update(){
+            if(mMoving_ > 0){
+                mMoving_--;
+                if(mMoving_ <= 0){
+                    if(mModel_){
+                        mModel_.stopAnimation("HumanoidFeetWalk");
+                        mModel_.stopAnimation("HumanoidUpperWalk");
+                    }
+                }
+            }
         }
     }
 
@@ -225,6 +244,7 @@
 
         mSceneLogic_.updatePercentage(mExplorationPercentage_);
         mProjectileManager_.update();
+        mPlayerEntry_.update();
     }
 
     function checkExploration(){
