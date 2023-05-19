@@ -41,6 +41,16 @@
         }
         function move(amount){
             setPosition(mPos_ + amount);
+            if(mModel_){
+                local orientation = Quat(atan2(amount.x, amount.z), Vec3(0, 1, 0));
+                mModel_.setOrientation(orientation);
+            }else{
+                if(mEntity_){
+                    local orientation = Quat(atan2(amount.x, amount.z), Vec3(0, 1, 0));
+                    getSceneNode().setOrientation(orientation);
+                }
+            }
+
             if(mMoving_ == 0){
                 if(mModel_){
                     mModel_.startAnimation("HumanoidFeetWalk");

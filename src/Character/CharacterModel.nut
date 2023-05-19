@@ -15,6 +15,10 @@
         mCurrentAnimations_ = {};
     }
 
+    function setOrientation(orientation){
+        mNode_.setOrientation(orientation);
+    }
+
     function startAnimation(animName){
         local newAnim = _animation.createAnimation(animName, mAnimInfo_);
         mCurrentAnimations_.rawset(animName, newAnim);
