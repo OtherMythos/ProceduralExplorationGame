@@ -12,23 +12,30 @@ enum CharacterModelType{
     mModelTypes_ = array(CharacterModelType.MAX);
 
     constructor(){
-        _animation.loadAnimationFile("res://../../assets/characterAnimations/testCharacterAnimations.xml");
     }
 
     function createCharacterModel(parentNode, constructionData){
+
+        local modelDef = mModelTypes_[CharacterModelType.HUMANOID];
+
+        //TODO have some system to manage the animation file lifetimes.
+        _animation.loadAnimationFile(modelDef.mAnimFile);
+
         local modelNode = parentNode.createChildSceneNode();
-        local nodes = populateSceneNodeWithModel_(modelNode, CharacterModelType.HUMANOID);
-
+        local nodes = populateSceneNodeWithModel_(modelNode, modelDef);
         local animationInfo = _animation.createAnimationInfo(nodes);
-        ::currentAnim <- _animation.createAnimation("walk", animationInfo);
 
-        local model = CharacterModel(modelNode);
+        local model = CharacterModel(modelNode, animationInfo);
+        modelNode.setScale(0.3, 0.3, 0.3);
+
+        //model.startAnimation("HumanoidFeetWalk");
+        //model.startAnimation("HumanoidUpperWalk");
 
         return model;
     }
 
-    function populateSceneNodeWithModel_(parentNode, modelId){
-        local model = mModelTypes_[modelId];
+    function populateSceneNodeWithModel_(parentNode, modelDef){
+        local model = modelDef.mNodes;
         local outNodes = array(model.len(), null);
         foreach(c,i in model){
             local modelNode = parentNode.createChildSceneNode();

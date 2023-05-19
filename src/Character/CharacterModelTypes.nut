@@ -12,16 +12,38 @@ local Entry = class{
     }
 };
 
-::CharacterGenerator.mModelTypes_[CharacterModelType.HUMANOID] = [
+local ModelType = class{
+    mAnimFile = null;
+    mNodes = null;
+    constructor(anim, nodes){
+        mAnimFile = anim;
+        mNodes = nodes;
+    }
+};
+
+::CharacterGenerator.mModelTypes_[CharacterModelType.HUMANOID] = ModelType("res://../../assets/characterAnimations/humanoidAnimation.xml",
+    [
+    //Head
+    Entry(
+        "playerHead.mesh", null, Vec3(0, 10, 0), Vec3(1, 1, 1)
+    ),
     //Body
     Entry(
-        "cube", null, Vec3(0, 2, 0), Vec3(1, 1, 1)
+        "playerBody.mesh", null, Vec3(0, 3, 0), Vec3(1, 1, 1)
     ),
 
     Entry(//Left arm
-        "cube", null, Vec3(-1, 0, 0), Vec3(0.5, 0.5, 0.5)
+        "playerArm.mesh", null, Vec3(-4, 8, 0), Vec3(1, 1, 1)
     ),
     Entry(//Right arm
-        "cube", null, Vec3(1, 0, 0), Vec3(0.5, 0.5, 0.5)
+        "playerArm.mesh", null, Vec3(8, 8, 0), Vec3(1, 1, 1)
+    ),
+
+    Entry(//Left foot
+        "playerFoot.mesh", null, Vec3(-1, 2, 0), Vec3(1, 1, 1)
+    ),
+    Entry(//Right foot
+        "playerFoot.mesh", null, Vec3(4.5, 2, 0), Vec3(1, 1, 1)
     )
 ]
+);
