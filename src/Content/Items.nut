@@ -84,15 +84,20 @@ enum ItemType{
     mMesh = null;
     mType = ItemType.NONE;
     mScrapVal = 0;
-    mEquippableSlot = EquippedSlotTypes.NONE;
 
-    constructor(name, desc, mesh, type, scrapVal, equippableSlot){
+    mEquippableSlot = EquippedSlotTypes.NONE;
+    mEquippablePosition = null;
+    mEquippableOrientation = null;
+
+    constructor(name, desc, mesh, type, scrapVal, equippableSlot, equippablePosition=null, equippableOrientation=null){
         mName = name;
         mDesc = desc;
         mMesh = mesh;
         mType = type;
         mScrapVal = scrapVal;
         mEquippableSlot = equippableSlot;
+        mEquippablePosition = equippablePosition;
+        mEquippableOrientation = equippableOrientation;
 
         //Sanity checks.
         if(mType == ItemType.CONSUMABLE){
@@ -104,8 +109,10 @@ enum ItemType{
     function getName(){ return mName; }
     function getDescription(){ return mDesc; }
     function getMesh(){ return mMesh; }
-    function getEquippableSlot(){ return mEquippableSlot; }
     function getScrapVal(){ return mScrapVal; }
+    function getEquippableSlot(){ return mEquippableSlot; }
+    function getEquippablePosition(){ return mEquippablePosition; }
+    function getEquippableOrientation(){ return mEquippableOrientation; }
 }
 ::Items <- array(ItemId.MAX, null);
 
@@ -115,7 +122,7 @@ enum ItemType{
 ::Items[ItemId.HEALTH_POTION] = ItemDef("Health Potion", "A potion of health. Bubbles gently inside a cast glass flask.", "smallPotion.mesh", ItemType.CONSUMABLE, 5, EquippedSlotTypes.NONE);
 ::Items[ItemId.LARGE_HEALTH_POTION] = ItemDef("Large Health Potion", "A large potion of health.", "largePotion.mesh", ItemType.CONSUMABLE, 5, EquippedSlotTypes.NONE);
 
-::Items[ItemId.SIMPLE_SWORD] = ItemDef("Simple Sword", "A cheap, weak sword. Relatively blunt for something claiming to be a sword.", "simpleSword.mesh", ItemType.EQUIPPABLE, 5, EquippedSlotTypes.SWORD);
+::Items[ItemId.SIMPLE_SWORD] = ItemDef("Simple Sword", "A cheap, weak sword. Relatively blunt for something claiming to be a sword.", "simpleSword.mesh", ItemType.EQUIPPABLE, 5, EquippedSlotTypes.SWORD, Vec3(0, 8, 0), Quat(2, Vec3(0, 1, 0)));
 ::Items[ItemId.SIMPLE_SHIELD] = ItemDef("Simple Shield", "An un-interesting shield. Provides minimal protection.", null, ItemType.EQUIPPABLE, 5, EquippedSlotTypes.SHIELD);
 
 ::Items[ItemId.BRONZE_SWORD] = ItemDef("Bronze Sword", "A sword made from bronze.", null, ItemType.EQUIPPABLE, 10, EquippedSlotTypes.SWORD);

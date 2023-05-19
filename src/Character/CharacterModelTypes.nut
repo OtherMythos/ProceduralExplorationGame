@@ -4,11 +4,13 @@ local Entry = class{
     mChildren = null;
     mPos = null;
     mScale = null;
-    constructor(mesh, children=null, pos=null, scale=null){
+    mEquipType = null;
+    constructor(mesh=null, children=null, pos=null, scale=null, equipType=null){
         mMesh = mesh;
         mChildren = children;
         mPos = pos;
         mScale = scale;
+        mEquipType = equipType;
     }
 };
 
@@ -33,10 +35,12 @@ local ModelType = class{
     ),
 
     Entry(//Left arm
-        "playerArm.mesh", null, Vec3(-4, 8, 0), Vec3(1, 1, 1)
+        "playerArm.mesh",
+        [Entry(null, null, null, Vec3(0.8, 0.8, 0.8), CharacterModelEquipNodeType.LEFT_HAND)]
+        , Vec3(-8, 8, 0), Vec3(0.8, 0.8, 0.8)
     ),
     Entry(//Right arm
-        "playerArm.mesh", null, Vec3(8, 8, 0), Vec3(1, 1, 1)
+        "playerArm.mesh", null, Vec3(8, 8, 0), Vec3(0.8, 0.8, 0.8)
     ),
 
     Entry(//Left foot
