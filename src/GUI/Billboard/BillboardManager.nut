@@ -2,6 +2,7 @@
 
     mCamera_ = null;
     mSize_ = null;
+    mPos_ = null;
 
     mTrackedNodes_ = null;
 
@@ -14,9 +15,10 @@
         }
     }
 
-    constructor(camera, size){
+    constructor(camera, size, pos){
         mCamera_ = camera;
         mSize_ = size;
+        mPos_ = pos;
 
         mTrackedNodes_ = [];
     }
@@ -32,7 +34,7 @@
             pos = Vec2((pos.x + 1) / 2, (-pos.y + 1) / 2);
             local posVisible = i.mBillboard.posVisible(pos);
             if(posVisible){
-                i.mBillboard.setPosition(pos * mSize_);
+                i.mBillboard.setPosition(mPos_ + (pos * mSize_));
             }
         }
     }

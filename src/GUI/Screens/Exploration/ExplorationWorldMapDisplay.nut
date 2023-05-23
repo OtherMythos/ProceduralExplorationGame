@@ -23,7 +23,7 @@
         layoutLine.addCell(mExplorationScenePanel_);
         mExplorationScenePanel_.setExpandVertical(true);
         mExplorationScenePanel_.setExpandHorizontal(true);
-        mExplorationScenePanel_.setProportionVertical(2);
+        mExplorationScenePanel_.setProportionVertical(4);
         mExplorationScenePanel_.setMargin(4, 4);
     }
 
@@ -44,6 +44,7 @@
     }
     function setupCompositor(){
         local winSize = mExplorationScenePanel_.getSize();
+        local winPos = mExplorationScenePanel_.getPosition();
 
         local compId = ::CompositorManager.createCompositorWorkspace("renderTexture30Workspace", winSize, CompositorSceneType.EXPLORATION);
         local datablock = ::CompositorManager.getDatablockForCompositor(compId);
@@ -51,7 +52,7 @@
         mExplorationScenePanel_.setDatablock(datablock);
 
         local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION);
-        mBillboardManager_ = ::BillboardManager(camera, winSize);
+        mBillboardManager_ = ::BillboardManager(camera, winSize, winPos);
     }
 
     function update(){

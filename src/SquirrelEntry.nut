@@ -23,3 +23,9 @@ function update(){
 function end(){
 
 }
+
+function sceneSafeUpdate(){
+    if(::Base.mExplorationLogic != null){
+        ::Base.mExplorationLogic.sceneSafeUpdate();
+    }
+}

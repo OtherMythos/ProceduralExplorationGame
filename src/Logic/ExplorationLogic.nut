@@ -118,6 +118,8 @@
     mExplorationFinished_ = false;
     mExplorationPaused_ = false;
 
+    mCurrentTargetEnemy_ = null;
+
     mCurrentMapData_ = null;
     mPlayerEntry_ = null;
     mActiveEnemies_ = null;
@@ -338,6 +340,10 @@
                 targetPos = getSystemDeterminedFlag();
             }
         }
+        if(mCurrentTargetEnemy_ != null){
+            local enemyPos = mActiveEnemies_[mCurrentTargetEnemy_].getPosition();
+            targetPos = enemyPos + Vec3(4, 0, 0);
+        }
         if(targetPos != null){
             local finished = movePlayerToPos(targetPos);
             if(finished){
@@ -348,6 +354,17 @@
                     mSceneLogic_.removeLocationFlag(mQueuedFlags_[targetIdx][1]);
                     mQueuedFlags_[targetIdx] = null;
                 }
+
+                if(mCurrentTargetEnemy_) triggerPlayerMove(0);
+            }
+        }
+
+        //Check if the current enemy is in the list.
+        if(mCurrentTargetEnemy_ != null){
+            print("checking thing");
+            if(!::w.e.rawin(mCurrentTargetEnemy_)){
+                //Assuming the enemy has been destroyed now.
+                mCurrentTargetEnemy_ = null;
             }
         }
     }
@@ -778,5 +795,42 @@
             }
         }
 
+    }
+
+    function sceneSafeUpdate(){
+        if(_input.getMouseButton(0)){
+            if(mGui_){
+                local inWindow = mGui_.checkPlayerInputPosition(_input.getMouseX(), _input.getMouseY());
+                if(inWindow != null){
+                    local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION);
+
+                    local ray = camera.getCameraToViewportRay(inWindow.x, inWindow.y);
+                    local result = _scene.testRayForObject(ray, 1 << 4);
+                    if(result != null){
+                        local parent = result.getParentNode();
+                        assert(parent != null);
+
+                        local enemy = getEntityForPosition(parent.getPositionVec3());
+                        if(enemy != null){
+                            setCurrentTargetEnemy(enemy);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    //Bit of a work around, I just get the vector position and check through all entities.
+    //TODO find a proper solution for this.
+    function getEntityForPosition(pos){
+        foreach(c,i in mActiveEnemies_){
+            if(i.mPos_.x == pos.x && i.mPos_.y == pos.y){
+                return c;
+            }
+        }
+        return null;
+    }
+
+    function setCurrentTargetEnemy(currentEnemy){
+        mCurrentTargetEnemy_ = currentEnemy;
     }
 };

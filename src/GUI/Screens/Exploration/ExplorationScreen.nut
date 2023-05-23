@@ -38,13 +38,14 @@ enum ExplorationBusEvents{
 
         //World map display
         mWorldMapDisplay_ = WorldMapDisplay(mWindow_);
-        mWorldMapDisplay_.addToLayout(layoutLine);
 
-        mExplorationItemsContainer_ = ExplorationItemsContainer(mWindow_, mExplorationBus_);
-        mExplorationItemsContainer_.addToLayout(layoutLine);
+        //mExplorationItemsContainer_ = ExplorationItemsContainer(mWindow_, mExplorationBus_);
+        //mExplorationItemsContainer_.addToLayout(layoutLine);
 
         //mExplorationEnemiesContainer_ = ExplorationEnemiesContainer(mWindow_, mExplorationBus_);
         mExplorationMovesContainer_ = ExplorationMovesContainer(mWindow_, mExplorationBus_);
+        mExplorationMovesContainer_.addToLayout(layoutLine);
+        mWorldMapDisplay_.addToLayout(layoutLine);
 
         //mExplorationProgressBar_ = ExplorationProgressBar(mWindow_, this);
         //mExplorationProgressBar_.addToLayout(layoutLine);
@@ -59,17 +60,18 @@ enum ExplorationBusEvents{
         mMoneyCounter_.mMoneyLabel_.setGridLocation(_GRID_LOCATION_TOP_LEFT);
         layoutLine.layout();
 
-        local targetSize = mExplorationItemsContainer_.getSize();
-        mExplorationItemsContainer_.setSize(targetSize.x, targetSize.y/2);
-        mExplorationItemsContainer_.sizeForButtons();
+        //local targetSize = mExplorationItemsContainer_.getSize();
+        //mExplorationItemsContainer_.setSize(targetSize.x, targetSize.y/2);
+        //mExplorationItemsContainer_.sizeForButtons();
         mWorldMapDisplay_.notifyResize();
 
         //mExplorationEnemiesContainer_.setSize(targetSize.x, targetSize.y/2);
         //mExplorationEnemiesContainer_.setPosition(Vec2(mExplorationItemsContainer_.getPosition().x, 5 + mExplorationItemsContainer_.getPosition().y + mExplorationItemsContainer_.getSize().y));
         //mExplorationEnemiesContainer_.sizeForButtons();
 
-        mExplorationMovesContainer_.setSize(targetSize.x, targetSize.y/2);
-        mExplorationMovesContainer_.setPosition(Vec2(mExplorationItemsContainer_.getPosition().x, 5 + mExplorationItemsContainer_.getPosition().y + mExplorationItemsContainer_.getSize().y));
+        //mExplorationMovesContainer_.setSize(targetSize.x, targetSize.y/2);
+        //mExplorationMovesContainer_.setPosition(Vec2(mExplorationItemsContainer_.getPosition().x, 5 + mExplorationItemsContainer_.getPosition().y + mExplorationItemsContainer_.getSize().y));
+        //mExplorationMovesContainer_.setPosition(Vec2(0, 100));
         mExplorationMovesContainer_.sizeForButtons();
 
 
@@ -82,6 +84,7 @@ enum ExplorationBusEvents{
         mPlaceHelperButton_.setHidden(true);
         mPlaceHelperButton_.attachListenerForEvent(notifyPlaceVisitButton, _GUI_ACTION_PRESSED);
 
+        /*
         mScrapAllButton_ = mWindow_.createButton();
         mScrapAllButton_.setText("Scrap all");
         mScrapAllButton_.setPosition(0, mExplorationItemsContainer_.getPosition().y - mScrapAllButton_.getSize().y);
@@ -89,6 +92,7 @@ enum ExplorationBusEvents{
             //mLogicInterface_.scrapAllFoundObjects();
             scrapAllObjects();
         }, _GUI_ACTION_PRESSED, this);
+        */
 
         mLogicInterface_.continueOrResetExploration();
 
@@ -98,7 +102,7 @@ enum ExplorationBusEvents{
 
     function update(){
         mLogicInterface_.tickUpdate();
-        mExplorationItemsContainer_.update();
+        //mExplorationItemsContainer_.update();
         //mExplorationEnemiesContainer_.update();
         mExplorationMovesContainer_.update();
         mMoneyCounter_.update();
@@ -109,8 +113,8 @@ enum ExplorationBusEvents{
     function checkPlayerInputPosition(x, y){
         local start = mWorldMapDisplay_.getPosition();
         local end = mWorldMapDisplay_.getSize();
-        if(x >= start.x && y >= start.y && x < end.x && y < end.y){
-            return Vec2(x / end.x, y / end.y);
+        if(x >= start.x && y >= start.y && x < end.x+start.x && y < end.y+start.y){
+            return Vec2((x-start.x) / end.x, (y-start.y) / end.y);
         }
         return null;
     }
@@ -121,7 +125,7 @@ enum ExplorationBusEvents{
 
     function notifyObjectFound(foundObject, idx, position = null){
         local screenPos = position != null ? mWorldMapDisplay_.getWorldPositionInScreenSpace(position) : null;
-        mExplorationItemsContainer_.setObjectForIndex(foundObject, idx, screenPos);
+        //mExplorationItemsContainer_.setObjectForIndex(foundObject, idx, screenPos);
     }
 
     function notifyEnemyCombatBegan(combatData, position){
@@ -145,10 +149,10 @@ enum ExplorationBusEvents{
     }
 
     function notifyFoundItemRemoved(idx){
-        mExplorationItemsContainer_.setObjectForIndex(FoundObject(), idx, null);
+        //mExplorationItemsContainer_.setObjectForIndex(FoundObject(), idx, null);
     }
     function notifyQueuedEnemyRemoved(idx){
-        mExplorationEnemiesContainer_.setObjectForIndex(null, idx, null);
+        //mExplorationEnemiesContainer_.setObjectForIndex(null, idx, null);
     }
 
     function notifyGatewayStatsChange(gatewayPercentage){
@@ -203,7 +207,7 @@ enum ExplorationBusEvents{
     }
 
     function notifyFoundItemLifetime(idx, lifetime){
-        mExplorationItemsContainer_.setLifetimeForIndex(idx, lifetime);
+        //mExplorationItemsContainer_.setLifetimeForIndex(idx, lifetime);
     }
     function notifyQueuedEnemyLifetime(idx, lifetime){
         mExplorationEnemiesContainer_.setLifetimeForIndex(idx, lifetime);
@@ -255,6 +259,7 @@ enum ExplorationBusEvents{
     }
 
     function scrapAllObjects(){
+        /*
         for(local i = 0; i < mExplorationItemsContainer_.mNumSlots_; i++){
             if(mLogicInterface_.mFoundObjects_[i] == null) continue;
             local targetButton = mExplorationItemsContainer_.mFoundWidgetButtons_[i];
@@ -264,6 +269,7 @@ enum ExplorationBusEvents{
         }
 
         mLogicInterface_.scrapAllFoundObjects();
+        */
     }
 
     function notifyPlayerMove(moveId){

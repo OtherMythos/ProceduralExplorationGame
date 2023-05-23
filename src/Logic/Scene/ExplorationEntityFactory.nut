@@ -41,9 +41,9 @@
 
         _component.collision.add(en, collisionObject, damageReceiver);
 
-        //local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(playerNode, ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_));
-        //_component.user[Component.MISC].add(en);
-        //_component.user[Component.MISC].set(en, 0, billboardIdx);
+        local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(playerNode, ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_));
+        _component.user[Component.MISC].add(en);
+        _component.user[Component.MISC].set(en, 0, billboardIdx);
 
         local totalHealth = 100;
         _component.user[Component.HEALTH].add(en);
@@ -65,6 +65,7 @@
         local enemyNode = mBaseSceneNode_.createChildSceneNode();
         local enemyItem = _scene.createItem("goblin.mesh");
         enemyItem.setRenderQueueGroup(30);
+        enemyItem.setQueryFlags(1 << 4);
         enemyNode.attachObject(enemyItem);
         enemyNode.setScale(mMobScale_);
         _component.sceneNode.add(en, enemyNode, true);
