@@ -151,6 +151,7 @@
 
         mInputs_ = {
             "move": _input.getAxisActionHandle("Move"),
+            "camera": _input.getAxisActionHandle("Camera"),
             "playerMoves": [
                 _input.getButtonActionHandle("PerformMove1"),
                 _input.getButtonActionHandle("PerformMove2"),
@@ -250,6 +251,7 @@
         if(mEnemyEncountered_) return;
         //updatePercentage();
         checkExploration();
+        checkCameraChange();
         checkPlayerMove();
         checkPlayerCombatMoves();
         ageItems();
@@ -276,6 +278,10 @@
                 triggerPlayerMove(c);
             }
         }
+    }
+
+    function checkCameraChange(){
+        mSceneLogic_.processCameraMove(_input.getAxisActionX(mInputs_.camera, _INPUT_ANY), _input.getAxisActionY(mInputs_.camera, _INPUT_ANY));
     }
 
     function checkPlayerMove(){
@@ -449,7 +455,9 @@
             local mTestPlane_ = Plane(Vec3(0, 1, 0), Vec3(0, 0, 0));
             local ray = camera.getCameraToViewportRay(touchCoords.x, touchCoords.y);
             local point = ray.intersects(mTestPlane_);
-            assert(point != false);
+            if(point == false){
+                return;
+            }
             local worldPoint = ray.getPoint(point);
             print("World point " + worldPoint);
 

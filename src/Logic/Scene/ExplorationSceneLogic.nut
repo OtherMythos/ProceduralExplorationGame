@@ -16,14 +16,29 @@
     mLocationFlagIds_ = 0;
     mLocationFlagNodes_ = null;
 
+    mPosition_ = null;
+    mRotation_ = null;
+    mCachedRotation_ = null;
+    mCurrentZoomLevel_ = 20;
+
     constructor(){
         mLocationFlagNodes_ = {};
+
+        mRotation_ = Vec2();
+        mPosition_ = Vec3();
     }
 
     function setup(){
         ABOVE_GROUND = 0xFF - mWorldData_.seaLevel;
         createScene();
         voxeliseMap();
+
+        {
+            local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION);
+            assert(camera != null);
+            local parentNode = camera.getParentNode();
+            mCachedRotation_ = parentNode.getOrientation();
+        }
 
         _world.createWorld();
         _developer.setRenderQueueForMeshGroup(30);
@@ -114,6 +129,21 @@
     function updatePercentage(percentage){
     }
 
+    function processCameraMove(x, y){
+        mRotation_ += Vec2(x, y) * -0.05;
+        local first = PI * 0.6;
+        local second = PI * 0.1;
+        if(mRotation_.y > first) mRotation_.y = first;
+        if(mRotation_.y < second) mRotation_.y = second;
+
+        local mouseScroll = _input.getMouseWheelValue();
+        if(mouseScroll != 0){
+            mCurrentZoomLevel_ += mouseScroll;
+        }
+
+        updateCameraPosition();
+    }
+
     function createScene(){
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
         ::ExplorationEntityFactory.mBaseSceneNode_ = mParentNode_;
@@ -141,14 +171,27 @@
     }
 
     function updatePlayerPos(playerPos){
-        local zPos = getZForPos(playerPos);
-        //local zPos = 0;
+        mPosition_ = playerPos;
+
+        updateCameraPosition();
+    }
+
+    function updateCameraPosition(){
+        local zPos = getZForPos(mPosition_);
 
         local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
         assert(camera != null);
         local parentNode = camera.getParentNode();
-        parentNode.setPosition(Vec3(playerPos.x, zPos + 20, playerPos.z + 20));
-        camera.lookAt(playerPos.x, zPos, playerPos.z);
+
+        local xPos = cos(mRotation_.x)*mCurrentZoomLevel_;
+        local yPos = sin(mRotation_.x)*mCurrentZoomLevel_;
+        local rot = Vec3(xPos, 0, yPos);
+        xPos = cos(mRotation_.x)*mCurrentZoomLevel_;
+        yPos = sin(mRotation_.y)*mCurrentZoomLevel_;
+        rot += Vec3(xPos, yPos, 0);
+
+        parentNode.setPosition(Vec3(mPosition_.x, zPos, mPosition_.z) + rot );
+        camera.lookAt(mPosition_.x, zPos, mPosition_.z);
 
         //mPlayerNode_.setPosition(Vec3(playerPos.x, zPos, playerPos.y));
     }
