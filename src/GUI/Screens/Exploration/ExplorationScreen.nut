@@ -44,7 +44,13 @@ enum ExplorationBusEvents{
 
         //mExplorationEnemiesContainer_ = ExplorationEnemiesContainer(mWindow_, mExplorationBus_);
         mExplorationMovesContainer_ = ExplorationMovesContainer(mWindow_, mExplorationBus_);
-        mExplorationMovesContainer_.addToLayout(layoutLine);
+
+        if(::Base.getTargetInterface() == TargetInterface.MOBILE){
+            mExplorationMovesContainer_.addToLayout(layoutLine);
+        }else{
+            mExplorationMovesContainer_.setPosition(Vec2(0, 0));
+            mExplorationMovesContainer_.setSize(400, 100);
+        }
         mWorldMapDisplay_.addToLayout(layoutLine);
 
         //mExplorationProgressBar_ = ExplorationProgressBar(mWindow_, this);

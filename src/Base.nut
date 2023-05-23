@@ -12,7 +12,21 @@
 
     mCurrentWorld_ = null
 
+    mTargetInterface_ = TargetInterface.DESKTOP
+
+    function checkUserParams(){
+        //TODO work around the fact that I can't use multiple avSetup files to override this yet.
+        if(_settings.getPlatform() == _PLATFORM_IOS){
+            mTargetInterface_ = TargetInterface.MOBILE;
+        }
+    }
+    function getTargetInterface(){
+        return mTargetInterface_;
+    }
+
     function setup(){
+        checkUserParams();
+
         createLights();
 
         _gui.loadSkins("res://assets/skins/ui.json");

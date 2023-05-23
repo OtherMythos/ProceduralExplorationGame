@@ -69,7 +69,8 @@
 
         local winSize = mExplorationScenePanel_.getSize();
         local basePos = mExplorationScenePanel_.getPosition();
-        local targetSize = winSize * 0.3;
+        local targetSize = winSize * 0.2;
+        targetSize.y = targetSize.x;
         mMapViewerWindow_.setClipBorders(0, 0, 0, 0);
         mMapViewerWindow_.setSize(targetSize);
         mMapViewerWindow_.setPosition((basePos.x + winSize.x) - mMapViewerWindow_.getSize().x, basePos.y);

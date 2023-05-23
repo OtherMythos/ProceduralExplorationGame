@@ -6,6 +6,13 @@ const EFFECT_WINDOW_CAMERA_Z = 100;
 const SCREENS_START_Z = 40;
 const POPUPS_START_Z = 60;
 
+enum TargetInterface{
+    MOBILE,
+    DESKTOP,
+
+    MAX
+};
+
 enum Component{
     HEALTH = 0,
     MISC = 1
