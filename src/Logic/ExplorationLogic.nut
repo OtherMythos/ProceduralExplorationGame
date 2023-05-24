@@ -106,7 +106,7 @@
     EXPLORATION_ITEM_LIFE = 400.0;
     EXPLORATION_ENEMY_LIFE = 800.0;
 
-    NUM_PLAYER_QUEUED_FLAGS = 4;
+    NUM_PLAYER_QUEUED_FLAGS = 1;
     mQueuedFlags_ = null;
     mDeterminedFlag_ = null;
 
@@ -126,6 +126,7 @@
     mQueuedEnemyEncounters_ = null;
     mQueuedEnemyEncountersLife_ = null;
     mNumQueuedEnemies_ = 0;
+    mPlacingMarker_ = false;
 
     mOrientatingCamera_ = false;
     mPrevMouseX_ = null;
@@ -348,9 +349,17 @@
             if(mGui_){
                 local inWindow = mGui_.checkPlayerInputPosition(_input.getMouseX(), _input.getMouseY());
                 if(inWindow != null){
-                    queuePlayerFlagForWindowTouch(inWindow);
+                    if(!mPlacingMarker_){
+                        //The first touch of the mouse.
+                        queuePlayerFlagForWindowTouch(inWindow);
+                    }else{
+                        updatePositionOfCurrentFlag(inWindow);
+                    }
+                    mPlacingMarker_ = true;
                 }
             }
+        }else{
+            mPlacingMarker_ = false;
         }
         if(moved){
             movePlayer(dir);
@@ -480,7 +489,7 @@
         }
     }
 
-    function queuePlayerFlagForWindowTouch(touchCoords){
+    function playerFlagBase_(touchCoords){
         local inWindow = mGui_.checkPlayerInputPosition(_input.getMouseX(), _input.getMouseY());
         if(inWindow != null){
             local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
@@ -494,8 +503,21 @@
             local worldPoint = ray.getPoint(point);
             print("World point " + worldPoint);
 
-            queuePlayerFlag(worldPoint);
+            return worldPoint;
         }
+        return null;
+    }
+    function updatePositionOfCurrentFlag(touchCoords){
+        local worldPoint = playerFlagBase_(touchCoords);
+
+        if(mQueuedFlags_[0] == null) return;
+        local flagId = mQueuedFlags_[0][1];
+        mSceneLogic_.updateLocationFlagPos(flagId, worldPoint);
+        mQueuedFlags_[0] = [worldPoint, flagId];
+    }
+    function queuePlayerFlagForWindowTouch(touchCoords){
+        local worldPoint = playerFlagBase_(touchCoords);
+        queuePlayerFlag(worldPoint);
     }
     function queuePlayerFlag(worldPos){
         local firstNull = mQueuedFlags_.find(null);

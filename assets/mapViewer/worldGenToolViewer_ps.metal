@@ -19,6 +19,7 @@ struct Params
    unsigned int numWaterSeeds;
    unsigned int numLandSeeds;
    unsigned int seaLevel;
+   float opacity = 0.5;
 };
 
 fragment float4 main_metal
@@ -55,11 +56,12 @@ fragment float4 main_metal
    short waterGroup = (voxVal >> 16) & 0xFF;
    short landGroup = (voxVal >> 24) & 0xFF;
 
-   float4 drawVal(0, 0, 0, 1);
+   float opacity = p.opacity;
+   float4 drawVal(0, 0, 0, opacity);
 
    //Just draw the altitude.
    float val = (float)altitude / 255;
-   drawVal = float4(val, val, val, 1);
+   drawVal = float4(val, val, val, opacity);
 
    if(p.drawFlags & GROUND_MASK){
       drawVal = voxelColours[voxelMeta];
@@ -67,15 +69,15 @@ fragment float4 main_metal
    if(p.drawFlags & WATER_MASK){
       if(altitude < p.seaLevel){
          if(waterGroup == 0){
-            drawVal = float4(0, 0, 1.0, 1.0);
+            drawVal = float4(0, 0, 1.0, opacity);
          }else{
-            drawVal = float4(0.15, 0.15, 1.0, 1.0);
+            drawVal = float4(0.15, 0.15, 1.0, opacity);
          }
       }
    }
    if(p.drawFlags & WATER_GROUPS_MASK){
       float valGroup = (float)waterGroup / p.numWaterSeeds;
-      drawVal = float4(valGroup, valGroup, valGroup, 1);
+      drawVal = float4(valGroup, valGroup, valGroup, opacity);
    }
    if(p.drawFlags & RIVER_DATA_MASK){
       //for(int i = 0; i < 4; i++){
@@ -89,7 +91,7 @@ fragment float4 main_metal
          unsigned int x = (riverVal >> 16) & 0xFFFF;
          unsigned int y = riverVal & 0xFFFF;
          if(xVox == x && yVox == y){
-            drawVal = first ? float4(1, 0, 1, 1) : float4(1, 1, 1, 1);
+            drawVal = first ? float4(1, 0, 1, 1) : float4(1, 1, 1, opacity);
          }
          first = false;
          i++;
@@ -100,11 +102,11 @@ fragment float4 main_metal
    }
    if(p.drawFlags & LAND_GROUPS_MASK){
       float valGroup = (float)landGroup / p.numLandSeeds;
-      drawVal = float4(valGroup, valGroup, valGroup, 1);
+      drawVal = float4(valGroup, valGroup, valGroup, opacity);
    }
    if(p.drawFlags & EDGE_VALS){
       if(edgeVox){
-         drawVal = float4(0, 0, 0, 1);
+         drawVal = float4(0, 0, 0, opacity);
       }
    }
    if(p.drawFlags & PLACE_LOCATIONS){
@@ -116,7 +118,7 @@ fragment float4 main_metal
          unsigned int x = (placeVal >> 16) & 0xFFFF;
          unsigned int y = placeVal & 0xFFFF;
          if(xVox == x && yVox == y){
-            drawVal = float4(0, 0, 0, 1);
+            drawVal = float4(0, 0, 0, opacity);
             break;
          }
          i++;
@@ -128,9 +130,9 @@ fragment float4 main_metal
       int bitIdx = idx % 32;
       unsigned int val = (p.visiblePlaceBuffer[byteIdx] >> (bitIdx)) & 0x3;
 
-      float4 col = float4(0, 0, 0, 1);
+      float4 col = float4(0, 0, 0, opacity);
       if(val & 0x2) col = drawVal;
-      else if(val & 0x1) col = float4(0.4, 0.4, 0.4, 1);
+      else if(val & 0x1) col = float4(0.4, 0.4, 0.4, opacity);
 
       drawVal = col;
    }

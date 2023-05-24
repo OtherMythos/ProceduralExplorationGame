@@ -17,6 +17,7 @@
         mMapViewerPanel_ = mMapViewerWindow_.createPanel();
         mMapViewer_ = MapViewer();
         mMapViewer_.setLabelWindow(mMapViewerWindow_);
+        mMapViewerWindow_.setVisualsEnabled(false);
     }
 
     function addToLayout(layoutLine){
@@ -69,7 +70,8 @@
 
         local winSize = mExplorationScenePanel_.getSize();
         local basePos = mExplorationScenePanel_.getPosition();
-        local targetSize = winSize * 0.2;
+        local offset = ::Base.getTargetInterface() == TargetInterface.MOBILE ? 0.4 : 0.2;
+        local targetSize = winSize * offset;
         targetSize.y = targetSize.x;
         mMapViewerWindow_.setClipBorders(0, 0, 0, 0);
         mMapViewerWindow_.setSize(targetSize);

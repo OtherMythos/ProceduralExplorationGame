@@ -18,7 +18,7 @@
 
     mPosition_ = null;
     mRotation_ = null;
-    mCurrentZoomLevel_ = 20;
+    mCurrentZoomLevel_ = 30;
     static MIN_ZOOM = 10;
 
     constructor(){
@@ -209,6 +209,11 @@
         local idx = (mLocationFlagIds_++).tostring();
         mLocationFlagNodes_[idx] <- flagNode;
         return idx;
+    }
+    function updateLocationFlagPos(idx, pos){
+        local newPos = pos.copy();
+        newPos.y = getZForPos(newPos);
+        mLocationFlagNodes_[idx].setPosition(newPos);
     }
     function removeLocationFlag(idx){
         mLocationFlagNodes_[idx].destroyNodeAndChildren();

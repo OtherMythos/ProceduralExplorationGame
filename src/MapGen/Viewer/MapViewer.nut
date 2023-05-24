@@ -163,6 +163,7 @@ enum DrawOptions{
         fragmentParams.setNamedConstant("numWaterSeeds", outData.waterData.len());
         fragmentParams.setNamedConstant("numLandSeeds", outData.landData.len());
         fragmentParams.setNamedConstant("seaLevel", outData.seaLevel);
+        fragmentParams.setNamedConstant("opacity", 0.4);
         //fragmentParams.setNamedConstant("visiblePlaceBuffer", mVisiblePlacesBuffer_);
 
         mFragmentParams_ = fragmentParams;
@@ -287,7 +288,13 @@ enum DrawOptions{
         cameraNode.attachObject(newCamera);
         mCompositorCamera_ = newCamera;
 
-        local datablock = _hlms.unlit.createDatablock("mapViewer/renderDatablock");
+        local blend = _hlms.getBlendblock({
+            "src_blend_factor": _HLMS_SBF_SOURCE_ALPHA,
+            "dst_blend_factor": _HLMS_SBF_ONE_MINUS_SOURCE_ALPHA,
+            "src_alpha_blend_factor": _HLMS_SBF_ONE_MINUS_DEST_ALPHA,
+            "dst_alpha_blend_factor": _HLMS_SBF_ONE
+        });
+        local datablock = _hlms.unlit.createDatablock("mapViewer/renderDatablock", blend);
         datablock.setTexture(0, newTex);
         mCompositorDatablock_ = datablock;
 

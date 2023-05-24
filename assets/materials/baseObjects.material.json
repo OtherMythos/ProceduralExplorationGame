@@ -15,6 +15,14 @@
             "diffuse" :
             {
                 "texture" : "voxelPalette.png"
+            },
+            "roughness" :
+            {
+                "value" : 1
+            },
+            "metallness" :
+            {
+                "value" : 0
             }
         }
     }
