@@ -18,14 +18,13 @@
 
     mPosition_ = null;
     mRotation_ = null;
-    mCachedRotation_ = null;
     mCurrentZoomLevel_ = 20;
     static MIN_ZOOM = 10;
 
     constructor(){
         mLocationFlagNodes_ = {};
 
-        mRotation_ = Vec2();
+        mRotation_ = Vec2(PI*0.5, PI*0.4);
         mPosition_ = Vec3();
     }
 
@@ -33,13 +32,6 @@
         ABOVE_GROUND = 0xFF - mWorldData_.seaLevel;
         createScene();
         voxeliseMap();
-
-        {
-            local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION);
-            assert(camera != null);
-            local parentNode = camera.getParentNode();
-            mCachedRotation_ = parentNode.getOrientation();
-        }
 
         _world.createWorld();
         _developer.setRenderQueueForMeshGroup(30);

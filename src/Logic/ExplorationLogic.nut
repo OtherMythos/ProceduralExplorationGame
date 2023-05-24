@@ -127,6 +127,10 @@
     mQueuedEnemyEncountersLife_ = null;
     mNumQueuedEnemies_ = 0;
 
+    mOrientatingCamera_ = false;
+    mPrevMouseX_ = null;
+    mPrevMouseY_ = null;
+
     mProjectileManager_ = null;
     mExplorationStats_ = null;
     mGatewayPercentage_ = 0.0;
@@ -253,6 +257,7 @@
         checkExploration();
         checkCameraChange();
         checkPlayerMove();
+        checkOrientatingCamera();
         checkPlayerCombatMoves();
         ageItems();
 
@@ -280,6 +285,34 @@
         }
     }
 
+    function setOrientatingCamera(orientate){
+        mOrientatingCamera_ = orientate;
+    }
+    function checkOrientatingCamera(){
+        if(!mOrientatingCamera_) return;
+        print("orientating");
+
+        if(_input.getMouseButton(0)){
+            local mouseX = _input.getMouseX();
+            local mouseY = _input.getMouseY();
+            if(mPrevMouseX_ != null && mPrevMouseY_ != null){
+                local deltaX = mouseX - mPrevMouseX_;
+                local deltaY = mouseY - mPrevMouseY_;
+                printf("delta x: %f y: %f", deltaX, deltaY);
+                mSceneLogic_.processCameraMove(deltaX*-0.2, deltaY*-0.2);
+            }
+            mPrevMouseX_ = mouseX;
+            mPrevMouseY_ = mouseY;
+        }else{
+            //Wait for the first move to happen.
+            if(mPrevMouseX_ != null && mPrevMouseY_ != null){
+                mPrevMouseX_ = null;
+                mPrevMouseY_ = null;
+                mOrientatingCamera_ = false;
+            }
+        }
+    }
+
     function checkCameraChange(){
         mSceneLogic_.processCameraMove(_input.getAxisActionX(mInputs_.camera, _INPUT_ANY), _input.getAxisActionY(mInputs_.camera, _INPUT_ANY));
     }
@@ -299,7 +332,7 @@
             dir /= 4;
         }
 
-        if(_input.getMouseButton(0)){
+        if(_input.getMouseButton(0) && !mOrientatingCamera_){
             /*
             moved = true;
             local width = _window.getWidth();

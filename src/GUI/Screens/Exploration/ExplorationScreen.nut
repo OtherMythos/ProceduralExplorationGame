@@ -17,6 +17,7 @@ enum ExplorationBusEvents{
     mPlaceHelperButton_ = null;
     mCurrentPlace_ = null;
     mScrapAllButton_ = null;
+    mCameraButton_ = null;
 
     mInsideGateway_ = false;
 
@@ -89,6 +90,16 @@ enum ExplorationBusEvents{
         mPlaceHelperButton_.setPosition(0, 40);
         mPlaceHelperButton_.setHidden(true);
         mPlaceHelperButton_.attachListenerForEvent(notifyPlaceVisitButton, _GUI_ACTION_PRESSED);
+
+
+        if(::Base.getTargetInterface() == TargetInterface.MOBILE){
+            mCameraButton_ = mWindow_.createButton();
+            mCameraButton_.setText("Camera");
+            mCameraButton_.setPosition(_window.getWidth() / 2 - mCameraButton_.getSize().x/2, _window.getHeight() - mCameraButton_.getSize().y*2);
+            mCameraButton_.attachListenerForEvent(function(widget, action){
+                mLogicInterface_.setOrientatingCamera(true);
+            }, _GUI_ACTION_PRESSED, this);
+        }
 
         /*
         mScrapAllButton_ = mWindow_.createButton();
