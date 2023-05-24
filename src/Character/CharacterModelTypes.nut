@@ -31,7 +31,7 @@ local ModelType = class{
     ),
     //Body
     Entry(
-        "playerBody.mesh", null, Vec3(0, 3, 0), Vec3(1, 1, 1)
+        "playerBody.mesh", null, Vec3(0, 3, 0), Vec3(0.9, 1, 0.9)
     ),
 
     Entry(//Left arm

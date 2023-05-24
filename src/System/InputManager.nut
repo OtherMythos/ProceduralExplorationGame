@@ -46,10 +46,10 @@
         //_input.mapKeyboardInputAxis(_K_D, _K_S, _K_A, _K_W, this.explorationMove);
         _input.mapKeyboardInputAxis(_K_D, _K_S, _K_A, _K_W, this.explorationCamera);
 
-        _input.mapKeyboardInput(_K_UP, this.performMove1);
-        _input.mapKeyboardInput(_K_DOWN, this.performMove2);
-        _input.mapKeyboardInput(_K_LEFT, this.performMove3);
-        _input.mapKeyboardInput(_K_RIGHT, this.performMove4);
+        _input.mapKeyboardInput(_K_1, this.performMove1);
+        _input.mapKeyboardInput(_K_2, this.performMove2);
+        _input.mapKeyboardInput(_K_3, this.performMove3);
+        _input.mapKeyboardInput(_K_4, this.performMove4);
 
         _input.setActionSetForDevice(_ANY_INPUT_DEVICE, ::InputManager.actionSetGameplay);
     }
