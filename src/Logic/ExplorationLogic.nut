@@ -390,7 +390,9 @@
         }
         if(mCurrentTargetEnemy_ != null){
             local enemyPos = mActiveEnemies_[mCurrentTargetEnemy_].getPosition();
-            targetPos = enemyPos + Vec3(4, 0, 0);
+            local dir = (mPlayerEntry_.getPosition() - enemyPos);
+            dir.normalise();
+            targetPos = enemyPos + (Vec3(4, 0, 4) * dir);
         }
         if(targetPos != null){
             local finished = movePlayerToPos(targetPos);
