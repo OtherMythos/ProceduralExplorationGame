@@ -135,3 +135,9 @@ enum CombatOpponentAnims{
     HOPPING,
     DYING
 };
+
+enum ExplorationGizmos{
+    TARGET_ENEMY,
+
+    MAX
+};

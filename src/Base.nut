@@ -27,6 +27,9 @@
     function setup(){
         checkUserParams();
 
+        //TODO move this somewhere else.
+        _animation.loadAnimationFile("res://build/assets/animation/baseAnimation.xml");
+
         createLights();
 
         _gui.loadSkins("res://assets/skins/ui.json");

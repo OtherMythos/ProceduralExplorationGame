@@ -36,6 +36,7 @@ function destroyed(eid){
     ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": 10, "start": worldPos, "end": endPos, "money": 10, "coinScale": 0.1}));
 
     ::w.e.rawdelete(eid.getId());
+    ::Base.mExplorationLogic.notifyEnemyDestroyed(eid.getId());
 }
 
 ::BasicEnemyMachine <- class extends ::CombatStateMachine{

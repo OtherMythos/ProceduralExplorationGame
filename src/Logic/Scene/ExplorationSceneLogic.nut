@@ -1,3 +1,40 @@
+::ExplorationGizmo <- class{
+    mSceneNode_ = null;
+    constructor(parent, pos){
+        setup(parent);
+        setPosition(pos);
+    }
+    function setPosition(pos){
+        mSceneNode_.setPosition(pos);
+    }
+    function destroy(){
+        mSceneNode_.destroyNodeAndChildren();
+    }
+    function setup(parent){}
+};
+::ExplorationGizmos <- array(ExplorationGizmos.MAX, null);
+
+::ExplorationGizmos[ExplorationGizmos.TARGET_ENEMY] = class extends ::ExplorationGizmo{
+    mAnim_ = null;
+    function setup(parent){
+        mSceneNode_ = parent.createChildSceneNode();
+        local animNode = mSceneNode_.createChildSceneNode();
+
+        local targetItem = _scene.createItem("enemyTargetMarker.mesh");
+        targetItem.setRenderQueueGroup(30);
+        animNode.attachObject(targetItem);
+        animNode.setScale(0.5, 0.5, 0.5);
+        animNode.setPosition(0, 1, 0);
+
+        local animationInfo = _animation.createAnimationInfo([animNode]);
+        mAnim_ = _animation.createAnimation("gizmoEnemyTarget", animationInfo);
+    }
+    function destroy(){
+        mSceneNode_.destroyNodeAndChildren();
+        mAnim_ = null;
+    }
+};
+
 ::ExplorationCount <- 0;
 ::ExplorationSceneLogic <- class{
 
@@ -21,8 +58,11 @@
     mCurrentZoomLevel_ = 30;
     static MIN_ZOOM = 10;
 
+    mActiveGizmos_ = null;
+
     constructor(){
         mLocationFlagNodes_ = {};
+        mActiveGizmos_ = {};
 
         mRotation_ = Vec2(PI*0.5, PI*0.4);
         mPosition_ = Vec3();
@@ -218,6 +258,11 @@
     function removeLocationFlag(idx){
         mLocationFlagNodes_[idx].destroyNodeAndChildren();
         mLocationFlagNodes_[idx] = null;
+    }
+    //TODO the flags can be converted to use the gizmos as well.
+    function createGizmo(pos, gizmoType){
+        local newGizmo = ::ExplorationGizmos[gizmoType](mParentNode_, pos);
+        return newGizmo;
     }
 
 };

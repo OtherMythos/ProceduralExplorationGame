@@ -1,0 +1,13 @@
+<AnimationSequence>
+    <data>
+        <first type='SceneNode'/>
+    </data>
+    <animations>
+        <gizmoEnemyTarget repeat='true' end='160'>
+            <t type='transform' target='0'>
+                <k t='0' rot='0, 0, 0'/>
+                <k t='160' rot='0, 360, 0'/>
+            </t>
+        </gizmoEnemyTarget>
+    </animations>
+</AnimationSequence>

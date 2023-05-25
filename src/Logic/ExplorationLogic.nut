@@ -18,6 +18,7 @@
         mEncountered_ = false;
         mModel_ = null;
         mMoving_ = 0;
+        mGizmo_ = null;
 
         mEntity_ = null;
 
@@ -29,6 +30,7 @@
         function setPosition(pos){
             mPos_ = pos;
             if(mEntity_) mEntity_.setPosition(SlotPosition(pos));
+            if(mGizmo_) mGizmo_.setPosition(pos);
         }
         function getSceneNode(){
             return _component.sceneNode.getNode(mEntity_);
@@ -70,8 +72,14 @@
         function getId(){
             return mId_;
         }
-        function destroy(){
-            _entity.destroy(mEntity_);
+        function notifyDestroyed(){
+            if(mGizmo_) mGizmo_.destroy();
+        }
+        function setGizmo(gizmo){
+            mGizmo_ = gizmo;
+        }
+        function getGizmo(){
+            return mGizmo_;
         }
 
         function update(){
@@ -118,6 +126,7 @@
     mExplorationFinished_ = false;
     mExplorationPaused_ = false;
 
+    mPrevTargetEnemy_ = null;
     mCurrentTargetEnemy_ = null;
 
     mCurrentMapData_ = null;
@@ -127,6 +136,7 @@
     mQueuedEnemyEncountersLife_ = null;
     mNumQueuedEnemies_ = 0;
     mPlacingMarker_ = false;
+    mRecentTargetEnemy_ = false;
 
     mOrientatingCamera_ = false;
     mPrevMouseX_ = null;
@@ -255,6 +265,7 @@
         if(mExplorationPaused_) return;
         if(mEnemyEncountered_) return;
         //updatePercentage();
+        checkTargetEnemy();
         checkExploration();
         checkCameraChange();
         checkPlayerMove();
@@ -284,6 +295,25 @@
                 triggerPlayerMove(c);
             }
         }
+    }
+
+    //Unfortunately as the scene is safe when the target enemy is registered I have to check this later.
+    function checkTargetEnemy(){
+        if(!mRecentTargetEnemy_) return;
+
+        if(mActiveEnemies_.rawin(mPrevTargetEnemy_)){
+            local gizmo = mActiveEnemies_[mPrevTargetEnemy_].getGizmo();
+            gizmo.destroy();
+        }
+
+        local e = mActiveEnemies_[mCurrentTargetEnemy_];
+        local gizmo = mSceneLogic_.createGizmo(e.getPosition(), ExplorationGizmos.TARGET_ENEMY);
+        e.setGizmo(gizmo);
+    }
+    function notifyEnemyDestroyed(eid){
+        mActiveEnemies_[eid].notifyDestroyed();
+        mActiveEnemies_.rawdelete(eid);
+        if(eid == mCurrentTargetEnemy_) mCurrentTargetEnemy_ = null;
     }
 
     function setOrientatingCamera(orientate){
@@ -333,7 +363,19 @@
             dir /= 4;
         }
 
-        if(_input.getMouseButton(0) && !mOrientatingCamera_){
+        //Try and walk to the queued position.
+        local targetIdx = -1;
+        local targetPos = null;
+        //Perform first so the later checks will take precedent.
+        if(mCurrentTargetEnemy_ != null){
+            local enemyPos = mActiveEnemies_[mCurrentTargetEnemy_].getPosition();
+            local dir = (mPlayerEntry_.getPosition() - enemyPos);
+            dir.normalise();
+            targetPos = enemyPos + (Vec3(4, 0, 4) * dir);
+        }
+
+
+        if(_input.getMouseButton(0) && !mOrientatingCamera_ && !mRecentTargetEnemy_){
             /*
             moved = true;
             local width = _window.getWidth();
@@ -366,15 +408,8 @@
             return;
         }
 
-        /*
-        foreach(c,i in mQueuedFlags_){
-            print("Flag " + c + " : " + i);
-        }
-        */
+        mRecentTargetEnemy_ = false;
 
-        //Try and walk to the queued position.
-        local targetIdx = -1;
-        local targetPos = null;
         for(local i = 0; i < NUM_PLAYER_QUEUED_FLAGS; i++){
             if(mQueuedFlags_[i] != null){
                 targetPos = mQueuedFlags_[i][0];
@@ -387,12 +422,6 @@
                 //If no queued flags were found use the system intended location.
                 targetPos = getSystemDeterminedFlag();
             }
-        }
-        if(mCurrentTargetEnemy_ != null){
-            local enemyPos = mActiveEnemies_[mCurrentTargetEnemy_].getPosition();
-            local dir = (mPlayerEntry_.getPosition() - enemyPos);
-            dir.normalise();
-            targetPos = enemyPos + (Vec3(4, 0, 4) * dir);
         }
         if(targetPos != null){
             local finished = movePlayerToPos(targetPos);
@@ -896,6 +925,8 @@
     }
 
     function setCurrentTargetEnemy(currentEnemy){
+        mPrevTargetEnemy_ = mCurrentTargetEnemy_;
         mCurrentTargetEnemy_ = currentEnemy;
+        mRecentTargetEnemy_ = true;
     }
 };
