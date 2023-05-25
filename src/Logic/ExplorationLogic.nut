@@ -38,6 +38,9 @@
         function getPosition(){
             return mPos_;
         }
+        function getEntity(){
+            return mEntity_;
+        }
         function setModel(model){
             mModel_ = model;
         }
@@ -73,7 +76,10 @@
             return mId_;
         }
         function notifyDestroyed(){
-            if(mGizmo_) mGizmo_.destroy();
+            if(mGizmo_){
+                mGizmo_.destroy();
+                mGizmo_ = null;
+            }
         }
         function setGizmo(gizmo){
             mGizmo_ = gizmo;
@@ -928,5 +934,41 @@
         mPrevTargetEnemy_ = mCurrentTargetEnemy_;
         mCurrentTargetEnemy_ = currentEnemy;
         mRecentTargetEnemy_ = true;
+    }
+
+    function notifyNewEntityHealth(entity, newHealth){
+        local billboardIdx = -1;
+        try{
+            billboardIdx = _component.user[Component.MISC].get(entity, 0);
+        }catch(e){ }
+
+        if(billboardIdx >= 0){
+            if(newHealth <= 0){
+                mGui_.mWorldMapDisplay_.mBillboardManager_.untrackNode(billboardIdx);
+                return;
+            }
+            local maxHealth = _component.user[Component.HEALTH].get(entity, 1);
+            local newPercentage = newHealth.tofloat() / maxHealth.tofloat();
+
+            checkEntityHealthImportant(entity, newHealth, newPercentage);
+
+            mGui_.mWorldMapDisplay_.mBillboardManager_.updateHealth(billboardIdx, newPercentage);
+        }
+    }
+
+    function checkEntityHealthImportant(entity, newHealth, percentage){
+        if(entity.getId() == mPlayerEntry_.getEntity().getId()){
+            local data = {
+                "health": newHealth,
+                "percentage": percentage
+            };
+            _event.transmit(Event.PLAYER_HEALTH_CHANGED, data);
+        }
+
+        if(mActiveEnemies_.rawin(entity.getId())){
+            if(entity.getId() == mActiveEnemies_[mCurrentTargetEnemy_].getEntity().getId()){
+                print("is the target entity");
+            }
+        }
     }
 };

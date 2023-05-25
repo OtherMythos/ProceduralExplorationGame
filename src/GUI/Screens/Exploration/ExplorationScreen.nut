@@ -11,6 +11,7 @@ enum ExplorationBusEvents{
     mExplorationItemsContainer_ = null;
     mExplorationEnemiesContainer_ = null;
     mExplorationMovesContainer_ = null;
+    mExplorationStatsContainer_ = null;
     mMoneyCounter_ = null;
     mExplorationBus_ = null;
     mPlaceHelperLabel_ = null;
@@ -40,12 +41,19 @@ enum ExplorationBusEvents{
         //World map display
         mWorldMapDisplay_ = WorldMapDisplay(mWindow_);
 
+        mExplorationStatsContainer_ = ExplorationStatsContainer(mWindow_, mExplorationBus_);
+        if(::Base.getTargetInterface() == TargetInterface.MOBILE){
+            mExplorationStatsContainer_.addToLayout(layoutLine);
+        }else{
+            mExplorationStatsContainer_.setPosition(Vec2(0, 110));
+            mExplorationStatsContainer_.setSize(400, 100);
+        }
+
         //mExplorationItemsContainer_ = ExplorationItemsContainer(mWindow_, mExplorationBus_);
         //mExplorationItemsContainer_.addToLayout(layoutLine);
 
         //mExplorationEnemiesContainer_ = ExplorationEnemiesContainer(mWindow_, mExplorationBus_);
         mExplorationMovesContainer_ = ExplorationMovesContainer(mWindow_, mExplorationBus_);
-
         if(::Base.getTargetInterface() == TargetInterface.MOBILE){
             mExplorationMovesContainer_.addToLayout(layoutLine);
         }else{
@@ -79,6 +87,7 @@ enum ExplorationBusEvents{
         //mExplorationMovesContainer_.setSize(targetSize.x, targetSize.y/2);
         //mExplorationMovesContainer_.setPosition(Vec2(mExplorationItemsContainer_.getPosition().x, 5 + mExplorationItemsContainer_.getPosition().y + mExplorationItemsContainer_.getSize().y));
         //mExplorationMovesContainer_.setPosition(Vec2(0, 100));
+        mExplorationStatsContainer_.sizeForButtons();
         mExplorationMovesContainer_.sizeForButtons();
 
 
@@ -312,3 +321,4 @@ _doFile("res://src/GUI/Screens/Exploration/ExplorationFoundEnemyWidget.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationMovesContainer.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationEndScreen.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationPlayerDeathScreen.nut");
+_doFile("res://src/GUI/Screens/Exploration/ExplorationStatsContainer.nut");

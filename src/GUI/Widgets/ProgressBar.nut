@@ -59,6 +59,9 @@
         mLabelObject_.setCentre(sizeDiv + mPos_);
     }
 
+    function getPosition(){
+        return mParentContainer_.getPosition();
+    }
     function setPosition(x, y){
         local pos = Vec2(x, y);
         mParentContainer_.setPosition(pos);
