@@ -144,6 +144,9 @@
     mPlacingMarker_ = false;
     mRecentTargetEnemy_ = false;
 
+    mCurrentHighlightEnemy_ = null;
+    mPreviousHighlightEnemy_ = null;
+
     mOrientatingCamera_ = false;
     mPrevMouseX_ = null;
     mPrevMouseY_ = null;
@@ -277,6 +280,7 @@
         checkPlayerMove();
         checkOrientatingCamera();
         checkPlayerCombatMoves();
+        checkHighlightEnemy();
         ageItems();
 
         mSceneLogic_.updatePercentage(mExplorationPercentage_);
@@ -301,6 +305,19 @@
                 triggerPlayerMove(c);
             }
         }
+    }
+
+    function checkHighlightEnemy(){
+        if(mCurrentHighlightEnemy_ == mPreviousHighlightEnemy_) return;
+
+        assert(mCurrentHighlightEnemy_ != mPreviousHighlightEnemy_);
+        print("Highlight enemy change");
+
+        local enemy = null;
+        if(mCurrentHighlightEnemy_ != null){
+            enemy = mActiveEnemies_[mCurrentHighlightEnemy_].mEnemy_;
+        }
+        if(mGui_) mGui_.notifyHighlightEnemy(enemy);
     }
 
     //Unfortunately as the scene is safe when the target enemy is registered I have to check this later.
@@ -898,26 +915,32 @@
     }
 
     function sceneSafeUpdate(){
-        if(_input.getMouseButton(0)){
-            if(mGui_){
-                local inWindow = mGui_.checkPlayerInputPosition(_input.getMouseX(), _input.getMouseY());
-                if(inWindow != null){
-                    local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION);
+        if(mGui_){
+            local inWindow = mGui_.checkPlayerInputPosition(_input.getMouseX(), _input.getMouseY());
+            if(inWindow != null){
+                local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION);
 
-                    local ray = camera.getCameraToViewportRay(inWindow.x, inWindow.y);
-                    local result = _scene.testRayForObject(ray, 1 << 4);
-                    if(result != null){
-                        local parent = result.getParentNode();
-                        assert(parent != null);
+                local ray = camera.getCameraToViewportRay(inWindow.x, inWindow.y);
+                local result = _scene.testRayForObject(ray, 1 << 4);
+                if(result != null){
+                    local parent = result.getParentNode();
+                    assert(parent != null);
 
-                        local enemy = getEntityForPosition(parent.getPositionVec3());
-                        if(enemy != null){
+                    local enemy = getEntityForPosition(parent.getPositionVec3());
+                    if(enemy != null){
+
+                        if(_input.getMouseButton(0)){
                             setCurrentTargetEnemy(enemy);
+                        }else{
+                            setCurrentHighlightEnemy(enemy);
+                            return;
                         }
                     }
                 }
             }
         }
+
+        setCurrentHighlightEnemy(null);
     }
     //Bit of a work around, I just get the vector position and check through all entities.
     //TODO find a proper solution for this.
@@ -928,6 +951,11 @@
             }
         }
         return null;
+    }
+
+    function setCurrentHighlightEnemy(enemy){
+        mPreviousHighlightEnemy_ = mCurrentHighlightEnemy_;
+        mCurrentHighlightEnemy_ = enemy;
     }
 
     function setCurrentTargetEnemy(currentEnemy){

@@ -21,6 +21,7 @@ enum ExplorationBusEvents{
     mCameraButton_ = null;
 
     mInsideGateway_ = false;
+    mTooltipManager_ = null;
 
     function setup(data){
         mLogicInterface_ = data.logic;
@@ -124,6 +125,9 @@ enum ExplorationBusEvents{
 
         mExplorationBus_.registerCallback(busCallback, this);
         mLogicInterface_.setup();
+
+        mTooltipManager_ = TooltipManager();
+
     }
 
     function update(){
@@ -133,6 +137,8 @@ enum ExplorationBusEvents{
         mExplorationMovesContainer_.update();
         mMoneyCounter_.update();
         mWorldMapDisplay_.update();
+
+        mTooltipManager_.update();
     }
 
 
@@ -179,6 +185,14 @@ enum ExplorationBusEvents{
     }
     function notifyQueuedEnemyRemoved(idx){
         //mExplorationEnemiesContainer_.setObjectForIndex(null, idx, null);
+    }
+
+    function notifyHighlightEnemy(enemy){
+        if(enemy != null){
+            local string = ::ItemHelper.enemyToName(enemy);
+            mTooltipManager_.setTooltip(string);
+        }
+        mTooltipManager_.setVisible(enemy != null);
     }
 
     function notifyGatewayStatsChange(gatewayPercentage){
@@ -322,3 +336,4 @@ _doFile("res://src/GUI/Screens/Exploration/ExplorationMovesContainer.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationEndScreen.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationPlayerDeathScreen.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationStatsContainer.nut");
+_doFile("res://src/GUI/Screens/Exploration/ExplorationTooltipManager.nut");
