@@ -82,6 +82,9 @@
             }
         }
         function setGizmo(gizmo){
+            if(mGizmo_ != null){
+                mGizmo_.destroy();
+            }
             mGizmo_ = gizmo;
         }
         function getGizmo(){
@@ -315,7 +318,9 @@
 
         local enemy = null;
         if(mCurrentHighlightEnemy_ != null){
-            enemy = mActiveEnemies_[mCurrentHighlightEnemy_].mEnemy_;
+            if(mActiveEnemies_.rawin(mCurrentHighlightEnemy_)){
+                enemy = mActiveEnemies_[mCurrentHighlightEnemy_].mEnemy_;
+            }
         }
         if(mGui_) mGui_.notifyHighlightEnemy(enemy);
     }
@@ -325,8 +330,7 @@
         if(!mRecentTargetEnemy_) return;
 
         if(mActiveEnemies_.rawin(mPrevTargetEnemy_)){
-            local gizmo = mActiveEnemies_[mPrevTargetEnemy_].getGizmo();
-            gizmo.destroy();
+            mActiveEnemies_[mPrevTargetEnemy_].setGizmo(null);
         }
 
         local e = mActiveEnemies_[mCurrentTargetEnemy_];
@@ -993,7 +997,7 @@
             _event.transmit(Event.PLAYER_HEALTH_CHANGED, data);
         }
 
-        if(mActiveEnemies_.rawin(entity.getId())){
+        if(mCurrentTargetEnemy_ && mActiveEnemies_.rawin(entity.getId())){
             if(entity.getId() == mActiveEnemies_[mCurrentTargetEnemy_].getEntity().getId()){
                 print("is the target entity");
             }
