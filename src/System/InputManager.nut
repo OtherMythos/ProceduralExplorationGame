@@ -43,7 +43,7 @@
         _input.mapControllerInput(_B_X, this.performMove3);
         _input.mapControllerInput(_B_Y, this.performMove4);
 
-        //_input.mapKeyboardInputAxis(_K_D, _K_S, _K_A, _K_W, this.explorationMove);
+        //_input.mapKeyboardInputAxis(_K_RIGHT, _K_DOWN, _K_LEFT, _K_UP, this.explorationMove);
         _input.mapKeyboardInputAxis(_K_D, _K_S, _K_A, _K_W, this.explorationCamera);
 
         _input.mapKeyboardInput(_K_1, this.performMove1);

@@ -372,7 +372,10 @@
     }
 
     function checkCameraChange(){
-        mSceneLogic_.processCameraMove(_input.getAxisActionX(mInputs_.camera, _INPUT_ANY), _input.getAxisActionY(mInputs_.camera, _INPUT_ANY));
+        local modifier = 1;
+        local x = _input.getAxisActionX(mInputs_.camera, _INPUT_ANY);
+        local y = _input.getAxisActionY(mInputs_.camera, _INPUT_ANY);
+        mSceneLogic_.processCameraMove(x*modifier, y*modifier);
     }
 
     function checkPlayerMove(){
@@ -387,7 +390,12 @@
         local dir = Vec2(xVal, yVal);
         moved = (xVal != 0 || yVal != 0);
         if(moved){
-            dir /= 4;
+            local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
+            local targetForward = camera.getOrientation() * Vec3(xVal, 0, yVal);
+            targetForward.y = 0;
+
+            targetForward = Vec2(targetForward.x, targetForward.z);
+            dir = Vec2(targetForward.x, targetForward.y) / 4;
         }
 
         //Try and walk to the queued position.
@@ -575,6 +583,7 @@
     }
     function queuePlayerFlagForWindowTouch(touchCoords){
         local worldPoint = playerFlagBase_(touchCoords);
+        if(worldPoint == null) return;
         queuePlayerFlag(worldPoint);
     }
     function queuePlayerFlag(worldPos){
