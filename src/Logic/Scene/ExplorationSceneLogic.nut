@@ -128,7 +128,7 @@
                 }
             }
         }
-        local vox = VoxToMesh(Timer(), 1 << 2);
+        local vox = VoxToMesh(Timer(), 1 << 2, 0.4);
         //TODO get rid of this with the proper function to destory meshes.
         ::ExplorationCount++;
         local meshObj = vox.createMeshForVoxelData("worldVox" + ::ExplorationCount, voxData, width, height, WORLD_DEPTH);

@@ -154,4 +154,47 @@
         return entry;
     }
 
+    function constructEXPOrb(pos){
+        local targetPos = pos.copy();
+        targetPos.y = getZForPos(targetPos);
+
+        local en = _entity.create(SlotPosition(targetPos));
+        if(!en.valid()) throw "Error creating entity";
+
+        //local entry = ::ExplorationLogic.ActiveEnemyEntry(placeData.placeId, targetPos, en);
+
+        local placeNode = mBaseSceneNode_.createChildSceneNode();
+        placeNode.setPosition(targetPos);
+        placeNode.setScale(0.4, 0.4, 0.4);
+        local item = _scene.createItem("EXPOrbMesh");
+        item.setRenderQueueGroup(30);
+        local animNode = placeNode.createChildSceneNode();
+        animNode.attachObject(item);
+        _component.sceneNode.add(en, placeNode, true);
+
+        //TODO finish this
+        local senderTable = {
+            "func" : "receivePlayerEntered",
+            "path" : "res://src/Logic/Scene/ExplorationEXPOrbScript.nut"
+            "id" : 0,
+            "type" : _COLLISION_PLAYER,
+            "event" : _COLLISION_INSIDE
+        };
+        local shape = _physics.getCubeShape(1.5, 2, 1.5);
+        local collisionObject = _physics.collision[TRIGGER].createSender(senderTable, shape, targetPos);
+        _physics.collision[TRIGGER].addObject(collisionObject);
+        _component.collision.add(en, collisionObject);
+
+        _component.lifetime.add(en, 600);
+
+        local animationInfo = _animation.createAnimationInfo([animNode]);
+        local anim = _animation.createAnimation("EXPOrbAnim", animationInfo);
+
+        anim.setTime(_random.randInt(0, 180));
+
+        _component.animation.add(en, anim);
+
+        return en;
+    }
+
 };

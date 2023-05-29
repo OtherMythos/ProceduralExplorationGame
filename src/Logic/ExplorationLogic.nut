@@ -157,6 +157,7 @@
     mProjectileManager_ = null;
     mExplorationStats_ = null;
     mGatewayPercentage_ = 0.0;
+    mActiveEXPOrbs_ = null;
 
     mInputs_ = null;
 
@@ -172,6 +173,7 @@
         mQueuedFlags_ = array(NUM_PLAYER_QUEUED_FLAGS, null);
         mQueuedEnemyEncounters_ = [];
         mQueuedEnemyEncountersLife_ = [];
+        mActiveEXPOrbs_ = {};
 
         resetExploration_();
         processDebug_();
@@ -235,6 +237,7 @@
             "totalDiscoveredPlaces": 0,
             "totalEncountered": 0,
             "totalDefeated": 0,
+            "foundEXPOrbs": 0,
         };
 
         renotifyItems();
@@ -328,6 +331,7 @@
     //Unfortunately as the scene is safe when the target enemy is registered I have to check this later.
     function checkTargetEnemy(){
         if(!mRecentTargetEnemy_) return;
+        if(!mCurrentTargetEnemy_) return;
 
         if(mActiveEnemies_.rawin(mPrevTargetEnemy_)){
             mActiveEnemies_[mPrevTargetEnemy_].setGizmo(null);
@@ -347,6 +351,10 @@
         mOrientatingCamera_ = orientate;
     }
     function checkOrientatingCamera(){
+
+        if(_input.getMouseButton(1)){
+            ::Base.mExplorationLogic.spawnEXPOrbs(mPlayerEntry_.getPosition(), 4);
+        }
         if(!mOrientatingCamera_) return;
         print("orientating");
 
@@ -1011,5 +1019,20 @@
                 print("is the target entity");
             }
         }
+    }
+
+    function spawnEXPOrbs(pos, num, spread=4){
+        for(local i = 0; i < num; i++){
+            local randDir = (_random.rand()*2-1) * PI;
+
+            //local targetPos = pos + (Vec3(_random.rand()-0.5, 0, _random.rand()-0.5) * spread);
+            local targetPos = pos + (Vec3(sin(randDir) * spread, 0, cos(randDir) * spread));
+            local newEntity = ::ExplorationEntityFactory.constructEXPOrb(targetPos);
+            mActiveEXPOrbs_.rawset(newEntity.getId(), newEntity);
+        }
+    }
+
+    function notifyFoundEXPOrb(){
+        mExplorationStats_.foundEXPOrbs++;
     }
 };

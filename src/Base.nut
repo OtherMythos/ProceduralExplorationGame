@@ -141,6 +141,7 @@
         //::ScreenManager.transitionToScreen(Screen.STORY_CONTENT_SCREEN);
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_END_SCREEN, {"totalFoundItems": 5, "totalDiscoveredPlaces": 4, "totalEncountered": 2, "totalDefeated": 1}), null, 1);
 
+        setupBaseMeshes();
     }
 
     function update(){
@@ -184,6 +185,14 @@
         if(mCurrentWorld_ == null) return;
         mCurrentWorld_.shutdown();
         mCurrentWorld_ = null;
+    }
+
+    function setupBaseMeshes(){
+        local voxMesh = VoxToMesh();
+
+        local voxData = array(1, 188);
+
+        local meshObj = voxMesh.createMeshForVoxelData("EXPOrbMesh", voxData, 1, 1, 1);
     }
 
 };

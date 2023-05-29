@@ -35,6 +35,8 @@ function destroyed(eid){
     local endPos = ::Base.mExplorationLogic.mGui_.mMoneyCounter_.getPositionWindowPos();
     ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": 10, "start": worldPos, "end": endPos, "money": 10, "coinScale": 0.1}));
 
+    ::Base.mExplorationLogic.spawnEXPOrbs(eid.getPosition().toVector3(), 8);
+
     ::w.e.rawdelete(eid.getId());
     ::Base.mExplorationLogic.notifyEnemyDestroyed(eid.getId());
 }

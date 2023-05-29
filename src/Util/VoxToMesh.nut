@@ -52,15 +52,17 @@
 
     mVertexElemVec_ = null;
     mFaceExclusionMask_ = 0;
+    mYMult_ = 1;
 
     mNumTris_ = 0;
 
     /**
      * @param exclusionMask Allows for certain faces to always be rejected, for instance not drawing the bottom face in a terrain.
      */
-    constructor(timer = null, exclusionMask = 0){
+    constructor(timer = null, exclusionMask = 0, yMult=1){
         mFaceExclusionMask_ = exclusionMask;
         mTimer_ = timer;
+        mYMult_ = yMult;
 
         TILE_WIDTH = (1.0 / COLS_WIDTH) / 2.0;
         TILE_HEIGHT = (1.0 / COLS_HEIGHT) / 2.0;
@@ -85,8 +87,6 @@
         local verts = [];
         local indices = [];
 
-        local yMult = 0.4;
-
         local index = 0;
         local numVerts = 0;
         for(local z = 0; z < depth; z++)
@@ -103,7 +103,7 @@
                 for(local i = 0; i < 4; i++){
                     verts.append(VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3] + x);
                     verts.append(VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 1] + y);
-                    verts.append(VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 2]*yMult + z*yMult);
+                    verts.append(VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 2]*mYMult_ + z*mYMult_);
                     verts.append(FACES_NORMALS[f * 3]);
                     verts.append(FACES_NORMALS[f * 3 + 1]);
                     verts.append(FACES_NORMALS[f * 3 + 2]);

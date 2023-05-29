@@ -9,5 +9,12 @@
                 <k t='160' rot='0, 360, 0'/>
             </t>
         </gizmoEnemyTarget>
+        <EXPOrbAnim repeat='true' end='240'>
+            <t type='transform' target='0'>
+                <k t='0' position='0, 1, 0' rot='0, 0, 0'/>
+                <k t='120' position='0, 1.5, 0' rot='0, 180, 0'/>
+                <k t='240' position='0, 1, 0' rot='0, 360, 0'/>
+            </t>
+        </EXPOrbAnim>
     </animations>
 </AnimationSequence>
