@@ -3,6 +3,9 @@
     mBus_ = null;
     mLayoutLine_ = null;
 
+    mMoneyCounter_ = null;
+    mEXPCounter_ = null;
+
     mPlayerHealthBar_ = null;
 
     constructor(parentWin, bus){
@@ -14,12 +17,17 @@
         mWindow_.setClickable(false);
         //mWindow_.setVisualsEnabled(false);
 
-        mLayoutLine_ = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
+        mLayoutLine_ = _gui.createLayoutLine();
 
         mPlayerHealthBar_ = ::GuiWidgets.ProgressBar(mWindow_);
         //mPlayerHealthBar_.setSize(100, 40);
         mPlayerHealthBar_.setPercentage(1.0);
         mPlayerHealthBar_.addToLayout(mLayoutLine_);
+
+        mMoneyCounter_ = ::GuiWidgets.InventoryMoneyCounter(mWindow_);
+        mMoneyCounter_.addToLayout(mLayoutLine_);
+        mEXPCounter_ = ::GuiWidgets.InventoryEXPCounter(mWindow_);
+        mEXPCounter_.addToLayout(mLayoutLine_);
 
         //mLayoutLine_.setMarginForAllCells(10, 10);
         //mLayoutLine_.layout();
@@ -58,6 +66,8 @@
     }
 
     function update(){
+        mMoneyCounter_.update();
+        mEXPCounter_.update();
     }
 
     function sizeForButtons(){
@@ -69,6 +79,13 @@
 
     function playerHealthChanged(id, data){
         mPlayerHealthBar_.setPercentage(data.percentage);
+    }
+
+    function getMoneyCounter(){
+        return mMoneyCounter_;
+    }
+    function getEXPCounter(){
+        return mEXPCounter_;
     }
 };
 

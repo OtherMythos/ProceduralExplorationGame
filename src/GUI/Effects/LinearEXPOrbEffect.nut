@@ -91,6 +91,8 @@ local LinearEXPOrbEffectStateMachine = class extends ::Util.StateMachine{
     function destroy(){
         mOrbs_.clear();
         mParentNode_.destroyNodeAndChildren();
+
+        _event.transmit(Event.EXP_ORBS_ADDED, 1);
     }
 
     function createCoinOffsets(numCoins){

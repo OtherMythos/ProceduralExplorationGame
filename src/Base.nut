@@ -65,7 +65,9 @@
         _doFile("res://src/MapGen/Generator/MapGen.nut");
 
         ::GuiWidgets <- {};
+        _doFile("res://src/GUI/Widgets/InventoryBaseCounter.nut");
         _doFile("res://src/GUI/Widgets/InventoryMoneyCounter.nut");
+        _doFile("res://src/GUI/Widgets/InventoryEXPCounter.nut");
         _doFile("res://src/GUI/Widgets/ProgressBar.nut");
 
         _doFile("res://src/GUI/Billboard/BillboardManager.nut");

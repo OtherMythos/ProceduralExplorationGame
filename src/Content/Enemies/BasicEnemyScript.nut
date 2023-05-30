@@ -32,7 +32,7 @@ function update(eid){
 
 function destroyed(eid){
     local worldPos = ::EffectManager.getWorldPositionForWindowPos(::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getPosition() + ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getSize() / 2);
-    local endPos = ::Base.mExplorationLogic.mGui_.mMoneyCounter_.getPositionWindowPos();
+    local endPos = ::Base.mExplorationLogic.mGui_.getMoneyCounter().getPositionWindowPos();
     ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": 10, "start": worldPos, "end": endPos, "money": 10, "coinScale": 0.1}));
 
     ::Base.mExplorationLogic.spawnEXPOrbs(eid.getPosition().toVector3(), 8);

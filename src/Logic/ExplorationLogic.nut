@@ -891,7 +891,7 @@
 
             //Do a coin effect.
             local worldPos = ::EffectManager.getWorldPositionForWindowPos(mGui_.mWorldMapDisplay_.getPosition() + mGui_.mWorldMapDisplay_.getSize() / 2);
-            local endPos = mGui_.mMoneyCounter_.getPositionWindowPos();
+            local endPos = mGui_.getMoneyCounter().getPositionWindowPos();
             ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"cellSize": 2, "coinScale": 0.1, "numCoins": 5, "start": worldPos, "end": endPos, "money": 100}));
 
             mExplorationStats_.totalDiscoveredPlaces++;
@@ -1036,8 +1036,7 @@
         mExplorationStats_.foundEXPOrbs++;
 
         local worldPos = ::EffectManager.getWorldPositionForWindowPos(::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getPosition() + ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getSize() / 2);
-        local endPos = ::Base.mExplorationLogic.mGui_.mMoneyCounter_.getPositionWindowPos();
-        //::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": 10, "start": worldPos, "end": endPos, "money": 10, "coinScale": 0.1}));
+        local endPos = ::Base.mExplorationLogic.mGui_.getEXPCounter().getPositionWindowPos();
 
         ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_EXP_ORB_EFFECT, {"numOrbs": 1, "start": worldPos, "end": endPos, "orbScale": 0.2}));
     }

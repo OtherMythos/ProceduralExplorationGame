@@ -36,9 +36,6 @@ enum ExplorationBusEvents{
 
         local layoutLine = _gui.createLayoutLine();
 
-        mMoneyCounter_ = ::GuiWidgets.InventoryMoneyCounter(mWindow_);
-        //mMoneyCounter_.addToLayout(layoutLine);
-
         //World map display
         mWorldMapDisplay_ = WorldMapDisplay(mWindow_);
 
@@ -72,8 +69,8 @@ enum ExplorationBusEvents{
         //layoutLine.setMarginForAllCells(0, 20);
         //layoutLine.setPosition(_window.getWidth() * 0.05, 0);
         layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
-        mMoneyCounter_.mMoneyLabel_.setMargin(0, 0);
-        mMoneyCounter_.mMoneyLabel_.setGridLocation(_GRID_LOCATION_TOP_LEFT);
+        //mMoneyCounter_.mMoneyLabel_.setMargin(0, 0);
+        //mMoneyCounter_.mMoneyLabel_.setGridLocation(_GRID_LOCATION_TOP_LEFT);
         layoutLine.layout();
 
         //local targetSize = mExplorationItemsContainer_.getSize();
@@ -135,10 +132,18 @@ enum ExplorationBusEvents{
         //mExplorationItemsContainer_.update();
         //mExplorationEnemiesContainer_.update();
         mExplorationMovesContainer_.update();
-        mMoneyCounter_.update();
+        mExplorationStatsContainer_.update();
+        //mMoneyCounter_.update();
         mWorldMapDisplay_.update();
 
         mTooltipManager_.update();
+    }
+
+    function getMoneyCounter(){
+        return mExplorationStatsContainer_.getMoneyCounter();
+    }
+    function getEXPCounter(){
+        return mExplorationStatsContainer_.getEXPCounter();
     }
 
 
@@ -255,10 +260,11 @@ enum ExplorationBusEvents{
 
     function shutdown(){
         mLogicInterface_.shutdown();
-        mMoneyCounter_.shutdown();
+        //mMoneyCounter_.shutdown();
         base.shutdown();
         mLogicInterface_.notifyLeaveExplorationScreen();
         mExplorationItemsContainer_.shutdown();
+        mExplorationStatsContainer_.update();
         mExplorationEnemiesContainer_.shutdown();
         mWorldMapDisplay_.shutdown();
     }
