@@ -1,19 +1,12 @@
 ::ScreenManager.Screens[Screen.PLAYER_DEATH_SCREEN] = class extends ::Screen{
 
-    mCombatData_ = null;
-    mEnemyStart_ = null;
-    mEnemyEnd_ = null;
-
-    mBackgroundWindow_ = null;
-
     function setup(data){
 
         local winWidth = _window.getWidth() * 0.8;
         local winHeight = _window.getHeight() * 0.8;
 
         //Create a window to block inputs for when the popup appears.
-        mBackgroundWindow_ = createBackgroundScreen_();
-        mBackgroundWindow_.setZOrder(60);
+        createBackgroundScreen_();
 
         mWindow_ = _gui.createWindow();
         mWindow_.setSize(winWidth, winHeight);

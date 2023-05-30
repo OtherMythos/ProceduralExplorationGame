@@ -260,13 +260,10 @@ enum ExplorationBusEvents{
 
     function shutdown(){
         mLogicInterface_.shutdown();
-        //mMoneyCounter_.shutdown();
-        base.shutdown();
         mLogicInterface_.notifyLeaveExplorationScreen();
-        mExplorationItemsContainer_.shutdown();
-        mExplorationStatsContainer_.update();
-        mExplorationEnemiesContainer_.shutdown();
+        mExplorationStatsContainer_.shutdown();
         mWorldMapDisplay_.shutdown();
+        base.shutdown();
     }
 
     function busCallback(event, data){

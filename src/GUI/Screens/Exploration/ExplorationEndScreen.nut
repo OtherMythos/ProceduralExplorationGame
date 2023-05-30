@@ -4,21 +4,19 @@
     mEnemyStart_ = null;
     mEnemyEnd_ = null;
 
-    mBackgroundWindow_ = null;
-
     function setup(data){
 
         local winWidth = _window.getWidth() * 0.8;
         local winHeight = _window.getHeight() * 0.8;
 
         //Create a window to block inputs for when the popup appears.
-        mBackgroundWindow_ = createBackgroundScreen_();
-        mBackgroundWindow_.setZOrder(60);
+        createBackgroundScreen_();
 
         mWindow_ = _gui.createWindow();
         mWindow_.setSize(winWidth, winHeight);
         mWindow_.setPosition(_window.getWidth() * 0.1, _window.getHeight() * 0.1);
         mWindow_.setClipBorders(10, 10, 10, 10);
+        mWindow_.setZOrder(61);
 
         local layoutLine = _gui.createLayoutLine();
 
@@ -38,12 +36,13 @@
         descText.setExpandHorizontal(true);
         layoutLine.addCell(descText);
 
-        //Add the buttons to either keep or scrap.
-        local buttonOptions = ["Explore again", "Back"];
+        local buttonOptions = ["Explore again", "Return to menu"];
         local buttonFunctions = [
             function(widget, action){
             },
             function(widget, action){
+                ::ScreenManager.queueTransition(null, null, mLayerIdx);
+                ::ScreenManager.queueTransition(Screen.MAIN_MENU_SCREEN);
             }
         ];
         foreach(i,c in buttonOptions){

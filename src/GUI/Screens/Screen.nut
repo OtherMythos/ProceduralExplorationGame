@@ -4,6 +4,8 @@
     mScreenData_ = null;
     mLayerIdx = 0;
 
+    mBackgroundWindow_ = null;
+
     /**
      * A class to facilitate communication between the parts of the screen systems.
      *
@@ -57,12 +59,13 @@
     function createBackgroundScreen_(){
         local win = _gui.createWindow();
         win.setSize(_window.getWidth(), _window.getHeight());
-        win.setVisualsEnabled(false);
+        win.setVisualsEnabled(true);
 
         return win;
     }
 
     function setZOrder(idx){
+        if(mBackgroundWindow_) mBackgroundWindow_.setZOrder(idx-1);
         mWindow_.setZOrder(idx);
     }
 };

@@ -15,6 +15,11 @@
         mCurrentAnimations_ = {};
     }
 
+    function destroy(){
+        //TODO destroy here
+        mCurrentAnimations_.clear();
+    }
+
     function setOrientation(orientation){
         mNode_.setOrientation(orientation);
     }

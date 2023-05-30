@@ -1,6 +1,5 @@
 ::ScreenManager.Screens[Screen.COMBAT_SPOILS_POPUP_SCREEN] = class extends ::Screen{
 
-    mBackgroundWindow_ = null;
     mItemsContainer_ = null;
     mBus_ = null;
 
@@ -9,7 +8,7 @@
         mBus_ = ScreenBus();
 
         //Create a window to block inputs for when the popup appears.
-        mBackgroundWindow_ = createBackgroundScreen_();
+        createBackgroundScreen_();
 
         mWindow_ = _gui.createWindow();
         mWindow_.setSize(winWidth, _window.getHeight() * 0.333);
@@ -84,7 +83,7 @@
 
     function closeScreen(){
         ::ScreenManager.queueTransition(null, null, mLayerIdx);
-        ::ScreenManager.queueTransition(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
+        ::ScreenManager.queueTransition(Screen.MAIN_MENU_SCREEN);
     }
 
     function shutdown(){

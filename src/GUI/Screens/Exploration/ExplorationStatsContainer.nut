@@ -41,7 +41,7 @@
     }
 
     function shutdown(){
-        _event.unsubscribe(Event.PLAYER_HEALTH_CHANGED, this);
+        _event.unsubscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);
     }
 
     function addToLayout(layoutLine){

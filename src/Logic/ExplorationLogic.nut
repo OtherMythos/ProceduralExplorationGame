@@ -80,6 +80,7 @@
                 mGizmo_.destroy();
                 mGizmo_ = null;
             }
+            if(mModel_) mModel_.destroy();
         }
         function setGizmo(gizmo){
             if(mGizmo_ != null){
@@ -203,6 +204,10 @@
     }
 
     function shutdown(){
+        foreach(i in mActiveEnemies_){
+            i.notifyDestroyed();
+        }
+        mActiveEnemies_.clear();
         mSceneLogic_.shutdown();
 
         _event.unsubscribe(Event.PLAYER_DIED, processPlayerDeath, this);
@@ -217,6 +222,7 @@
 
     function processPlayerDeath(id, data){
         print("Received player death");
+        pauseExploration();
         if(mGui_) mGui_.notifyPlayerDeath();
     }
 
@@ -353,7 +359,9 @@
     function checkOrientatingCamera(){
 
         if(_input.getMouseButton(1)){
-            ::Base.mExplorationLogic.spawnEXPOrbs(mPlayerEntry_.getPosition(), 4);
+            //::Base.mExplorationLogic.spawnEXPOrbs(mPlayerEntry_.getPosition(), 4);
+
+            gatewayEndExploration();
         }
         if(!mOrientatingCamera_) return;
         print("orientating");

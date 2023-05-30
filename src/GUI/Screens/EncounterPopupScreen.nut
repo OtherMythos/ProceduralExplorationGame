@@ -58,8 +58,6 @@ local EncounterPopupScreenStateMachine = class extends ::Util.StateMachine{
     mMaxCount_ = 150;
     mBackgroundColour_ = false;
 
-    mBackgroundWindow_ = null;
-
     mParentNode_ = null;
     mObjectNode_ = null;
     mAnimNode_ = null;
@@ -74,8 +72,7 @@ local EncounterPopupScreenStateMachine = class extends ::Util.StateMachine{
         local winWidth = _window.getWidth() * 0.8;
 
         //Create a window to block inputs for when the popup appears.
-        mBackgroundWindow_ = createBackgroundScreen_();
-        mBackgroundWindow_.setZOrder(60);
+        createBackgroundScreen_();
 
         mPopupWin_ = _gui.createWindow();
         mPopupWin_.setSize(winWidth, _window.getHeight() * 0.333);
