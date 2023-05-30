@@ -1034,5 +1034,11 @@
 
     function notifyFoundEXPOrb(){
         mExplorationStats_.foundEXPOrbs++;
+
+        local worldPos = ::EffectManager.getWorldPositionForWindowPos(::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getPosition() + ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getSize() / 2);
+        local endPos = ::Base.mExplorationLogic.mGui_.mMoneyCounter_.getPositionWindowPos();
+        //::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": 10, "start": worldPos, "end": endPos, "money": 10, "coinScale": 0.1}));
+
+        ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_EXP_ORB_EFFECT, {"numOrbs": 1, "start": worldPos, "end": endPos, "orbScale": 0.2}));
     }
 };

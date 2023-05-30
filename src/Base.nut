@@ -79,6 +79,7 @@
         _doFile("res://src/GUI/Effects/Effect.nut");
         _doFile("res://src/GUI/Effects/SpreadCoinEffect.nut");
         _doFile("res://src/GUI/Effects/LinearCoinEffect.nut");
+        _doFile("res://src/GUI/Effects/LinearEXPOrbEffect.nut");
         _doFile("res://src/GUI/Effects/FoundItemEffect.nut");
         _doFile("res://src/GUI/Effects/FoundItemEffectIdle.nut");
         ::EffectManager.setup();
