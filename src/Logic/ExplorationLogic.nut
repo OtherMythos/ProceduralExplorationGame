@@ -80,7 +80,10 @@
                 mGizmo_.destroy();
                 mGizmo_ = null;
             }
-            if(mModel_) mModel_.destroy();
+            if(mModel_){
+                mModel_.destroy();
+                mModel_ = null;
+            }
         }
         function setGizmo(gizmo){
             if(mGizmo_ != null){
@@ -207,13 +210,19 @@
         foreach(i in mActiveEnemies_){
             i.notifyDestroyed();
         }
+        mPlayerEntry_.notifyDestroyed();
+
         mActiveEnemies_.clear();
         mSceneLogic_.shutdown();
 
         _event.unsubscribe(Event.PLAYER_DIED, processPlayerDeath, this);
+
+        _state.setPauseState(0);
     }
 
     function setup(){
+        _state.setPauseState(0);
+
         resetGenMap_();
         //mSceneLogic_.setup();
 
@@ -795,6 +804,7 @@
         mEnemyEncountered_ = false;
         mExplorationPaused_ = false;
         renotifyItems();
+        _state.setPauseState(0);
     }
 
     function setGuiObject(guiObj){
@@ -815,6 +825,7 @@
     function pauseExploration(){
         print("Pausing exploration");
         mExplorationPaused_ = true;
+        _state.setPauseState(0xFFFF);
     }
 
     /*

@@ -16,7 +16,6 @@
     }
 
     function destroy(){
-        //TODO destroy here
         mCurrentAnimations_.clear();
     }
 
