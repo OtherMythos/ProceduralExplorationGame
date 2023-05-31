@@ -267,6 +267,10 @@
         //mSceneLogic_.updatePlayerPos(mPlayerEntry_.mPos_);
     }
     function resetExploration(){
+        //TODO find a better way than the direct lookup.
+        if(mGui_) mGui_.mWorldMapDisplay_.mBillboardManager_.untrackAllNodes();
+        _state.setPauseState(0);
+
         resetExploration_();
         resetGenMap_();
     }

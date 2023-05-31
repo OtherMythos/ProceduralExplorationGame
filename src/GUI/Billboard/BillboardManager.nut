@@ -52,8 +52,14 @@
         return idx;
     }
     function untrackNode(id){
+        if(mTrackedNodes_[id] == null) return;
         mTrackedNodes_[id].mBillboard.destroy();
         mTrackedNodes_[id] = null;
+    }
+    function untrackAllNodes(){
+        foreach(c,i in mTrackedNodes_){
+            untrackNode(c);
+        }
     }
 
     function updateHealth(id, healthPercent){

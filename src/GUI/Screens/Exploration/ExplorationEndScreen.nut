@@ -39,6 +39,8 @@
         local buttonOptions = ["Explore again", "Return to menu"];
         local buttonFunctions = [
             function(widget, action){
+                ::Base.mExplorationLogic.resetExploration();
+                ::ScreenManager.queueTransition(null, null, mLayerIdx);
             },
             function(widget, action){
                 ::ScreenManager.queueTransition(null, null, mLayerIdx);

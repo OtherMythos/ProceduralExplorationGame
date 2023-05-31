@@ -88,6 +88,8 @@
     }
 
     function shutdown(){
+        clearAllLocationFlags();
+
         if(mParentNode_) mParentNode_.destroyNodeAndChildren();
         if(mVoxMesh_ == null){
         }
@@ -258,6 +260,12 @@
     function removeLocationFlag(idx){
         mLocationFlagNodes_[idx].destroyNodeAndChildren();
         mLocationFlagNodes_[idx] = null;
+    }
+    function clearAllLocationFlags(){
+        foreach(c,i in mLocationFlagNodes_){
+            if(i == null) continue;
+            removeLocationFlag(c);
+        }
     }
     //TODO the flags can be converted to use the gizmos as well.
     function createGizmo(pos, gizmoType){
