@@ -6,6 +6,8 @@
 
     mPlayerCombatStats = null;
 
+    mPlayerCurrentEXP_ = 0;
+
     constructor(){
         _event.subscribe(Event.PLACE_VISITED, receivePlaceVisitedEvent, this);
 
@@ -40,6 +42,10 @@
     function equipItem(item, slot){
         print("Equipping player item: " + item.getName())
         mPlayerCombatStats.mEquippedItems.setEquipped(item, slot);
+    }
+
+    function addEXP(exp){
+
     }
 
 };

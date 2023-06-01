@@ -1,10 +1,122 @@
+enum ExplorationScreenComponents{
+    NONE,
+    INTRO,
+    TITLE,
+    TEXT_ENTRIES,
+    EXP_PROGRESS,
+    END_BUTTONS,
+
+    MAX
+};
+
+local ExplorationEndScreenAnimStateMachine = class extends ::Util.StateMachine{
+    mStates_ = array(ExplorationScreenComponents.MAX);
+};
+
+local ObjAnim = class{
+    mObj = null;
+    mStart = null; mEnd = null;
+    constructor(obj){
+        mObj = obj;
+        mObj.setTextColour(0, 0, 0, 0);
+        mObj.setVisible(true);
+        mEnd = mObj.getPosition();
+        mStart = mEnd - Vec2(30, 0);
+    }
+    function update(p){
+        mObj.setTextColour(0, 0, 0, p);
+        mObj.setPosition(mStart + (mEnd - mStart) * p);
+    }
+};
+
+{
+    ExplorationEndScreenAnimStateMachine.mStates_[ExplorationScreenComponents.INTRO] = class extends ::Util.State{
+        mTotalCount_ = 1
+        mNextState_ = ExplorationScreenComponents.TITLE;
+        function start(data){
+            local c = data.components;
+            c[ExplorationScreenComponents.TITLE].setVisible(false);
+            foreach(i in c[ExplorationScreenComponents.TEXT_ENTRIES]) { i.setVisible(false); }
+            c[ExplorationScreenComponents.EXP_PROGRESS].setVisible(false);
+            foreach(i in c[ExplorationScreenComponents.END_BUTTONS]) { i.setVisible(false); }
+        }
+        function update(p, data){
+        }
+    };
+    ExplorationEndScreenAnimStateMachine.mStates_[ExplorationScreenComponents.TITLE] = class extends ::Util.State{
+        mTotalCount_ = 20
+        mNextState_ = ExplorationScreenComponents.TEXT_ENTRIES;
+        mObjAnim_ = null;
+        function start(data){
+            mObjAnim_ = ObjAnim(data.components[ExplorationScreenComponents.TITLE]);
+        }
+        function update(p, data){
+            mObjAnim_.update(p);
+        }
+    };
+    ExplorationEndScreenAnimStateMachine.mStates_[ExplorationScreenComponents.TEXT_ENTRIES] = class extends ::Util.State{
+        mTotalCount_ = 30
+        mNextState_ = ExplorationScreenComponents.EXP_PROGRESS;
+        mObjAnim_ = null;
+        mDiv_ = 0;
+        function start(data){
+            mObjAnim_ = [];
+            foreach(i in data.components[ExplorationScreenComponents.TEXT_ENTRIES]){
+                mObjAnim_.append(ObjAnim(i));
+            }
+            mDiv_ = 1.0 / mObjAnim_.len().tofloat();
+        }
+        function update(p, data){
+            local current = (p / mDiv_).tointeger();
+            local anim = (p % mDiv_) / mDiv_;
+            print("current " + current);
+            print("anim " + anim);
+            if(current < mObjAnim_.len()){
+                for(local i = 0; i < current+1; i++){
+                    mObjAnim_[i].update(current == i ? anim : 1.0);
+                }
+            }else{
+                //Just make sure they're all fully visible.
+                foreach(i in mObjAnim_){
+                    i.update(1.0);
+                }
+            }
+        }
+    };
+    ExplorationEndScreenAnimStateMachine.mStates_[ExplorationScreenComponents.EXP_PROGRESS] = class extends ::Util.State{
+        mTotalCount_ = 20
+        mNextState_ = ExplorationScreenComponents.END_BUTTONS;
+        mObjAnim_ = null;
+        function start(data){
+            data.components[ExplorationScreenComponents.EXP_PROGRESS].setVisible(true);
+        }
+        function update(p, data){
+        }
+    };
+    ExplorationEndScreenAnimStateMachine.mStates_[ExplorationScreenComponents.END_BUTTONS] = class extends ::Util.State{
+        mTotalCount_ = 20
+        mNextState_ = ExplorationScreenComponents.NONE;
+        mObjAnim_ = null;
+        function start(data){
+            local vals = data.components[ExplorationScreenComponents.END_BUTTONS];
+            foreach(i in vals){
+                i.setVisible(true);
+            }
+        }
+        function update(p, data){
+        }
+    };
+}
+
 ::ScreenManager.Screens[Screen.EXPLORATION_END_SCREEN] = class extends ::Screen{
 
-    mCombatData_ = null;
-    mEnemyStart_ = null;
-    mEnemyEnd_ = null;
+    mScreenComponents_ = null;
+
+    mStateMachine_ = null;
 
     function setup(data){
+
+        mScreenComponents_ = {};
 
         local winWidth = _window.getWidth() * 0.8;
         local winHeight = _window.getHeight() * 0.8;
@@ -28,13 +140,23 @@
         title.setTextColour(0, 0, 0, 1);
         layoutLine.addCell(title);
 
-        local descText = mWindow_.createLabel();
-        descText.setText(getTextForExploration(data));
-        //descText.setSize(winWidth, descText.getSize().y);
-        //descText.setTextColour(0, 0, 0, 1);
-        descText.sizeToFit(winWidth);
-        descText.setExpandHorizontal(true);
-        layoutLine.addCell(descText);
+        mScreenComponents_[ExplorationScreenComponents.TITLE] <- title;
+
+        local outText = getTextForExploration(data);
+        foreach(c,i in outText){
+            local descText = mWindow_.createLabel();
+            descText.setText(i);
+            descText.sizeToFit(winWidth);
+            descText.setExpandHorizontal(true);
+            layoutLine.addCell(descText);
+            outText[c] = descText;
+        }
+        mScreenComponents_[ExplorationScreenComponents.TEXT_ENTRIES] <- outText;
+
+        local levelBar = ::GuiWidgets.ProgressBar(mWindow_);
+        levelBar.setSize(200, 50);
+        levelBar.addToLayout(layoutLine);
+        mScreenComponents_[ExplorationScreenComponents.EXP_PROGRESS] <- levelBar;
 
         local buttonOptions = ["Explore again", "Return to menu"];
         local buttonFunctions = [
@@ -47,6 +169,7 @@
                 ::ScreenManager.queueTransition(Screen.MAIN_MENU_SCREEN);
             }
         ];
+        local endButtons = [];
         foreach(i,c in buttonOptions){
             local button = mWindow_.createButton();
             button.setDefaultFontSize(button.getDefaultFontSize() * 1.5);
@@ -55,23 +178,37 @@
             button.setExpandHorizontal(true);
             button.setMinSize(0, 100);
             layoutLine.addCell(button);
+            endButtons.append(button);
         }
+        mScreenComponents_[ExplorationScreenComponents.END_BUTTONS] <- endButtons;
 
         layoutLine.setSize(winWidth, winHeight);
         layoutLine.setPosition(0, 0);
         layoutLine.layout();
+
+        levelBar.notifyLayout();
+        levelBar.setPercentage(0.5);
+
+        mStateMachine_ = ExplorationEndScreenAnimStateMachine({"components": mScreenComponents_});
+        mStateMachine_.setState(ExplorationScreenComponents.INTRO);
+    }
+
+    function update(){
+        mStateMachine_.update();
     }
 
     function wrapBulletText_(text){
-        return "    • " + text + "\n";
+        return "    • " + text;
     }
     function getTextForExploration(data){
-        local outString = "Exploration completed in 1:24 minutes.\n";
-        outString += format(wrapBulletText_("Found %i items"), data.totalFoundItems);
-        outString += format(wrapBulletText_("Found %i places"), data.totalDiscoveredPlaces);
-        outString += format(wrapBulletText_("Encountered %i enemies"), data.totalEncountered);
-        outString += format(wrapBulletText_("Defeated %i enemies"), data.totalDefeated);
+        local outText = [];
 
-        return outString;
+        outText.append("Exploration completed in 1:24 minutes.");
+        outText.append(format(wrapBulletText_("Found %i items"), data.totalFoundItems));
+        outText.append(format(wrapBulletText_("Found %i places"), data.totalDiscoveredPlaces));
+        outText.append(format(wrapBulletText_("Encountered %i enemies"), data.totalEncountered));
+        outText.append(format(wrapBulletText_("Defeated %i enemies"), data.totalDefeated));
+
+        return outText;
     }
 }

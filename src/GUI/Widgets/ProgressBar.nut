@@ -104,4 +104,9 @@
         processSize_();
         //setPosition_();
     }
+
+    function notifyLayout(){
+        local parentPos = mParentContainer_.getPosition();
+        setPosition(parentPos.x, parentPos.y);
+    }
 };

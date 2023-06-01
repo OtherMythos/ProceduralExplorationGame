@@ -67,8 +67,4 @@
 
     function start(data) {}
     function update(p, data) {}
-
-    function tickCount(){
-        mCurrentCount_++;
-    }
 };
