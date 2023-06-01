@@ -65,8 +65,12 @@
     function updateHealth(id, healthPercent){
         mTrackedNodes_[id].mBillboard.setPercentage(healthPercent);
     }
+    function setVisible(id, visible){
+        mTrackedNodes_[id].mBillboard.setVisible(visible);
+    }
 
 }
 
 _doFile("res://src/GUI/Billboard/Billboard.nut");
 _doFile("res://src/GUI/Billboard/HealthBarBillboard.nut");
+_doFile("res://src/GUI/Billboard/GatewayExplorationEndBillboard.nut");

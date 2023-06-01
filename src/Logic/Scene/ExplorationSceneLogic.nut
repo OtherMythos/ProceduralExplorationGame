@@ -82,7 +82,7 @@
     function setupPlaces(){
         mActivePlaces_ = [];
         foreach(c,i in mWorldData_.placeData){
-            local placeEntry = ::ExplorationEntityFactory.constructPlace(i, c);
+            local placeEntry = ::ExplorationEntityFactory.constructPlace(i, c, ::Base.mExplorationLogic.mGui_);
             mActivePlaces_.append(placeEntry);
         }
     }

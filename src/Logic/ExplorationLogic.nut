@@ -596,7 +596,6 @@
                 return;
             }
             local worldPoint = ray.getPoint(point);
-            print("World point " + worldPoint);
 
             return worldPoint;
         }
@@ -920,10 +919,23 @@
             mExplorationStats_.totalDiscoveredPlaces++;
             notifyGatewayStatsChange();
         }
+
+        local entity = placeEntry.getEntity();
+        checkPlaceBillboardVisible(entity, entered);
+
         placeEntry.mEncountered_ = true;
 
         //TODO will want to rename this from enemy at some point.
         if(mGui_) mGui_.notifyPlaceEnterState(placeEntry.mEnemy_, entered, firstTime, placeEntry.mPos_);
+    }
+    function checkPlaceBillboardVisible(entity, visible){
+        local billboardIdx = -1;
+        try{
+            billboardIdx = _component.user[Component.MISC].get(entity, 0);
+        }catch(e){ }
+        if(billboardIdx == -1) return;
+
+        mGui_.mWorldMapDisplay_.mBillboardManager_.setVisible(billboardIdx, visible);
     }
 
     function gatewayEndExploration(){

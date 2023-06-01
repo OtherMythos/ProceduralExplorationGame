@@ -116,7 +116,7 @@
         return entry;
     }
 
-    function constructPlace(placeData, idx){
+    function constructPlace(placeData, idx, explorationScreen){
         local en = _entity.create(SlotPosition());
         if(!en.valid()) throw "Error creating entity";
         local targetPos = Vec3(placeData.originX, 0, -placeData.originY);
@@ -148,6 +148,15 @@
         local collisionObject = _physics.collision[TRIGGER].createSender(senderTable, shape, targetPos);
         _physics.collision[TRIGGER].addObject(collisionObject);
         _component.collision.add(en, collisionObject);
+
+        if(placeType == PlaceType.GATEWAY){
+            local billboard = ::BillboardManager.GatewayExplorationEndBillboard(explorationScreen.mWindow_);
+            billboard.setVisible(false);
+            local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(placeNode, billboard);
+
+            _component.user[Component.MISC].add(en);
+            _component.user[Component.MISC].set(en, 0, billboardIdx);
+        }
 
         entry.setPosition(targetPos);
 
