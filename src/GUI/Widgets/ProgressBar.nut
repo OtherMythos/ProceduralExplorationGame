@@ -72,6 +72,12 @@
     function setCentre(x, y){
         setPosition(x - mSize_.x / 2, y - mSize_.y / 2);
     }
+    function getCentre(){
+        return mParentContainer_.getCentre();
+    }
+    function getDerivedCentre(){
+        return mParentContainer_.getDerivedCentre();
+    }
 
     function setSize(x, y){
         mSize_ = Vec2(x, y);

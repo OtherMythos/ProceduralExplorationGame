@@ -252,9 +252,7 @@
 
         mExplorationStats_ = {
             "explorationTimeTaken": 0,
-            "totalFoundItems": 0,
             "totalDiscoveredPlaces": 0,
-            "totalEncountered": 0,
             "totalDefeated": 0,
             "foundEXPOrbs": 0,
         };
@@ -371,6 +369,8 @@
         mActiveEnemies_[eid].notifyDestroyed();
         mActiveEnemies_.rawdelete(eid);
         if(eid == mCurrentTargetEnemy_) mCurrentTargetEnemy_ = null;
+
+        mExplorationStats_.totalDefeated++;
     }
 
     function setOrientatingCamera(orientate){
@@ -733,7 +733,6 @@
 
         if(mGui_) mGui_.notifyObjectFound(foundObj, idx, foundPosition);
 
-        mExplorationStats_.totalFoundItems++;
         notifyGatewayStatsChange();
     }
 

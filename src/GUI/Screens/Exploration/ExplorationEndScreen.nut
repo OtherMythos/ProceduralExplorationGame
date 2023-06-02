@@ -84,13 +84,41 @@ local ObjAnim = class{
         }
     };
     ExplorationEndScreenAnimStateMachine.mStates_[ExplorationScreenComponents.EXP_PROGRESS] = class extends ::Util.State{
-        mTotalCount_ = 20
+        mTotalCount_ = 200
         mNextState_ = ExplorationScreenComponents.END_BUTTONS;
         mObjAnim_ = null;
+
+        mOrbsToAdd_ = 0;
+
+        mStartPos_ = null;
+        mEndPos_ = null;
+        mLevelData_ = null;
         function start(data){
             data.components[ExplorationScreenComponents.EXP_PROGRESS].setVisible(true);
+
+            //TOOD assume the final is the xp orb counter, ensure this in future.
+            mStartPos_ = ::EffectManager.getWorldPositionForWindowPos(data.components[ExplorationScreenComponents.TEXT_ENTRIES].top().getDerivedCentre());
+            mEndPos_ = ::EffectManager.getWorldPositionForWindowPos(data.components[ExplorationScreenComponents.EXP_PROGRESS].getDerivedCentre());
+
+            mTotalCount_ = data.data.foundEXPOrbs;
+            mOrbsToAdd_ = data.data.foundEXPOrbs;
+
+            mLevelData_ = ::Base.mPlayerStats.addEXP(mOrbsToAdd_);
+
+            //"startLevel": prevLevel,
+            //"endLevel": endLevel,
+            //"levelPercentage": percentage,
+            //"startPercentage": startPercentage,
+            data.components[ExplorationScreenComponents.EXP_PROGRESS].setPercentage(mLevelData_.startPercentage);
         }
         function update(p, data){
+            if(mOrbsToAdd_ > 0){
+                ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_EXP_ORB_EFFECT, {"numOrbs": 1, "start": mStartPos_, "end": mEndPos_, "orbScale": 0.2}));
+            }
+            mOrbsToAdd_--;
+
+            local percentageDiff = mLevelData_.endPercentage - mLevelData_.startPercentage;
+            data.components[ExplorationScreenComponents.EXP_PROGRESS].setPercentage(mLevelData_.startPercentage + percentageDiff * p);
         }
     };
     ExplorationEndScreenAnimStateMachine.mStates_[ExplorationScreenComponents.END_BUTTONS] = class extends ::Util.State{
@@ -189,7 +217,7 @@ local ObjAnim = class{
         levelBar.notifyLayout();
         levelBar.setPercentage(0.5);
 
-        mStateMachine_ = ExplorationEndScreenAnimStateMachine({"components": mScreenComponents_});
+        mStateMachine_ = ExplorationEndScreenAnimStateMachine({"components": mScreenComponents_, "data": data});
         mStateMachine_.setState(ExplorationScreenComponents.INTRO);
     }
 
@@ -206,10 +234,9 @@ local ObjAnim = class{
         local minutes = (data.explorationTimeTaken / 60.0).tointeger();
         local seconds = (data.explorationTimeTaken % 60.0).tointeger();
         outText.append(format("Exploration completed in %i:%i minutes.", minutes, seconds));
-        outText.append(format(wrapBulletText_("Found %i items"), data.totalFoundItems));
         outText.append(format(wrapBulletText_("Found %i places"), data.totalDiscoveredPlaces));
-        outText.append(format(wrapBulletText_("Encountered %i enemies"), data.totalEncountered));
         outText.append(format(wrapBulletText_("Defeated %i enemies"), data.totalDefeated));
+        outText.append(format(wrapBulletText_("Found %i EXP orbs"), data.foundEXPOrbs));
 
         return outText;
     }
