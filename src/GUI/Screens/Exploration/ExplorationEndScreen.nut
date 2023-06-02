@@ -203,7 +203,9 @@ local ObjAnim = class{
     function getTextForExploration(data){
         local outText = [];
 
-        outText.append("Exploration completed in 1:24 minutes.");
+        local minutes = (data.explorationTimeTaken / 60.0).tointeger();
+        local seconds = (data.explorationTimeTaken % 60.0).tointeger();
+        outText.append(format("Exploration completed in %i:%i minutes.", minutes, seconds));
         outText.append(format(wrapBulletText_("Found %i items"), data.totalFoundItems));
         outText.append(format(wrapBulletText_("Found %i places"), data.totalDiscoveredPlaces));
         outText.append(format(wrapBulletText_("Encountered %i enemies"), data.totalEncountered));

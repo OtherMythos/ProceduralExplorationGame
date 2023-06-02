@@ -167,6 +167,8 @@
 
     mDebugForceItem_ = ItemId.NONE;
 
+    mCurrentTimer_ = null;
+
     mGui_ = null;
 
     constructor(){
@@ -223,8 +225,9 @@
     function setup(){
         _state.setPauseState(0);
 
-        resetGenMap_();
+        //resetGenMap_();
         //mSceneLogic_.setup();
+        resetExploration();
 
         _event.subscribe(Event.PLAYER_DIED, processPlayerDeath, this);
     }
@@ -248,6 +251,7 @@
         mExplorationPaused_ = false;
 
         mExplorationStats_ = {
+            "explorationTimeTaken": 0,
             "totalFoundItems": 0,
             "totalDiscoveredPlaces": 0,
             "totalEncountered": 0,
@@ -273,6 +277,9 @@
 
         resetExploration_();
         resetGenMap_();
+
+        mCurrentTimer_ = Timer();
+        mCurrentTimer_.start();
     }
     function resetExplorationGenMap_(){
         local gen = ::MapGen();
@@ -940,6 +947,8 @@
 
     function gatewayEndExploration(){
         pauseExploration();
+        mCurrentTimer_.stop();
+        mExplorationStats_.explorationTimeTaken = mCurrentTimer_.getSeconds();
         if(mGui_) mGui_.notifyGatewayEnd(mExplorationStats_);
     }
 
