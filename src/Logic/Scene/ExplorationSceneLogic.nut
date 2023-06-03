@@ -258,6 +258,7 @@
         mLocationFlagNodes_[idx].setPosition(newPos);
     }
     function removeLocationFlag(idx){
+        if(mLocationFlagNodes_[idx] == null) return;
         mLocationFlagNodes_[idx].destroyNodeAndChildren();
         mLocationFlagNodes_[idx] = null;
     }

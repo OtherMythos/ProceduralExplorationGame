@@ -209,6 +209,7 @@
     }
 
     function shutdown(){
+        print("===Beginning world shutdown===");
         foreach(i in mActiveEnemies_){
             i.notifyDestroyed();
         }
@@ -220,9 +221,11 @@
         _event.unsubscribe(Event.PLAYER_DIED, processPlayerDeath, this);
 
         _state.setPauseState(0);
+        print("===Ending world shutdown===");
     }
 
     function setup(){
+        print("===Beginning world setup===");
         _state.setPauseState(0);
 
         //resetGenMap_();
@@ -230,6 +233,7 @@
         resetExploration();
 
         _event.subscribe(Event.PLAYER_DIED, processPlayerDeath, this);
+        print("===Finishing world setup===");
     }
 
     function processPlayerDeath(id, data){
@@ -447,18 +451,6 @@
 
 
         if(_input.getMouseButton(0) && !mOrientatingCamera_ && !mRecentTargetEnemy_){
-            /*
-            moved = true;
-            local width = _window.getWidth();
-            local height = _window.getHeight();
-
-            local posX = _input.getMouseX().tofloat() / width;
-            local posY = _input.getMouseY().tofloat() / height;
-
-            dir = (Vec2(posX, posY) - Vec2(0.5, 0.5));
-            dir.normalise();
-            dir /= 4;
-            */
             if(mGui_){
                 local inWindow = mGui_.checkPlayerInputPosition(_input.getMouseX(), _input.getMouseY());
                 if(inWindow != null){
@@ -622,6 +614,7 @@
         queuePlayerFlag(worldPoint);
     }
     function queuePlayerFlag(worldPos){
+        //TODO this is all over the place, the data structure is a table so can't exactly shift things.
         local firstNull = mQueuedFlags_.find(null);
         if(firstNull == null){
             //There are no spaces in the list, so shift them all to the right.
