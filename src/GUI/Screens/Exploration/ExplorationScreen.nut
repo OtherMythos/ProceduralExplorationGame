@@ -151,7 +151,9 @@ enum ExplorationBusEvents{
         local start = mWorldMapDisplay_.getPosition();
         local end = mWorldMapDisplay_.getSize();
         if(x >= start.x && y >= start.y && x < end.x+start.x && y < end.y+start.y){
-            return Vec2((x-start.x) / end.x, (y-start.y) / end.y);
+            if(mWorldMapDisplay_.getExplorationWorldHasFocus()){
+                return Vec2((x-start.x) / end.x, (y-start.y) / end.y);
+            }
         }
         return null;
     }
