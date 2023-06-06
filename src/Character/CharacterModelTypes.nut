@@ -34,7 +34,8 @@ local ModelType = class{
     }
 };
 
-::CharacterGenerator.mModelTypes_[CharacterModelType.HUMANOID] = ModelType("assets/characterAnimations/humanoidAnimation.xml",
+//TODO move this into a separate thing.
+::CharacterGenerator.mModelTypes_[CharacterModelType.HUMANOID] = ModelType("assets/characterAnimations/baseAnimation.xml",
     [
         Entry(
             "playerHead.mesh", CharacterModelPartType.HEAD, null, Vec3(0, 10, 0), Vec3(1, 1, 1)

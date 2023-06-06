@@ -15,7 +15,7 @@
 
         local targetNode = _scene.getRootSceneNode().createChildSceneNode();
         mInspectedModel_ = ::generator.createCharacterModel(targetNode, constructionData);
-        mInspectedModel_.startAnimation("HumanoidFeetWalk");
+        mInspectedModel_.startAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
 
         _camera.setPosition(0, 0, 20);
         _camera.lookAt(0, 0, 0);
@@ -28,8 +28,8 @@
 
     function animCheckboxCallback(widget, action){
         local testVals = [
-            "HumanoidFeetWalk",
-            "HumanoidUpperWalk"
+            CharacterModelAnimId.BASE_LEGS_WALK,
+            CharacterModelAnimId.BASE_ARMS_WALK,
         ];
         if(widget.getValue()){
             mInspectedModel_.startAnimation(testVals[widget.getUserId()]);

@@ -58,8 +58,8 @@
 
             if(mMoving_ == 0){
                 if(mModel_){
-                    mModel_.startAnimation("HumanoidFeetWalk");
-                    mModel_.startAnimation("HumanoidUpperWalk");
+                    mModel_.startAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
+                    mModel_.startAnimation(CharacterModelAnimId.BASE_ARMS_WALK);
                 }
             }
             mMoving_ = 10;
@@ -100,8 +100,8 @@
                 mMoving_--;
                 if(mMoving_ <= 0){
                     if(mModel_){
-                        mModel_.stopAnimation("HumanoidFeetWalk");
-                        mModel_.stopAnimation("HumanoidUpperWalk");
+                        mModel_.stopAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
+                        mModel_.stopAnimation(CharacterModelAnimId.BASE_ARMS_WALK);
                     }
                 }
             }

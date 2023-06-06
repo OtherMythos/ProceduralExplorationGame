@@ -1,29 +1,3 @@
-enum CharacterModelType{
-    NONE,
-    HUMANOID,
-    TEST
-
-    MAX
-};
-
-enum CharacterModelPartType{
-    NONE,
-
-    HEAD,
-    BODY,
-    LEFT_HAND,
-    RIGHT_HAND,
-    LEFT_FOOT,
-    RIGHT_FOOT,
-
-    MAX
-};
-
-enum CharacterModelEquipNodeType{
-    LEFT_HAND,
-    RIGHT_HAND
-};
-
 
 ::CharacterGeneratorPrefix <- "res://"
 ::CharacterGenerator <- class{
@@ -35,16 +9,16 @@ enum CharacterModelEquipNodeType{
 
     function createCharacterModel(parentNode, constructionData, renderQueue=0){
 
-        local modelDef = mModelTypes_[CharacterModelType.HUMANOID];
+        local modelType = CharacterModelType.HUMANOID;
+        local modelDef = mModelTypes_[modelType];
 
         //TODO have some system to manage the animation file lifetimes.
         _animation.loadAnimationFile(modelDef.mAnimFile);
 
         local modelNode = parentNode.createChildSceneNode();
         local nodes = populateSceneNodeWithModel_(modelNode, modelDef, renderQueue);
-        local animationInfo = _animation.createAnimationInfo(nodes[0]);
 
-        local model = CharacterModel(modelNode, animationInfo, nodes[1], renderQueue);
+        local model = CharacterModel(modelType, modelNode, nodes[0], nodes[1], renderQueue);
         modelNode.setScale(0.3, 0.3, 0.3);
 
         //model.startAnimation("HumanoidFeetWalk");

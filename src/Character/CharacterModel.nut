@@ -1,14 +1,16 @@
 ::CharacterModel <- class{
-    mNode_ = null;
-    mAnimInfo_ = null;
+    mModelType_ = CharacterModelType.NONE;
+    mParentNode_ = null;
+    mNodes_ = null;
     mEquipNodes_ = null;
     mRenderQueue_ = 0;
 
     mCurrentAnimations_ = null;
 
-    constructor(node, animationInfo, equipNodes, renderQueue=0){
-        mNode_ = node;
-        mAnimInfo_ = animationInfo;
+    constructor(modelType, parent, nodes, equipNodes, renderQueue=0){
+        mModelType_ = modelType;
+        mParentNode_ = parent;
+        mNodes_ = nodes;
         mEquipNodes_ = equipNodes;
         mRenderQueue_ = renderQueue;
 
@@ -20,21 +22,37 @@
     }
 
     function setOrientation(orientation){
-        mNode_.setOrientation(orientation);
+        mParentNode_.setOrientation(orientation);
     }
 
-    function startAnimation(animName){
-        local newAnim = _animation.createAnimation(animName, mAnimInfo_);
-        mCurrentAnimations_.rawset(animName, newAnim);
+    function startAnimation(animId){
+        //local newAnim = _animation.createAnimation(animName, mNodes_);
+        //local newAnim = _animation.createAnimation(animName, mNodes_);
+        local newAnim = createAnimation(animId);
+        mCurrentAnimations_.rawset(animId, newAnim);
         resetAnimTimes_();
     }
-    function stopAnimation(animName){
-        mCurrentAnimations_.rawdelete(animName);
+    function stopAnimation(animId){
+        mCurrentAnimations_.rawdelete(animId);
     }
     function resetAnimTimes_(){
         foreach(c,i in mCurrentAnimations_){
             i.setTime(0);
         }
+    }
+
+    function createAnimation(animId){
+        local target = ::CharacterModelAnims[animId];
+        local targetIds = ::CharacterGenerator.mModelTypes_[mModelType_].mNodeIds;
+        local targetNodes = [];
+        foreach(i in target.mUsedNodes){
+            assert(targetIds.rawin(i));
+            targetNodes.append(mNodes_[targetIds[i]]);
+        }
+        assert(target.mUsedNodes.len() == targetNodes.len());
+
+        local animationInfo = _animation.createAnimationInfo(targetNodes);
+        return _animation.createAnimation(target.mName, animationInfo);
     }
 
     function equipToNode(item, targetNode){

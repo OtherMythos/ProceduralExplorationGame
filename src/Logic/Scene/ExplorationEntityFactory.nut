@@ -7,7 +7,10 @@
         return ::Base.mExplorationLogic.mSceneLogic_.getZForPos(pos);
     }
 
+    testCount = 0,
+
     function constructPlayer(explorationScreen){
+testCount = 0;
         local en = _entity.create(SlotPosition());
         if(!en.valid()) throw "Error creating entity";
         local playerEntry = ::ExplorationLogic.ActiveEnemyEntry(Enemy.NONE, Vec2(0, 0), en);
@@ -117,6 +120,9 @@
     }
 
     function constructPlace(placeData, idx, explorationScreen){
+        if(testCount > 0) return;
+testCount++;
+
         local en = _entity.create(SlotPosition());
         if(!en.valid()) throw "Error creating entity";
         local targetPos = Vec3(placeData.originX, 0, -placeData.originY);
