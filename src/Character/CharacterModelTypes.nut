@@ -34,8 +34,9 @@ local ModelType = class{
     }
 };
 
-//TODO move this into a separate thing.
-::CharacterGenerator.mModelTypes_[CharacterModelType.HUMANOID] = ModelType("assets/characterAnimations/baseAnimation.xml",
+::ModelTypes <- array(CharacterModelType.MAX, null);
+
+::ModelTypes[CharacterModelType.HUMANOID] = ModelType("assets/characterAnimations/baseAnimation.xml",
     [
         Entry(
             "playerHead.mesh", CharacterModelPartType.HEAD, null, Vec3(0, 10, 0), Vec3(1, 1, 1)
@@ -59,5 +60,29 @@ local ModelType = class{
         Entry(
             "playerFoot.mesh", CharacterModelPartType.RIGHT_FOOT, null, Vec3(4.5, 2, 0), Vec3(1, 1, 1)
         )
+    ]
+);
+::ModelTypes[CharacterModelType.GOBLIN] = ModelType("assets/characterAnimations/baseAnimation.xml",
+    [
+        Entry(
+            "goblinBody.mesh", CharacterModelPartType.BODY, null, Vec3(0, 4, 0), Vec3(1.2, 1.2, 1.2)
+        ),
+
+        Entry(
+            "goblinArm.mesh", CharacterModelPartType.LEFT_HAND,
+            [Entry(null, CharacterModelPartType.NONE, null, null, Vec3(0.4, 0.4, 0.4), CharacterModelEquipNodeType.LEFT_HAND)]
+            , Vec3(-8, 8, 0), Vec3(1.2, 1.2, 1.2)
+        ),
+        Entry(
+            "goblinArm.mesh", CharacterModelPartType.RIGHT_HAND, null, Vec3(8, 8, 0), Vec3(1.2, 1.2, 1.2)
+        ),
+
+        Entry(
+            "goblinFoot.mesh", CharacterModelPartType.LEFT_FOOT, null, Vec3(-1, 2, 0), Vec3(1, 1, 1)
+        ),
+        Entry(
+            "goblinFoot.mesh", CharacterModelPartType.RIGHT_FOOT, null, Vec3(4.5, 2, 0), Vec3(1, 1, 1)
+        )
+
     ]
 );

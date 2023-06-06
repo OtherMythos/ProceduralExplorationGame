@@ -1,7 +1,7 @@
 enum CharacterModelType{
     NONE,
     HUMANOID,
-    TEST
+    GOBLIN,
 
     MAX
 };

@@ -319,7 +319,11 @@
 
         mSceneLogic_.updatePercentage(mExplorationPercentage_);
         mProjectileManager_.update();
+
         mPlayerEntry_.update();
+        foreach(i in mActiveEnemies_){
+            i.update();
+        }
     }
 
     function checkExploration(){

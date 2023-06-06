@@ -16,7 +16,7 @@ testCount = 0;
         local playerEntry = ::ExplorationLogic.ActiveEnemyEntry(Enemy.NONE, Vec2(0, 0), en);
 
         local playerNode = mBaseSceneNode_.createChildSceneNode();
-        local playerModel = mCharacterGenerator_.createCharacterModel(playerNode, null, 30);
+        local playerModel = mCharacterGenerator_.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, 30);
         playerModel.equipToNode(::Items[ItemId.SIMPLE_SWORD], CharacterModelEquipNodeType.LEFT_HAND);
         playerNode.setScale(0.5, 0.5, 0.5);
         _component.sceneNode.add(en, playerNode);
@@ -66,12 +66,20 @@ testCount = 0;
         local entry = ::ExplorationLogic.ActiveEnemyEntry(enemyType, targetPos, en);
 
         local enemyNode = mBaseSceneNode_.createChildSceneNode();
+        /*
         local enemyItem = _scene.createItem("goblin.mesh");
         enemyItem.setRenderQueueGroup(30);
         enemyItem.setQueryFlags(1 << 4);
         enemyNode.attachObject(enemyItem);
         enemyNode.setScale(mMobScale_);
         _component.sceneNode.add(en, enemyNode, true);
+        */
+
+        local goblinModel = mCharacterGenerator_.createCharacterModel(enemyNode, {"type": CharacterModelType.GOBLIN}, 30);
+        goblinModel.equipToNode(::Items[ItemId.SIMPLE_SWORD], CharacterModelEquipNodeType.LEFT_HAND);
+        enemyNode.setScale(0.5, 0.5, 0.5);
+        _component.sceneNode.add(en, enemyNode);
+        entry.setModel(goblinModel);
 
         local senderTable = {
             "func" : "receivePlayerSpotted",

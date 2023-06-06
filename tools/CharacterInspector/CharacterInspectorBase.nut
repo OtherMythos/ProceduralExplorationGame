@@ -10,12 +10,16 @@
         ::generator <- CharacterGenerator();
 
         local constructionData = {
-            "test": null
+            "type": CharacterModelType.GOBLIN
         };
 
         local targetNode = _scene.getRootSceneNode().createChildSceneNode();
         mInspectedModel_ = ::generator.createCharacterModel(targetNode, constructionData);
-        mInspectedModel_.startAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
+        try{
+            mInspectedModel_.startAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
+        }catch(e){
+            print(e);
+        }
 
         _camera.setPosition(0, 0, 20);
         _camera.lookAt(0, 0, 0);

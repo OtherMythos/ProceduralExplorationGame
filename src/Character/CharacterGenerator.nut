@@ -2,15 +2,13 @@
 ::CharacterGeneratorPrefix <- "res://"
 ::CharacterGenerator <- class{
 
-    mModelTypes_ = array(CharacterModelType.MAX);
-
     constructor(){
     }
 
     function createCharacterModel(parentNode, constructionData, renderQueue=0){
 
-        local modelType = CharacterModelType.HUMANOID;
-        local modelDef = mModelTypes_[modelType];
+        local modelType = constructionData.type;
+        local modelDef = ::ModelTypes[modelType];
 
         //TODO have some system to manage the animation file lifetimes.
         _animation.loadAnimationFile(modelDef.mAnimFile);

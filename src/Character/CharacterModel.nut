@@ -19,6 +19,7 @@
 
     function destroy(){
         mCurrentAnimations_.clear();
+        mParentNode_.destroyNodeAndChildren();
     }
 
     function setOrientation(orientation){
@@ -43,10 +44,12 @@
 
     function createAnimation(animId){
         local target = ::CharacterModelAnims[animId];
-        local targetIds = ::CharacterGenerator.mModelTypes_[mModelType_].mNodeIds;
+        local targetIds = ::ModelTypes[mModelType_].mNodeIds;
         local targetNodes = [];
         foreach(i in target.mUsedNodes){
-            assert(targetIds.rawin(i));
+            if(!targetIds.rawin(i)){
+                throw "Missing model type for animation";
+            }
             targetNodes.append(mNodes_[targetIds[i]]);
         }
         assert(target.mUsedNodes.len() == targetNodes.len());
