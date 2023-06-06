@@ -7,6 +7,7 @@ function start(){
     _doFile("res://../../src/Util/VoxToMesh.nut");
     _doFile("res://../../src/Character/CharacterModel.nut");
     _doFile("res://../../src/Character/CharacterGenerator.nut");
+    ::CharacterGeneratorPrefix = "res://../../";
     _doFile("res://../../src/Character/CharacterModelTypes.nut");
 
     _doFile("res://../VoxToMesh/fpsCamera.nut");

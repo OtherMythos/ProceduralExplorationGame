@@ -12,6 +12,7 @@ enum CharacterModelEquipNodeType{
 };
 
 
+::CharacterGeneratorPrefix <- "res://"
 ::CharacterGenerator <- class{
 
     mModelTypes_ = array(CharacterModelType.MAX);

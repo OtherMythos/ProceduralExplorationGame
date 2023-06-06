@@ -18,12 +18,13 @@ local ModelType = class{
     mAnimFile = null;
     mNodes = null;
     constructor(anim, nodes){
-        mAnimFile = anim;
+        mAnimFile = ::CharacterGeneratorPrefix + anim;
+
         mNodes = nodes;
     }
 };
 
-::CharacterGenerator.mModelTypes_[CharacterModelType.HUMANOID] = ModelType("res://assets/characterAnimations/humanoidAnimation.xml",
+::CharacterGenerator.mModelTypes_[CharacterModelType.HUMANOID] = ModelType("assets/characterAnimations/humanoidAnimation.xml",
     [
     //Head
     Entry(
