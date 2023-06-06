@@ -6,6 +6,19 @@ enum CharacterModelType{
     MAX
 };
 
+enum CharacterModelPartType{
+    NONE,
+
+    HEAD,
+    BODY,
+    LEFT_HAND,
+    RIGHT_HAND,
+    LEFT_FOOT,
+    RIGHT_FOOT,
+
+    MAX
+};
+
 enum CharacterModelEquipNodeType{
     LEFT_HAND,
     RIGHT_HAND
