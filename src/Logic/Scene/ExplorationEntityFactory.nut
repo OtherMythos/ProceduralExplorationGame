@@ -66,16 +66,8 @@ testCount = 0;
         local entry = ::ExplorationLogic.ActiveEnemyEntry(enemyType, targetPos, en);
 
         local enemyNode = mBaseSceneNode_.createChildSceneNode();
-        /*
-        local enemyItem = _scene.createItem("goblin.mesh");
-        enemyItem.setRenderQueueGroup(30);
-        enemyItem.setQueryFlags(1 << 4);
-        enemyNode.attachObject(enemyItem);
-        enemyNode.setScale(mMobScale_);
-        _component.sceneNode.add(en, enemyNode, true);
-        */
 
-        local goblinModel = mCharacterGenerator_.createCharacterModel(enemyNode, {"type": CharacterModelType.GOBLIN}, 30);
+        local goblinModel = mCharacterGenerator_.createCharacterModel(enemyNode, {"type": CharacterModelType.GOBLIN}, 30, 1 << 4);
         goblinModel.equipToNode(::Items[ItemId.SIMPLE_SWORD], CharacterModelEquipNodeType.LEFT_HAND);
         enemyNode.setScale(0.5, 0.5, 0.5);
         _component.sceneNode.add(en, enemyNode);

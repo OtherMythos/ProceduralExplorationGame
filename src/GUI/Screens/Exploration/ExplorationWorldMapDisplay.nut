@@ -9,8 +9,6 @@
 
     mBillboardManager_ = null;
 
-    mPanelHighlighted_ = false;
-
     constructor(parentWin){
         mExplorationScenePanel_ = parentWin.createPanel();
         mExplorationScenePanel_.setPosition(0, 0);
@@ -20,21 +18,10 @@
         mMapViewer_ = MapViewer();
         mMapViewer_.setLabelWindow(mMapViewerWindow_);
         mMapViewerWindow_.setVisualsEnabled(false);
-
-        mExplorationScenePanel_.attachListener(explorationPanelListener, this);
     }
 
     function getExplorationWorldHasFocus(){
-        return mPanelHighlighted_;
-    }
-
-    function explorationPanelListener(widget, action){
-        if(action == _GUI_ACTION_HIGHLIGHTED){
-            mPanelHighlighted_ = true;
-        }
-        else if(action == _GUI_ACTION_CANCEL){
-            mPanelHighlighted_ = false;
-        }
+        return true;
     }
 
     function addToLayout(layoutLine){

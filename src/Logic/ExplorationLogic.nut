@@ -209,7 +209,6 @@
     }
 
     function shutdown(){
-        print("===Beginning world shutdown===");
         foreach(i in mActiveEnemies_){
             i.notifyDestroyed();
         }
@@ -221,11 +220,9 @@
         _event.unsubscribe(Event.PLAYER_DIED, processPlayerDeath, this);
 
         _state.setPauseState(0);
-        print("===Ending world shutdown===");
     }
 
     function setup(){
-        print("===Beginning world setup===");
         _state.setPauseState(0);
 
         //resetGenMap_();
@@ -233,7 +230,6 @@
         resetExploration();
 
         _event.subscribe(Event.PLAYER_DIED, processPlayerDeath, this);
-        print("===Finishing world setup===");
     }
 
     function processPlayerDeath(id, data){
@@ -507,7 +503,6 @@
 
         //Check if the current enemy is in the list.
         if(mCurrentTargetEnemy_ != null){
-            print("checking thing");
             if(!::w.e.rawin(mCurrentTargetEnemy_)){
                 //Assuming the enemy has been destroyed now.
                 mCurrentTargetEnemy_ = null;
@@ -984,7 +979,8 @@
                 local ray = camera.getCameraToViewportRay(inWindow.x, inWindow.y);
                 local result = _scene.testRayForObject(ray, 1 << 4);
                 if(result != null){
-                    local parent = result.getParentNode();
+                    //TODO bit of a work around for the various nodes, probably not correct long term.
+                    local parent = result.getParentNode().getParent().getParent();
                     assert(parent != null);
 
                     local enemy = getEntityForPosition(parent.getPositionVec3());

@@ -5,8 +5,7 @@
     constructor(){
     }
 
-    function createCharacterModel(parentNode, constructionData, renderQueue=0){
-
+    function createCharacterModel(parentNode, constructionData, renderQueue=0, queryFlag=0){
         local modelType = constructionData.type;
         local modelDef = ::ModelTypes[modelType];
 
@@ -14,9 +13,9 @@
         _animation.loadAnimationFile(modelDef.mAnimFile);
 
         local modelNode = parentNode.createChildSceneNode();
-        local nodes = populateSceneNodeWithModel_(modelNode, modelDef, renderQueue);
+        local nodes = populateSceneNodeWithModel_(modelNode, modelDef, renderQueue, queryFlag);
 
-        local model = CharacterModel(modelType, modelNode, nodes[0], nodes[1], renderQueue);
+        local model = CharacterModel(modelType, modelNode, nodes[0], nodes[1], renderQueue, queryFlag);
         modelNode.setScale(0.3, 0.3, 0.3);
 
         //model.startAnimation("HumanoidFeetWalk");
@@ -25,7 +24,7 @@
         return model;
     }
 
-    function populateSceneNodeWithModel_(parentNode, modelDef, renderQueue){
+    function populateSceneNodeWithModel_(parentNode, modelDef, renderQueue, queryFlag){
         local model = modelDef.mNodes;
         local outNodes = array(model.len(), null);
         local equipNodes = {};
@@ -34,6 +33,7 @@
             if(i.mMesh){
                 local item = _scene.createItem(i.mMesh);
                 item.setRenderQueueGroup(renderQueue);
+                item.setQueryFlags(queryFlag);
                 modelNode.attachObject(item);
             }
             if(i.mPos) modelNode.setPosition(i.mPos);

@@ -4,15 +4,17 @@
     mNodes_ = null;
     mEquipNodes_ = null;
     mRenderQueue_ = 0;
+    mQueryFlag_ = 0;
 
     mCurrentAnimations_ = null;
 
-    constructor(modelType, parent, nodes, equipNodes, renderQueue=0){
+    constructor(modelType, parent, nodes, equipNodes, renderQueue=0, queryFlag=0){
         mModelType_ = modelType;
         mParentNode_ = parent;
         mNodes_ = nodes;
         mEquipNodes_ = equipNodes;
         mRenderQueue_ = renderQueue;
+        mQueryFlag_ = queryFlag;
 
         mCurrentAnimations_ = {};
     }
