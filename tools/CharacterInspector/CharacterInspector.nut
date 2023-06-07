@@ -5,6 +5,9 @@ function start(){
     //TODO get rid of this.
     _animation.loadAnimationFile("res://../../assets/characterAnimations/equippableAnimation.xml");
 
+    _doFile("res://CharacterInspectorHelper.nut");
+    ::generateFloorGrid();
+
     _doFile("res://../../src/Constants.nut");
     _doFile("res://../../src/Content/Equippables.nut");
     _doFile("res://../../src/Content/Items.nut");
