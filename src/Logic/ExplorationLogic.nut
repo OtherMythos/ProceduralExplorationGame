@@ -124,7 +124,7 @@
             if(equippedSword == null) return;
 
             local equippable = ::Equippables[equippedSword.getEquippableData()];
-            local performance = ::EquippablePerformance(equippable);
+            local performance = ::EquippablePerformance(equippable, mModel_);
             mPerformingEquippable_ = performance;
         }
     }

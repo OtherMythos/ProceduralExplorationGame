@@ -1,9 +1,19 @@
 //Items define the name and descriptions, equippables define information about how the item is equipped in a shareable format.
 
-function regularSwordBaseAttack(p, pos){
+function regularSwordBaseAttack(p, model, pos){
     print("Regular sword attack " + p);
 
-    ::Base.mExplorationLogic.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, Vec3(), _COLLISION_ENEMY);
+    if(p == 0){
+        model.startAnimation(CharacterModelAnimId.REGULAR_SWORD_SWING);
+    }
+
+    if(p == 15){
+        ::Base.mExplorationLogic.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, Vec3(), _COLLISION_ENEMY);
+    }
+
+    if(p == 20){
+        model.stopAnimation(CharacterModelAnimId.REGULAR_SWORD_SWING);
+    }
 }
 
 
@@ -37,12 +47,14 @@ enum EquippableId{
 ::EquippablePerformance <- class{
     mEquippable = null;
     mCurrentFrame_ = 0;
-    constructor(equippable){
+    mModel_ = null;
+    constructor(equippable, model){
         mEquippable = equippable;
+        mModel_ = model;
     }
     function update(pos){
-        if(mCurrentFrame_ >= mEquippable.mTotalFrames_) return false;
-        mEquippable.mAttackFunction_(mCurrentFrame_, pos);
+        if(mCurrentFrame_ > mEquippable.mTotalFrames_) return false;
+        mEquippable.mAttackFunction_(mCurrentFrame_, mModel_, pos);
         mCurrentFrame_++;
 
         return true;
@@ -54,5 +66,5 @@ enum EquippableId{
 //-------------------------------
 ::Equippables[EquippableId.NONE] = EquippableDef(EquippedSlotTypes.NONE, null, 0);
 
-::Equippables[EquippableId.REGULAR_SWORD] = EquippableDef(EquippedSlotTypes.SWORD, regularSwordBaseAttack, 10);
+::Equippables[EquippableId.REGULAR_SWORD] = EquippableDef(EquippedSlotTypes.SWORD, regularSwordBaseAttack, 20);
 //-------------------------------

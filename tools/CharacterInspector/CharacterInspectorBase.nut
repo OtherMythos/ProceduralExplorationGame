@@ -34,6 +34,7 @@
         local testVals = [
             CharacterModelAnimId.BASE_LEGS_WALK,
             CharacterModelAnimId.BASE_ARMS_WALK,
+            CharacterModelAnimId.REGULAR_SWORD_SWING,
         ];
         if(widget.getValue()){
             mInspectedModel_.startAnimation(testVals[widget.getUserId()]);
@@ -57,7 +58,8 @@
 
         local labels = [
             "FeetWalk",
-            "UpperWalk"
+            "UpperWalk",
+            "Sword swing"
         ];
         foreach(c,i in labels){
             local checkbox = ::containerWin.createCheckbox();

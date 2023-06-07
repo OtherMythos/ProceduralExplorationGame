@@ -29,6 +29,7 @@
 
         //TODO move this somewhere else.
         _animation.loadAnimationFile("res://build/assets/animation/baseAnimation.xml");
+        _animation.loadAnimationFile("res://assets/characterAnimations/equippableAnimation.xml");
 
         createLights();
 
@@ -49,7 +50,6 @@
         _doFile("res://src/World/EntityFactory.nut");
         _doFile("res://src/World/World.nut");
 
-        _doFile("res://src/Character/CharacterConstants.nut");
         _doFile("res://src/Character/CharacterModelAnimations.nut");
         _doFile("res://src/Character/CharacterModel.nut");
         _doFile("res://src/Character/CharacterGenerator.nut");
