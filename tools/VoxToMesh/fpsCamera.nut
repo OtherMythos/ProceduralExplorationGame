@@ -8,7 +8,7 @@
         return value * (180 / 3.14159);
     }
 
-    function start(startDirection){
+    function start(pos=null, rot=null){
         this.sense <- 0.05;
         this.cursorMoveStarted <- false;
 
@@ -19,15 +19,17 @@
         this.prevMouseY <- 0.0;
 
         this.yaw <- 270.0;
-        //this.yaw <- degree(atan2(startDirection.x, startDirection.z));
-        //print(this.yaw);
-        //print(startDirection);
-        //assert(false);
-        //this.yaw <- 270;
-        //this.pitch <- asin(-startDirection.y);
         this.pitch <- 0.0;
 
         this.count <- 0;
+
+        if(pos != null){
+            _camera.setPosition(pos);
+        }
+        if(rot != null){
+            this.yaw = rot.x;
+            this.pitch = rot.y;
+        }
     }
 
     function update(){
@@ -102,7 +104,7 @@
         // if(yVal > 0) thing.
 
         local target = Vec3();
-        local speed = 0.1;
+        local speed = 0.2;
         if(yVal > 0.2){
             target = -front;
             target *= speed;

@@ -5,8 +5,7 @@ function start(){
     _doFile("res://fpsCamera.nut");
 
 
-    //::mFpsCam <- ::fpsCamera();
-    fpsCamera.start(Vec3());
+    fpsCamera.start();
 
     local voxMesh = VoxToMesh();
 

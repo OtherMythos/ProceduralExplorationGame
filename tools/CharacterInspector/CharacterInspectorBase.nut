@@ -3,14 +3,14 @@
     mInspectedModel_ = null;
 
     constructor(){
-        fpsCamera.start(Vec3());
+        fpsCamera.start(Vec3(10, 10, 20), Vec3(245.45, -15.9, 0));
 
         createGui();
 
         ::generator <- CharacterGenerator();
 
         local constructionData = {
-            "type": CharacterModelType.GOBLIN
+            "type": CharacterModelType.HUMANOID
         };
 
         local targetNode = _scene.getRootSceneNode().createChildSceneNode();
@@ -20,9 +20,6 @@
         }catch(e){
             print(e);
         }
-
-        _camera.setPosition(0, 0, 20);
-        _camera.lookAt(0, 0, 0);
     }
 
     function update(){
