@@ -19,8 +19,11 @@
         mModel_ = null;
         mMoving_ = 0;
         mGizmo_ = null;
+        mCombatData_ = null;
 
         mEntity_ = null;
+
+        mPerformingEquippable_ = null;
 
         constructor(enemyType, enemyPos, entity){
             mEnemy_ = enemyType;
@@ -43,6 +46,9 @@
         }
         function setModel(model){
             mModel_ = model;
+        }
+        function setCombatData(combatData){
+            mCombatData_ = combatData;
         }
         function move(amount){
             setPosition(mPos_ + amount);
@@ -105,6 +111,21 @@
                     }
                 }
             }
+            if(mPerformingEquippable_){
+                local result = mPerformingEquippable_.update(mPos_);
+                if(!result) mPerformingEquippable_ = null;
+            }
+        }
+        function performAttack(){
+            if(mPerformingEquippable_) return;
+            if(mCombatData_ == null) return;
+            local equippedSword = mCombatData_.mEquippedItems.mItems[EquippedSlotTypes.SWORD];
+            //TODO in future have some base attack.
+            if(equippedSword == null) return;
+
+            local equippable = ::Equippables[equippedSword.getEquippableData()];
+            local performance = ::EquippablePerformance(equippable);
+            mPerformingEquippable_ = performance;
         }
     }
 
@@ -497,7 +518,7 @@
                     mQueuedFlags_[targetIdx] = null;
                 }
 
-                if(mCurrentTargetEnemy_) triggerPlayerMove(0);
+                if(mCurrentTargetEnemy_) performPlayerAttack();
             }
         }
 
@@ -943,9 +964,23 @@
         if(mGui_) mGui_.notifyGatewayEnd(mExplorationStats_);
     }
 
+    //-------
+    function performPlayerAttack(){
+        entityPerformAttack_(mPlayerEntry_);
+    }
+    function entityPerformAttack(eid){
+        assert(mActiveEnemies_.rawin(eid));
+        local enemy = mActiveEnemies_[eid];
+        entityPerformAttack_(enemy);
+    }
+    function entityPerformAttack_(entityObject){
+        //Determine which item the entity has equipped and determine the attack from there.
+        entityObject.performAttack();
+    }
+
     function performPlayerMove(moveId){
         local playerPos = mPlayerEntry_.mPos_.copy();
-        performMove(moveId, playerPos, null, _COLLISION_ENEMY)
+        performMove(moveId, playerPos, null, _COLLISION_ENEMY);
     }
 
     function performMove(moveId, pos, dir, collisionType){
@@ -969,6 +1004,7 @@
         }
 
     }
+    //-------
 
     function sceneSafeUpdate(){
         if(mGui_){

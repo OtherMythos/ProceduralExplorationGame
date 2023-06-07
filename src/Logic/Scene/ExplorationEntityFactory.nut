@@ -17,10 +17,16 @@ testCount = 0;
 
         local playerNode = mBaseSceneNode_.createChildSceneNode();
         local playerModel = mCharacterGenerator_.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, 30);
-        playerModel.equipToNode(::Items[ItemId.SIMPLE_SWORD], CharacterModelEquipNodeType.LEFT_HAND);
         playerNode.setScale(0.5, 0.5, 0.5);
         _component.sceneNode.add(en, playerNode);
         playerEntry.setModel(playerModel);
+
+        local equipped = ::Combat.EquippedItems();
+        equipped.setEquipped(::Item(ItemId.SIMPLE_SWORD));
+        local combatData = ::Combat.CombatStats(Enemy.NONE, 0, equipped);
+        //TODO tie this up a bit better with the rest of the code.
+        playerModel.equipToNode(::Item(ItemId.SIMPLE_SWORD), CharacterModelEquipNodeType.LEFT_HAND);
+        playerEntry.setCombatData(combatData);
 
         local receiverInfo = {
             "type" : _COLLISION_PLAYER
@@ -68,7 +74,7 @@ testCount = 0;
         local enemyNode = mBaseSceneNode_.createChildSceneNode();
 
         local goblinModel = mCharacterGenerator_.createCharacterModel(enemyNode, {"type": CharacterModelType.GOBLIN}, 30, 1 << 4);
-        goblinModel.equipToNode(::Items[ItemId.SIMPLE_SWORD], CharacterModelEquipNodeType.LEFT_HAND);
+        goblinModel.equipToNode(::Item(ItemId.SIMPLE_SWORD), CharacterModelEquipNodeType.LEFT_HAND);
         enemyNode.setScale(0.5, 0.5, 0.5);
         _component.sceneNode.add(en, enemyNode);
         entry.setModel(goblinModel);

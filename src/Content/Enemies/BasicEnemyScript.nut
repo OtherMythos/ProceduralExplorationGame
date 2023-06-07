@@ -63,7 +63,7 @@ function destroyed(eid){
                 if(ctx.attackCooldown <= 0){
                     ctx.attackCooldown = ctx.maxAttackCooldown;
 
-                    ::Base.mExplorationLogic.performMove(MoveId.AREA, e.getPosition().toVector3(), null, _COLLISION_PLAYER);
+                    //::Base.mExplorationLogic.performMove(MoveId.AREA, e.getPosition().toVector3(), null, _COLLISION_PLAYER);
                 }
             }
         },

@@ -5,7 +5,8 @@
             mItems = array(EquippedSlotTypes.MAX, null);
         }
 
-        function setEquipped(item, slot){
+        function setEquipped(item){
+            local slot = ::Equippables[item.getEquippableData()].mEquippedSlot_;
             mItems[slot] = item;
         }
 
@@ -37,6 +38,8 @@
             mEnemyType = enemyType;
             if(equippedItems == null){
                 mEquippedItems = ::Combat.EquippedItems();
+            }else{
+                mEquippedItems = equippedItems;
             }
         }
 

@@ -38,11 +38,12 @@
         _doFile("res://src/System/InputManager.nut");
         _doFile("res://src/Util/VoxToMesh.nut");
 
+        _doFile("res://src/Content/Projectiles.nut");
+        _doFile("res://src/Content/Equippables.nut");
         _doFile("res://src/Content/Items.nut");
         _doFile("res://src/Content/Places.nut");
         _doFile("res://src/Content/FoundObject.nut");
         _doFile("res://src/Content/CombatData.nut");
-        _doFile("res://src/Content/Projectiles.nut");
         _doFile("res://src/Content/Moves.nut");
 
         _doFile("res://src/World/EntityFactory.nut");

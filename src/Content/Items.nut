@@ -69,7 +69,9 @@ enum ItemType{
     function getName(){ return mItem_.getName(); }
     function getMesh(){ return mItem_.getMesh(); }
     function getDescription(){ return mItem_.getDescription(); }
-    function getEquippableSlot(){ return mItem_.getEquippableSlot(); }
+    function getEquippableData(){ return mItem_.getEquippableData(); }
+    function getEquippablePosition(){ return mItem_.getEquippablePosition(); }
+    function getEquippableOrientation(){ return mItem_.getEquippableOrientation(); }
     function getScrapVal(){ return mItem_.getScrapVal(); }
     function toStats(){
         return ::ItemHelper.itemToStats(getType());
@@ -85,23 +87,23 @@ enum ItemType{
     mType = ItemType.NONE;
     mScrapVal = 0;
 
-    mEquippableSlot = EquippedSlotTypes.NONE;
+    mEquippableData = EquippableId.NONE;
     mEquippablePosition = null;
     mEquippableOrientation = null;
 
-    constructor(name, desc, mesh, type, scrapVal, equippableSlot, equippablePosition=null, equippableOrientation=null){
+    constructor(name, desc, mesh, type, scrapVal, equippableData, equippablePosition=null, equippableOrientation=null){
         mName = name;
         mDesc = desc;
         mMesh = mesh;
         mType = type;
         mScrapVal = scrapVal;
-        mEquippableSlot = equippableSlot;
+        mEquippableData = equippableData;
         mEquippablePosition = equippablePosition;
         mEquippableOrientation = equippableOrientation;
 
         //Sanity checks.
         if(mType == ItemType.CONSUMABLE){
-            assert(mEquippableSlot == EquippedSlotTypes.NONE);
+            assert(mEquippableData == EquippableId.NONE);
         }
     }
 
@@ -110,49 +112,49 @@ enum ItemType{
     function getDescription(){ return mDesc; }
     function getMesh(){ return mMesh; }
     function getScrapVal(){ return mScrapVal; }
-    function getEquippableSlot(){ return mEquippableSlot; }
+    function getEquippableData(){ return mEquippableData; }
     function getEquippablePosition(){ return mEquippablePosition; }
     function getEquippableOrientation(){ return mEquippableOrientation; }
 }
 ::Items <- array(ItemId.MAX, null);
 
 //-------------------------------
-::Items[ItemId.NONE] = ItemDef("None", "None", null, ItemType.NONE, 1, EquippedSlotTypes.NONE);
+::Items[ItemId.NONE] = ItemDef("None", "None", null, ItemType.NONE, 1, EquippableId.NONE);
 
-::Items[ItemId.HEALTH_POTION] = ItemDef("Health Potion", "A potion of health. Bubbles gently inside a cast glass flask.", "smallPotion.mesh", ItemType.CONSUMABLE, 5, EquippedSlotTypes.NONE);
-::Items[ItemId.LARGE_HEALTH_POTION] = ItemDef("Large Health Potion", "A large potion of health.", "largePotion.mesh", ItemType.CONSUMABLE, 5, EquippedSlotTypes.NONE);
+::Items[ItemId.HEALTH_POTION] = ItemDef("Health Potion", "A potion of health. Bubbles gently inside a cast glass flask.", "smallPotion.mesh", ItemType.CONSUMABLE, 5, EquippableId.NONE);
+::Items[ItemId.LARGE_HEALTH_POTION] = ItemDef("Large Health Potion", "A large potion of health.", "largePotion.mesh", ItemType.CONSUMABLE, 5, EquippableId.NONE);
 
-::Items[ItemId.SIMPLE_SWORD] = ItemDef("Simple Sword", "A cheap, weak sword. Relatively blunt for something claiming to be a sword.", "simpleSword.mesh", ItemType.EQUIPPABLE, 5, EquippedSlotTypes.SWORD, Vec3(0, 8, 0), Quat(2, Vec3(0, 1, 0)));
-::Items[ItemId.SIMPLE_SHIELD] = ItemDef("Simple Shield", "An un-interesting shield. Provides minimal protection.", null, ItemType.EQUIPPABLE, 5, EquippedSlotTypes.SHIELD);
+::Items[ItemId.SIMPLE_SWORD] = ItemDef("Simple Sword", "A cheap, weak sword. Relatively blunt for something claiming to be a sword.", "simpleSword.mesh", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SWORD, Vec3(0, 8, 0), Quat(2, Vec3(0, 1, 0)));
+::Items[ItemId.SIMPLE_SHIELD] = ItemDef("Simple Shield", "An un-interesting shield. Provides minimal protection.", null, ItemType.EQUIPPABLE, 5, EquippableId.NONE);
 
-::Items[ItemId.BRONZE_SWORD] = ItemDef("Bronze Sword", "A sword made from bronze.", null, ItemType.EQUIPPABLE, 10, EquippedSlotTypes.SWORD);
-::Items[ItemId.BRONZE_SHIELD] = ItemDef("Bronze Shield", "A shield made from bronze.", null, ItemType.EQUIPPABLE, 10, EquippedSlotTypes.SHIELD);
-::Items[ItemId.BRONZE_LEGGINGS] = ItemDef("Bronze Leggings", "A set of leegings made from bronze.", null, ItemType.EQUIPPABLE, 15, EquippedSlotTypes.LEGS);
-::Items[ItemId.BRONZE_CHESTPLATE] = ItemDef("Bronze Chestplate", "A chestplate made from bronze.", null, ItemType.EQUIPPABLE, 15, EquippedSlotTypes.BODY);
-::Items[ItemId.BRONZE_HELMET] = ItemDef("Bronze Helmet", "A helmet made from bronze.", null, ItemType.EQUIPPABLE, 10, EquippedSlotTypes.HEAD);
-::Items[ItemId.BRONZE_BOOTS] = ItemDef("Bronze Boots", "A pair of boots made from bronze.", null, ItemType.EQUIPPABLE, 10, EquippedSlotTypes.FEET);
-::Items[ItemId.BRONZE_BATTLEAXE] = ItemDef("Bronze Battleaxe", "A battleaxe made from bronze.", null, ItemType.EQUIPPABLE, 10, EquippedSlotTypes.SWORD);
-::Items[ItemId.BRONZE_DAGGER] = ItemDef("Bronze Dagger", "A dagger made from bronze.", null, ItemType.EQUIPPABLE, 10, EquippedSlotTypes.SWORD);
+::Items[ItemId.BRONZE_SWORD] = ItemDef("Bronze Sword", "A sword made from bronze.", null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
+::Items[ItemId.BRONZE_SHIELD] = ItemDef("Bronze Shield", "A shield made from bronze.", null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
+::Items[ItemId.BRONZE_LEGGINGS] = ItemDef("Bronze Leggings", "A set of leegings made from bronze.", null, ItemType.EQUIPPABLE, 15, EquippableId.NONE);
+::Items[ItemId.BRONZE_CHESTPLATE] = ItemDef("Bronze Chestplate", "A chestplate made from bronze.", null, ItemType.EQUIPPABLE, 15, EquippableId.NONE);
+::Items[ItemId.BRONZE_HELMET] = ItemDef("Bronze Helmet", "A helmet made from bronze.", null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
+::Items[ItemId.BRONZE_BOOTS] = ItemDef("Bronze Boots", "A pair of boots made from bronze.", null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
+::Items[ItemId.BRONZE_BATTLEAXE] = ItemDef("Bronze Battleaxe", "A battleaxe made from bronze.", null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
+::Items[ItemId.BRONZE_DAGGER] = ItemDef("Bronze Dagger", "A dagger made from bronze.", null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
 
-::Items[ItemId.IRON_SWORD] = ItemDef("Iron Sword", "A sword made from iron.", null, ItemType.EQUIPPABLE, 20, EquippedSlotTypes.SWORD);
-::Items[ItemId.IRON_SHIELD] = ItemDef("Iron Shield", "A shield made from iron.", null, ItemType.EQUIPPABLE, 20, EquippedSlotTypes.SHIELD);
-::Items[ItemId.IRON_LEGGINGS] = ItemDef("Iron Leggings", "A set of leegings made from iron.", null, ItemType.EQUIPPABLE, 25, EquippedSlotTypes.LEGS);
-::Items[ItemId.IRON_CHESTPLATE] = ItemDef("Iron Chestplate", "A chestplate made from iron.", null, ItemType.EQUIPPABLE, 25, EquippedSlotTypes.BODY);
-::Items[ItemId.IRON_HELMET] = ItemDef("Iron Helmet", "A helmet made from iron.", null, ItemType.EQUIPPABLE, 20, EquippedSlotTypes.HEAD);
-::Items[ItemId.IRON_BOOTS] = ItemDef("Iron Boots", "A pair of boots made from iron.", null, ItemType.EQUIPPABLE, 20, EquippedSlotTypes.FEET);
-::Items[ItemId.IRON_BATTLEAXE] = ItemDef("Iron Battleaxe", "A battleaxe made from iron.", null, ItemType.EQUIPPABLE, 10, EquippedSlotTypes.SWORD);
-::Items[ItemId.IRON_DAGGER] = ItemDef("Iron Dagger", "A dagger made from iron.", null, ItemType.EQUIPPABLE, 10, EquippedSlotTypes.SWORD);
+::Items[ItemId.IRON_SWORD] = ItemDef("Iron Sword", "A sword made from iron.", null, ItemType.EQUIPPABLE, 20, EquippableId.NONE);
+::Items[ItemId.IRON_SHIELD] = ItemDef("Iron Shield", "A shield made from iron.", null, ItemType.EQUIPPABLE, 20, EquippableId.NONE);
+::Items[ItemId.IRON_LEGGINGS] = ItemDef("Iron Leggings", "A set of leegings made from iron.", null, ItemType.EQUIPPABLE, 25, EquippableId.NONE);
+::Items[ItemId.IRON_CHESTPLATE] = ItemDef("Iron Chestplate", "A chestplate made from iron.", null, ItemType.EQUIPPABLE, 25, EquippableId.NONE);
+::Items[ItemId.IRON_HELMET] = ItemDef("Iron Helmet", "A helmet made from iron.", null, ItemType.EQUIPPABLE, 20, EquippableId.NONE);
+::Items[ItemId.IRON_BOOTS] = ItemDef("Iron Boots", "A pair of boots made from iron.", null, ItemType.EQUIPPABLE, 20, EquippableId.NONE);
+::Items[ItemId.IRON_BATTLEAXE] = ItemDef("Iron Battleaxe", "A battleaxe made from iron.", null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
+::Items[ItemId.IRON_DAGGER] = ItemDef("Iron Dagger", "A dagger made from iron.", null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
 
-::Items[ItemId.STEEL_SWORD] = ItemDef("Steel Sword", "A sword made from steel.", null, ItemType.EQUIPPABLE, 30, EquippedSlotTypes.SWORD);
-::Items[ItemId.STEEL_SHIELD] = ItemDef("Steel Shield", "A shield made from steel.", null, ItemType.EQUIPPABLE, 30, EquippedSlotTypes.SHIELD);
-::Items[ItemId.STEEL_LEGGINGS] = ItemDef("Steel Leggings", "A set of leegings made from steel.", null, ItemType.EQUIPPABLE, 35, EquippedSlotTypes.LEGS);
-::Items[ItemId.STEEL_CHESTPLATE] = ItemDef("Steel Chestplate", "A chestplate made from steel.", null, ItemType.EQUIPPABLE, 35, EquippedSlotTypes.BODY);
-::Items[ItemId.STEEL_HELMET] = ItemDef("Steel Helmet", "A helmet made from steel.", null, ItemType.EQUIPPABLE, 30, EquippedSlotTypes.HEAD);
-::Items[ItemId.STEEL_BOOTS] = ItemDef("Steel Boots", "A pair of boots made from steel.", null, ItemType.EQUIPPABLE, 30, EquippedSlotTypes.FEET);
-::Items[ItemId.STEEL_BATTLEAXE] = ItemDef("Steel Battleaxe", "A battleaxe made from steel.", null, ItemType.EQUIPPABLE, 10, EquippedSlotTypes.SWORD);
-::Items[ItemId.STEEL_DAGGER] = ItemDef("Steel Dagger", "A dagger made from steel.", null, ItemType.EQUIPPABLE, 10, EquippedSlotTypes.SWORD);
+::Items[ItemId.STEEL_SWORD] = ItemDef("Steel Sword", "A sword made from steel.", null, ItemType.EQUIPPABLE, 30, EquippableId.NONE);
+::Items[ItemId.STEEL_SHIELD] = ItemDef("Steel Shield", "A shield made from steel.", null, ItemType.EQUIPPABLE, 30, EquippableId.NONE);
+::Items[ItemId.STEEL_LEGGINGS] = ItemDef("Steel Leggings", "A set of leegings made from steel.", null, ItemType.EQUIPPABLE, 35, EquippableId.NONE);
+::Items[ItemId.STEEL_CHESTPLATE] = ItemDef("Steel Chestplate", "A chestplate made from steel.", null, ItemType.EQUIPPABLE, 35, EquippableId.NONE);
+::Items[ItemId.STEEL_HELMET] = ItemDef("Steel Helmet", "A helmet made from steel.", null, ItemType.EQUIPPABLE, 30, EquippableId.NONE);
+::Items[ItemId.STEEL_BOOTS] = ItemDef("Steel Boots", "A pair of boots made from steel.", null, ItemType.EQUIPPABLE, 30, EquippableId.NONE);
+::Items[ItemId.STEEL_BATTLEAXE] = ItemDef("Steel Battleaxe", "A battleaxe made from steel.", null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
+::Items[ItemId.STEEL_DAGGER] = ItemDef("Steel Dagger", "A dagger made from steel.", null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
 
-::Items[ItemId.LARGE_BAG_OF_COINS] = ItemDef("Large bag of coins", "A hefty bag of coins", "coinBag.mesh", ItemType.MONEY, 20, EquippedSlotTypes.NONE);
+::Items[ItemId.LARGE_BAG_OF_COINS] = ItemDef("Large bag of coins", "A hefty bag of coins", "coinBag.mesh", ItemType.MONEY, 20, EquippableId.REGULAR_SWORD);
 //-------------------------------
 
 ::ItemHelper <- {
