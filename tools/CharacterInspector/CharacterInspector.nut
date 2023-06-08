@@ -2,6 +2,9 @@
 
 function start(){
 
+    local winSize = Vec2(_window.getWidth(), _window.getHeight());
+    _gui.setCanvasSize(winSize, winSize);
+
     //TODO get rid of this.
     _animation.loadAnimationFile("res://../../assets/characterAnimations/equippableAnimation.xml");
 

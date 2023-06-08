@@ -1,3 +1,5 @@
+::ConstHelper <- {};
+
 const TRIGGER = 0;
 const DAMAGE = 1;
 
@@ -155,6 +157,16 @@ enum CharacterModelType{
 
     MAX
 };
+::ConstHelper.CharacterModelTypeToString <- function(e){
+    switch(e){
+        case CharacterModelType.NONE: return "None";
+        case CharacterModelType.HUMANOID: return "Humanoid";
+        case CharacterModelType.GOBLIN: return "Goblin";
+        default:{
+            assert(false);
+        }
+    }
+}
 
 enum CharacterModelPartType{
     NONE,
