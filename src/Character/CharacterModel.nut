@@ -66,8 +66,10 @@
         targetNode.recursiveDestroyChildren();
 
         if(item == null) return;
+        local meshName = item.getMesh();
+        if(meshName == null) throw format("Item '%s' does not define a mesh.", item.getName());
 
-        local model = _scene.createItem(item.getMesh());
+        local model = _scene.createItem(meshName);
         local offsetPos = item.getEquippablePosition();
         local offsetOrientation = item.getEquippableOrientation();
         local attachNode = targetNode;

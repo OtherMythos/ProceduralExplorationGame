@@ -167,6 +167,9 @@ enum CharacterModelType{
         }
     }
 }
+::ConstHelper.ItemIdToString <- function(e){
+    return ::Items[e].getName();
+}
 
 enum CharacterModelPartType{
     NONE,

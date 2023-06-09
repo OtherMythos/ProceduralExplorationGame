@@ -1,5 +1,8 @@
 enum CharacterInspectorWidgetTypes{
-    MODEL_TYPE
+    MODEL_TYPE,
+
+    EQUIP_LEFT_HAND,
+    EQUIP_RIGHT_HAND,
 };
 
 ::CharacterInspectorWidgets <- {};
@@ -49,12 +52,14 @@ enum CharacterInspectorWidgetTypes{
     mLabelFunction_ = null;
     mStart_ = 0;
     mEnd_ = 0;
-    constructor(callback, current, win, label, labelFunction, start, end){
+    mId_ = 0;
+    constructor(callback, id, current, win, label, labelFunction, start, end){
         mCallback_ = callback;
         mCurrentVal_ = current;
         mLabelFunction_ = labelFunction;
         mStart_ = start;
         mEnd_ = end;
+        mId_ = id;
 
         local button = win.createButton();
         button.setText(mLabel_);
@@ -89,13 +94,17 @@ enum CharacterInspectorWidgetTypes{
         //updateButtonLabel();
     }
     function updateButtonLabel(){
-        local label = ::ConstHelper.CharacterModelTypeToString(mCurrentVal_);
+        local label = mLabelFunction_(mCurrentVal_);
         mButton_.setText(label);
     }
     function notifyNewSelection(selection){
         mCurrentVal_ = selection;
         updateButtonLabel();
-        mCallback_(selection);
+        mCallback_(mId_, selection);
+    }
+
+    function getId(){
+        return mId_;
     }
 }
 
@@ -157,7 +166,7 @@ enum CharacterInspectorWidgetTypes{
         local layout = _gui.createLayoutLine();
 
         guiCreateTitle("Entity Data", layout);
-        local entityTypeButton = ::CharacterInspectorMultiChoicePopupButton(notifyEntityTypeChange.bindenv(this), CharacterModelType.HUMANOID, ::containerWin, "Model Type", ::ConstHelper.CharacterModelTypeToString, CharacterModelType.NONE, CharacterModelType.MAX);
+        local entityTypeButton = ::CharacterInspectorMultiChoicePopupButton(notifyEntityTypeChange.bindenv(this), 0, CharacterModelType.HUMANOID, ::containerWin, "Model Type", ::ConstHelper.CharacterModelTypeToString, CharacterModelType.NONE, CharacterModelType.MAX);
         entityTypeButton.addToLayout(layout);
         ::CharacterInspectorWidgets[CharacterInspectorWidgetTypes.MODEL_TYPE] <- entityTypeButton;
 
@@ -180,23 +189,34 @@ enum CharacterInspectorWidgetTypes{
         }
 
         guiCreateTitle("Equipables", layout);
-        labels = [
-            "equipSword"
+        local equipEntries = [
+            "Right Hand",
+            "Left Hand"
         ];
-        foreach(c,i in labels){
-            local checkbox = ::containerWin.createCheckbox();
-            checkbox.attachListenerForEvent(equipCheckboxCallback, _GUI_ACTION_RELEASED, this);
-            checkbox.setText(i);
-            checkbox.setUserId(c);
-
-            layout.addCell(checkbox);
+        local equipEntriesVals = [
+            CharacterInspectorWidgetTypes.EQUIP_RIGHT_HAND,
+            CharacterInspectorWidgetTypes.EQUIP_LEFT_HAND,
+        ];
+        local equipNodeType = [
+            CharacterModelEquipNodeType.LEFT_HAND
+            CharacterModelEquipNodeType.RIGHT_HAND,
+        ];
+        foreach(c,i in equipEntries){
+            local equipVal = equipEntriesVals[c];
+            local equip = ::CharacterInspectorMultiChoicePopupButton(notifyEquipChange.bindenv(this), equipNodeType[c], ItemId.NONE, ::containerWin, i, ::ConstHelper.ItemIdToString, ItemId.NONE, ItemId.MAX);
+            equip.addToLayout(layout);
+            ::CharacterInspectorWidgets[equipVal] <- equip;
         }
-
 
         layout.layout();
     }
 
-    function notifyEntityTypeChange(newType){
+    function notifyEquipChange(equipType, newEquip){
+        local item = ::Items[newEquip];
+        mInspectedModel_.equipToNode(newEquip == ItemId.NONE ? null : item, equipType);
+    }
+
+    function notifyEntityTypeChange(id, newType){
         mConstructionData_.type = newType;
 
         reCreateEntity();

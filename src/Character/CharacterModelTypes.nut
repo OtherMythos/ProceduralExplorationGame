@@ -51,7 +51,9 @@ local ModelType = class{
             , Vec3(-8, 8, 0), Vec3(0.8, 0.8, 0.8)
         ),
         Entry(
-            "playerArm.mesh", CharacterModelPartType.RIGHT_HAND, null, Vec3(8, 8, 0), Vec3(0.8, 0.8, 0.8)
+            "playerArm.mesh", CharacterModelPartType.RIGHT_HAND,
+            [Entry(null, CharacterModelPartType.NONE, null, null, Vec3(0.8, 0.8, 0.8), CharacterModelEquipNodeType.RIGHT_HAND)]
+            , Vec3(8, 8, 0), Vec3(0.8, 0.8, 0.8)
         ),
 
         Entry(
@@ -74,7 +76,9 @@ local ModelType = class{
             , Vec3(-8, 8, 0), Vec3(1.2, 1.2, 1.2)
         ),
         Entry(
-            "goblinArm.mesh", CharacterModelPartType.RIGHT_HAND, null, Vec3(8, 8, 0), Vec3(1.2, 1.2, 1.2)
+            "goblinArm.mesh", CharacterModelPartType.RIGHT_HAND,
+            [Entry(null, CharacterModelPartType.NONE, null, null, Vec3(0.4, 0.4, 0.4), CharacterModelEquipNodeType.RIGHT_HAND)]
+            , Vec3(8, 8, 0), Vec3(1.2, 1.2, 1.2)
         ),
 
         Entry(
