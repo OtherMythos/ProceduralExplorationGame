@@ -22,11 +22,11 @@ testCount = 0;
         playerEntry.setModel(playerModel);
 
         local equipped = ::Combat.EquippedItems();
-        equipped.setEquipped(::Item(ItemId.SIMPLE_SWORD));
+        equipped.setEquipped(::Item(ItemId.SIMPLE_TWO_HANDED_SWORD));
         local combatData = ::Combat.CombatStats(Enemy.NONE, 0, equipped);
         //TODO tie this up a bit better with the rest of the code.
-        playerModel.equipToNode(::Item(ItemId.SIMPLE_SWORD), CharacterModelEquipNodeType.RIGHT_HAND);
-        playerModel.equipToNode(::Item(ItemId.SIMPLE_SHIELD), CharacterModelEquipNodeType.LEFT_HAND);
+        playerModel.equipToNode(::Item(ItemId.SIMPLE_TWO_HANDED_SWORD), CharacterModelEquipNodeType.LEFT_HAND);
+        //playerModel.equipToNode(::Item(ItemId.SIMPLE_SHIELD), CharacterModelEquipNodeType.LEFT_HAND);
         playerEntry.setCombatData(combatData);
 
         local receiverInfo = {

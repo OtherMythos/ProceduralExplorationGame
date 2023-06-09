@@ -17,5 +17,21 @@
                 <k t="20" position="8.0, 8.0, -5.998386"/>
             </t>
         </RegularSwordSwing>
+        <RegularTwoHandedSwordSwing repeat="true" end="80">
+            <t type="transform" target="0">
+                <k t="0" position="-7.0, 8.0, 6.0" rot="0, -60, 0"/>
+                <k t="40" position="-12.0, 12.0, 0.0" rot="-90, -60, 0"/>
+                <k t="50" position="-2.0, 8.0, 8.0" rot="20, 90, 80"/>
+                <k t="55" position="-2.0, 8.0, 8.0" rot="20, 90, 80"/>
+                <k t="80" position="-7.0, 8.0, 6.0" rot="0, -60, 0"/>
+            </t>
+            <t type="transform" target="1">
+                <k t="0" position="-3.0, 8.0, 5.0" rot="0, 0, 0"/>
+                <k t="40" position="-8.0, 12.0, -1.0" rot="0, 0, 0"/>
+                <k t="50" position="2.0, 8.0, 7.0" rot="0, 0, 0"/>
+                <k t="55" position="2.0, 8.0, 7.0" rot="0, 0, 0"/>
+                <k t="80" position="-3.0, 8.0, 5.0" rot="0, 0, 0"/>
+            </t>
+        </RegularTwoHandedSwordSwing>
     </animations>
 </AnimationSequence>

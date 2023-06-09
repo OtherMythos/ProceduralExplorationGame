@@ -16,6 +16,21 @@ function regularSwordBaseAttack(p, model, pos){
     }
 }
 
+function regularTwoHandedBaseAttack(p, model, pos){
+    print("Regular two handed attack " + p);
+
+    if(p == 0){
+        model.startAnimation(CharacterModelAnimId.REGULAR_TWO_HANDED_SWORD_SWING);
+    }
+
+    if(p == 52){
+        ::Base.mExplorationLogic.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, Vec3(), _COLLISION_ENEMY);
+    }
+
+    if(p == 80){
+        model.stopAnimation(CharacterModelAnimId.REGULAR_TWO_HANDED_SWORD_SWING);
+    }
+}
 
 
 enum EquippableId{
@@ -23,6 +38,7 @@ enum EquippableId{
 
     REGULAR_SWORD,
     REGULAR_SHIELD,
+    REGULAR_TWO_HANDED_SWORD,
 
     MAX
 };
@@ -69,4 +85,5 @@ enum EquippableId{
 
 ::Equippables[EquippableId.REGULAR_SWORD] = EquippableDef(EquippedSlotTypes.SWORD, regularSwordBaseAttack, 20);
 ::Equippables[EquippableId.REGULAR_SHIELD] = EquippableDef(EquippedSlotTypes.SHIELD, regularSwordBaseAttack, 20);
+::Equippables[EquippableId.REGULAR_TWO_HANDED_SWORD] = EquippableDef(EquippedSlotTypes.SWORD, regularTwoHandedBaseAttack, 80);
 //-------------------------------

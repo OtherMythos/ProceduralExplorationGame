@@ -5,6 +5,7 @@ enum ItemId{
 
     SIMPLE_SWORD,
     SIMPLE_SHIELD,
+    SIMPLE_TWO_HANDED_SWORD,
 
     BRONZE_SWORD,
     BRONZE_SHIELD,
@@ -130,6 +131,7 @@ enum ItemType{
 
 ::Items[ItemId.SIMPLE_SWORD] = ItemDef("Simple Sword", "A cheap, weak sword. Relatively blunt for something claiming to be a sword.", "simpleSword.mesh", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SWORD, Vec3(0, 8, 0), Quat(2, Vec3(0, 1, 0)));
 ::Items[ItemId.SIMPLE_SHIELD] = ItemDef("Simple Shield", "An un-interesting shield. Provides minimal protection.", "simpleShield.mesh", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SHIELD, Vec3(-4, 0, 0), Quat(-PI*0.5, Vec3(0, 1, 0)), Vec3(1.4, 1.4, 1.0));
+::Items[ItemId.SIMPLE_TWO_HANDED_SWORD] = ItemDef("Simple Two Handed sword", "A two handed sword as blunt as it is big", "simpleTwoHandedSword.mesh", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_TWO_HANDED_SWORD, Vec3(0, 14, 0), Quat(-PI*0.5, Vec3(0, 1, 0)), Vec3(1.4, 1.4, 1.0));
 
 ::Items[ItemId.BRONZE_SWORD] = ItemDef("Bronze Sword", "A sword made from bronze.", null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
 ::Items[ItemId.BRONZE_SHIELD] = ItemDef("Bronze Shield", "A shield made from bronze.", null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
@@ -158,7 +160,7 @@ enum ItemType{
 ::Items[ItemId.STEEL_BATTLEAXE] = ItemDef("Steel Battleaxe", "A battleaxe made from steel.", null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
 ::Items[ItemId.STEEL_DAGGER] = ItemDef("Steel Dagger", "A dagger made from steel.", null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
 
-::Items[ItemId.LARGE_BAG_OF_COINS] = ItemDef("Large bag of coins", "A hefty bag of coins", "coinBag.mesh", ItemType.MONEY, 20, EquippableId.REGULAR_SWORD);
+::Items[ItemId.LARGE_BAG_OF_COINS] = ItemDef("Large bag of coins", "A hefty bag of coins", "coinBag.mesh", ItemType.MONEY, 20, EquippableId.NONE);
 //-------------------------------
 
 ::ItemHelper <- {

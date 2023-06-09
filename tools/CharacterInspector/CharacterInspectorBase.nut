@@ -123,7 +123,7 @@ enum CharacterInspectorWidgetTypes{
             "type": CharacterModelType.HUMANOID,
             "equip": array(CharacterModelEquipNodeType.MAX, ItemId.NONE)
         }
-        //mCurrentData_.equip[CharacterModelEquipNodeType.LEFT_HAND] = ItemId.SIMPLE_SWORD;
+        mCurrentData_.equip[CharacterModelEquipNodeType.LEFT_HAND] = ItemId.SIMPLE_TWO_HANDED_SWORD;
 
         createGui();
 
@@ -142,6 +142,7 @@ enum CharacterInspectorWidgetTypes{
             CharacterModelAnimId.BASE_LEGS_WALK,
             CharacterModelAnimId.BASE_ARMS_WALK,
             CharacterModelAnimId.REGULAR_SWORD_SWING,
+            CharacterModelAnimId.REGULAR_TWO_HANDED_SWORD_SWING,
         ];
         if(widget.getValue()){
             mInspectedModel_.startAnimation(testVals[widget.getUserId()]);
@@ -169,7 +170,8 @@ enum CharacterInspectorWidgetTypes{
         local labels = [
             "FeetWalk",
             "UpperWalk",
-            "Sword swing"
+            "Sword swing",
+            "Two Hand Sword swing",
         ];
         foreach(c,i in labels){
             local checkbox = ::containerWin.createCheckbox();

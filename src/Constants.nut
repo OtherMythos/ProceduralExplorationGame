@@ -200,6 +200,7 @@ enum CharacterModelAnimId{
     BASE_ARMS_WALK,
 
     REGULAR_SWORD_SWING,
+    REGULAR_TWO_HANDED_SWORD_SWING,
 
     MAX
 };

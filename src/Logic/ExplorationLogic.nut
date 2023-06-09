@@ -120,6 +120,7 @@
             if(mPerformingEquippable_) return;
             if(mCombatData_ == null) return;
             local equippedSword = mCombatData_.mEquippedItems.mItems[EquippedSlotTypes.SWORD];
+            print(equippedSword);
             //TODO in future have some base attack.
             if(equippedSword == null) return;
 
