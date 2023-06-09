@@ -146,14 +146,6 @@ enum CharacterInspectorWidgetTypes{
             mInspectedModel_.stopAnimation(testVals[widget.getUserId()]);
         }
     }
-    function equipCheckboxCallback(widget, action){
-        if(widget.getValue()){
-            local item = ::Items[ItemId.SIMPLE_SWORD];
-            mInspectedModel_.equipToNode(item, CharacterModelEquipNodeType.LEFT_HAND);
-        }else{
-            mInspectedModel_.equipToNode(null, CharacterModelEquipNodeType.LEFT_HAND);
-        }
-    }
 
     function guiCreateTitle(title, layout){
         local entityDataTitle = ::containerWin.createLabel();

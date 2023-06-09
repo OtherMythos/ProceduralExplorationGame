@@ -72,6 +72,7 @@ enum ItemType{
     function getEquippableData(){ return mItem_.getEquippableData(); }
     function getEquippablePosition(){ return mItem_.getEquippablePosition(); }
     function getEquippableOrientation(){ return mItem_.getEquippableOrientation(); }
+    function getEquippableScale(){ return mItem_.getEquippableScale(); }
     function getScrapVal(){ return mItem_.getScrapVal(); }
     function toStats(){
         return ::ItemHelper.itemToStats(getType());
@@ -90,8 +91,9 @@ enum ItemType{
     mEquippableData = EquippableId.NONE;
     mEquippablePosition = null;
     mEquippableOrientation = null;
+    mEquippableScale = null;
 
-    constructor(name, desc, mesh, type, scrapVal, equippableData, equippablePosition=null, equippableOrientation=null){
+    constructor(name, desc, mesh, type, scrapVal, equippableData, equippablePosition=null, equippableOrientation=null, equippableScale=null){
         mName = name;
         mDesc = desc;
         mMesh = mesh;
@@ -100,6 +102,7 @@ enum ItemType{
         mEquippableData = equippableData;
         mEquippablePosition = equippablePosition;
         mEquippableOrientation = equippableOrientation;
+        mEquippableScale = equippableScale;
 
         //Sanity checks.
         if(mType == ItemType.CONSUMABLE){
@@ -115,6 +118,7 @@ enum ItemType{
     function getEquippableData(){ return mEquippableData; }
     function getEquippablePosition(){ return mEquippablePosition; }
     function getEquippableOrientation(){ return mEquippableOrientation; }
+    function getEquippableScale(){ return mEquippableScale; }
 }
 ::Items <- array(ItemId.MAX, null);
 
@@ -125,7 +129,7 @@ enum ItemType{
 ::Items[ItemId.LARGE_HEALTH_POTION] = ItemDef("Large Health Potion", "A large potion of health.", "largePotion.mesh", ItemType.CONSUMABLE, 5, EquippableId.NONE);
 
 ::Items[ItemId.SIMPLE_SWORD] = ItemDef("Simple Sword", "A cheap, weak sword. Relatively blunt for something claiming to be a sword.", "simpleSword.mesh", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SWORD, Vec3(0, 8, 0), Quat(2, Vec3(0, 1, 0)));
-::Items[ItemId.SIMPLE_SHIELD] = ItemDef("Simple Shield", "An un-interesting shield. Provides minimal protection.", null, ItemType.EQUIPPABLE, 5, EquippableId.NONE);
+::Items[ItemId.SIMPLE_SHIELD] = ItemDef("Simple Shield", "An un-interesting shield. Provides minimal protection.", "simpleShield.mesh", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SHIELD, Vec3(-4, 0, 0), Quat(-PI*0.5, Vec3(0, 1, 0)), Vec3(1.4, 1.4, 1.0));
 
 ::Items[ItemId.BRONZE_SWORD] = ItemDef("Bronze Sword", "A sword made from bronze.", null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
 ::Items[ItemId.BRONZE_SHIELD] = ItemDef("Bronze Shield", "A shield made from bronze.", null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);

@@ -60,9 +60,9 @@
         return _animation.createAnimation(target.mName, animationInfo);
     }
 
-    function equipToNode(item, targetNode){
-        if(!mEquipNodes_.rawin(targetNode)) return;
-        local targetNode = mEquipNodes_[targetNode];
+    function equipToNode(item, targetNodeType){
+        if(!mEquipNodes_.rawin(targetNodeType)) return;
+        local targetNode = mEquipNodes_[targetNodeType];
         targetNode.recursiveDestroyChildren();
 
         if(item == null) return;
@@ -72,10 +72,18 @@
         local model = _scene.createItem(meshName);
         local offsetPos = item.getEquippablePosition();
         local offsetOrientation = item.getEquippableOrientation();
+        local offsetScale = item.getEquippableScale();
         local attachNode = targetNode;
-        if(offsetPos != null || offsetOrientation != null){
-            local childNode = targetNode.createChildSceneNode();
+        local secondTarget = targetNode;
+        if(targetNodeType == CharacterModelEquipNodeType.RIGHT_HAND){
+            secondTarget = secondTarget.createChildSceneNode();
+            secondTarget.setOrientation(Quat(PI, Vec3(0, 1, 0)));
+            attachNode = secondTarget;
+        }
+        if(offsetPos != null || offsetOrientation != null || offsetScale != null){
+            local childNode = secondTarget.createChildSceneNode();
             childNode.setPosition(offsetPos != null ? offsetPos : Vec3());
+            childNode.setScale(offsetScale != null ? offsetScale : Vec3(1, 1, 1));
             childNode.setOrientation(offsetOrientation != null ? offsetOrientation : Quat());
 
             attachNode = childNode;

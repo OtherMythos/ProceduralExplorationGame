@@ -22,6 +22,7 @@ enum EquippableId{
     NONE,
 
     REGULAR_SWORD,
+    REGULAR_SHIELD,
 
     MAX
 };
@@ -67,4 +68,5 @@ enum EquippableId{
 ::Equippables[EquippableId.NONE] = EquippableDef(EquippedSlotTypes.NONE, null, 0);
 
 ::Equippables[EquippableId.REGULAR_SWORD] = EquippableDef(EquippedSlotTypes.SWORD, regularSwordBaseAttack, 20);
+::Equippables[EquippableId.REGULAR_SHIELD] = EquippableDef(EquippedSlotTypes.SHIELD, regularSwordBaseAttack, 20);
 //-------------------------------

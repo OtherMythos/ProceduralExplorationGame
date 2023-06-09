@@ -25,7 +25,8 @@ testCount = 0;
         equipped.setEquipped(::Item(ItemId.SIMPLE_SWORD));
         local combatData = ::Combat.CombatStats(Enemy.NONE, 0, equipped);
         //TODO tie this up a bit better with the rest of the code.
-        playerModel.equipToNode(::Item(ItemId.SIMPLE_SWORD), CharacterModelEquipNodeType.LEFT_HAND);
+        playerModel.equipToNode(::Item(ItemId.SIMPLE_SWORD), CharacterModelEquipNodeType.RIGHT_HAND);
+        playerModel.equipToNode(::Item(ItemId.SIMPLE_SHIELD), CharacterModelEquipNodeType.LEFT_HAND);
         playerEntry.setCombatData(combatData);
 
         local receiverInfo = {
@@ -75,6 +76,7 @@ testCount = 0;
 
         local goblinModel = mCharacterGenerator_.createCharacterModel(enemyNode, {"type": CharacterModelType.GOBLIN}, 30, 1 << 4);
         goblinModel.equipToNode(::Item(ItemId.SIMPLE_SWORD), CharacterModelEquipNodeType.LEFT_HAND);
+        if(_random.randInt(2) == 0)goblinModel.equipToNode(::Item(ItemId.SIMPLE_SHIELD), CharacterModelEquipNodeType.RIGHT_HAND);
         enemyNode.setScale(0.5, 0.5, 0.5);
         _component.sceneNode.add(en, enemyNode);
         entry.setModel(goblinModel);
