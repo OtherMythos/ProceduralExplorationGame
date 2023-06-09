@@ -1,7 +1,12 @@
 function baseDamage(id, type, internalId, sender, receiver){
     if(type != _COLLISION_ENTER) return;
 
-    _applyDamage(receiver, 5);
+    local active = ::Base.mExplorationLogic.mProjectileManager_.mActiveProjectiles_;
+    if(!active.rawin(id)) return;
+    local projData = active[id];
+    local damage = projData.mCombatMove_.getDamage();
+
+    _applyDamage(receiver, damage);
 }
 
 ::_applyDamage <- function(entity, damage){

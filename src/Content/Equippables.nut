@@ -8,7 +8,7 @@ function regularSwordBaseAttack(p, model, pos){
     }
 
     if(p == 15){
-        ::Base.mExplorationLogic.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, Vec3(), _COLLISION_ENEMY);
+        ::Base.mExplorationLogic.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, Vec3(), ::Combat.CombatMove(5), _COLLISION_ENEMY);
     }
 
     if(p == 20){
@@ -24,7 +24,7 @@ function regularTwoHandedBaseAttack(p, model, pos){
     }
 
     if(p == 52){
-        ::Base.mExplorationLogic.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, Vec3(), _COLLISION_ENEMY);
+        ::Base.mExplorationLogic.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, Vec3(), ::Combat.CombatMove(10), _COLLISION_ENEMY);
     }
 
     if(p == 80){
@@ -50,7 +50,7 @@ enum EquippableId{
     mTotalFrames_ = 0;
 
     constructor(equippedSlot, attackFunction, totalFrames){
-        mEquippedSlot_ = EquippedSlotTypes.SWORD;
+        mEquippedSlot_ = equippedSlot;
         mAttackFunction_ = attackFunction;
         mTotalFrames_ = totalFrames;
     }
@@ -83,7 +83,7 @@ enum EquippableId{
 //-------------------------------
 ::Equippables[EquippableId.NONE] = EquippableDef(EquippedSlotTypes.NONE, null, 0);
 
-::Equippables[EquippableId.REGULAR_SWORD] = EquippableDef(EquippedSlotTypes.SWORD, regularSwordBaseAttack, 20);
-::Equippables[EquippableId.REGULAR_SHIELD] = EquippableDef(EquippedSlotTypes.SHIELD, regularSwordBaseAttack, 20);
-::Equippables[EquippableId.REGULAR_TWO_HANDED_SWORD] = EquippableDef(EquippedSlotTypes.SWORD, regularTwoHandedBaseAttack, 80);
+::Equippables[EquippableId.REGULAR_SWORD] = EquippableDef(EquippedSlotTypes.HAND, regularSwordBaseAttack, 20);
+::Equippables[EquippableId.REGULAR_SHIELD] = EquippableDef(EquippedSlotTypes.HAND, regularSwordBaseAttack, 20);
+::Equippables[EquippableId.REGULAR_TWO_HANDED_SWORD] = EquippableDef(EquippedSlotTypes.HAND, regularTwoHandedBaseAttack, 80);
 //-------------------------------

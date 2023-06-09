@@ -119,10 +119,13 @@
         function performAttack(){
             if(mPerformingEquippable_) return;
             if(mCombatData_ == null) return;
-            local equippedSword = mCombatData_.mEquippedItems.mItems[EquippedSlotTypes.SWORD];
-            print(equippedSword);
+            //TODO determine which weapon takes presidence
+            local equippedSword = mCombatData_.mEquippedItems.mItems[EquippedSlotTypes.LEFT_HAND];
             //TODO in future have some base attack.
-            if(equippedSword == null) return;
+            if(equippedSword == null){
+                print("IS NULL");
+                return;
+            }
 
             local equippable = ::Equippables[equippedSword.getEquippableData()];
             local performance = ::EquippablePerformance(equippable, mModel_);
@@ -988,7 +991,7 @@
         local moveDef = ::Moves[moveId];
         local targetProjectile = moveDef.getProjectile();
         if(targetProjectile != null){
-            mProjectileManager_.spawnProjectile(targetProjectile, pos, dir, collisionType);
+            mProjectileManager_.spawnProjectile(targetProjectile, pos, dir, ::Combat.CombatMove(5), collisionType);
         }
     }
 

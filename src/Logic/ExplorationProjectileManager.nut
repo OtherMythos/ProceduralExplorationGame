@@ -1,14 +1,16 @@
 ::ExplorationProjectileManager <- class{
 
-    ProjectileDef = class{
+    Projectile = class{
         mPos_ = null;
         mDir_ = null;
         mPhysics_ = null;
         mLifetime_ = 10;
-        constructor(pos, dir, physicsShape, lifetime = 10){
+        mCombatMove_ = null;
+        constructor(pos, dir, physicsShape, combatMove, lifetime = 10){
             mPos_ = pos;
             mDir_ = dir;
             mPhysics_ = physicsShape;
+            mCombatMove_ = combatMove;
             mLifetime_ = lifetime;
         }
     };
@@ -37,12 +39,8 @@
         mQueuedDestructionProjectiles_.clear();
     }
 
-    function spawnProjectile(projId, pos, dir, collisionType=_COLLISION_ENEMY){
+    function spawnProjectile(projId, pos, dir, combatMove, collisionType=_COLLISION_ENEMY){
         local projData = ::Projectiles[projId];
-
-        local mesh = _mesh.create("cube");
-        mesh.setPosition(pos);
-        mesh.setScale(projData.mSize);
 
         local senderInfo = {
             "func" : "baseDamage",
@@ -56,7 +54,7 @@
         local damageSender = _physics.collision[DAMAGE].createSender(senderInfo, shape, pos);
         _physics.collision[DAMAGE].addObject(damageSender);
 
-        local proj = ProjectileDef(pos, dir, damageSender, 6);
+        local proj = Projectile(pos, dir, damageSender, combatMove, 6);
 
         mActiveProjectiles_.rawset(mCurrentProjectileId_, proj);
         mCurrentProjectileId_++;

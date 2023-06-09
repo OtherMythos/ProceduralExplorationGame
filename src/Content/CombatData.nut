@@ -5,9 +5,23 @@
             mItems = array(EquippedSlotTypes.MAX, null);
         }
 
-        function setEquipped(item){
-            local slot = ::Equippables[item.getEquippableData()].mEquippedSlot_;
-            mItems[slot] = item;
+        function setEquipped(item, targetSlot){
+            assert(targetSlot != EquippedSlotTypes.HAND);
+            //TODO I don't particularly like any of the mismatches between enums.
+            //It would be more convenient if everything was re-named an ideally the HAND entry wasn't there.
+            local itemRequestEquip = ::Equippables[item.getEquippableData()].mEquippedSlot_;
+            if(itemRequestEquip == EquippedSlotTypes.HAND){
+                if(targetSlot != EquippedSlotTypes.LEFT_HAND && targetSlot != EquippedSlotTypes.RIGHT_HAND){
+                    throw format("Item '%s' requested incorrect equip slot.", targetSlot);
+                }
+            }
+            else{
+                //Ensure the item equip type matches.
+                if(itemRequestEquip != targetSlot){
+                    throw format("Item '%s' requested incorrect equip slot.", targetSlot);
+                }
+            }
+            mItems[targetSlot] = item;
         }
 
         function getTotalStats(){

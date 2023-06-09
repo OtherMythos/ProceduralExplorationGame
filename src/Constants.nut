@@ -125,8 +125,10 @@ enum EquippedSlotTypes{
     NONE,
     HEAD,
     BODY,
-    SWORD,
-    SHIELD
+    //TODO this whole equippable slot system could be reduced, as there's some duplication with the other equip system.
+    HAND,
+    LEFT_HAND,
+    RIGHT_HAND,
     LEGS,
     FEET,
     ACCESSORY_1,
