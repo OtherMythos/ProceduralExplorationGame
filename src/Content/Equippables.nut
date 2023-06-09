@@ -1,34 +1,26 @@
 //Items define the name and descriptions, equippables define information about how the item is equipped in a shareable format.
 
-function regularSwordBaseAttack(p, model, pos){
-    print("Regular sword attack " + p);
-
+function regularSwordBaseAttack(p, entry, pos){
     if(p == 0){
-        model.startAnimation(CharacterModelAnimId.REGULAR_SWORD_SWING);
+        entry.getModel().startAnimation(CharacterModelAnimId.REGULAR_SWORD_SWING);
     }
-
-    if(p == 15){
-        ::Base.mExplorationLogic.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, Vec3(), ::Combat.CombatMove(5), _COLLISION_ENEMY);
+    else if(p == 15){
+        ::Base.mExplorationLogic.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, Vec3(), ::Combat.CombatMove(5), entry.getTargetCollisionWorld());
     }
-
-    if(p == 20){
-        model.stopAnimation(CharacterModelAnimId.REGULAR_SWORD_SWING);
+    else if(p == 20){
+        entry.getModel().stopAnimation(CharacterModelAnimId.REGULAR_SWORD_SWING);
     }
 }
 
-function regularTwoHandedBaseAttack(p, model, pos){
-    print("Regular two handed attack " + p);
-
+function regularTwoHandedBaseAttack(p, entry, pos){
     if(p == 0){
-        model.startAnimation(CharacterModelAnimId.REGULAR_TWO_HANDED_SWORD_SWING);
+        entry.getModel().startAnimation(CharacterModelAnimId.REGULAR_TWO_HANDED_SWORD_SWING);
     }
-
-    if(p == 52){
-        ::Base.mExplorationLogic.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, Vec3(), ::Combat.CombatMove(10), _COLLISION_ENEMY);
+    else if(p == 52){
+        ::Base.mExplorationLogic.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, Vec3(), ::Combat.CombatMove(10), entry.getTargetCollisionWorld());
     }
-
-    if(p == 80){
-        model.stopAnimation(CharacterModelAnimId.REGULAR_TWO_HANDED_SWORD_SWING);
+    else if(p == 80){
+        entry.getModel().stopAnimation(CharacterModelAnimId.REGULAR_TWO_HANDED_SWORD_SWING);
     }
 }
 
@@ -64,14 +56,14 @@ enum EquippableId{
 ::EquippablePerformance <- class{
     mEquippable = null;
     mCurrentFrame_ = 0;
-    mModel_ = null;
-    constructor(equippable, model){
+    mEntityEntry_ = null;
+    constructor(equippable, entityEntry){
         mEquippable = equippable;
-        mModel_ = model;
+        mEntityEntry_ = entityEntry;
     }
     function update(pos){
         if(mCurrentFrame_ > mEquippable.mTotalFrames_) return false;
-        mEquippable.mAttackFunction_(mCurrentFrame_, mModel_, pos);
+        mEquippable.mAttackFunction_(mCurrentFrame_, mEntityEntry_, pos);
         mCurrentFrame_++;
 
         return true;

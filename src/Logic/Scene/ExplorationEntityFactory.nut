@@ -22,13 +22,14 @@ testCount = 0;
         playerEntry.setModel(playerModel);
 
         local equipped = ::Combat.EquippedItems();
-        local targetItem = ::Item(ItemId.SIMPLE_SWORD);
+        local targetItem = ::Item(ItemId.SIMPLE_TWO_HANDED_SWORD);
         equipped.setEquipped(targetItem, EquippedSlotTypes.LEFT_HAND);
         local combatData = ::Combat.CombatStats(Enemy.NONE, 0, equipped);
         //TODO tie this up a bit better with the rest of the code.
         playerModel.equipToNode(targetItem, CharacterModelEquipNodeType.LEFT_HAND);
         //playerModel.equipToNode(::Item(ItemId.SIMPLE_SHIELD), CharacterModelEquipNodeType.LEFT_HAND);
         playerEntry.setCombatData(combatData);
+        playerEntry.setTargetCollisionWorld(_COLLISION_ENEMY);
 
         local receiverInfo = {
             "type" : _COLLISION_PLAYER
@@ -76,8 +77,20 @@ testCount = 0;
         local enemyNode = mBaseSceneNode_.createChildSceneNode();
 
         local goblinModel = mCharacterGenerator_.createCharacterModel(enemyNode, {"type": CharacterModelType.GOBLIN}, 30, 1 << 4);
-        goblinModel.equipToNode(::Item(ItemId.SIMPLE_SWORD), CharacterModelEquipNodeType.LEFT_HAND);
-        if(_random.randInt(2) == 0)goblinModel.equipToNode(::Item(ItemId.SIMPLE_SHIELD), CharacterModelEquipNodeType.RIGHT_HAND);
+
+        local equipped = ::Combat.EquippedItems();
+        local targetItem = ::Item(ItemId.SIMPLE_TWO_HANDED_SWORD);
+        equipped.setEquipped(targetItem, EquippedSlotTypes.LEFT_HAND);
+        local combatData = ::Combat.CombatStats(Enemy.GOBLIN, 0, equipped);
+        entry.setCombatData(combatData);
+        //TODO tie this up a bit better with the rest of the code.
+        goblinModel.equipToNode(targetItem, CharacterModelEquipNodeType.LEFT_HAND);
+        //playerModel.equipToNode(::Item(ItemId.SIMPLE_SHIELD), CharacterModelEquipNodeType.LEFT_HAND);
+        //goblinModel.equipToNode(::Item(ItemId.SIMPLE_SWORD), CharacterModelEquipNodeType.LEFT_HAND);
+        goblinModel.equipToNode(::Item(ItemId.SIMPLE_TWO_HANDED_SWORD), CharacterModelEquipNodeType.LEFT_HAND);
+        //if(_random.randInt(2) == 0)goblinModel.equipToNode(::Item(ItemId.SIMPLE_SHIELD), CharacterModelEquipNodeType.RIGHT_HAND);
+        entry.setTargetCollisionWorld(_COLLISION_PLAYER);
+
         enemyNode.setScale(0.5, 0.5, 0.5);
         _component.sceneNode.add(en, enemyNode);
         entry.setModel(goblinModel);

@@ -20,6 +20,7 @@
         mMoving_ = 0;
         mGizmo_ = null;
         mCombatData_ = null;
+        mTargetCollisionWorld_ = 0;
 
         mEntity_ = null;
 
@@ -47,8 +48,17 @@
         function setModel(model){
             mModel_ = model;
         }
+        function getModel(){
+            return mModel_;
+        }
         function setCombatData(combatData){
             mCombatData_ = combatData;
+        }
+        function setTargetCollisionWorld(world){
+            mTargetCollisionWorld_ = world;
+        }
+        function getTargetCollisionWorld(){
+            return mTargetCollisionWorld_;
         }
         function move(amount){
             setPosition(mPos_ + amount);
@@ -64,8 +74,8 @@
 
             if(mMoving_ == 0){
                 if(mModel_){
-                    mModel_.startAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
-                    mModel_.startAnimation(CharacterModelAnimId.BASE_ARMS_WALK);
+                    //mModel_.startAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
+                    //mModel_.startAnimation(CharacterModelAnimId.BASE_ARMS_WALK);
                 }
             }
             mMoving_ = 10;
@@ -106,8 +116,8 @@
                 mMoving_--;
                 if(mMoving_ <= 0){
                     if(mModel_){
-                        mModel_.stopAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
-                        mModel_.stopAnimation(CharacterModelAnimId.BASE_ARMS_WALK);
+                        //mModel_.stopAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
+                        //mModel_.stopAnimation(CharacterModelAnimId.BASE_ARMS_WALK);
                     }
                 }
             }
@@ -128,7 +138,7 @@
             }
 
             local equippable = ::Equippables[equippedSword.getEquippableData()];
-            local performance = ::EquippablePerformance(equippable, mModel_);
+            local performance = ::EquippablePerformance(equippable, this);
             mPerformingEquippable_ = performance;
         }
     }
