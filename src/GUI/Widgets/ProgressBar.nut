@@ -24,6 +24,9 @@
         mChildBar_.setSize(mSize_);
         mChildBar_.setDatablock("gui/progressBarRed");
 
+        mParentContainer_.setClickable(false);
+        mChildBar_.setClickable(false);
+
         setPercentage(0.0);
         setPosition(0, 0);
     }

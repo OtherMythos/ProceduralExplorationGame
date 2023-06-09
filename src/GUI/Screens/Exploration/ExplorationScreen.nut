@@ -20,6 +20,8 @@ enum ExplorationBusEvents{
     mScrapAllButton_ = null;
     mCameraButton_ = null;
 
+    mInputBlockerWindow_ = null;
+
     mInsideGateway_ = false;
     mTooltipManager_ = null;
 
@@ -125,6 +127,7 @@ enum ExplorationBusEvents{
 
         mTooltipManager_ = TooltipManager();
 
+        createInputBlockerOverlay();
     }
 
     function update(){
@@ -146,6 +149,13 @@ enum ExplorationBusEvents{
         return mExplorationStatsContainer_.getEXPCounter();
     }
 
+    function createInputBlockerOverlay(){
+        mInputBlockerWindow_ = _gui.createWindow();
+        mInputBlockerWindow_.setSize(_window.getWidth(), _window.getHeight());
+        mInputBlockerWindow_.setZOrder(140);
+        mInputBlockerWindow_.setVisualsEnabled(false);
+        mInputBlockerWindow_.setVisible(false);
+    }
 
     function checkPlayerInputPosition(x, y){
         local start = mWorldMapDisplay_.getPosition();
@@ -251,6 +261,11 @@ enum ExplorationBusEvents{
     function notifyEnemyEncounter(idx, enemy, position=null){
         local screenPos = position != null ? mWorldMapDisplay_.getWorldPositionInScreenSpace(position) : null;
         mExplorationEnemiesContainer_.setObjectForIndex(enemy, idx, screenPos);
+    }
+
+    //Block input while a flag movement is in progress, to prevent buttons being pressed when they shouldn't be.
+    function notifyBlockInput(block){
+        mInputBlockerWindow_.setVisible(block);
     }
 
     function notifyFoundItemLifetime(idx, lifetime){

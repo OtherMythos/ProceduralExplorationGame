@@ -496,10 +496,13 @@
                         updatePositionOfCurrentFlag(inWindow);
                     }
                     mPlacingMarker_ = true;
+
+                    mGui_.notifyBlockInput(true);
                 }
             }
         }else{
             mPlacingMarker_ = false;
+            mGui_.notifyBlockInput(false);
         }
         if(moved){
             movePlayer(dir);
