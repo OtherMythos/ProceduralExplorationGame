@@ -185,8 +185,12 @@ enum CharacterModelPartType{
 };
 
 enum CharacterModelEquipNodeType{
+    NONE,
+
     LEFT_HAND,
-    RIGHT_HAND
+    RIGHT_HAND,
+
+    MAX
 };
 
 enum CharacterModelAnimId{

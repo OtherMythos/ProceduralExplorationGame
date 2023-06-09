@@ -112,15 +112,18 @@ enum CharacterInspectorWidgetTypes{
     mGenerator_ = null;
     mInspectedModel_ = null;
 
-    mConstructionData_ = null;
     mNode_ = null;
+
+    mCurrentData_ = null;
 
     constructor(){
         fpsCamera.start(Vec3(10, 10, 20), Vec3(245.45, -15.9, 0));
 
-        mConstructionData_ = {
-            "type": CharacterModelType.HUMANOID
-        };
+        mCurrentData_ = {
+            "type": CharacterModelType.HUMANOID,
+            "equip": array(CharacterModelEquipNodeType.MAX, ItemId.NONE)
+        }
+        //mCurrentData_.equip[CharacterModelEquipNodeType.LEFT_HAND] = ItemId.SIMPLE_SWORD;
 
         createGui();
 
@@ -158,7 +161,7 @@ enum CharacterInspectorWidgetTypes{
         local layout = _gui.createLayoutLine();
 
         guiCreateTitle("Entity Data", layout);
-        local entityTypeButton = ::CharacterInspectorMultiChoicePopupButton(notifyEntityTypeChange.bindenv(this), 0, CharacterModelType.HUMANOID, ::containerWin, "Model Type", ::ConstHelper.CharacterModelTypeToString, CharacterModelType.NONE, CharacterModelType.MAX);
+        local entityTypeButton = ::CharacterInspectorMultiChoicePopupButton(notifyEntityTypeChange.bindenv(this), 0, mCurrentData_.type, ::containerWin, "Model Type", ::ConstHelper.CharacterModelTypeToString, CharacterModelType.NONE, CharacterModelType.MAX);
         entityTypeButton.addToLayout(layout);
         ::CharacterInspectorWidgets[CharacterInspectorWidgetTypes.MODEL_TYPE] <- entityTypeButton;
 
@@ -190,12 +193,14 @@ enum CharacterInspectorWidgetTypes{
             CharacterInspectorWidgetTypes.EQUIP_LEFT_HAND,
         ];
         local equipNodeType = [
-            CharacterModelEquipNodeType.LEFT_HAND
-            CharacterModelEquipNodeType.RIGHT_HAND,
+            CharacterModelEquipNodeType.RIGHT_HAND
+            CharacterModelEquipNodeType.LEFT_HAND,
         ];
         foreach(c,i in equipEntries){
             local equipVal = equipEntriesVals[c];
-            local equip = ::CharacterInspectorMultiChoicePopupButton(notifyEquipChange.bindenv(this), equipNodeType[c], ItemId.NONE, ::containerWin, i, ::ConstHelper.ItemIdToString, ItemId.NONE, ItemId.MAX);
+            local equipNodeType = equipNodeType[c];
+            local currentEquip = mCurrentData_.equip[equipNodeType];
+            local equip = ::CharacterInspectorMultiChoicePopupButton(notifyEquipChange.bindenv(this), equipNodeType, currentEquip, ::containerWin, i, ::ConstHelper.ItemIdToString, ItemId.NONE, ItemId.MAX);
             equip.addToLayout(layout);
             ::CharacterInspectorWidgets[equipVal] <- equip;
         }
@@ -204,14 +209,21 @@ enum CharacterInspectorWidgetTypes{
     }
 
     function notifyEquipChange(equipType, newEquip){
-        local item = ::Items[newEquip];
-        mInspectedModel_.equipToNode(newEquip == ItemId.NONE ? null : item, equipType);
+        mCurrentData_.equip[equipType] = newEquip;
+        processEquipTypeChange();
     }
 
     function notifyEntityTypeChange(id, newType){
-        mConstructionData_.type = newType;
+        mCurrentData_.type = newType;
 
         reCreateEntity();
+    }
+
+    function processEquipTypeChange(){
+        for(local i = CharacterModelEquipNodeType.NONE+1; i < CharacterModelEquipNodeType.MAX; i++){
+            local item = ::Items[mCurrentData_.equip[i]];
+            mInspectedModel_.equipToNode(item.getType() == ItemId.NONE ? null : item, i);
+        }
     }
 
     function reCreateEntity(){
@@ -219,11 +231,17 @@ enum CharacterInspectorWidgetTypes{
             mNode_.destroyNodeAndChildren();
         }
         mNode_ = _scene.getRootSceneNode().createChildSceneNode();
-        mInspectedModel_ = mGenerator_.createCharacterModel(mNode_, mConstructionData_);
+
+        local constructionData = {
+            "type": mCurrentData_.type
+        };
+        mInspectedModel_ = mGenerator_.createCharacterModel(mNode_, constructionData);
         try{
             mInspectedModel_.startAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
         }catch(e){
             print(e);
         }
+
+        processEquipTypeChange();
     }
 };
