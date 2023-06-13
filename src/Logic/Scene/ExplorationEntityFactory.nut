@@ -86,9 +86,9 @@ testCount = 0;
         //TODO tie this up a bit better with the rest of the code.
         goblinModel.equipToNode(targetItem, CharacterModelEquipNodeType.LEFT_HAND);
         //playerModel.equipToNode(::Item(ItemId.SIMPLE_SHIELD), CharacterModelEquipNodeType.LEFT_HAND);
-        //goblinModel.equipToNode(::Item(ItemId.SIMPLE_SWORD), CharacterModelEquipNodeType.LEFT_HAND);
-        goblinModel.equipToNode(::Item(ItemId.SIMPLE_TWO_HANDED_SWORD), CharacterModelEquipNodeType.LEFT_HAND);
-        //if(_random.randInt(2) == 0)goblinModel.equipToNode(::Item(ItemId.SIMPLE_SHIELD), CharacterModelEquipNodeType.RIGHT_HAND);
+        goblinModel.equipToNode(::Item(ItemId.SIMPLE_SWORD), CharacterModelEquipNodeType.LEFT_HAND);
+        //goblinModel.equipToNode(::Item(ItemId.SIMPLE_TWO_HANDED_SWORD), CharacterModelEquipNodeType.LEFT_HAND);
+        if(_random.randInt(2) == 0)goblinModel.equipToNode(::Item(ItemId.SIMPLE_SHIELD), CharacterModelEquipNodeType.RIGHT_HAND);
         entry.setTargetCollisionWorld(_COLLISION_PLAYER);
 
         enemyNode.setScale(0.5, 0.5, 0.5);
@@ -142,7 +142,7 @@ testCount = 0;
     }
 
     function constructPlace(placeData, idx, explorationScreen){
-        if(testCount > 0) return;
+        //if(testCount > 0) return;
 testCount++;
 
         local en = _entity.create(SlotPosition());

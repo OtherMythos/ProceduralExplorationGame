@@ -26,6 +26,8 @@
 
         mPerformingEquippable_ = null;
 
+        mAttacker_ = null;
+
         constructor(enemyType, enemyPos, entity){
             mEnemy_ = enemyType;
             mPos_ = enemyPos;
@@ -33,6 +35,7 @@
         }
         function setPosition(pos){
             mPos_ = pos;
+            ::Base.mExplorationLogic.mTargetManager_.notifyEntityPositionChange(this);
             if(mEntity_) mEntity_.setPosition(SlotPosition(pos));
             if(mGizmo_) mGizmo_.setPosition(pos);
         }
@@ -74,8 +77,8 @@
 
             if(mMoving_ == 0){
                 if(mModel_){
-                    //mModel_.startAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
-                    //mModel_.startAnimation(CharacterModelAnimId.BASE_ARMS_WALK);
+                    mModel_.startAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
+                    mModel_.startAnimation(CharacterModelAnimId.BASE_ARMS_WALK);
                 }
             }
             mMoving_ = 10;
@@ -100,6 +103,7 @@
                 mModel_.destroy();
                 mModel_ = null;
             }
+            ::Base.mExplorationLogic.mTargetManager_.notifyEntityDestroyed(this);
         }
         function setGizmo(gizmo){
             if(mGizmo_ != null){
@@ -112,12 +116,13 @@
         }
 
         function update(){
+            print(mPerformingEquippable_);
             if(mMoving_ > 0){
                 mMoving_--;
                 if(mMoving_ <= 0){
                     if(mModel_){
-                        //mModel_.stopAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
-                        //mModel_.stopAnimation(CharacterModelAnimId.BASE_ARMS_WALK);
+                        mModel_.stopAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
+                        mModel_.stopAnimation(CharacterModelAnimId.BASE_ARMS_WALK);
                     }
                 }
             }
@@ -140,6 +145,22 @@
             local equippable = ::Equippables[equippedSword.getEquippableData()];
             local performance = ::EquippablePerformance(equippable, this);
             mPerformingEquippable_ = performance;
+        }
+
+        function isMidAttack(){
+            return mAttacker_ != null;
+        }
+
+        function notifyAttackBegan(attacker){
+            print("attack began " + attacker.getEntity().getId());
+            mAttacker_ = attacker;
+            performAttack();
+        }
+        function notifyAttackEnded(attacker){
+            print("attack ended " + attacker.getEntity().getId());
+            //assert(attacker.getEntity().getId() == mAttacker_.getEntity().getId());
+            mAttacker_ = null;
+            //mPerformingEquippable_ = null;
         }
     }
 
@@ -173,6 +194,8 @@
     mEnemyEncountered_ = false;
     mExplorationFinished_ = false;
     mExplorationPaused_ = false;
+
+    mTargetManager_ = null;
 
     mPrevTargetEnemy_ = null;
     mCurrentTargetEnemy_ = null;
@@ -215,6 +238,8 @@
         mQueuedEnemyEncounters_ = [];
         mQueuedEnemyEncountersLife_ = [];
         mActiveEXPOrbs_ = {};
+
+        mTargetManager_ = EntityTargetManager();
 
         resetExploration_();
         processDebug_();
@@ -477,8 +502,9 @@
         local targetIdx = -1;
         local targetPos = null;
         //Perform first so the later checks will take precedent.
-        if(mCurrentTargetEnemy_ != null){
-            local enemyPos = mActiveEnemies_[mCurrentTargetEnemy_].getPosition();
+        if(mCurrentTargetEnemy_ != null && !mPlayerEntry_.isMidAttack()){
+            local targetEntity = mTargetManager_.getTargetForEntity(mPlayerEntry_);
+            local enemyPos = targetEntity.getPosition();
             local dir = (mPlayerEntry_.getPosition() - enemyPos);
             dir.normalise();
             targetPos = enemyPos + (Vec3(4, 0, 4) * dir);
@@ -535,9 +561,11 @@
                     mQueuedFlags_[targetIdx] = null;
                 }
 
-                if(mCurrentTargetEnemy_) performPlayerAttack();
+                //if(mCurrentTargetEnemy_) performPlayerAttack();
             }
         }
+
+        //if(mPlayerEntry_.isMidAttack()) performPlayerAttack();
 
         //Check if the current enemy is in the list.
         if(mCurrentTargetEnemy_ != null){
@@ -893,6 +921,7 @@
         if(mEnemyEncountered_) return;
         local enemyEntry = mActiveEnemies_[enemyId];
         if(enemyEntry == null) return;
+        if(enemyEntry.isMidAttack()) return;
         local dir = mPlayerEntry_.mPos_ - enemyEntry.mPos_;
         dir.normalise();
         dir *= 0.05;
@@ -1069,9 +1098,13 @@
     }
 
     function setCurrentTargetEnemy(currentEnemy){
+        assert(currentEnemy != null);
+
         mPrevTargetEnemy_ = mCurrentTargetEnemy_;
         mCurrentTargetEnemy_ = currentEnemy;
         mRecentTargetEnemy_ = true;
+
+        mTargetManager_.targetEntity(mActiveEnemies_[currentEnemy], mPlayerEntry_);
     }
 
     function notifyNewEntityHealth(entity, newHealth){

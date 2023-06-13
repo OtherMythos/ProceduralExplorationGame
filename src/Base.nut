@@ -110,6 +110,7 @@
         _doFile("res://src/GUI/Screens/ExplorationTestScreen.nut");
         _doFile("res://src/GUI/Screens/WorldSceneScreen.nut");
 
+        _doFile("res://src/Logic/EntityTargetManager.nut");
         _doFile("res://src/Logic/ExplorationLogic.nut");
         _doFile("res://src/Logic/Scene/ExplorationSceneLogic.nut");
         _doFile("res://src/Logic/ExplorationProjectileManager.nut");
