@@ -41,9 +41,10 @@
     }
 
     function removeFromList_(list, id, inner){
+        printf("===Removing entry %i from list", inner);
         local targetList = list[id];
         targetList[inner] = null;
-        local allNull = false;
+        local allNull = true;
         foreach(i in targetList){
             if(i != null){
                 allNull = false;
@@ -52,13 +53,28 @@
         }
         if(allNull){
             //Remove the list completely.
+            printf("===Destroying contents of list");
             list.rawdelete(id);
+        }
+    }
+    function releaseTargetFromAggressor_(aggressor, targetId){
+        local aggressorId = aggressor.getEntity().getId();
+        printf("===attempting to release target %i", aggressorId);
+        if(!mTargets_.rawin(aggressorId)) return;
+        local targetList = mTargets_[aggressorId];
+        foreach(c,i in targetList){
+            if(i.getEntity().getId() == targetId){
+                printf("===found target to release %i", c);
+                releaseTarget(aggressor, c);
+                return;
+            }
         }
     }
     function releaseTarget(aggressor, id){
         local aggressorId = aggressor.getEntity().getId();
+        printf("===Releasing target %i for aggressor %i", aggressorId, id);
         local list = mTargets_[aggressorId]
-        assert(id < list.len());
+        assert(id >= 0 && id < list.len());
         //TODO this might not want to be attack ended as the attack might not be in progress.
         list[id].notifyAttackEnded(aggressor);
         //list[id] = null;
@@ -67,6 +83,7 @@
 
     function releaseAggressor_(target, id){
         local targetId = target.getEntity().getId();
+        printf("===Releasing aggressor %i for target %i", targetId, id);
         local list = mAggressors_[targetId];
         assert(id < list.len());
         list[id].notifyAttackEnded(target);
@@ -90,9 +107,10 @@
             foreach(c,i in targetList){
                 local closeToAttack = entityDetermineDistance(entity.getPosition(), i.getPosition());
                 if(closeToAttack){
+                    printf("===Attack began targets %i", entityId);
                     checkAttackForEntity(entity, i);
                     checkAttackForEntity(i, entity);
-                    return;
+                    break;
                 }
             }
         }
@@ -103,9 +121,10 @@
             foreach(c,i in targetList){
                 local closeToAttack = entityDetermineDistance(entity.getPosition(), i.getPosition());
                 if(closeToAttack){
+                    printf("===Attack began aggressors %i", entityId);
                     checkAttackForEntity(entity, i);
                     checkAttackForEntity(i, entity);
-                    return;
+                    break;
                 }
             }
         }
@@ -118,6 +137,7 @@
 
     function notifyEntityDestroyed(entity){
         local entityId = entity.getEntity().getId();
+        printf("===Entity %i deceased", entityId);
         if(mTargets_.rawin(entityId)){
             local targetList = mTargets_[entityId];
             foreach(c,i in targetList){
@@ -130,10 +150,13 @@
         if(mAggressors_.rawin(entityId)){
             local list = mAggressors_[entityId];
             foreach(c,i in list){
-                local targetId = i.getEntity().getId();
+                //local aggressorId = i.getEntity().getId();
                 //Can't guarantee it'll be in the list as it might've been removed above.
                 //assert(mTargets_.rawin(targetId));
                 //releaseAggressor(entity, c);
+
+                //Let anyone aggressing (targeting) against us know this entity has died.
+                releaseTargetFromAggressor_(i, entityId);
                 releaseAggressor_(entity, c);
             }
         }

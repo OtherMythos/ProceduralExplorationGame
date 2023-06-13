@@ -152,12 +152,12 @@
         }
 
         function notifyAttackBegan(attacker){
-            print("attack began " + attacker.getEntity().getId());
+            print("===attack began " + attacker.getEntity().getId());
             mAttacker_ = attacker;
             performAttack();
         }
         function notifyAttackEnded(attacker){
-            print("attack ended " + attacker.getEntity().getId());
+            print("===attack ended " + attacker.getEntity().getId());
             //assert(attacker.getEntity().getId() == mAttacker_.getEntity().getId());
             mAttacker_ = null;
             //mPerformingEquippable_ = null;
@@ -1021,7 +1021,7 @@
     }
     function entityPerformAttack_(entityObject){
         //Determine which item the entity has equipped and determine the attack from there.
-        entityObject.performAttack();
+        //entityObject.performAttack();
     }
 
     function performPlayerMove(moveId){
