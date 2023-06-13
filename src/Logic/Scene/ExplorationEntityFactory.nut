@@ -135,7 +135,7 @@ testCount = 0;
 
         _component.script.add(en, "res://src/Content/Enemies/BasicEnemyScript.nut");
 
-        local machine = ::BasicEnemyMachine();
+        local machine = ::BasicEnemyMachine(en);
         ::w.e.rawset(en.getId(), machine);
 
         return entry;

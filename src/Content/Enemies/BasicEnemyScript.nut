@@ -45,6 +45,7 @@ function destroyed(eid){
     attacking = false;
     maxAttackCooldown = 30;
     attackCooldown = 30;
+    targetingId = -1;
 
     idleState = {
         "update": function(ctx, e, data) {},
@@ -55,6 +56,9 @@ function destroyed(eid){
         }
     };
     chasingPlayerState = {
+        "start": function(ctx, e) {
+            ctx.targetingId = ::Base.mExplorationLogic.mTargetManager_.targetEntity(::Base.mExplorationLogic.mPlayerEntry_, ::Base.mExplorationLogic.mActiveEnemies_[e.getId()]);
+        },
         "update": function(ctx, e, data) {
             ::Base.mExplorationLogic.moveEnemyToPlayer(e.getId());
 
@@ -79,10 +83,15 @@ function destroyed(eid){
             else if(id == BasicEnemyEvents.PLAYER_OUT_ATTACK_RANGE){
                 ctx.attacking = false;
             }
-        }
+        },
+        "end": function(ctx, e) {
+            assert(ctx.targetingId != -1);
+            ::Base.mExplorationLogic.mTargetManager_.releaseTarget(::Base.mExplorationLogic.mActiveEnemies_[e.getId()], ctx.targetingId);
+        },
     };
 
-    constructor(){
+    constructor(entity){
+        this.entity = entity;
         switchState(idleState);
     }
 };
