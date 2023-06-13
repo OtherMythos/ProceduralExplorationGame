@@ -418,7 +418,8 @@ enum MapVoxelTypes{
         //Head through the list backwards.
         //Smaller landmasses should be at the back, ensure that each piece of land gets one entry in the list.
         //In this case the smaller landmasses will steal from the largest landmass.
-        for(local i = landData.len()-1; i >= 0; i--){
+        local startIdx = landData.len() > 100 ? 100 : landData.len()-1;
+        for(local i = startIdx; i >= 0; i--){
             local weightFloat = (landData[i].total.tofloat() / totalLand) * 100;
             local weight = weightFloat >= 1.0 ? weightFloat.tointeger() : 1;
             for(local y = 0; y < weight; y++){
