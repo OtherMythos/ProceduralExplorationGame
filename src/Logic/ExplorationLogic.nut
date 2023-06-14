@@ -116,7 +116,6 @@
         }
 
         function update(){
-            print(mPerformingEquippable_);
             if(mMoving_ > 0){
                 mMoving_--;
                 if(mMoving_ <= 0){
@@ -125,6 +124,9 @@
                         mModel_.stopAnimation(CharacterModelAnimId.BASE_ARMS_WALK);
                     }
                 }
+            }
+            if(isMidAttack()){
+                performAttack();
             }
             if(mPerformingEquippable_){
                 local result = mPerformingEquippable_.update(mPos_);
@@ -154,7 +156,7 @@
         function notifyAttackBegan(attacker){
             print("===attack began " + attacker.getEntity().getId());
             mAttacker_ = attacker;
-            performAttack();
+            //performAttack();
         }
         function notifyAttackEnded(attacker){
             print("===attack ended " + attacker.getEntity().getId());

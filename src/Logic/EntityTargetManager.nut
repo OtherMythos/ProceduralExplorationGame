@@ -98,38 +98,40 @@
         return null;
     }
 
+    function checkCloseToAttackForList(list, entity, entityId){
+        foreach(c,i in list){
+            local closeToAttack = entityDetermineDistance(entity.getPosition(), i.getPosition());
+            if(closeToAttack){
+                checkAttackForEntity(entity, i);
+                checkAttackForEntity(i, entity);
+                //break;
+            }else{
+                //If this couple is too far away, check if they were previously in combat.
+                checkEndAttackForEntity(entity, i);
+                checkEndAttackForEntity(i, entity);
+            }
+        }
+    }
     function notifyEntityPositionChange(entity){
         local entityId = entity.getEntity().getId();
 
         //First check the targets to see if we're any closer to them.
         if(mTargets_.rawin(entityId)){
             local targetList = mTargets_[entityId];
-            foreach(c,i in targetList){
-                local closeToAttack = entityDetermineDistance(entity.getPosition(), i.getPosition());
-                if(closeToAttack){
-                    printf("===Attack began targets %i", entityId);
-                    checkAttackForEntity(entity, i);
-                    checkAttackForEntity(i, entity);
-                    break;
-                }
-            }
+            checkCloseToAttackForList(targetList, entity, entityId);
         }
 
         //Secondly check through the aggressors to see if they should begin to attack.
         if(mAggressors_.rawin(entityId)){
             local targetList = mAggressors_[entityId];
-            foreach(c,i in targetList){
-                local closeToAttack = entityDetermineDistance(entity.getPosition(), i.getPosition());
-                if(closeToAttack){
-                    printf("===Attack began aggressors %i", entityId);
-                    checkAttackForEntity(entity, i);
-                    checkAttackForEntity(i, entity);
-                    break;
-                }
-            }
+            checkCloseToAttackForList(targetList, entity, entityId);
         }
     }
 
+    function checkEndAttackForEntity(entity, attacker){
+        if(entity.mAttacker_ == null) return;
+        entity.notifyAttackEnded(attacker);
+    }
     function checkAttackForEntity(entity, attacker){
         if(entity.mAttacker_ != null) return;
         entity.notifyAttackBegan(attacker);

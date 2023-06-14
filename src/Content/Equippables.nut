@@ -17,7 +17,7 @@ function regularTwoHandedBaseAttack(p, entry, pos){
         entry.getModel().startAnimation(CharacterModelAnimId.REGULAR_TWO_HANDED_SWORD_SWING);
     }
     else if(p == 52){
-        ::Base.mExplorationLogic.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, Vec3(), ::Combat.CombatMove(10), entry.getTargetCollisionWorld());
+        ::Base.mExplorationLogic.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, Vec3(), ::Combat.CombatMove(1), entry.getTargetCollisionWorld());
     }
     else if(p == 80){
         entry.getModel().stopAnimation(CharacterModelAnimId.REGULAR_TWO_HANDED_SWORD_SWING);
