@@ -26,7 +26,7 @@
 
         mPerformingEquippable_ = null;
 
-        mAttacker_ = null;
+        mAttackers_ = null;
 
         constructor(enemyType, enemyPos, entity){
             mEnemy_ = enemyType;
@@ -125,6 +125,7 @@
                     }
                 }
             }
+            print("Mid attack "+ isMidAttack());
             if(isMidAttack()){
                 performAttack();
             }
@@ -150,19 +151,30 @@
         }
 
         function isMidAttack(){
-            return mAttacker_ != null;
+            return mAttackers_ != null;
+        }
+        function isMidAttackWithAttacker(attackerId){
+            if(mAttackers_ == null) return false;
+            return mAttackers_.rawin(attackerId);
         }
 
         function notifyAttackBegan(attacker){
-            print("===attack began " + attacker.getEntity().getId());
-            mAttacker_ = attacker;
-            //performAttack();
+            local attackerId = attacker.getEntity().getId();
+            print("===attack began " + attackerId);
+            //Register the new attacker.
+            if(mAttackers_ == null){
+                //Defer the creation until later to avoid having lots of lists for entities which don't need them.
+                mAttackers_ = {};
+            }
+            mAttackers_[attackerId] <- attacker;
         }
         function notifyAttackEnded(attacker){
-            print("===attack ended " + attacker.getEntity().getId());
-            //assert(attacker.getEntity().getId() == mAttacker_.getEntity().getId());
-            mAttacker_ = null;
-            //mPerformingEquippable_ = null;
+            local attackerId = attacker.getEntity().getId();
+            print("===attack ended " + attackerId);
+            assert(mAttackers_ != null);
+            assert(mAttackers_.rawin(attackerId));
+            mAttackers_.rawdelete(attackerId);
+            if(mAttackers_.len() == 0) mAttackers_ = null;
         }
     }
 
@@ -504,12 +516,15 @@
         local targetIdx = -1;
         local targetPos = null;
         //Perform first so the later checks will take precedent.
-        if(mCurrentTargetEnemy_ != null && !mPlayerEntry_.isMidAttack()){
+        if(mCurrentTargetEnemy_ != null){
             local targetEntity = mTargetManager_.getTargetForEntity(mPlayerEntry_);
             local enemyPos = targetEntity.getPosition();
-            local dir = (mPlayerEntry_.getPosition() - enemyPos);
-            dir.normalise();
-            targetPos = enemyPos + (Vec3(4, 0, 4) * dir);
+            local playerPos = mPlayerEntry_.getPosition();
+            if(!mTargetManager_.entityDetermineDistance(enemyPos, playerPos)){
+                local dir = (mPlayerEntry_.getPosition() - enemyPos);
+                dir.normalise();
+                targetPos = enemyPos + (Vec3(4, 0, 4) * dir);
+            }
         }
 
 

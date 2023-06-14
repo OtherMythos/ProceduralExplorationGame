@@ -37,6 +37,8 @@
         local targetTrackerId = _registerEntityToMap(aggressorId, target, mTargets_);
         _registerEntityToMap(targetId, aggressor, mAggressors_);
 
+        printf("===Targeting entity %i for aggressor %i", targetId, aggressorId);
+
         return targetTrackerId;
     }
 
@@ -76,7 +78,8 @@
         local list = mTargets_[aggressorId]
         assert(id >= 0 && id < list.len());
         //TODO this might not want to be attack ended as the attack might not be in progress.
-        list[id].notifyAttackEnded(aggressor);
+        checkEndAttackForEntity(list[id], aggressor);
+        //list[id].notifyAttackEnded(aggressor);
         //list[id] = null;
         removeFromList_(mTargets_, aggressorId, id);
     }
@@ -86,7 +89,8 @@
         printf("===Releasing aggressor %i for target %i", targetId, id);
         local list = mAggressors_[targetId];
         assert(id < list.len());
-        list[id].notifyAttackEnded(target);
+        checkEndAttackForEntity(list[id], target);
+        //list[id].notifyAttackEnded(target);
         removeFromList_(mAggressors_, targetId, id);
     }
 
@@ -129,11 +133,11 @@
     }
 
     function checkEndAttackForEntity(entity, attacker){
-        if(entity.mAttacker_ == null) return;
+        if(!entity.isMidAttackWithAttacker(attacker.getEntity().getId())) return;
         entity.notifyAttackEnded(attacker);
     }
     function checkAttackForEntity(entity, attacker){
-        if(entity.mAttacker_ != null) return;
+        if(entity.isMidAttackWithAttacker(attacker.getEntity().getId())) return;
         entity.notifyAttackBegan(attacker);
     }
 
@@ -166,7 +170,7 @@
 
     function entityDetermineDistance(first, second){
         local distance = first.distance(second);
-        print(distance);
+        //print(distance);
         return distance <= TARGET_DISTANCE;
     }
 };
