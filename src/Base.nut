@@ -65,6 +65,7 @@
         mPlayerStats = ::PlayerStats();
 
         _doFile("res://src/MapGen/Viewer/MapViewer.nut");
+        _doFile("res://src/MapGen/Generator/MapGenHelpers.nut");
         _doFile("res://src/MapGen/Generator/MapGen.nut");
 
         ::GuiWidgets <- {};

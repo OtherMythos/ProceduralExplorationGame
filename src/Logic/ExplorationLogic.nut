@@ -125,7 +125,6 @@
                     }
                 }
             }
-            print("Mid attack "+ isMidAttack());
             if(isMidAttack()){
                 performAttack();
             }
@@ -773,10 +772,9 @@
     }
 
     function appearEnemy(enemyType){
-        assert(mSceneLogic_ != null);
-        local randVec = _random.randVec2();
-        local targetPos = mPlayerEntry_.mPos_ + Vec3(5, 0, 5) + (Vec3(randVec.x, 0, randVec.y) * 20);
-        local enemyEntry = ::ExplorationEntityFactory.constructEnemy(enemyType, targetPos, mGui_);
+        local target = MapGenHelpers.findRandomPointOnLand(mCurrentMapData_, mPlayerEntry_.getPosition(), 50);
+
+        local enemyEntry = ::ExplorationEntityFactory.constructEnemy(enemyType, target, mGui_);
         mActiveEnemies_.rawset(enemyEntry.mEntity_.getId(), enemyEntry);
     }
 
