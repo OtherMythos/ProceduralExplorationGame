@@ -88,6 +88,12 @@
             mPos_.y = zQuery;
             move(amount);
         }
+        function moveToPoint(point, amount, sceneLogic){
+            local dir = point - mPos_;
+            dir.normalise();
+            dir *= amount;
+            moveQueryZ(dir, sceneLogic);
+        }
         function setId(id){
             mId_ = id;
         }
@@ -937,10 +943,8 @@
         local enemyEntry = mActiveEnemies_[enemyId];
         if(enemyEntry == null) return;
         if(enemyEntry.isMidAttack()) return;
-        local dir = mPlayerEntry_.mPos_ - enemyEntry.mPos_;
-        dir.normalise();
-        dir *= 0.05;
-        enemyEntry.move(dir);
+
+        enemyEntry.moveToPoint(mPlayerEntry_.mPos_, 0.05, mSceneLogic_);
     }
 
     function removeQueuedEnemy(idx){
