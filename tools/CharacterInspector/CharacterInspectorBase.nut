@@ -143,6 +143,7 @@ enum CharacterInspectorWidgetTypes{
             CharacterModelAnimId.BASE_ARMS_WALK,
             CharacterModelAnimId.REGULAR_SWORD_SWING,
             CharacterModelAnimId.REGULAR_TWO_HANDED_SWORD_SWING,
+            CharacterModelAnimId.BASE_ARMS_SWIM,
         ];
         if(widget.getValue()){
             mInspectedModel_.startAnimation(testVals[widget.getUserId()]);
@@ -158,7 +159,7 @@ enum CharacterInspectorWidgetTypes{
     }
     function createGui(){
         ::containerWin <- _gui.createWindow();
-        containerWin.setSize(500, 500);
+        containerWin.setSize(500, _window.getHeight());
         local layout = _gui.createLayoutLine();
 
         guiCreateTitle("Entity Data", layout);
@@ -172,6 +173,7 @@ enum CharacterInspectorWidgetTypes{
             "UpperWalk",
             "Sword swing",
             "Two Hand Sword swing",
+            "UpperSwim",
         ];
         foreach(c,i in labels){
             local checkbox = ::containerWin.createCheckbox();

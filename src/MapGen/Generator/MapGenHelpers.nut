@@ -5,13 +5,21 @@
         local x = pos.x.tointeger();
         local y = -pos.z.tointeger();
 
-        printf("Testing %i %i", x, y);
-
         local buf = worldData.voxelBuffer;
         buf.seek((x + y * worldData.width) * 4);
         local landGroup = ((buf.readn('i') >> 24) & 0xFF);
 
-        printf("land group %i", landGroup);
+        return landGroup == 255 ? null : landGroup;
+    }
+
+    function getWaterGroupForPos(worldData, pos){
+        local x = pos.x.tointeger();
+        local y = -pos.z.tointeger();
+
+        local buf = worldData.voxelBuffer;
+        buf.seek((x + y * worldData.width) * 4);
+        local landGroup = ((buf.readn('i') >> 16) & 0xFF);
+
         return landGroup == 255 ? null : landGroup;
     }
 

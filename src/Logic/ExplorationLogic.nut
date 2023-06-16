@@ -3,6 +3,88 @@
 ::w.e <- {
 }
 
+
+enum ActiveEnemyAnimationEvents{
+    NONE,
+
+    STARTED_MOVING,
+    STOPPED_MOVING,
+    WATER_STATE_CHANGE,
+
+    MAX
+};
+enum ActiveEnemyAnimationStage{
+    NONE,
+
+    IDLE,
+    WALKING,
+    SWIMMING,
+
+    MAX
+};
+::ActiveEnemyAnimationStateMachine <- class extends ::Util.SimpleStateMachine{
+    mStates_ = array(ActiveEnemyAnimationStage.MAX);
+    mModel_ = null;
+    mInWater_ = false;
+    constructor(model){
+        mModel_ = model;
+    }
+    function notifyWaterState(inWater){
+        mInWater_ = inWater;
+        notify(ActiveEnemyAnimationEvents.WATER_STATE_CHANGE);
+    }
+}
+ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.IDLE] = class extends ::Util.SimpleState{
+    function start(ctx){
+    }
+    function update(ctx){
+    }
+    function notify(ctx, event){
+        if(event == ActiveEnemyAnimationEvents.STARTED_MOVING) return ActiveEnemyAnimationStage.WALKING;
+    }
+    function end(ctx){
+    }
+};
+ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.WALKING] = class extends ::Util.SimpleState{
+    function start(ctx){
+        ctx.mModel_.startAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
+        ctx.mModel_.startAnimation(CharacterModelAnimId.BASE_ARMS_WALK);
+    }
+    function update(ctx){
+    }
+    function notify(ctx, event){
+        if(event == ActiveEnemyAnimationEvents.STOPPED_MOVING) return ActiveEnemyAnimationStage.IDLE;
+
+        if(event == ActiveEnemyAnimationEvents.WATER_STATE_CHANGE){
+            //Assume if we're in the walking state we must be changing to in the water.
+            if(ctx.mInWater_) return ActiveEnemyAnimationStage.SWIMMING;
+        }
+    }
+    function end(ctx){
+        ctx.mModel_.stopAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
+        ctx.mModel_.stopAnimation(CharacterModelAnimId.BASE_ARMS_WALK);
+    }
+};
+ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = class extends ::Util.SimpleState{
+    function start(ctx){
+        //ctx.mModel_.startAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
+        ctx.mModel_.startAnimation(CharacterModelAnimId.BASE_ARMS_SWIM);
+    }
+    function update(ctx){
+    }
+    function notify(ctx, event){
+        if(event == ActiveEnemyAnimationEvents.STOPPED_MOVING) return ActiveEnemyAnimationStage.IDLE;
+
+        if(event == ActiveEnemyAnimationEvents.WATER_STATE_CHANGE){
+            if(!ctx.mInWater_) return ActiveEnemyAnimationStage.WALKING;
+        }
+    }
+    function end(ctx){
+        //ctx.mModel_.stopAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
+        ctx.mModel_.stopAnimation(CharacterModelAnimId.BASE_ARMS_SWIM);
+    }
+};
+
 /**
  * Logic interface for exploration.
  *
@@ -11,12 +93,14 @@
  */
 ::ExplorationLogic <- class{
 
+
     ActiveEnemyEntry = class{
         mEnemy_ = Enemy.NONE;
         mPos_ = null;
         mId_ = null;
         mEncountered_ = false;
         mModel_ = null;
+        mStateMachineModel_ = null;
         mMoving_ = 0;
         mGizmo_ = null;
         mCombatData_ = null;
@@ -27,6 +111,7 @@
         mPerformingEquippable_ = null;
 
         mAttackers_ = null;
+        mInWater_ = false;
 
         constructor(enemyType, enemyPos, entity){
             mEnemy_ = enemyType;
@@ -50,6 +135,8 @@
         }
         function setModel(model){
             mModel_ = model;
+            mStateMachineModel_ = ActiveEnemyAnimationStateMachine(mModel_);
+            mStateMachineModel_.setState(ActiveEnemyAnimationStage.IDLE);
         }
         function getModel(){
             return mModel_;
@@ -75,24 +162,36 @@
                 }
             }
 
-            if(mMoving_ == 0){
-                if(mModel_){
-                    mModel_.startAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
-                    mModel_.startAnimation(CharacterModelAnimId.BASE_ARMS_WALK);
-                }
+            if(mMoving_ <= 0 && mStateMachineModel_){
+                mStateMachineModel_.notify(ActiveEnemyAnimationEvents.STARTED_MOVING);
             }
             mMoving_ = 10;
         }
-        function moveQueryZ(amount, sceneLogic){
+        function moveQueryZ(amount, sceneLogic, inWater=false){
             local zQuery = sceneLogic.getZForPos(mPos_ + amount);
             mPos_.y = zQuery;
+            if(inWater){
+                mPos_.y = -1.4;
+            }
             move(amount);
         }
         function moveToPoint(point, amount, sceneLogic){
             local dir = point - mPos_;
             dir.normalise();
-            dir *= amount;
-            moveQueryZ(dir, sceneLogic);
+
+            local inWater = ::MapGenHelpers.getWaterGroupForPos(sceneLogic.mWorldData_, mPos_) != null;
+            if(inWater != mInWater_){
+                mStateMachineModel_.notifyWaterState(inWater);
+            }
+            mInWater_ = inWater;
+
+            dir *= (amount * getSlowFactor(mInWater_));
+            moveQueryZ(dir, sceneLogic, mInWater_);
+        }
+        function getSlowFactor(inWater){
+            local slow = 1.0;
+            if(inWater) slow = 0.5;
+            return slow;
         }
         function setId(id){
             mId_ = id;
@@ -125,9 +224,11 @@
             if(mMoving_ > 0){
                 mMoving_--;
                 if(mMoving_ <= 0){
-                    if(mModel_){
-                        mModel_.stopAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
-                        mModel_.stopAnimation(CharacterModelAnimId.BASE_ARMS_WALK);
+                    if(mStateMachineModel_){
+                        mStateMachineModel_.notify(ActiveEnemyAnimationEvents.STOPPED_MOVING);
+                        //mModel_.stopAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
+                        ////mModel_.stopAnimation(CharacterModelAnimId.BASE_ARMS_WALK);
+                        //mModel_.stopAnimation(mInWater_ ? CharacterModelAnimId.BASE_ARMS_SWIM : CharacterModelAnimId.BASE_ARMS_WALK);
                     }
                 }
             }
@@ -137,6 +238,10 @@
             if(mPerformingEquippable_){
                 local result = mPerformingEquippable_.update(mPos_);
                 if(!result) mPerformingEquippable_ = null;
+            }
+
+            if(mStateMachineModel_ != null){
+                mStateMachineModel_.update();
             }
         }
         function performAttack(){
@@ -622,11 +727,9 @@
     }
 
     function movePlayerToPos(targetPos){
-        local original = (targetPos - mPlayerEntry_.getPosition());
-        local dir = original.normalisedCopy() * 0.2;
-        local target = Vec2(dir.x, dir.z);
+        mPlayerEntry_.moveToPoint(targetPos, 0.2, mSceneLogic_);
 
-        movePlayer(target);
+        notifyPlayerMoved();
 
         local newPos = mPlayerEntry_.mPos_.copy();
         local newTarget = targetPos.copy();
@@ -636,8 +739,7 @@
         return distance < 0.4;
     }
 
-    function movePlayer(dir){
-        mPlayerEntry_.moveQueryZ(Vec3(dir.x, 0, dir.y), mSceneLogic_);
+    function notifyPlayerMoved(){
         local playerPos = Vec3(mPlayerEntry_.mPos_.x, 0, mPlayerEntry_.mPos_.z);
         mSceneLogic_.updatePlayerPos(playerPos);
         _world.setPlayerPosition(SlotPosition(playerPos));

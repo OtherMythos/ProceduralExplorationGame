@@ -1,5 +1,73 @@
 ::Util <- {};
 
+::Util.SimpleStateMachine <- class{
+    mStates_ = null;
+    mCurrentState_ = null;
+    mData_ = null;
+    mStateInstance_ = null;
+
+    constructor(data){
+        mData_ = data;
+    }
+
+    function setState(state){
+        assert(state < mStates_.len());
+        if(state == mCurrentState_) return false;
+
+        if(mStateInstance_ != null){
+            mStateInstance_.end(this);
+        }
+
+        if(state == 0){
+            resetState();
+            return false;
+        }
+
+        local entry = mStates_[state];
+        assert(entry != null);
+        mStateInstance_ = entry();
+        if(entry != null){
+            mStateInstance_.start(this);
+        }
+        mCurrentState_ = state;
+
+        return true;
+    }
+
+    function notify(event){
+        if(mStateInstance_ == null) return false;
+
+        local newState = mStateInstance_.notify(this, event);
+        if(newState != null && newState != mCurrentState_){
+            if(!setState(newState)) return false;
+        }
+
+        return true;
+    }
+
+    function resetState(){
+        mCurrentState_ = null;
+        mStateInstance_ = null;
+    }
+
+    function update(){
+        if(mStateInstance_ == null) return false;
+        local newState = mStateInstance_.update(this);
+
+        if(newState != null && newState != mCurrentState_){
+            if(!setState(newState)) return false;
+        }
+
+        return true;
+    }
+
+};
+
+::Util.SimpleState <- class{
+    function start(data) {}
+    function update(data) {}
+};
+
 ::Util.StateMachine <- class{
 
     mStates_ = null;
