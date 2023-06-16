@@ -11,6 +11,8 @@ enum ActiveEnemyAnimationEvents{
     STOPPED_MOVING,
     WATER_STATE_CHANGE,
 
+    EQUIPPABLE_PERFORMANCE_STATE_CHANGE,
+
     MAX
 };
 enum ActiveEnemyAnimationStage{
@@ -26,12 +28,31 @@ enum ActiveEnemyAnimationStage{
     mStates_ = array(ActiveEnemyAnimationStage.MAX);
     mModel_ = null;
     mInWater_ = false;
+
+    mEquippablePerformance_ = null;
+    mCurrentEquippableAnim_ = CharacterModelAnimId.NONE;
     constructor(model){
         mModel_ = model;
     }
     function notifyWaterState(inWater){
         mInWater_ = inWater;
         notify(ActiveEnemyAnimationEvents.WATER_STATE_CHANGE);
+    }
+    function notifyEquippablePerformance(performance){
+        mEquippablePerformance_ = performance;
+        notify(ActiveEnemyAnimationEvents.EQUIPPABLE_PERFORMANCE_STATE_CHANGE);
+    }
+
+    function processPerformance_(){
+        if(mEquippablePerformance_ != null){
+            local anim = mEquippablePerformance_.getEquippableAttackAnim();
+            mCurrentEquippableAnim_ = anim;
+            mModel_.startAnimation(anim);
+        }else{
+            if(mCurrentEquippableAnim_ != CharacterModelAnimId.NONE){
+                mModel_.stopAnimation(mCurrentEquippableAnim_);
+            }
+        }
     }
 }
 ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.IDLE] = class extends ::Util.SimpleState{
@@ -40,7 +61,12 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.IDLE] = clas
     function update(ctx){
     }
     function notify(ctx, event){
-        if(event == ActiveEnemyAnimationEvents.STARTED_MOVING) return ActiveEnemyAnimationStage.WALKING;
+        if(event == ActiveEnemyAnimationEvents.STARTED_MOVING){
+            return ctx.mInWater_ ? ActiveEnemyAnimationStage.SWIMMING : ActiveEnemyAnimationStage.WALKING;
+        }
+        else if(event == ActiveEnemyAnimationEvents.EQUIPPABLE_PERFORMANCE_STATE_CHANGE){
+            ctx.processPerformance_();
+        }
     }
     function end(ctx){
     }
@@ -58,6 +84,9 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.WALKING] = c
         if(event == ActiveEnemyAnimationEvents.WATER_STATE_CHANGE){
             //Assume if we're in the walking state we must be changing to in the water.
             if(ctx.mInWater_) return ActiveEnemyAnimationStage.SWIMMING;
+        }
+        else if(event == ActiveEnemyAnimationEvents.EQUIPPABLE_PERFORMANCE_STATE_CHANGE){
+            ctx.processPerformance_();
         }
     }
     function end(ctx){
@@ -165,6 +194,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
             if(mMoving_ <= 0 && mStateMachineModel_){
                 mStateMachineModel_.notify(ActiveEnemyAnimationEvents.STARTED_MOVING);
             }
+            mPerformingEquippable_ = null;
             mMoving_ = 10;
         }
         function moveQueryZ(amount, sceneLogic, inWater=false){
@@ -237,7 +267,10 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
             }
             if(mPerformingEquippable_){
                 local result = mPerformingEquippable_.update(mPos_);
-                if(!result) mPerformingEquippable_ = null;
+                if(!result){
+                    mStateMachineModel_.notifyEquippablePerformance(null);
+                    mPerformingEquippable_ = null;
+                }
             }
 
             if(mStateMachineModel_ != null){
@@ -257,6 +290,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
 
             local equippable = ::Equippables[equippedSword.getEquippableData()];
             local performance = ::EquippablePerformance(equippable, this);
+            mStateMachineModel_.notifyEquippablePerformance(performance);
             mPerformingEquippable_ = performance;
         }
 

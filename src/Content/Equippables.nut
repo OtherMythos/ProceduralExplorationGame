@@ -1,26 +1,14 @@
 //Items define the name and descriptions, equippables define information about how the item is equipped in a shareable format.
 
 function regularSwordBaseAttack(p, entry, pos){
-    if(p == 0){
-        entry.getModel().startAnimation(CharacterModelAnimId.REGULAR_SWORD_SWING);
-    }
-    else if(p == 15){
+    if(p == 15){
         ::Base.mExplorationLogic.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, Vec3(), ::Combat.CombatMove(3), entry.getTargetCollisionWorld());
-    }
-    else if(p == 20){
-        entry.getModel().stopAnimation(CharacterModelAnimId.REGULAR_SWORD_SWING);
     }
 }
 
 function regularTwoHandedBaseAttack(p, entry, pos){
-    if(p == 0){
-        entry.getModel().startAnimation(CharacterModelAnimId.REGULAR_TWO_HANDED_SWORD_SWING);
-    }
-    else if(p == 52){
+    if(p == 52){
         ::Base.mExplorationLogic.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, Vec3(), ::Combat.CombatMove(10), entry.getTargetCollisionWorld());
-    }
-    else if(p == 80){
-        entry.getModel().stopAnimation(CharacterModelAnimId.REGULAR_TWO_HANDED_SWORD_SWING);
     }
 }
 
@@ -40,11 +28,13 @@ enum EquippableId{
     mEquippedSlot_ = EquippedSlotTypes.NONE;
     mAttackFunction_ = null;
     mTotalFrames_ = 0;
+    mAttackAnim_ = null;
 
-    constructor(equippedSlot, attackFunction, totalFrames){
+    constructor(equippedSlot, attackFunction, totalFrames, attackAnim){
         mEquippedSlot_ = equippedSlot;
         mAttackFunction_ = attackFunction;
         mTotalFrames_ = totalFrames;
+        mAttackAnim_ = attackAnim;
     }
 
     function getEquippedSlot() { return mEquippedSlot_; }
@@ -68,14 +58,17 @@ enum EquippableId{
 
         return true;
     }
+    function getEquippableAttackAnim(){
+        return mEquippable.mAttackAnim_;
+    }
 }
 
 ::Equippables <- array(EquippableId.MAX, null);
 
 //-------------------------------
-::Equippables[EquippableId.NONE] = EquippableDef(EquippedSlotTypes.NONE, null, 0);
+::Equippables[EquippableId.NONE] = EquippableDef(EquippedSlotTypes.NONE, null, 0, CharacterModelAnimId.NONE);
 
-::Equippables[EquippableId.REGULAR_SWORD] = EquippableDef(EquippedSlotTypes.HAND, regularSwordBaseAttack, 20);
-::Equippables[EquippableId.REGULAR_SHIELD] = EquippableDef(EquippedSlotTypes.HAND, regularSwordBaseAttack, 20);
-::Equippables[EquippableId.REGULAR_TWO_HANDED_SWORD] = EquippableDef(EquippedSlotTypes.HAND, regularTwoHandedBaseAttack, 80);
+::Equippables[EquippableId.REGULAR_SWORD] = EquippableDef(EquippedSlotTypes.HAND, regularSwordBaseAttack, 20, CharacterModelAnimId.REGULAR_SWORD_SWING);
+::Equippables[EquippableId.REGULAR_SHIELD] = EquippableDef(EquippedSlotTypes.HAND, regularSwordBaseAttack, 20, CharacterModelAnimId.REGULAR_SWORD_SWING);
+::Equippables[EquippableId.REGULAR_TWO_HANDED_SWORD] = EquippableDef(EquippedSlotTypes.HAND, regularTwoHandedBaseAttack, 80, CharacterModelAnimId.REGULAR_TWO_HANDED_SWORD_SWING);
 //-------------------------------
