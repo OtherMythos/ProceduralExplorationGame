@@ -43,14 +43,20 @@ enum ActiveEnemyAnimationStage{
         notify(ActiveEnemyAnimationEvents.EQUIPPABLE_PERFORMANCE_STATE_CHANGE);
     }
 
-    function processPerformance_(){
+    function processPerformance_(alternativeAnim=null){
         if(mEquippablePerformance_ != null){
             local anim = mEquippablePerformance_.getEquippableAttackAnim();
             mCurrentEquippableAnim_ = anim;
             mModel_.startAnimation(anim);
+            if(alternativeAnim != null){
+                mModel_.stopAnimation(alternativeAnim);
+            }
         }else{
             if(mCurrentEquippableAnim_ != CharacterModelAnimId.NONE){
                 mModel_.stopAnimation(mCurrentEquippableAnim_);
+                if(alternativeAnim != null){
+                    mModel_.startAnimation(alternativeAnim);
+                }
             }
         }
     }
@@ -65,7 +71,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.IDLE] = clas
             return ctx.mInWater_ ? ActiveEnemyAnimationStage.SWIMMING : ActiveEnemyAnimationStage.WALKING;
         }
         else if(event == ActiveEnemyAnimationEvents.EQUIPPABLE_PERFORMANCE_STATE_CHANGE){
-            ctx.processPerformance_();
+            ctx.processPerformance_(null);
         }
     }
     function end(ctx){
@@ -86,7 +92,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.WALKING] = c
             if(ctx.mInWater_) return ActiveEnemyAnimationStage.SWIMMING;
         }
         else if(event == ActiveEnemyAnimationEvents.EQUIPPABLE_PERFORMANCE_STATE_CHANGE){
-            ctx.processPerformance_();
+            ctx.processPerformance_(CharacterModelAnimId.BASE_ARMS_WALK);
         }
     }
     function end(ctx){
@@ -106,6 +112,9 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
 
         if(event == ActiveEnemyAnimationEvents.WATER_STATE_CHANGE){
             if(!ctx.mInWater_) return ActiveEnemyAnimationStage.WALKING;
+        }
+        else if(event == ActiveEnemyAnimationEvents.EQUIPPABLE_PERFORMANCE_STATE_CHANGE){
+            ctx.processPerformance_(CharacterModelAnimId.BASE_ARMS_SWIM);
         }
     }
     function end(ctx){
@@ -146,6 +155,9 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
             mEnemy_ = enemyType;
             mPos_ = enemyPos;
             mEntity_ = entity;
+        }
+        function getEID(){
+            return mEntity_.getId();
         }
         function setPosition(pos){
             mPos_ = pos;
