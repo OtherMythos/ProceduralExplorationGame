@@ -15,9 +15,8 @@
 
     function _registerEntityToMap(key, entry, map){
         local outId = -1;
-        if(map.rawin(entry)){
+        if(map.rawin(key)){
             local targetArray = map[key];
-            assert(!targetArray.rawin(key));
             //TODO turn this into a system of determining holes in the array.
             outId = targetArray.len();
             targetArray.append(entry);
@@ -65,6 +64,7 @@
         if(!mTargets_.rawin(aggressorId)) return;
         local targetList = mTargets_[aggressorId];
         foreach(c,i in targetList){
+            if(i == null) continue;
             if(i.getEID() == targetId){
                 printf("===found target to release %i", c);
                 releaseTarget(aggressor, c);
@@ -90,6 +90,7 @@
 
     function findEntityIndexInList(list, eid){
         foreach(c,i in list){
+            if(i == null) continue;
             if(i.getEID() == eid) return c;
         }
         return null;
@@ -114,6 +115,7 @@
 
     function checkCloseToAttackForList(list, entity, entityId, helper){
         foreach(c,i in list){
+            if(i == null) continue;
             local closeToAttack = entityDetermineDistance(entity.getPosition(), i.getPosition());
             if(closeToAttack){
                 printf("===List length %i %s", list.len(), helper);
@@ -155,8 +157,6 @@
     function notifyEntityDestroyed(entity){
         local entityId = entity.getEID();
         printf("===Entity %i deceased", entityId);
-        local targetRemoved = 0;
-        local aggressorRemoved = 0;
         if(mAggressors_.rawin(entityId)){
             local list = mAggressors_[entityId];
             printf("===Aggressor list length %i", list.len());
@@ -168,8 +168,7 @@
 
                 //Let anyone aggressing (targeting) against us know this entity has died.
                 releaseTargetFromAggressor_(i, entityId);
-                releaseAggressor_(entity, c);
-                aggressorRemoved++;
+                //releaseAggressor_(entity, c);
             }
         }else{
             printf("===NO aggressors for id %i", entityId);
@@ -181,11 +180,8 @@
                 assert(mAggressors_.rawin(targetId));
                 //mAggressors_[targetId].
                 releaseTarget(entity, c);
-                targetRemoved++;
             }
         }
-
-        assert(targetRemoved == aggressorRemoved);
     }
 
     function entityDetermineDistance(first, second){
