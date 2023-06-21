@@ -31,11 +31,10 @@ enum MapViewerColours{
     mMapData_ = null;
 
     mColours_ = null;
+    mOpacity_ = 0.4;
 
     mDrawOptions_ = null;
-    mDrawFlags_ = 0;
     mDrawLocationOptions_ = null;
-    mDrawLocationFlags_ = 0;
 
     mCompositorDatablock_ = null
     mCompositorWorkspace_ = null
@@ -213,16 +212,6 @@ enum MapViewerColours{
         //mFragmentParams_.setNamedConstant("visiblePlaceBuffer", mVisiblePlacesBuffer_);
     }
 
-    function generatePlaceBuffer_(placeData){
-        local b = blob(placeData.len() * 4);
-        foreach(i in placeData){
-            b.writen(i.originWrapped, 'i');
-        }
-        b.writen(0xFFFFFFFF, 'i');
-
-        return b;
-    }
-
     function setupPlaceMarkers(outData){
         if(mLabelWindow_ == null) return;
         for(local i = 0; i < mPlaceMarkers_.len(); i++){
@@ -238,10 +227,23 @@ enum MapViewerColours{
 
     function setDrawOption(option, value){
         mDrawOptions_[option] = value;
+        uploadToTexture();
     }
 
     function setLocationDrawOption(option, value){
         mDrawLocationOptions_[option] = value;
+
+        local f = 0;
+        for(local i = 0; i < PlaceType.MAX; i++){
+            if(mDrawLocationOptions_[i]){
+                f = f | (1 << i);
+            }
+        }
+
+
+        foreach(i in mPlaceMarkers_){
+            i.updateForLocationFlags(f);
+        }
     }
 
     function getDrawOption(option){
@@ -255,12 +257,11 @@ enum MapViewerColours{
     function setupColours(){
         local colVals = array(MapViewerColours.MAX);
         local baseVal = ColourValue(0, 0, 0, 1);
-        local opacity = 0.4;
         colVals[MapViewerColours.VOXEL_GROUP_GROUND] = ColourValue(0.84, 0.87, 0.29, 1);
         colVals[MapViewerColours.VOXEL_GROUP_GRASS] = ColourValue(0.33, 0.92, 0.27, 1);
         colVals[MapViewerColours.VOXEL_GROUP_ICE] = ColourValue(0.84, 0.88, 0.84, 1);
-        colVals[MapViewerColours.OCEAN] = ColourValue(0, 0, 1.0, opacity);
-        colVals[MapViewerColours.FRESH_WATER] = ColourValue(0.15, 0.15, 1.0, opacity);
+        colVals[MapViewerColours.OCEAN] = ColourValue(0, 0, 1.0, mOpacity_);
+        colVals[MapViewerColours.FRESH_WATER] = ColourValue(0.15, 0.15, 1.0, mOpacity_);
         colVals[MapViewerColours.WATER_GROUPS] = baseVal;
         colVals[MapViewerColours.COLOUR_BLACK] = baseVal;
         colVals[MapViewerColours.COLOUR_MAGENTA] = ColourValue(1, 0, 1, 1);
@@ -328,12 +329,15 @@ enum MapViewerColours{
         local voxelMeta = (voxVal >> 8) & 0x7F;
         local waterGroup = (voxVal >> 16) & 0xFF;
 
-        local opacity = 0.4;
-        local val = altitude.tofloat() / 255;
         local drawVal = 0x0;
 
         if(mDrawOptions_[DrawOptions.GROUND_TYPE]){
             drawVal = mColours_[voxelMeta];
+        }else{
+            //NOTE: Slight optimisation.
+            //Most cases will have ground type enabled, so no point doing this check unless needed.
+            local val = altitude.tofloat() / 255;
+            drawVal = ColourValue(val, val, val, 1).getAsABGR();
         }
         if(mDrawOptions_[DrawOptions.WATER]){
             if(altitude < mMapData_.seaLevel){
@@ -346,24 +350,26 @@ enum MapViewerColours{
         }
         if(mDrawOptions_[DrawOptions.WATER_GROUPS]){
             local valGroup = waterGroup.tofloat() / mMapData_.waterData.len();
-            drawVal = ColourValue(valGroup, valGroup, valGroup, opacity);
+            drawVal = ColourValue(valGroup, valGroup, valGroup, mOpacity_).getAsABGR();
         }
         if(mDrawOptions_[DrawOptions.RIVER_DATA]){
-            local i = 0;
+            //local i = 0;
+            mMapData_.riverBuffer.seek(0);
             local first = true;
             while(true){
-                local riverVal = p.riverBuffer[i];
-                if(first && riverVal == 0xFFFFFFFF){
+                //local riverVal = mMapData_.riverBuffer[i];
+                local riverVal = mMapData_.riverBuffer.readn('i');
+                if(first && riverVal < 0){
                     break;
                 }
                 local x = (riverVal >> 16) & 0xFFFF;
                 local y = riverVal & 0xFFFF;
                 if(xVox == x && yVox == y){
-                    drawVal = first ? float4(1, 0, 1, 1) : float4(1, 1, 1, opacity);
+                    drawVal = first ? mColours_[MapViewerColours.COLOUR_MAGENTA] : mColours_[MapViewerColours.COLOUR_BLACK];
                 }
                 first = false;
-                i++;
-                if(riverVal == 0xFFFFFFFF){
+                //i++;
+                if(riverVal < 0){
                     first = true;
                 }
             }
@@ -371,7 +377,7 @@ enum MapViewerColours{
         if(mDrawOptions_[DrawOptions.LAND_GROUPS]){
             local landGroup = (voxVal >> 24) & 0xFF;
             local valGroup = landGroup.tofloat() / mMapData_.landData.len();
-            drawVal = ColourValue(valGroup, valGroup, valGroup, opacity);
+            drawVal = ColourValue(valGroup, valGroup, valGroup, mOpacity_).getAsABGR();
         }
         if(mDrawOptions_[DrawOptions.EDGE_VALS]){
             local edgeVox = (voxVal >> 8) & 0x80;
@@ -380,18 +386,11 @@ enum MapViewerColours{
             }
         }
         if(mDrawOptions_[DrawOptions.PLACE_LOCATIONS]){
-            local i = 0;
-            while(true){
-                local placeVal = p.placeBuffer[i];
-                if(placeVal == 0xFFFFFFFF) break;
-
-                local x = (placeVal >> 16) & 0xFFFF;
-                local y = placeVal & 0xFFFF;
-                if(xVox == x && yVox == y){
-                    drawVal = float4(0, 0, 0, opacity);
+            foreach(i in mMapData_.placeData){
+                if(xVox == i.originX && yVox == i.originY){
+                    drawVal = mColours_[MapViewerColours.COLOUR_BLACK];
                     break;
                 }
-                i++;
             }
         }
         if(mDrawOptions_[DrawOptions.VISIBLE_PLACES_MASK]){
@@ -400,9 +399,9 @@ enum MapViewerColours{
             local bitIdx = idx % 32;
             local val = (p.visiblePlaceBuffer[byteIdx] >> (bitIdx)) & 0x3;
 
-            local col = float4(0, 0, 0, opacity);
+            local col = float4(0, 0, 0, mOpacity_);
             if(val & 0x2) col = drawVal;
-            else if(val & 0x1) col = float4(0.4, 0.4, 0.4, opacity);
+            else if(val & 0x1) col = float4(0.4, 0.4, 0.4, mOpacity_);
 
             drawVal = col;
         }
