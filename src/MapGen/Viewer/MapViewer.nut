@@ -11,9 +11,26 @@ enum DrawOptions{
     MAX
 };
 
+enum MapViewerColours{
+    VOXEL_GROUP_GROUND,
+    VOXEL_GROUP_GRASS,
+    VOXEL_GROUP_ICE,
+
+    OCEAN,
+    FRESH_WATER,
+    WATER_GROUPS,
+
+    COLOUR_BLACK,
+    COLOUR_MAGENTA,
+
+    MAX
+};
+
 ::MapViewer <- class{
 
     mMapData_ = null;
+
+    mColours_ = null;
 
     mDrawOptions_ = null;
     mDrawFlags_ = 0;
@@ -134,6 +151,7 @@ enum DrawOptions{
         mPlaceMarkers_ = [];
 
         setupBlendblock();
+        setupColours();
 
         //setupCompositor();
     }
@@ -148,42 +166,21 @@ enum DrawOptions{
     function displayMapData(outData, showPlaceMarkers=true){
         mMapData_ = outData;
 
-        local material = _graphics.getMaterialByName("mapViewer/mapMaterial");
-        local fragmentParams = material.getFragmentProgramParameters(0, 0);
-
         if(showPlaceMarkers){
             setupPlaceMarkers(outData);
         }
 
         mVisiblePlacesBuffer_ = setupVisiblePlacesBuffer(outData.width, outData.height);
 
-        fragmentParams.setNamedConstant("intBuffer", outData.voxelBuffer);
-        fragmentParams.setNamedConstant("riverBuffer", outData.riverBuffer);
-        fragmentParams.setNamedConstant("placeBuffer", generatePlaceBuffer_(outData.placeData));
-        fragmentParams.setNamedConstant("width", outData.width);
-        fragmentParams.setNamedConstant("height", outData.height);
-        fragmentParams.setNamedConstant("numWaterSeeds", outData.waterData.len());
-        fragmentParams.setNamedConstant("numLandSeeds", outData.landData.len());
-        fragmentParams.setNamedConstant("seaLevel", outData.seaLevel);
-        fragmentParams.setNamedConstant("opacity", 0.4);
-        //fragmentParams.setNamedConstant("visiblePlaceBuffer", mVisiblePlacesBuffer_);
-
-        mFragmentParams_ = fragmentParams;
-
-        resubmitDrawFlags_();
-        resubmitDrawLocationFlags_();
-
         setPlayerPosition(0.5, 0.5);
-
-        //setAreaVisible(100, 100, 10, 10);
 
         local timer = Timer();
         timer.start();
-        setupTextures(mMapData_);
-        uploadToTexture();
+            setupTextures(mMapData_);
+            uploadToTexture();
         timer.stop();
         local outTime = timer.getSeconds();
-        printf("Displaying map took %f seconds", outTime);
+        printf("Generating map texture took %f seconds", outTime);
     }
 
     function setupVisiblePlacesBuffer(width, height){
@@ -226,36 +223,6 @@ enum DrawOptions{
         return b;
     }
 
-    function resubmitDrawFlags_(){
-        local f = 0;
-        for(local i = 0; i < DrawOptions.MAX; i++){
-            if(mDrawOptions_[i]){
-                f = f | (1 << i);
-            }
-        }
-
-        mDrawFlags_ = f;
-        print("new draw flags " + mDrawFlags_);
-        mFragmentParams_.setNamedConstant("drawFlags", mDrawFlags_);
-    }
-
-    function resubmitDrawLocationFlags_(){
-        local f = 0;
-        for(local i = 0; i < PlaceType.MAX; i++){
-            print(mDrawLocationOptions_[i]);
-            if(mDrawLocationOptions_[i]){
-                f = f | (1 << i);
-            }
-        }
-
-        mDrawLocationFlags_ = f;
-        print("new draw location flags " + mDrawLocationFlags_);
-
-        foreach(i in mPlaceMarkers_){
-            i.updateForLocationFlags(mDrawLocationFlags_);
-        }
-    }
-
     function setupPlaceMarkers(outData){
         if(mLabelWindow_ == null) return;
         for(local i = 0; i < mPlaceMarkers_.len(); i++){
@@ -271,12 +238,10 @@ enum DrawOptions{
 
     function setDrawOption(option, value){
         mDrawOptions_[option] = value;
-        resubmitDrawFlags_();
     }
 
     function setLocationDrawOption(option, value){
         mDrawLocationOptions_[option] = value;
-        resubmitDrawLocationFlags_();
     }
 
     function getDrawOption(option){
@@ -285,6 +250,25 @@ enum DrawOptions{
 
     function getLocationDrawOption(option){
         return mDrawLocationOptions_[option];
+    }
+
+    function setupColours(){
+        local colVals = array(MapViewerColours.MAX);
+        local baseVal = ColourValue(0, 0, 0, 1);
+        local opacity = 0.4;
+        colVals[MapViewerColours.VOXEL_GROUP_GROUND] = ColourValue(0.84, 0.87, 0.29, 1);
+        colVals[MapViewerColours.VOXEL_GROUP_GRASS] = ColourValue(0.33, 0.92, 0.27, 1);
+        colVals[MapViewerColours.VOXEL_GROUP_ICE] = ColourValue(0.84, 0.88, 0.84, 1);
+        colVals[MapViewerColours.OCEAN] = ColourValue(0, 0, 1.0, opacity);
+        colVals[MapViewerColours.FRESH_WATER] = ColourValue(0.15, 0.15, 1.0, opacity);
+        colVals[MapViewerColours.WATER_GROUPS] = baseVal;
+        colVals[MapViewerColours.COLOUR_BLACK] = baseVal;
+        colVals[MapViewerColours.COLOUR_MAGENTA] = ColourValue(1, 0, 1, 1);
+
+        for(local i = 0; i < colVals.len(); i++){
+            colVals[i] = colVals[i].getAsABGR();
+        }
+        mColours_ = colVals;
     }
 
     function setupBlendblock(){
@@ -328,73 +312,43 @@ enum DrawOptions{
     }
 
     function fillBufferWithMap(textureBox){
-        //Write a gradient pattern.
         mMapData_.voxelBuffer.seek(0);
         for(local y = 0; y < mMapData_.height; y++){
             local yVal = (y.tofloat() / mMapData_.height) * 0x80;
             for(local x = 0; x < mMapData_.width; x++){
-                local colour = _getColourForPoint(x, y);
+                local colour = _getColourForVox(x, y);
                 textureBox.writen(colour, 'i');
             }
         }
     }
 
-    function _getColourForPoint(x, y){
-        //return 0xFFFFFF00 | ((x.tofloat() / 200.0) * 0xFF).tointeger();
-
-        local float4 = class{
-            x = 0;
-            y = 0;
-            z = 0;
-            w = 0;
-            constructor(x, y, z, w){
-                this.x = x;
-                this.y = y;
-                this.z = z;
-                this.w = w;
-            }
-        };
-        //TODO move this somewhere else.
-        local voxelColours = [
-            float4(0.84, 0.87, 0.29, 1),
-            float4(0.33, 0.92, 0.27, 1),
-            float4(0.84, 0.88, 0.84, 1),
-        ];
-
-        //float2 uv = inPs.uv0;
-        local xVox = x;
-        local yVox = y;
-
-        //int voxVal = p.intBuffer[xVox + yVox * p.width];
+    function _getColourForVox(xVox, yVox){
         local voxVal = mMapData_.voxelBuffer.readn('i');
         local altitude = voxVal & 0xFF;
         local voxelMeta = (voxVal >> 8) & 0x7F;
-        local edgeVox = (voxVal >> 8) & 0x80;
         local waterGroup = (voxVal >> 16) & 0xFF;
-        local landGroup = (voxVal >> 24) & 0xFF;
 
         local opacity = 0.4;
         local val = altitude.tofloat() / 255;
-        local drawVal = float4(val, val, val, opacity);
+        local drawVal = 0x0;
 
         if(mDrawOptions_[DrawOptions.GROUND_TYPE]){
-            drawVal = voxelColours[voxelMeta];
+            drawVal = mColours_[voxelMeta];
         }
         if(mDrawOptions_[DrawOptions.WATER]){
             if(altitude < mMapData_.seaLevel){
                 if(waterGroup == 0){
-                    drawVal = float4(0, 0, 1.0, opacity);
+                    drawVal = mColours_[MapViewerColours.OCEAN];
                 }else{
-                    drawVal = float4(0.15, 0.15, 1.0, opacity);
+                    drawVal = mColours_[MapViewerColours.FRESH_WATER];
                 }
             }
         }
         if(mDrawOptions_[DrawOptions.WATER_GROUPS]){
             local valGroup = waterGroup.tofloat() / mMapData_.waterData.len();
-            drawVal = float4(valGroup, valGroup, valGroup, opacity);
+            drawVal = ColourValue(valGroup, valGroup, valGroup, opacity);
         }
         if(mDrawOptions_[DrawOptions.RIVER_DATA]){
-            //for(int i = 0; i < 4; i++){
             local i = 0;
             local first = true;
             while(true){
@@ -415,12 +369,14 @@ enum DrawOptions{
             }
         }
         if(mDrawOptions_[DrawOptions.LAND_GROUPS]){
+            local landGroup = (voxVal >> 24) & 0xFF;
             local valGroup = landGroup.tofloat() / mMapData_.landData.len();
-            drawVal = float4(valGroup, valGroup, valGroup, opacity);
+            drawVal = ColourValue(valGroup, valGroup, valGroup, opacity);
         }
         if(mDrawOptions_[DrawOptions.EDGE_VALS]){
+            local edgeVox = (voxVal >> 8) & 0x80;
             if(edgeVox){
-                drawVal = float4(0, 0, 0, opacity);
+                drawVal = mColours_[MapViewerColours.COLOUR_BLACK];
             }
         }
         if(mDrawOptions_[DrawOptions.PLACE_LOCATIONS]){
@@ -451,59 +407,8 @@ enum DrawOptions{
             drawVal = col;
         }
 
-        local out = 0;
-        {
-            local val8;
-            local val32 = 0;
-
-            // Red
-            val8 = (drawVal.x * 255).tointeger();
-            val32 = val8;
-
-            // Green
-            val8 = (drawVal.y * 255).tointeger();
-            val32 += val8 << 8;
-
-            // Blue
-            val8 = (drawVal.z * 255).tointeger();
-            val32 += val8 << 16;
-
-            // Alpha
-            val8 = (drawVal.w * 255).tointeger();
-            val32 += val8 << 24;
-
-            out = val32;
-        }
-
-        return out;
+        return drawVal;
     }
-
-    /*
-    function setupCompositor(){
-        local newTex = _graphics.createTexture("mapViewer/renderTexture");
-        newTex.setResolution(1920, 1080);
-        newTex.scheduleTransitionTo(_GPU_RESIDENCY_RESIDENT);
-        mCompositorTexture_ = newTex;
-
-        local newCamera = _scene.createCamera("mapViewer/camera");
-        local cameraNode = _scene.getRootSceneNode().createChildSceneNode();
-        cameraNode.attachObject(newCamera);
-        mCompositorCamera_ = newCamera;
-
-        local blend = _hlms.getBlendblock({
-            "src_blend_factor": _HLMS_SBF_SOURCE_ALPHA,
-            "dst_blend_factor": _HLMS_SBF_ONE_MINUS_SOURCE_ALPHA,
-            "src_alpha_blend_factor": _HLMS_SBF_ONE_MINUS_DEST_ALPHA,
-            "dst_alpha_blend_factor": _HLMS_SBF_ONE
-        });
-        local datablock = _hlms.unlit.createDatablock("mapViewer/renderDatablock", blend);
-        datablock.setTexture(0, newTex);
-        mCompositorDatablock_ = datablock;
-
-        //TODO might want to make this not auto update.
-        mCompositorWorkspace_ = _compositor.addWorkspace([mCompositorTexture_], mCompositorCamera_, "mapViewer/renderTextureWorkspace", true);
-    }
-    */
 
     function getDatablock(){
         return mCompositorDatablock_;
