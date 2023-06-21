@@ -1,4 +1,6 @@
 function start(){
+    _gui.setScrollSpeed(5.0);
+
     _doFile("res://../../src/Helpers.nut");
     _doFile("res://../../src/Util/VoxToMesh.nut");
     _doFile("res://../../src/Content/Places.nut");

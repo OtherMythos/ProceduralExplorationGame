@@ -162,6 +162,8 @@
 
         layout.layout();
 
+        mControlsWindow_.sizeScrollToFit();
+
         local renderWindow = _gui.createWindow();
         renderWindow.setSize(mWinWidth_ * (1.0 - winWidth), mWinHeight_);
         renderWindow.setPosition(mWinWidth_ * winWidth, 0);

@@ -133,13 +133,15 @@ enum DrawOptions{
 
         mPlaceMarkers_ = [];
 
-        setupCompositor();
+        setupBlendblock();
+
+        //setupCompositor();
     }
 
     function shutdown(){
-        _compositor.removeWorkspace(mCompositorWorkspace_);
+        //_compositor.removeWorkspace(mCompositorWorkspace_);
         _hlms.destroyDatablock(mCompositorDatablock_);
-        mCompositorCamera_.getParentNode().destroyNodeAndChildren();
+        //mCompositorCamera_.getParentNode().destroyNodeAndChildren();
         _graphics.destroyTexture(mCompositorTexture_);
     }
 
@@ -174,6 +176,14 @@ enum DrawOptions{
         setPlayerPosition(0.5, 0.5);
 
         //setAreaVisible(100, 100, 10, 10);
+
+        local timer = Timer();
+        timer.start();
+        setupTextures(mMapData_);
+        uploadToTexture();
+        timer.stop();
+        local outTime = timer.getSeconds();
+        printf("Displaying map took %f seconds", outTime);
     }
 
     function setupVisiblePlacesBuffer(width, height){
@@ -277,6 +287,198 @@ enum DrawOptions{
         return mDrawLocationOptions_[option];
     }
 
+    function setupBlendblock(){
+        local blend = _hlms.getBlendblock({
+            "src_blend_factor": _HLMS_SBF_SOURCE_ALPHA,
+            "dst_blend_factor": _HLMS_SBF_ONE_MINUS_SOURCE_ALPHA,
+            "src_alpha_blend_factor": _HLMS_SBF_ONE_MINUS_DEST_ALPHA,
+            "dst_alpha_blend_factor": _HLMS_SBF_ONE
+        });
+        local datablock = _hlms.unlit.createDatablock("mapViewer/renderDatablock", blend);
+        mCompositorDatablock_ = datablock;
+    }
+    function setupTextures(mapData){
+        //TODO check for the old texture and destroy that as well.
+        //mCompositorDatablock_.setTexture(0, null);
+        if(mCompositorTexture_){
+            _graphics.destroyTexture(mCompositorTexture_);
+            mCompositorTexture_ = null;
+        }
+
+        local newTex = _graphics.createTexture("mapViewer/renderTexture");
+        newTex.setResolution(mapData.width, mapData.height);
+        newTex.setPixelFormat(_PFG_RGBA8_UNORM);
+        newTex.scheduleTransitionTo(_GPU_RESIDENCY_RESIDENT);
+        mCompositorTexture_ = newTex;
+
+        assert(mCompositorDatablock_ != null);
+        mCompositorDatablock_.setTexture(0, mCompositorTexture_);
+    }
+
+    function uploadToTexture(){
+        //TODO change this.
+        local stagingTexture = _graphics.getStagingTexture(mMapData_.width, mMapData_.height, 1, 1, _PFG_RGBA8_UNORM);
+        stagingTexture.startMapRegion();
+        local textureBox = stagingTexture.mapRegion(mMapData_.width, mMapData_.height, 1, 1, _PFG_RGBA8_UNORM);
+
+        fillBufferWithMap(textureBox);
+
+        stagingTexture.stopMapRegion();
+        stagingTexture.upload(textureBox, mCompositorTexture_, 0);
+    }
+
+    function fillBufferWithMap(textureBox){
+        //Write a gradient pattern.
+        mMapData_.voxelBuffer.seek(0);
+        for(local y = 0; y < mMapData_.height; y++){
+            local yVal = (y.tofloat() / mMapData_.height) * 0x80;
+            for(local x = 0; x < mMapData_.width; x++){
+                local colour = _getColourForPoint(x, y);
+                textureBox.writen(colour, 'i');
+            }
+        }
+    }
+
+    function _getColourForPoint(x, y){
+        //return 0xFFFFFF00 | ((x.tofloat() / 200.0) * 0xFF).tointeger();
+
+        local float4 = class{
+            x = 0;
+            y = 0;
+            z = 0;
+            w = 0;
+            constructor(x, y, z, w){
+                this.x = x;
+                this.y = y;
+                this.z = z;
+                this.w = w;
+            }
+        };
+        //TODO move this somewhere else.
+        local voxelColours = [
+            float4(0.84, 0.87, 0.29, 1),
+            float4(0.33, 0.92, 0.27, 1),
+            float4(0.84, 0.88, 0.84, 1),
+        ];
+
+        //float2 uv = inPs.uv0;
+        local xVox = x;
+        local yVox = y;
+
+        //int voxVal = p.intBuffer[xVox + yVox * p.width];
+        local voxVal = mMapData_.voxelBuffer.readn('i');
+        local altitude = voxVal & 0xFF;
+        local voxelMeta = (voxVal >> 8) & 0x7F;
+        local edgeVox = (voxVal >> 8) & 0x80;
+        local waterGroup = (voxVal >> 16) & 0xFF;
+        local landGroup = (voxVal >> 24) & 0xFF;
+
+        local opacity = 0.4;
+        local val = altitude.tofloat() / 255;
+        local drawVal = float4(val, val, val, opacity);
+
+        if(mDrawOptions_[DrawOptions.GROUND_TYPE]){
+            drawVal = voxelColours[voxelMeta];
+        }
+        if(mDrawOptions_[DrawOptions.WATER]){
+            if(altitude < mMapData_.seaLevel){
+                if(waterGroup == 0){
+                    drawVal = float4(0, 0, 1.0, opacity);
+                }else{
+                    drawVal = float4(0.15, 0.15, 1.0, opacity);
+                }
+            }
+        }
+        if(mDrawOptions_[DrawOptions.WATER_GROUPS]){
+            local valGroup = waterGroup.tofloat() / mMapData_.waterData.len();
+            drawVal = float4(valGroup, valGroup, valGroup, opacity);
+        }
+        if(mDrawOptions_[DrawOptions.RIVER_DATA]){
+            //for(int i = 0; i < 4; i++){
+            local i = 0;
+            local first = true;
+            while(true){
+                local riverVal = p.riverBuffer[i];
+                if(first && riverVal == 0xFFFFFFFF){
+                    break;
+                }
+                local x = (riverVal >> 16) & 0xFFFF;
+                local y = riverVal & 0xFFFF;
+                if(xVox == x && yVox == y){
+                    drawVal = first ? float4(1, 0, 1, 1) : float4(1, 1, 1, opacity);
+                }
+                first = false;
+                i++;
+                if(riverVal == 0xFFFFFFFF){
+                    first = true;
+                }
+            }
+        }
+        if(mDrawOptions_[DrawOptions.LAND_GROUPS]){
+            local valGroup = landGroup.tofloat() / mMapData_.landData.len();
+            drawVal = float4(valGroup, valGroup, valGroup, opacity);
+        }
+        if(mDrawOptions_[DrawOptions.EDGE_VALS]){
+            if(edgeVox){
+                drawVal = float4(0, 0, 0, opacity);
+            }
+        }
+        if(mDrawOptions_[DrawOptions.PLACE_LOCATIONS]){
+            local i = 0;
+            while(true){
+                local placeVal = p.placeBuffer[i];
+                if(placeVal == 0xFFFFFFFF) break;
+
+                local x = (placeVal >> 16) & 0xFFFF;
+                local y = placeVal & 0xFFFF;
+                if(xVox == x && yVox == y){
+                    drawVal = float4(0, 0, 0, opacity);
+                    break;
+                }
+                i++;
+            }
+        }
+        if(mDrawOptions_[DrawOptions.VISIBLE_PLACES_MASK]){
+            local idx = (xVox + yVox * p.width) * 2;
+            local byteIdx = int(idx / 32);
+            local bitIdx = idx % 32;
+            local val = (p.visiblePlaceBuffer[byteIdx] >> (bitIdx)) & 0x3;
+
+            local col = float4(0, 0, 0, opacity);
+            if(val & 0x2) col = drawVal;
+            else if(val & 0x1) col = float4(0.4, 0.4, 0.4, opacity);
+
+            drawVal = col;
+        }
+
+        local out = 0;
+        {
+            local val8;
+            local val32 = 0;
+
+            // Red
+            val8 = (drawVal.x * 255).tointeger();
+            val32 = val8;
+
+            // Green
+            val8 = (drawVal.y * 255).tointeger();
+            val32 += val8 << 8;
+
+            // Blue
+            val8 = (drawVal.z * 255).tointeger();
+            val32 += val8 << 16;
+
+            // Alpha
+            val8 = (drawVal.w * 255).tointeger();
+            val32 += val8 << 24;
+
+            out = val32;
+        }
+
+        return out;
+    }
+
+    /*
     function setupCompositor(){
         local newTex = _graphics.createTexture("mapViewer/renderTexture");
         newTex.setResolution(1920, 1080);
@@ -301,6 +503,7 @@ enum DrawOptions{
         //TODO might want to make this not auto update.
         mCompositorWorkspace_ = _compositor.addWorkspace([mCompositorTexture_], mCompositorCamera_, "mapViewer/renderTextureWorkspace", true);
     }
+    */
 
     function getDatablock(){
         return mCompositorDatablock_;
