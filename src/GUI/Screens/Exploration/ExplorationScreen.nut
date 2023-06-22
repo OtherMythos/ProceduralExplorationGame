@@ -46,7 +46,7 @@ enum ExplorationBusEvents{
             mExplorationStatsContainer_.addToLayout(layoutLine);
         }else{
             mExplorationStatsContainer_.setPosition(Vec2(0, 110));
-            mExplorationStatsContainer_.setSize(400, 100);
+            mExplorationStatsContainer_.setSize(400, 140);
         }
 
         //mExplorationItemsContainer_ = ExplorationItemsContainer(mWindow_, mExplorationBus_);
@@ -343,6 +343,10 @@ enum ExplorationBusEvents{
 
     function notifyPlayerDeath(){
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLAYER_DEATH_SCREEN, null), null, 1);
+    }
+
+    function notifyPlayerTarget(target){
+        _event.transmit(Event.PLAYER_TARGET_CHANGE, target);
     }
 };
 

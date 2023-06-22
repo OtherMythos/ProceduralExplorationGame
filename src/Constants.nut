@@ -65,6 +65,7 @@ enum Event{
     SCREEN_CHANGED = 1011,
 
     PLAYER_HEALTH_CHANGED = 1012,
+    PLAYER_TARGET_CHANGE = 1013
 }
 
 enum FoundObjectType{

@@ -5,6 +5,7 @@
 
     mMoneyCounter_ = null;
     mEXPCounter_ = null;
+    mTargetEnemyWidget_ = null;
 
     mPlayerHealthBar_ = null;
 
@@ -28,6 +29,9 @@
         mMoneyCounter_.addToLayout(mLayoutLine_);
         mEXPCounter_ = ::GuiWidgets.InventoryEXPCounter(mWindow_);
         mEXPCounter_.addToLayout(mLayoutLine_);
+
+        mTargetEnemyWidget_ = ::GuiWidgets.TargetEnemyWidget(mWindow_);
+        mTargetEnemyWidget_.addToLayout(mLayoutLine_);
 
         //mLayoutLine_.setMarginForAllCells(10, 10);
         //mLayoutLine_.layout();

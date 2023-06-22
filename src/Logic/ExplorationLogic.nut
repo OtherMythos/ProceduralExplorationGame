@@ -591,18 +591,34 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         if(!mRecentTargetEnemy_) return;
         if(!mCurrentTargetEnemy_) return;
 
+        setTargetEnemy(mCurrentTargetEnemy_);
+    }
+    function setTargetEnemy(target){
         if(mActiveEnemies_.rawin(mPrevTargetEnemy_)){
             mActiveEnemies_[mPrevTargetEnemy_].setGizmo(null);
         }
 
-        local e = mActiveEnemies_[mCurrentTargetEnemy_];
-        local gizmo = mSceneLogic_.createGizmo(e.getPosition(), ExplorationGizmos.TARGET_ENEMY);
-        e.setGizmo(gizmo);
+        local e = null;
+        if(target != null){
+            e = mActiveEnemies_[target];
+            local gizmo = mSceneLogic_.createGizmo(e.getPosition(), ExplorationGizmos.TARGET_ENEMY);
+            e.setGizmo(gizmo);
+        }else{
+            if(mActiveEnemies_.rawin(mCurrentTargetEnemy_)){
+                local entity = mActiveEnemies_[mCurrentTargetEnemy_];
+                entity.setGizmo(null);
+            }
+        }
+
+        mCurrentTargetEnemy_ = target;
+        mGui_.notifyPlayerTarget(e);
     }
     function notifyEnemyDestroyed(eid){
         mActiveEnemies_[eid].notifyDestroyed();
         mActiveEnemies_.rawdelete(eid);
-        if(eid == mCurrentTargetEnemy_) mCurrentTargetEnemy_ = null;
+        if(eid == mCurrentTargetEnemy_){
+            setTargetEnemy(null);
+        }
 
         mExplorationStats_.totalDefeated++;
     }
@@ -735,16 +751,6 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
                 }
 
                 //if(mCurrentTargetEnemy_) performPlayerAttack();
-            }
-        }
-
-        //if(mPlayerEntry_.isMidAttack()) performPlayerAttack();
-
-        //Check if the current enemy is in the list.
-        if(mCurrentTargetEnemy_ != null){
-            if(!::w.e.rawin(mCurrentTargetEnemy_)){
-                //Assuming the enemy has been destroyed now.
-                mCurrentTargetEnemy_ = null;
             }
         }
     }
@@ -1236,7 +1242,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
                     if(enemy != null){
 
                         if(_input.getMouseButton(0)){
-                            setCurrentTargetEnemy(enemy);
+                            setCurrentTargetEnemy_sceneSafe(enemy);
                         }else{
                             setCurrentHighlightEnemy(enemy);
                             return;
@@ -1264,7 +1270,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         mCurrentHighlightEnemy_ = enemy;
     }
 
-    function setCurrentTargetEnemy(currentEnemy){
+    function setCurrentTargetEnemy_sceneSafe(currentEnemy){
         assert(currentEnemy != null);
 
         mPrevTargetEnemy_ = mCurrentTargetEnemy_;
@@ -1301,12 +1307,6 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
                 "percentage": percentage
             };
             _event.transmit(Event.PLAYER_HEALTH_CHANGED, data);
-        }
-
-        if(mCurrentTargetEnemy_ && mActiveEnemies_.rawin(entity.getId())){
-            if(entity.getId() == mActiveEnemies_[mCurrentTargetEnemy_].getEntity().getId()){
-                print("is the target entity");
-            }
         }
     }
 
