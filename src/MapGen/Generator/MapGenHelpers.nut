@@ -12,6 +12,23 @@
         return landGroup == 255 ? null : landGroup;
     }
 
+    function getAltitudeForPosition(worldData, pos){
+        local x = pos.x.tointeger();
+        local y = -pos.z.tointeger();
+
+        local voxBuff = worldData.voxelBuffer;
+        voxBuff.seek((x + y * worldData.width) * 4);
+        local val = voxBuff.readn('i');
+        return val & 0xFF;
+    }
+
+    function getTraverseTerrainForPosition(worldData, pos){
+        local altitude = getAltitudeForPosition(worldData, pos);
+
+        if(altitude <= worldData.seaLevel) return EnemyTraversableTerrain.WATER;
+        return EnemyTraversableTerrain.LAND;
+    }
+
     function getWaterGroupForPos(worldData, pos){
         local x = pos.x.tointeger();
         local y = -pos.z.tointeger();

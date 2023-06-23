@@ -116,7 +116,7 @@ testCount = 0;
 
         _component.collision.add(en, collisionObject, innerCollisionObject, damageReceiver);
 
-        entry.setPosition(targetPos);
+        entry.setPosition(::Base.mExplorationLogic.mSceneLogic_, targetPos);
 
         local totalHealth = 10;
         _component.user[Component.HEALTH].add(en);
@@ -202,7 +202,7 @@ testCount++;
             _component.user[Component.MISC].set(en, 0, billboardIdx);
         }
 
-        entry.setPosition(targetPos);
+        entry.setPosition(::Base.mExplorationLogic.mSceneLogic_, targetPos);
 
         return entry;
     }

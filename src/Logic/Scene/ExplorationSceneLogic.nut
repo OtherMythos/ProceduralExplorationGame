@@ -146,6 +146,10 @@
         vox.printStats();
     }
 
+    function getTraverseTerrainForPosition(mPos_){
+        return ::MapGenHelpers.getTraverseTerrainForPosition(mWorldData_, mPos_);
+    }
+
     function getZForPos(pos){
         //Move somewhere else.
 

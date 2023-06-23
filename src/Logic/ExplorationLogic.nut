@@ -159,8 +159,15 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         function getEID(){
             return mEntity_.getId();
         }
-        function setPosition(pos){
+        function setPosition(sceneLogic, pos){
             mPos_ = pos;
+
+            local inWater = ::MapGenHelpers.getWaterGroupForPos(sceneLogic.mWorldData_, mPos_) != null;
+            if(inWater != mInWater_ && mStateMachineModel_){
+                mStateMachineModel_.notifyWaterState(inWater);
+            }
+            mInWater_ = inWater;
+
             ::Base.mExplorationLogic.mTargetManager_.notifyEntityPositionChange(this);
             if(mEntity_) mEntity_.setPosition(SlotPosition(pos));
             if(mGizmo_) mGizmo_.setPosition(pos);
@@ -191,8 +198,20 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         function getTargetCollisionWorld(){
             return mTargetCollisionWorld_;
         }
-        function move(amount){
-            setPosition(mPos_ + amount);
+        function isPositionWalkable(sceneLogic, intended){
+            local traverseTypes = ::Enemies[mEnemy_].getTraversableTerrain();
+            local traverse = sceneLogic.getTraverseTerrainForPosition(intended);
+
+            return traverseTypes & traverse;
+        }
+        function move(amount, sceneLogic){
+            //First check if that section of the map is walkable.
+            local intended = mPos_ + amount;
+            if(!isPositionWalkable(sceneLogic, intended)){
+                return false;
+            }
+
+            setPosition(sceneLogic, intended);
             if(mModel_){
                 local orientation = Quat(atan2(amount.x, amount.z), Vec3(0, 1, 0));
                 mModel_.setOrientation(orientation);
@@ -208,6 +227,8 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
             }
             mPerformingEquippable_ = null;
             mMoving_ = 10;
+
+            return true;
         }
         function moveQueryZ(amount, sceneLogic, inWater=false){
             local zQuery = sceneLogic.getZForPos(mPos_ + amount);
@@ -215,17 +236,11 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
             if(inWater){
                 mPos_.y = -1.4;
             }
-            move(amount);
+            move(amount, sceneLogic);
         }
         function moveToPoint(point, amount, sceneLogic){
             local dir = point - mPos_;
             dir.normalise();
-
-            local inWater = ::MapGenHelpers.getWaterGroupForPos(sceneLogic.mWorldData_, mPos_) != null;
-            if(inWater != mInWater_){
-                mStateMachineModel_.notifyWaterState(inWater);
-            }
-            mInWater_ = inWater;
 
             dir *= (amount * getSlowFactor(mInWater_));
             moveQueryZ(dir, sceneLogic, mInWater_);
@@ -494,7 +509,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         resetExplorationGenMap_();
         mSceneLogic_.resetExploration(mCurrentMapData_);
         mPlayerEntry_ = ::ExplorationEntityFactory.constructPlayer(mGui_);
-        mPlayerEntry_.setPosition(Vec3(mCurrentMapData_.width / 2, 0, -mCurrentMapData_.height / 2));
+        mPlayerEntry_.setPosition(mSceneLogic_, Vec3(mCurrentMapData_.width / 2, 0, -mCurrentMapData_.height / 2));
         if(mGui_) mGui_.notifyNewMapData(mCurrentMapData_);
         //mSceneLogic_.updatePlayerPos(mPlayerEntry_.mPos_);
     }
