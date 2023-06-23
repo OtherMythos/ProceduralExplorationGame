@@ -23,6 +23,7 @@ enum Component{
 enum Enemy{
     NONE,
     GOBLIN,
+    SQUID,
 
     MAX
 };
@@ -36,6 +37,7 @@ enum ObjectType{
 enum EnemyNames{
     NONE = "None",
     GOBLIN = "Goblin",
+    SQUID = "Squid",
 
     MAX = "Max"
 };
@@ -209,6 +211,15 @@ enum CharacterModelAnimId{
     REGULAR_TWO_HANDED_SWORD_SWING,
 
     SQUID_WALK,
+
+    MAX
+};
+
+enum CharacterModelAnimBaseType{
+    UPPER_WALK,
+    LOWER_WALK,
+
+    UPPER_SWIM,
 
     MAX
 };

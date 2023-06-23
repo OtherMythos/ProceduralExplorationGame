@@ -20,10 +20,12 @@ local ModelType = class{
     mAnimFile = null;
     mNodes = null;
     mNodeIds = null;
-    constructor(anim, nodes){
+    mBaseAnims = null;
+    constructor(anim, nodes, baseAnims){
         mAnimFile = ::CharacterGeneratorPrefix + anim;
 
         mNodes = nodes;
+        mBaseAnims = baseAnims;
 
         //Resolve the node ids table upfront so it doesn't have to be stored in each model instance.
         mNodeIds = {};
@@ -62,7 +64,8 @@ local ModelType = class{
         Entry(
             "playerFoot.mesh", CharacterModelPartType.RIGHT_FOOT, null, Vec3(4.5, 2, 0), Vec3(1, 1, 1)
         )
-    ]
+    ],
+    [CharacterModelAnimId.BASE_ARMS_WALK, CharacterModelAnimId.BASE_LEGS_WALK, CharacterModelAnimId.BASE_ARMS_SWIM]
 );
 ::ModelTypes[CharacterModelType.GOBLIN] = ModelType("assets/characterAnimations/baseAnimation.xml",
     [
@@ -88,7 +91,8 @@ local ModelType = class{
             "goblinFoot.mesh", CharacterModelPartType.RIGHT_FOOT, null, Vec3(4.5, 2, 0), Vec3(1, 1, 1)
         )
 
-    ]
+    ],
+    [CharacterModelAnimId.BASE_ARMS_WALK, CharacterModelAnimId.BASE_LEGS_WALK, CharacterModelAnimId.BASE_ARMS_SWIM]
 );
 ::ModelTypes[CharacterModelType.SQUID] = ModelType("assets/characterAnimations/squidAnimation.xml",
     [
@@ -101,5 +105,6 @@ local ModelType = class{
         Entry(
             "squidTentacle.mesh", CharacterModelPartType.RIGHT_HAND, null, Vec3(-8, 0, 0), Vec3(1.2, 1.2, 1.2)
         )
-    ]
+    ],
+    [CharacterModelAnimId.NONE, CharacterModelAnimId.SQUID_WALK, CharacterModelAnimId.SQUID_WALK]
 );

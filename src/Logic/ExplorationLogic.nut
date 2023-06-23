@@ -49,13 +49,13 @@ enum ActiveEnemyAnimationStage{
             mCurrentEquippableAnim_ = anim;
             mModel_.startAnimation(anim);
             if(alternativeAnim != null){
-                mModel_.stopAnimation(alternativeAnim);
+                mModel_.stopAnimationBaseType(alternativeAnim);
             }
         }else{
             if(mCurrentEquippableAnim_ != CharacterModelAnimId.NONE){
                 mModel_.stopAnimation(mCurrentEquippableAnim_);
                 if(alternativeAnim != null){
-                    mModel_.startAnimation(alternativeAnim);
+                    mModel_.startAnimationBaseType(alternativeAnim);
                 }
             }
         }
@@ -79,8 +79,8 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.IDLE] = clas
 };
 ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.WALKING] = class extends ::Util.SimpleState{
     function start(ctx){
-        ctx.mModel_.startAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
-        ctx.mModel_.startAnimation(CharacterModelAnimId.BASE_ARMS_WALK);
+        ctx.mModel_.startAnimationBaseType(CharacterModelAnimBaseType.UPPER_WALK);
+        ctx.mModel_.startAnimationBaseType(CharacterModelAnimBaseType.LOWER_WALK);
     }
     function update(ctx){
     }
@@ -92,18 +92,18 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.WALKING] = c
             if(ctx.mInWater_) return ActiveEnemyAnimationStage.SWIMMING;
         }
         else if(event == ActiveEnemyAnimationEvents.EQUIPPABLE_PERFORMANCE_STATE_CHANGE){
-            ctx.processPerformance_(CharacterModelAnimId.BASE_ARMS_WALK);
+            ctx.processPerformance_(CharacterModelAnimBaseType.UPPER_WALK);
         }
     }
     function end(ctx){
-        ctx.mModel_.stopAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
-        ctx.mModel_.stopAnimation(CharacterModelAnimId.BASE_ARMS_WALK);
+        ctx.mModel_.stopAnimationBaseType(CharacterModelAnimBaseType.UPPER_WALK);
+        ctx.mModel_.stopAnimationBaseType(CharacterModelAnimBaseType.LOWER_WALK);
     }
 };
 ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = class extends ::Util.SimpleState{
     function start(ctx){
-        //ctx.mModel_.startAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
-        ctx.mModel_.startAnimation(CharacterModelAnimId.BASE_ARMS_SWIM);
+        //ctx.mModel_.startAnimationBaseType(CharacterModelAnimId.BASE_LEGS_WALK);
+        ctx.mModel_.startAnimationBaseType(CharacterModelAnimBaseType.UPPER_SWIM);
     }
     function update(ctx){
     }
@@ -114,12 +114,12 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
             if(!ctx.mInWater_) return ActiveEnemyAnimationStage.WALKING;
         }
         else if(event == ActiveEnemyAnimationEvents.EQUIPPABLE_PERFORMANCE_STATE_CHANGE){
-            ctx.processPerformance_(CharacterModelAnimId.BASE_ARMS_SWIM);
+            ctx.processPerformance_(CharacterModelAnimBaseType.UPPER_SWIM);
         }
     }
     function end(ctx){
         //ctx.mModel_.stopAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
-        ctx.mModel_.stopAnimation(CharacterModelAnimId.BASE_ARMS_SWIM);
+        ctx.mModel_.stopAnimationBaseType(CharacterModelAnimBaseType.UPPER_SWIM);
     }
 };
 
@@ -581,6 +581,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         if(mCurrentHighlightEnemy_ != null){
             if(mActiveEnemies_.rawin(mCurrentHighlightEnemy_)){
                 enemy = mActiveEnemies_[mCurrentHighlightEnemy_].mEnemy_;
+                print("===enemy " + enemy);
             }
         }
         if(mGui_) mGui_.notifyHighlightEnemy(enemy);
@@ -928,11 +929,17 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
             print("can't add any more enemies");
             return;
         }
-        appearEnemy(Enemy.GOBLIN);
+        appearEnemy(_random.randInt(Enemy.GOBLIN, Enemy.MAX-1));
     }
 
     function appearEnemy(enemyType){
-        local target = MapGenHelpers.findRandomPointOnLand(mCurrentMapData_, mPlayerEntry_.getPosition(), 50);
+        local target = null;
+        //TODO in future have a more sophisticated method to solve this, for instance spawn locations stored in entity defs.
+        if(enemyType == Enemy.SQUID){
+            target = MapGenHelpers.findRandomPositionInWater(mCurrentMapData_, 0);
+        }else{
+            target = MapGenHelpers.findRandomPointOnLand(mCurrentMapData_, mPlayerEntry_.getPosition(), 50);
+        }
 
         local enemyEntry = ::ExplorationEntityFactory.constructEnemy(enemyType, target, mGui_);
         mActiveEnemies_.rawset(enemyEntry.mEntity_.getId(), enemyEntry);

@@ -28,6 +28,18 @@
         mParentNode_.setOrientation(orientation);
     }
 
+    function startAnimationBaseType(baseAnim){
+        local baseAnims = ::ModelTypes[mModelType_].mBaseAnims;
+        local anim = baseAnims[baseAnim];
+        if(anim == CharacterModelAnimId.NONE) return;
+        startAnimation(anim);
+    }
+    function stopAnimationBaseType(baseAnim){
+        local baseAnims = ::ModelTypes[mModelType_].mBaseAnims;
+        local anim = baseAnims[baseAnim];
+        if(anim == CharacterModelAnimId.NONE) return;
+        stopAnimation(anim);
+    }
     function startAnimation(animId){
         //local newAnim = _animation.createAnimation(animName, mNodes_);
         //local newAnim = _animation.createAnimation(animName, mNodes_);

@@ -266,6 +266,7 @@ enum ItemType{
         switch(enemy){
             case Enemy.NONE: return EnemyNames.NONE;
             case Enemy.GOBLIN: return EnemyNames.GOBLIN;
+            case Enemy.SQUID: return EnemyNames.SQUID;
             default:
                 assert(false);
         }

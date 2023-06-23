@@ -32,7 +32,7 @@
             point & 0xFFFF);
 
         outPoint.z = -outPoint.z;
-        printf("landmass %s", outPoint.tostring());
+        //printf("landmass %s", outPoint.tostring());
         return outPoint;
     }
 
@@ -51,6 +51,24 @@
             return targetPos;
         }
         return null;
+    }
+
+    function findRandomPointInWater(worldData, waterData){
+        local randIndex = _random.randIndex(waterData.coords);
+        return waterData.coords[randIndex];
+    }
+
+    function findRandomPositionInWater(worldData, waterGroupId){
+        local waterGroup = worldData.waterData[waterGroupId];
+        local point = findRandomPointInWater(worldData, waterGroup);
+
+        local outPoint = Vec3(
+            (point >> 16) & 0xFFFF, 0
+            point & 0xFFFF);
+
+        outPoint.z = -outPoint.z;
+
+        return outPoint;
     }
 
 };
