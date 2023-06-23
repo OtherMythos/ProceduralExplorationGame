@@ -27,7 +27,7 @@ function receivePlayerInner(id, type, internal, sender, receiver){
         print("Player entered entity innter.")
 
         local enemyData = [
-            ::Combat.CombatStats(Enemy.GOBLIN)
+            ::Combat.CombatStats(EnemyId.GOBLIN)
         ];
         local currentCombatData = ::Combat.CombatData(::Base.mPlayerStats.mPlayerCombatStats, enemyData);
         ::Base.notifyEncounter(currentCombatData);

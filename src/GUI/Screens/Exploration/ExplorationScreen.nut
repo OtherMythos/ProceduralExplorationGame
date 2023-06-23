@@ -206,7 +206,7 @@ enum ExplorationBusEvents{
 
     function notifyHighlightEnemy(enemy){
         if(enemy != null){
-            local string = ::ItemHelper.enemyToName(enemy);
+            local string = ::Enemies[enemy].getName();
             mTooltipManager_.setTooltip(string);
         }
         mTooltipManager_.setVisible(enemy != null);

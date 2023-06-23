@@ -37,7 +37,7 @@
     function setTargetEnemy(e){
         local text = " ";
         if(e != null){
-            local enemyName = ::ItemHelper.enemyToName(e.mEnemy_);
+            local enemyName = ::Enemies[e.mEnemy_].getName();
             text = "Targeting: " + enemyName;
         }
         mLabel_.setText(text);

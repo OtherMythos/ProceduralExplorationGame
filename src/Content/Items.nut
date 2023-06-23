@@ -262,16 +262,6 @@ enum ItemType{
         }
     }
 
-    function enemyToName(enemy){
-        switch(enemy){
-            case Enemy.NONE: return EnemyNames.NONE;
-            case Enemy.GOBLIN: return EnemyNames.GOBLIN;
-            case Enemy.SQUID: return EnemyNames.SQUID;
-            default:
-                assert(false);
-        }
-    }
-
     function nameToItemId(itemName){
         foreach(c,i in ::Items){
             if(i.getName() == itemName){

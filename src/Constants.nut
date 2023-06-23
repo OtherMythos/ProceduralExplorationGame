@@ -20,26 +20,11 @@ enum Component{
     MISC = 1
 }
 
-enum Enemy{
-    NONE,
-    GOBLIN,
-    SQUID,
-
-    MAX
-};
 
 enum ObjectType{
     SCREEN_DATA = "ScreenData",
     POPUP_DATA = "PopupData",
     EFFECT_DATA = "EffectData",
-};
-
-enum EnemyNames{
-    NONE = "None",
-    GOBLIN = "Goblin",
-    SQUID = "Squid",
-
-    MAX = "Max"
 };
 
 enum StatType{

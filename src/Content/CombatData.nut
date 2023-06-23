@@ -42,12 +42,12 @@
     "CombatStats": class{
         mHealth = 10;
         mMaxHealth = 10;
-        mEnemyType = Enemy.NONE;
+        mEnemyType = EnemyId.NONE;
         mEquippedItems = null;
 
         mDead = false;
 
-        constructor(enemyType = Enemy.NONE, health = 10, equippedItems = null){
+        constructor(enemyType = EnemyId.NONE, health = 10, equippedItems = null){
             mHealth = mMaxHealth = health;
             mEnemyType = enemyType;
             if(equippedItems == null){

@@ -38,7 +38,7 @@
         foreach(c,i in combatBus.mCombatData.mOpponentStats){
             local enemyType = i.mEnemyType;
 
-            local textItem = i.mDead ? " " : ::ItemHelper.enemyToName(enemyType);
+            local textItem = i.mDead ? " " : ::Enemies[enemyType].getName();
             local enemyLabel = mWindow_.createLabel();
             enemyLabel.setText(textItem);
             layout.addCell(enemyLabel);

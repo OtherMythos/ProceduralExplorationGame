@@ -17,7 +17,7 @@
         local combatData = combatBus.mCombatData;
         foreach(i in combatData.mOpponentStats){
             local healthBar = ::GuiWidgets.ProgressBar(mWindow_);
-            healthBar.setLabel(::ItemHelper.enemyToName(i.mEnemyType));
+            healthBar.setLabel(::Enemies[enemyType].getName());
             mDataDisplays_.append(healthBar);
         }
 

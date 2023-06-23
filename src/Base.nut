@@ -39,6 +39,7 @@
         _doFile("res://src/System/InputManager.nut");
         _doFile("res://src/Util/VoxToMesh.nut");
 
+        _doFile("res://src/Content/Enemies.nut");
         _doFile("res://src/Content/Projectiles.nut");
         _doFile("res://src/Content/Equippables.nut");
         _doFile("res://src/Content/Items.nut");
@@ -127,13 +128,15 @@
         ::InputManager.setup();
 
         mExplorationLogic = ExplorationLogic();
+        /*
         local enemyData = [
-            ::Combat.CombatStats(Enemy.GOBLIN, 20),
-            ::Combat.CombatStats(Enemy.GOBLIN)
+            ::Combat.CombatStats(EnemyId.GOBLIN, 20),
+            ::Combat.CombatStats(EnemyId.GOBLIN)
         ];
         mCurrentCombatData = ::Combat.CombatData(mPlayerStats.mPlayerCombatStats, enemyData);
+        */
         //TODO temporary to setup the logic. Really a new combatData would be pushed at the start of a new combat.
-        mCombatLogic = CombatLogic(mCurrentCombatData);
+        //mCombatLogic = CombatLogic(mCurrentCombatData);
 
         //::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));

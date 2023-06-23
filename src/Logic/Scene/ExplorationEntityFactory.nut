@@ -13,7 +13,7 @@
 testCount = 0;
         local en = _entity.create(SlotPosition());
         if(!en.valid()) throw "Error creating entity";
-        local playerEntry = ::ExplorationLogic.ActiveEnemyEntry(Enemy.NONE, Vec2(0, 0), en);
+        local playerEntry = ::ExplorationLogic.ActiveEnemyEntry(EnemyId.NONE, Vec2(0, 0), en);
 
         local playerNode = mBaseSceneNode_.createChildSceneNode();
         local playerModel = mCharacterGenerator_.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, 30);
@@ -24,7 +24,7 @@ testCount = 0;
         local equipped = ::Combat.EquippedItems();
         local targetItem = ::Item(ItemId.SIMPLE_TWO_HANDED_SWORD);
         equipped.setEquipped(targetItem, EquippedSlotTypes.LEFT_HAND);
-        local combatData = ::Combat.CombatStats(Enemy.NONE, 0, equipped);
+        local combatData = ::Combat.CombatStats(EnemyId.NONE, 0, equipped);
         //TODO tie this up a bit better with the rest of the code.
         playerModel.equipToNode(targetItem, CharacterModelEquipNodeType.LEFT_HAND);
         //playerModel.equipToNode(::Item(ItemId.SIMPLE_SHIELD), CharacterModelEquipNodeType.LEFT_HAND);
@@ -78,7 +78,7 @@ testCount = 0;
 
         //TODO in future have entity defs which contain this information.
         local modelType = CharacterModelType.GOBLIN;
-        if(enemyType == Enemy.SQUID){
+        if(enemyType == EnemyId.SQUID){
             modelType = CharacterModelType.SQUID;
         }
         local characterModel = mCharacterGenerator_.createCharacterModel(enemyNode, {"type": modelType}, 30, 1 << 4);
@@ -138,7 +138,7 @@ testCount = 0;
     function constructEnemy(enemyType, pos, explorationScreen){
         local enemy = constructEnemyBase_(enemyType, pos, explorationScreen);
 
-        if(enemyType == Enemy.GOBLIN){
+        if(enemyType == EnemyId.GOBLIN){
             local equipped = ::Combat.EquippedItems();
             local targetItem = ::Item(ItemId.SIMPLE_TWO_HANDED_SWORD);
             equipped.setEquipped(targetItem, EquippedSlotTypes.LEFT_HAND);

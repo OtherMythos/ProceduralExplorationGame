@@ -118,7 +118,7 @@ local EncounterPopupScreenStateMachine = class extends ::Util.StateMachine{
         assert(combatLen > 0);
         if(combatLen == 1){
             local enemyType = mCombatData_.mOpponentStats[0].mEnemyType;
-            return ::ItemHelper.enemyToName(enemyType);
+            return ::Enemies[enemyType].getName();
         }
 
         return "Multiple enemies";

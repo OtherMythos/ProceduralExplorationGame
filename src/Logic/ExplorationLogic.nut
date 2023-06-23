@@ -133,7 +133,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
 
 
     ActiveEnemyEntry = class{
-        mEnemy_ = Enemy.NONE;
+        mEnemy_ = EnemyId.NONE;
         mPos_ = null;
         mId_ = null;
         mEncountered_ = false;
@@ -814,7 +814,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
 
         //Age the enemies.
         for(local i = 0; i < mQueuedEnemyEncounters_.len(); i++){
-            if(mQueuedEnemyEncounters_[i] == null || mQueuedEnemyEncounters_[i] == Enemy.NONE) continue;
+            if(mQueuedEnemyEncounters_[i] == null || mQueuedEnemyEncounters_[i] == EnemyId.NONE) continue;
             mQueuedEnemyEncountersLife_[i]--;
             if(mGui_) mGui_.notifyQueuedEnemyLifetime(i, mQueuedEnemyEncountersLife_[i].tofloat() / EXPLORATION_ENEMY_LIFE);
             if(mQueuedEnemyEncountersLife_[i] <= 0){
@@ -929,13 +929,13 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
             print("can't add any more enemies");
             return;
         }
-        appearEnemy(_random.randInt(Enemy.GOBLIN, Enemy.MAX-1));
+        appearEnemy(_random.randInt(EnemyId.GOBLIN, EnemyId.MAX-1));
     }
 
     function appearEnemy(enemyType){
         local target = null;
         //TODO in future have a more sophisticated method to solve this, for instance spawn locations stored in entity defs.
-        if(enemyType == Enemy.SQUID){
+        if(enemyType == EnemyId.SQUID){
             target = MapGenHelpers.findRandomPositionInWater(mCurrentMapData_, 0);
         }else{
             target = MapGenHelpers.findRandomPointOnLand(mCurrentMapData_, mPlayerEntry_.getPosition(), 50);
@@ -949,7 +949,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         local foundSomething = _random.randInt(2000) == 0;
         if(foundSomething){
             //decide what was found.
-            local enemy = _random.randInt(Enemy.NONE+1, Enemy.MAX-1);
+            local enemy = _random.randInt(EnemyId.NONE+1, EnemyId.MAX-1);
             //processEncounter(enemy);
         }
     }

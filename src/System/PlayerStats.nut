@@ -15,7 +15,7 @@
         mPlacesVisited_ = array(PlaceId.MAX, false);
         mLeanPlacesVisited_ = [];
 
-        mPlayerCombatStats = ::Combat.CombatStats(Enemy.NONE, 100);
+        mPlayerCombatStats = ::Combat.CombatStats(EnemyId.NONE, 100);
     }
 
     function alterPlayerHealth(amount){
