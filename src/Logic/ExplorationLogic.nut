@@ -234,7 +234,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
             local zQuery = sceneLogic.getZForPos(mPos_ + amount);
             mPos_.y = zQuery;
             if(inWater){
-                mPos_.y = -1.4;
+                if(::Enemies[mEnemy_].getAllowSwimState()) mPos_.y = -1.4;
             }
             move(amount, sceneLogic);
         }
@@ -247,7 +247,9 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         }
         function getSlowFactor(inWater){
             local slow = 1.0;
-            if(inWater) slow = 0.5;
+            if(inWater){
+                slow = ::Enemies[mEnemy_].getAllowSwimState() ? 0.5 : 1.0;
+            }
             return slow;
         }
         function setId(id){

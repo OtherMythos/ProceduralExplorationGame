@@ -18,12 +18,15 @@ enum EnemyTraversableTerrain{
 local EnemyDef = class{
     mName = null;
     mTraversableTerrain = EnemyTraversableTerrain.ALL;
-    constructor(name, traversableTerrain=EnemyTraversableTerrain.ALL){
+    mAllowSwimState = true;
+    constructor(name, traversableTerrain=EnemyTraversableTerrain.ALL, allowSwimState=true){
         mName = name;
         mTraversableTerrain = traversableTerrain;
+        mAllowSwimState = allowSwimState;
     }
     function getName() { return mName; }
     function getTraversableTerrain() { return mTraversableTerrain; }
+    function getAllowSwimState() { return mAllowSwimState; }
 };
 
 ::Enemies <- array(EnemyId.MAX, null);
@@ -31,4 +34,4 @@ local EnemyDef = class{
 ::Enemies[EnemyId.NONE] = EnemyDef("None");
 
 ::Enemies[EnemyId.GOBLIN] = EnemyDef("Goblin");
-::Enemies[EnemyId.SQUID] = EnemyDef("Squid", EnemyTraversableTerrain.WATER);
+::Enemies[EnemyId.SQUID] = EnemyDef("Squid", EnemyTraversableTerrain.WATER, false);
