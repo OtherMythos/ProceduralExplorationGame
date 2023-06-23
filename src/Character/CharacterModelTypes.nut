@@ -90,3 +90,16 @@ local ModelType = class{
 
     ]
 );
+::ModelTypes[CharacterModelType.SQUID] = ModelType("assets/characterAnimations/squidAnimation.xml",
+    [
+        Entry(
+            "squidBody.mesh", CharacterModelPartType.BODY, null, Vec3(0, 0, 0), Vec3(1.0, 1.0, 1.0)
+        ),
+        Entry(
+            "squidTentacle.mesh", CharacterModelPartType.LEFT_HAND, null, Vec3(8, 0, 0), Vec3(1.2, 1.2, 1.2)
+        ),
+        Entry(
+            "squidTentacle.mesh", CharacterModelPartType.RIGHT_HAND, null, Vec3(-8, 0, 0), Vec3(1.2, 1.2, 1.2)
+        )
+    ]
+);

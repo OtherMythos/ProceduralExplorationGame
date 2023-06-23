@@ -1,0 +1,21 @@
+<AnimationSequence>
+    <data>
+        <targetNode0 type="SceneNode" name="leftTentacle" />
+        <targetNode1 type="SceneNode" name="rightTentacle" />
+        <targetNode2 type="SceneNode" name="squidBody" />
+    </data>
+    <animations>
+        <SquidWalk repeat="true" end="40">
+            <t type="transform" target="0">
+                <k t="0" position="-8, 0, 0" rot="20, 0, 0"/>
+                <k t="20" position="-8, 0, 0" rot="-20, 0, 0"/>
+                <k t="40" position="-8, 0, 0" rot="20, 0, 0"/>
+            </t>
+            <t type="transform" target="1">
+                <k t="0" position="8, 0, 0" rot="-20, 0, 0"/>
+                <k t="20" position="8, 0, 0" rot="20, 0, 0"/>
+                <k t="40" position="8, 0, 0" rot="-20, 0, 0"/>
+            </t>
+        </SquidWalk>
+    </animations>
+</AnimationSequence>

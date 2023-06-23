@@ -120,7 +120,7 @@ enum CharacterInspectorWidgetTypes{
         fpsCamera.start(Vec3(10, 10, 20), Vec3(245.45, -15.9, 0));
 
         mCurrentData_ = {
-            "type": CharacterModelType.HUMANOID,
+            "type": CharacterModelType.SQUID,
             "equip": array(CharacterModelEquipNodeType.MAX, ItemId.NONE)
         }
         mCurrentData_.equip[CharacterModelEquipNodeType.LEFT_HAND] = ItemId.SIMPLE_TWO_HANDED_SWORD;
@@ -138,17 +138,10 @@ enum CharacterInspectorWidgetTypes{
 
 
     function animCheckboxCallback(widget, action){
-        local testVals = [
-            CharacterModelAnimId.BASE_LEGS_WALK,
-            CharacterModelAnimId.BASE_ARMS_WALK,
-            CharacterModelAnimId.REGULAR_SWORD_SWING,
-            CharacterModelAnimId.REGULAR_TWO_HANDED_SWORD_SWING,
-            CharacterModelAnimId.BASE_ARMS_SWIM,
-        ];
         if(widget.getValue()){
-            mInspectedModel_.startAnimation(testVals[widget.getUserId()]);
+            mInspectedModel_.startAnimation(widget.getUserId());
         }else{
-            mInspectedModel_.stopAnimation(testVals[widget.getUserId()]);
+            mInspectedModel_.stopAnimation(widget.getUserId());
         }
     }
 
@@ -168,6 +161,17 @@ enum CharacterInspectorWidgetTypes{
         ::CharacterInspectorWidgets[CharacterInspectorWidgetTypes.MODEL_TYPE] <- entityTypeButton;
 
         guiCreateTitle("Animation", layout);
+        for(local i = 1; i < CharacterModelAnimId.MAX; i++){
+            local checkbox = ::containerWin.createCheckbox();
+            checkbox.attachListenerForEvent(animCheckboxCallback, _GUI_ACTION_RELEASED, this);
+            checkbox.setText(::CharacterModelAnims[i].mName);
+            checkbox.setUserId(i);
+
+            layout.addCell(checkbox);
+            if(i == 1){
+                checkbox.setValue(true);
+            }
+        }
         local labels = [
             "FeetWalk",
             "UpperWalk",
@@ -176,15 +180,6 @@ enum CharacterInspectorWidgetTypes{
             "UpperSwim",
         ];
         foreach(c,i in labels){
-            local checkbox = ::containerWin.createCheckbox();
-            checkbox.attachListenerForEvent(animCheckboxCallback, _GUI_ACTION_RELEASED, this);
-            checkbox.setText(i);
-            checkbox.setUserId(c);
-
-            layout.addCell(checkbox);
-            if(c == 0){
-                checkbox.setValue(true);
-            }
         }
 
         guiCreateTitle("Equipables", layout);

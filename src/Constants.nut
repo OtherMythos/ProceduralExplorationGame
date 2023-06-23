@@ -157,6 +157,7 @@ enum CharacterModelType{
     NONE,
     HUMANOID,
     GOBLIN,
+    SQUID
 
     MAX
 };
@@ -165,6 +166,7 @@ enum CharacterModelType{
         case CharacterModelType.NONE: return "None";
         case CharacterModelType.HUMANOID: return "Humanoid";
         case CharacterModelType.GOBLIN: return "Goblin";
+        case CharacterModelType.SQUID: return "Squid";
         default:{
             assert(false);
         }
@@ -205,6 +207,8 @@ enum CharacterModelAnimId{
 
     REGULAR_SWORD_SWING,
     REGULAR_TWO_HANDED_SWORD_SWING,
+
+    SQUID_WALK,
 
     MAX
 };
