@@ -20,6 +20,8 @@ enum ExplorationBusEvents{
     mScrapAllButton_ = null;
     mCameraButton_ = null;
 
+    mScreenInputCheckList_ = null;
+
     mInputBlockerWindow_ = null;
 
     mInsideGateway_ = false;
@@ -128,6 +130,11 @@ enum ExplorationBusEvents{
         mTooltipManager_ = TooltipManager();
 
         createInputBlockerOverlay();
+
+        mScreenInputCheckList_ = [
+            mExplorationStatsContainer_,
+            mExplorationMovesContainer_
+        ];
     }
 
     function update(){
@@ -157,13 +164,20 @@ enum ExplorationBusEvents{
         mInputBlockerWindow_.setVisible(false);
     }
 
+    function checkIntersect_(x, y, widget){
+        local start = widget.getPosition();
+        local end = widget.getSize();
+        return (x >= start.x && y >= start.y && x < end.x+start.x && y < end.y+start.y);
+    }
     function checkPlayerInputPosition(x, y){
         local start = mWorldMapDisplay_.getPosition();
         local end = mWorldMapDisplay_.getSize();
         if(x >= start.x && y >= start.y && x < end.x+start.x && y < end.y+start.y){
-            if(mWorldMapDisplay_.getExplorationWorldHasFocus()){
-                return Vec2((x-start.x) / end.x, (y-start.y) / end.y);
+            foreach(i in mScreenInputCheckList_){
+                if(checkIntersect_(x, y, i)) return null;
             }
+
+            return Vec2((x-start.x) / end.x, (y-start.y) / end.y);
         }
         return null;
     }

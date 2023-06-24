@@ -20,10 +20,6 @@
         mMapViewerWindow_.setVisualsEnabled(false);
     }
 
-    function getExplorationWorldHasFocus(){
-        return true;
-    }
-
     function addToLayout(layoutLine){
         layoutLine.addCell(mExplorationScenePanel_);
         mExplorationScenePanel_.setExpandVertical(true);
