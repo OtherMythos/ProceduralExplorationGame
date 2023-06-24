@@ -8,6 +8,8 @@
             ::Base.mExplorationLogic.gatewayEndExploration();
         }, _GUI_ACTION_PRESSED, this);
 
+        button.setZOrder(BillboardZOrder.BUTTON);
+
         mPanel_ = button;
     }
 

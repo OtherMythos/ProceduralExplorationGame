@@ -39,6 +39,11 @@
         mLabelObject_.setText(mLabel_);
     }
 
+    function setZOrder(zOrder){
+        mParentContainer_.setZOrder(zOrder);
+        mChildBar_.setZOrder(zOrder);
+    }
+
     function _constructLabel(){
         mLabelObject_ = mParentWin_.createLabel();
         positionLabel_();

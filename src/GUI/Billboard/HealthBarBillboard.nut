@@ -8,6 +8,8 @@
         mPanel_ = panel;
 
         setPercentage(1.0);
+
+        panel.setZOrder(BillboardZOrder.HEALTH_BAR);
     }
 
     function destroy(){

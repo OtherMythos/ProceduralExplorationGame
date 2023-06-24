@@ -1,3 +1,8 @@
+enum BillboardZOrder{
+    HEALTH_BAR = 70,
+    BUTTON = 75
+};
+
 ::BillboardManager.Billboard <- class{
 
     mPanel_ = null;
