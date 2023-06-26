@@ -162,7 +162,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         function setPosition(sceneLogic, pos){
             mPos_ = pos;
 
-            local inWater = ::MapGenHelpers.getWaterGroupForPos(sceneLogic.mWorldData_, mPos_) != null;
+            local inWater = ::MapGenHelpers.getIsWaterForPosition(sceneLogic.mWorldData_, mPos_);
             if(inWater != mInWater_ && mStateMachineModel_){
                 mStateMachineModel_.notifyWaterState(inWater);
             }
@@ -531,8 +531,8 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         local data = {
             "seed": _random.randInt(0, 1000),
             "variation": _random.randInt(0, 1000),
-            "width": 200,
-            "height": 200,
+            "width": 400,
+            "height": 400,
             "numRivers": 12,
             "seaLevel": 100,
             "altitudeBiomes": [10, 100],

@@ -326,13 +326,17 @@ enum MapViewerColours{
     function _getColourForVox(xVox, yVox){
         local voxVal = mMapData_.voxelBuffer.readn('i');
         local altitude = voxVal & 0xFF;
-        local voxelMeta = (voxVal >> 8) & 0x7F;
+        local voxelMeta = (voxVal >> 8) & MAP_VOXEL_MASK;
         local waterGroup = (voxVal >> 16) & 0xFF;
 
         local drawVal = 0x0;
 
         if(mDrawOptions_[DrawOptions.GROUND_TYPE]){
-            drawVal = mColours_[voxelMeta];
+            if((voxVal >> 8) & MapVoxelTypes.RIVER){
+                drawVal = mColours_[MapViewerColours.FRESH_WATER];
+            }else{
+                drawVal = mColours_[voxelMeta];
+            }
         }else{
             //NOTE: Slight optimisation.
             //Most cases will have ground type enabled, so no point doing this check unless needed.

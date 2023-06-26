@@ -27,7 +27,7 @@ testCount = 0;
         local combatData = ::Combat.CombatStats(EnemyId.NONE, 0, equipped);
         //TODO tie this up a bit better with the rest of the code.
         playerModel.equipToNode(targetItem, CharacterModelEquipNodeType.LEFT_HAND);
-        //playerModel.equipToNode(::Item(ItemId.SIMPLE_SHIELD), CharacterModelEquipNodeType.LEFT_HAND);
+        playerModel.equipToNode(::Item(ItemId.SIMPLE_SHIELD), CharacterModelEquipNodeType.RIGHT_HAND);
         playerEntry.setCombatData(combatData);
         playerEntry.setTargetCollisionWorld(_COLLISION_ENEMY);
 

@@ -116,6 +116,7 @@
         local voxVals = [
             2, 112, 0, 192
         ];
+        local waterVal = 192;
         for(local y = 0; y < height; y++){
             for(local x = 0; x < width; x++){
                 local vox = buf.readn('i')
@@ -123,10 +124,14 @@
                 if(voxFloat <= mWorldData_.seaLevel) continue;
                 //+1 because vox values at 0 still need to be drawn.
                 local altitude = (((voxFloat - mWorldData_.seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger() + 1;
-                local voxelMeta = (vox >> 8) & 0x7F;
+                local voxelMeta = (vox >> 8) & MAP_VOXEL_MASK;
+                local isRiver = (vox >> 8) & MapVoxelTypes.RIVER;
+                if(isRiver){
+                    altitude-=2;
+                }
                 //if(voxFloat <= mWorldData_.seaLevel) voxelMeta = 3;
                 for(local i = 0; i < altitude; i++){
-                    voxData[x + (y * width) + (i*width*height)] = voxVals[voxelMeta];
+                    voxData[x + (y * width) + (i*width*height)] = isRiver ? waterVal : voxVals[voxelMeta];
                 }
             }
         }

@@ -2,8 +2,13 @@
 enum MapVoxelTypes{
     SAND,
     DIRT,
-    SNOW
+    SNOW,
+
+    EDGE = 0x40,
+    RIVER = 0x20,
 };
+//The mask is used to include the edge and river flags.
+const MAP_VOXEL_MASK = 0x1F;
 
 /**
  * Provides logic to construct a generated map for exploration.
@@ -343,6 +348,7 @@ enum MapVoxelTypes{
     function carveRivers(voxelBlob, riverBlob){
         riverBlob.seek(0);
         local first = true;
+        local carvePos = {};
         while(true){
             local wrappedPos = riverBlob.readn('i');
             if(wrappedPos < 0){
@@ -353,15 +359,20 @@ enum MapVoxelTypes{
                 continue;
             }
             first = false;
-            local xPos = (wrappedPos >> 16) & 0xFFFF;
-            local yPos = wrappedPos & 0xFFFF;
 
-            clearLandMass_(voxelBlob, xPos, yPos, mData_.width, mData_.seaLevel-1);
-            //Add a bit of a circle around it.
-            clearLandMass_(voxelBlob, xPos-1, yPos, mData_.width, mData_.seaLevel-1);
-            clearLandMass_(voxelBlob, xPos+1, yPos, mData_.width, mData_.seaLevel-1);
-            clearLandMass_(voxelBlob, xPos, yPos-1, mData_.width, mData_.seaLevel-1);
-            clearLandMass_(voxelBlob, xPos, yPos+1, mData_.width, mData_.seaLevel-1);
+            //Batch up the positions to carve so they don't get applied twice.
+            carvePos.rawset(wrappedPos, null);
+            carvePos.rawset(((((wrappedPos >> 16) & 0xFFFF)-1)<<16) | (wrappedPos&0xFFFF), null);
+            carvePos.rawset(((((wrappedPos >> 16) & 0xFFFF)+1)<<16) | (wrappedPos&0xFFFF), null);
+            carvePos.rawset(wrappedPos&0xFFFF0000 | (wrappedPos&0xFFFF)-1, null);
+            carvePos.rawset(wrappedPos&0xFFFF0000 | (wrappedPos&0xFFFF)+1, null);
+        }
+
+        foreach(c,i in carvePos){
+            local xPos = (c >> 16) & 0xFFFF;
+            local yPos = c & 0xFFFF;
+            //alterLandmass_(voxelBlob, xPos, yPos, mData_.width, -4);
+            markVoxelAsRiver_(voxelBlob, xPos, yPos, mData_.width);
         }
     }
 
@@ -497,6 +508,48 @@ enum MapVoxelTypes{
         blob.seek((x + y * width) * 4);
         local val = blob.readn('i');
         return val & 0xFF;
+    }
+
+    function setVoxToRiver(blob, x, y, width){
+        local pos = (x + y * width) * 4;
+        blob.seek(pos);
+        local original = blob.readn('i');
+        local vox = (original & 0xFF00) >> 8;
+        local newVal = original & 0xFFFFFF00;
+        local val = altitude + dipVal;
+        if(val < 0) val = 0;
+        if(val > 0xFF) val = 0xFF;
+        assert(val >= 0 && val <= 0xFF);
+        newVal = newVal | val;
+        blob.seek(pos);
+        blob.writen(newVal, 'i');
+    }
+    function markVoxelAsRiver_(blob, x, y, width){
+        local pos = (x + y * width) * 4;
+        blob.seek(pos);
+        local original = blob.readn('i');
+        local voxVal = (original >> 8) & 0xFF;
+        local newVal = voxVal | MapVoxelTypes.RIVER;
+        newVal = (original & 0xFFFF00FF) | newVal << 8;
+        blob.seek(pos);
+        blob.writen(newVal, 'i');
+    }
+    /**
+     * Reduce the current landmass altitude by the requested amount.
+     */
+    function alterLandmass_(blob, x, y, width, dipVal){
+        local pos = (x + y * width) * 4;
+        blob.seek(pos);
+        local original = blob.readn('i');
+        local altitude = original & 0xFF;
+        local newVal = original & 0xFFFFFF00;
+        local val = altitude + dipVal;
+        if(val < 0) val = 0;
+        if(val > 0xFF) val = 0xFF;
+        assert(val >= 0 && val <= 0xFF);
+        newVal = newVal | val;
+        blob.seek(pos);
+        blob.writen(newVal, 'i');
     }
     function clearLandMass_(blob, x, y, width, val){
         local pos = (x + y * width) * 4;
