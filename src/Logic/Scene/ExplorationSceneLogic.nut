@@ -145,7 +145,7 @@
         item.setRenderQueueGroup(30);
         local landNode = mParentNode_.createChildSceneNode();
         landNode.attachObject(item);
-        //landNode.setScale(2, 2, 2);
+        landNode.setScale(1, 1, 0.4);
         landNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
 
         vox.printStats();

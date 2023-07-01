@@ -68,7 +68,7 @@
         TILE_HEIGHT = (1.0 / COLS_HEIGHT) / 2.0;
 
         mVertexElemVec_ = _graphics.createVertexElemVec();
-        mVertexElemVec_.pushVertexElement(_VET_FLOAT2, _VES_POSITION);
+        mVertexElemVec_.pushVertexElement(_VET_FLOAT3, _VES_POSITION);
         mVertexElemVec_.pushVertexElement(_VET_FLOAT1, _VES_NORMAL);
         mVertexElemVec_.pushVertexElement(_VET_FLOAT2, _VES_TEXTURE_COORDINATES);
     }
@@ -87,7 +87,7 @@
         local verts = [];
         local indices = [];
 
-        local NUM_VERTS = 5;
+        local NUM_VERTS = 6;
 
         local index = 0;
         local numVerts = 0;
@@ -103,7 +103,7 @@
                 if(!blockIsFaceVisible(neighbourMask, f)) continue;
                 if((1 << f) & mFaceExclusionMask_) continue;
                 //Face is valid by this point, so do the ambient occlusion checks.
-                ambientMask = getVerticeBorder(voxData, f, x, y, z, width, height, depth);
+                local ambientMask = getVerticeBorder(voxData, f, x, y, z, width, height, depth);
                 for(local i = 0; i < 4; i++){
                     //Pack everything into a single integer.
                     local x = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3] + x).tointeger();
@@ -122,8 +122,9 @@
                     //val = f;
                     verts.append(val);
                     //verts.append(f);
+                    //TODO Magic number for now to avoid it breaking the regular materials.
+                    verts.append(0xFF7F7F);
                     verts.append(0);
-                    //verts.append(0);
                     //verts.append(0);
                     //TODO just to pad it out, long term I shouldn't need this.
                     //verts.append(0);
@@ -184,7 +185,7 @@
         foreach(c,i in verts){
             local valid = c % NUM_VERTS == 0;
             if(valid){
-                thingCount = 2;
+                thingCount = 3;
             }
             b.writen(i, thingCount > 0 ? 'i' : 'f');
             //b.writen(i, 'i');
@@ -211,6 +212,8 @@
         outMesh.setBounds(bounds);
         outMesh.setBoundingSphereRadius(bounds.getRadius());
 
+        local datablock = _hlms.getDatablock("baseVoxelMaterial");
+        datablock.setUserValue(0, 0.1, 0, 0, 0);
         subMesh.setMaterialName("baseVoxelMaterial");
 
         if(mTimer_) mTimer_.stop();
