@@ -1,6 +1,6 @@
 @piece( custom_ps_preLights )
 	//finalColour = float3(1.0, 1.0, 1.0);
-	//finalColour = inPs.diffuse.xyz / float(0xFF);
+	finalColour = finalColour * inPs.diffuse.xyz;
 @end
 
 @piece( custom_VStoPS )
@@ -27,24 +27,18 @@
 	int pos_x = as_type<int>(original & 0xFF);
 	int pos_y = as_type<int>((original >> 8) & 0xFF);
 	int pos_z = as_type<int>((original >> 16) & 0xFF);
-	//int pos_x = as_type<int>(input.position.x);
-	//int pos_y = as_type<int>(input.position.y);
-	//int pos_z = as_type<int>(input.position.z);
 	input.position.x = float(pos_x);
 	input.position.y = float(pos_y);
 	input.position.z = float(pos_z);
 
 	unsigned int vox = as_type<unsigned int>(originalSecond & 0xFFFF);
-	unsigned int norm = as_type<unsigned int>((originalSecond >> 16) & 0xFFFF);
-	//unsigned int norm = as_type<unsigned int>(originalSecond);
+	unsigned int norm = as_type<unsigned int>((originalSecond >> 16) & 0xFF);
+	unsigned int ambient = as_type<unsigned int>((originalSecond >> 24) & 0xFF);
 
 	#undef inVs_normal
 	#define inVs_normal normVal
-
 	float3 normVal = FACES_NORMALS[norm];
 
-	//float val = (float)originalSecond / 6;
-	//float val = (float)input.position.z;
-	//outVs.diffuse = float3(val, val, val);
-	//outVs.diffuse = float3((float)norm/6, 0, (float)norm/6);
+	float ambientVal = (float)ambient/4;
+	outVs.diffuse = float3(ambientVal, ambientVal, ambientVal);
 @end

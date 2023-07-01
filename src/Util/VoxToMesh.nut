@@ -102,6 +102,8 @@
             for(local f = 0; f < 6; f++){
                 if(!blockIsFaceVisible(neighbourMask, f)) continue;
                 if((1 << f) & mFaceExclusionMask_) continue;
+                //Face is valid by this point, so do the ambient occlusion checks.
+                ambientMask = getVerticeBorder(voxData, f, x, y, z, width, height, depth);
                 for(local i = 0; i < 4; i++){
                     //Pack everything into a single integer.
                     local x = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3] + x).tointeger();
@@ -113,7 +115,10 @@
                     local val = x | y << 8 | z << 16;
                     verts.append(val);
 
-                    val = f << 16 | v;
+                    local ambient = (ambientMask >> 8 * i) & 0xFF;
+                    assert(ambient >= 0 && ambient <= 3);
+
+                    val = ambient << 24 | f << 16 | v;
                     //val = f;
                     verts.append(val);
                     //verts.append(f);
@@ -135,7 +140,8 @@
                     //verts.append(0);
                     //verts.append(0);
                     //verts.append(0);
-                    if(v == 3){
+                    //if(v == 3){
+                    if(false){
                         texCoordX = ((v % COLS_WIDTH).tofloat() / COLS_WIDTH);
                         texCoordY = ((v.tofloat() / COLS_WIDTH) / COLS_HEIGHT);
                         if(i == 0){
@@ -216,9 +222,79 @@
         return data[x + (y * width) + (z*width*height)];
     }
 
+    VERTICE_BORDERS = [
+        //F0
+        -1, -1,  0, /**/ 0, -1, -1, /**/ -1, -1, -1,
+         0, -1, -1, /**/ 1, -1,  0, /**/  1, -1, -1,
+         1, -1,  0, /**/ 0, -1,  1, /**/  1, -1,  1,
+         0, -1,  1, /**/-1, -1,  0, /**/ -1, -1,  1,
+        //F1
+         1,  1,  0, /**/  0,  1, -1, /**/ 1,  1, -1,
+         0,  1, -1, /**/ -1,  1,  0, /**/-1,  1, -1,
+        -1,  1,  0, /**/  0,  1,  1, /**/-1,  1,  1,
+         0,  1,  1, /**/  1,  1,  0, /**/ 1,  1,  1,
+        //F2
+         0, -1, -1, /**/ -1,  0, -1, /**/-1, -1, -1,
+        -1,  0, -1, /**/  0,  1, -1, /**/-1,  1, -1,
+         0,  1, -1, /**/  1,  0, -1, /**/ 1,  1, -1,
+         1,  0, -1, /**/  0, -1, -1, /**/ 1, -1, -1,
+        //F3
+         0, -1,  1, /**/  1,  0,  1, /**/ 1, -1,  1,
+         1,  0,  1, /**/  0,  1,  1, /**/ 1,  1,  1,
+         0,  1,  1, /**/ -1,  0,  1, /**/-1,  1,  1,
+        -1,  0,  1, /**/  0, -1,  1, /**/-1, -1,  1,
+        //F4
+        1, -1,  0, /**/ 1,  0, -1, /**/ 1, -1, -1,
+        1,  0, -1, /**/ 1,  1,  0, /**/ 1,  1, -1,
+        1,  1,  0, /**/ 1,  0,  1, /**/ 1,  1,  1,
+        1,  0,  1, /**/ 1, -1,  0, /**/ 1, -1,  1,
+        //F5
+        -1,  0, -1, /**/ -1, -1,  0, /**/ -1, -1, -1,
+        -1, -1,  0, /**/ -1,  0,  1, /**/ -1, -1,  1,
+        -1,  0,  1, /**/ -1,  1,  0, /**/ -1,  1,  1,
+        -1,  1,  0, /**/ -1,  0, -1, /**/ -1,  1, -1,
+    ];
+    //TODO consider a different approach.
+    foundValsTemp = array(3, 0)
+    function getVerticeBorder(data, f, x, y, z, width, height, depth){
+        local ret = 0;
+        for(local v = 0; v < 4; v++){
+            for(local i = 0; i < 3; i++){
+                local faceVal = f * 9 * 4;
+                local xx = VERTICE_BORDERS[faceVal + v * 9 + i * 3];
+                local yy = VERTICE_BORDERS[faceVal + v * 9 + i * 3 + 1];
+                local zz = VERTICE_BORDERS[faceVal + v * 9 + i * 3 + 2];
+
+                local xPos = x + xx;
+                if(xPos < 0 || xPos >= width) continue;
+                local yPos = y + yy;
+                if(yPos < 0 || yPos >= height) continue;
+                local zPos = z + zz;
+                if(zPos < 0 || zPos >= depth) continue;
+
+                local vox = readVoxelFromData_(data, xPos, yPos, zPos, width, height);
+                foundValsTemp[i] = vox != null ? 1 : 0;
+                //if(vox != null){
+                    //ret = ret | (1 << v)
+                //}
+            }
+            //https://0fps.net/2013/07/03/ambient-occlusion-for-minecraft-like-worlds/
+            local val = 0;
+            if(foundValsTemp[0] && foundValsTemp[1]){
+                val = 0;
+            }else{
+                val = 3 - (foundValsTemp[0] + foundValsTemp[1] + foundValsTemp[2]);
+            }
+            assert(val >= 0 && val <= 3);
+            //print("From function " + val);
+            //Batch the results for all 4 vertices into the single return value.
+            ret = ret | val << (v * 8);
+        }
+        return ret;
+    }
+
     function getNeighbourMask(data, x, y, z, width, height, depth){
         local ret = 0;
-        local i = 0;
         for(local v = 0; v < 6; v++){
             local xx = MASKS[v * 3];
             local yy = MASKS[v * 3 + 1];
@@ -235,7 +311,6 @@
             if(vox != null){
                 ret = ret | (1 << v)
             }
-            i++;
         }
         return ret;
     }
