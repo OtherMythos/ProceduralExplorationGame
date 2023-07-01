@@ -12,6 +12,8 @@
         {
             "workflow": "metallic",
 
+            "macroblock": "polyBlock",
+
             "diffuse" :
             {
                 "texture" : "voxelPalette.png"
@@ -23,6 +25,17 @@
             "metallness" :
             {
                 "value" : 0
+            }
+        },
+
+        "oceanPBS":
+        {
+            "workflow": "metallic",
+            "macroblock": "polyBlock",
+
+            "diffuse":
+            {
+                "value": [0, 0, 1]
             }
         }
     }

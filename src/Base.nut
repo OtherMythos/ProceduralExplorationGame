@@ -182,10 +182,12 @@
         lightNode.attachObject(light);
 
         light.setType(_LIGHT_DIRECTIONAL);
-        light.setDirection(-1, -1, -1);
+        light.setDirection(0, -1, -1);
+        //light.setPowerScale(PI * 2);
         light.setPowerScale(PI);
 
-        _scene.setAmbientLight(0xffffffff, 0xffffffff, Vec3(0, 1, 0));
+        local val = 2.0;
+        _scene.setAmbientLight(ColourValue(val, val, val, 1.0), ColourValue(val, val, val, 1.0), Vec3(0, 1, 0));
     }
 
     function setupWorld(mapName){

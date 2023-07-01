@@ -47,7 +47,7 @@
         0,  0, -1,
         0,  0,  1,
         1,  0,  0,
-        1,  0,  0,
+        -1,  0,  0,
     ];
 
     mVertexElemVec_ = null;
@@ -68,8 +68,8 @@
         TILE_HEIGHT = (1.0 / COLS_HEIGHT) / 2.0;
 
         mVertexElemVec_ = _graphics.createVertexElemVec();
-        mVertexElemVec_.pushVertexElement(_VET_FLOAT3, _VES_POSITION);
-        mVertexElemVec_.pushVertexElement(_VET_FLOAT3, _VES_NORMAL);
+        mVertexElemVec_.pushVertexElement(_VET_FLOAT2, _VES_POSITION);
+        mVertexElemVec_.pushVertexElement(_VET_FLOAT1, _VES_NORMAL);
         mVertexElemVec_.pushVertexElement(_VET_FLOAT2, _VES_TEXTURE_COORDINATES);
     }
 
@@ -87,6 +87,8 @@
         local verts = [];
         local indices = [];
 
+        local NUM_VERTS = 5;
+
         local index = 0;
         local numVerts = 0;
         for(local z = 0; z < depth; z++)
@@ -101,14 +103,61 @@
                 if(!blockIsFaceVisible(neighbourMask, f)) continue;
                 if((1 << f) & mFaceExclusionMask_) continue;
                 for(local i = 0; i < 4; i++){
-                    verts.append(VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3] + x);
-                    verts.append(VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 1] + y);
-                    verts.append(VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 2]*mYMult_ + z*mYMult_);
-                    verts.append(FACES_NORMALS[f * 3]);
-                    verts.append(FACES_NORMALS[f * 3 + 1]);
-                    verts.append(FACES_NORMALS[f * 3 + 2]);
-                    verts.append(texCoordX);
-                    verts.append(texCoordY);
+                    //Pack everything into a single integer.
+                    local x = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3] + x).tointeger();
+                    local y = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 1] + y).tointeger();
+                    local z = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 2] + z).tointeger();
+                    assert(x <= 0xFF && x >= -0xFF);
+                    assert(y <= 0xFF && y >= -0xFF);
+                    assert(z <= 0xFF && z >= -0xFF);
+                    local val = x | y << 8 | z << 16;
+                    verts.append(val);
+
+                    val = f << 16 | v;
+                    //val = f;
+                    verts.append(val);
+                    //verts.append(f);
+                    verts.append(0);
+                    //verts.append(0);
+                    //verts.append(0);
+                    //TODO just to pad it out, long term I shouldn't need this.
+                    //verts.append(0);
+                    //verts.append(0);
+                    //verts.append(x);
+                    //verts.append();
+                    //verts.append((VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 2] + z).tointeger());
+
+                    //verts.append(FACES_NORMALS[f * 3]);
+                    //verts.append(FACES_NORMALS[f * 3 + 1]);
+                    //verts.append(FACES_NORMALS[f * 3 + 2]);
+
+                    //TODO for the normal and texture. Find a way to remove this.
+                    //verts.append(0);
+                    //verts.append(0);
+                    //verts.append(0);
+                    if(v == 3){
+                        texCoordX = ((v % COLS_WIDTH).tofloat() / COLS_WIDTH);
+                        texCoordY = ((v.tofloat() / COLS_WIDTH) / COLS_HEIGHT);
+                        if(i == 0){
+                            verts.append(texCoordX);
+                            verts.append(texCoordY);
+                        }
+                        else if(i == 1){
+                            verts.append(texCoordX + TILE_WIDTH);
+                            verts.append(texCoordY);
+                        }
+                        else if(i == 2){
+                            verts.append(texCoordX);
+                            verts.append(texCoordY + TILE_HEIGHT);
+                        }
+                        else if(i == 3){
+                            verts.append(texCoordX + TILE_WIDTH);
+                            verts.append(texCoordY + TILE_HEIGHT);
+                        }
+                    }else{
+                        verts.append(texCoordX);
+                        verts.append(texCoordY);
+                    }
                     numVerts++;
                 }
                 indices.append(index + 0);
@@ -121,12 +170,20 @@
                 mNumTris_ += 2;
             }
         }
-        assert(numVerts == verts.len() / 8);
+        assert(numVerts == verts.len() / NUM_VERTS);
 
         local b = blob(verts.len() * 4);
         b.seek(0);
-        foreach(i in verts){
-            b.writen(i, 'f');
+        local thingCount = 0;
+        foreach(c,i in verts){
+            local valid = c % NUM_VERTS == 0;
+            if(valid){
+                thingCount = 2;
+            }
+            b.writen(i, thingCount > 0 ? 'i' : 'f');
+            //b.writen(i, 'i');
+            thingCount--;
+            //b.writen(i, 'f');
         }
         local indiceStride = index + 4 >= 0xFFFF ? 4 : 2;
         local bb = blob(indices.len() * indiceStride);
