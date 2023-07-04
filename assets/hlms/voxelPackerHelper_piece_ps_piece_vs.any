@@ -1,0 +1,67 @@
+@piece( custom_ps_functions )
+	float blendDarkenBase(float base, float blend) {
+		return min(blend,base);
+	}
+
+	float3 blendDarkenFloat3(float3 base, float3 blend) {
+		return float3(blendDarkenBase(base.r,blend.r),blendDarkenBase(base.g,blend.g),blendDarkenBase(base.b,blend.b));
+	}
+
+	float3 blendDarken(float3 base, float3 blend, float opacity) {
+		return (blendDarkenFloat3(base, blend) * opacity + base * (1.0 - opacity));
+	}
+@end
+
+@piece( custom_ps_preLights )
+	//finalColour = float3(1.0, 1.0, 1.0);
+	//float opacity = material.userValue[0].x;
+	finalColour = finalColour * inPs.diffuse.xyz;
+
+	//finalColour = (min(finalColour, finalColour - inPs.diffuse.xyz) * opacity + finalColour * (1.0 - opacity));
+	//finalColour = blendDarken(finalColour, inPs.diffuse.xyz, 0.5);
+@end
+
+@piece( custom_VStoPS )
+	float3 diffuse;
+@end
+@piece( custom_vs_preExecution )
+    const float3 FACES_NORMALS[6] = {
+        float3(0, -1,  0),
+        float3(0,  1,  0),
+        float3(0,  0, -1),
+        float3(0,  0,  1),
+        float3(1,  0,  0),
+        float3(-1, 0,  0),
+    };
+
+	//outVs.diffuse = input.diffuse;
+	//input.normal = float3(0, 0, 0);
+	//inVs_normal = float3(0, 0, 0);
+	//float test = input.normal.x;
+
+	unsigned int original = as_type<unsigned int>(input.position.x);
+	unsigned int originalSecond = as_type<unsigned int>(input.position.y);
+	unsigned int magicNumber = originalSecond & 0x1FFFFFFF;
+	float3 normVal = float3(0, 0, 0);
+	#undef inVs_normal
+	#define inVs_normal normVal
+	if(magicNumber == 0x15FBF7DB){
+		int pos_x = as_type<int>(original & 0x3FF);
+		int pos_y = as_type<int>((original >> 10) & 0x3FF);
+		int pos_z = as_type<int>((original >> 20) & 0x3FF);
+		input.position.x = float(pos_x);
+		input.position.y = float(pos_y);
+		input.position.z = float(pos_z);
+
+		//unsigned int vox = as_type<unsigned int>(originalSecond & 0xFFFF);
+		unsigned int norm = as_type<unsigned int>((originalSecond >> 29) & 0x3);
+		unsigned int ambient = as_type<unsigned int>((original >> 30) & 0x3);
+
+		normVal = FACES_NORMALS[norm];
+
+		float ambientVal = (float)ambient/3;
+		outVs.diffuse = float3(ambientVal, ambientVal, ambientVal);
+	}else{
+		outVs.diffuse = float3(1, 1, 1);
+	}
+@end

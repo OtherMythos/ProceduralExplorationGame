@@ -7,8 +7,6 @@
     mEXPCounter_ = null;
     mTargetEnemyWidget_ = null;
 
-    mDiffuseSlider_ = null;
-
     mPlayerHealthBar_ = null;
 
     constructor(parentWin, bus){
@@ -42,20 +40,7 @@
         //local healthSize = mPlayerHealthBar_.getPosition();
         //mPlayerHealthBar_.setPosition(healthSize.x, healthSize.y);
 
-        mDiffuseSlider_ = this.mWindow_.createSlider();
-        mDiffuseSlider_.setSize(200, 50);
-        mDiffuseSlider_.setPosition(0, 100);
-        mDiffuseSlider_.setZOrder(110);
-        mDiffuseSlider_.setRange(0, 10);
-        mDiffuseSlider_.attachListener(sliderCallback);
-
         _event.subscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);
-    }
-
-    function sliderCallback(widget, action){
-        //::setSliderValue(widget, widget.getValue());
-        local datablock = _hlms.getDatablock("baseVoxelMaterial");
-        datablock.setUserValue(0, widget.getValue().tofloat() / 10.0, 0, 0, 0);
     }
 
     function shutdown(){

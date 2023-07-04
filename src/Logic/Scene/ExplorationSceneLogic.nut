@@ -114,7 +114,7 @@
         local buf = mWorldData_.voxelBuffer;
         buf.seek(0);
         local voxVals = [
-            2, 3, 0, 192
+            2, 112, 0, 192
         ];
         local waterVal = 192;
         for(local y = 0; y < height; y++){

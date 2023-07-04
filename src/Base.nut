@@ -153,6 +153,7 @@
         //::ScreenManager.transitionToScreen(Screen.STORY_CONTENT_SCREEN);
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_END_SCREEN, {"totalFoundItems": 5, "totalDiscoveredPlaces": 4, "totalEncountered": 2, "totalDefeated": 1}), null, 1);
 
+        setupBaseMaterials();
         setupBaseMeshes();
     }
 
@@ -185,6 +186,7 @@
         light.setDirection(0, -1, -1);
         //light.setPowerScale(PI * 2);
         light.setPowerScale(PI);
+        //light.setPowerScale(PI * 0.8);
 
         local val = 2.0;
         _scene.setAmbientLight(ColourValue(val, val, val, 1.0), ColourValue(val, val, val, 1.0), Vec3(0, 1, 0));
@@ -207,6 +209,11 @@
         local voxData = array(1, 188);
 
         local meshObj = voxMesh.createMeshForVoxelData("EXPOrbMesh", voxData, 1, 1, 1);
+    }
+
+    function setupBaseMaterials(){
+        local datablock = _hlms.getDatablock("baseVoxelMaterial");
+        datablock.setUserValue(0, 0.5, 0, 0, 0);
     }
 
 };

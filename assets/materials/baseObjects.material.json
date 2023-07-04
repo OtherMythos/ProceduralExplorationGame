@@ -12,15 +12,13 @@
         {
             "workflow": "metallic",
 
-            "macroblock": "polyBlock",
-
             "diffuse" :
             {
                 "texture" : "voxelPalette.png"
             },
             "roughness" :
             {
-                "value" : 1
+                "value" : 1.0
             },
             "metallness" :
             {

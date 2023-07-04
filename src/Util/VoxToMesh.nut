@@ -109,62 +109,27 @@
                     local x = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3] + x).tointeger();
                     local y = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 1] + y).tointeger();
                     local z = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 2] + z).tointeger();
-                    assert(x <= 0xFF && x >= -0xFF);
-                    assert(y <= 0xFF && y >= -0xFF);
-                    assert(z <= 0xFF && z >= -0xFF);
-                    local val = x | y << 8 | z << 16;
-                    verts.append(val);
+                    assert(x <= 0x2FF && x >= -0x2FF);
+                    assert(y <= 0x2FF && y >= -0x2FF);
+                    assert(z <= 0x2FF && z >= -0x2FF);
 
                     local ambient = (ambientMask >> 8 * i) & 0xFF;
                     assert(ambient >= 0 && ambient <= 3);
 
-                    val = ambient << 24 | f << 16 | v;
+                    local val = x | y << 10 | z << 20 | ambient << 30;
+                    verts.append(val);
+
+                    //TODO Magic number for now to avoid it breaking the regular materials.
+                    val = f << 29 | 0x15FBF7DB;
                     //val = f;
                     verts.append(val);
                     //verts.append(f);
-                    //TODO Magic number for now to avoid it breaking the regular materials.
-                    verts.append(0xFF7F7F);
                     verts.append(0);
-                    //verts.append(0);
                     //TODO just to pad it out, long term I shouldn't need this.
-                    //verts.append(0);
-                    //verts.append(0);
-                    //verts.append(x);
-                    //verts.append();
-                    //verts.append((VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 2] + z).tointeger());
+                    verts.append(0);
 
-                    //verts.append(FACES_NORMALS[f * 3]);
-                    //verts.append(FACES_NORMALS[f * 3 + 1]);
-                    //verts.append(FACES_NORMALS[f * 3 + 2]);
-
-                    //TODO for the normal and texture. Find a way to remove this.
-                    //verts.append(0);
-                    //verts.append(0);
-                    //verts.append(0);
-                    //if(v == 3){
-                    if(false){
-                        texCoordX = ((v % COLS_WIDTH).tofloat() / COLS_WIDTH);
-                        texCoordY = ((v.tofloat() / COLS_WIDTH) / COLS_HEIGHT);
-                        if(i == 0){
-                            verts.append(texCoordX);
-                            verts.append(texCoordY);
-                        }
-                        else if(i == 1){
-                            verts.append(texCoordX + TILE_WIDTH);
-                            verts.append(texCoordY);
-                        }
-                        else if(i == 2){
-                            verts.append(texCoordX);
-                            verts.append(texCoordY + TILE_HEIGHT);
-                        }
-                        else if(i == 3){
-                            verts.append(texCoordX + TILE_WIDTH);
-                            verts.append(texCoordY + TILE_HEIGHT);
-                        }
-                    }else{
-                        verts.append(texCoordX);
-                        verts.append(texCoordY);
-                    }
+                    verts.append(texCoordX);
+                    verts.append(texCoordY);
                     numVerts++;
                 }
                 indices.append(index + 0);
@@ -181,16 +146,14 @@
 
         local b = blob(verts.len() * 4);
         b.seek(0);
-        local thingCount = 0;
+        local intFloatCount = 0;
         foreach(c,i in verts){
             local valid = c % NUM_VERTS == 0;
             if(valid){
-                thingCount = 3;
+                intFloatCount = 3;
             }
-            b.writen(i, thingCount > 0 ? 'i' : 'f');
-            //b.writen(i, 'i');
-            thingCount--;
-            //b.writen(i, 'f');
+            b.writen(i, intFloatCount > 0 ? 'i' : 'f');
+            intFloatCount--;
         }
         local indiceStride = index + 4 >= 0xFFFF ? 4 : 2;
         local bb = blob(indices.len() * indiceStride);
@@ -212,8 +175,6 @@
         outMesh.setBounds(bounds);
         outMesh.setBoundingSphereRadius(bounds.getRadius());
 
-        local datablock = _hlms.getDatablock("baseVoxelMaterial");
-        datablock.setUserValue(0, 0.1, 0, 0, 0);
         subMesh.setMaterialName("baseVoxelMaterial");
 
         if(mTimer_) mTimer_.stop();
@@ -257,7 +218,7 @@
         -1,  0,  1, /**/ -1,  1,  0, /**/ -1,  1,  1,
         -1,  1,  0, /**/ -1,  0, -1, /**/ -1,  1, -1,
     ];
-    //TODO consider a different approach.
+    //Temporary array to store values deep in the list. Prevents destruction and re-creation of the array.
     foundValsTemp = array(3, 0)
     function getVerticeBorder(data, f, x, y, z, width, height, depth){
         local ret = 0;
@@ -277,9 +238,6 @@
 
                 local vox = readVoxelFromData_(data, xPos, yPos, zPos, width, height);
                 foundValsTemp[i] = vox != null ? 1 : 0;
-                //if(vox != null){
-                    //ret = ret | (1 << v)
-                //}
             }
             //https://0fps.net/2013/07/03/ambient-occlusion-for-minecraft-like-worlds/
             local val = 0;
