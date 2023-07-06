@@ -7,6 +7,8 @@
     mCompositorTexture_ = null
     mSeedLabel_ = null
     mSeedEditbox_ = null
+    mMoistureSeedLabel_ = null
+    mMoistureSeedEditbox_ = null
     mVariationSeedEditbox_ = null
 
     mMapViewer_ = null
@@ -23,6 +25,7 @@
     mTimerLabel_ = null
 
     mSeed_ = 0
+    mMoistureSeed_ = 0
     mVariation_ = 0
 
     mWinWidth_ = 1920
@@ -64,6 +67,21 @@
         layout.addCell(seedEditbox);
         mSeedEditbox_ = seedEditbox;
 
+
+        local moistureSeedLabel = mControlsWindow_.createLabel();
+        moistureSeedLabel.setText("Moisture seed");
+        layout.addCell(moistureSeedLabel);
+        mMoistureSeedLabel_ = moistureSeedLabel;
+
+        local moistureSeedEditbox = mControlsWindow_.createEditbox();
+        moistureSeedEditbox.setSize(300, 50);
+        layout.addCell(moistureSeedEditbox);
+        mMoistureSeedEditbox_ = moistureSeedEditbox;
+
+        local variationLabel = mControlsWindow_.createLabel();
+        variationLabel.setText("Variation");
+        layout.addCell(variationLabel);
+
         local variationSeedEditbox = mControlsWindow_.createEditbox();
         variationSeedEditbox.setSize(300, 50);
         layout.addCell(variationSeedEditbox);
@@ -76,6 +94,11 @@
             print("Input text: " + text.tostring());
             local intText = text.tointeger();
             ::WorldGenTool.setSeed(intText);
+
+            local moistureText = mMoistureSeedEditbox_.getText();
+            print("Input moisture text: " + moistureText.tostring());
+            local moistureIntText = moistureText.tointeger();
+            ::WorldGenTool.setSeed(moistureIntText);
 
             local variationText = mVariationSeedEditbox_.getText();
             print("Variation text: " + variationText.tostring());
@@ -98,6 +121,7 @@
             "Draw water",
             "Draw ground voxels",
             "Show water group",
+            "Show moisture map"
             "Show river data",
             "Show land group",
             "Show edge vals",
@@ -179,12 +203,20 @@
     function setRandomSeed(){
         local seed = _random.randInt(0, 100000);
         setSeed(seed);
+        seed = _random.randInt(0, 100000);
+        setMoistureSeed(seed);
     }
 
     function setSeed(seedValue){
         mSeedLabel_.setText("Seed: " + seedValue.tostring());
         mSeedEditbox_.setText(seedValue.tostring());
         mSeed_ = seedValue;
+    }
+
+    function setMoistureSeed(seedValue){
+        mMoistureSeedLabel_.setText("Moisture seed: " + seedValue.tostring());
+        mMoistureSeedEditbox_.setText(seedValue.tostring());
+        mMoistureSeed_ = seedValue;
     }
 
     function setVariation(variation){
@@ -267,8 +299,9 @@
         local data = {
             "seed": mSeed_,
             "variation": mVariation_,
-            "width": 200,
-            "height": 200,
+            "moistureSeed": mMoistureSeed_,
+            "width": 400,
+            "height": 400,
             "numRivers": 24,
             "seaLevel": 100,
             "altitudeBiomes": [10, 100],

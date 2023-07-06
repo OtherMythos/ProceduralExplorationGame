@@ -2,6 +2,7 @@ enum DrawOptions{
     WATER,
     GROUND_TYPE,
     WATER_GROUPS,
+    MOISTURE_MAP,
     RIVER_DATA,
     LAND_GROUPS,
     EDGE_VALS,
@@ -15,6 +16,7 @@ enum MapViewerColours{
     VOXEL_GROUP_GROUND,
     VOXEL_GROUP_GRASS,
     VOXEL_GROUP_ICE,
+    VOXEL_GROUP_TREES,
 
     OCEAN,
     FRESH_WATER,
@@ -260,6 +262,7 @@ enum MapViewerColours{
         colVals[MapViewerColours.VOXEL_GROUP_GROUND] = ColourValue(0.84, 0.87, 0.29, 1);
         colVals[MapViewerColours.VOXEL_GROUP_GRASS] = ColourValue(0.33, 0.92, 0.27, 1);
         colVals[MapViewerColours.VOXEL_GROUP_ICE] = ColourValue(0.84, 0.88, 0.84, 1);
+        colVals[MapViewerColours.VOXEL_GROUP_TREES] = ColourValue(0.33, 0.66, 0.005, 1);
         colVals[MapViewerColours.OCEAN] = ColourValue(0, 0, 1.0, mOpacity_);
         colVals[MapViewerColours.FRESH_WATER] = ColourValue(0.15, 0.15, 1.0, mOpacity_);
         colVals[MapViewerColours.WATER_GROUPS] = baseVal;
@@ -340,7 +343,7 @@ enum MapViewerColours{
         }else{
             //NOTE: Slight optimisation.
             //Most cases will have ground type enabled, so no point doing this check unless needed.
-            local val = altitude.tofloat() / 255;
+            local val = altitude.tofloat() / 0xFF;
             drawVal = ColourValue(val, val, val, 1).getAsABGR();
         }
         if(mDrawOptions_[DrawOptions.WATER]){
@@ -355,6 +358,13 @@ enum MapViewerColours{
         if(mDrawOptions_[DrawOptions.WATER_GROUPS]){
             local valGroup = waterGroup.tofloat() / mMapData_.waterData.len();
             drawVal = ColourValue(valGroup, valGroup, valGroup, mOpacity_).getAsABGR();
+        }
+        if(mDrawOptions_[DrawOptions.MOISTURE_MAP]){
+            mMapData_.moistureBuffer.seek((xVox + yVox * mMapData_.width) * 4);
+            local moistureVal = mMapData_.moistureBuffer.readn('i');
+
+            local val = moistureVal.tofloat() / 0xFF;
+            drawVal = ColourValue(val, val, val, 1).getAsABGR();
         }
         if(mDrawOptions_[DrawOptions.RIVER_DATA]){
             //local i = 0;

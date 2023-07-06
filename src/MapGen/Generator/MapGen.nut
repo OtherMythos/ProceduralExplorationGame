@@ -1,15 +1,4 @@
 
-enum MapVoxelTypes{
-    SAND,
-    DIRT,
-    SNOW,
-
-    EDGE = 0x40,
-    RIVER = 0x20,
-};
-//The mask is used to include the edge and river flags.
-const MAP_VOXEL_MASK = 0x1F;
-
 /**
  * Provides logic to construct a generated map for exploration.
  */
@@ -43,6 +32,17 @@ const MAP_VOXEL_MASK = 0x1F;
 
         return val > 1.0 ? 1.0 : val;
     }
+    function reduceMoisture(moistureBlob, data){
+        moistureBlob.seek(0);
+        for(local i = 0; i < data.width * data.height; i++){
+            local pos = moistureBlob.tell();
+            local val = moistureBlob.readn('f');
+            val = (val * 0xFF).tointeger();
+            assert(val <= 0xFF);
+            moistureBlob.seek(pos);
+            moistureBlob.writen(val, 'i');
+        }
+    }
     function reduceNoise(blob, data){
         blob.seek(0);
         for(local y = 0; y < data.height; y++){
@@ -70,8 +70,9 @@ const MAP_VOXEL_MASK = 0x1F;
         }
     }
 
-    function determineVoxelTypes(blob, data){
+    function processBiomeTypes(blob, moistureBlob, data){
         blob.seek(0);
+        moistureBlob.seek(0);
 
         local biomeSand = data.seaLevel + data.altitudeBiomes[0];
         local biomeGround = data.seaLevel + data.altitudeBiomes[1];
@@ -79,17 +80,22 @@ const MAP_VOXEL_MASK = 0x1F;
         for(local i = 0; i < data.width * data.height; i++){
             local pos = blob.tell();
             local originalVal = blob.readn('i');
-            local val = originalVal & 0xFF;
+            local altitude = originalVal & 0xFF;
+            local moisture = moistureBlob.readn('i');
 
-            local out = MapVoxelTypes.DIRT;
-            if(val >= 0 && val < biomeSand) out = MapVoxelTypes.SAND;
-            else if(val >= biomeSand && val < biomeGround) out = MapVoxelTypes.DIRT;
-            else if(val >= biomeGround && val <= 255) out = MapVoxelTypes.SNOW;
-            else{
-                assert(false);
+            //The biome determines the type of the voxel as well as what gets placed, so instead determine the biome and pass off to that.
+            local targetBiome = BiomeId.DEEP_OCEAN;
+            if(altitude >= data.seaLevel){
+                targetBiome = BiomeId.GRASS_LAND;
+                if(altitude >= 120 && altitude <= 150){
+                    if(moisture >= 150) targetBiome = BiomeId.GRASS_FOREST;
+                }
             }
 
-            out = originalVal | (out << 8);
+            local biome = ::Biomes[targetBiome];
+            local vox = biome.determineVoxFunction(altitude, moisture);
+
+            local out = originalVal | (vox << 8);
 
             blob.seek(pos);
             blob.writen(out, 'i');
@@ -593,8 +599,14 @@ const MAP_VOXEL_MASK = 0x1F;
         _random.seedPatternGenerator(data.seed);
         _random.seed(data.variation);
 
-        local noiseBlob = _random.genPerlinNoise(data.width, data.height, 0.05, 4);
+        local noiseBlob = _random.genPerlinNoise(data.width, data.height, 0.02, 4);
         assert(noiseBlob.len() == data.width*data.height*4);
+
+        _random.seedPatternGenerator(data.moistureSeed);
+        local moistureBlob = _random.genPerlinNoise(data.width, data.height, 0.05, 4);
+        assert(moistureBlob.len() == data.width*data.height*4);
+
+        reduceMoisture(moistureBlob, data);
         reduceNoise(noiseBlob, data);
         determineAltitude(noiseBlob, data);
         local waterData = floodFillWater(noiseBlob, data);
@@ -602,7 +614,7 @@ const MAP_VOXEL_MASK = 0x1F;
         removeRedundantIslands(noiseBlob, data, landData);
         sortLandmassesBySize(landData);
         local landWeighted = generateLandWeightedAverage(landData);
-        determineVoxelTypes(noiseBlob, data);
+        processBiomeTypes(noiseBlob, moistureBlob, data);
         outlineEdges(noiseBlob, waterData, landData)
         local riverData = determineRiverOrigins(noiseBlob, landData, landWeighted, data);
         calculateRivers(riverData, noiseBlob, data);
@@ -618,6 +630,7 @@ const MAP_VOXEL_MASK = 0x1F;
         printPlaceData(placeData);
 
         local outData = {
+            "moistureBuffer": moistureBlob,
             "voxelBuffer": noiseBlob,
             "width": data.width,
             "height": data.height,

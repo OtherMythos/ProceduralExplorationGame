@@ -530,10 +530,11 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         local gen = ::MapGen();
         local data = {
             "seed": _random.randInt(0, 1000),
+            "moistureSeed": _random.randInt(0, 1000),
             "variation": _random.randInt(0, 1000),
-            "width": 200,
-            "height": 200,
-            "numRivers": 12,
+            "width": 400,
+            "height": 400,
+            "numRivers": 24,
             "seaLevel": 100,
             "altitudeBiomes": [10, 100],
             "placeFrequency": [0, 1, 1, 4, 4, 30]
