@@ -70,36 +70,45 @@
         }
     }
 
-    function processBiomeTypes(blob, moistureBlob, data){
+    function processBiomeTypes(blob, moistureBlob, blueNoise, data){
         blob.seek(0);
         moistureBlob.seek(0);
 
         local biomeSand = data.seaLevel + data.altitudeBiomes[0];
         local biomeGround = data.seaLevel + data.altitudeBiomes[1];
 
-        for(local i = 0; i < data.width * data.height; i++){
-            local pos = blob.tell();
-            local originalVal = blob.readn('i');
-            local altitude = originalVal & 0xFF;
-            local moisture = moistureBlob.readn('i');
+        local placementItems = [];
 
-            //The biome determines the type of the voxel as well as what gets placed, so instead determine the biome and pass off to that.
-            local targetBiome = BiomeId.DEEP_OCEAN;
-            if(altitude >= data.seaLevel){
-                targetBiome = BiomeId.GRASS_LAND;
-                if(altitude >= 120 && altitude <= 150){
-                    if(moisture >= 150) targetBiome = BiomeId.GRASS_FOREST;
+        local width = data.width;
+        local height = data.height;
+        for(local y = 0; y < height; y++){
+            for(local x = 0; x < width; x++){
+                local pos = blob.tell();
+                local originalVal = blob.readn('i');
+                local altitude = originalVal & 0xFF;
+                local moisture = moistureBlob.readn('i');
+
+                //The biome determines the type of the voxel as well as what gets placed, so instead determine the biome and pass off to that.
+                local targetBiome = BiomeId.DEEP_OCEAN;
+                if(altitude >= data.seaLevel){
+                    targetBiome = BiomeId.GRASS_LAND;
+                    if(altitude >= 120 && altitude <= 150){
+                        if(moisture >= 150) targetBiome = BiomeId.GRASS_FOREST;
+                    }
                 }
+
+                local biome = ::Biomes[targetBiome];
+                local vox = biome.determineVoxFunction(altitude, moisture);
+                biome.placeObjectsFunction(placementItems, blueNoise, x, y, width, height, altitude, moisture);
+
+                local out = originalVal | (vox << 8);
+
+                blob.seek(pos);
+                blob.writen(out, 'i');
             }
-
-            local biome = ::Biomes[targetBiome];
-            local vox = biome.determineVoxFunction(altitude, moisture);
-
-            local out = originalVal | (vox << 8);
-
-            blob.seek(pos);
-            blob.writen(out, 'i');
         }
+
+        return placementItems;
     }
 
 
@@ -606,6 +615,9 @@
         local moistureBlob = _random.genPerlinNoise(data.width, data.height, 0.05, 4);
         assert(moistureBlob.len() == data.width*data.height*4);
 
+        local blueNoise = _random.genPerlinNoise(data.width, data.height, 0.5, 1);
+        assert(blueNoise.len() == data.width*data.height*4);
+
         reduceMoisture(moistureBlob, data);
         reduceNoise(noiseBlob, data);
         determineAltitude(noiseBlob, data);
@@ -614,7 +626,7 @@
         removeRedundantIslands(noiseBlob, data, landData);
         sortLandmassesBySize(landData);
         local landWeighted = generateLandWeightedAverage(landData);
-        processBiomeTypes(noiseBlob, moistureBlob, data);
+        local placedItems = processBiomeTypes(noiseBlob, moistureBlob, blueNoise, data);
         outlineEdges(noiseBlob, waterData, landData)
         local riverData = determineRiverOrigins(noiseBlob, landData, landWeighted, data);
         calculateRivers(riverData, noiseBlob, data);
@@ -632,13 +644,15 @@
         local outData = {
             "moistureBuffer": moistureBlob,
             "voxelBuffer": noiseBlob,
+            "blueNoiseBuffer": blueNoise,
             "width": data.width,
             "height": data.height,
             "waterData": waterData,
             "landData": landData,
             "riverBuffer": riverBuffer,
             "seaLevel": data.seaLevel,
-            "placeData": placeData
+            "placeData": placeData,
+            "placedItems": placedItems,
             "stats": {
                 "totalSeconds": mTimer_.getSeconds()
             }

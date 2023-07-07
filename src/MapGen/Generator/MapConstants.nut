@@ -22,3 +22,14 @@ enum BiomeId{
 
     MAX
 };
+
+/**
+ * Generally aestetic things like trees, rocks, etc.
+ */
+enum PlacedItemId{
+    NONE,
+
+    TREE,
+
+    MAX
+};

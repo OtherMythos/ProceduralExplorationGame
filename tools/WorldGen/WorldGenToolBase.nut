@@ -122,6 +122,7 @@
             "Draw ground voxels",
             "Show water group",
             "Show moisture map"
+            "Show blue noise",
             "Show river data",
             "Show land group",
             "Show edge vals",

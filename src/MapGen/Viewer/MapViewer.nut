@@ -3,6 +3,7 @@ enum DrawOptions{
     GROUND_TYPE,
     WATER_GROUPS,
     MOISTURE_MAP,
+    BLUE_NOISE,
     RIVER_DATA,
     LAND_GROUPS,
     EDGE_VALS,
@@ -324,6 +325,12 @@ enum MapViewerColours{
                 textureBox.writen(colour, 'i');
             }
         }
+
+        //Now determine some of the individual pixels
+        foreach(i in mMapData_.placedItems){
+            textureBox.seek((i.originX + i.originY * mMapData_.width) * 4);
+            textureBox.writen(0, 'i');
+        }
     }
 
     function _getColourForVox(xVox, yVox){
@@ -364,6 +371,12 @@ enum MapViewerColours{
             local moistureVal = mMapData_.moistureBuffer.readn('i');
 
             local val = moistureVal.tofloat() / 0xFF;
+            drawVal = ColourValue(val, val, val, 1).getAsABGR();
+        }
+        if(mDrawOptions_[DrawOptions.BLUE_NOISE]){
+            mMapData_.blueNoiseBuffer.seek((xVox + yVox * mMapData_.width) * 4);
+            local val = mMapData_.blueNoiseBuffer.readn('f');
+
             drawVal = ColourValue(val, val, val, 1).getAsABGR();
         }
         if(mDrawOptions_[DrawOptions.RIVER_DATA]){
