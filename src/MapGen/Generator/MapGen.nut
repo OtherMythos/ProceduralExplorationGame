@@ -70,19 +70,12 @@
         }
     }
 
-    function processBiomeTypes(blob, moistureBlob, blueNoise, data){
+    function processBiomeTypes(blob, moistureBlob, data){
         blob.seek(0);
         moistureBlob.seek(0);
 
-        local biomeSand = data.seaLevel + data.altitudeBiomes[0];
-        local biomeGround = data.seaLevel + data.altitudeBiomes[1];
-
-        local placementItems = [];
-
-        local width = data.width;
-        local height = data.height;
-        for(local y = 0; y < height; y++){
-            for(local x = 0; x < width; x++){
+        for(local y = 0; y < data.height; y++){
+            for(local x = 0; x < data.width; x++){
                 local pos = blob.tell();
                 local originalVal = blob.readn('i');
                 local altitude = originalVal & 0xFF;
@@ -98,28 +91,51 @@
                     }
                 }
 
-                local biome = ::Biomes[targetBiome];
-                local vox = biome.determineVoxFunction(altitude, moisture);
-                biome.placeObjectsFunction(placementItems, blueNoise, x, y, width, height, altitude, moisture, flags);
-
-                local out = originalVal | (vox << 8);
+                //Write the biome for now, later keep track of the biome group after the flood fill.
+                local out = originalVal | (targetBiome << 8);
 
                 blob.seek(pos);
                 blob.writen(out, 'i');
+            }
+        }
+    }
+    function determineFinalBiomes(noiseBlob, biomeData){
+        //TODO in future alter some of the biomes.
+    }
+    function populateFinalBiomes(noiseBlob, blueNoise, biomeData){
+        local placementItems = [];
+
+        local width = mData_.width;
+        local height = mData_.height;
+        foreach(i in biomeData){
+            foreach(wrapped in i.coords){
+                local x = (wrapped >> 16) & 0xFFFF;
+                local y = wrapped & 0xFFFF;
+                local pos = (x + y * width) * 4;
+                noiseBlob.seek(pos);
+                local val = noiseBlob.readn('i');
+                local targetBiome = (val >> 8) & MAP_VOXEL_MASK;
+                local flags = (val >> 8) & ~MAP_VOXEL_MASK;
+
+                local biome = ::Biomes[targetBiome];
+                local vox = biome.determineVoxFunction(val & 0xFF);
+                biome.placeObjectsFunction(placementItems, blueNoise, x, y, width, height, val & 0xFF, flags);
+
+                noiseBlob.seek(pos);
+                noiseBlob.writen((val & (0xFFFF00FF | MAP_VOXEL_MASK)) | vox << 8, 'i');
             }
         }
 
         return placementItems;
     }
 
-
-    function floodFill_(x, y, width, height, comparisonFunction, vals, blob, currentIdx, floodData){
+    function floodFill_(x, y, width, height, readFunction, comparisonFunction, vals, blob, currentIdx, floodData){
         if(x < 0 || y < 0 || x >= width || y >= height) return 0;
         local idx = x+y*width;
         if(vals[idx] != 0xFF) return 0;
 
-        local altitude = readAltitude_(blob, x, y, width);
-        if(!comparisonFunction(altitude)) return 1;
+        local readVal = readFunction(blob, x, y, width);
+        if(!comparisonFunction(readVal)) return 1;
 
         if(x == 0 || y == 0 || x == width-1 || y == height-1){
             floodData.nextToWorldEdge = true;
@@ -130,10 +146,10 @@
         local wrappedPos = wrapWorldPos_(x, y);
         floodData.coords.append(wrappedPos);
         local isEdge = 0;
-        isEdge = isEdge | floodFill_(x-1, y, width, height, comparisonFunction, vals, blob, currentIdx, floodData);
-        isEdge = isEdge | floodFill_(x+1, y, width, height, comparisonFunction, vals, blob, currentIdx, floodData);
-        isEdge = isEdge | floodFill_(x, y-1, width, height, comparisonFunction, vals, blob, currentIdx, floodData);
-        isEdge = isEdge | floodFill_(x, y+1, width, height, comparisonFunction, vals, blob, currentIdx, floodData);
+        isEdge = isEdge | floodFill_(x-1, y, width, height, readFunction, comparisonFunction, vals, blob, currentIdx, floodData);
+        isEdge = isEdge | floodFill_(x+1, y, width, height, readFunction, comparisonFunction, vals, blob, currentIdx, floodData);
+        isEdge = isEdge | floodFill_(x, y-1, width, height, readFunction, comparisonFunction, vals, blob, currentIdx, floodData);
+        isEdge = isEdge | floodFill_(x, y+1, width, height, readFunction, comparisonFunction, vals, blob, currentIdx, floodData);
 
         if(isEdge){
             floodData.edges.append(wrappedPos);
@@ -142,14 +158,16 @@
         return 0;
     }
 
-    function floodFill(comparisonFunction, shiftVal, blob, data){
+    checkingVal = null;
+    function floodFill(comparisonFunction, readFunction, shiftVal, blob, data, writeToBlob=true){
         local vals = array(data.width*data.height, 0xFF);
         local outData = [];
         local currentIdx = 0;
 
         for(local y = 0; y < data.height; y++){
             for(local x = 0; x < data.width; x++){
-                local altitude = readAltitude_(blob, x, y, data.width);
+                local altitude = readFunction(blob, x, y, data.width);
+                checkingVal = altitude;
                 if(comparisonFunction(altitude)){
                     //Designate this as water.
                     if(vals[x + y * data.width] == 0xFF){
@@ -162,7 +180,7 @@
                             "edges": [],
                             "coords": []
                         };
-                        floodFill_(x, y, data.width, data.height, comparisonFunction, vals, blob, currentIdx, floodData);
+                        floodFill_(x, y, data.width, data.height, readFunction, comparisonFunction, vals, blob, currentIdx, floodData);
                         outData.append(floodData);
                         currentIdx++;
                     }
@@ -170,17 +188,19 @@
             }
         }
 
-        //Ensure sizes match up.
-        assert(blob.len() == vals.len() * 4);
-        //Commit the values to the blob.
-        blob.seek(0);
-        for(local i = 0; i < vals.len(); i++){
-            local pos = blob.tell();
-            local current = blob.readn('i');
-            current = current | ((vals[i] & 0xFF) << shiftVal);
+        if(writeToBlob){
+            //Ensure sizes match up.
+            assert(blob.len() == vals.len() * 4);
+            //Commit the values to the blob.
+            blob.seek(0);
+            for(local i = 0; i < vals.len(); i++){
+                local pos = blob.tell();
+                local current = blob.readn('i');
+                current = current | ((vals[i] & 0xFF) << shiftVal);
 
-            blob.seek(pos);
-            blob.writen(current, 'i');
+                blob.seek(pos);
+                blob.writen(current, 'i');
+            }
         }
 
         assert(outData.len() < 0xFF);
@@ -191,14 +211,23 @@
         return altitude < mData_.seaLevel;
     }
     function floodFillWater(blob, data){
-        return floodFill(floodFillWaterComparisonFunction_, 16, blob, data);
+        return floodFill(floodFillWaterComparisonFunction_, readAltitude_, 16, blob, data);
+    }
+
+    function floodFillBiomeComparisonFunction_(val){
+        printf("checking original val %i", (val));
+        printf("checking val %i", (val & MAP_VOXEL_MASK));
+        return (val & MAP_VOXEL_MASK) == checkingVal;
+    }
+    function floodFillBiomes(blob, data){
+        return floodFill(floodFillBiomeComparisonFunction_, readWholeVoxel_, 8, blob, data, false);
     }
 
     function floodFillLandComparisonFunction_(altitude){
         return altitude >= mData_.seaLevel;
     }
     function floodFillLand(blob, data){
-        return floodFill(floodFillLandComparisonFunction_, 24, blob, data);
+        return floodFill(floodFillLandComparisonFunction_, readAltitude_, 24, blob, data);
     }
 
 
@@ -543,8 +572,13 @@
     }
     function readVoxFlags_(blob, x, y, width){
         blob.seek((x + y * width) * 4);
-        local val = (blob.readn('i') >> 8) & MAP_VOXEL_MASK;
+        local val = (blob.readn('i') >> 8) & ~MAP_VOXEL_MASK;
         return val;
+    }
+    function readWholeVoxel_(blob, x, y, width){
+        blob.seek((x + y * width) * 4);
+        local val = (blob.readn('i') >> 8);
+        return val & 0xFF;
     }
 
     function markVoxelAsRiver_(blob, x, y, width){
@@ -637,7 +671,10 @@
         local riverBuffer = riverDataToBlob(riverData);
         carveRivers(noiseBlob, riverBuffer);
         local placeData = determinePlaces(noiseBlob, landData, landWeighted, data);
-        local placedItems = processBiomeTypes(noiseBlob, moistureBlob, blueNoise, data);
+        processBiomeTypes(noiseBlob, moistureBlob, data);
+        local biomeData = floodFillBiomes(noiseBlob, data);
+        determineFinalBiomes(noiseBlob, biomeData);
+        local placedItems = populateFinalBiomes(noiseBlob, blueNoise, biomeData);
 
         mTimer_.stop();
 
@@ -654,6 +691,7 @@
             "height": data.height,
             "waterData": waterData,
             "landData": landData,
+            "biomeData": biomeData,
             "riverBuffer": riverBuffer,
             "seaLevel": data.seaLevel,
             "placeData": placeData,
