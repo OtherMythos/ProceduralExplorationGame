@@ -157,6 +157,44 @@ testCount = 0;
         return enemy;
     }
 
+    function constructPlacedItem(itemData, idx){
+        local en = _entity.create(SlotPosition());
+        if(!en.valid()) throw "Error creating entity";
+        local targetPos = Vec3(itemData.originX, 0, -itemData.originY);
+        targetPos.y = getZForPos(targetPos);
+
+        local entry = ::ExplorationLogic.ActiveEnemyEntry(itemData.type, targetPos, en);
+
+        local placeNode = mBaseSceneNode_.createChildSceneNode();
+        local meshTarget = "tree.mesh";
+        placeNode.setPosition(targetPos);
+        local item = _scene.createItem(meshTarget);
+        item.setRenderQueueGroup(30);
+        placeNode.attachObject(item);
+        placeNode.setScale(0.6, 0.6, 0.6);
+        _component.sceneNode.add(en, placeNode, true);
+
+
+        local receiverInfo = {
+            "type" : _COLLISION_ENEMY
+        };
+        local shape = _physics.getSphereShape(2);
+        local damageReceiver = _physics.collision[DAMAGE].createReceiver(receiverInfo, shape, targetPos);
+        _physics.collision[DAMAGE].addObject(damageReceiver);
+        _component.collision.add(en, damageReceiver);
+
+
+        local totalHealth = 1;
+        _component.user[Component.HEALTH].add(en);
+        _component.user[Component.HEALTH].set(en, 0, totalHealth);
+        _component.user[Component.HEALTH].set(en, 1, totalHealth);
+
+
+        entry.setPosition(::Base.mExplorationLogic.mSceneLogic_, targetPos);
+
+        return entry;
+    }
+
     function constructPlace(placeData, idx, explorationScreen){
         //if(testCount > 0) return;
 testCount++;

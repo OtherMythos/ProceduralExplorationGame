@@ -86,6 +86,7 @@
                 local pos = blob.tell();
                 local originalVal = blob.readn('i');
                 local altitude = originalVal & 0xFF;
+                local flags = (originalVal >> 8) & 0xFF;
                 local moisture = moistureBlob.readn('i');
 
                 //The biome determines the type of the voxel as well as what gets placed, so instead determine the biome and pass off to that.
@@ -99,7 +100,7 @@
 
                 local biome = ::Biomes[targetBiome];
                 local vox = biome.determineVoxFunction(altitude, moisture);
-                biome.placeObjectsFunction(placementItems, blueNoise, x, y, width, height, altitude, moisture);
+                biome.placeObjectsFunction(placementItems, blueNoise, x, y, width, height, altitude, moisture, flags);
 
                 local out = originalVal | (vox << 8);
 
@@ -429,6 +430,10 @@
         local randIndex = _random.randIndex(landData.coords);
         return landData.coords[randIndex];
     }
+    function checkPointValidForFlags(blob, packedOrigin, flags){
+        local f = readVoxFlags_(blob, (packedOrigin >> 16) & 0xFFFF, packedOrigin & 0xFFFF, mData_.width);
+        return (f & flags) == 0;
+    }
 
     /**
      * Generate a list with 100 entries, where each entry is a value in the land data list.
@@ -487,7 +492,18 @@
     function determinePlaces_place(noiseBlob, landData, landWeighted, place, placeId){
         local landmassId = determinePlaces_determineLandmassForPlace(landData, landWeighted, place);
         local landmass = landData[landmassId];
-        local point = findRandomPointInLandmass(landmass);
+
+        local point = null;
+        //Avoid infinite loops incase of not finding a suitable place.
+        for(local i = 0; i < 100; i++){
+            local intended = findRandomPointInLandmass(landmass);
+            if(checkPointValidForFlags(noiseBlob, intended, MapVoxelTypes.RIVER)){
+                //In this case stop the check.
+                point = intended;
+                break;
+            }
+        }
+        if(point == null) return null;
 
         local placeData = {
             "originX": (point >> 16) & 0xFFFF,
@@ -508,6 +524,7 @@
                 local targetPlace = totalPlaces[_random.randIndex(totalPlaces)];
                 local place = ::Places[targetPlace];
                 local addedPlace = determinePlaces_place(noiseBlob, landData, landWeighted, place, targetPlace);
+                if(addedPlace == null) continue;
                 placeData.append(addedPlace);
             }
         }
@@ -524,30 +541,18 @@
         local val = blob.readn('i');
         return val & 0xFF;
     }
-
-    function setVoxToRiver(blob, x, y, width){
-        local pos = (x + y * width) * 4;
-        blob.seek(pos);
-        local original = blob.readn('i');
-        local vox = (original & 0xFF00) >> 8;
-        local newVal = original & 0xFFFFFF00;
-        local val = altitude + dipVal;
-        if(val < 0) val = 0;
-        if(val > 0xFF) val = 0xFF;
-        assert(val >= 0 && val <= 0xFF);
-        newVal = newVal | val;
-        blob.seek(pos);
-        blob.writen(newVal, 'i');
+    function readVoxFlags_(blob, x, y, width){
+        blob.seek((x + y * width) * 4);
+        local val = (blob.readn('i') >> 8) & MAP_VOXEL_MASK;
+        return val;
     }
+
     function markVoxelAsRiver_(blob, x, y, width){
         local pos = (x + y * width) * 4;
         blob.seek(pos);
         local original = blob.readn('i');
-        local voxVal = (original >> 8) & 0xFF;
-        local newVal = voxVal | MapVoxelTypes.RIVER;
-        newVal = (original & 0xFFFF00FF) | newVal << 8;
         blob.seek(pos);
-        blob.writen(newVal, 'i');
+        blob.writen(original | (MapVoxelTypes.RIVER << 8), 'i');
     }
     /**
      * Reduce the current landmass altitude by the requested amount.
@@ -626,13 +631,13 @@
         removeRedundantIslands(noiseBlob, data, landData);
         sortLandmassesBySize(landData);
         local landWeighted = generateLandWeightedAverage(landData);
-        local placedItems = processBiomeTypes(noiseBlob, moistureBlob, blueNoise, data);
         outlineEdges(noiseBlob, waterData, landData)
         local riverData = determineRiverOrigins(noiseBlob, landData, landWeighted, data);
         calculateRivers(riverData, noiseBlob, data);
         local riverBuffer = riverDataToBlob(riverData);
         carveRivers(noiseBlob, riverBuffer);
         local placeData = determinePlaces(noiseBlob, landData, landWeighted, data);
+        local placedItems = processBiomeTypes(noiseBlob, moistureBlob, blueNoise, data);
 
         mTimer_.stop();
 

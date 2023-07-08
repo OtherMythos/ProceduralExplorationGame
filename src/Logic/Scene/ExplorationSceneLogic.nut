@@ -77,6 +77,7 @@
         _developer.setRenderQueueForMeshGroup(30);
 
         setupPlaces();
+        createPlacedItems();
     }
 
     function setupPlaces(){
@@ -114,7 +115,7 @@
         local buf = mWorldData_.voxelBuffer;
         buf.seek(0);
         local voxVals = [
-            2, 112, 0, 192
+            2, 112, 0, 147
         ];
         local waterVal = 192;
         for(local y = 0; y < height; y++){
@@ -128,6 +129,7 @@
                 local isRiver = (vox >> 8) & MapVoxelTypes.RIVER;
                 if(isRiver){
                     altitude-=2;
+                    if(altitude < 1) altitude = 1;
                 }
                 //if(voxFloat <= mWorldData_.seaLevel) voxelMeta = 3;
                 for(local i = 0; i < altitude; i++){
@@ -149,6 +151,13 @@
         landNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
 
         vox.printStats();
+    }
+
+    function createPlacedItems(){
+        foreach(c,i in mWorldData_.placedItems){
+            local itemEntry = ::ExplorationEntityFactory.constructPlacedItem(i, c);
+            mActivePlaces_.append(itemEntry);
+        }
     }
 
     function getTraverseTerrainForPosition(mPos_){

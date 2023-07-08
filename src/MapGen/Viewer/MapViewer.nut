@@ -329,7 +329,7 @@ enum MapViewerColours{
         //Now determine some of the individual pixels
         foreach(i in mMapData_.placedItems){
             textureBox.seek((i.originX + i.originY * mMapData_.width) * 4);
-            textureBox.writen(0, 'i');
+            textureBox.writen(mColours_[MapViewerColours.COLOUR_BLACK], 'i');
         }
     }
 

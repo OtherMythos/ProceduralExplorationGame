@@ -45,9 +45,10 @@ local Biome = class{
             return MapVoxelTypes.SAND;
         }
     },
-    function(placementItems, noise, x, y, width, height, altitude, moisture){
+    function(placementItems, noise, x, y, width, height, altitude, moisture, flags){
         //Don't place trees on the sand.
         if(altitude >= 110){
+            if(flags & MapVoxelTypes.RIVER) return;
             if(processRValue(noise, x, y, width, height, 6)){
                 printf("Placing tree %i, %i", x, y);
                 placementItems.append({
@@ -64,7 +65,8 @@ local Biome = class{
     function(altitude, moisture){
         return MapVoxelTypes.TREES;
     },
-    function(placementItems, noise, x, y, width, height, altitude, moisture){
+    function(placementItems, noise, x, y, width, height, altitude, moisture, flags){
+        if(flags & MapVoxelTypes.RIVER) return;
         if(processRValue(noise, x, y, width, height, 1)){
             printf("Placing tree %i, %i", x, y);
             placementItems.append({
@@ -80,7 +82,7 @@ local Biome = class{
     function(altitude, moisture){
         return MapVoxelTypes.SAND;
     },
-    function(placementItems, noise, x, y, width, height, altitude, moisture){
+    function(placementItems, noise, x, y, width, height, altitude, moisture, flags){
 
     }
 );
@@ -88,7 +90,7 @@ local Biome = class{
     function(altitude, moisture){
         return MapVoxelTypes.SAND;
     },
-    function(placementItems, noise, x, y, width, height, altitude, moisture){
+    function(placementItems, noise, x, y, width, height, altitude, moisture, flags){
 
     }
 );
