@@ -100,7 +100,19 @@
         }
     }
     function determineFinalBiomes(noiseBlob, biomeData){
-        //TODO in future alter some of the biomes.
+        if(_random.randInt(1) == 0){
+            local availableBiomes = [];
+            foreach(c,i in biomeData){
+                if(i.startingVal == BiomeId.GRASS_FOREST){
+                    availableBiomes.append(c);
+                }
+            }
+            //Decide which biome to alter.
+            local index = _random.randIndex(availableBiomes);
+            local data = availableBiomes[index];
+
+            biomeData[data].startingVal = BiomeId.CHERRY_BLOSSOM_FOREST;
+        }
     }
     function populateFinalBiomes(noiseBlob, blueNoise, biomeData){
         local placementItems = [];
@@ -108,13 +120,13 @@
         local width = mData_.width;
         local height = mData_.height;
         foreach(i in biomeData){
-            foreach(wrapped in i.coords){
+            local targetBiome = i.startingVal;
+            foreach(c,wrapped in i.coords){
                 local x = (wrapped >> 16) & 0xFFFF;
                 local y = wrapped & 0xFFFF;
                 local pos = (x + y * width) * 4;
                 noiseBlob.seek(pos);
                 local val = noiseBlob.readn('i');
-                local targetBiome = (val >> 8) & MAP_VOXEL_MASK;
                 local flags = (val >> 8) & ~MAP_VOXEL_MASK;
 
                 local biome = ::Biomes[targetBiome];
@@ -176,6 +188,7 @@
                             "total": 0,
                             "seedX": x,
                             "seedY": y,
+                            "startingVal": checkingVal,
                             "nextToWorldEdge": false,
                             "edges": [],
                             "coords": []
@@ -215,8 +228,6 @@
     }
 
     function floodFillBiomeComparisonFunction_(val){
-        printf("checking original val %i", (val));
-        printf("checking val %i", (val & MAP_VOXEL_MASK));
         return (val & MAP_VOXEL_MASK) == checkingVal;
     }
     function floodFillBiomes(blob, data){

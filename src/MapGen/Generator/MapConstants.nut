@@ -4,6 +4,7 @@ enum MapVoxelTypes{
     DIRT,
     SNOW,
     TREES,
+    TREES_CHERRY_BLOSSOM,
 
     EDGE = 0x40,
     RIVER = 0x20,
@@ -16,6 +17,7 @@ enum BiomeId{
 
     GRASS_LAND,
     GRASS_FOREST,
+    CHERRY_BLOSSOM_FOREST,
 
     SHALLOW_OCEAN,
     DEEP_OCEAN,
@@ -30,6 +32,7 @@ enum PlacedItemId{
     NONE,
 
     TREE,
+    CHERRY_BLOSSOM_TREE,
 
     MAX
 };

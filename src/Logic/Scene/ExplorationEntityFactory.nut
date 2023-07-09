@@ -166,7 +166,7 @@ testCount = 0;
         local entry = ::ExplorationLogic.ActiveEnemyEntry(itemData.type, targetPos, en);
 
         local placeNode = mBaseSceneNode_.createChildSceneNode();
-        local meshTarget = "tree.mesh";
+        local meshTarget = itemData.type == PlacedItemId.CHERRY_BLOSSOM_TREE ? "treeCherryBlossom.mesh" : "tree.mesh";
         placeNode.setPosition(targetPos);
         local item = _scene.createItem(meshTarget);
         item.setRenderQueueGroup(30);

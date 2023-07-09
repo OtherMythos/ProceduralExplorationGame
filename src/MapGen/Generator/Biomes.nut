@@ -78,6 +78,22 @@ local Biome = class{
         }
     }
 );
+::Biomes[BiomeId.CHERRY_BLOSSOM_FOREST] = Biome(
+    function(altitude){
+        return MapVoxelTypes.TREES_CHERRY_BLOSSOM;
+    },
+    function(placementItems, noise, x, y, width, height, altitude, flags){
+        if(flags & MapVoxelTypes.RIVER) return;
+        if(processRValue(noise, x, y, width, height, 1)){
+            placementItems.append({
+                "originX": x,
+                "originY": y,
+                "originWrapped": x << 16 | y,
+                "type": PlacedItemId.CHERRY_BLOSSOM_TREE
+            });
+        }
+    }
+);
 ::Biomes[BiomeId.SHALLOW_OCEAN] = Biome(
     function(altitude){
         return MapVoxelTypes.SAND;
