@@ -13,7 +13,7 @@
 testCount = 0;
         local en = _entity.create(SlotPosition());
         if(!en.valid()) throw "Error creating entity";
-        local playerEntry = ::ExplorationLogic.ActiveEnemyEntry(EnemyId.NONE, Vec2(0, 0), en);
+        local playerEntry = ActiveEnemyEntry(EnemyId.NONE, Vec3(0, 0, 0), en);
 
         local playerNode = mBaseSceneNode_.createChildSceneNode();
         local playerModel = mCharacterGenerator_.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, 30);
@@ -72,7 +72,7 @@ testCount = 0;
         if(!en.valid()) throw "Error creating entity";
         local zPos = getZForPos(pos);
         local targetPos = Vec3(pos.x, zPos, pos.z);
-        local entry = ::ExplorationLogic.ActiveEnemyEntry(enemyType, targetPos, en);
+        local entry = ActiveEnemyEntry(enemyType, targetPos, en);
 
         local enemyNode = mBaseSceneNode_.createChildSceneNode();
 
@@ -163,7 +163,7 @@ testCount = 0;
         local targetPos = Vec3(itemData.originX, 0, -itemData.originY);
         targetPos.y = getZForPos(targetPos);
 
-        local entry = ::ExplorationLogic.ActiveEnemyEntry(itemData.type, targetPos, en);
+        local entry = ActiveEnemyEntry(itemData.type, targetPos, en);
 
         local placeNode = mBaseSceneNode_.createChildSceneNode();
         local meshTarget = itemData.type == PlacedItemId.CHERRY_BLOSSOM_TREE ? "treeCherryBlossom.mesh" : "tree.mesh";
@@ -204,7 +204,7 @@ testCount++;
         local targetPos = Vec3(placeData.originX, 0, -placeData.originY);
         targetPos.y = getZForPos(targetPos);
 
-        local entry = ::ExplorationLogic.ActiveEnemyEntry(placeData.placeId, targetPos, en);
+        local entry = ActiveEnemyEntry(placeData.placeId, targetPos, en);
 
         local placeNode = mBaseSceneNode_.createChildSceneNode();
         local placeType = ::Places[placeData.placeId].getType();
@@ -252,7 +252,7 @@ testCount++;
         local en = _entity.create(SlotPosition(targetPos));
         if(!en.valid()) throw "Error creating entity";
 
-        //local entry = ::ExplorationLogic.ActiveEnemyEntry(placeData.placeId, targetPos, en);
+        //local entry = ActiveEnemyEntry(placeData.placeId, targetPos, en);
 
         local placeNode = mBaseSceneNode_.createChildSceneNode();
         placeNode.setPosition(targetPos);

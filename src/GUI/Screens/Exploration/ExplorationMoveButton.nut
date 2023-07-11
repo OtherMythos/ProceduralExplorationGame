@@ -31,7 +31,7 @@
     }
 
     function buttonPressed(widget, action){
-        ::Base.mExplorationLogic.triggerPlayerMove(widget.getUserId());
+        ::Base.mExplorationLogic.mCurrentWorld_.triggerPlayerMove(widget.getUserId());
     }
 
     function notifyMovePerformed(){

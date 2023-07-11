@@ -35,7 +35,7 @@ function destroyed(eid){
     local endPos = ::Base.mExplorationLogic.mGui_.getMoneyCounter().getPositionWindowPos();
     ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": 10, "start": worldPos, "end": endPos, "money": 10, "coinScale": 0.1}));
 
-    ::Base.mExplorationLogic.spawnEXPOrbs(eid.getPosition().toVector3(), 8);
+    ::Base.mExplorationLogic.mCurrentWorld_.spawnEXPOrbs(eid.getPosition().toVector3(), 8);
 
     ::w.e.rawdelete(eid.getId());
     ::Base.mExplorationLogic.notifyEnemyDestroyed(eid.getId());
@@ -57,10 +57,11 @@ function destroyed(eid){
     };
     chasingPlayerState = {
         "start": function(ctx, e) {
-            ctx.targetingId = ::Base.mExplorationLogic.mTargetManager_.targetEntity(::Base.mExplorationLogic.mPlayerEntry_, ::Base.mExplorationLogic.mActiveEnemies_[e.getId()]);
+            //TODO remove direct access.
+            ctx.targetingId = ::Base.mExplorationLogic.mTargetManager_.targetEntity(::Base.mExplorationLogic.mCurrentWorld_.mPlayerEntry_, ::Base.mExplorationLogic.mCurrentWorld_.mActiveEnemies_[e.getId()]);
         },
         "update": function(ctx, e, data) {
-            ::Base.mExplorationLogic.moveEnemyToPlayer(e.getId());
+            ::Base.mExplorationLogic.mCurrentWorld_.moveEnemyToPlayer(e.getId());
 
             if(ctx.attacking){
                 ctx.attackCooldown--;
@@ -68,7 +69,7 @@ function destroyed(eid){
                     ctx.attackCooldown = ctx.maxAttackCooldown;
 
                     //::Base.mExplorationLogic.performMove(MoveId.AREA, e.getPosition().toVector3(), null, _COLLISION_PLAYER);
-                    ::Base.mExplorationLogic.entityPerformAttack(e.getId());
+                    ::Base.mExplorationLogic.mCurrentWorld_.entityPerformAttack(e.getId());
                 }
             }
         },
@@ -86,7 +87,7 @@ function destroyed(eid){
         },
         "end": function(ctx, e) {
             assert(ctx.targetingId != -1);
-            ::Base.mExplorationLogic.mTargetManager_.releaseTarget(::Base.mExplorationLogic.mActiveEnemies_[e.getId()], ctx.targetingId);
+            ::Base.mExplorationLogic.mTargetManager_.releaseTarget(::Base.mExplorationLogic.mCurrentWorld_.mActiveEnemies_[e.getId()], ctx.targetingId);
         },
     };
 

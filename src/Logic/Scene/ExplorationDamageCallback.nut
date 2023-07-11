@@ -16,7 +16,7 @@ function baseDamage(id, type, internalId, sender, receiver){
     _component.user[Component.HEALTH].set(entity, 0, newHealth);
     print("new health " + newHealth);
 
-    ::Base.mExplorationLogic.notifyNewEntityHealth(entity, newHealth);
+    ::Base.mExplorationLogic.mCurrentWorld_.notifyNewEntityHealth(entity, newHealth);
 
     if(newHealth <= 0){
         _entity.destroy(entity);

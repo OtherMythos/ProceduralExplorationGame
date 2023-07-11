@@ -26,6 +26,7 @@ function end(){
 
 function sceneSafeUpdate(){
     if(::Base.mExplorationLogic != null){
-        ::Base.mExplorationLogic.sceneSafeUpdate();
+        //::Base.mExplorationLogic.sceneSafeUpdate();
+        ::Base.mExplorationLogic.mCurrentWorld_.sceneSafeUpdate();
     }
 }

@@ -10,8 +10,6 @@
     "mDialogManager": null,
     mInputManager = null
 
-    mCurrentWorld_ = null
-
     mTargetInterface_ = TargetInterface.DESKTOP
 
     function checkUserParams(){
@@ -47,9 +45,6 @@
         _doFile("res://src/Content/FoundObject.nut");
         _doFile("res://src/Content/CombatData.nut");
         _doFile("res://src/Content/Moves.nut");
-
-        _doFile("res://src/World/EntityFactory.nut");
-        _doFile("res://src/World/World.nut");
 
         _doFile("res://src/Character/CharacterModelAnimations.nut");
         _doFile("res://src/Character/CharacterModel.nut");
@@ -113,9 +108,10 @@
         _doFile("res://src/GUI/Screens/CombatSpoilsPopupScreen.nut");
         _doFile("res://src/GUI/Screens/TestScreen.nut");
         _doFile("res://src/GUI/Screens/ExplorationTestScreen.nut");
-        _doFile("res://src/GUI/Screens/WorldSceneScreen.nut");
 
         _doFile("res://src/Logic/EntityTargetManager.nut");
+        _doFile("res://src/Logic/ActiveEnemyEntry.nut");
+        _doFile("res://src/Logic/World/World.nut");
         _doFile("res://src/Logic/ExplorationLogic.nut");
         _doFile("res://src/Logic/Scene/ExplorationSceneLogic.nut");
         _doFile("res://src/Logic/ExplorationProjectileManager.nut");
@@ -163,10 +159,6 @@
         ::ScreenManager.update();
         ::PopupManager.update();
         ::EffectManager.update();
-        if(mCurrentWorld_) mCurrentWorld_.update();
-    }
-    function sceneSafeUpdate(){
-        if(mCurrentWorld_) mCurrentWorld_.sceneSafeUpdate();
     }
 
     function notifyEncounter(combatData){
@@ -192,17 +184,6 @@
 
         local val = 2.0;
         _scene.setAmbientLight(ColourValue(val, val, val, 1.0), ColourValue(val, val, val, 1.0), Vec3(0, 1, 0));
-    }
-
-    function setupWorld(mapName){
-        mCurrentWorld_ = World(mapName);
-        mCurrentWorld_.setup();
-    }
-
-    function shutdownWorld(){
-        if(mCurrentWorld_ == null) return;
-        mCurrentWorld_.shutdown();
-        mCurrentWorld_ = null;
     }
 
     function setupBaseMeshes(){
