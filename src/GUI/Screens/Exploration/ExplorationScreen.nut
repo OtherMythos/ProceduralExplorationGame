@@ -122,7 +122,7 @@ enum ExplorationBusEvents{
         }, _GUI_ACTION_PRESSED, this);
         */
 
-        mLogicInterface_.continueOrResetExploration();
+        //mLogicInterface_.continueOrResetExploration();
 
         mExplorationBus_.registerCallback(busCallback, this);
         mLogicInterface_.setup();
@@ -330,20 +330,6 @@ enum ExplorationBusEvents{
         else if(event == ExplorationBusEvents.TRIGGER_ENCOUNTER){
             mLogicInterface_.triggerCombatEarly();
         }
-    }
-
-    function scrapAllObjects(){
-        /*
-        for(local i = 0; i < mExplorationItemsContainer_.mNumSlots_; i++){
-            if(mLogicInterface_.mFoundObjects_[i] == null) continue;
-            local targetButton = mExplorationItemsContainer_.mFoundWidgetButtons_[i];
-            local worldPos = ::EffectManager.getWorldPositionForWindowPos(targetButton.mPosition_);
-            local endPos = mMoneyCounter_.getPositionWindowPos();
-            ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"cellSize": 2, "coinScale": 0.1, "numCoins": 2, "start": worldPos, "end": endPos, "money": 100}));
-        }
-
-        mLogicInterface_.scrapAllFoundObjects();
-        */
     }
 
     function notifyPlayerMove(moveId){
