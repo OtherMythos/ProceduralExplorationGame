@@ -112,8 +112,8 @@
         _doFile("res://src/Logic/EntityTargetManager.nut");
         _doFile("res://src/Logic/ActiveEnemyEntry.nut");
         _doFile("res://src/Logic/World/World.nut");
+        _doFile("res://src/Logic/World/ProceduralExplorationWorld.nut");
         _doFile("res://src/Logic/ExplorationLogic.nut");
-        _doFile("res://src/Logic/Scene/ExplorationSceneLogic.nut");
         _doFile("res://src/Logic/ExplorationProjectileManager.nut");
         _doFile("res://src/Logic/Scene/ExplorationEntityFactory.nut");
         _doFile("res://src/Logic/CombatLogic.nut");

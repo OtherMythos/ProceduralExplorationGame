@@ -20,11 +20,6 @@
         MoveId.AREA
     ];
 
-    mSceneLogic_ = null;
-
-    mExplorationCount_ = 0;
-    mExplorationPercentage_ = 0;
-
     NUM_PLAYER_QUEUED_FLAGS = 1;
     mQueuedFlags_ = null;
     mDeterminedFlag_ = null;
@@ -37,7 +32,6 @@
 
     mCurrentMapData_ = null;
     mPlayerEntry_ = null;
-    mActiveEnemies_ = null;
     mPlacingMarker_ = false;
 
     mOrientatingCamera_ = false;
@@ -70,12 +64,9 @@
             ]
         };
 
-        mSceneLogic_ = ExplorationSceneLogic();
         mProjectileManager_ = ExplorationProjectileManager();
 
-        mActiveEnemies_ = {};
-
-        mCurrentWorld_ = World(mActiveEnemies_, mSceneLogic_);
+        mCurrentWorld_ = ProceduralExplorationWorld();
 
         mQueuedFlags_ = array(NUM_PLAYER_QUEUED_FLAGS, null);
         mActiveEXPOrbs_ = {};
@@ -86,13 +77,7 @@
     }
 
     function shutdown(){
-        foreach(i in mActiveEnemies_){
-            i.notifyDestroyed();
-        }
-        mPlayerEntry_.notifyDestroyed();
-
-        mActiveEnemies_.clear();
-        mSceneLogic_.shutdown();
+        mCurrentWorld_.shutdown();
 
         _event.unsubscribe(Event.PLAYER_DIED, processPlayerDeath, this);
 
@@ -102,8 +87,8 @@
     function setup(){
         _state.setPauseState(0);
 
-        //resetGenMap_();
-        //mSceneLogic_.setup();
+        mCurrentWorld_.setup();
+
         resetExploration();
 
         _event.subscribe(Event.PLAYER_DIED, processPlayerDeath, this);
@@ -116,9 +101,6 @@
     }
 
     function resetExploration_(){
-        mExplorationCount_ = 0;
-        mExplorationPercentage_ = 0;
-
         mEnemyEncountered_ = false;
         mExplorationFinished_ = false;
         mExplorationPaused_ = false;
@@ -134,9 +116,7 @@
     }
     function resetGenMap_(){
         resetExplorationGenMap_();
-        mSceneLogic_.resetExploration(mCurrentMapData_);
-
-        mCurrentWorld_.resetSession();
+        mCurrentWorld_.resetSession(mCurrentMapData_);
 
         //mPlayerEntry_ = ::ExplorationEntityFactory.constructPlayer(mGui_);
         //mPlayerEntry_.setPosition(mSceneLogic_, Vec3(mCurrentMapData_.width / 2, 0, -mCurrentMapData_.height / 2));
@@ -180,7 +160,6 @@
         checkCameraChange();
         checkOrientatingCamera();
 
-        mSceneLogic_.updatePercentage(mExplorationPercentage_);
         mProjectileManager_.update();
     }
 
@@ -219,7 +198,7 @@
                 local deltaX = mouseX - mPrevMouseX_;
                 local deltaY = mouseY - mPrevMouseY_;
                 printf("delta x: %f y: %f", deltaX, deltaY);
-                mSceneLogic_.processCameraMove(deltaX*-0.2, deltaY*-0.2);
+                mCurrentWorld_.processCameraMove(deltaX*-0.2, deltaY*-0.2);
             }
             mPrevMouseX_ = mouseX;
             mPrevMouseY_ = mouseY;
@@ -237,16 +216,7 @@
         local modifier = 1;
         local x = _input.getAxisActionX(mInputs_.camera, _INPUT_ANY);
         local y = _input.getAxisActionY(mInputs_.camera, _INPUT_ANY);
-        mSceneLogic_.processCameraMove(x*modifier, y*modifier);
-    }
-
-    function processEncounter(){
-        //local foundPosition = mSceneLogic_.getFoundPositionForEncounter(enemy);
-        local foundPosition = mPlayerEntry_.mPos_;
-
-        local combatData = _setupDataForCombat();
-        if(mGui_) mGui_.notifyEnemyCombatBegan(combatData, foundPosition);
-        mEnemyEncountered_ = true;
+        mCurrentWorld_.processCameraMove(x*modifier, y*modifier);
     }
 
     function processExplorationBegan(){
@@ -264,18 +234,12 @@
         _state.setPauseState(0xFFFF);
     }
 
-    function notifyLeaveExplorationScreen(){
-        if(mExplorationFinished_) return;
-        mExplorationPaused_ = true;
-        mGui_ = null;
-    }
-
     function isGatewayReady(){
         return mGatewayPercentage_ >= 1.0;
     }
 
     function notifyPlaceEnterState(id, entered){
-        local placeEntry = mSceneLogic_.mActivePlaces_[id];
+        local placeEntry = mCurrentWorld_.mActivePlaces_[id];
         local firstTime = !placeEntry.mEncountered_;
         if(firstTime && placeEntry.mEnemy_ != PlaceId.GATEWAY){
             //Add the flag to the place.
@@ -292,7 +256,7 @@
             ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"cellSize": 2, "coinScale": 0.1, "numCoins": 5, "start": worldPos, "end": endPos, "money": 100}));
 
             mExplorationStats_.totalDiscoveredPlaces++;
-            notifyGatewayStatsChange();
+            //notifyGatewayStatsChange();
         }
 
         local entity = placeEntry.getEntity();

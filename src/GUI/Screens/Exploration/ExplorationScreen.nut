@@ -291,7 +291,7 @@ enum ExplorationBusEvents{
 
     function shutdown(){
         mLogicInterface_.shutdown();
-        mLogicInterface_.notifyLeaveExplorationScreen();
+        //mLogicInterface_.notifyLeaveExplorationScreen();
         mExplorationStatsContainer_.shutdown();
         mWorldMapDisplay_.shutdown();
         base.shutdown();

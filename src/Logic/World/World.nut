@@ -1,11 +1,51 @@
+::ExplorationGizmo <- class{
+    mSceneNode_ = null;
+    constructor(parent, pos){
+        setup(parent);
+        setPosition(pos);
+    }
+    function setPosition(pos){
+        mSceneNode_.setPosition(pos);
+    }
+    function destroy(){
+        mSceneNode_.destroyNodeAndChildren();
+    }
+    function setup(parent){}
+};
+::ExplorationGizmos <- array(ExplorationGizmos.MAX, null);
+
+::ExplorationGizmos[ExplorationGizmos.TARGET_ENEMY] = class extends ::ExplorationGizmo{
+    mAnim_ = null;
+    function setup(parent){
+        mSceneNode_ = parent.createChildSceneNode();
+        local animNode = mSceneNode_.createChildSceneNode();
+
+        local targetItem = _scene.createItem("enemyTargetMarker.mesh");
+        targetItem.setRenderQueueGroup(30);
+        animNode.attachObject(targetItem);
+        animNode.setScale(0.5, 0.5, 0.5);
+        animNode.setPosition(0, 1, 0);
+
+        local animationInfo = _animation.createAnimationInfo([animNode]);
+        mAnim_ = _animation.createAnimation("gizmoEnemyTarget", animationInfo);
+    }
+    function destroy(){
+        mSceneNode_.destroyNodeAndChildren();
+        mAnim_ = null;
+    }
+};
+
+
 ::World <- class{
+
+    mParentNode_ = null;
 
     mPlayerEntry_ = null;
     mActiveEnemies_ = null;
     mGui_ = null;
     mTargetManager_ = null;
 
-    mSceneLogic_ = null;
+    mEntityFactory_ = null;
 
     mCurrentHighlightEnemy_ = null;
     mPreviousHighlightEnemy_ = null;
@@ -14,9 +54,18 @@
     mPrevTargetEnemy_ = null;
     mCurrentTargetEnemy_ = null;
 
+    mLocationFlagIds_ = 0;
+    mLocationFlagNodes_ = null;
+
+    mPosition_ = null;
+    mRotation_ = null;
+    mCurrentZoomLevel_ = 30;
+    static MIN_ZOOM = 10;
+
     mQueuedFlags_ = null;
 
     mActiveEXPOrbs_ = null;
+    mActiveGizmos_ = null;
 
     mOrientatingCamera_ = false;
 
@@ -26,10 +75,13 @@
 
     NUM_PLAYER_QUEUED_FLAGS = 1;
 
-    constructor(activeEnemies, sceneLogic){
-        //TODO get rid
-        mActiveEnemies_ = activeEnemies;
-        mSceneLogic_ = sceneLogic;
+    constructor(){
+        mActiveEnemies_ = {};
+        mLocationFlagNodes_ = {};
+        mActiveGizmos_ = {};
+
+        mRotation_ = Vec2(PI*0.5, PI*0.4);
+        mPosition_ = Vec3();
 
         mTargetManager_ = EntityTargetManager();
         mActiveEXPOrbs_ = {};
@@ -48,6 +100,30 @@
         };
     }
 
+    function shutdown(){
+        foreach(i in mActiveEnemies_){
+            i.notifyDestroyed();
+        }
+        mPlayerEntry_.notifyDestroyed();
+
+        mActiveEnemies_.clear();
+
+        clearAllLocationFlags();
+
+        if(mParentNode_) mParentNode_.destroyNodeAndChildren();
+        mParentNode_ = null;
+
+        _world.destroyWorld();
+    }
+
+    function setup(){
+        _world.createWorld();
+
+        mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
+        mEntityFactory_ = ExplorationEntityFactory(this, mParentNode_, CharacterGenerator());
+        _developer.setRenderQueueForMeshGroup(30);
+    }
+
     function update(){
         checkHighlightEnemy();
         checkTargetEnemy();
@@ -62,7 +138,7 @@
     }
 
     function resetSession(){
-        mPlayerEntry_ = ::ExplorationEntityFactory.constructPlayer(mGui_);
+        mPlayerEntry_ = mEntityFactory_.constructPlayer(mGui_);
     }
 
     //-------
@@ -201,7 +277,7 @@
 
             //local targetPos = pos + (Vec3(_random.rand()-0.5, 0, _random.rand()-0.5) * spread);
             local targetPos = pos + (Vec3(sin(randDir) * spread, 0, cos(randDir) * spread));
-            local newEntity = ::ExplorationEntityFactory.constructEXPOrb(targetPos);
+            local newEntity = mEntityFactory_.constructEXPOrb(targetPos);
             mActiveEXPOrbs_.rawset(newEntity.getId(), newEntity);
         }
     }
@@ -237,7 +313,7 @@
         local e = null;
         if(target != null){
             e = mActiveEnemies_[target];
-            local gizmo = mSceneLogic_.createGizmo(e.getPosition(), ExplorationGizmos.TARGET_ENEMY);
+            local gizmo = createGizmo(e.getPosition(), ExplorationGizmos.TARGET_ENEMY);
             e.setGizmo(gizmo);
         }else{
             if(mActiveEnemies_.rawin(mCurrentTargetEnemy_)){
@@ -332,7 +408,7 @@
                 if(targetIdx < 0){
                     mDeterminedFlag_ = null;
                 }else{
-                    mSceneLogic_.removeLocationFlag(mQueuedFlags_[targetIdx][1]);
+                    removeLocationFlag(mQueuedFlags_[targetIdx][1]);
                     mQueuedFlags_[targetIdx] = null;
                 }
 
@@ -363,7 +439,7 @@
 
         if(mQueuedFlags_[0] == null) return;
         local flagId = mQueuedFlags_[0][1];
-        mSceneLogic_.updateLocationFlagPos(flagId, worldPoint);
+        updateLocationFlagPos(flagId, worldPoint);
         mQueuedFlags_[0] = [worldPoint, flagId];
     }
     function queuePlayerFlagForWindowTouch(touchCoords){
@@ -377,16 +453,16 @@
         if(firstNull == null){
             //There are no spaces in the list, so shift them all to the right.
             local queuedFlag = mQueuedFlags_.pop();
-            mSceneLogic_.removeLocationFlag(queuedFlag[1]);
+            removeLocationFlag(queuedFlag[1]);
         }else{
             mQueuedFlags_.remove(firstNull);
         }
-        local flagId = mSceneLogic_.queueLocationFlag(worldPos);
+        local flagId = queueLocationFlag(worldPos);
         mQueuedFlags_.insert(0, [worldPos, flagId]);
     }
 
     function movePlayerToPos(targetPos){
-        mPlayerEntry_.moveToPoint(targetPos, 0.2, mSceneLogic_);
+        mPlayerEntry_.moveToPoint(targetPos, 0.2);
 
         notifyPlayerMoved();
 
@@ -400,7 +476,7 @@
 
     function notifyPlayerMoved(){
         local playerPos = Vec3(mPlayerEntry_.mPos_.x, 0, mPlayerEntry_.mPos_.z);
-        mSceneLogic_.updatePlayerPos(playerPos);
+        updatePlayerPos(playerPos);
         _world.setPlayerPosition(SlotPosition(playerPos));
         //TODO remove direct access.
         mGui_.mWorldMapDisplay_.mMapViewer_.setPlayerPosition(playerPos.x, playerPos.z);
@@ -424,20 +500,13 @@
         appearEnemy(_random.randInt(EnemyId.GOBLIN, EnemyId.MAX-1));
     }
 
-    function getPositionForAppearEnemy_(){
-        //TODO fix this
+    function getPositionForAppearEnemy_(enemyType){
         return Vec3();
-        //TODO in future have a more sophisticated method to solve this, for instance spawn locations stored in entity defs.
-        if(enemyType == EnemyId.SQUID){
-            return MapGenHelpers.findRandomPositionInWater(mCurrentMapData_, 0);
-        }else{
-            return MapGenHelpers.findRandomPointOnLand(mCurrentMapData_, mPlayerEntry_.getPosition(), 50);
-        }
     }
 
     function appearEnemy(enemyType){
-        local target = getPositionForAppearEnemy_();
-        local enemyEntry = ::ExplorationEntityFactory.constructEnemy(enemyType, target, mGui_);
+        local target = getPositionForAppearEnemy_(enemyType);
+        local enemyEntry = mEntityFactory_.constructEnemy(enemyType, target, mGui_);
         mActiveEnemies_.rawset(enemyEntry.mEntity_.getId(), enemyEntry);
     }
 
@@ -446,7 +515,7 @@
         if(enemyEntry == null) return;
         if(enemyEntry.isMidAttack()) return;
 
-        enemyEntry.moveToPoint(mPlayerEntry_.mPos_, 0.05, mSceneLogic_);
+        enemyEntry.moveToPoint(mPlayerEntry_.mPos_, 0.05);
     }
 
 
@@ -514,5 +583,44 @@
                 triggerPlayerMove(c);
             }
         }
+    }
+
+    //TODO remove flag logic at some point.
+    function queueLocationFlag(pos){
+        local flagNode = mParentNode_.createChildSceneNode();
+        local flagItem = _scene.createItem("locationFlag.mesh");
+        flagItem.setRenderQueueGroup(30);
+        flagNode.attachObject(flagItem);
+        pos.y = getZForPos(pos);
+        flagNode.setPosition(pos);
+        flagNode.setScale(0.5, 0.5, 0.5);
+        local idx = (mLocationFlagIds_++).tostring();
+        mLocationFlagNodes_[idx] <- flagNode;
+        return idx;
+    }
+    function updateLocationFlagPos(idx, pos){
+        local newPos = pos.copy();
+        newPos.y = getZForPos(newPos);
+        mLocationFlagNodes_[idx].setPosition(newPos);
+    }
+    function removeLocationFlag(idx){
+        if(mLocationFlagNodes_[idx] == null) return;
+        mLocationFlagNodes_[idx].destroyNodeAndChildren();
+        mLocationFlagNodes_[idx] = null;
+    }
+    function clearAllLocationFlags(){
+        foreach(c,i in mLocationFlagNodes_){
+            if(i == null) continue;
+            removeLocationFlag(c);
+        }
+    }
+    //TODO the flags can be converted to use the gizmos as well.
+    function createGizmo(pos, gizmoType){
+        local newGizmo = ::ExplorationGizmos[gizmoType](mParentNode_, pos);
+        return newGizmo;
+    }
+
+    function updatePlayerPos(playerPos){
+        mPosition_ = playerPos;
     }
 };

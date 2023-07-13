@@ -1,19 +1,26 @@
-::ExplorationEntityFactory <- {
-    mBaseSceneNode_ = null,
-    mCharacterGenerator_ = null,
-    mMobScale_ = Vec3(0.2, 0.2, 0.2),
+::ExplorationEntityFactory <- class{
+    mBaseSceneNode_ = null
+    mCharacterGenerator_ = null
+    mConstructorWorld_ = null;
+    mMobScale_ = Vec3(0.2, 0.2, 0.2)
 
-    function getZForPos(pos){
-        return ::Base.mExplorationLogic.mSceneLogic_.getZForPos(pos);
+    constructor(constructorWorld, parentSceneNode, characterGenerator){
+        mConstructorWorld_ = constructorWorld;
+        mBaseSceneNode_ = parentSceneNode;
+        mCharacterGenerator_ = characterGenerator;
     }
 
-    testCount = 0,
+    function getZForPos(pos){
+        return mConstructorWorld_.getZForPos(pos);
+    }
+
+    //testCount = 0
 
     function constructPlayer(explorationScreen){
-testCount = 0;
+//testCount = 0;
         local en = _entity.create(SlotPosition());
         if(!en.valid()) throw "Error creating entity";
-        local playerEntry = ActiveEnemyEntry(EnemyId.NONE, Vec3(0, 0, 0), en);
+        local playerEntry = ActiveEnemyEntry(mConstructorWorld_, EnemyId.NONE, Vec3(0, 0, 0), en);
 
         local playerNode = mBaseSceneNode_.createChildSceneNode();
         local playerModel = mCharacterGenerator_.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, 30);
@@ -72,7 +79,7 @@ testCount = 0;
         if(!en.valid()) throw "Error creating entity";
         local zPos = getZForPos(pos);
         local targetPos = Vec3(pos.x, zPos, pos.z);
-        local entry = ActiveEnemyEntry(enemyType, targetPos, en);
+        local entry = ActiveEnemyEntry(mConstructorWorld_, enemyType, targetPos, en);
 
         local enemyNode = mBaseSceneNode_.createChildSceneNode();
 
@@ -116,7 +123,7 @@ testCount = 0;
 
         _component.collision.add(en, collisionObject, innerCollisionObject, damageReceiver);
 
-        entry.setPosition(::Base.mExplorationLogic.mSceneLogic_, targetPos);
+        entry.setPosition(targetPos);
 
         local totalHealth = 10;
         _component.user[Component.HEALTH].add(en);
@@ -163,7 +170,7 @@ testCount = 0;
         local targetPos = Vec3(itemData.originX, 0, -itemData.originY);
         targetPos.y = getZForPos(targetPos);
 
-        local entry = ActiveEnemyEntry(itemData.type, targetPos, en);
+        local entry = ActiveEnemyEntry(mConstructorWorld_, itemData.type, targetPos, en);
 
         local placeNode = mBaseSceneNode_.createChildSceneNode();
         local meshTarget = itemData.type == PlacedItemId.CHERRY_BLOSSOM_TREE ? "treeCherryBlossom.mesh" : "tree.mesh";
@@ -190,21 +197,21 @@ testCount = 0;
         _component.user[Component.HEALTH].set(en, 1, totalHealth);
 
 
-        entry.setPosition(::Base.mExplorationLogic.mSceneLogic_, targetPos);
+        entry.setPosition(targetPos);
 
         return entry;
     }
 
     function constructPlace(placeData, idx, explorationScreen){
         //if(testCount > 0) return;
-testCount++;
+//testCount++;
 
         local en = _entity.create(SlotPosition());
         if(!en.valid()) throw "Error creating entity";
         local targetPos = Vec3(placeData.originX, 0, -placeData.originY);
         targetPos.y = getZForPos(targetPos);
 
-        local entry = ActiveEnemyEntry(placeData.placeId, targetPos, en);
+        local entry = ActiveEnemyEntry(mConstructorWorld_, placeData.placeId, targetPos, en);
 
         local placeNode = mBaseSceneNode_.createChildSceneNode();
         local placeType = ::Places[placeData.placeId].getType();
@@ -240,7 +247,7 @@ testCount++;
             _component.user[Component.MISC].set(en, 0, billboardIdx);
         }
 
-        entry.setPosition(::Base.mExplorationLogic.mSceneLogic_, targetPos);
+        entry.setPosition(targetPos);
 
         return entry;
     }
@@ -252,7 +259,7 @@ testCount++;
         local en = _entity.create(SlotPosition(targetPos));
         if(!en.valid()) throw "Error creating entity";
 
-        //local entry = ActiveEnemyEntry(placeData.placeId, targetPos, en);
+        //local entry = ActiveEnemyEntry(mConstructorWorld_, placeData.placeId, targetPos, en);
 
         local placeNode = mBaseSceneNode_.createChildSceneNode();
         placeNode.setPosition(targetPos);
