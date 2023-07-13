@@ -149,7 +149,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
     function setPosition(pos){
         mPos_ = pos;
 
-        local inWater = ::MapGenHelpers.getIsWaterForPosition(mCreatorWorld_.mMapData_, mPos_);
+        local inWater = mCreatorWorld_.getIsWaterForPosition(mPos_);
         if(inWater != mInWater_ && mStateMachineModel_){
             mStateMachineModel_.notifyWaterState(inWater);
         }
@@ -187,7 +187,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
     }
     function isPositionWalkable(intended){
         local traverseTypes = ::Enemies[mEnemy_].getTraversableTerrain();
-        local traverse = ::MapGenHelpers.getTraverseTerrainForPosition(mCreatorWorld_.mMapData_, mPos_);
+        local traverse = mCreatorWorld_.getTraverseTerrainForPosition(mPos_);
 
         return traverseTypes & traverse;
     }

@@ -100,6 +100,10 @@
         };
     }
 
+    function getWorldType(){
+        return WorldTypes.WORLD;
+    }
+
     function shutdown(){
         foreach(i in mActiveEnemies_){
             i.notifyDestroyed();
@@ -622,5 +626,13 @@
 
     function updatePlayerPos(playerPos){
         mPosition_ = playerPos;
+    }
+
+    function getTraverseTerrainForPosition(pos){
+        return 0xFF;
+    }
+
+    function getIsWaterForPosition(pos){
+        return false;
     }
 };

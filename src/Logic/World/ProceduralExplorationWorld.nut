@@ -24,6 +24,10 @@
         return mMapData_;
     }
 
+    function getWorldType(){
+        return WorldTypes.PROCEDURAL_EXPLORATION_WORLD;
+    }
+
     //TODO long term remove this and generate the map data somewhere else so it can be threaded easier.
     function resetSessionGenMap(){
         local gen = ::MapGen();
@@ -209,6 +213,13 @@
             local itemEntry = mEntityFactory_.constructPlacedItem(i, c);
             mActivePlaces_.append(itemEntry);
         }
+    }
+
+    function getTraverseTerrainForPosition(pos){
+        return ::MapGenHelpers.getTraverseTerrainForPosition(mMapData_, pos);
+    }
+    function getIsWaterForPosition(pos){
+        return ::MapGenHelpers.getIsWaterForPosition(mMapData_, pos);
     }
 
 };

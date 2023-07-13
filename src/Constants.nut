@@ -20,6 +20,12 @@ enum Component{
     MISC = 1
 }
 
+enum WorldTypes{
+    WORLD,
+    PROCEDURAL_EXPLORATION_WORLD,
+    PROCEDURAL_DUNGEON_WORLD,
+};
+
 
 enum ObjectType{
     SCREEN_DATA = "ScreenData",

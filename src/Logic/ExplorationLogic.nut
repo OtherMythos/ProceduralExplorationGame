@@ -20,10 +20,6 @@
         MoveId.AREA
     ];
 
-    NUM_PLAYER_QUEUED_FLAGS = 1;
-    mQueuedFlags_ = null;
-    mDeterminedFlag_ = null;
-
     mEnemyEncountered_ = false;
     mExplorationFinished_ = false;
     mExplorationPaused_ = false;
@@ -40,7 +36,6 @@
     mProjectileManager_ = null;
     mExplorationStats_ = null;
     mGatewayPercentage_ = 0.0;
-    mActiveEXPOrbs_ = null;
 
     mCurrentTimer_ = null;
 
@@ -65,10 +60,8 @@
 
         mProjectileManager_ = ExplorationProjectileManager();
 
-        mCurrentWorld_ = ProceduralExplorationWorld();
-
-        mQueuedFlags_ = array(NUM_PLAYER_QUEUED_FLAGS, null);
-        mActiveEXPOrbs_ = {};
+        //mCurrentWorld_ = ProceduralExplorationWorld();
+        mCurrentWorld_ = ProceduralDungeonWorld();
 
         mTargetManager_ = EntityTargetManager();
 

@@ -23,7 +23,9 @@
     }
 
     function processActiveWorldChange(id, data){
-        mMapViewer_.displayMapData(data.getMapData(), false);
+        if(data.getWorldType() == WorldTypes.PROCEDURAL_EXPLORATION_WORLD){
+            mMapViewer_.displayMapData(data.getMapData(), false);
+        }
     }
 
     function addToLayout(layoutLine){
