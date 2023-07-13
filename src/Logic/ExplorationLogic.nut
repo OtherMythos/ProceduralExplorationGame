@@ -30,7 +30,6 @@
 
     mTargetManager_ = null;
 
-    mCurrentMapData_ = null;
     mPlayerEntry_ = null;
     mPlacingMarker_ = false;
 
@@ -92,6 +91,7 @@
         resetExploration();
 
         _event.subscribe(Event.PLAYER_DIED, processPlayerDeath, this);
+        _event.transmit(Event.ACTIVE_WORLD_CHANGE, mCurrentWorld_);
     }
 
     function processPlayerDeath(id, data){
@@ -111,17 +111,6 @@
             "totalDefeated": 0,
             "foundEXPOrbs": 0,
         };
-
-        processExplorationBegan();
-    }
-    function resetGenMap_(){
-        resetExplorationGenMap_();
-        mCurrentWorld_.resetSession(mCurrentMapData_);
-
-        //mPlayerEntry_ = ::ExplorationEntityFactory.constructPlayer(mGui_);
-        //mPlayerEntry_.setPosition(mSceneLogic_, Vec3(mCurrentMapData_.width / 2, 0, -mCurrentMapData_.height / 2));
-        if(mGui_) mGui_.notifyNewMapData(mCurrentMapData_);
-        //mSceneLogic_.updatePlayerPos(mPlayerEntry_.mPos_);
     }
     function resetExploration(){
         //TODO find a better way than the direct lookup.
@@ -129,26 +118,9 @@
         _state.setPauseState(0);
 
         resetExploration_();
-        resetGenMap_();
 
         mCurrentTimer_ = Timer();
         mCurrentTimer_.start();
-    }
-    function resetExplorationGenMap_(){
-        local gen = ::MapGen();
-        local data = {
-            "seed": _random.randInt(0, 1000),
-            "moistureSeed": _random.randInt(0, 1000),
-            "variation": _random.randInt(0, 1000),
-            "width": 200,
-            "height": 200,
-            "numRivers": 24,
-            "seaLevel": 100,
-            "altitudeBiomes": [10, 100],
-            "placeFrequency": [0, 1, 1, 4, 4, 30]
-        };
-        local outData = gen.generate(data);
-        mCurrentMapData_ = outData;
     }
 
     function tickUpdate(){
@@ -217,10 +189,6 @@
         local x = _input.getAxisActionX(mInputs_.camera, _INPUT_ANY);
         local y = _input.getAxisActionY(mInputs_.camera, _INPUT_ANY);
         mCurrentWorld_.processCameraMove(x*modifier, y*modifier);
-    }
-
-    function processExplorationBegan(){
-        if(mGui_) mGui_.notifyExplorationBegan();
     }
 
     function setGuiObject(guiObj){

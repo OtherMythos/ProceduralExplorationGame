@@ -14,6 +14,35 @@
         base.constructor();
     }
 
+    function setup(){
+        base.setup();
+
+        resetSessionGenMap();
+    }
+
+    function getMapData(){
+        return mMapData_;
+    }
+
+    //TODO long term remove this and generate the map data somewhere else so it can be threaded easier.
+    function resetSessionGenMap(){
+        local gen = ::MapGen();
+        local data = {
+            "seed": _random.randInt(0, 1000),
+            "moistureSeed": _random.randInt(0, 1000),
+            "variation": _random.randInt(0, 1000),
+            "width": 200,
+            "height": 200,
+            "numRivers": 24,
+            "seaLevel": 100,
+            "altitudeBiomes": [10, 100],
+            "placeFrequency": [0, 1, 1, 4, 4, 30]
+        };
+        local outData = gen.generate(data);
+
+        resetSession(outData);
+    }
+
     function resetSession(mapData){
         //TODO would prefer to have the base call further up.
         createScene();

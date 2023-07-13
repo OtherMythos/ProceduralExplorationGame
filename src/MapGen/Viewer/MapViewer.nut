@@ -447,6 +447,7 @@ enum MapViewerColours{
     }
 
     function setPlayerPosition(x, y){
+        if(mMapData_ == null) return;
         if(mPlayerLocationPanel_ == null && mLabelWindow_){
             mPlayerLocationPanel_ = PlaceMarkerIcon(mLabelWindow_, mMapData_);
             mPlayerLocationPanel_.setDatablock("playerMapIndicator");
@@ -455,6 +456,7 @@ enum MapViewerColours{
     }
 
     function notifyNewPlaceFound(id, pos){
+        if(mMapData_ == null) return;
         local placeMarker = null;
         if(id == PlaceId.GATEWAY){
             placeMarker = PlaceMarkerIcon(mLabelWindow_, mMapData_, 5);

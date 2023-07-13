@@ -18,6 +18,12 @@
         mMapViewer_ = MapViewer();
         mMapViewer_.setLabelWindow(mMapViewerWindow_);
         mMapViewerWindow_.setVisualsEnabled(false);
+
+        _event.subscribe(Event.ACTIVE_WORLD_CHANGE, processActiveWorldChange, this);
+    }
+
+    function processActiveWorldChange(id, data){
+        mMapViewer_.displayMapData(data.getMapData(), false);
     }
 
     function addToLayout(layoutLine){
@@ -42,6 +48,8 @@
         //_gui.destroy(mExplorationScenePanel_);
         shutdownCompositor_();
         mMapViewer_.shutdown();
+
+        _event.unsubscribe(Event.ACTIVE_WORLD_CHANGE, processActiveWorldChange, this);
     }
     function setupCompositor(){
         local winSize = mExplorationScenePanel_.getSize();
@@ -58,11 +66,6 @@
 
     function update(){
         mBillboardManager_.update();
-    }
-
-
-    function notifyNewMapData(data){
-        mMapViewer_.displayMapData(data, false);
     }
 
     function notifyResize(){
