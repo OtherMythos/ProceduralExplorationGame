@@ -30,7 +30,7 @@ enum MapViewerColours{
     MAX
 };
 
-::MapViewer <- class{
+::ExplorationMapViewer <- class extends ::MapViewer{
 
     mMapData_ = null;
 
@@ -41,105 +41,12 @@ enum MapViewerColours{
     mDrawLocationOptions_ = null;
 
     mCompositorDatablock_ = null
-    mCompositorWorkspace_ = null
-    mCompositorCamera_ = null
     mCompositorTexture_ = null
-
-    mPlayerLocationPanel_ = null;
 
     mFragmentParams_ = null
 
     mPlaceMarkers_ = null;
     mLabelWindow_ = null;
-
-    mVisiblePlacesBuffer_ = null;
-
-    PlaceMarkerIcon = class{
-        mPanel_ = null;
-        mParent_ = null;
-        mMapData_ = null;
-        constructor(parentWin, mapData, size=5){
-            mParent_ = parentWin;
-            mMapData_ = mapData;
-
-            mPanel_ = parentWin.createPanel();
-            mPanel_.setSize(size, size);
-            mPanel_.setPosition(0, 0);
-            setDatablock("placeMapIndicator");
-        }
-        function setCentre(x, y){
-            local intendedPos = Vec2(x.tofloat() / mMapData_.width.tofloat(), y.tofloat() / mMapData_.height.tofloat());
-            intendedPos *= mParent_.getSize();
-            mPanel_.setCentre(intendedPos.x, -intendedPos.y);
-        }
-        function setDatablock(datablock){
-            mPanel_.setDatablock(datablock);
-        }
-        function setZOrder(zOrder){
-            mPanel_.setZOrder(zOrder);
-        }
-    };
-
-    PlaceMarker = class{
-
-        mParentWin_ = null;
-        mX_ = 0;
-        mY_ = 0;
-        mWidth_ = 0;
-        mHeight_ = 0;
-        mPlace_ = null;
-
-        mLabel_ = null;
-        mTypeSizes_ = [
-            0, 20, 30, 20, 15, 10
-        ];
-        mTypeColours_ = [
-            null,
-            ColourValue(0.2, 0.2, 1),
-            ColourValue(1, 1, 1),
-            ColourValue(0.8, 0.8, 0.8),
-            ColourValue(0.7, 0.7, 0.7),
-            ColourValue(0.65, 0.65, 0.65),
-            ColourValue(0.55, 0.55, 0.55),
-        ];
-
-        constructor(window, x, y, width, height, place){
-            mParentWin_ = window;
-            mX_ = x;
-            mY_ = y;
-            mWidth_ = width;
-            mHeight_ = height;
-            mPlace_ = place;
-
-            mLabel_ = mParentWin_.createLabel();
-            local placeDef = ::Places[mPlace_];
-            styleLabelForPlaceType(mLabel_, placeDef.getType());
-            mLabel_.setText(placeDef.getName());
-            local pos = Vec2(x.tofloat() / width.tofloat(), y.tofloat() / height.tofloat());
-            mLabel_.setCentre(pos * window.getSize());
-        }
-
-        function styleLabelForPlaceType(label, type){
-            label.setDefaultFontSize(mTypeSizes_[type]);
-            label.setTextColour(mTypeColours_[type]);
-            label.setShadowOutline(true, ColourValue(0, 0, 0), Vec2(2, 2));
-        }
-
-        function shutdown(){
-            _gui.destroy(mLabel_);
-        }
-
-        function updateForLocationFlags(flag){
-            if(flag & 0x1){
-                //Use none just to hide everything.
-                mLabel_.setHidden(true);
-                return;
-            }
-            local t = ::Places[mPlace_].getType();
-            local visible = (flag >> t) & 0x1;
-            mLabel_.setHidden(!visible);
-        }
-    };
 
     constructor(){
         mDrawOptions_ = array(DrawOptions.MAX, false);
@@ -155,15 +62,6 @@ enum MapViewerColours{
 
         setupBlendblock();
         setupColours();
-
-        //setupCompositor();
-    }
-
-    function shutdown(){
-        //_compositor.removeWorkspace(mCompositorWorkspace_);
-        _hlms.destroyDatablock(mCompositorDatablock_);
-        //mCompositorCamera_.getParentNode().destroyNodeAndChildren();
-        _graphics.destroyTexture(mCompositorTexture_);
     }
 
     function displayMapData(outData, showPlaceMarkers=true){
@@ -172,8 +70,6 @@ enum MapViewerColours{
         if(showPlaceMarkers){
             setupPlaceMarkers(outData);
         }
-
-        mVisiblePlacesBuffer_ = setupVisiblePlacesBuffer(outData.width, outData.height);
 
         setPlayerPosition(0.5, 0.5);
 
@@ -184,36 +80,6 @@ enum MapViewerColours{
         timer.stop();
         local outTime = timer.getSeconds();
         printf("Generating map texture took %f seconds", outTime);
-    }
-
-    function setupVisiblePlacesBuffer(width, height){
-        //Using 2 bits to represent each voxel.
-        local totalSize = ceil(((width * height) * 2).tofloat() / 8.0).tointeger();
-        print("blob size " + totalSize);
-        local buf = blob(totalSize);
-        buf.seek(0);
-        for(local i = 0; i < totalSize; i++){
-            buf.writen(0, 'b')
-        }
-        return buf;
-    }
-    function setAreaVisible(x, y, radius, feather){
-        /*
-        mVisiblePlacesBuffer_.seek(0);
-        for(local i = 0; i < 1000; i++){
-            mVisiblePlacesBuffer_.writen(0xFF, 'b');
-        }
-        */
-        local idx = (x + y * mMapData_.width) * 2;
-        local byteIdx = (idx / 8).tointeger();
-        local bitIdx = (idx % 8).tointeger();
-        mVisiblePlacesBuffer_.seek(byteIdx);
-        local val = mVisiblePlacesBuffer_.readn('b');
-        local newVal = val | (0x3 << bitIdx * 2);
-        mVisiblePlacesBuffer_.seek(byteIdx);
-        mVisiblePlacesBuffer_.writen(newVal, 'b');
-
-        //mFragmentParams_.setNamedConstant("visiblePlaceBuffer", mVisiblePlacesBuffer_);
     }
 
     function setupPlaceMarkers(outData){
@@ -276,46 +142,6 @@ enum MapViewerColours{
             colVals[i] = colVals[i].getAsABGR();
         }
         mColours_ = colVals;
-    }
-
-    function setupBlendblock(){
-        local blend = _hlms.getBlendblock({
-            "src_blend_factor": _HLMS_SBF_SOURCE_ALPHA,
-            "dst_blend_factor": _HLMS_SBF_ONE_MINUS_SOURCE_ALPHA,
-            "src_alpha_blend_factor": _HLMS_SBF_ONE_MINUS_DEST_ALPHA,
-            "dst_alpha_blend_factor": _HLMS_SBF_ONE
-        });
-        local datablock = _hlms.unlit.createDatablock("mapViewer/renderDatablock", blend);
-        mCompositorDatablock_ = datablock;
-    }
-    function setupTextures(mapData){
-        //TODO check for the old texture and destroy that as well.
-        //mCompositorDatablock_.setTexture(0, null);
-        if(mCompositorTexture_){
-            _graphics.destroyTexture(mCompositorTexture_);
-            mCompositorTexture_ = null;
-        }
-
-        local newTex = _graphics.createTexture("mapViewer/renderTexture");
-        newTex.setResolution(mapData.width, mapData.height);
-        newTex.setPixelFormat(_PFG_RGBA8_UNORM);
-        newTex.scheduleTransitionTo(_GPU_RESIDENCY_RESIDENT);
-        mCompositorTexture_ = newTex;
-
-        assert(mCompositorDatablock_ != null);
-        mCompositorDatablock_.setTexture(0, mCompositorTexture_);
-    }
-
-    function uploadToTexture(){
-        //TODO change this.
-        local stagingTexture = _graphics.getStagingTexture(mMapData_.width, mMapData_.height, 1, 1, _PFG_RGBA8_UNORM);
-        stagingTexture.startMapRegion();
-        local textureBox = stagingTexture.mapRegion(mMapData_.width, mMapData_.height, 1, 1, _PFG_RGBA8_UNORM);
-
-        fillBufferWithMap(textureBox);
-
-        stagingTexture.stopMapRegion();
-        stagingTexture.upload(textureBox, mCompositorTexture_, 0);
     }
 
     function fillBufferWithMap(textureBox){
@@ -436,23 +262,6 @@ enum MapViewerColours{
         }
 
         return drawVal;
-    }
-
-    function getDatablock(){
-        return mCompositorDatablock_;
-    }
-
-    function setLabelWindow(renderWindow){
-        mLabelWindow_ = renderWindow;
-    }
-
-    function setPlayerPosition(x, y){
-        if(mMapData_ == null) return;
-        if(mPlayerLocationPanel_ == null && mLabelWindow_){
-            mPlayerLocationPanel_ = PlaceMarkerIcon(mLabelWindow_, mMapData_);
-            mPlayerLocationPanel_.setDatablock("playerMapIndicator");
-        }
-        mPlayerLocationPanel_.setCentre(x, y);
     }
 
     function notifyNewPlaceFound(id, pos){

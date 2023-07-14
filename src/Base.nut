@@ -60,11 +60,14 @@
         _doFile("res://src/System/PlayerStats.nut");
         mPlayerStats = ::PlayerStats();
 
-        _doFile("res://src/MapGen/Generator/MapConstants.nut");
-        _doFile("res://src/MapGen/Generator/Biomes.nut");
-        _doFile("res://src/MapGen/Generator/MapGen.nut");
-        _doFile("res://src/MapGen/Viewer/MapViewer.nut");
-        _doFile("res://src/MapGen/Generator/MapGenHelpers.nut");
+        _doFile("res://src/MapGen/Exploration/Generator/MapConstants.nut");
+        _doFile("res://src/MapGen/Exploration/Generator/Biomes.nut");
+        _doFile("res://src/MapGen/Exploration/Generator/MapGen.nut");
+        _doFile("res://src/MapGen/MapViewer.nut");
+        _doFile("res://src/MapGen/Exploration/Viewer/ExplorationMapViewer.nut");
+        _doFile("res://src/MapGen/Dungeon/Viewer/DungeonMapViewer.nut");
+        _doFile("res://src/MapGen/Dungeon/Generator/DungeonGen.nut");
+        _doFile("res://src/MapGen/Exploration/Generator/MapGenHelpers.nut");
 
         ::GuiWidgets <- {};
         _doFile("res://src/GUI/Widgets/InventoryBaseCounter.nut");

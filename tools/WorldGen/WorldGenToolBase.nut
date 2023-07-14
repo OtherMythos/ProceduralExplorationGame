@@ -44,7 +44,7 @@
     }
 
     function setupGui(){
-        mMapViewer_ = ::MapViewer();
+        mMapViewer_ = ::ExplorationMapViewer();
 
         local winWidth = 0.4;
 

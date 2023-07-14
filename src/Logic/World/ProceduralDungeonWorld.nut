@@ -3,6 +3,8 @@
 
 ::ProceduralDungeonWorld <- class extends ::World{
 
+    mMapData_ = null;
+
     constructor(){
         base.constructor();
     }
@@ -14,7 +16,24 @@
     function setup(){
         base.setup();
 
+        resetSessionGenMap();
+    }
+
+    function resetSessionGenMap(){
+        local gen = ::DungeonGen();
+        local data = {
+            "width": 50,
+            "height": 50,
+        };
+        local outData = gen.generate(data);
+
+        resetSession(outData);
+    }
+
+    function resetSession(mapData){
         base.resetSession();
+
+        mMapData_ = mapData;
     }
 
     function getPositionForAppearEnemy_(enemyType){
@@ -67,6 +86,10 @@
     function createScene(){
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
 
+    }
+
+    function getMapData(){
+        return mMapData_;
     }
 
 };
