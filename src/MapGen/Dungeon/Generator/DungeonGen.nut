@@ -11,6 +11,8 @@
         //Use a flood fill algorithm to collect combined rooms together.
         _determineTotalRooms(outVals, data.width, data.height);
 
+        _determineEdges(outVals, data.width, data.height);
+
         local outData = {
             "width": data.width,
             "height": data.height,
@@ -92,29 +94,65 @@
 
     }
 
-    function _floodFillData(d, x, y, w, i){
+    function _floodFillData(d, x, y, w, i, entry){
         d[x + y * w] = i;
+        entry.tileCount++;
 
-        local ret = 1;
         //Note: It has to be true not just boolean check.
-        if(d[x + (y - 1) * w] == true) ret += _floodFillData(d, x, y - 1, w, i);
-        if(d[(x - 1) + y * w] == true) ret += _floodFillData(d, x - 1, y, w, i);
-        if(d[(x + 1) + y * w] == true) ret += _floodFillData(d, x + 1, y, w, i);
-        if(d[x + (y + 1) * w] == true) ret += _floodFillData(d, x, y + 1, w, i);
+        //TODO do a mask of which tiles were true.
+        local mask = 0;
+        if(d[x + (y - 1) * w] == true) { _floodFillData(d, x, y - 1, w, i, entry); mask = mask | 0x1; }
+        if(d[(x - 1) + y * w] == true) { _floodFillData(d, x - 1, y, w, i, entry); mask = mask | 0x2; }
+        if(d[(x + 1) + y * w] == true) { _floodFillData(d, x + 1, y, w, i, entry); mask = mask | 0x4; }
+        if(d[x + (y + 1) * w] == true) { _floodFillData(d, x, y + 1, w, i, entry); mask = mask | 0x8; }
 
-        return ret;
+        print(mask);
+
+        //d[x + y * w] = (i | (mask << 24));
+
+        return true;
     }
 
     function _determineTotalRooms(d, w, h){
+        local outData = [];
+
         local roomIndex = 0;
         for(local y = 0; y < h; y++){
             for(local x = 0; x < w; x++){
                 if(d[x + y * w] == true){
+                    local entry = {
+                        "tileCount": 0
+                    };
                     //A tile has been found, so start the flood fill.
-                    local roomTileCount = _floodFillData(d, x, y, w, roomIndex);
+                    _floodFillData(d, x, y, w, roomIndex, entry);
 
                     roomIndex++;
+                    outData.append(entry);
                 }
+            }
+        }
+
+        return outData;
+    }
+
+    function _checkEdges(d, x, y, w, h){
+        local idx = (x + y * w);
+        if(idx < 0 || idx >= w*h) return false;
+        return d[idx] == false;
+    }
+    function _determineEdges(d, w, h){
+        for(local y = 0; y < h; y++){
+            for(local x = 0; x < w; x++){
+                local val = d[x + y * w];
+                if(val == false) continue;
+                local mask = 0;
+                if(_checkEdges(d, x, (y - 1), w, h)) mask = mask | 0x1;
+                if(_checkEdges(d, (x - 1), y, w, h)) mask = mask | 0x2;
+                if(_checkEdges(d, (x + 1), y, w, h)) mask = mask | 0x4;
+                if(_checkEdges(d, x, (y + 1), w, h)) mask = mask | 0x8;
+
+                print(mask);
+                d[x + y * w] = val | (mask << 24);
             }
         }
     }

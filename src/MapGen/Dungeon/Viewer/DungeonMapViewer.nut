@@ -48,4 +48,13 @@
     function notifyNewPlaceFound(id, pos){
         //TODO Stub for now but in future dispatch this sort of thing with events.
     }
+
+    function setPlayerPosition(x, y){
+        if(mMapData_ == null) return;
+        if(mPlayerLocationPanel_ == null && mLabelWindow_){
+            mPlayerLocationPanel_ = PlaceMarkerIcon(mLabelWindow_, mMapData_);
+            mPlayerLocationPanel_.setDatablock("playerMapIndicator");
+        }
+        mPlayerLocationPanel_.setCentre(x.tofloat()/5, -y.tofloat()/5);
+    }
 }

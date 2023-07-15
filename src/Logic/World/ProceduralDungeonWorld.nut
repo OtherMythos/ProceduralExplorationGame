@@ -4,6 +4,7 @@
 ::ProceduralDungeonWorld <- class extends ::World{
 
     mMapData_ = null;
+    mVoxMesh_ = null;
 
     constructor(){
         base.constructor();
@@ -34,6 +35,8 @@
         base.resetSession();
 
         mMapData_ = mapData;
+
+        createScene();
     }
 
     function getPositionForAppearEnemy_(enemyType){
@@ -80,12 +83,50 @@
     }
 
     function getZForPos(pos){
-        return 0;
+        return 1;
     }
 
     function createScene(){
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
 
+        local width = mMapData_.width;
+        local height = mMapData_.height;
+        local voxData = array(width * height, null);
+        local v = mMapData_.vals;
+        for(local y = 0; y < height; y++){
+            for(local x = 0; x < width; x++){
+                local val = v[x + y * width];
+                if(val == false) continue;
+
+                local mask = (val >> 24) & 0xF;
+
+                local newNode = mParentNode_.createChildSceneNode();
+                newNode.setPosition(x * 5, 0, y * 5);
+
+                local itemName = "DungeonFloor.mesh";
+                local orientation = Quat();
+                if(mask == 0){
+                }else{
+                    if(mask == 0x2) orientation = Quat(0, sqrt(0.5), 0, sqrt(0.5));
+                    else if(mask == 0x4) orientation = Quat(0, -sqrt(0.5), 0, sqrt(0.5));
+                    else if(mask == 0x8) orientation = Quat(0, 1, 0, 0);
+                    itemName = "DungeonWall.mesh";
+
+                    if((mask & (mask - 1)) != 0){
+                        //Two bits are true meaning this is a corner.
+                        itemName = "DungeonWallCorner.mesh";
+                        if(mask == 0x3) orientation = Quat(0, sqrt(0.5), 0, sqrt(0.5));
+                        if(mask == 0xA) orientation = Quat(0, 1, 0, 0);
+                        if(mask == 0xC) orientation = Quat(0, -sqrt(0.5), 0, sqrt(0.5));
+                    }
+                }
+
+                local item = _scene.createItem(itemName);
+                item.setRenderQueueGroup(30);
+                newNode.attachObject(item);
+                newNode.setOrientation(orientation);
+            }
+        }
     }
 
     function getMapData(){
