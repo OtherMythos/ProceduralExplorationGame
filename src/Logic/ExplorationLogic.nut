@@ -13,27 +13,14 @@
  */
 ::ExplorationLogic <- class{
 
-    mPlayerMoves = [
-        MoveId.AREA,
-        MoveId.FIREBALL,
-        MoveId.AREA,
-        MoveId.AREA
-    ];
-
     mEnemyEncountered_ = false;
     mExplorationFinished_ = false;
     mExplorationPaused_ = false;
-
-    mTargetManager_ = null;
-
-    mPlayerEntry_ = null;
-    mPlacingMarker_ = false;
 
     mOrientatingCamera_ = false;
     mPrevMouseX_ = null;
     mPrevMouseY_ = null;
 
-    mProjectileManager_ = null;
     mExplorationStats_ = null;
     mGatewayPercentage_ = 0.0;
 
@@ -58,12 +45,8 @@
             ]
         };
 
-        mProjectileManager_ = ExplorationProjectileManager();
-
         //mCurrentWorld_ = ProceduralExplorationWorld();
         mCurrentWorld_ = ProceduralDungeonWorld();
-
-        mTargetManager_ = EntityTargetManager();
 
         resetExploration_();
     }
@@ -124,8 +107,6 @@
 
         checkCameraChange();
         checkOrientatingCamera();
-
-        mProjectileManager_.update();
     }
 
     function notifyEnemyDestroyed(eid){

@@ -15,7 +15,7 @@
         mParent_ = parentWin;
         mBus_ = bus;
         mSize_ = Vec2(10, 10);
-        mTargetMoveId_ = ::Base.mExplorationLogic.mPlayerMoves[buttonId];
+        mTargetMoveId_ = ::World.mPlayerMoves[buttonId];
 
         local button = parentWin.createButton();
         button.setText(::Moves[mTargetMoveId_].getName());

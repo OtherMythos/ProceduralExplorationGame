@@ -1,7 +1,7 @@
 function baseDamage(id, type, internalId, sender, receiver){
     if(type != _COLLISION_ENTER) return;
 
-    local active = ::Base.mExplorationLogic.mProjectileManager_.mActiveProjectiles_;
+    local active = ::Base.mExplorationLogic.mCurrentWorld_.mProjectileManager_.mActiveProjectiles_;
     if(!active.rawin(id)) return;
     local projData = active[id];
     local damage = projData.mCombatMove_.getDamage();

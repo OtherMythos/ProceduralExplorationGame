@@ -38,6 +38,14 @@
 
 ::World <- class{
 
+    //TODO remove this at some point.
+    mPlayerMoves = [
+        MoveId.AREA,
+        MoveId.FIREBALL,
+        MoveId.AREA,
+        MoveId.AREA
+    ];
+
     mParentNode_ = null;
 
     mPlayerEntry_ = null;
@@ -49,6 +57,8 @@
 
     mCurrentHighlightEnemy_ = null;
     mPreviousHighlightEnemy_ = null;
+
+    mProjectileManager_ = null;
 
     mRecentTargetEnemy_ = false;
     mPrevTargetEnemy_ = null;
@@ -135,6 +145,8 @@
         checkForEnemyAppear();
         checkPlayerCombatMoves();
 
+        mProjectileManager_.update();
+
         mPlayerEntry_.update();
         foreach(i in mActiveEnemies_){
             i.update();
@@ -143,6 +155,10 @@
 
     function resetSession(){
         mPlayerEntry_ = mEntityFactory_.constructPlayer(mGui_);
+
+        if(mProjectileManager_ != null) mProjectileManager_.shutdown();
+        mProjectileManager_ = ExplorationProjectileManager();
+
     }
 
     //-------

@@ -2,13 +2,13 @@
 
 function regularSwordBaseAttack(p, entry, pos){
     if(p == 15){
-        ::Base.mExplorationLogic.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, Vec3(), ::Combat.CombatMove(3), entry.getTargetCollisionWorld());
+        ::Base.mExplorationLogic.mCurrentWorld_.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, Vec3(), ::Combat.CombatMove(3), entry.getTargetCollisionWorld());
     }
 }
 
 function regularTwoHandedBaseAttack(p, entry, pos){
     if(p == 52){
-        ::Base.mExplorationLogic.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, Vec3(), ::Combat.CombatMove(10), entry.getTargetCollisionWorld());
+        ::Base.mExplorationLogic.mCurrentWorld_.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, Vec3(), ::Combat.CombatMove(10), entry.getTargetCollisionWorld());
     }
 }
 

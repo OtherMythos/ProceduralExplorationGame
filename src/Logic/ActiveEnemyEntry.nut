@@ -155,7 +155,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         }
         mInWater_ = inWater;
 
-        ::Base.mExplorationLogic.mTargetManager_.notifyEntityPositionChange(this);
+        mCreatorWorld_.mTargetManager_.notifyEntityPositionChange(this);
         if(mEntity_) mEntity_.setPosition(SlotPosition(pos));
         if(mGizmo_) mGizmo_.setPosition(pos);
     }
@@ -254,7 +254,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
             mModel_.destroy();
             mModel_ = null;
         }
-        ::Base.mExplorationLogic.mTargetManager_.notifyEntityDestroyed(this);
+        mCreatorWorld_.mTargetManager_.notifyEntityDestroyed(this);
     }
     function setGizmo(gizmo){
         if(mGizmo_ != null){

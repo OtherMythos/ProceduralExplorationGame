@@ -24,6 +24,10 @@
         mQueuedDestructionProjectiles_ = [];
     }
 
+    function shutdown(){
+
+    }
+
     function update(){
         foreach(c,i in mActiveProjectiles_){
             i.mLifetime_--;

@@ -58,7 +58,7 @@ function destroyed(eid){
     chasingPlayerState = {
         "start": function(ctx, e) {
             //TODO remove direct access.
-            ctx.targetingId = ::Base.mExplorationLogic.mTargetManager_.targetEntity(::Base.mExplorationLogic.mCurrentWorld_.mPlayerEntry_, ::Base.mExplorationLogic.mCurrentWorld_.mActiveEnemies_[e.getId()]);
+            ctx.targetingId = ::Base.mExplorationLogic.mCurrentWorld_.mTargetManager_.targetEntity(::Base.mExplorationLogic.mCurrentWorld_.mPlayerEntry_, ::Base.mExplorationLogic.mCurrentWorld_.mActiveEnemies_[e.getId()]);
         },
         "update": function(ctx, e, data) {
             ::Base.mExplorationLogic.mCurrentWorld_.moveEnemyToPlayer(e.getId());
@@ -87,7 +87,7 @@ function destroyed(eid){
         },
         "end": function(ctx, e) {
             assert(ctx.targetingId != -1);
-            ::Base.mExplorationLogic.mTargetManager_.releaseTarget(::Base.mExplorationLogic.mCurrentWorld_.mActiveEnemies_[e.getId()], ctx.targetingId);
+            ::Base.mExplorationLogic.mCurrentWorld_.mTargetManager_.releaseTarget(::Base.mExplorationLogic.mCurrentWorld_.mActiveEnemies_[e.getId()], ctx.targetingId);
         },
     };
 
