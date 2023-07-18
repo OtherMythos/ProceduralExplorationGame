@@ -176,7 +176,9 @@
 
     function setPlayerPosition(x, y){
         if(mMapData_ == null) return;
-        if(mPlayerLocationPanel_ == null && mLabelWindow_){
+        if(mLabelWindow_ == null) return;
+
+        if(mPlayerLocationPanel_ == null){
             mPlayerLocationPanel_ = PlaceMarkerIcon(mLabelWindow_, mMapData_);
             mPlayerLocationPanel_.setDatablock("playerMapIndicator");
         }

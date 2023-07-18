@@ -48,6 +48,9 @@
 
     mParentNode_ = null;
 
+    mHasEverBeenActive_ = false;
+    mActive_ = false;
+
     mPlayerEntry_ = null;
     mActiveEnemies_ = null;
     mGui_ = null;
@@ -127,11 +130,11 @@
         if(mParentNode_) mParentNode_.destroyNodeAndChildren();
         mParentNode_ = null;
 
-        _world.destroyWorld();
+        //_world.destroyWorld();
     }
 
     function setup(){
-        _world.createWorld();
+        //_world.createWorld();
 
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
         mEntityFactory_ = ExplorationEntityFactory(this, mParentNode_, CharacterGenerator());
@@ -150,6 +153,16 @@
         mPlayerEntry_.update();
         foreach(i in mActiveEnemies_){
             i.update();
+        }
+    }
+
+    function setActive(active){
+        mActive_ = active;
+        if(active){
+            if(!mHasEverBeenActive_){
+                setup();
+            }
+            mHasEverBeenActive_ = true;
         }
     }
 
@@ -499,7 +512,9 @@
         updatePlayerPos(playerPos);
         _world.setPlayerPosition(SlotPosition(playerPos));
         //TODO remove direct access.
-        mGui_.mWorldMapDisplay_.mMapViewer_.setPlayerPosition(playerPos.x, playerPos.z);
+        if(mGui_.mWorldMapDisplay_.mMapViewer_){
+            mGui_.mWorldMapDisplay_.mMapViewer_.setPlayerPosition(playerPos.x, playerPos.z);
+        }
     }
 
     function notifyEnemyDestroyed(eid){

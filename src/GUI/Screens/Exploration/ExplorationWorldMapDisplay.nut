@@ -15,18 +15,27 @@
 
         mMapViewerWindow_ = parentWin.createWindow();
         mMapViewerPanel_ = mMapViewerWindow_.createPanel();
-        //mMapViewer_ = ExplorationMapViewer();
-        mMapViewer_ = DungeonMapViewer();
-        mMapViewer_.setLabelWindow(mMapViewerWindow_);
         mMapViewerWindow_.setVisualsEnabled(false);
 
         _event.subscribe(Event.ACTIVE_WORLD_CHANGE, processActiveWorldChange, this);
     }
 
+    function switchMapViewer(worldType, data){
+        if(worldType == WorldTypes.PROCEDURAL_EXPLORATION_WORLD){
+            mMapViewer_ = ExplorationMapViewer();
+        }
+        else if(worldType == WorldTypes.PROCEDURAL_DUNGEON_WORLD){
+            mMapViewer_ = DungeonMapViewer();
+        }else{
+            assert(false);
+        }
+        mMapViewer_.displayMapData(data, false);
+        mMapViewer_.setLabelWindow(mMapViewerWindow_);
+        mMapViewerPanel_.setDatablock(mMapViewer_.getDatablock());
+    }
+
     function processActiveWorldChange(id, data){
-        //if(data.getWorldType() == WorldTypes.PROCEDURAL_EXPLORATION_WORLD){
-            mMapViewer_.displayMapData(data.getMapData(), false);
-        //}
+        switchMapViewer(data.getWorldType(), data.getMapData());
     }
 
     function addToLayout(layoutLine){
@@ -83,7 +92,6 @@
         mMapViewerWindow_.setSize(targetSize);
         mMapViewerWindow_.setPosition((basePos.x + winSize.x) - mMapViewerWindow_.getSize().x, basePos.y);
         mMapViewerPanel_.setSize(targetSize);
-        mMapViewerPanel_.setDatablock(mMapViewer_.getDatablock());
     }
 
     function getPosition(){

@@ -28,6 +28,8 @@
 
     mCurrentWorld_ = null;
 
+    mQueuedWorlds_ = null;
+
     mGui_ = null;
     mInputs_ = null;
 
@@ -46,7 +48,9 @@
         };
 
         //mCurrentWorld_ = ProceduralExplorationWorld();
-        mCurrentWorld_ = ProceduralDungeonWorld();
+        //mCurrentWorld_ = ProceduralDungeonWorld();
+
+        mQueuedWorlds_ = [];
 
         resetExploration_();
     }
@@ -57,17 +61,39 @@
         _event.unsubscribe(Event.PLAYER_DIED, processPlayerDeath, this);
 
         _state.setPauseState(0);
+        _world.destroyWorld();
     }
 
     function setup(){
+        _world.createWorld();
+
         _state.setPauseState(0);
 
-        mCurrentWorld_.setup();
-
-        resetExploration();
+        //local newWorld = ProceduralDungeonWorld();
+        local newWorld = ProceduralExplorationWorld();
+        //newWorld.setup();
+        setCurrentWorld_(newWorld);
 
         _event.subscribe(Event.PLAYER_DIED, processPlayerDeath, this);
         _event.transmit(Event.ACTIVE_WORLD_CHANGE, mCurrentWorld_);
+    }
+
+    /**
+     * Set the provided world to be active, de-activating and queuing the previous.
+    */
+    function pushWorld(worldInstance){
+        mCurrentWorld_.setActive(false);
+        mQueuedWorlds_.append(mCurrentWorld_);
+        setCurrentWorld_(worldInstance);
+    }
+    function setCurrentWorld(worldInstance){
+        if(mCurrentWorld_ != null) mCurrentWorld_.shutdown();
+        setCurrentWorld_(worldInstance);
+    }
+    function setCurrentWorld_(worldInstance){
+        mCurrentWorld_ = worldInstance;
+        mCurrentWorld_.setGuiObject(mGui_);
+        mCurrentWorld_.setActive(true);
     }
 
     function processPlayerDeath(id, data){
@@ -167,7 +193,6 @@
 
     function setGuiObject(guiObj){
         mGui_ = guiObj;
-        mCurrentWorld_.setGuiObject(guiObj);
     }
 
     function pauseExploration(){
