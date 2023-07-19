@@ -1,4 +1,5 @@
 
+::MapViewerCount <- 0;
 
 ::MapViewer <- class{
 
@@ -10,8 +11,6 @@
     mPlayerLocationPanel_ = null;
 
     mLabelWindow_ = null;
-
-    mVisiblePlacesBuffer_ = null;
 
     PlaceMarkerIcon = class{
         mPanel_ = null;
@@ -36,6 +35,9 @@
         }
         function setZOrder(zOrder){
             mPanel_.setZOrder(zOrder);
+        }
+        function shutdown(){
+            _gui.destroy(mPanel_);
         }
     };
 
@@ -113,12 +115,11 @@
     function displayMapData(outData, showPlaceMarkers=true){
         mMapData_ = outData;
 
-        mVisiblePlacesBuffer_ = setupVisiblePlacesBuffer(outData.width, outData.height);
-
         setPlayerPosition(0.5, 0.5);
 
         local timer = Timer();
         timer.start();
+            ::MapViewerCount++;
             setupTextures(mMapData_);
             uploadToTexture();
         timer.stop();
@@ -133,7 +134,7 @@
             "src_alpha_blend_factor": _HLMS_SBF_ONE_MINUS_DEST_ALPHA,
             "dst_alpha_blend_factor": _HLMS_SBF_ONE
         });
-        local datablock = _hlms.unlit.createDatablock("mapViewer/renderDatablock", blend);
+        local datablock = _hlms.unlit.createDatablock("mapViewer/renderDatablock" + ::MapViewerCount, blend);
         mCompositorDatablock_ = datablock;
     }
     function setupTextures(mapData){
@@ -144,7 +145,7 @@
             mCompositorTexture_ = null;
         }
 
-        local newTex = _graphics.createTexture("mapViewer/renderTexture");
+        local newTex = _graphics.createTexture("mapViewer/renderTexture" + ::MapViewerCount);
         newTex.setResolution(mapData.width, mapData.height);
         newTex.setPixelFormat(_PFG_RGBA8_UNORM);
         newTex.scheduleTransitionTo(_GPU_RESIDENCY_RESIDENT);
@@ -172,6 +173,15 @@
 
     function setLabelWindow(renderWindow){
         mLabelWindow_ = renderWindow;
+    }
+
+    function shutdown(){
+        _hlms.destroyDatablock(mCompositorDatablock_);
+        _graphics.destroyTexture(mCompositorTexture_);
+
+        if(mPlayerLocationPanel_ != null){
+            mPlayerLocationPanel_.shutdown();
+        }
     }
 
     function setPlayerPosition(x, y){

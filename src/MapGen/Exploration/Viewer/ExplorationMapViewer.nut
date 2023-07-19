@@ -46,6 +46,7 @@ enum MapViewerColours{
     mFragmentParams_ = null
 
     mPlaceMarkers_ = null;
+    mFoundPlaces_ = null;
     mLabelWindow_ = null;
 
     constructor(){
@@ -59,27 +60,26 @@ enum MapViewerColours{
         mDrawLocationOptions_[PlaceType.NONE] = false;
 
         mPlaceMarkers_ = [];
+        mFoundPlaces_ = [];
 
         setupBlendblock();
         setupColours();
     }
 
+    function shutdown(){
+        base.shutdown();
+
+        foreach(i in mFoundPlaces_){
+            i.shutdown();
+        }
+    }
+
     function displayMapData(outData, showPlaceMarkers=true){
-        mMapData_ = outData;
+        base.displayMapData(outData, showPlaceMarkers);
 
         if(showPlaceMarkers){
             setupPlaceMarkers(outData);
         }
-
-        setPlayerPosition(0.5, 0.5);
-
-        local timer = Timer();
-        timer.start();
-            setupTextures(mMapData_);
-            uploadToTexture();
-        timer.stop();
-        local outTime = timer.getSeconds();
-        printf("Generating map texture took %f seconds", outTime);
     }
 
     function setupPlaceMarkers(outData){
@@ -275,6 +275,8 @@ enum MapViewerColours{
             placeMarker = PlaceMarkerIcon(mLabelWindow_, mMapData_, 3);
         }
         placeMarker.setCentre(pos.x, pos.z);
+
+        mFoundPlaces_.append(placeMarker);
     }
 
 }

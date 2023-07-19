@@ -75,7 +75,6 @@
         setCurrentWorld_(newWorld);
 
         _event.subscribe(Event.PLAYER_DIED, processPlayerDeath, this);
-        _event.transmit(Event.ACTIVE_WORLD_CHANGE, mCurrentWorld_);
     }
 
     /**
@@ -94,6 +93,8 @@
         mCurrentWorld_ = worldInstance;
         mCurrentWorld_.setGuiObject(mGui_);
         mCurrentWorld_.setActive(true);
+
+        _event.transmit(Event.ACTIVE_WORLD_CHANGE, mCurrentWorld_);
     }
 
     function processPlayerDeath(id, data){

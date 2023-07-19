@@ -21,6 +21,7 @@
     }
 
     function switchMapViewer(worldType, data){
+        local oldViewer = mMapViewer_;
         if(worldType == WorldTypes.PROCEDURAL_EXPLORATION_WORLD){
             mMapViewer_ = ExplorationMapViewer();
         }
@@ -32,6 +33,7 @@
         mMapViewer_.displayMapData(data, false);
         mMapViewer_.setLabelWindow(mMapViewerWindow_);
         mMapViewerPanel_.setDatablock(mMapViewer_.getDatablock());
+        if(oldViewer != null) oldViewer.shutdown();
     }
 
     function processActiveWorldChange(id, data){

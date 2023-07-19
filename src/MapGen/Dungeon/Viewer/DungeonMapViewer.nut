@@ -13,25 +13,6 @@
         setupBlendblock();
     }
 
-    function displayMapData(outData, showPlaceMarkers=true){
-        mMapData_ = outData;
-
-        setPlayerPosition(0.5, 0.5);
-
-        local timer = Timer();
-        timer.start();
-            setupTextures(mMapData_);
-            uploadToTexture();
-        timer.stop();
-        local outTime = timer.getSeconds();
-        printf("Generating map texture took %f seconds", outTime);
-    }
-
-    function setDrawOption(option, value){
-        mDrawOptions_[option] = value;
-        uploadToTexture();
-    }
-
     function fillBufferWithMap(textureBox){
         textureBox.seek(0);
         local v = mMapData_.vals;
