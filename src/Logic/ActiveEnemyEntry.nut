@@ -256,6 +256,24 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         }
         mCreatorWorld_.mTargetManager_.notifyEntityDestroyed(this);
     }
+    function notifyNewHealth(newHealth){
+        local billboardIdx = -1;
+        try{
+            billboardIdx = _component.user[Component.MISC].get(mEntity_, 0);
+        }catch(e){ }
+
+        if(billboardIdx >= 0){
+            if(newHealth <= 0){
+                //TODO destroy this billboard.
+                mCreatorWorld_.mGui_.mWorldMapDisplay_.mBillboardManager_.untrackNode(billboardIdx);
+                return;
+            }
+            local maxHealth = _component.user[Component.HEALTH].get(entity, 1);
+            local newPercentage = newHealth.tofloat() / maxHealth.tofloat();
+
+            mCreatorWorld_.mGui_.mWorldMapDisplay_.mBillboardManager_.updateHealth(billboardIdx, newPercentage);
+        }
+    }
     function setGizmo(gizmo){
         if(mGizmo_ != null){
             mGizmo_.destroy();

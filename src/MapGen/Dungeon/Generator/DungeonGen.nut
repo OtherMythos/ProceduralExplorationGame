@@ -106,8 +106,6 @@
         if(d[(x + 1) + y * w] == true) { _floodFillData(d, x + 1, y, w, i, entry); mask = mask | 0x4; }
         if(d[x + (y + 1) * w] == true) { _floodFillData(d, x, y + 1, w, i, entry); mask = mask | 0x8; }
 
-        print(mask);
-
         //d[x + y * w] = (i | (mask << 24));
 
         return true;
@@ -151,7 +149,6 @@
                 if(_checkEdges(d, (x + 1), y, w, h)) mask = mask | 0x4;
                 if(_checkEdges(d, x, (y + 1), w, h)) mask = mask | 0x8;
 
-                print(mask);
                 d[x + y * w] = val | (mask << 24);
             }
         }

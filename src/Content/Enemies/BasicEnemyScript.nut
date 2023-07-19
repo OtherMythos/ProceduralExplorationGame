@@ -33,12 +33,26 @@ function update(eid){
 function destroyed(eid){
     local worldPos = ::EffectManager.getWorldPositionForWindowPos(::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getPosition() + ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getSize() / 2);
     local endPos = ::Base.mExplorationLogic.mGui_.getMoneyCounter().getPositionWindowPos();
-    ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": 10, "start": worldPos, "end": endPos, "money": 10, "coinScale": 0.1}));
 
+    //TODO this shouldn't be here if the enemy has been destroyed.
+    ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": 10, "start": worldPos, "end": endPos, "money": 10, "coinScale": 0.1}));
     ::Base.mExplorationLogic.mCurrentWorld_.spawnEXPOrbs(eid.getPosition().toVector3(), 8);
+
+    checkDestroyBillboard_(eid);
 
     ::w.e.rawdelete(eid.getId());
     ::Base.mExplorationLogic.notifyEnemyDestroyed(eid.getId());
+}
+
+function checkDestroyBillboard_(eid){
+    local billboardIdx = -1;
+    try{
+        billboardIdx = _component.user[Component.MISC].get(eid, 0);
+    }catch(e){ }
+
+    if(billboardIdx >= 0){
+        ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.mBillboardManager_.untrackNode(billboardIdx);
+    }
 }
 
 ::BasicEnemyMachine <- class extends ::CombatStateMachine{

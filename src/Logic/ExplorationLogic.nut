@@ -158,7 +158,8 @@
         if(_input.getMouseButton(1)){
             //::Base.mExplorationLogic.spawnEXPOrbs(mPlayerEntry_.getPosition(), 4);
 
-            gatewayEndExploration();
+            //gatewayEndExploration();
+            pushWorld(ProceduralDungeonWorld());
         }
         if(!mOrientatingCamera_) return;
         print("orientating");

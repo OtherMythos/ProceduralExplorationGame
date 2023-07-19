@@ -222,4 +222,9 @@
         return ::MapGenHelpers.getIsWaterForPosition(mMapData_, pos);
     }
 
+    function processActiveChange_(active){
+        if(!active){
+            destroyEnemyMap_(mActivePlaces_);
+        }
+    }
 };

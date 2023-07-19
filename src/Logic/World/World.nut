@@ -163,7 +163,36 @@
                 setup();
             }
             mHasEverBeenActive_ = true;
+        }else{
+            //TODO this whole section could do with being better.
+            destroyEnemyMap_(mActiveEnemies_);
+            mPlayerEntry_.notifyDestroyed();
+            ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.mBillboardManager_.untrackAllNodes();
         }
+
+        mParentNode_.setVisible(active);
+        processActiveChange_(active);
+
+    }
+    function destroyEnemyMap_(target){
+        local enemies = [];
+        printf("%i current", target.len());
+        foreach(i in target){
+            enemies.append(i.mEntity_);
+        }
+        foreach(i in enemies){
+            _entity.destroy(i);
+        }
+
+        foreach(i in target){
+            i.notifyDestroyed();
+        }
+        target.clear();
+        //assert(target.len() == 0);
+    }
+
+    function processActiveChange_(active){
+        //Stub
     }
 
     function resetSession(){
@@ -275,23 +304,10 @@
     }
 
     function notifyNewEntityHealth(entity, newHealth){
-        local billboardIdx = -1;
-        try{
-            billboardIdx = _component.user[Component.MISC].get(entity, 0);
-        }catch(e){ }
+        local enemy = mActiveEnemies_[entity.getId()];
+        enemy.notifyNewHealth(newHealth);
 
-        if(billboardIdx >= 0){
-            if(newHealth <= 0){
-                mGui_.mWorldMapDisplay_.mBillboardManager_.untrackNode(billboardIdx);
-                return;
-            }
-            local maxHealth = _component.user[Component.HEALTH].get(entity, 1);
-            local newPercentage = newHealth.tofloat() / maxHealth.tofloat();
-
-            checkEntityHealthImportant(entity, newHealth, newPercentage);
-
-            mGui_.mWorldMapDisplay_.mBillboardManager_.updateHealth(billboardIdx, newPercentage);
-        }
+        checkEntityHealthImportant(entity, newHealth, newPercentage);
     }
 
     function checkEntityHealthImportant(entity, newHealth, percentage){
