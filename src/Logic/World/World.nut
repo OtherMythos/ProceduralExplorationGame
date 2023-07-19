@@ -303,9 +303,11 @@
         mTargetManager_.targetEntity(mActiveEnemies_[currentEnemy], mPlayerEntry_);
     }
 
-    function notifyNewEntityHealth(entity, newHealth){
-        local enemy = mActiveEnemies_[entity.getId()];
-        enemy.notifyNewHealth(newHealth);
+    function notifyNewEntityHealth(entity, newHealth, newPercentage){
+        if(mActiveEnemies_.rawin(entity.getId())){
+            local enemy = mActiveEnemies_[entity.getId()];
+            enemy.notifyNewHealth(newHealth, newPercentage);
+        }
 
         checkEntityHealthImportant(entity, newHealth, newPercentage);
     }
@@ -594,36 +596,6 @@
         local targetProjectile = moveDef.getProjectile();
         if(targetProjectile != null){
             mProjectileManager_.spawnProjectile(targetProjectile, pos, dir, ::Combat.CombatMove(5), collisionType);
-        }
-    }
-
-    function notifyNewEntityHealth(entity, newHealth){
-        local billboardIdx = -1;
-        try{
-            billboardIdx = _component.user[Component.MISC].get(entity, 0);
-        }catch(e){ }
-
-        if(billboardIdx >= 0){
-            if(newHealth <= 0){
-                mGui_.mWorldMapDisplay_.mBillboardManager_.untrackNode(billboardIdx);
-                return;
-            }
-            local maxHealth = _component.user[Component.HEALTH].get(entity, 1);
-            local newPercentage = newHealth.tofloat() / maxHealth.tofloat();
-
-            checkEntityHealthImportant(entity, newHealth, newPercentage);
-
-            mGui_.mWorldMapDisplay_.mBillboardManager_.updateHealth(billboardIdx, newPercentage);
-        }
-    }
-
-    function checkEntityHealthImportant(entity, newHealth, percentage){
-        if(entity.getId() == mPlayerEntry_.getEntity().getId()){
-            local data = {
-                "health": newHealth,
-                "percentage": percentage
-            };
-            _event.transmit(Event.PLAYER_HEALTH_CHANGED, data);
         }
     }
 

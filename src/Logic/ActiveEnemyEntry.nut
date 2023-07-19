@@ -256,7 +256,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         }
         mCreatorWorld_.mTargetManager_.notifyEntityDestroyed(this);
     }
-    function notifyNewHealth(newHealth){
+    function notifyNewHealth(newHealth, newPercentage){
         local billboardIdx = -1;
         try{
             billboardIdx = _component.user[Component.MISC].get(mEntity_, 0);
@@ -264,14 +264,19 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
 
         if(billboardIdx >= 0){
             if(newHealth <= 0){
-                //TODO destroy this billboard.
                 mCreatorWorld_.mGui_.mWorldMapDisplay_.mBillboardManager_.untrackNode(billboardIdx);
-                return;
+            }else{
+                mCreatorWorld_.mGui_.mWorldMapDisplay_.mBillboardManager_.updateHealth(billboardIdx, newPercentage);
             }
-            local maxHealth = _component.user[Component.HEALTH].get(entity, 1);
-            local newPercentage = newHealth.tofloat() / maxHealth.tofloat();
+        }
 
-            mCreatorWorld_.mGui_.mWorldMapDisplay_.mBillboardManager_.updateHealth(billboardIdx, newPercentage);
+        if(newHealth <= 0){
+            //Drop spoils here.
+            local worldPos = ::EffectManager.getWorldPositionForWindowPos(::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getPosition() + ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getSize() / 2);
+            local endPos = ::Base.mExplorationLogic.mGui_.getMoneyCounter().getPositionWindowPos();
+
+            ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": 10, "start": worldPos, "end": endPos, "money": 10, "coinScale": 0.1}));
+            ::Base.mExplorationLogic.mCurrentWorld_.spawnEXPOrbs(mPos_, 8);
         }
     }
     function setGizmo(gizmo){
