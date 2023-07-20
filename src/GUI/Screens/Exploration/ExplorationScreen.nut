@@ -238,34 +238,7 @@ enum ExplorationBusEvents{
     }
 
     function notifyPlaceEnterState(id, entered, firstTime, placeEnteredPos){
-        if(firstTime){
-            mWorldMapDisplay_.mMapViewer_.notifyNewPlaceFound(id, placeEnteredPos);
-        }
-        if(id == PlaceId.GATEWAY){
-            mInsideGateway_ = entered;
-            local text = "";
-            local gatewayReady = mLogicInterface_.isGatewayReady();
-            if(entered){
-                text = gatewayReady ? "Gateway is ready" : "Gateway is not ready yet"
-            }
-            mPlaceHelperLabel_.setText(text);
-            mPlaceHelperButton_.setText("End exploration");
-            mPlaceHelperButton_.setHidden(!entered || !gatewayReady);
-            mPlaceHelperButton_.attachListenerForEvent(notifyPlaceGatewayButton, _GUI_ACTION_PRESSED);
-            return;
-        }
-        //Make sure if the player has entered the gateway box that overrides everything else.
-        if(mInsideGateway_) return;
 
-        local text = "";
-        if(entered){
-            text = ::Places[id].getName();
-        }
-        mPlaceHelperLabel_.setText(text);
-        mPlaceHelperButton_.setText("Visit");
-        mPlaceHelperButton_.setHidden(!entered);
-        mPlaceHelperButton_.attachListenerForEvent(notifyPlaceVisitButton, _GUI_ACTION_PRESSED);
-        mCurrentPlace_ = entered ? id : null;
     }
 
     function notifyEnemyEncounter(idx, enemy, position=null){

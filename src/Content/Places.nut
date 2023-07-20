@@ -21,8 +21,8 @@ enum PlaceId{
     VILLAGE_3,
 
     LOCATION_1,
-    LOCATION_2,
-    LOCATION_3,
+    //LOCATION_2,
+    //LOCATION_3,
 
     MAX
 };
@@ -116,9 +116,10 @@ enum PlaceNecessaryFeatures{
 ::Places[PlaceId.VILLAGE_2] = PlaceDef("Village2", "Village2", PlaceType.VILLAGE, 0.1, 30);
 ::Places[PlaceId.VILLAGE_3] = PlaceDef("Village3", "Village3", PlaceType.VILLAGE, 0.1, 30);
 
-::Places[PlaceId.LOCATION_1] = PlaceDef("Location1", "Location1", PlaceType.LOCATION, 0.1, 10);
-::Places[PlaceId.LOCATION_2] = PlaceDef("Location2", "Location2", PlaceType.LOCATION, 0.1, 10);
-::Places[PlaceId.LOCATION_3] = PlaceDef("Location3", "Location3", PlaceType.LOCATION, 0.1, 10);
+::Places[PlaceId.LOCATION_1] = PlaceDef("Dungeon", "Dungeon", PlaceType.LOCATION, 0.1, 10);
+//::Places[PlaceId.LOCATION_1] = PlaceDef("Location1", "Location1", PlaceType.LOCATION, 0.1, 10);
+//::Places[PlaceId.LOCATION_2] = PlaceDef("Location2", "Location2", PlaceType.LOCATION, 0.1, 10);
+//::Places[PlaceId.LOCATION_3] = PlaceDef("Location3", "Location3", PlaceType.LOCATION, 0.1, 10);
 //-------------------------------
 
 ::PlacesByType <- {};
