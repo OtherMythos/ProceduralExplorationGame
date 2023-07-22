@@ -15,6 +15,6 @@ BUILD_INPUT=${SCRIPT_DIR}/assets/
 docker run -it --name asset-builder-container --rm \
     -v "$BUILD_OUTPUT:$BUILD_OUTPUT" \
     -v "$BUILD_INPUT:$BUILD_INPUT" \
-    asset-builder-image-voxel -m AssetModuleGox --input $BUILD_INPUT --output $BUILD_OUTPUT $*
+    asset-builder-image-voxel -m AssetModuleGox AssetModuleTerrainBMP --input $BUILD_INPUT --output $BUILD_OUTPUT $*
 
 chmod -R 777 $BUILD_OUTPUT

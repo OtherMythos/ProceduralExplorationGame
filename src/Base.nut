@@ -64,6 +64,7 @@
         _doFile("res://src/MapGen/Exploration/Generator/Biomes.nut");
         _doFile("res://src/MapGen/Exploration/Generator/MapGen.nut");
         _doFile("res://src/MapGen/MapViewer.nut");
+        _doFile("res://src/MapGen/VisitedLocationMapViewer.nut");
         _doFile("res://src/MapGen/Exploration/Viewer/ExplorationMapViewer.nut");
         _doFile("res://src/MapGen/Dungeon/Viewer/DungeonMapViewer.nut");
         _doFile("res://src/MapGen/Dungeon/Generator/DungeonGen.nut");
@@ -115,6 +116,7 @@
         _doFile("res://src/Logic/EntityTargetManager.nut");
         _doFile("res://src/Logic/ActiveEnemyEntry.nut");
         _doFile("res://src/Logic/World/World.nut");
+        _doFile("res://src/Logic/World/VisitedLocationWorld.nut");
         _doFile("res://src/Logic/World/ProceduralExplorationWorld.nut");
         _doFile("res://src/Logic/World/ProceduralDungeonWorld.nut");
         _doFile("res://src/Logic/ExplorationLogic.nut");

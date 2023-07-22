@@ -47,9 +47,6 @@
             ]
         };
 
-        //mCurrentWorld_ = ProceduralExplorationWorld();
-        //mCurrentWorld_ = ProceduralDungeonWorld();
-
         mQueuedWorlds_ = [];
 
         resetExploration_();
@@ -70,7 +67,8 @@
         _state.setPauseState(0);
 
         //local newWorld = ProceduralDungeonWorld();
-        local newWorld = ProceduralExplorationWorld();
+        //local newWorld = ProceduralExplorationWorld();
+        local newWorld = VisitedLocationWorld("testVillage");
         //newWorld.setup();
         setCurrentWorld_(newWorld);
 

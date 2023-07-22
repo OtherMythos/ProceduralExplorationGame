@@ -27,6 +27,9 @@
         }
         else if(worldType == WorldTypes.PROCEDURAL_DUNGEON_WORLD){
             mMapViewer_ = DungeonMapViewer();
+        }
+        else if(worldType == WorldTypes.VISITED_LOCATION_WORLD){
+            mMapViewer_ = VisitedLocationMapViewer();
         }else{
             assert(false);
         }

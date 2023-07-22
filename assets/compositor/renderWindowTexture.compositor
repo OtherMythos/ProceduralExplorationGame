@@ -77,7 +77,7 @@ compositor_node renderTexture30Node
         }
         pass render_scene
         {
-            rq_first 30
+            rq_first 0
             rq_last 31
         }
     }

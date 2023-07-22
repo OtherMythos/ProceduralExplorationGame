@@ -1,0 +1,26 @@
+<scene>
+    <empty>
+        <mesh name="Cube" mesh="goblinBody.mesh">
+            <position x="20.0" y="0.0" z="-20.0" />
+            <scale x="1.0" y="1.0" z="1.0" />
+        </mesh>
+        <mesh name="cube" mesh="cube">
+            <position x="2.401364803314209" y="0.8049612045288086" z="6.003604412078857" />
+            <scale x="1.0" y="1.0" z="1.0" />
+        </mesh>
+        <mesh name="Cube.002" mesh="cube">
+            <position x="-3.8922512531280518" y="2.8701298236846924" z="-5.7508087158203125" />
+            <scale x="1.0" y="1.0" z="1.0" />
+        </mesh>
+        <mesh name="Cube.003" mesh="cube">
+            <position x="8.013995170593262" y="-0.366177499294281" z="-0.6627100110054016" />
+            <scale x="1.0" y="1.0" z="1.0" />
+        </mesh>
+        <empty>
+            <mesh name="Cube.004" mesh="cube">
+                <position x="16.013995170593262" y="-0.366177499294281" z="-0.6627100110054016" />
+                <scale x="1.0" y="1.0" z="1.0" />
+            </mesh>
+        </empty>
+    </empty>
+</scene>
