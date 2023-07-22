@@ -26,12 +26,6 @@
     function resetSession(){
         base.resetSession();
 
-        //TODO temporary for now.
-        mMapData_ = {
-            "width": 200,
-            "height": 200,
-        };
-
         createScene();
     }
 
@@ -79,13 +73,31 @@
     }
 
     function getZForPos(pos){
-        return 1;
+        if(mMapData_ == null) return 0;
+
+        local x = pos.x.tointeger();
+        local y = -pos.z.tointeger();
+
+        local height = mMapData_.voxHeight.data[x + y * mMapData_.width];
+
+        return height * 0.4;
+    }
+
+    function getIsWaterForPosition(pos){
+        return getZForPos(pos) == 0;
     }
 
     function createScene(){
         local targetNode = _scene.getRootSceneNode().createChildSceneNode();
         local path = "res://assets/maps/" + mTargetMap_ + "/scene.avscene";
-        _scene.insertSceneFile(path, targetNode);
+        //_scene.insertSceneFile(path, targetNode);
+
+        local parsedFile = _scene.parseSceneFile(path);
+        local animData = _scene.insertParsedSceneFileGetAnimInfo(parsedFile, targetNode);
+
+        local path = "res://assets/maps/" + mTargetMap_ + "/sceneAnimation.xml";
+        _animation.loadAnimationFile(path);
+        ::currentAnim <- _animation.createAnimation("sceneAnim", animData);
 
         printf("Loading scene file with path '%s'", path);
 
@@ -95,17 +107,45 @@
         file.open(path);
         local voxData = parseFileToData_(file);
 
-        voxeliseMapData_(voxData, targetNode);
+        file = File();
+        path = "res://build/assets/maps/" + mTargetMap_ + "/terrainBlend.txt";
+        file.open(path);
+        local colourData = parseFileToData_(file);
+
+        voxeliseMapData_(voxData, colourData, targetNode);
+
+        //TODO temporary for now.
+        mMapData_ = {
+            "voxHeight": voxData,
+            "voxType": colourData,
+
+            "width": voxData.width,
+            "height": voxData.height,
+        };
+
+        local oceanNode = mParentNode_.createChildSceneNode();
+        local oceanItem = _scene.createItem("plane");
+        oceanItem.setRenderQueueGroup(30);
+        oceanItem.setDatablock("oceanUnlit");
+        oceanNode.attachObject(oceanItem);
+        oceanNode.setScale(500, 500, 500)
+        oceanNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
+
+        local character = mEntityFactory_.constructNPCCharacter();
+        mActiveEnemies_.rawset(character.mEntity_.getId(), character);
+        character.moveQueryZ(Vec3(100, 0, -50));
     }
 
-    function voxeliseMapData_(mapData, targetNode){
+    function voxeliseMapData_(mapData, colourData, targetNode){
+        assert(mapData.width == colourData.width && mapData.height == colourData.height);
+
         local width = mapData.width;
         local height = mapData.height;
         local voxArray = array(mapData.width * mapData.height * mapData.greatest, null);
         for(local y = 0; y < height; y++){
             for(local x = 0; x < width; x++){
                 for(local i = 0; i < mapData.data[x + y * width]; i++){
-                    voxArray[x + (y * width) + (i*width*height)] = 112;
+                    voxArray[x + (y * width) + (i*width*height)] = colourData.data[x + y * width];
                 }
             }
         }
@@ -158,6 +198,11 @@
 
     function getMapData(){
         return mMapData_;
+    }
+
+    function checkForEnemyAppear(){
+        //Stub to get enemies to stop spawning.
+        return;
     }
 
 };

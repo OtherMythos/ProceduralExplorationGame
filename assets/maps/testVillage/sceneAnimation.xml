@@ -1,0 +1,13 @@
+<AnimationSequence>
+    <data>
+        <firstNode type='SceneNode'/>
+    </data>
+    <animations>
+        <sceneAnim repeat='true' end='720'>
+            <t type='transform' target='0'>
+                <k t='0' rot='0, 0, 0'/>
+                <k t='720' rot='360, 0, 0'/>
+            </t>
+        </sceneAnim>
+    </animations>
+</AnimationSequence>

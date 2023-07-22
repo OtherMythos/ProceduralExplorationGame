@@ -16,6 +16,28 @@
 
     //testCount = 0
 
+    function constructNPCCharacter(){
+        local en = _entity.create(SlotPosition());
+        if(!en.valid()) throw "Error creating entity";
+        local playerEntry = ActiveEnemyEntry(mConstructorWorld_, EnemyId.NONE, Vec3(0, 0, 0), en);
+
+        local playerNode = mBaseSceneNode_.createChildSceneNode();
+        local playerModel = mCharacterGenerator_.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, 30);
+        playerNode.setScale(0.5, 0.5, 0.5);
+        _component.sceneNode.add(en, playerNode);
+        playerEntry.setModel(playerModel);
+
+        local equipped = ::Combat.EquippedItems();
+        local targetItem = ::Item(ItemId.SIMPLE_TWO_HANDED_SWORD);
+        equipped.setEquipped(targetItem, EquippedSlotTypes.LEFT_HAND);
+        local combatData = ::Combat.CombatStats(EnemyId.NONE, 0, equipped);
+        playerEntry.setTargetCollisionWorld(_COLLISION_ENEMY);
+
+        playerEntry.setId(-1);
+
+        return playerEntry;
+    }
+
     function constructPlayer(explorationScreen){
 //testCount = 0;
         local en = _entity.create(SlotPosition());
