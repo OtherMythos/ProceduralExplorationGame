@@ -1,0 +1,3 @@
+[submodule "tools/SceneEditor/sceneEditorFramework"]
+	path = tools/SceneEditor/sceneEditorFramework
+	url = https://gitlab.com/edherbert/sceneeditorframework
