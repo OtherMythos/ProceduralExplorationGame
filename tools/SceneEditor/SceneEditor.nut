@@ -26,6 +26,12 @@
 
     function update(){
         fpsCamera.update();
+
+        mEditorBase.update();
+    }
+
+    function sceneSafeUpdate(){
+        mEditorBase.sceneSafeUpdate();
     }
 
 };

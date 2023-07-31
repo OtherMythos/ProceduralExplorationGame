@@ -12,6 +12,10 @@ function update(){
     ::Base.update();
 }
 
+function sceneSafeUpdate(){
+    ::Base.sceneSafeUpdate();
+}
+
 function end(){
 
 }
