@@ -7,6 +7,8 @@
 
     mChunkData_ = null;
 
+    PADDING = 1;
+
     constructor(){
 
     }
@@ -23,7 +25,6 @@
 
     function constructDataForChunks(){
         //Padding so the ambient occlusion can work.
-        local PADDING = 1;
         local chunkWidth = (mMapData_.width / mChunkDivisions_);
         local chunkHeight = (mMapData_.height / mChunkDivisions_);
         local depth = mMapData_.voxHeight.greatest;
@@ -45,22 +46,16 @@
                 local startX = x * chunkWidth;
                 local startY = y * chunkHeight;
 
+                //Keep track with a simple count rather than calculating the value each iteration.
                 local count = -1;
                 for(local yy = startY - PADDING; yy < startY + chunkHeight + PADDING; yy++){
                     for(local xx = startX - PADDING; xx < startX + chunkWidth + PADDING; xx++){
                         count++;
                         if(xx < 0 || yy < 0 || xx >= width || yy >= height) continue;
-                        //newArray[xx + yy * chunkWidth] = 1;
                         local someData = heightData[xx + yy * width];
-                        //assert(someData == 2);
                         for(local i = 0; i < someData; i++){
-                            //newArray[xx + (yy * width) + (i*width*height)] = colourData.data[xx + yy * width];
-                            print("thing " + i);
                             local colourValue = colourData[xx + yy * width];
-                            print(someData);
                             newArray[count + (i*(chunkWidth+2)*(chunkHeight+2))] = colourValue;
-                            newArray[count] = colourValue;
-                            //newArray[count] = 0;
                         }
                     }
                 }
@@ -93,14 +88,13 @@
         assert(mChunkData_.rawin(targetIdx));
         local targetChunkArray = mChunkData_.rawget(targetIdx);
 
-        //TODO don't duplicate this check.
-        local width = (mMapData_.width / mChunkDivisions_) + 2;
-        local height = (mMapData_.height / mChunkDivisions_) + 2;
+        local widthWithPadding = (mMapData_.width / mChunkDivisions_) + PADDING * 2;
+        local heightWithPadding = (mMapData_.height / mChunkDivisions_) + PADDING * 2;
 
         local vox = VoxToMesh(Timer(), 1 << 2, 0.4);
         //TODO get rid of this with the proper function to destory meshes.
         ::ExplorationCount++;
-        local meshObj = vox.createMeshForVoxelData(format("terrainChunkManager%s%s", ::ExplorationCount.tostring(), targetIdx.tostring()), targetChunkArray, width, height, mMapData_.voxHeight.greatest);
+        local meshObj = vox.createMeshForVoxelData(format("terrainChunkManager%s%s", ::ExplorationCount.tostring(), targetIdx.tostring()), targetChunkArray, widthWithPadding, heightWithPadding, mMapData_.voxHeight.greatest);
         mVoxTerrainMesh_ = meshObj;
 
         local item = _scene.createItem(meshObj);
