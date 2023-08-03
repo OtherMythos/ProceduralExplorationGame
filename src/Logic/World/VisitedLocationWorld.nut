@@ -6,9 +6,12 @@
     mMapData_ = null;
     mTargetMap_ = null;
     mVoxTerrainMesh_ = null;
+    mTerrainChunkManager_ = null;
 
     constructor(targetMap){
         base.constructor();
+
+        mTerrainChunkManager_ = TerrainChunkManager();
 
         mTargetMap_ = targetMap;
     }
@@ -112,8 +115,6 @@
         file.open(path);
         local colourData = parseFileToData_(file);
 
-        voxeliseMapData_(voxData, colourData, targetNode);
-
         //TODO temporary for now.
         mMapData_ = {
             "voxHeight": voxData,
@@ -122,6 +123,8 @@
             "width": voxData.width,
             "height": voxData.height,
         };
+
+        mTerrainChunkManager_.setup(targetNode, mMapData_, 4);
 
         local oceanNode = mParentNode_.createChildSceneNode();
         local oceanItem = _scene.createItem("plane");
@@ -134,36 +137,6 @@
         local character = mEntityFactory_.constructNPCCharacter();
         mActiveEnemies_.rawset(character.mEntity_.getId(), character);
         character.moveQueryZ(Vec3(100, 0, -50));
-    }
-
-    function voxeliseMapData_(mapData, colourData, targetNode){
-        assert(mapData.width == colourData.width && mapData.height == colourData.height);
-
-        local width = mapData.width;
-        local height = mapData.height;
-        local voxArray = array(mapData.width * mapData.height * mapData.greatest, null);
-        for(local y = 0; y < height; y++){
-            for(local x = 0; x < width; x++){
-                for(local i = 0; i < mapData.data[x + y * width]; i++){
-                    voxArray[x + (y * width) + (i*width*height)] = colourData.data[x + y * width];
-                }
-            }
-        }
-
-        local vox = VoxToMesh(Timer(), 1 << 2, 0.4);
-        //TODO get rid of this with the proper function to destory meshes.
-        ::ExplorationCount++;
-        local meshObj = vox.createMeshForVoxelData("visitedLocationWorld" + ::ExplorationCount, voxArray, width, height, mapData.greatest);
-        mVoxTerrainMesh_ = meshObj;
-
-        local item = _scene.createItem(meshObj);
-        item.setRenderQueueGroup(30);
-        local landNode = targetNode.createChildSceneNode();
-        landNode.attachObject(item);
-        landNode.setScale(1, 1, 0.4);
-        landNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
-
-        vox.printStats();
     }
 
     function parseFileToData_(file){
