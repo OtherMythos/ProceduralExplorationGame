@@ -6,6 +6,7 @@ function start(){
     _doFile("res://../../src/Util/VoxToMesh.nut");
 
     _doFile("res://SceneEditor.nut");
+    _doFile("res://SceneEditorGUITerrainToolProperties.nut");
 
     ::Base.setup();
 }

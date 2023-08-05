@@ -117,6 +117,7 @@
         assert(width % 2 == 1 && height % 2 == 1);
 
         if(width == 1 && height == 1){
+            local altered = false;
             mMapHeightDataCopy_[x + y * mMapData_.width] = values[0];
             //print(mMapHeightDataCopy_[x + y * mMapData_.width]);
 
@@ -128,13 +129,22 @@
             local targetChunkArray = mChunkColourData_[targetIdx];
             local startColour = mMapData_.voxType.data[x + y * mMapData_.voxType.width];
 
+            local startIdx = targetX + (targetY * (mChunkWidth_ + PADDING_BOTH));
+            local otherIdx = (mChunkWidth_ + PADDING_BOTH) * (mChunkHeight_ + PADDING_BOTH)
+            local valToWrite = null;
             for(local i = 0; i < 6; i++){
-                targetChunkArray[targetX + (targetY * (mChunkWidth_ + PADDING_BOTH)) + (i * (mChunkWidth_ + PADDING_BOTH) * (mChunkHeight_ + PADDING_BOTH))] = null;
+                local idx = startIdx + (i * otherIdx);
+                local prev = targetChunkArray[idx];
+
+                targetChunkArray[idx] = valToWrite;
+                altered = (prev != valToWrite);
             }
             printf("Chunk format %i %i", chunkX, chunkY);
 
             //mNodesForChunk_[targetIdx].destroyNodeAndChildren();
-            recreateChunk(chunkX, chunkY);
+            if(altered){
+                recreateChunk(chunkX, chunkY);
+            }
         }
     }
 

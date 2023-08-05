@@ -1,50 +1,47 @@
 <scene>
     <empty>
         <mesh mesh="watermill.mesh">
-            <position x="75.0" y="2.0" z="-85.0" />
-            <orientation x="0.0" y="1.0" z="0.0" w="0.0"/>
+            <position x="242.547" y="7.29122" z="-85"/>
             <scale x="0.6" y="0.6" z="0.6"/>
-
-            <mesh mesh="waterwheel.mesh" animIdx="0">
-                <position x="-13" y="9" z="-21" />
+            <orientation x="0" y="1" z="0" w="0"/>
+            <mesh animIdx="0" mesh="waterwheel.mesh">
+                <position x="-30" y="9" z="-21"/>
             </mesh>
         </mesh>
         <mesh mesh="house1.mesh">
-            <position x="114.0" y="2.0" z="-113.0" />
-            <orientation x="0.0" y="1.0" z="0.0" w="0.0"/>
+            <position x="114" y="2" z="-113"/>
             <scale x="0.6" y="0.6" z="0.6"/>
+            <orientation x="0" y="1" z="0" w="0"/>
         </mesh>
         <mesh mesh="dungeonEntrance.mesh">
-            <position x="120" y="0" z="-20" />
-            <orientation x="0.0" y="1.0" z="0.0" w="0.0"/>
+            <position x="120" y="0" z="-20"/>
+            <orientation x="0" y="1" z="0" w="0"/>
         </mesh>
-
         <mesh mesh="bridge.mesh">
-            <position x="94" y="0.5" z="-136" />
-            <orientation x="0.0" y="0.70710678118" z="0.0" w="0.70710678118"/>
+            <position x="94" y="0.5" z="-136"/>
             <scale x="0.6" y="0.6" z="0.6"/>
-        </mesh>
-
-        <mesh mesh="tree.mesh">
-            <position x="135" y="3" z="-28" />
+            <orientation x="0" y="0.707107" z="0" w="0.707107"/>
         </mesh>
         <mesh mesh="tree.mesh">
-            <position x="145" y="3" z="-26" />
+            <position x="135" y="3" z="-28"/>
         </mesh>
         <mesh mesh="tree.mesh">
-            <position x="128" y="3" z="-21" />
+            <position x="145" y="3" z="-26"/>
         </mesh>
         <mesh mesh="tree.mesh">
-            <position x="115" y="3" z="-30" />
+            <position x="128" y="3" z="-21"/>
         </mesh>
         <mesh mesh="tree.mesh">
-            <position x="112" y="3" z="-20" />
+            <position x="115" y="3" z="-30"/>
         </mesh>
         <mesh mesh="tree.mesh">
-            <position x="112" y="3" z="-16" />
+            <position x="112" y="3" z="-20"/>
         </mesh>
         <mesh mesh="tree.mesh">
-            <position x="108" y="3" z="-13" />
+            <position x="112" y="3" z="-16"/>
+        </mesh>
+        <mesh mesh="tree.mesh">
+            <position x="108" y="3" z="-13"/>
         </mesh>
     </empty>
 </scene>
