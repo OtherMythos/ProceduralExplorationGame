@@ -104,25 +104,8 @@
 
         printf("Loading scene file with path '%s'", path);
 
-        //Parse the terrain information.
-        local file = File();
-        path = "res://build/assets/maps/" + mTargetMap_ + "/terrain.txt";
-        file.open(path);
-        local voxData = parseFileToData_(file);
-
-        file = File();
-        path = "res://build/assets/maps/" + mTargetMap_ + "/terrainBlend.txt";
-        file.open(path);
-        local colourData = parseFileToData_(file);
-
-        //TODO temporary for now.
-        mMapData_ = {
-            "voxHeight": voxData,
-            "voxType": colourData,
-
-            "width": voxData.width,
-            "height": voxData.height,
-        };
+        local fileHandler = ::TerrainChunkFileHandler();
+        mMapData_ = fileHandler.readMapData("testVillage");
 
         mTerrainChunkManager_.setup(targetNode, mMapData_, 4);
 

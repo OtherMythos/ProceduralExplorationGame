@@ -14,6 +14,7 @@
         fpsCamera.start(Vec3(0, 20, 0), Vec3(319.55, -14.55, 0));
 
         mEditorBase = ::SceneEditorFramework.Base();
+        mEditorBase.mBus_.subscribeObject(this);
 
         mParentNode = _scene.getRootSceneNode().createChildSceneNode();
 
@@ -21,63 +22,12 @@
         mEditorBase.setActiveSceneTree(sceneTree);
         sceneTree.debugPrint();
 
-
-                //TODO remove the duplication.
-                function parseFileToData_(file){
-                    local outArray = [];
-                    local height = 0;
-                    local width = 0;
-                    local greatest = 0;
-                    while(!file.eof()){
-                        local line = file.getLine();
-                        local vals = split(line, ",");
-                        local len = vals.len();
-                        if(len == 0) continue;
-                        width = len;
-                        foreach(i in vals){
-                            local intVal = i.tointeger();
-                            outArray.append(intVal);
-                            if(intVal > greatest){
-                                greatest = intVal;
-                            }
-                        }
-                        height++;
-                    }
-
-
-                    return {
-                        "width": width,
-                        "height": height,
-                        "greatest": greatest,
-                        "data": outArray,
-                    }
-                }
-
-                local mTargetMap_ = "testVillage";
-                //Parse the terrain information.
-                local file = File();
-                local path = "res://../../build/assets/maps/" + mTargetMap_ + "/terrain.txt";
-                file.open(path);
-                local voxData = parseFileToData_(file);
-
-                file = File();
-                path = "res://../../build/assets/maps/" + mTargetMap_ + "/terrainBlend.txt";
-                file.open(path);
-                local colourData = parseFileToData_(file);
-
-                //TODO temporary for now.
-                local mMapData = {
-                    "voxHeight": voxData,
-                    "voxType": colourData,
-
-                    "width": voxData.width,
-                    "height": voxData.height,
-                };
+        local fileHandler = ::TerrainChunkFileHandler("res://../../assets/maps/");
+        local outMapData = fileHandler.readMapData("testVillage");
 
         mTerrainChunkManager = ::TerrainChunkManager();
-        //function setup(parentNode, mapData, chunkDivisions, copyHeightData=false){
         local targetParent = _scene.getRootSceneNode().createChildSceneNode();
-        mTerrainChunkManager.setup(targetParent, mMapData, 4, true);
+        mTerrainChunkManager.setup(targetParent, outMapData, 4, true);
 
         local sceneTreeWindow = _gui.createWindow();
         sceneTreeWindow.setSize(500, 500);
@@ -124,6 +74,12 @@
 
     function setEditTerrain(edit){
         mEditingTerrain = edit;
+    }
+
+    function notifyBusEvent(event, data){
+        if(event == SceneEditorBusEvents.REQUEST_SAVE){
+            mTerrainChunkManager.performSave("testVillage");
+        }
     }
 
 };

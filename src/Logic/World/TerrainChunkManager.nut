@@ -173,4 +173,17 @@
 
     }
 
+    function performSave(mapName){
+        local fileHandler = TerrainChunkFileHandler("res://../../assets/maps/");
+        //local fileHandler = TerrainChunkFileHandler("/tmp/");
+
+        local saveMapData = ::TerrainChunkFileHandler.ParsedTerrainData();
+        saveMapData.width = mMapData_.width;
+        saveMapData.height = mMapData_.height;
+        saveMapData.voxHeight = {"data": mMapHeightDataCopy_, "width": mMapData_.voxHeight.width, "height": mMapData_.voxHeight.height};
+        saveMapData.voxType = mMapData_.voxType;
+
+        fileHandler.writeMapData(mapName, saveMapData);
+    }
+
 };
