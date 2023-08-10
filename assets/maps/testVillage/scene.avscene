@@ -1,7 +1,7 @@
 <scene>
     <empty>
         <mesh mesh="watermill.mesh">
-            <position x="242.547" y="7.29122" z="-85"/>
+            <position x="73.5966" y="2.33125" z="-70.0163"/>
             <scale x="0.6" y="0.6" z="0.6"/>
             <orientation x="0" y="1" z="0" w="0"/>
             <mesh animIdx="0" mesh="waterwheel.mesh">

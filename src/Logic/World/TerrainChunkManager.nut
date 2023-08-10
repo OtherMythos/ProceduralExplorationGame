@@ -7,6 +7,7 @@
 
     mChunkColourData_ = null;
     mMapHeightDataCopy_ = null;
+    mMapVoxTypeDataCopy_ = null;
     mNodesForChunk_ = null;
 
     mChunkWidth_ = null;
@@ -20,9 +21,9 @@
     }
 
     /**
-     * @param copyHeightData Duplicate height values per chunk. Only use if allowing for a level editor.
+     * @param copyData Duplicate height values per chunk. Only use if allowing for a level editor.
      */
-    function setup(parentNode, mapData, chunkDivisions, copyHeightData=false){
+    function setup(parentNode, mapData, chunkDivisions, copyData=false){
         mMapData_ = mapData;
         mParentNode_ = parentNode;
         mChunkDivisions_ = chunkDivisions;
@@ -32,12 +33,19 @@
         mChunkWidth_ = mMapData_.width / mChunkDivisions_;
         mChunkHeight_ = mMapData_.height / mChunkDivisions_;
 
-        if(copyHeightData){
-            local targetArray = mMapData_.voxHeight.data;
-            mMapHeightDataCopy_ = array(targetArray.len());
-            for(local i = 0; i < mMapHeightDataCopy_.len(); i++){
-                mMapHeightDataCopy_[i] = targetArray[i];
+        if(copyData){
+            local duplicateArray = function(arr){
+                local newArr = array(arr.len());
+                for(local i = 0; i < newArr.len(); i++){
+                    newArr[i] = arr[i];
+                }
+                return newArr;
             }
+            mMapHeightDataCopy_ = duplicateArray(mMapData_.voxHeight.data);
+            mMapVoxTypeDataCopy_ = duplicateArray(mMapData_.voxType.data);
+
+            assert(mMapHeightDataCopy_.len() == mMapData_.width * mMapData_.height);
+            assert(mMapVoxTypeDataCopy_.len() == mMapData_.width * mMapData_.height);
         }
 
         constructDataForChunks();
@@ -110,6 +118,48 @@
         return item;
     }
 
+    function drawVoxTypeValues(x, y, width, height, values){
+        assert(mMapVoxTypeDataCopy_ != null);
+
+        //Must be 0 so there's a centre voxel.
+        assert(width % 2 == 1 && height % 2 == 1);
+
+        assert(mMapVoxTypeDataCopy_.len() == mMapData_.width * mMapData_.height);
+
+        if(width == 1 && height == 1){
+            local altered = false;
+            mMapVoxTypeDataCopy_[x + y * mMapData_.width] = values[0];
+
+            local chunkX = (x / mChunkWidth_).tointeger();
+            local chunkY = (y / mChunkHeight_).tointeger();
+            local targetIdx = chunkX << 4 | chunkY;
+            local targetX = x - (chunkX * mChunkWidth_);
+            local targetY = y - (chunkY * mChunkHeight_);
+            local targetChunkArray = mChunkColourData_[targetIdx];
+            local startColour = mMapData_.voxType.data[x + y * mMapData_.voxType.width];
+
+            local startIdx = targetX + (targetY * (mChunkWidth_ + PADDING_BOTH));
+            local otherIdx = (mChunkWidth_ + PADDING_BOTH) * (mChunkHeight_ + PADDING_BOTH)
+            local valToWrite = values[0];
+            //TOOD remove the 6.
+            for(local i = 0; i < 6; i++){
+                local idx = startIdx + (i * otherIdx);
+                local prev = targetChunkArray[idx];
+
+                targetChunkArray[idx] = valToWrite;
+                altered = (prev != valToWrite);
+            }
+            printf("Chunk format %i %i", chunkX, chunkY);
+
+            //mNodesForChunk_[targetIdx].destroyNodeAndChildren();
+            if(altered){
+                recreateChunk(chunkX, chunkY);
+            }
+        }
+
+        assert(mMapVoxTypeDataCopy_.len() == mMapData_.width * mMapData_.height);
+    }
+
     function drawHeightValues(x, y, width, height, values){
         assert(mMapHeightDataCopy_ != null);
 
@@ -177,11 +227,13 @@
         local fileHandler = TerrainChunkFileHandler("res://../../assets/maps/");
         //local fileHandler = TerrainChunkFileHandler("/tmp/");
 
+        assert(mMapHeightDataCopy_ != null && mMapVoxTypeDataCopy_ != null);
+
         local saveMapData = ::TerrainChunkFileHandler.ParsedTerrainData();
         saveMapData.width = mMapData_.width;
         saveMapData.height = mMapData_.height;
         saveMapData.voxHeight = {"data": mMapHeightDataCopy_, "width": mMapData_.voxHeight.width, "height": mMapData_.voxHeight.height};
-        saveMapData.voxType = mMapData_.voxType;
+        saveMapData.voxType = {"data": mMapVoxTypeDataCopy_, "width": mMapData_.voxType.width, "height": mMapData_.voxType.height};
 
         fileHandler.writeMapData(mapName, saveMapData);
     }

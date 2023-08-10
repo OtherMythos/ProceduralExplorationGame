@@ -1,6 +1,12 @@
 //TODO remove this.
 ::ExplorationCount <- 0;
 
+enum TerrainEditState{
+    NONE,
+    HEIGHT,
+    COLOUR
+};
+
 ::Base <- {
 
     mEditorBase = null
@@ -9,6 +15,7 @@
     mTerrainChunkManager = null
 
     mEditingTerrain = false
+    mEditingTerrainMode = TerrainEditState.NONE
 
     function setup(){
         fpsCamera.start(Vec3(0, 20, 0), Vec3(319.55, -14.55, 0));
@@ -64,7 +71,12 @@
                     printf("Test %i %i", chunkX, chunkY);
 
                     if(_input.getMouseButton(0)){
-                        mTerrainChunkManager.drawHeightValues(chunkX, chunkY, 1, 1, [1]);
+                        if(getTerrainEditState() == TerrainEditState.HEIGHT){
+                            mTerrainChunkManager.drawHeightValues(chunkX, chunkY, 1, 1, [1]);
+                        }
+                        else if(getTerrainEditState() == TerrainEditState.COLOUR){
+                            mTerrainChunkManager.drawVoxTypeValues(chunkX, chunkY, 1, 1, [1]);
+                        }
                     }
                 }
             }else{
@@ -79,6 +91,16 @@
 
     function setEditTerrain(edit){
         mEditingTerrain = edit;
+    }
+    function setEditTerrainHeight(edit){
+        mEditingTerrainMode = edit ? TerrainEditState.HEIGHT : null;
+    }
+    function setEditTerrainColour(edit){
+        mEditingTerrainMode = edit ? TerrainEditState.COLOUR : null;
+    }
+
+    function getTerrainEditState(){
+        return mEditingTerrainMode;
     }
 
     function notifyBusEvent(event, data){

@@ -21,14 +21,20 @@
     function parseFileToData_(file){
         local outArray = [];
         local height = 0;
-        local width = 0;
+        local width = null;
         local greatest = 0;
         while(!file.eof()){
             local line = file.getLine();
             local vals = split(line, ",");
             local len = vals.len();
-            if(len == 0) continue;
-            width = len;
+            if(len == 0) break;
+
+            if(width == null){
+                width = len;
+            }else{
+                if(len != width) throw "Inconsistent line lengths in file";
+            }
+
             foreach(i in vals){
                 local intVal = i.tointeger();
                 outArray.append(intVal);
@@ -68,30 +74,31 @@
     }
 
     function writeMapDataToPath_(mapPath, mapData){
+        assert(mapData.data.len() == mapData.width * mapData.height);
         local file = File();
-        printf("Saving to file %s", mapPath);
+        printf("Saving terrain data to file %s", mapPath);
         file.open(mapPath);
-        local outString = "";
         local width = mapData.width;
         for(local y = 0; y < mapData.height; y++){
+            local outString = "";
             for(local x = 0; x < width; x++){
-                outString += mapData.data[x + y * width];
+                outString += mapData.data[x + y * width].tostring();
                 outString += ",";
             }
             outString += "\n";
+            file.writeLine(outString);
         }
-        //local voxData = parseFileToData_(file);
-        //parsedData.append(voxData);
-        file.write(outString);
+
         file.close();
     }
     function writeMapData(mapName, terrainData){
         local paths = [getTerrainHeightFile(mapName), getTerrainBlendFile(mapName)];
         local data = [terrainData.voxHeight, terrainData.voxType];
         foreach(c,i in paths){
-            if(!_system.exists(i)){
-                _system.createBlankFile(i);
+            if(_system.exists(i)){
+                _system.remove(i);
             }
+            _system.createBlankFile(i);
             writeMapDataToPath_(i, data[c]);
         }
     }
