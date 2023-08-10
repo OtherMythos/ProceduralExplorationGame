@@ -50,20 +50,25 @@
         mEditorBase.update();
 
         if(mEditingTerrain){
-            local mTestPlane_ = Plane(Vec3(0, 1, 0), Vec3(0, 0, 0));
-            local mousePos = Vec2(_input.getMouseX(), _input.getMouseY()) / _window.getSize();
-            local ray = _camera.getCameraToViewportRay(mousePos.x, mousePos.y);
-            local point = ray.intersects(mTestPlane_);
-            if(point != false){
-                local worldPoint = ray.getPoint(point);
+            local mousePos = Vec2(_input.getMouseX(), _input.getMouseY())
+            if(mEditorBase.checkMousePositionValid(mousePos)){
+                local mTestPlane_ = Plane(Vec3(0, 1, 0), Vec3(0, 0, 0));
+                mousePos /= _window.getSize();
+                local ray = _camera.getCameraToViewportRay(mousePos.x, mousePos.y);
+                local point = ray.intersects(mTestPlane_);
+                if(point != false){
+                    local worldPoint = ray.getPoint(point);
 
-                local chunkX = worldPoint.x.tointeger();
-                local chunkY = -worldPoint.z.tointeger();
-                printf("Test %i %i", chunkX, chunkY);
+                    local chunkX = worldPoint.x.tointeger();
+                    local chunkY = -worldPoint.z.tointeger();
+                    printf("Test %i %i", chunkX, chunkY);
 
-                if(_input.getMouseButton(0)){
-                    mTerrainChunkManager.drawHeightValues(chunkX, chunkY, 1, 1, [1]);
+                    if(_input.getMouseButton(0)){
+                        mTerrainChunkManager.drawHeightValues(chunkX, chunkY, 1, 1, [1]);
+                    }
                 }
+            }else{
+                print("failed");
             }
         }
     }

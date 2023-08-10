@@ -9,6 +9,9 @@ function start(){
     _doFile("res://SceneEditor.nut");
     _doFile("res://SceneEditorGUITerrainToolProperties.nut");
 
+    local winSize = Vec2(_window.getWidth(), _window.getHeight());
+    _gui.setCanvasSize(winSize, winSize);
+
     ::Base.setup();
 }
 
