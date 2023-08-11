@@ -1,5 +1,7 @@
 ::fpsCamera <- {
 
+    mSpeedModifier = false
+
     function radians(value){
         return value * (3.14159 / 180);
     }
@@ -104,7 +106,7 @@
         // if(yVal > 0) thing.
 
         local target = Vec3();
-        local speed = 0.2;
+        local speed = mSpeedModifier ? 1.0 : 0.3;
         if(yVal > 0.2){
             target = -front;
             target *= speed;
@@ -134,5 +136,10 @@
         // if(yaw > 360.0f) yaw = 0.0f;
         // if(yaw < 0.0f) yaw = 360.0f;
 
+    }
+
+    function setSpeedModifier(modifier){
+        print(modifier);
+        mSpeedModifier = modifier;
     }
 };

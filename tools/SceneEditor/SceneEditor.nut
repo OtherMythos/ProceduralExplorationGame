@@ -12,6 +12,8 @@ enum TerrainEditState{
     mEditorBase = null
     mParentNode = null
 
+    mAcceptHandle = null
+
     mTerrainChunkManager = null
 
     mEditingTerrain = false
@@ -19,6 +21,9 @@ enum TerrainEditState{
 
     function setup(){
         fpsCamera.start(Vec3(0, 20, 0), Vec3(319.55, -14.55, 0));
+
+        mAcceptHandle = _input.getButtonActionHandle("Accept");
+        _input.mapKeyboardInput(_K_SPACE, mAcceptHandle);
 
         mEditorBase = ::SceneEditorFramework.Base();
         mEditorBase.mBus_.subscribeObject(this);
@@ -53,6 +58,8 @@ enum TerrainEditState{
 
     function update(){
         fpsCamera.update();
+        //_input.(i, _INPUT_PRESSED)
+        fpsCamera.setSpeedModifier(_input.getButtonAction(mAcceptHandle));
 
         mEditorBase.update();
 
