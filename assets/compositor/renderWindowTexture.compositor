@@ -66,6 +66,23 @@ compositor_node renderTexture65_70Node
     }
 }
 
+compositor_node_shadow default_simpleShadowNode
+{
+    technique focused
+    texture focusedTex 4096 4096 PFG_D32_FLOAT
+    shadow_map 0 focusedTex light 0
+    //Render shadow map "0"
+    shadow_map_target_type directional spot
+    {
+        shadow_map 0
+        {
+            pass clear { colour_value 1 1 1 1 }
+            pass render_scene
+            {
+            }
+        }
+    }
+}
 compositor_node renderTexture30Node
 {
     in 0 renderTexture
@@ -79,6 +96,8 @@ compositor_node renderTexture30Node
         {
             rq_first 0
             rq_last 31
+
+            shadows default_simpleShadowNode
         }
     }
 }

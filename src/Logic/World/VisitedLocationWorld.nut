@@ -111,6 +111,7 @@
 
         local oceanNode = mParentNode_.createChildSceneNode();
         local oceanItem = _scene.createItem("plane");
+        oceanItem.setCastsShadows(false);
         oceanItem.setRenderQueueGroup(30);
         oceanItem.setDatablock("oceanUnlit");
         oceanNode.attachObject(oceanItem);

@@ -115,6 +115,7 @@
 
         local item = _scene.createItem(meshObj);
         item.setRenderQueueGroup(30);
+        item.setCastsShadows(false);
         return item;
     }
 

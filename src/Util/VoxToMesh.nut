@@ -169,6 +169,7 @@
         local vao = _graphics.createVertexArrayObject(buffer, indexBuffer, _OT_TRIANGLE_LIST);
 
         subMesh.pushMeshVAO(vao, _VP_NORMAL);
+        subMesh.pushMeshVAO(vao, _VP_SHADOW);
 
         local halfBounds = Vec3(width/2, height/2, depth/2);
         local bounds = AABB(halfBounds, halfBounds);
