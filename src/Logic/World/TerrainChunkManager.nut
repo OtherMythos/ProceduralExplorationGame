@@ -125,6 +125,8 @@
         //Must be 0 so there's a centre voxel.
         assert(width % 2 == 1 && height % 2 == 1);
 
+        local depth = mMapData_.voxHeight.greatest;
+
         assert(mMapVoxTypeDataCopy_.len() == mMapData_.width * mMapData_.height);
 
         if(width == 1 && height == 1){
@@ -142,10 +144,10 @@
             local startIdx = targetX + (targetY * (mChunkWidth_ + PADDING_BOTH));
             local otherIdx = (mChunkWidth_ + PADDING_BOTH) * (mChunkHeight_ + PADDING_BOTH)
             local valToWrite = values[0];
-            //TOOD remove the 6.
-            for(local i = 0; i < 6; i++){
+            for(local i = 0; i < depth; i++){
                 local idx = startIdx + (i * otherIdx);
                 local prev = targetChunkArray[idx];
+                if(prev == null) continue;
 
                 targetChunkArray[idx] = valToWrite;
                 altered = (prev != valToWrite);
@@ -167,9 +169,12 @@
         //Must be 0 so there's a centre voxel.
         assert(width % 2 == 1 && height % 2 == 1);
 
+        local depth = mMapData_.voxHeight.greatest;
+
         if(width == 1 && height == 1){
             local altered = false;
-            mMapHeightDataCopy_[x + y * mMapData_.width] = values[0];
+            local heightToWrite = values[0];
+            mMapHeightDataCopy_[x + y * mMapData_.width] = heightToWrite;
             //print(mMapHeightDataCopy_[x + y * mMapData_.width]);
 
             local chunkX = (x / mChunkWidth_).tointeger();
@@ -178,12 +183,13 @@
             local targetX = x - (chunkX * mChunkWidth_);
             local targetY = y - (chunkY * mChunkHeight_);
             local targetChunkArray = mChunkColourData_[targetIdx];
+            //TODO might want to read this from the copy.
             local startColour = mMapData_.voxType.data[x + y * mMapData_.voxType.width];
 
             local startIdx = targetX + (targetY * (mChunkWidth_ + PADDING_BOTH));
             local otherIdx = (mChunkWidth_ + PADDING_BOTH) * (mChunkHeight_ + PADDING_BOTH)
-            local valToWrite = null;
-            for(local i = 0; i < 6; i++){
+            for(local i = 0; i < depth; i++){
+                local valToWrite = (i >= heightToWrite) ? null : startColour;
                 local idx = startIdx + (i * otherIdx);
                 local prev = targetChunkArray[idx];
 

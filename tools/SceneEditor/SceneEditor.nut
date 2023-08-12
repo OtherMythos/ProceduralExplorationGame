@@ -75,7 +75,6 @@ enum TerrainEditState{
 
                     local chunkX = worldPoint.x.tointeger();
                     local chunkY = -worldPoint.z.tointeger();
-                    printf("Test %i %i", chunkX, chunkY);
 
                     if(_input.getMouseButton(0)){
                         if(getTerrainEditState() == TerrainEditState.HEIGHT){
@@ -86,8 +85,6 @@ enum TerrainEditState{
                         }
                     }
                 }
-            }else{
-                print("failed");
             }
         }
     }
