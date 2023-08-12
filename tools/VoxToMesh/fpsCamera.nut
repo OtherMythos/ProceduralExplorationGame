@@ -139,7 +139,6 @@
     }
 
     function setSpeedModifier(modifier){
-        print(modifier);
         mSpeedModifier = modifier;
     }
 };

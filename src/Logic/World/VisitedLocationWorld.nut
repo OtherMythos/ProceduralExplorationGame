@@ -8,6 +8,48 @@
     mVoxTerrainMesh_ = null;
     mTerrainChunkManager_ = null;
 
+    ColoudManager = class{
+        mParentNode_ = null;
+        NUM_CLOUDS = 9;
+        mActiveClouds_ = null;
+        mSize_ = null;
+        constructor(parent, width, height){
+            mSize_ = Vec3(width, 0, -height);
+            mParentNode_ = parent;
+            mActiveClouds_ = [];
+            for(local i = 0; i < NUM_CLOUDS; i++){
+                local newCloud = setupCloud();
+                mActiveClouds_.append(newCloud);
+            }
+        }
+
+        function update(){
+            foreach(i in mActiveClouds_){
+                local cloudPosition = i.getPositionVec3();
+                cloudPosition.z -= 0.1;
+                if(cloudPosition.z <= mSize_.z){
+                    cloudPosition.z = 100;
+                }
+                i.setPosition(cloudPosition);
+            }
+        }
+
+        function setupCloud(){
+            local newNode = mParentNode_.createChildSceneNode();
+            local item = _scene.createItem("cloud.mesh");
+            item.setRenderQueueGroup(70);
+            newNode.attachObject(item);
+            local outPos = _random.randVec3() * mSize_;
+            outPos.y = 50;
+            newNode.setPosition(outPos);
+            newNode.setScale(2, 2, 2);
+            //newNode.setOrientation(Quat(_random.rand() * PI, Vec3(0, 0, 1)));
+            return newNode;
+        }
+    };
+
+    mCloudManager_ = null;
+
     constructor(targetMap){
         base.constructor();
 
@@ -40,6 +82,12 @@
         base.updatePlayerPos(playerPos);
 
         updateCameraPosition();
+    }
+
+    function update(){
+        base.update();
+
+        mCloudManager_.update();
     }
 
     function updateCameraPosition(){
@@ -106,6 +154,8 @@
 
         local fileHandler = ::TerrainChunkFileHandler();
         mMapData_ = fileHandler.readMapData("testVillage");
+
+        mCloudManager_ = ColoudManager(mParentNode_, mMapData_.width, mMapData_.height);
 
         mTerrainChunkManager_.setup(targetNode, mMapData_, 4);
 

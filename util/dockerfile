@@ -16,4 +16,3 @@ RUN cd /goxelBuild/goxel-0.11.0 && make release && make install
 
 COPY voxelConverter.py /builder/voxelConverter.py
 COPY AssetModuleGox.py /scripts/assetPipeline/assetModules/AssetModuleGox.py
-COPY AssetModuleTerrainBMP.py /scripts/assetPipeline/assetModules/AssetModuleTerrainBMP.py
