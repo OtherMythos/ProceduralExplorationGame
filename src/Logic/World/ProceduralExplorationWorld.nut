@@ -10,6 +10,8 @@
 
     mActivePlaces_ = null;
 
+    mCloudManager_ = null;
+
     constructor(){
         base.constructor();
     }
@@ -59,6 +61,8 @@
 
         voxeliseMap();
 
+        mCloudManager_ = CloudManager(mParentNode_, mMapData_.width, mMapData_.height);
+
         setupPlaces();
         createPlacedItems();
 
@@ -72,6 +76,12 @@
         }else{
             return MapGenHelpers.findRandomPointOnLand(mMapData_, mPlayerEntry_.getPosition(), 50);
         }
+    }
+
+    function update(){
+        base.update();
+
+        mCloudManager_.update();
     }
 
     function updatePlayerPos(playerPos){
