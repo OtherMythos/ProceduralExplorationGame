@@ -1,4 +1,4 @@
-::ExplorationEntityFactory <- class{
+::World.EntityFactory <- class{
     mBaseSceneNode_ = null
     mCharacterGenerator_ = null
     mConstructorWorld_ = null;
@@ -13,8 +13,6 @@
     function getZForPos(pos){
         return mConstructorWorld_.getZForPos(pos);
     }
-
-    //testCount = 0
 
     function constructNPCCharacter(){
         local en = _entity.create(SlotPosition());

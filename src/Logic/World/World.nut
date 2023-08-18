@@ -177,7 +177,7 @@
         //_world.createWorld();
 
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
-        mEntityFactory_ = ExplorationEntityFactory(this, mParentNode_, CharacterGenerator());
+        mEntityFactory_ = EntityFactory(this, mParentNode_, CharacterGenerator());
         _developer.setRenderQueueForMeshGroup(30);
     }
 
@@ -695,3 +695,5 @@
         return false;
     }
 };
+
+_doFile("res://src/Logic/World/EntityFactory.nut");

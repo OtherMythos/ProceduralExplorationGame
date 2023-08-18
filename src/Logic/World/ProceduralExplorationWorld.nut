@@ -140,8 +140,6 @@
 
     function createScene(){
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
-        //::ExplorationEntityFactory.mBaseSceneNode_ = mParentNode_;
-        //::ExplorationEntityFactory.mCharacterGenerator_ = ::CharacterGenerator();
 
         if(mMapData_){
             local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)

@@ -123,7 +123,6 @@
         _doFile("res://src/Logic/World/ProceduralDungeonWorld.nut");
         _doFile("res://src/Logic/ExplorationLogic.nut");
         _doFile("res://src/Logic/ExplorationProjectileManager.nut");
-        _doFile("res://src/Logic/Scene/ExplorationEntityFactory.nut");
         _doFile("res://src/Logic/CombatLogic.nut");
         _doFile("res://src/Logic/Scene/CombatSceneLogic.nut");
         _doFile("res://src/Logic/StoryContentLogic.nut");
