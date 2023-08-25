@@ -107,6 +107,9 @@
     mPrevTargetEnemy_ = null;
     mCurrentTargetEnemy_ = null;
 
+    mDamageCollisionWorld_ = null;
+    mTriggerCollisionWorld_ = null;
+
     mLocationFlagIds_ = 0;
     mLocationFlagNodes_ = null;
 
@@ -156,6 +159,12 @@
     function getWorldType(){
         return WorldTypes.WORLD;
     }
+    function getDamageWorld(){
+        return mDamageCollisionWorld_;
+    }
+    function getTriggerWorld(){
+        return mTriggerCollisionWorld_;
+    }
 
     function shutdown(){
         foreach(i in mActiveEnemies_){
@@ -179,6 +188,34 @@
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
         mEntityFactory_ = EntityFactory(this, mParentNode_, CharacterGenerator());
         _developer.setRenderQueueForMeshGroup(30);
+
+        mDamageCollisionWorld_ = CollisionWorldWrapper(this);
+        mTriggerCollisionWorld_ = CollisionWorldWrapper(this);
+    }
+
+
+    //TODO get rid of this.
+    //TODO destroy the point from the trigger world once the exp orb has been collected.
+    //It's difficult to do that because it's not attached to the entity.
+    function processEXPOrb(entityId){
+        if(!mActiveEXPOrbs_.rawin(entityId)) return;
+        local sender = mActiveEXPOrbs_[entityId];
+        local receiver = mPlayerEntry_.mEntity_;
+        if(!sender.valid() || !receiver.valid()) return;
+
+        local distance = sender.getPosition().distance(receiver.getPosition());
+        if(distance >= 4) return;
+        if(distance <= 0.8){
+            ::Base.mExplorationLogic.notifyFoundEXPOrb();
+            _entity.destroy(sender);
+            mActiveEXPOrbs_.rawdelete(entityId);
+            return;
+        }
+
+        distance /= 4;
+
+        local anim = sqrt(1 - pow(distance - 1, 2)) * 0.4;
+        sender.moveTowards(receiver.getPosition(), anim);
     }
 
     function update(){
@@ -194,6 +231,9 @@
         foreach(i in mActiveEnemies_){
             i.update();
         }
+
+        mDamageCollisionWorld_.processCollision();
+        mTriggerCollisionWorld_.processCollision();
     }
 
     function setActive(active){
@@ -369,6 +409,7 @@
             //local targetPos = pos + (Vec3(_random.rand()-0.5, 0, _random.rand()-0.5) * spread);
             local targetPos = pos + (Vec3(sin(randDir) * spread, 0, cos(randDir) * spread));
             local newEntity = mEntityFactory_.constructEXPOrb(targetPos);
+            printf("newEntity %i", newEntity.getId());
             mActiveEXPOrbs_.rawset(newEntity.getId(), newEntity);
         }
     }
@@ -696,4 +737,5 @@
     }
 };
 
+_doFile("res://src/Logic/World/CollisionWorldWrapper.nut");
 _doFile("res://src/Logic/World/EntityFactory.nut");

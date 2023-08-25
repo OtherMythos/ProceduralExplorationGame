@@ -67,8 +67,8 @@
         _state.setPauseState(0);
 
         //local newWorld = ProceduralDungeonWorld();
-        //local newWorld = ProceduralExplorationWorld();
-        local newWorld = VisitedLocationWorld("testVillage");
+        local newWorld = ProceduralExplorationWorld();
+        //local newWorld = VisitedLocationWorld("testVillage");
         //newWorld.setup();
         setCurrentWorld_(newWorld);
 

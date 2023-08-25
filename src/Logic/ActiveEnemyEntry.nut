@@ -129,6 +129,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
     mGizmo_ = null;
     mCombatData_ = null;
     mTargetCollisionWorld_ = 0;
+    mCollisionPoint_ = null;
 
     mEntity_ = null;
 
@@ -158,6 +159,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         mCreatorWorld_.mTargetManager_.notifyEntityPositionChange(this);
         if(mEntity_) mEntity_.setPosition(SlotPosition(pos));
         if(mGizmo_) mGizmo_.setPosition(pos);
+        if(mCollisionPoint_ != null) mCreatorWorld_.getTriggerWorld().mCollisionWorld_.setPositionForPoint(mCollisionPoint_, pos.x, pos.z);
     }
     function getSceneNode(){
         return _component.sceneNode.getNode(mEntity_);
@@ -178,6 +180,9 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
     }
     function setCombatData(combatData){
         mCombatData_ = combatData;
+    }
+    function setCollisionPoint(point){
+        mCollisionPoint_ = point;
     }
     function setTargetCollisionWorld(world){
         mTargetCollisionWorld_ = world;
@@ -253,6 +258,9 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         if(mModel_){
             mModel_.destroy();
             mModel_ = null;
+        }
+        if(mCollisionPoint_ != null){
+            mCreatorWorld_.getTriggerWorld().removeCollisionPoint(mCollisionPoint_);
         }
         mCreatorWorld_.mTargetManager_.notifyEntityDestroyed(this);
     }

@@ -58,6 +58,9 @@
         playerEntry.setCombatData(combatData);
         playerEntry.setTargetCollisionWorld(_COLLISION_ENEMY);
 
+        local triggerWorld = mConstructorWorld_.getTriggerWorld();
+        local collisionPoint = triggerWorld.addCollisionReceiver(0, 0, 1.5, _COLLISION_PLAYER);
+
         local receiverInfo = {
             "type" : _COLLISION_PLAYER
         };
@@ -77,6 +80,8 @@
         //
 
         playerEntry.setId(-1);
+
+        playerEntry.setCollisionPoint(collisionPoint);
 
         _component.collision.add(en, collisionObject, damageReceiver);
 
@@ -282,8 +287,6 @@
         local en = _entity.create(SlotPosition(targetPos));
         if(!en.valid()) throw "Error creating entity";
 
-        //local entry = ActiveEnemyEntry(mConstructorWorld_, placeData.placeId, targetPos, en);
-
         local placeNode = mBaseSceneNode_.createChildSceneNode();
         placeNode.setPosition(targetPos);
         placeNode.setScale(0.4, 0.4, 0.4);
@@ -293,18 +296,8 @@
         animNode.attachObject(item);
         _component.sceneNode.add(en, placeNode, true);
 
-        //TODO finish this
-        local senderTable = {
-            "func" : "receivePlayerEntered",
-            "path" : "res://src/Logic/Scene/ExplorationEXPOrbScript.nut"
-            "id" : 0,
-            "type" : _COLLISION_PLAYER,
-            "event" : _COLLISION_INSIDE
-        };
-        local shape = _physics.getCubeShape(1.5, 2, 1.5);
-        local collisionObject = _physics.collision[TRIGGER].createSender(senderTable, shape, targetPos);
-        _physics.collision[TRIGGER].addObject(collisionObject);
-        _component.collision.add(en, collisionObject);
+        local triggerWorld = mConstructorWorld_.getTriggerWorld();
+        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.EXP_ORB, en.getId(), targetPos.x, targetPos.z, 1.5, _COLLISION_PLAYER);
 
         _component.lifetime.add(en, 600);
 
