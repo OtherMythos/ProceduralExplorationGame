@@ -7,7 +7,8 @@ function start(){
     _doFile("res://../../src/MapGen/Exploration/Generator/MapConstants.nut");
     _doFile("res://../../src/MapGen/Exploration/Generator/Biomes.nut");
     _doFile("res://../../src/MapGen/Exploration/Generator/MapGen.nut");
-    _doFile("res://../../src/MapGen/Exploration/Viewer/MapViewer.nut");
+    _doFile("res://../../src/MapGen/MapViewer.nut");
+    _doFile("res://../../src/MapGen/Exploration/Viewer/ExplorationMapViewer.nut");
 
     _doFile("res://WorldGenToolBase.nut");
     _doFile("res://fpsCamera.nut");
