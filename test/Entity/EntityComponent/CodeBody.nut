@@ -44,7 +44,7 @@
 
     local entity = manager.createEntity(Vec3());
 
-    manager.assignComponent(entity, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](10));
+    manager.assignComponent(entity, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](10, null));
 
     _test.assertTrue(manager.hasComponent(entity, EntityComponents.COLLISION_POINT));
     local component = manager.getComponent(entity, EntityComponents.COLLISION_POINT);
@@ -53,7 +53,7 @@
 
     //Create a second entity and try the same thing.
     local second = manager.createEntity(Vec3(10, 20, 30));
-    manager.assignComponent(second, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](20));
+    manager.assignComponent(second, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](20, null));
     component = manager.getComponent(second, EntityComponents.COLLISION_POINT);
     _test.assertNotEqual(component, null);
     _test.assertEqual(component.mPoint, 20);
@@ -61,3 +61,5 @@
     manager.removeComponent(entity, EntityComponents.COLLISION_POINT);
     _test.assertFalse(manager.hasComponent(entity, EntityComponents.COLLISION_POINT));
 }
+
+//TODO check that destroying an entity destroys all its components.

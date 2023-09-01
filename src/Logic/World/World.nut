@@ -109,6 +109,7 @@
 
     mDamageCollisionWorld_ = null;
     mTriggerCollisionWorld_ = null;
+    mEntityManager_ = null;
 
     mLocationFlagIds_ = 0;
     mLocationFlagNodes_ = null;
@@ -165,6 +166,9 @@
     function getTriggerWorld(){
         return mTriggerCollisionWorld_;
     }
+    function getEntityManager(){
+        return mEntityManager_;
+    }
 
     function shutdown(){
         foreach(i in mActiveEnemies_){
@@ -191,23 +195,26 @@
 
         mDamageCollisionWorld_ = CollisionWorldWrapper(this);
         mTriggerCollisionWorld_ = CollisionWorldWrapper(this);
+
+        mEntityManager_ = EntityManager.createEntityManager();
     }
 
 
     //TODO get rid of this.
-    //TODO destroy the point from the trigger world once the exp orb has been collected.
-    //It's difficult to do that because it's not attached to the entity.
     function processEXPOrb(entityId){
         if(!mActiveEXPOrbs_.rawin(entityId)) return;
         local sender = mActiveEXPOrbs_[entityId];
         local receiver = mPlayerEntry_.mEntity_;
-        if(!sender.valid() || !receiver.valid()) return;
+        if(!mEntityManager_.entityValid(sender) || !receiver.valid()) return;
 
-        local distance = sender.getPosition().distance(receiver.getPosition());
+        local senderPos = mEntityManager_.getPosition(sender);
+        local senderFirst = senderPos.xz();
+        local receiverFirst = mPlayerEntry_.getPosition().xz();
+        local distance = senderFirst.distance(receiverFirst);
         if(distance >= 4) return;
         if(distance <= 0.8){
             ::Base.mExplorationLogic.notifyFoundEXPOrb();
-            _entity.destroy(sender);
+            mEntityManager_.destroyEntity(entityId);
             mActiveEXPOrbs_.rawdelete(entityId);
             return;
         }
@@ -215,7 +222,7 @@
         distance /= 4;
 
         local anim = sqrt(1 - pow(distance - 1, 2)) * 0.4;
-        sender.moveTowards(receiver.getPosition(), anim);
+        mEntityManager_.moveTowards(sender, mPlayerEntry_.getPosition(), anim);
     }
 
     function update(){
@@ -409,8 +416,7 @@
             //local targetPos = pos + (Vec3(_random.rand()-0.5, 0, _random.rand()-0.5) * spread);
             local targetPos = pos + (Vec3(sin(randDir) * spread, 0, cos(randDir) * spread));
             local newEntity = mEntityFactory_.constructEXPOrb(targetPos);
-            printf("newEntity %i", newEntity.getId());
-            mActiveEXPOrbs_.rawset(newEntity.getId(), newEntity);
+            mActiveEXPOrbs_.rawset(newEntity, newEntity);
         }
     }
 

@@ -36,6 +36,8 @@
         _doFile("res://src/Helpers.nut");
         _doFile("res://src/System/InputManager.nut");
         _doFile("res://src/Util/VoxToMesh.nut");
+        _doFile("res://src/Logic/Entity/EntityManager.nut");
+        _doFile("res://src/Logic/Entity/EntityComponent.nut");
 
         _doFile("res://src/Content/Enemies.nut");
         _doFile("res://src/Content/Projectiles.nut");

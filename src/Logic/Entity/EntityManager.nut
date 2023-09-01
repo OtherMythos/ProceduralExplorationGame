@@ -5,6 +5,9 @@
 enum EntityComponents{
 
     COLLISION_POINT,
+    SCENE_NODE,
+    LIFETIME,
+    ANIMATION_COMPONENT,
 
     MAX
 
@@ -46,9 +49,11 @@ EntityManager.ComponentPool <- class{
     function removeComponent(eid){
         local compIdx = findCompForEid(eid);
         assert(compIdx != null);
-        //Maybe have a destroy function here.
+        local outComp = mComps_[compIdx];
         mComps_[compIdx] = null;
         mFreeList_.append(compIdx);
+
+        return outComp;
     }
 
     function findCompForEid(eid){
@@ -128,6 +133,8 @@ EntityManager.EntityManager <- class{
         if(mVersions_[idx] != version) throw "Entity is invalid";
         //
 
+        processEntityDestruction_(eid, idx);
+
         mVersions_[idx]++;
         mEntityComponentHashes_[idx] = null;
         mFreeList_.append(idx);
@@ -185,6 +192,58 @@ EntityManager.EntityManager <- class{
 
         mComponents_[compType].removeComponent(eid);
         mEntityComponentHashes_[idx] = (mEntityComponentHashes_[idx]) & ~(1 << compType);
+    }
+
+    function getPosition(eid){
+        //
+        local world = (eid >> 60) & 0xF;
+        if(world != mId) throw "Entity does not belong to this world.";
+        local version = (eid >> 30) & 0x3FFFFFFF;
+        local idx = eid & 0x3FFFFFFF;
+        if(mVersions_[idx] != version) throw "Entity is invalid";
+        //
+        return mEntityPositions_[idx];
+    }
+
+    function moveTowards(eid, targetPos, anim){
+        //
+        local world = (eid >> 60) & 0xF;
+        if(world != mId) throw "Entity does not belong to this world.";
+        local version = (eid >> 30) & 0x3FFFFFFF;
+        local idx = eid & 0x3FFFFFFF;
+        if(mVersions_[idx] != version) throw "Entity is invalid";
+        //
+        local pos = mEntityPositions_[idx];
+        pos.moveTowards(targetPos, anim);
+        processPositionChange_(eid, idx, pos);
+    }
+
+    function processPositionChange_(eid, idx, newPos){
+        if(mEntityComponentHashes_[idx] & (1<<EntityComponents.SCENE_NODE)){
+            mComponents_[EntityComponents.SCENE_NODE].getCompForEid(eid).mNode.setPosition(newPos);
+        }
+        if(mEntityComponentHashes_[idx] & (1<<EntityComponents.COLLISION_POINT)){
+            local comp = mComponents_[EntityComponents.COLLISION_POINT].getCompForEid(eid);
+            comp.mCreator.mCollisionWorld_.setPositionForPoint(comp.mPoint, newPos.x, newPos.z);
+        }
+    }
+
+    function processEntityDestruction_(eid, idx){
+        local currentHash = mEntityComponentHashes_[idx];
+        for(local i = 0; i < EntityComponents.MAX; i++){
+            if(currentHash & (1 << i)){
+                local component = mComponents_[i].removeComponent(eid);
+                //Check if any logic has to be performed on the component.
+                if(i == EntityComponents.SCENE_NODE){
+                    if(component.mDestroyOnDestruction){
+                        component.mNode.destroyNodeAndChildren();
+                    }
+                }
+                else if(i == EntityComponents.COLLISION_POINT){
+                    component.mCreator.removeCollisionPoint(component.mPoint);
+                }
+            }
+        }
     }
 
 };

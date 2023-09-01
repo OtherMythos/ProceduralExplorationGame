@@ -52,7 +52,6 @@ enum CollisionWorldTriggerResponses{
             //_test.assertEqual(collisionStatus, 0x2);
             local first = pair & 0xFFFFFFF;
             //local second = (pair >> 30) & 0xFFFFFFF;
-            print(first);
             assert(mPoints_.rawin(first));
             local triggerResponseId = mPoints_[first];
             local response = mTriggerResponses_[triggerResponseId];
