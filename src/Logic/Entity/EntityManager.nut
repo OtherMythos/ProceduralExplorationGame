@@ -92,6 +92,16 @@ EntityManager.EntityManager <- class{
         }
     }
 
+    function update(){
+        foreach(i in mComponents_[EntityComponents.LIFETIME].mComps_){
+            if(i == null) continue;
+            i.mLifetime--;
+            if(i.mLifetime <= 0){
+                destroyEntity(i.eid);
+            }
+        }
+    }
+
     function entityValid(eid){
         local world = (eid >> 60) & 0xF;
         if(world != mId) return false;

@@ -281,37 +281,6 @@
     }
 
     function constructEXPOrb(pos){
-        /*
-        local targetPos = pos.copy();
-        targetPos.y = getZForPos(targetPos);
-
-        local en = _entity.create(SlotPosition(targetPos));
-        if(!en.valid()) throw "Error creating entity";
-
-        local placeNode = mBaseSceneNode_.createChildSceneNode();
-        placeNode.setPosition(targetPos);
-        placeNode.setScale(0.4, 0.4, 0.4);
-        local item = _scene.createItem("EXPOrbMesh");
-        item.setRenderQueueGroup(30);
-        local animNode = placeNode.createChildSceneNode();
-        animNode.attachObject(item);
-        _component.sceneNode.add(en, placeNode, true);
-
-        local triggerWorld = mConstructorWorld_.getTriggerWorld();
-        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.EXP_ORB, en.getId(), targetPos.x, targetPos.z, 1.5, _COLLISION_PLAYER);
-
-        _component.lifetime.add(en, 600);
-
-        local animationInfo = _animation.createAnimationInfo([animNode]);
-        local anim = _animation.createAnimation("EXPOrbAnim", animationInfo);
-
-        anim.setTime(_random.randInt(0, 180));
-
-        _component.animation.add(en, anim);
-
-        return en;
-        */
-
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = pos.copy();
         targetPos.y = getZForPos(targetPos);
@@ -332,15 +301,13 @@
         local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.EXP_ORB, en, targetPos.x, targetPos.z, 4, _COLLISION_PLAYER);
         manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
 
-        manager.assignComponent(en, EntityComponents.LIFETIME, ::EntityManager.Components[EntityComponents.LIFETIME](100));
-        //_component.lifetime.add(en, 600);
+        manager.assignComponent(en, EntityComponents.LIFETIME, ::EntityManager.Components[EntityComponents.LIFETIME](500 + _random.randInt(100)));
 
         local animationInfo = _animation.createAnimationInfo([animNode]);
         local anim = _animation.createAnimation("EXPOrbAnim", animationInfo);
         anim.setTime(_random.randInt(0, 180));
 
         manager.assignComponent(en, EntityComponents.ANIMATION_COMPONENT, ::EntityManager.Components[EntityComponents.ANIMATION_COMPONENT](anim));
-        //_component.animation.add(en, anim);
 
         return en;
     }

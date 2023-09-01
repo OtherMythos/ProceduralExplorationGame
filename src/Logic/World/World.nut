@@ -233,6 +233,7 @@
         checkPlayerCombatMoves();
 
         mProjectileManager_.update();
+        mEntityManager_.update();
 
         mPlayerEntry_.update();
         foreach(i in mActiveEnemies_){
