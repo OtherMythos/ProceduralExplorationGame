@@ -228,13 +228,10 @@
     }
 
     function constructPlace(placeData, idx, explorationScreen){
-        //if(testCount > 0) return;
-//testCount++;
-
-        local en = _entity.create(SlotPosition());
-        if(!en.valid()) throw "Error creating entity";
+        local manager = mConstructorWorld_.getEntityManager();
         local targetPos = Vec3(placeData.originX, 0, -placeData.originY);
         targetPos.y = getZForPos(targetPos);
+        local en = manager.createEntity(targetPos);
 
         local entry = ActiveEnemyEntry(mConstructorWorld_, placeData.placeId, targetPos, en);
 
@@ -249,19 +246,11 @@
         item.setRenderQueueGroup(30);
         placeNode.attachObject(item);
         placeNode.setScale(0.3, 0.3, 0.3);
-        _component.sceneNode.add(en, placeNode, true);
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](placeNode, true));
 
-        local senderTable = {
-            "func" : "receivePlayerEntered",
-            "path" : "res://src/Logic/Scene/ExplorationScenePlaceScript.nut"
-            "id" : idx,
-            "type" : _COLLISION_PLAYER,
-            "event" : _COLLISION_ENTER | _COLLISION_LEAVE
-        };
-        local shape = _physics.getCubeShape(2, 8, 2);
-        local collisionObject = _physics.collision[TRIGGER].createSender(senderTable, shape, targetPos);
-        _physics.collision[TRIGGER].addObject(collisionObject);
-        _component.collision.add(en, collisionObject);
+        local triggerWorld = mConstructorWorld_.getTriggerWorld();
+        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.OVERWORLD_VISITED_PLACE, idx, targetPos.x, targetPos.z, 4, _COLLISION_PLAYER);
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
 
         local billboard = null;
         if(placeType == PlaceType.GATEWAY){
@@ -271,9 +260,8 @@
         }
         billboard.setVisible(false);
         local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(placeNode, billboard);
-        _component.user[Component.MISC].add(en);
-        _component.user[Component.MISC].set(en, 0, billboardIdx);
 
+        manager.assignComponent(en, EntityComponents.BILLBOARD, ::EntityManager.Components[EntityComponents.BILLBOARD](billboardIdx));
 
         entry.setPosition(targetPos);
 
@@ -306,7 +294,7 @@
         local anim = _animation.createAnimation("EXPOrbAnim", animationInfo);
         anim.setTime(_random.randInt(0, 180));
 
-        manager.assignComponent(en, EntityComponents.ANIMATION_COMPONENT, ::EntityManager.Components[EntityComponents.ANIMATION_COMPONENT](anim));
+        manager.assignComponent(en, EntityComponents.ANIMATION, ::EntityManager.Components[EntityComponents.ANIMATION](anim));
 
         return en;
     }

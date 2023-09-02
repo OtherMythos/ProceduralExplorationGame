@@ -233,7 +233,8 @@
 
     function processActiveChange_(active){
         if(!active){
-            destroyEnemyMap_(mActivePlaces_);
+            //destroyEnemyMap_(mActivePlaces_);
+            destroyEnemyMapNEW_(mActivePlaces_);
         }
     }
 };

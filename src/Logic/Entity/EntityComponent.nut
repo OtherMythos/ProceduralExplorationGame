@@ -41,12 +41,22 @@
 
 };
 
-::EntityManager.Components[EntityComponents.ANIMATION_COMPONENT] = class extends ::EntityManager.Component{
+::EntityManager.Components[EntityComponents.ANIMATION] = class extends ::EntityManager.Component{
 
     mAnim = null;
 
     constructor(anim){
         mAnim = anim;
+    }
+
+};
+
+::EntityManager.Components[EntityComponents.BILLBOARD] = class extends ::EntityManager.Component{
+
+    mBillboard = null;
+
+    constructor(billboard){
+        mBillboard = billboard;
     }
 
 };

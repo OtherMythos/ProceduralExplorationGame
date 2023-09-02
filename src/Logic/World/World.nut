@@ -273,6 +273,24 @@
         target.clear();
         //assert(target.len() == 0);
     }
+    //TODO make this the main one eventually.
+    function destroyEnemyMapNEW_(target){
+        local enemies = [];
+        //printf("%i current", target.len());
+        foreach(i in target){
+            enemies.append(i.mEntity_);
+        }
+        foreach(i in enemies){
+            //_entity.destroy(i);
+            mEntityManager_.destroyEntity(i);
+        }
+
+        foreach(i in target){
+            i.notifyDestroyed();
+        }
+        target.clear();
+        //assert(target.len() == 0);
+    }
 
     function processActiveChange_(active){
         //Stub

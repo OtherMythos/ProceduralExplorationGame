@@ -7,7 +7,8 @@ enum EntityComponents{
     COLLISION_POINT,
     SCENE_NODE,
     LIFETIME,
-    ANIMATION_COMPONENT,
+    ANIMATION,
+    BILLBOARD,
 
     MAX
 
@@ -213,6 +214,18 @@ EntityManager.EntityManager <- class{
         if(mVersions_[idx] != version) throw "Entity is invalid";
         //
         return mEntityPositions_[idx];
+    }
+
+    function setEntityPosition(eid, targetPos){
+        //
+        local world = (eid >> 60) & 0xF;
+        if(world != mId) throw "Entity does not belong to this world.";
+        local version = (eid >> 30) & 0x3FFFFFFF;
+        local idx = eid & 0x3FFFFFFF;
+        if(mVersions_[idx] != version) throw "Entity is invalid";
+        //
+        mEntityPositions_[idx] = targetPos;
+        processPositionChange_(eid, idx, targetPos);
     }
 
     function moveTowards(eid, targetPos, anim){

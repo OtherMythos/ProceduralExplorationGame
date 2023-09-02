@@ -237,12 +237,11 @@
     }
     function checkPlaceBillboardVisible(entity, visible){
         local billboardIdx = -1;
-        try{
-            billboardIdx = _component.user[Component.MISC].get(entity, 0);
-        }catch(e){ }
-        if(billboardIdx == -1) return;
 
-        mGui_.mWorldMapDisplay_.mBillboardManager_.setVisible(billboardIdx, visible);
+        local comp = mCurrentWorld_.mEntityManager_.getComponent(entity, EntityComponents.BILLBOARD);
+        if(comp != null){
+            mGui_.mWorldMapDisplay_.mBillboardManager_.setVisible(comp.mBillboard, visible);
+        }
     }
 
     function gatewayEndExploration(){

@@ -145,6 +145,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         mEntity_ = entity;
     }
     function getEID(){
+        if(typeof mEntity_ == "integer") return mEntity_;
         return mEntity_.getId();
     }
     function setPosition(pos){
@@ -157,12 +158,22 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         mInWater_ = inWater;
 
         mCreatorWorld_.mTargetManager_.notifyEntityPositionChange(this);
-        if(mEntity_) mEntity_.setPosition(SlotPosition(pos));
+        if(mEntity_){
+            if(typeof mEntity_ == "integer"){
+                //mEntity_.setPosition(SlotPosition(pos));
+                mCreatorWorld_.getEntityManager().setEntityPosition(mEntity_, pos);
+            }else{
+                mEntity_.setPosition(SlotPosition(pos));
+            }
+        }
         if(mGizmo_) mGizmo_.setPosition(pos);
         if(mCollisionPoint_ != null) mCreatorWorld_.getTriggerWorld().mCollisionWorld_.setPositionForPoint(mCollisionPoint_, pos.x, pos.z);
     }
     function getSceneNode(){
-        return _component.sceneNode.getNode(mEntity_);
+        if(typeof mEntity_ == "integer"){
+            return mCreatorWorld_.getEntityManager().getComponent(mEntity_, EntityComponents.SCENE_NODE).mNode;
+        }
+        _component.sceneNode.getNode(mEntity_);
     }
     function getPosition(){
         return mPos_;

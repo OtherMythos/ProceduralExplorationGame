@@ -1,6 +1,7 @@
 
 enum CollisionWorldTriggerResponses{
     EXP_ORB,
+    OVERWORLD_VISITED_PLACE,
 
     MAX = 100
 };
@@ -16,8 +17,8 @@ enum CollisionWorldTriggerResponses{
         constructor(targetFunction){
             mFunc_ = targetFunction;
         }
-        function trigger(world, triggerData){
-            mFunc_(world, triggerData);
+        function trigger(world, triggerData, collisionStatus){
+            mFunc_(world, triggerData, collisionStatus);
         }
     };
 
@@ -36,8 +37,17 @@ enum CollisionWorldTriggerResponses{
         mTriggerData_ = {};
         mPoints_ = {};
 
-        mTriggerResponses_[CollisionWorldTriggerResponses.EXP_ORB] <- TriggerResponse(function(world, entityId){
+        mTriggerResponses_[CollisionWorldTriggerResponses.EXP_ORB] <- TriggerResponse(function(world, entityId, collisionStatus){
             world.processEXPOrb(entityId);
+        });
+        mTriggerResponses_[CollisionWorldTriggerResponses.OVERWORLD_VISITED_PLACE] <- TriggerResponse(function(world, id, collisionStatus){
+            //TODO remove magic numbers.
+            if(collisionStatus == 0x1){
+                ::Base.mExplorationLogic.notifyPlaceEnterState(id, true);
+            }
+            else if(collisionStatus == 0x2){
+                ::Base.mExplorationLogic.notifyPlaceEnterState(id, false);
+            }
         });
     }
 
@@ -55,7 +65,7 @@ enum CollisionWorldTriggerResponses{
             local triggerResponseId = mPoints_[first];
             local response = mTriggerResponses_[triggerResponseId];
             local dataResponse = mTriggerData_[first];
-            response.trigger(mParentWorld_, dataResponse);
+            response.trigger(mParentWorld_, dataResponse, collisionStatus);
 
             //(pair & 0xFFFFFFF)
             //TODO complete this
