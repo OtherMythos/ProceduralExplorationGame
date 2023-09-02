@@ -37,7 +37,6 @@ enum CollisionWorldTriggerResponses{
         mPoints_ = {};
 
         mTriggerResponses_[CollisionWorldTriggerResponses.EXP_ORB] <- TriggerResponse(function(world, entityId){
-            //print("Trigger EXP orb " + entityId);
             world.processEXPOrb(entityId);
         });
     }

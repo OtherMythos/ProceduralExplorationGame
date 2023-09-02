@@ -121,7 +121,6 @@
 
     mQueuedFlags_ = null;
 
-    mActiveEXPOrbs_ = null;
     mActiveGizmos_ = null;
 
     mOrientatingCamera_ = false;
@@ -141,7 +140,6 @@
         mPosition_ = Vec3();
 
         mTargetManager_ = EntityTargetManager();
-        mActiveEXPOrbs_ = {};
 
         mQueuedFlags_ = array(NUM_PLAYER_QUEUED_FLAGS, null);
 
@@ -200,10 +198,8 @@
     }
 
 
-    //TODO get rid of this.
     function processEXPOrb(entityId){
-        if(!mActiveEXPOrbs_.rawin(entityId)) return;
-        local sender = mActiveEXPOrbs_[entityId];
+        local sender = entityId;
         local receiver = mPlayerEntry_.mEntity_;
         if(!mEntityManager_.entityValid(sender) || !receiver.valid()) return;
 
@@ -215,7 +211,6 @@
         if(distance <= 0.8){
             ::Base.mExplorationLogic.notifyFoundEXPOrb();
             mEntityManager_.destroyEntity(entityId);
-            mActiveEXPOrbs_.rawdelete(entityId);
             return;
         }
 
@@ -416,8 +411,7 @@
 
             //local targetPos = pos + (Vec3(_random.rand()-0.5, 0, _random.rand()-0.5) * spread);
             local targetPos = pos + (Vec3(sin(randDir) * spread, 0, cos(randDir) * spread));
-            local newEntity = mEntityFactory_.constructEXPOrb(targetPos);
-            mActiveEXPOrbs_.rawset(newEntity, newEntity);
+            mEntityFactory_.constructEXPOrb(targetPos);
         }
     }
 
