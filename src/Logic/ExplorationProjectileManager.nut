@@ -18,10 +18,12 @@
     mCurrentProjectileId_ = 0;
     mActiveProjectiles_ = null;
     mQueuedDestructionProjectiles_ = null;
+    mDamageWorld_ = null;
 
-    constructor(){
+    constructor(damageWorld){
         mActiveProjectiles_ = {};
         mQueuedDestructionProjectiles_ = [];
+        mDamageWorld_ = damageWorld;
     }
 
     function shutdown(){
@@ -38,27 +40,34 @@
         }
 
         foreach(i in mQueuedDestructionProjectiles_){
+            destroyProjectile_(mActiveProjectiles_[i]);
             mActiveProjectiles_.rawdelete(i);
         }
         mQueuedDestructionProjectiles_.clear();
     }
 
+    function destroyProjectile_(proj){
+        mDamageWorld_.removeCollisionPoint(proj.mPhysics_);
+    }
+
     function spawnProjectile(projId, pos, dir, combatMove, collisionType=_COLLISION_ENEMY){
         local projData = ::Projectiles[projId];
 
-        local senderInfo = {
-            "func" : "baseDamage",
-            "path" : "res://src/Logic/Scene/ExplorationDamageCallback.nut"
-            "id" : mCurrentProjectileId_,
-            "type" : collisionType,
-            "event" : _COLLISION_ENTER
-        };
-        local shape = _physics.getCubeShape(projData.mSize);
+        //local senderInfo = {
+        //    "func" : "baseDamage",
+        //    "path" : "res://src/Logic/Scene/ExplorationDamageCallback.nut"
+        //    "id" : mCurrentProjectileId_,
+        //    "type" : collisionType,
+        //    "event" : _COLLISION_ENTER
+        //};
+        //local shape = _physics.getCubeShape(projData.mSize);
 
-        local damageSender = _physics.collision[DAMAGE].createSender(senderInfo, shape, pos);
-        _physics.collision[DAMAGE].addObject(damageSender);
+        //local damageSender = _physics.collision[DAMAGE].createSender(senderInfo, shape, pos);
+        //_physics.collision[DAMAGE].addObject(damageSender);
 
-        local proj = Projectile(pos, dir, damageSender, combatMove, 6);
+        local collisionPoint = mDamageWorld_.addCollisionSender(CollisionWorldTriggerResponses.PROJECTILE_DAMAGE, mCurrentProjectileId_, pos.x, pos.z, projData.mSize.x, collisionType);
+
+        local proj = Projectile(pos, dir, collisionPoint, combatMove, 6);
 
         mActiveProjectiles_.rawset(mCurrentProjectileId_, proj);
         mCurrentProjectileId_++;

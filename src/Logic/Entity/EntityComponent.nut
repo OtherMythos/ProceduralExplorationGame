@@ -60,3 +60,15 @@
     }
 
 };
+
+::EntityManager.Components[EntityComponents.HEALTH] = class extends ::EntityManager.Component{
+
+    mHealth = 1;
+    mMaxHealth = 1;
+
+    constructor(health){
+        mHealth = health;
+        mMaxHealth = health;
+    }
+
+};

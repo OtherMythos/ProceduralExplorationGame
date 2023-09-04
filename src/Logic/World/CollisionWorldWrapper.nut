@@ -2,9 +2,31 @@
 enum CollisionWorldTriggerResponses{
     EXP_ORB,
     OVERWORLD_VISITED_PLACE,
+    PROJECTILE_DAMAGE,
 
     MAX = 100
 };
+
+
+::_applyDamageOther <- function(manager, entity, damage){
+    if(!manager.entityValid(entity)) return;
+    print("Applying damage " + damage);
+    //local newHealth = _component.user[Component.HEALTH].get(entity, 0) - damage;
+    //local maxHealth = _component.user[Component.HEALTH].get(entity, 1);
+    local component = manager.getComponent(entity, EntityComponents.HEALTH);
+    local newHealth = component.mHealth - damage;
+    local newPercentage = newHealth.tofloat() / component.mMaxHealth.tofloat();
+
+    component.mHealth = newHealth;
+    print("new health " + newHealth);
+
+    //::Base.mExplorationLogic.mCurrentWorld_.notifyNewEntityHealth(entity, newHealth, newPercentage);
+
+    if(newHealth <= 0){
+        //_entity.destroy(entity);
+        manager.destroyEntity(entity);
+    }
+}
 
 /**
  * Wrapper for the engine's collision world objects.
@@ -17,8 +39,8 @@ enum CollisionWorldTriggerResponses{
         constructor(targetFunction){
             mFunc_ = targetFunction;
         }
-        function trigger(world, triggerData, collisionStatus){
-            mFunc_(world, triggerData, collisionStatus);
+        function trigger(world, triggerData, dataSecond, collisionStatus){
+            mFunc_(world, triggerData, dataSecond, collisionStatus);
         }
     };
 
@@ -37,10 +59,10 @@ enum CollisionWorldTriggerResponses{
         mTriggerData_ = {};
         mPoints_ = {};
 
-        mTriggerResponses_[CollisionWorldTriggerResponses.EXP_ORB] <- TriggerResponse(function(world, entityId, collisionStatus){
+        mTriggerResponses_[CollisionWorldTriggerResponses.EXP_ORB] <- TriggerResponse(function(world, entityId, receiver, collisionStatus){
             world.processEXPOrb(entityId);
         });
-        mTriggerResponses_[CollisionWorldTriggerResponses.OVERWORLD_VISITED_PLACE] <- TriggerResponse(function(world, id, collisionStatus){
+        mTriggerResponses_[CollisionWorldTriggerResponses.OVERWORLD_VISITED_PLACE] <- TriggerResponse(function(world, id, receiver, collisionStatus){
             //TODO remove magic numbers.
             if(collisionStatus == 0x1){
                 ::Base.mExplorationLogic.notifyPlaceEnterState(id, true);
@@ -48,6 +70,17 @@ enum CollisionWorldTriggerResponses{
             else if(collisionStatus == 0x2){
                 ::Base.mExplorationLogic.notifyPlaceEnterState(id, false);
             }
+        });
+        mTriggerResponses_[CollisionWorldTriggerResponses.PROJECTILE_DAMAGE] <- TriggerResponse(function(world, projectileId, entityId, collisionStatus){
+            if(collisionStatus != 0x1) return;
+
+            local active = world.mProjectileManager_.mActiveProjectiles_;
+            //TODO can this be removed with the new collision system?
+            //if(!active.rawin(projectileId)) return;
+            local projData = active[projectileId];
+            local damage = projData.mCombatMove_.getDamage();
+
+            _applyDamageOther(world.getEntityManager(), entityId, damage);
         });
     }
 
@@ -57,19 +90,16 @@ enum CollisionWorldTriggerResponses{
         for(local i = 0; i < mCollisionWorld_.getNumCollisions(); i++){
             local pair = mCollisionWorld_.getCollisionPairForIdx(i);
             local collisionStatus = (pair & 0xF000000000000000) >> 60;
-            //local pair = world.getCollisionPairForIdx(0) & 0xFFFFFFFFFFFFF;
-            //_test.assertEqual(collisionStatus, 0x2);
+
             local first = pair & 0xFFFFFFF;
-            //local second = (pair >> 30) & 0xFFFFFFF;
-            assert(mPoints_.rawin(first));
+            local second = (pair >> 30) & 0xFFFFFFF;
+            if(!mTriggerData_.rawin(first) || !mTriggerData_.rawin(second)) continue;
             local triggerResponseId = mPoints_[first];
             local response = mTriggerResponses_[triggerResponseId];
             local dataResponse = mTriggerData_[first];
-            response.trigger(mParentWorld_, dataResponse, collisionStatus);
+            local dataSecond = mTriggerData_[second];
 
-            //(pair & 0xFFFFFFF)
-            //TODO complete this
-            //assert(false);
+            response.trigger(mParentWorld_, dataResponse, dataSecond, collisionStatus);
         }
     }
 
@@ -77,7 +107,8 @@ enum CollisionWorldTriggerResponses{
         local pointId = mCollisionWorld_.addCollisionPoint(x, y, rad, mask, _COLLISION_WORLD_ENTRY_SENDER);
         if(triggerId < CollisionWorldTriggerResponses.MAX){
             mPoints_[pointId] <- triggerId;
-            mTriggerData_[pointId] <- triggerData;
+            assert(!mTriggerData_.rawin(pointId));
+            mTriggerData_.rawset(pointId, triggerData);
             return pointId;
         }
 
@@ -88,14 +119,21 @@ enum CollisionWorldTriggerResponses{
         //mTriggerResponses_[pointId] <- trigger;
     }
 
-    function addCollisionReceiver(x, y, rad, mask=0xFF){
+    function addCollisionReceiver(triggerData, x, y, rad, mask=0xFF){
         local pointId = mCollisionWorld_.addCollisionPoint(x, y, rad, mask, _COLLISION_WORLD_ENTRY_RECEIVER);
+
+        assert(!mTriggerData_.rawin(pointId));
+        mTriggerData_.rawset(pointId, triggerData);
 
         return pointId;
     }
 
     function removeCollisionPoint(id){
         mCollisionWorld_.removeCollisionPoint(id);
+
+        mPoints_.rawdelete(id);
+        assert(mTriggerData_.rawin(id));
+        mTriggerData_.rawdelete(id);
     }
 
 }

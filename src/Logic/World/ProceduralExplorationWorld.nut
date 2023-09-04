@@ -210,6 +210,7 @@
     }
 
     function setupPlaces(){
+        //TODO see about getting rid of this.
         mActivePlaces_ = [];
         foreach(c,i in mMapData_.placeData){
             local placeEntry = mEntityFactory_.constructPlace(i, c, ::Base.mExplorationLogic.mGui_);
@@ -220,7 +221,7 @@
     function createPlacedItems(){
         foreach(c,i in mMapData_.placedItems){
             local itemEntry = mEntityFactory_.constructPlacedItem(i, c);
-            mActivePlaces_.append(itemEntry);
+            //mActivePlaces_.append(itemEntry);
         }
     }
 

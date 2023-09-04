@@ -300,7 +300,7 @@
         mPlayerEntry_ = mEntityFactory_.constructPlayer(mGui_);
 
         if(mProjectileManager_ != null) mProjectileManager_.shutdown();
-        mProjectileManager_ = ExplorationProjectileManager();
+        mProjectileManager_ = ExplorationProjectileManager(mDamageCollisionWorld_);
 
     }
 

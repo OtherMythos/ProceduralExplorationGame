@@ -59,7 +59,7 @@
         playerEntry.setTargetCollisionWorld(_COLLISION_ENEMY);
 
         local triggerWorld = mConstructorWorld_.getTriggerWorld();
-        local collisionPoint = triggerWorld.addCollisionReceiver(0, 0, 1.5, _COLLISION_PLAYER);
+        local collisionPoint = triggerWorld.addCollisionReceiver(null, 0, 0, 1.5, _COLLISION_PLAYER);
 
         local receiverInfo = {
             "type" : _COLLISION_PLAYER
@@ -190,12 +190,12 @@
     }
 
     function constructPlacedItem(itemData, idx){
-        local en = _entity.create(SlotPosition());
-        if(!en.valid()) throw "Error creating entity";
+        local manager = mConstructorWorld_.getEntityManager();
         local targetPos = Vec3(itemData.originX, 0, -itemData.originY);
         targetPos.y = getZForPos(targetPos);
+        local en = manager.createEntity(targetPos);
 
-        local entry = ActiveEnemyEntry(mConstructorWorld_, itemData.type, targetPos, en);
+        //local entry = ActiveEnemyEntry(mConstructorWorld_, itemData.type, targetPos, en);
 
         local placeNode = mBaseSceneNode_.createChildSceneNode();
         local meshTarget = itemData.type == PlacedItemId.CHERRY_BLOSSOM_TREE ? "treeCherryBlossom.mesh" : "tree.mesh";
@@ -204,27 +204,18 @@
         item.setRenderQueueGroup(30);
         placeNode.attachObject(item);
         placeNode.setScale(0.6, 0.6, 0.6);
-        _component.sceneNode.add(en, placeNode, true);
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](placeNode, true));
 
-
-        local receiverInfo = {
-            "type" : _COLLISION_ENEMY
-        };
-        local shape = _physics.getSphereShape(2);
-        local damageReceiver = _physics.collision[DAMAGE].createReceiver(receiverInfo, shape, targetPos);
-        _physics.collision[DAMAGE].addObject(damageReceiver);
-        _component.collision.add(en, damageReceiver);
-
+        local damageWorld = mConstructorWorld_.getDamageWorld();
+        local collisionPoint = damageWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_ENEMY);
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, damageWorld));
 
         local totalHealth = 1;
-        _component.user[Component.HEALTH].add(en);
-        _component.user[Component.HEALTH].set(en, 0, totalHealth);
-        _component.user[Component.HEALTH].set(en, 1, totalHealth);
+        manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](totalHealth));
 
+        //entry.setPosition(targetPos);
 
-        entry.setPosition(targetPos);
-
-        return entry;
+        //return entry;
     }
 
     function constructPlace(placeData, idx, explorationScreen){

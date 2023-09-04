@@ -9,6 +9,7 @@ enum EntityComponents{
     LIFETIME,
     ANIMATION,
     BILLBOARD,
+    HEALTH,
 
     MAX
 
