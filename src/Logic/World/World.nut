@@ -201,7 +201,7 @@
     function processEXPOrb(entityId){
         local sender = entityId;
         local receiver = mPlayerEntry_.mEntity_;
-        if(!mEntityManager_.entityValid(sender) || !receiver.valid()) return;
+        if(!mEntityManager_.entityValid(sender) || !mEntityManager_.entityValid(receiver)) return;
 
         local senderPos = mEntityManager_.getPosition(sender);
         local senderFirst = senderPos.xz();
@@ -405,8 +405,9 @@
     }
 
     function notifyNewEntityHealth(entity, newHealth, newPercentage){
-        if(mActiveEnemies_.rawin(entity.getId())){
-            local enemy = mActiveEnemies_[entity.getId()];
+        //TODO the health node should notify all entities rather than doing it here.
+        if(mActiveEnemies_.rawin(entity)){
+            local enemy = mActiveEnemies_[entity];
             enemy.notifyNewHealth(newHealth, newPercentage);
         }
 
@@ -414,11 +415,12 @@
     }
 
     function checkEntityHealthImportant(entity, newHealth, percentage){
-        if(entity.getId() == mPlayerEntry_.getEntity().getId()){
+        if(entity == mPlayerEntry_.getEntity()){
             local data = {
                 "health": newHealth,
                 "percentage": percentage
             };
+            mPlayerEntry_.notifyNewHealth(newHealth, percentage);
             _event.transmit(Event.PLAYER_HEALTH_CHANGED, data);
         }
     }
@@ -660,7 +662,11 @@
     function appearEnemy(enemyType){
         local target = getPositionForAppearEnemy_(enemyType);
         local enemyEntry = mEntityFactory_.constructEnemy(enemyType, target, mGui_);
-        mActiveEnemies_.rawset(enemyEntry.mEntity_.getId(), enemyEntry);
+        if(typeof enemyEntry.mEntity_ == "integer"){
+            mActiveEnemies_.rawset(enemyEntry.mEntity_, enemyEntry);
+        }else{
+            mActiveEnemies_.rawset(enemyEntry.mEntity_.getId(), enemyEntry);
+        }
     }
 
     function moveEnemyToPlayer(enemyId){

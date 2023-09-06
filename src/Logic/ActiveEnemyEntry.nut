@@ -158,9 +158,8 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         mInWater_ = inWater;
 
         mCreatorWorld_.mTargetManager_.notifyEntityPositionChange(this);
-        if(mEntity_){
+        if(mEntity_ != null){
             if(typeof mEntity_ == "integer"){
-                //mEntity_.setPosition(SlotPosition(pos));
                 mCreatorWorld_.getEntityManager().setEntityPosition(mEntity_, pos);
             }else{
                 mEntity_.setPosition(SlotPosition(pos));
@@ -219,7 +218,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
             local orientation = Quat(atan2(amount.x, amount.z), Vec3(0, 1, 0));
             mModel_.setOrientation(orientation);
         }else{
-            if(mEntity_){
+            if(mEntity_ != null){
                 local orientation = Quat(atan2(amount.x, amount.z), Vec3(0, 1, 0));
                 getSceneNode().setOrientation(orientation);
             }
@@ -276,10 +275,12 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         mCreatorWorld_.mTargetManager_.notifyEntityDestroyed(this);
     }
     function notifyNewHealth(newHealth, newPercentage){
+        local entityManager = mCreatorWorld_.getEntityManager();
         local billboardIdx = -1;
-        try{
-            billboardIdx = _component.user[Component.MISC].get(mEntity_, 0);
-        }catch(e){ }
+        if(entityManager.hasComponent(mEntity_, EntityComponents.BILLBOARD)){
+            local comp = entityManager.getComponent(mEntity_, EntityComponents.BILLBOARD);
+            billboardIdx = comp.mBillboard;
+        }
 
         if(billboardIdx >= 0){
             if(newHealth <= 0){
@@ -361,7 +362,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
     }
 
     function notifyAttackBegan(attacker){
-        local attackerId = attacker.getEntity().getId();
+        local attackerId = attacker.getEntity();
         print("===attack began " + attackerId);
         //Register the new attacker.
         if(mAttackers_ == null){
@@ -371,7 +372,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         mAttackers_[attackerId] <- attacker;
     }
     function notifyAttackEnded(attacker){
-        local attackerId = attacker.getEntity().getId();
+        local attackerId = attacker.getEntity();
         print("===attack ended " + attackerId);
         assert(mAttackers_ != null);
         assert(mAttackers_.rawin(attackerId));

@@ -37,7 +37,7 @@
     }
 
     function constructPlayer(explorationScreen){
-//testCount = 0;
+        /*
         local en = _entity.create(SlotPosition());
         if(!en.valid()) throw "Error creating entity";
         local playerEntry = ActiveEnemyEntry(mConstructorWorld_, EnemyId.NONE, Vec3(0, 0, 0), en);
@@ -97,9 +97,61 @@
         _component.script.add(en, "res://src/Content/Enemies/PlayerScript.nut");
 
         return playerEntry;
+        */
+
+        local manager = mConstructorWorld_.getEntityManager();
+        local targetPos = Vec3();
+        local en = manager.createEntity(targetPos);
+        local playerEntry = ActiveEnemyEntry(mConstructorWorld_, EnemyId.NONE, targetPos, en);
+
+        local playerNode = mBaseSceneNode_.createChildSceneNode();
+        local playerModel = mCharacterGenerator_.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, 30);
+        playerNode.setScale(0.5, 0.5, 0.5);
+        //_component.sceneNode.add(en, playerNode);
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](playerNode));
+        playerEntry.setModel(playerModel);
+
+        local equipped = ::Combat.EquippedItems();
+        local targetItem = ::Item(ItemId.SIMPLE_TWO_HANDED_SWORD);
+        equipped.setEquipped(targetItem, EquippedSlotTypes.LEFT_HAND);
+        local combatData = ::Combat.CombatStats(EnemyId.NONE, 0, equipped);
+        //TODO tie this up a bit better with the rest of the code.
+        playerModel.equipToNode(targetItem, CharacterModelEquipNodeType.LEFT_HAND);
+        playerModel.equipToNode(::Item(ItemId.SIMPLE_SHIELD), CharacterModelEquipNodeType.RIGHT_HAND);
+        playerEntry.setCombatData(combatData);
+        playerEntry.setTargetCollisionWorld(_COLLISION_ENEMY);
+
+        local triggerWorld = mConstructorWorld_.getTriggerWorld();
+        local collisionPoint = triggerWorld.addCollisionReceiver(null, 0, 0, 1.5, _COLLISION_PLAYER);
+
+        //TODO collision logic.
+
+        playerEntry.setId(-1);
+
+        //playerEntry.setCollisionPoint(collisionPoint);
+
+        local damageWorld = mConstructorWorld_.getDamageWorld();
+        local damagePoint = damageWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
+
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO, ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](collisionPoint, damagePoint, triggerWorld, damageWorld));
+
+        //_component.collision.add(en, collisionObject, damageReceiver);
+
+        local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(playerNode, ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_));
+        manager.assignComponent(en, EntityComponents.BILLBOARD, ::EntityManager.Components[EntityComponents.BILLBOARD](billboardIdx));
+        //_component.user[Component.MISC].add(en);
+        //_component.user[Component.MISC].set(en, 0, billboardIdx);
+
+        local totalHealth = 100;
+        manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](totalHealth));
+
+        //_component.script.add(en, "res://src/Content/Enemies/PlayerScript.nut");
+
+        return playerEntry;
     }
 
     function constructEnemyBase_(enemyType, pos, explorationScreen){
+        /*
         local en = _entity.create(SlotPosition());
         if(!en.valid()) throw "Error creating entity";
         local zPos = getZForPos(pos);
@@ -166,6 +218,55 @@
 
         return entry;
 
+        */
+
+        local manager = mConstructorWorld_.getEntityManager();
+        local zPos = getZForPos(pos);
+        local targetPos = Vec3(pos.x, zPos, pos.z);
+        local en = manager.createEntity(targetPos);
+        local entry = ActiveEnemyEntry(mConstructorWorld_, enemyType, targetPos, en);
+
+        local enemyNode = mBaseSceneNode_.createChildSceneNode();
+
+        //TODO in future have entity defs which contain this information.
+        local modelType = CharacterModelType.GOBLIN;
+        if(enemyType == EnemyId.SQUID){
+            modelType = CharacterModelType.SQUID;
+        }
+        local characterModel = mCharacterGenerator_.createCharacterModel(enemyNode, {"type": modelType}, 30, 1 << 4);
+
+        entry.setTargetCollisionWorld(_COLLISION_PLAYER);
+
+        //TODO add a component for the character model.
+        enemyNode.setScale(0.5, 0.5, 0.5);
+        //_component.sceneNode.add(en, enemyNode);
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](enemyNode));
+        entry.setModel(characterModel);
+
+        local triggerWorld = mConstructorWorld_.getTriggerWorld();
+        local playerSpottedOutline = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.BASIC_ENEMY_RECEIVE_PLAYER_SPOTTED, en, targetPos.x, targetPos.z, 16, _COLLISION_PLAYER);
+
+        local damageWorld = mConstructorWorld_.getDamageWorld();
+        local damagePoint = damageWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_ENEMY);
+        //manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](damagePoint, damageWorld));
+
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO, ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](playerSpottedOutline, damagePoint, triggerWorld, damageWorld));
+
+        entry.setPosition(targetPos);
+
+        local totalHealth = 20;
+        manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](totalHealth));
+
+        local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(enemyNode, ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_));
+        manager.assignComponent(en, EntityComponents.BILLBOARD, ::EntityManager.Components[EntityComponents.BILLBOARD](billboardIdx));
+
+        //_component.script.add(en, "res://src/Content/Enemies/BasicEnemyScript.nut");
+        manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](::BasicEnemyScript(en)));
+
+        //local machine = ::BasicEnemyMachine(en);
+        //::w.e.rawset(en.getId(), machine);
+
+        return entry;
     }
     function constructEnemy(enemyType, pos, explorationScreen){
         local enemy = constructEnemyBase_(enemyType, pos, explorationScreen);

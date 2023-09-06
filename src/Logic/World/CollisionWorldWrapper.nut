@@ -3,6 +3,7 @@ enum CollisionWorldTriggerResponses{
     EXP_ORB,
     OVERWORLD_VISITED_PLACE,
     PROJECTILE_DAMAGE,
+    BASIC_ENEMY_RECEIVE_PLAYER_SPOTTED,
 
     MAX = 100
 };
@@ -20,7 +21,8 @@ enum CollisionWorldTriggerResponses{
     component.mHealth = newHealth;
     print("new health " + newHealth);
 
-    //::Base.mExplorationLogic.mCurrentWorld_.notifyNewEntityHealth(entity, newHealth, newPercentage);
+    //TODO get rid of this.
+    ::Base.mExplorationLogic.mCurrentWorld_.notifyNewEntityHealth(entity, newHealth, newPercentage);
 
     if(newHealth <= 0){
         //_entity.destroy(entity);
@@ -82,6 +84,14 @@ enum CollisionWorldTriggerResponses{
 
             _applyDamageOther(world.getEntityManager(), entityId, damage);
         });
+        mTriggerResponses_[CollisionWorldTriggerResponses.BASIC_ENEMY_RECEIVE_PLAYER_SPOTTED] <- TriggerResponse(function(world, entityId, second, collisionStatus){
+            if(collisionStatus == 0x0) return;
+            local manager = world.getEntityManager();
+            assert(manager.hasComponent(entityId, EntityComponents.SCRIPT));
+            local comp = manager.getComponent(entityId, EntityComponents.SCRIPT);
+            if(collisionStatus == 0x1) comp.mScript.receivePlayerSpotted(true);
+            else if(collisionStatus == 0x2) comp.mScript.receivePlayerSpotted(false);
+        });
     }
 
     function processCollision(){
@@ -93,7 +103,14 @@ enum CollisionWorldTriggerResponses{
 
             local first = pair & 0xFFFFFFF;
             local second = (pair >> 30) & 0xFFFFFFF;
+            //print("Status " + collisionStatus + " for thing " + first);
             if(!mTriggerData_.rawin(first) || !mTriggerData_.rawin(second)) continue;
+            if(collisionStatus == 0x2){
+                //If the point has just left it might be because it was destroyed.
+                //TODO might be able to check this case in c++ for efficiency.
+                if(!mPoints_.rawin(first)) continue;
+            }
+            //if(!mPoints_.rawin(first)) continue;
             local triggerResponseId = mPoints_[first];
             local response = mTriggerResponses_[triggerResponseId];
             local dataResponse = mTriggerData_[first];
@@ -106,7 +123,9 @@ enum CollisionWorldTriggerResponses{
     function addCollisionSender(triggerId, triggerData, x, y, rad, mask=0xFF){
         local pointId = mCollisionWorld_.addCollisionPoint(x, y, rad, mask, _COLLISION_WORLD_ENTRY_SENDER);
         if(triggerId < CollisionWorldTriggerResponses.MAX){
-            mPoints_[pointId] <- triggerId;
+            print("Registering sender with id " + pointId + " for mask " + mask);
+            mPoints_.rawset(pointId, triggerId);
+            //mPoints_[pointId] <- triggerId;
             assert(!mTriggerData_.rawin(pointId));
             mTriggerData_.rawset(pointId, triggerData);
             return pointId;
@@ -131,6 +150,8 @@ enum CollisionWorldTriggerResponses{
     function removeCollisionPoint(id){
         mCollisionWorld_.removeCollisionPoint(id);
 
+        //If the point is a receiver then it won't have a point registered.
+        //assert(mPoints_.rawin(id));
         mPoints_.rawdelete(id);
         assert(mTriggerData_.rawin(id));
         mTriggerData_.rawdelete(id);

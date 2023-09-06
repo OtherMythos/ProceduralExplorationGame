@@ -18,6 +18,21 @@
     }
 
 };
+::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO] = class extends ::EntityManager.Component{
+
+    mPointFirst = null;
+    mPointSecond = null;
+    mCreatorFirst = null;
+    mCreatorSecond = null;
+
+    constructor(first, second, creatorFirst, creatorSecond){
+        mPointFirst = first;
+        mPointSecond = second;
+        mCreatorFirst = creatorFirst;
+        mCreatorSecond = creatorSecond;
+    }
+
+};
 
 ::EntityManager.Components[EntityComponents.SCENE_NODE] = class extends ::EntityManager.Component{
 
@@ -69,6 +84,16 @@
     constructor(health){
         mHealth = health;
         mMaxHealth = health;
+    }
+
+};
+
+::EntityManager.Components[EntityComponents.SCRIPT] = class extends ::EntityManager.Component{
+
+    mScript = null;
+
+    constructor(script){
+        mScript = script;
     }
 
 };

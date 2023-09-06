@@ -5,11 +5,13 @@
 enum EntityComponents{
 
     COLLISION_POINT,
+    COLLISION_POINT_TWO,
     SCENE_NODE,
     LIFETIME,
     ANIMATION,
     BILLBOARD,
     HEALTH,
+    SCRIPT,
 
     MAX
 
@@ -101,6 +103,10 @@ EntityManager.EntityManager <- class{
             if(i.mLifetime <= 0){
                 destroyEntity(i.eid);
             }
+        }
+        foreach(i in mComponents_[EntityComponents.SCRIPT].mComps_){
+            if(i == null) continue;
+            i.mScript.update(i.eid);
         }
     }
 
@@ -243,6 +249,7 @@ EntityManager.EntityManager <- class{
     }
 
     function processPositionChange_(eid, idx, newPos){
+        //TODO build up a system where the billboards don't get positioned each from by the scene node.
         if(mEntityComponentHashes_[idx] & (1<<EntityComponents.SCENE_NODE)){
             mComponents_[EntityComponents.SCENE_NODE].getCompForEid(eid).mNode.setPosition(newPos);
         }
@@ -250,9 +257,15 @@ EntityManager.EntityManager <- class{
             local comp = mComponents_[EntityComponents.COLLISION_POINT].getCompForEid(eid);
             comp.mCreator.mCollisionWorld_.setPositionForPoint(comp.mPoint, newPos.x, newPos.z);
         }
+        if(mEntityComponentHashes_[idx] & (1<<EntityComponents.COLLISION_POINT_TWO)){
+            local comp = mComponents_[EntityComponents.COLLISION_POINT_TWO].getCompForEid(eid);
+            comp.mCreatorFirst.mCollisionWorld_.setPositionForPoint(comp.mPointFirst, newPos.x, newPos.z);
+            comp.mCreatorSecond.mCollisionWorld_.setPositionForPoint(comp.mPointSecond, newPos.x, newPos.z);
+        }
     }
 
     function processEntityDestruction_(eid, idx){
+        print("Destroying entity with eid " + eid);
         local currentHash = mEntityComponentHashes_[idx];
         for(local i = 0; i < EntityComponents.MAX; i++){
             if(currentHash & (1 << i)){
@@ -265,6 +278,18 @@ EntityManager.EntityManager <- class{
                 }
                 else if(i == EntityComponents.COLLISION_POINT){
                     component.mCreator.removeCollisionPoint(component.mPoint);
+                }
+                else if(i == EntityComponents.COLLISION_POINT_TWO){
+                    component.mCreatorFirst.removeCollisionPoint(component.mPointFirst);
+                    component.mCreatorSecond.removeCollisionPoint(component.mPointSecond);
+                }
+                else if(i == EntityComponents.SCRIPT){
+                    if("destroyed" in component.mScript){
+                        component.mScript.destroyed(eid);
+                    }
+                }
+                else if(i == EntityComponents.BILLBOARD){
+                    ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.mBillboardManager_.untrackNode(component.mBillboard);
                 }
             }
         }

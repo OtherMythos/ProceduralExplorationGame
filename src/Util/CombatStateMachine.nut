@@ -13,7 +13,8 @@
         if("start" in newState) newState.start(this, entity);
     }
 
-    function notify(id, e, data = null){
-        if("notify" in currentState) currentState.notify(this, id, e, data);
+    //TODO remove the 'e'
+    function notify(id, e=null, data = null){
+        if("notify" in currentState) currentState.notify(this, id, entity, data);
     }
 };
