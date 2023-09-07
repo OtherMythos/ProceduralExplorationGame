@@ -166,6 +166,8 @@
 
         setupBaseMaterials();
         setupBaseMeshes();
+
+        mExplorationLogic.resetExploration_();
     }
 
     function update(){

@@ -125,7 +125,7 @@ enum ExplorationBusEvents{
         //mLogicInterface_.continueOrResetExploration();
 
         mExplorationBus_.registerCallback(busCallback, this);
-        mLogicInterface_.setup();
+        //mLogicInterface_.setup();
 
         mTooltipManager_ = TooltipManager();
 

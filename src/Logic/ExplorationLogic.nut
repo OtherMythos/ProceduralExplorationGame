@@ -52,11 +52,15 @@
         mQueuedWorlds_ = [];
         mIdPool_ = IdPool();
 
-        resetExploration_();
+        //resetExploration_();
     }
 
     function shutdown(){
+        if(mCurrentWorld_ == null) return;
         mCurrentWorld_.shutdown();
+        foreach(i in mQueuedWorlds_){
+            i.shutdown();
+        }
 
         _event.unsubscribe(Event.PLAYER_DIED, processPlayerDeath, this);
 
@@ -124,6 +128,12 @@
         mExplorationFinished_ = false;
         mExplorationPaused_ = false;
 
+        mCurrentTimer_ = Timer();
+        mCurrentTimer_.start();
+
+        shutdown();
+        setup();
+
         mExplorationStats_ = {
             "explorationTimeTaken": 0,
             "totalDiscoveredPlaces": 0,
@@ -137,9 +147,6 @@
         _state.setPauseState(0);
 
         resetExploration_();
-
-        mCurrentTimer_ = Timer();
-        mCurrentTimer_.start();
     }
 
     function tickUpdate(){
@@ -176,8 +183,8 @@
             //::Base.mExplorationLogic.spawnEXPOrbs(mPlayerEntry_.getPosition(), 4);
             //mCurrentWorld_.spawnEXPOrbs(mCurrentWorld_.mPlayerEntry_.getPosition(), 1);
 
-            //gatewayEndExploration();
-            ::Base.mExplorationLogic.pushWorld(::Base.mExplorationLogic.createWorldInstance(WorldTypes.PROCEDURAL_EXPLORATION_WORLD));
+            gatewayEndExploration();
+            //::Base.mExplorationLogic.pushWorld(::Base.mExplorationLogic.createWorldInstance(WorldTypes.PROCEDURAL_EXPLORATION_WORLD));
         }
         if(!mOrientatingCamera_) return;
         print("orientating");

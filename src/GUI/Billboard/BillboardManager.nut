@@ -70,6 +70,7 @@
     }
     function setMaskVisible(mask){
         foreach(i in mTrackedNodes_){
+            if(i == null) continue;
             i.mBillboard.setMaskVisible(mask);
         }
     }

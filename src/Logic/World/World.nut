@@ -410,6 +410,10 @@
             };
             mPlayerEntry_.notifyNewHealth(newHealth, percentage);
             _event.transmit(Event.PLAYER_HEALTH_CHANGED, data);
+
+            if(newHealth <= 0){
+                _event.transmit(Event.PLAYER_DIED, null);
+            }
         }
     }
 

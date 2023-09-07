@@ -23,7 +23,7 @@
         title.setTextColour(0, 0, 0, 1);
         layoutLine.addCell(title);
 
-        //Add the buttons to either keep or scrap.
+        //Add the buttons.
         local buttonOptions = ["Explore again", "Back"];
         local buttonFunctions = [
             function(widget, action){
