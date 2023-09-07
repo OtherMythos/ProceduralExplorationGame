@@ -68,6 +68,11 @@
     function setVisible(id, visible){
         mTrackedNodes_[id].mBillboard.setVisible(visible);
     }
+    function setMaskVisible(mask){
+        foreach(i in mTrackedNodes_){
+            i.mBillboard.setMaskVisible(mask);
+        }
+    }
 
 }
 

@@ -88,6 +88,8 @@
 
     mParentNode_ = null;
 
+    mWorldId_ = null;
+
     mHasEverBeenActive_ = false;
     mActive_ = false;
 
@@ -131,7 +133,8 @@
 
     NUM_PLAYER_QUEUED_FLAGS = 1;
 
-    constructor(){
+    constructor(worldId){
+        mWorldId_ = worldId;
         mActiveEnemies_ = {};
         mLocationFlagNodes_ = {};
         mActiveGizmos_ = {};
@@ -167,6 +170,9 @@
     function getEntityManager(){
         return mEntityManager_;
     }
+    function getWorldId(){
+        return mWorldId_;
+    }
 
     function shutdown(){
         foreach(i in mActiveEnemies_){
@@ -189,7 +195,7 @@
 
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
         mEntityFactory_ = EntityFactory(this, mParentNode_, CharacterGenerator());
-        _developer.setRenderQueueForMeshGroup(30);
+        //_developer.setRenderQueueForMeshGroup(30);
 
         mDamageCollisionWorld_ = CollisionWorldWrapper(this);
         mTriggerCollisionWorld_ = CollisionWorldWrapper(this);
@@ -248,40 +254,22 @@
             mHasEverBeenActive_ = true;
         }else{
             //TODO this whole section could do with being better.
-            destroyEnemyMap_(mActiveEnemies_);
-            mPlayerEntry_.notifyDestroyed();
-            ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.mBillboardManager_.untrackAllNodes();
+            //destroyEnemyMap_(mActiveEnemies_);
+            //mPlayerEntry_.notifyDestroyed();
+            //::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.mBillboardManager_.untrackAllNodes();
         }
 
-        mParentNode_.setVisible(active);
+        mParentNode_.setVisible(active, true);
         processActiveChange_(active);
 
     }
     function destroyEnemyMap_(target){
-        local enemies = [];
-        printf("%i current", target.len());
-        foreach(i in target){
-            enemies.append(i.mEntity_);
-        }
-        foreach(i in enemies){
-            _entity.destroy(i);
-        }
-
-        foreach(i in target){
-            i.notifyDestroyed();
-        }
-        target.clear();
-        //assert(target.len() == 0);
-    }
-    //TODO make this the main one eventually.
-    function destroyEnemyMapNEW_(target){
         local enemies = [];
         //printf("%i current", target.len());
         foreach(i in target){
             enemies.append(i.mEntity_);
         }
         foreach(i in enemies){
-            //_entity.destroy(i);
             mEntityManager_.destroyEntity(i);
         }
 
@@ -630,7 +618,7 @@
     function notifyPlayerMoved(){
         local playerPos = Vec3(mPlayerEntry_.mPos_.x, 0, mPlayerEntry_.mPos_.z);
         updatePlayerPos(playerPos);
-        _world.setPlayerPosition(SlotPosition(playerPos));
+        //_world.setPlayerPosition(SlotPosition(playerPos));
         //TODO remove direct access.
         if(mGui_.mWorldMapDisplay_.mMapViewer_){
             mGui_.mWorldMapDisplay_.mMapViewer_.setPlayerPosition(playerPos.x, playerPos.z);
@@ -662,11 +650,11 @@
     function appearEnemy(enemyType){
         local target = getPositionForAppearEnemy_(enemyType);
         local enemyEntry = mEntityFactory_.constructEnemy(enemyType, target, mGui_);
-        if(typeof enemyEntry.mEntity_ == "integer"){
+        //if(typeof enemyEntry.mEntity_ == "integer"){
             mActiveEnemies_.rawset(enemyEntry.mEntity_, enemyEntry);
-        }else{
-            mActiveEnemies_.rawset(enemyEntry.mEntity_.getId(), enemyEntry);
-        }
+        //}else{
+        //    mActiveEnemies_.rawset(enemyEntry.mEntity_.getId(), enemyEntry);
+        //}
     }
 
     function moveEnemyToPlayer(enemyId){

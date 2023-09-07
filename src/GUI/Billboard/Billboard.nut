@@ -8,8 +8,10 @@ enum BillboardZOrder{
     mPanel_ = null;
     mSize_ = null;
     mVisible_ = true;
+    mMask_ = 0xFFFFFFFF;
 
-    constructor(parent){
+    constructor(parent, mask){
+        mMask_ = mask;
     }
 
     function destroy(){
@@ -27,6 +29,10 @@ enum BillboardZOrder{
     function setVisible(visible){
         mVisible_ = visible;
         mPanel_.setVisible(visible);
+    }
+
+    function setMaskVisible(mask){
+        mPanel_.setVisible(mVisible_ && (mask & mMask_) != 0);
     }
 
 }

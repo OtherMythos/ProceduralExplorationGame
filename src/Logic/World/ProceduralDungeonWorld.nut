@@ -6,8 +6,8 @@
     mMapData_ = null;
     mVoxMesh_ = null;
 
-    constructor(){
-        base.constructor();
+    constructor(worldId){
+        base.constructor(worldId);
     }
 
     function getWorldType(){

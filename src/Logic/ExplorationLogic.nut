@@ -1,7 +1,7 @@
-::w <- {
-}
-::w.e <- {
-}
+//::w <- {
+//}
+//::w.e <- {
+//}
 
 
 
@@ -10,6 +10,7 @@
  *
  * The exploration screen uses this class to determine how the exploration is progressing.
  * This prevents the gui from having to implement any of the actual logic.
+ * Manages worlds as part of a single exploration session.
  */
 ::ExplorationLogic <- class{
 
@@ -29,6 +30,7 @@
     mCurrentWorld_ = null;
 
     mQueuedWorlds_ = null;
+    mIdPool_ = null;
 
     mGui_ = null;
     mInputs_ = null;
@@ -48,6 +50,7 @@
         };
 
         mQueuedWorlds_ = [];
+        mIdPool_ = IdPool();
 
         resetExploration_();
     }
@@ -58,21 +61,34 @@
         _event.unsubscribe(Event.PLAYER_DIED, processPlayerDeath, this);
 
         _state.setPauseState(0);
-        _world.destroyWorld();
+        //_world.destroyWorld();
     }
 
     function setup(){
-        _world.createWorld();
+        //_world.createWorld();
 
         _state.setPauseState(0);
 
-        //local newWorld = ProceduralDungeonWorld();
-        local newWorld = ProceduralExplorationWorld();
-        //local newWorld = VisitedLocationWorld("testVillage");
-        //newWorld.setup();
-        setCurrentWorld_(newWorld);
+        setCurrentWorld_(createWorldInstance(WorldTypes.PROCEDURAL_EXPLORATION_WORLD));
 
         _event.subscribe(Event.PLAYER_DIED, processPlayerDeath, this);
+    }
+
+    function createWorldInstance(worldType){
+        //TODO create the instance, give it an id.
+        local id = mIdPool_.getId();
+        local created = null;
+        switch(worldType){
+            case WorldTypes.PROCEDURAL_EXPLORATION_WORLD:
+                created = ProceduralExplorationWorld(id);
+                break;
+            case WorldTypes.PROCEDURAL_DUNGEON_WORLD:
+                created = ProceduralDungeonWorld(id);
+                break;
+            default:
+                assert(false);
+        }
+        return created;
     }
 
     /**
@@ -91,6 +107,8 @@
         mCurrentWorld_ = worldInstance;
         mCurrentWorld_.setGuiObject(mGui_);
         mCurrentWorld_.setActive(true);
+
+        mGui_.mWorldMapDisplay_.mBillboardManager_.setMaskVisible(0x1 << mCurrentWorld_.getWorldId());
 
         _event.transmit(Event.ACTIVE_WORLD_CHANGE, mCurrentWorld_);
     }
@@ -156,10 +174,10 @@
 
         if(_input.getMouseButton(1)){
             //::Base.mExplorationLogic.spawnEXPOrbs(mPlayerEntry_.getPosition(), 4);
-            mCurrentWorld_.spawnEXPOrbs(mCurrentWorld_.mPlayerEntry_.getPosition(), 1);
+            //mCurrentWorld_.spawnEXPOrbs(mCurrentWorld_.mPlayerEntry_.getPosition(), 1);
 
             //gatewayEndExploration();
-            //pushWorld(ProceduralDungeonWorld());
+            ::Base.mExplorationLogic.pushWorld(::Base.mExplorationLogic.createWorldInstance(WorldTypes.PROCEDURAL_EXPLORATION_WORLD));
         }
         if(!mOrientatingCamera_) return;
         print("orientating");

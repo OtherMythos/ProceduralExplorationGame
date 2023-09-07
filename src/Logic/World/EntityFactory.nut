@@ -137,7 +137,8 @@
 
         //_component.collision.add(en, collisionObject, damageReceiver);
 
-        local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(playerNode, ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_));
+        local worldMask = (0x1 << mConstructorWorld_.getWorldId());
+        local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(playerNode, ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_, worldMask));
         manager.assignComponent(en, EntityComponents.BILLBOARD, ::EntityManager.Components[EntityComponents.BILLBOARD](billboardIdx));
         //_component.user[Component.MISC].add(en);
         //_component.user[Component.MISC].set(en, 0, billboardIdx);
@@ -257,7 +258,9 @@
         local totalHealth = 20;
         manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](totalHealth));
 
-        local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(enemyNode, ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_));
+        local worldMask = (0x1 << mConstructorWorld_.getWorldId());
+        local billboard = ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_, worldMask)
+        local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(enemyNode, billboard);
         manager.assignComponent(en, EntityComponents.BILLBOARD, ::EntityManager.Components[EntityComponents.BILLBOARD](billboardIdx));
 
         //_component.script.add(en, "res://src/Content/Enemies/BasicEnemyScript.nut");
@@ -345,10 +348,11 @@
         manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
 
         local billboard = null;
+        local worldMask = (0x1 << mConstructorWorld_.getWorldId());
         if(placeType == PlaceType.GATEWAY){
-            billboard = ::BillboardManager.GatewayExplorationEndBillboard(explorationScreen.mWindow_);
+            billboard = ::BillboardManager.GatewayExplorationEndBillboard(explorationScreen.mWindow_, worldMask);
         }else{
-            billboard = ::BillboardManager.PlaceExplorationVisitBillboard(explorationScreen.mWindow_);
+            billboard = ::BillboardManager.PlaceExplorationVisitBillboard(explorationScreen.mWindow_, worldMask);
         }
         billboard.setVisible(false);
         local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(placeNode, billboard);

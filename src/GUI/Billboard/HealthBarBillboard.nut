@@ -1,6 +1,7 @@
 ::BillboardManager.HealthBarBillboard <- class extends ::BillboardManager.Billboard{
 
-    constructor(parent){
+    constructor(parent, mask){
+        base.constructor(parent, mask);
         local panel = ::GuiWidgets.ProgressBar(parent);
         panel.setBorder(2);
         //panel.setHidden(false);

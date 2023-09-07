@@ -97,6 +97,7 @@ function receivePlayerSpotted(id, type, internal, sender, receiver){
     }
 }
 */
+/*
 function receivePlayerInner(id, type, internal, sender, receiver){
     if(type == _COLLISION_ENTER){
         local t = sender;
@@ -107,6 +108,7 @@ function receivePlayerInner(id, type, internal, sender, receiver){
         if(::w.e.rawin(t)) ::w.e[sender].notify(BasicEnemyEvents.PLAYER_OUT_ATTACK_RANGE, sender);
     }
 }
+*/
 
 function update(eid){
     //::w.e[eid].update(eid, null);

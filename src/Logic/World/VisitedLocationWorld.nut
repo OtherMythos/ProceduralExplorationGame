@@ -128,9 +128,9 @@
         oceanNode.setScale(500, 500, 500)
         oceanNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
 
-        local character = mEntityFactory_.constructNPCCharacter();
-        mActiveEnemies_.rawset(character.mEntity_.getId(), character);
-        character.moveQueryZ(Vec3(100, 0, -50));
+        //local character = mEntityFactory_.constructNPCCharacter();
+        //mActiveEnemies_.rawset(character.mEntity_.getId(), character);
+        //character.moveQueryZ(Vec3(100, 0, -50));
     }
 
     function parseFileToData_(file){

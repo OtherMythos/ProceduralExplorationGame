@@ -12,8 +12,8 @@
 
     mCloudManager_ = null;
 
-    constructor(){
-        base.constructor();
+    constructor(worldId){
+        base.constructor(worldId);
     }
 
     function setup(){
@@ -139,7 +139,7 @@
     }
 
     function createScene(){
-        mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
+        //mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
 
         if(mMapData_){
             local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
@@ -220,7 +220,7 @@
 
     function createPlacedItems(){
         foreach(c,i in mMapData_.placedItems){
-            local itemEntry = mEntityFactory_.constructPlacedItem(i, c);
+            mEntityFactory_.constructPlacedItem(i, c);
             //mActivePlaces_.append(itemEntry);
         }
     }
@@ -234,8 +234,7 @@
 
     function processActiveChange_(active){
         if(!active){
-            //destroyEnemyMap_(mActivePlaces_);
-            destroyEnemyMapNEW_(mActivePlaces_);
+            destroyEnemyMap_(mActivePlaces_);
         }
     }
 };

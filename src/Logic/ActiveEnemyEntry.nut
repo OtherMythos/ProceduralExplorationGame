@@ -145,8 +145,9 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         mEntity_ = entity;
     }
     function getEID(){
-        if(typeof mEntity_ == "integer") return mEntity_;
-        return mEntity_.getId();
+        //if(typeof mEntity_ == "integer") return mEntity_;
+        //return mEntity_.getId();
+        return mEntity_;
     }
     function setPosition(pos){
         mPos_ = pos;
@@ -159,20 +160,20 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
 
         mCreatorWorld_.mTargetManager_.notifyEntityPositionChange(this);
         if(mEntity_ != null){
-            if(typeof mEntity_ == "integer"){
+            //if(typeof mEntity_ == "integer"){
                 mCreatorWorld_.getEntityManager().setEntityPosition(mEntity_, pos);
-            }else{
-                mEntity_.setPosition(SlotPosition(pos));
-            }
+            //}else{
+            //    mEntity_.setPosition(SlotPosition(pos));
+            //}
         }
         if(mGizmo_) mGizmo_.setPosition(pos);
         if(mCollisionPoint_ != null) mCreatorWorld_.getTriggerWorld().mCollisionWorld_.setPositionForPoint(mCollisionPoint_, pos.x, pos.z);
     }
     function getSceneNode(){
-        if(typeof mEntity_ == "integer"){
+        //if(typeof mEntity_ == "integer"){
             return mCreatorWorld_.getEntityManager().getComponent(mEntity_, EntityComponents.SCENE_NODE).mNode;
-        }
-        _component.sceneNode.getNode(mEntity_);
+        //}
+        //_component.sceneNode.getNode(mEntity_);
     }
     function getPosition(){
         return mPos_;

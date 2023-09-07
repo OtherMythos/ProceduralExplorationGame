@@ -1,6 +1,7 @@
 ::BillboardManager.GatewayExplorationEndBillboard <- class extends ::BillboardManager.Billboard{
 
-    constructor(parent){
+    constructor(parent, mask){
+        base.constructor(parent, mask);
         local button = parent.createButton();
         button.setText("End exploration");
 
