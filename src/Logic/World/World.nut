@@ -472,9 +472,6 @@
     }
 
     function checkPlayerMove(){
-        //if(mEnemyEncountered_) return;
-        //if(mExplorationPaused_) return;
-
         //TODO ewww clean this up.
         local moved = false;
         local xVal = _input.getAxisActionX(mInputs_.move, _INPUT_ANY);

@@ -1,9 +1,3 @@
-//::w <- {
-//}
-//::w.e <- {
-//}
-
-
 
 /**
  * Logic interface for exploration.
@@ -14,9 +8,8 @@
  */
 ::ExplorationLogic <- class{
 
-    mEnemyEncountered_ = false;
-    mExplorationFinished_ = false;
     mExplorationPaused_ = false;
+    mExplorationActive_ = false;
 
     mOrientatingCamera_ = false;
     mPrevMouseX_ = null;
@@ -26,6 +19,7 @@
     mGatewayPercentage_ = 0.0;
 
     mCurrentTimer_ = null;
+    mRunning_ = false;
 
     mCurrentWorld_ = null;
 
@@ -65,11 +59,12 @@
         _event.unsubscribe(Event.PLAYER_DIED, processPlayerDeath, this);
 
         _state.setPauseState(0);
-        //_world.destroyWorld();
+
+        mExplorationActive_ = false;
     }
 
     function setup(){
-        //_world.createWorld();
+        mExplorationActive_ = true;
 
         _state.setPauseState(0);
 
@@ -124,8 +119,6 @@
     }
 
     function resetExploration_(){
-        mEnemyEncountered_ = false;
-        mExplorationFinished_ = false;
         mExplorationPaused_ = false;
 
         mCurrentTimer_ = Timer();
@@ -151,8 +144,8 @@
 
     function tickUpdate(){
         if(mExplorationPaused_) return;
-        if(mEnemyEncountered_) return;
 
+        //TODO reset the exploration.
         mCurrentWorld_.update();
 
         checkCameraChange();
@@ -274,5 +267,10 @@
         mCurrentTimer_.stop();
         mExplorationStats_.explorationTimeTaken = mCurrentTimer_.getSeconds();
         if(mGui_) mGui_.notifyGatewayEnd(mExplorationStats_);
+    }
+
+    function sceneSafeUpdate(){
+        if(!mExplorationActive_) return;
+        mCurrentWorld_.sceneSafeUpdate();
     }
 };

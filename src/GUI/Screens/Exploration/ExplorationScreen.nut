@@ -135,6 +135,8 @@ enum ExplorationBusEvents{
             mExplorationStatsContainer_,
             mExplorationMovesContainer_
         ];
+
+        ::Base.mExplorationLogic.resetExploration_();
     }
 
     function update(){
