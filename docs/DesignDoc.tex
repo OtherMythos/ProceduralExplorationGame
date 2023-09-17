@@ -1,0 +1,501 @@
+\documentclass[a4paper]{scrreprt}
+
+%% Language and font encodings
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+%% Sets page size and margins
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+%% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\newcommand{\nameofgame}{Voxel RPG game}
+
+\title{\nameofgame{} - Game Design Document}
+\subtitle{An RPG exploration game that fits into five minute bursts}
+\author{OtherMythos}
+\titlehead{\centering\includegraphics[width=6cm]{logo}}
+
+\date{\parbox{\linewidth}{\centering%
+  \color{red}
+  V0.1.0 - Work in progress\endgraf
+  \input{../.git/refs/heads/master}
+  }}
+
+
+\begin{document}
+\maketitle
+\newpage
+
+\begin{abstract}
+Explore a procedurally generated world collecting items, fighting monsters and discovering places.
+Intends to distill the feeling of exploring a large fantasy world into a tight gameplay loop riddled with dopamine and quick flashy content.
+\end{abstract}
+
+\tableofcontents
+
+% ______________________
+% chapter Overview
+% ______________________
+\chapter{Overview}
+
+% Main features and aspects of your game on a first page, describing story elements. -> "selling page", publisher should be able to decide after reading this single page whether to buy in or not
+
+\nameofgame{} is a game generally targeted at mobile play styles, intended to distill the feeling of exploring a large fantasy world into something that can be easily picked up and played in short bursts.
+It focuses on traditional RPG tropes to build its world and setting, using a voxel art style to keep its look simple.
+
+\vspace{5mm}
+Three words to describe the gameplay:
+
+\begin{itemize}
+    \item Quick
+    \item Flashy
+    \item Lots
+\end{itemize}
+
+\section{Quick}
+Gameplay should be easily accessible and fit into short play sessions.
+Animations, gameplay and interactions should fit into a short amount of time to keep the player engaged.
+During gameplay something should happen every five seconds minimum.
+The player is expected to make snap decisions regarding their health, stats, collected items and others.
+
+\section{Flashy}
+Animations should be fast and eye-catching.
+The interface should emulate the feeling of using a slot machine, it should be well animated and a source of dopamine.
+When the player achieves something important the interface should respond accordingly and provide congratulatory feedback.
+The art style should be fun and engaging.
+
+\section{Lots}
+There should be lots of variety in the items, monsters and things to discover.
+New items are gradually introduced to the player as the game plays out.
+A variety of reward systems should make the game appealing and there should be lots of ways to utilise these items in ways that effect the gameplay.
+
+
+% ______________________
+% chapter Specification and Market Analysis
+% ______________________
+
+%\chapter{Specification}
+%description of target group, platform, art style, who to attract of how to attract
+%
+%\section{Player(s) / Target-group}
+%who is the target group?
+%
+%\section{Genre}
+%what is the genre of the game?
+%
+%\section{Art Style}
+%the art style of the game?
+%
+%\section{Forms of Engagement}
+%thinking of Hunicke's 8 kinds of "fun" - what would you like to focus on?\\
+%(1. Sensation - Game as sense-pleasure
+%2. Fantasy - Game as make-believe
+%3. Narrative - Game as drama
+%4. Challenge - Game as obstacle course
+%5. Fellowship -  Game as social framework
+%6. Discovery - Game as uncharted territory
+%7. Expression - Game as self-discovery
+%8. Submission - Game as pastime)
+
+% ______________________
+% chapter Game Details
+% ______________________
+
+
+\chapter{Gameplay and Game Setting}
+%be specific about the core game features
+
+Gameplay follows the loop of:
+
+    \begin{itemize}
+        \item Begin exploration
+        \item Find items, places, kill monsters and collect resources
+        \item Reach the gateway and end the exploration
+        \item Increase levels, trade items, progress the story
+        \item Repeat
+    \end{itemize}
+
+The game is fundamentally about grinding and leveling.
+After each exploration the player will be given options about how to progress their character, and the things they have collected on the previous exploration will be given to them.
+Fundamentally the game involves moving around the world, so all these moment to moment gameplay systems must be fun.
+
+\section{Exploration}
+The main bulk of the gameplay takes place in the exploration scene.
+The player is presented with a freshly generated world and must move around it, looking to find the gateway which allows them to succesfully leave.
+If the player runs out of health before they find the gateway, they will fail the exploration and lose the items they found during that exploration.
+The player must manage their resources to avoid death and succesfully improve their character.
+
+\subsection{Input}
+The player is placed into a procedurally generated voxel world and must move around to find the gateway.
+The player is able to move the camera around them to help observe their surroundings.
+In this sense, moving the camera to inspect the world should become a part of the micromanaging jobs that the player has to perform.
+Depending on the input device the player can direct their character in a certain direction.
+
+\subsection{Combat}
+Combat follows a point and click approach.
+The player can click on an enemy to target it and the system will initiate the combat.
+Enemies which are targeting will walk towards each other and initiate the combat.
+As well as this the player has a series of special moves which can be used once their recharge has finished.
+Combat should be a system that the player has to micro-manage, rather than being too intrusive.
+
+\subsection{Visiting Places}
+During exploration gameplay the player has the option of visiting places.
+This would include locations such as procedural dungeons, or smaller towns.
+Places like dungeons give the player a small challenge while regular locations could provide a number of different things.
+(Note I'm not so sure how this is going to work from a gameplay perspective.
+It might be that the player can only visit towns when the exploration has finished.
+I need to make sure it doesn't break the flow.)
+
+\subsection{Terrain Types}
+Different terrain types will help force the player to make choices about how they move their character around the world.
+For instance, the player will move slower when moving through a body of water.
+As the water gradually gets deeper the player will move slower as a result.
+Similarly, climbing a gradient could slow the player down, allowing for some tactic to play into how to move around the world.
+
+\subsection{Dropped Items}
+Dropped items include exp orbs as well as money and inventory items.
+The player simply has to walk towards them in order to collect them.
+When the inventory is full, inventory items will remain on the ground, whereas money and EXP orbs can be collected in an unlimited amount.
+
+\subsection{Biomes}
+The exploration world is split into biomes to help break it up.
+Biomes come in a number of forms and will contain different monster and found item types.
+Biomes will integrate with the story and world building to help give context for their contents.
+
+\subsection{Masked World}
+As the player moves around the world, pieces of the world gradually become visible.
+Invisible parts of the world help to make the player guess what sort of places will be in their randomly generated exploration.
+This also adds an element of risk as the player has to decide whether to continue exploring or leave early once they've found the gateway.
+
+As the player enters an area which was previously invisible it will become visible and a flashy animation should play.
+Similarly, some hints as to what can be found in the invisible parts should exist, for example marking towns or settlements in the area with a glowing beacon.
+This should help alure the player towards that location and the prospect of discovering something.
+
+\subsection{Distractions}
+The player should have some temptations trying to distract them while exploring.
+This should help keep the player engaged and feeling on their toes.
+
+Distractions would include things such as:
+
+    \begin{itemize}
+        \item Random encounters with NPCs
+        \item 50/50 chance of receiving items if entering an area
+        \item Items which trigger a chain of EXP orbs in a certain direction
+        \item Chests in the overworld which can spawn items
+    \end{itemize}
+
+\subsection{Weather}
+Weather events can occur during the exploration and have an effect on the gameplay.
+For instance, rain might decrease the effect of certain combat moves, or increase the spawn rate of certain enemy types.
+A lightning weather effect might make exploration in the world more precarious.
+There should be a variety of weather patterns to help keep the gameplay interesting.
+
+\subsection{Exploration Indicators}
+The player should be offered a variety of items or events in the world that indicate what sort of things they can expect in their exploration.
+For instance paths that link settlements to indicate life or items that indicate the direction of the gateway.
+These things should help to guide the player and tempt them in a certain direction.
+
+\subsection{Pre-Exploration Buffs}
+Prior to the exploration beginning the player will be presented with a slot machine type minigame to select some exploration buffs.
+These buffs would be modifiers such as 1.5x all money during exploration, 2x EXP orbs, guarantee a city will appear in the exploration, etc.
+The primary purpose of this system is to hide the time it takes to generate a fresh world from the player.
+
+At time of writing the world gen system takes roughly 5 seconds to complete (although this will be optimised).
+As a result of this in order to provide a smooth gameplay experience it must be obfuscated with a small minigame which is actually relevant to the gameplay.
+The system will be built in a way in which there should be no technical slowdown as a result of the world gen running.
+
+\section{Exploration Locations}
+Locations in exploration will provide some alternate variety as part of the exploration.
+Within each location are biomes, which provide more granular variety to the exploration.
+The purpose of locations is to help give the player progressively more of a challenge, as locations must be gradually unlocked through gameplay.
+
+The current list of locations is:
+
+    \begin{itemize}
+        \item The Grasslands - Simple starter area
+        \item The Desert - Minimal amounts of water. Sections of deep sand contain giant wurms.
+        \item The Great Reservour - The water levels rise and fall as the exploration progresses.
+    \end{itemize}
+
+It is important that each location contains a different gameplay theme or style, as they ultimately act like levels.
+
+\section{Item Economics}
+The game is about collecting items and progressing the character.
+Each category of item must be well balanced and help facilitate the gameplay.
+
+\vspace{5mm}
+Items fit into the following categories:
+    \begin{itemize}
+        \item Equippables
+        \item Consumables and generic items
+        \item EXP orbs
+        \item Money
+        \item Charms
+        \item Combat Moves - Maybe move this
+    \end{itemize}
+
+\subsection{Equippables}
+Equippables are items such as swords, armour, accessories, etc.
+The player has a few different equippable slots including head, body, legs and two accessory slots.
+As well as this the player has two hands to equip weapons to.
+
+Items give different stats depending on what they are and change the combat gameplay accordingly.
+For instance two swords can be equipped at once to allow for a duel wield build.
+Similarly the player should be able to make unconventional builds such as a character wielding two shields.
+This variety of choice when building a character should help add variety to the game and allow more experienced players to challenge themselves.
+
+\subsection{Consumables and generic items}
+Consumables would be items such as potions which provide temporary benefits.
+Similarly some items can be found which can be traded or sold, which is their main value.
+The player is able to use these items mid way through the exploration, so there will be some tactic in their use.
+
+\subsection{EXP orbs}
+One of the main item systems are the EXP orbs.
+These are collected during an exploration and can be used to level up the character in a variety of ways once exploration has finished.
+They are one of the main systems to progress the character.
+
+\subsection{Money}
+Used to purchase items from a variety of locations such as shops.
+Multiple currencies might be used as part of the world building to represent different kingdoms.
+This could provide some gameplay variety as the player has to balance their money.
+
+\subsection{Charms/Buffs}
+TBD
+
+\subsection{Combat Moves}
+TBD
+
+\section{Mood and Emotions}
+The gameplay is intended to be fast and fun.
+However, from a story perspective, the game takes itself quite seriously, although still maintains a cartoony feel.
+The mood of the game is intended to follow a traditional RPG style and maintains a number of tropes, although does introduce some new concepts.
+The game should include a heavy emphasis on lore, where each item, location or biome has some sort of detail in the lore.
+This is intended to give more devoted players something to learn about.
+
+\section{Story}
+TBD
+
+%\section{World/Environment}
+%what is the settings of the game
+%
+%also, add here a map of your environment or a picture of your world if necessary
+%
+%\section{Objects in the Game}
+%what objects will be in the game?
+%
+%\section{Characters in the Game}
+%who are the characters in the game?
+%
+%\section{Main Objective}
+%what is the goal / main objective of the game?
+%
+%\section{Core Mechanics}
+%very important section: what are the core mechanics? be specific
+%
+%\section{Controls}
+%describe the controls of the game
+%also, add here a controller diagram if necessary
+
+% ______________________
+% chapter Front End
+% ______________________
+
+
+\chapter{Front End}
+The user interface should be as simple and efficient as possible.
+Given that this is a mobile first game, the interface must not impede the player in any way.
+As well as being animated in an entertaining way (As mentioned in the 'flashy' objective), the interface must also be easy to understand and simple to use.
+
+\section{Start Screen}
+Ideally the title screen should be merged into the save selection screen in order to limit the number of screens between game start and gameplay.
+The screen should present the title of the game as well as options to alter the save.
+Otherwise the previous played save file should be used.
+If the player wishes to continue with their previous save they should just be able to press a distincly obvious button to begin exploration selection.
+
+\section{Exploration Screen}
+During exploration the user interface should be as minimal as possible, while also giving the player control over their character.
+The exploration interface should primarily be taken up by the rendered scene.
+Exploration effects such as coin or experience effects should also be present in the exploration screen to help sell gratification to the player.
+
+% ______________________
+% chapter Game Details
+% ______________________
+
+
+% ______________________
+% chapter References
+% ______________________
+
+\chapter{References}
+Games which have been studied include:
+
+    \begin{itemize}
+        \item Battleheart - Mika Mobile - 2011
+        \item Cat Quest - The Gentlebros - 2017
+        \item Cube World - Picroma - 2019
+        \item Don't Starve - Klei Entertainment - 2013
+    \end{itemize}
+
+\section{Battleheart}
+A favourite of the author's growing up, Battleheart condensed many RPG tropes into a fun and enjoyable mobile gaming experience.
+Notable was its combat system which properly balanced micro-management and action into a control scheme which fit well onto a mobile device.
+
+Fundamentally Battleheart is about progressing the player's party of characters through combat scenes.
+At the end of each combat encounter the player will obtain loot which can be used to improve the party.
+While it is a simple loop, the gameplay itself is engaging enough that it remains fresh hours in.
+
+\section{Cat Quest}
+An RPG game featuring a feline theme, Cat Quest was investigated as part of this project in relation to how it was ported to mobile.
+The game was given a full mobile port, and attention was put into making the game work better on the mobile platform.
+However from playing the game it became clear to the author that this game fundamentally was designed around traditional controller or keyboard input, rather than a touch screen.
+Cat Quest as a game is significantly harder to play and a much less enjoyable experience on mobile when compared to another platform.
+
+\section{Cube World}
+A well known game in the indie space, Cube World is known for its procedural world and voxel art style.
+Cube World leant into RPG tropes more than games such as Minecraft, as the game focused far more on experience and collectables.
+
+\section{Don't Starve}
+Don't Starve is a survival game based in a procedurally generated world.
+The player must balance the needs of their character while also attempting to escape the situation they find themselves in.
+Exploring the world is notable, for instance concepts such as different types of paths help guide the player in certain directions.
+
+\chapter{Technology}
+This game will be built using the avEngine, a game engine written entirely by the author of this document.
+Part of the purpose of the creation of this game was as a way to test and develop the engine features and functions.
+
+\section{Target Systems}
+The game is intended to run on the three major desktop operating systems, Windows, MacOS and Linux.
+As well as this there will be mobile ports for iOS and Android.
+Devices such as the Steam Deck should be supported out of the box.
+
+\section{Hardware}
+Given the medium to low technical burden to run the game, it should be supported on most devices.
+
+\section{Development Systems/Tools}
+The voxel tool Goxel is being used to create models for this game.
+A docker based pipeline has been created to translate these models into a format the engine can use.
+
+
+\chapter{Marketing and Publishing Strategy}
+Weekly videos are being made about the development of this game.
+This game exists partly to grow the authors presence online as a game developer.
+It is intended that a series of games will be created using the avEngine and published online with the intent of growing an audience.
+This first game is intended to be a sizeable project that demonstrates the author's capabilities to produce scaleable projects rather than just small and low effort games.
+
+\chapter{Timeline and Cost Estimation}
+
+This game is intended to be a moderate sized indie game.
+Much of the gameplay value should be derived from its replay value and random nature, meaning much of the effort to produce content can be simplified down to producing re-useable assets.
+
+%\begin{table}[h]
+%\centering
+%\begin{tabular}{|l|l|l|}
+%\hline
+%Milestone & Description & Date \\\hline
+%& Official Start Date & 01.12.... \\
+%1 & Milestone Description ..  & 01.12.... \\
+%2 & Milestone Description ..  & 01.01.... \\
+%3 & Milestone Description ..  & 01.03.... \\
+%& End of Project & 01.04.... \\
+%\hline
+%\end{tabular}
+%\caption{\label{tab:schedule}Example Schedule.}
+%\end{table}
+
+\section{Time Estimation}
+
+Initial development for this game went through a number of stages, notably the initial vision of a more idle adventure game was scrapped in favour of a more involved game.
+This was partly as a result of a change in gameplay decisions but also in the direction of the author's online strategy.
+It was decided that a larger and more involved game had to be created, instead deciding to spend upwards of a single year working on the re-thought game.
+
+The estimate of time taken to complete this project relies on how much content eventually gets added to the game.
+Depending on the initial success and traction the game receives, it is possible more or less content could be included.
+
+This game is intended to be developed with a community focus.
+The community will receive access to early builds of the game to help understand how the gameplay could be improved.
+It is intended that new content will be drip-fed into community builds of the game after it has reached a certain point of completion.
+This method will be useful to gather feedback from the community and help build up the gameplay.
+
+\section{Intended Timeline}
+The timeline for the time remaining in 2023 is as follows:
+
+\subsection{Remainder of September}
+Focus on distractions and guiding the player through the exploration.
+
+    \begin{itemize}
+        \item Make sections of the world invisible and make them appear when the player walks around.
+        \begin{itemize}
+            \item Add highlights for places which can be discovered as prospective things.
+        \end{itemize}
+        \item Improve how enemies appear
+        \item Experiment with items which distract the player:
+        \begin{itemize}
+            \item Items which trigger a trail of EXP orbs
+            \item Items which point out the direction of the gateway
+            \item 50/50 encounters of a certain type
+            \item Potential boss fights in exploration
+        \end{itemize}
+    \end{itemize}
+
+
+\subsection{October}
+Integrate a few of the remaining systems and flesh out the game.
+
+    \begin{itemize}
+        \item Add the charms and buffs system
+        \item Implement the slot machine minigame before exploration begins
+        \item Add some particle effects to help sell the combat encounters
+        \item Begin trying to integrate more of the lore to make a complete product
+    \end{itemize}
+
+\subsection{November}
+Technical and polishing work.
+
+    \begin{itemize}
+        \item Technical stabilisation - Make sure the Windows port functions, release builds should work.
+        \item Polish the user interface up as much as possible, try and animate things and make it look as good as possible.
+        \item Try and get ambient occlusion in place for regular models.
+    \end{itemize}
+
+\subsection{December}
+Prepare product for initial release to community.
+
+    \begin{itemize}
+        \item Slack month, try and get builds of the game available for the start of the new year.
+    \end{itemize}
+
+\subsection{New year and 2024}
+Focus on content, ideally with the gameplay and technical base focused and understood.
+
+%\section{Cost Estimation}
+%
+%Estimated cost of the project based the described tasks and milestones and the  time estimation.
+
+% ______________________
+% chapter Game Details
+% ______________________
+
+
+\chapter{Team and Credits}
+
+Credit for the idea, development and release strategy goes to Edward Herbert (OtherMythos)
+
+Additional Credits:
+
+    \begin{itemize}
+        \item The YouTube viewer base
+    \end{itemize}
+
+
+%\todo[inline, color=green!40]{This is an inline comment.}
+
+%\bibliographystyle{alpha}
+%\bibliography{sample}
+
+\end{document}
