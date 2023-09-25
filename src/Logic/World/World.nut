@@ -231,6 +231,7 @@
         checkTargetEnemy();
         checkPlayerMove();
         checkForEnemyAppear();
+        checkForDistractionAppear();
         checkPlayerCombatMoves();
 
         mProjectileManager_.update();
@@ -634,6 +635,14 @@
         }
     }
 
+    function checkForDistractionAppear(){
+        local foundSomething = _random.randInt(100) == 0;
+        if(!foundSomething) return;
+
+        //TODO rename or alter the method call.
+        local target = getPositionForAppearEnemy_(EnemyId.GOBLIN);
+        mEntityFactory_.constructPercentageEncounter(target, mGui_);
+    }
     function checkForEnemyAppear(){
         local foundSomething = _random.randInt(100) == 0;
         if(!foundSomething) return;
@@ -648,14 +657,13 @@
         return Vec3();
     }
 
+    function createEnemy(enemyType, pos){
+        local enemyEntry = mEntityFactory_.constructEnemy(enemyType, pos, mGui_);
+        mActiveEnemies_.rawset(enemyEntry.mEntity_, enemyEntry);
+    }
     function appearEnemy(enemyType){
         local target = getPositionForAppearEnemy_(enemyType);
-        local enemyEntry = mEntityFactory_.constructEnemy(enemyType, target, mGui_);
-        //if(typeof enemyEntry.mEntity_ == "integer"){
-            mActiveEnemies_.rawset(enemyEntry.mEntity_, enemyEntry);
-        //}else{
-        //    mActiveEnemies_.rawset(enemyEntry.mEntity_.getId(), enemyEntry);
-        //}
+        createEnemy(enemyType, target);
     }
 
     function moveEnemyToPlayer(enemyId){
@@ -736,6 +744,26 @@
     function createGizmo(pos, gizmoType){
         local newGizmo = ::ExplorationGizmos[gizmoType](mParentNode_, pos);
         return newGizmo;
+    }
+
+    function actuateSpoils(data){
+        if(data.mType == SpoilsComponentType.PERCENTAGE){
+            local percentage = _random.randInt(0, 100);
+            local first = percentage >= 0 && percentage < data.mFirst;
+            local targetData = first ? data.mSecond : data.mThird;
+            if(targetData.mType == PercentageEncounterEntryType.EXP){
+                spawnEXPOrbs(mPlayerEntry_.getPosition(), targetData.mAmount);
+            }
+            else if(targetData.mType == PercentageEncounterEntryType.ENEMY){
+                for(local i = 0; i < targetData.mAmount; i++){
+                    local playerPos = mPlayerEntry_.getPosition().copy();
+                    local offset = ((_random.randVec3()-0.5) * 16);
+                    offset.y = 0;
+                    playerPos += offset;
+                    createEnemy(targetData.mSecondaryType, playerPos);
+                }
+            }
+        }
     }
 
     function updatePlayerPos(playerPos){

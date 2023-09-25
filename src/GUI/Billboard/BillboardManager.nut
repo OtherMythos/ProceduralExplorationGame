@@ -81,3 +81,4 @@ _doFile("res://src/GUI/Billboard/Billboard.nut");
 _doFile("res://src/GUI/Billboard/HealthBarBillboard.nut");
 _doFile("res://src/GUI/Billboard/GatewayExplorationEndBillboard.nut");
 _doFile("res://src/GUI/Billboard/PlaceExplorationVisitBillboard.nut");
+_doFile("res://src/GUI/Billboard/PercentageEncounterBillboard.nut");

@@ -12,9 +12,15 @@ enum EntityComponents{
     BILLBOARD,
     HEALTH,
     SCRIPT,
+    SPOILS,
 
     MAX
 
+};
+
+enum SpoilsComponentType{
+    PERCENTAGE,
+    DROPPED_ITEMS
 };
 
 ::EntityManager <- {

@@ -395,4 +395,34 @@
         return en;
     }
 
+    function constructPercentageEncounter(pos, explorationScreen){
+        local manager = mConstructorWorld_.getEntityManager();
+        local targetPos = pos.copy();
+        targetPos.y = getZForPos(targetPos);
+
+        local en = manager.createEntity(targetPos);
+
+        local parentNode = mBaseSceneNode_.createChildSceneNode();
+        parentNode.setPosition(targetPos);
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](parentNode, true));
+
+        local spoilsFirst = ::PercentageEncounterData(PercentageEncounterEntryType.ENEMY, 3, EnemyId.GOBLIN);
+        local spoilsSecond = ::PercentageEncounterData(PercentageEncounterEntryType.EXP, 50, null);
+        local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.PERCENTAGE, 50, spoilsFirst, spoilsSecond);
+        manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
+
+        local worldMask = (0x1 << mConstructorWorld_.getWorldId());
+        local billboard = ::BillboardManager.PercentageEncounterBillboard(spoilsComponent, explorationScreen.mWindow_, worldMask);
+        //billboard.setVisible(false);
+        local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(parentNode, billboard);
+
+        manager.assignComponent(en, EntityComponents.BILLBOARD, ::EntityManager.Components[EntityComponents.BILLBOARD](billboardIdx));
+
+        local triggerWorld = mConstructorWorld_.getTriggerWorld();
+        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.PERCENTAGE_ENCOUNTER, en, targetPos.x, targetPos.z, 4, _COLLISION_PLAYER);
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
+
+        return en;
+    }
+
 };

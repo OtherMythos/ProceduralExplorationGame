@@ -97,3 +97,20 @@
     }
 
 };
+
+::EntityManager.Components[EntityComponents.SPOILS] = class extends ::EntityManager.Component{
+
+    mType = SpoilsComponentType.PERCENTAGE;
+    //The meaning of these values changes depending on what type of spoil will be dropped.
+    mFirst = null;
+    mSecond = null;
+    mThird = null;
+
+    constructor(spoilsType, first, second=null, third=null){
+        mType = spoilsType;
+        mFirst = first;
+        mSecond = second;
+        mThird = third;
+    }
+
+};
