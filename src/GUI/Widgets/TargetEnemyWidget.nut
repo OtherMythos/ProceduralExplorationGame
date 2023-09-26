@@ -27,7 +27,7 @@
     }
 
     function cancelButtonPressed(widget, action){
-        ::Base.mExplorationLogic.setTargetEnemy(null);
+        ::Base.mExplorationLogic.mCurrentWorld_.setTargetEnemy(null);
     }
 
     function playerTargetChanged(id, data){

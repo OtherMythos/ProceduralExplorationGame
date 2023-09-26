@@ -154,7 +154,8 @@
                 _input.getButtonActionHandle("PerformMove2"),
                 _input.getButtonActionHandle("PerformMove3"),
                 _input.getButtonActionHandle("PerformMove4")
-            ]
+            ],
+            "canceltarget": _input.getButtonActionHandle("CancelTarget")
         };
     }
 
@@ -232,7 +233,7 @@
         checkPlayerMove();
         checkForEnemyAppear();
         checkForDistractionAppear();
-        checkPlayerCombatMoves();
+        checkPlayerInputs();
 
         mProjectileManager_.update();
         mEntityManager_.update();
@@ -702,12 +703,16 @@
         }
     }
 
-    function checkPlayerCombatMoves(){
+    function checkPlayerInputs(){
         foreach(c,i in mInputs_.playerMoves){
             local buttonState = _input.getButtonAction(i, _INPUT_PRESSED);
             if(buttonState){
                 triggerPlayerMove(c);
             }
+        }
+
+        if(_input.getButtonAction(mInputs_.canceltarget, _INPUT_PRESSED)){
+            setTargetEnemy(null);
         }
     }
 
