@@ -401,9 +401,17 @@
         targetPos.y = getZForPos(targetPos);
 
         local en = manager.createEntity(targetPos);
+        local RADIUS = 4 + _random.randInt(4, 8);
 
         local parentNode = mBaseSceneNode_.createChildSceneNode();
         parentNode.setPosition(targetPos);
+        local item = _scene.createItem("Cylinder.mesh");
+        item.setDatablock("PercentageEncounterCylinder");
+        item.setCastsShadows(false);
+        item.setRenderQueueGroup(30);
+        parentNode.attachObject(item);
+        //Add a bit of offset to the top to avoid z fighting.
+        parentNode.setScale(RADIUS, 9 + _random.rand(), RADIUS);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](parentNode, true));
 
         local spoilsFirst = ::PercentageEncounterData(PercentageEncounterEntryType.ENEMY, 3, EnemyId.GOBLIN);
@@ -418,8 +426,10 @@
 
         manager.assignComponent(en, EntityComponents.BILLBOARD, ::EntityManager.Components[EntityComponents.BILLBOARD](billboardIdx));
 
+        manager.assignComponent(en, EntityComponents.LIFETIME, ::EntityManager.Components[EntityComponents.LIFETIME](1000 + _random.randInt(250)));
+
         local triggerWorld = mConstructorWorld_.getTriggerWorld();
-        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.PERCENTAGE_ENCOUNTER, en, targetPos.x, targetPos.z, 4, _COLLISION_PLAYER);
+        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.PERCENTAGE_ENCOUNTER, en, targetPos.x, targetPos.z, RADIUS, _COLLISION_PLAYER);
         manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
 
         return en;

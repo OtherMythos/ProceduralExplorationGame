@@ -636,7 +636,7 @@
     }
 
     function checkForDistractionAppear(){
-        local foundSomething = _random.randInt(100) == 0;
+        local foundSomething = _random.randInt(1000) == 0;
         if(!foundSomething) return;
 
         //TODO rename or alter the method call.

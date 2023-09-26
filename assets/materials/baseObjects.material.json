@@ -6,6 +6,15 @@
         }
     },
 
+    "blendblocks" :
+    {
+        "transparentBlend" :
+        {
+            "dst_blend_factor" : "one",
+            "src_blend_factor" : "one"
+        }
+    },
+
     "pbs" :
     {
         "baseVoxelMaterial" :
@@ -34,6 +43,22 @@
             "diffuse":
             {
                 "value": [0, 0, 1]
+            }
+        },
+
+        "PercentageEncounterCylinder":
+        {
+            "workflow": "metallic",
+            "blendblock": "transparentBlend",
+
+            "diffuse":
+            {
+                "value": [1, 0, 1]
+            },
+            "transparency" :
+            {
+                "value" : 2,
+                "mode" : "Transparent"
             }
         }
     }
