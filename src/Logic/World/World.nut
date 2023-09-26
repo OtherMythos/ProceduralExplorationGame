@@ -95,6 +95,7 @@
 
     mPlayerEntry_ = null;
     mActiveEnemies_ = null;
+    mActiveWorldActions_ = null;
     mGui_ = null;
     mTargetManager_ = null;
 
@@ -138,6 +139,7 @@
         mActiveEnemies_ = {};
         mLocationFlagNodes_ = {};
         mActiveGizmos_ = {};
+        mActiveWorldActions_ = [];
 
         mRotation_ = Vec2(PI*0.5, PI*0.4);
         mPosition_ = Vec3();
@@ -242,6 +244,7 @@
         foreach(i in mActiveEnemies_){
             i.update();
         }
+        updateWorldActions();
 
         mDamageCollisionWorld_.processCollision();
         mTriggerCollisionWorld_.processCollision();
@@ -641,8 +644,13 @@
         if(!foundSomething) return;
 
         //TODO rename or alter the method call.
+        local randIdx = _random.randInt(2);
         local target = getPositionForAppearEnemy_(EnemyId.GOBLIN);
-        mEntityFactory_.constructPercentageEncounter(target, mGui_);
+        if(randIdx == 0){
+            mEntityFactory_.constructPercentageEncounter(target, mGui_);
+        }else{
+            mEntityFactory_.constructEXPTrailEncounter(target);
+        }
     }
     function checkForEnemyAppear(){
         local foundSomething = _random.randInt(100) == 0;
@@ -751,6 +759,26 @@
         return newGizmo;
     }
 
+    function pushWorldAction(actionInstance){
+        mActiveWorldActions_.append(actionInstance);
+    }
+    function updateWorldActions(){
+        local finishedActions = null;
+        foreach(c,i in mActiveWorldActions_){
+            local result = i.update();
+            if(!result){
+                if(finishedActions == null) finishedActions = [];
+                finishedActions.append(c);
+            }
+        }
+
+        if(finishedActions != null){
+            foreach(i in finishedActions){
+                mActiveWorldActions_.remove(i);
+            }
+        }
+    }
+
     function actuateSpoils(data){
         if(data.mType == SpoilsComponentType.PERCENTAGE){
             local percentage = _random.randInt(0, 100);
@@ -768,6 +796,11 @@
                     createEnemy(targetData.mSecondaryType, playerPos);
                 }
             }
+        }
+        else if(data.mType == SpoilsComponentType.EXP_TRAIL){
+            local playerPos = mPlayerEntry_.getPosition().copy();
+            local action = ::EXPTrailAction(this, playerPos, _random.randVec2()-0.5, data.mFirst);
+            pushWorldAction(action);
         }
     }
 

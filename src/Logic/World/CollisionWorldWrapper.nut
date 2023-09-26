@@ -4,7 +4,7 @@ enum CollisionWorldTriggerResponses{
     OVERWORLD_VISITED_PLACE,
     PROJECTILE_DAMAGE,
     BASIC_ENEMY_RECEIVE_PLAYER_SPOTTED,
-    PERCENTAGE_ENCOUNTER,
+    TRIGGER_SPOILS,
 
     MAX = 100
 };
@@ -93,7 +93,7 @@ enum CollisionWorldTriggerResponses{
             if(collisionStatus == 0x1) comp.mScript.receivePlayerSpotted(true);
             else if(collisionStatus == 0x2) comp.mScript.receivePlayerSpotted(false);
         });
-        mTriggerResponses_[CollisionWorldTriggerResponses.PERCENTAGE_ENCOUNTER] <- TriggerResponse(function(world, entityId, second, collisionStatus){
+        mTriggerResponses_[CollisionWorldTriggerResponses.TRIGGER_SPOILS] <- TriggerResponse(function(world, entityId, second, collisionStatus){
             if(collisionStatus != 0x1) return;
             local manager = world.getEntityManager();
             assert(manager.hasComponent(entityId, EntityComponents.SPOILS));

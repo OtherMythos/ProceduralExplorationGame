@@ -20,7 +20,8 @@ enum EntityComponents{
 
 enum SpoilsComponentType{
     PERCENTAGE,
-    DROPPED_ITEMS
+    DROPPED_ITEMS,
+    EXP_TRAIL,
 };
 
 ::EntityManager <- {

@@ -429,7 +429,40 @@
         manager.assignComponent(en, EntityComponents.LIFETIME, ::EntityManager.Components[EntityComponents.LIFETIME](1000 + _random.randInt(250)));
 
         local triggerWorld = mConstructorWorld_.getTriggerWorld();
-        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.PERCENTAGE_ENCOUNTER, en, targetPos.x, targetPos.z, RADIUS, _COLLISION_PLAYER);
+        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.TRIGGER_SPOILS, en, targetPos.x, targetPos.z, RADIUS, _COLLISION_PLAYER);
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
+
+        return en;
+    }
+
+    function constructEXPTrailEncounter(pos){
+        local manager = mConstructorWorld_.getEntityManager();
+        local targetPos = pos.copy();
+        targetPos.y = getZForPos(targetPos);
+
+        local en = manager.createEntity(targetPos);
+
+        local parentNode = mBaseSceneNode_.createChildSceneNode();
+        parentNode.setPosition(targetPos);
+        local item = _scene.createItem("EXPOrbMesh");
+        item.setRenderQueueGroup(30);
+        parentNode.setScale(1.5, 1.5, 1.5);
+        local animNode = parentNode.createChildSceneNode();
+        animNode.attachObject(item);
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](parentNode, true));
+
+        local animationInfo = _animation.createAnimationInfo([animNode]);
+        local anim = _animation.createAnimation("EXPOrbAnim", animationInfo);
+        anim.setTime(_random.randInt(0, 180));
+        manager.assignComponent(en, EntityComponents.ANIMATION, ::EntityManager.Components[EntityComponents.ANIMATION](anim));
+
+        local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.EXP_TRAIL, 15 + _random.randInt(25), null, null);
+        manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
+
+        manager.assignComponent(en, EntityComponents.LIFETIME, ::EntityManager.Components[EntityComponents.LIFETIME](1000 + _random.randInt(250)));
+
+        local triggerWorld = mConstructorWorld_.getTriggerWorld();
+        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.TRIGGER_SPOILS, en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
         manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
 
         return en;

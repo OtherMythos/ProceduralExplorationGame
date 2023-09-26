@@ -134,6 +134,9 @@
         _doFile("res://src/Logic/Scene/CombatSceneLogic.nut");
         _doFile("res://src/Logic/StoryContentLogic.nut");
 
+        _doFile("res://src/Logic/World/Actions/WorldAction.nut");
+        _doFile("res://src/Logic/World/Actions/EXPTrailAction.nut");
+
         _doFile("res://src/GUI/RenderIconManager.nut");
         ::RenderIconManager.setup();
 
