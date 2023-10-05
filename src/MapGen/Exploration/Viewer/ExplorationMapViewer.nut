@@ -8,6 +8,7 @@ enum DrawOptions{
     RIVER_DATA,
     LAND_GROUPS,
     EDGE_VALS,
+    VISIBLE_REGIONS, //NOTE: Generally only used during gameplay.
     PLACE_LOCATIONS,
     VISIBLE_PLACES_MASK,
 
@@ -27,6 +28,8 @@ enum MapViewerColours{
 
     COLOUR_BLACK,
     COLOUR_MAGENTA,
+
+    UNDISCOVRED_REGION,
 
     MAX
 };
@@ -49,6 +52,7 @@ enum MapViewerColours{
     mPlaceMarkers_ = null;
     mFoundPlaces_ = null;
     mLabelWindow_ = null;
+    mFoundRegions_ = null;
 
     constructor(){
         mDrawOptions_ = array(DrawOptions.MAX, false);
@@ -62,6 +66,7 @@ enum MapViewerColours{
 
         mPlaceMarkers_ = [];
         mFoundPlaces_ = [];
+        mFoundRegions_ = {};
 
         setupBlendblock();
         setupColours();
@@ -135,9 +140,11 @@ enum MapViewerColours{
         colVals[MapViewerColours.VOXEL_GROUP_CHERRY_BLOSSOM_TREE] = ColourValue(0.94, 0.44, 0.91, 1);
         colVals[MapViewerColours.OCEAN] = ColourValue(0, 0, 1.0, mOpacity_);
         colVals[MapViewerColours.FRESH_WATER] = ColourValue(0.15, 0.15, 1.0, mOpacity_);
+        colVals[MapViewerColours.FRESH_WATER] = ColourValue(0.15, 0.15, 1.0, mOpacity_);
         colVals[MapViewerColours.WATER_GROUPS] = baseVal;
         colVals[MapViewerColours.COLOUR_BLACK] = baseVal;
         colVals[MapViewerColours.COLOUR_MAGENTA] = ColourValue(1, 0, 1, 1);
+        colVals[MapViewerColours.UNDISCOVRED_REGION] = ColourValue(0.1, 0.1, 0.1, 1);
 
         for(local i = 0; i < colVals.len(); i++){
             colVals[i] = colVals[i].getAsABGR();
@@ -147,6 +154,7 @@ enum MapViewerColours{
 
     function fillBufferWithMap(textureBox){
         mMapData_.voxelBuffer.seek(0);
+        mMapData_.secondaryVoxBuffer.seek(0);
         for(local y = 0; y < mMapData_.height; y++){
             local yVal = (y.tofloat() / mMapData_.height) * 0x80;
             for(local x = 0; x < mMapData_.width; x++){
@@ -268,8 +276,23 @@ enum MapViewerColours{
 
             drawVal = col;
         }
+        if(mDrawOptions_[DrawOptions.VISIBLE_REGIONS]){
+            local voxVal = mMapData_.secondaryVoxBuffer.readn('i');
+            if(altitude >= mMapData_.seaLevel){
+                local region = (voxVal >> 8) & 0xFF;
+                //local valColour = region.tofloat() / mMapData_.numRegions.tofloat();
+                if(!mFoundRegions_.rawin(region)){
+                    drawVal = mColours_[MapViewerColours.UNDISCOVRED_REGION];
+                }
+            }
+        }
 
         return drawVal;
+    }
+
+    function notifyRegionFound(regionId){
+        mFoundRegions_.rawset(regionId, true);
+        uploadToTexture();
     }
 
     function notifyNewPlaceFound(id, pos){

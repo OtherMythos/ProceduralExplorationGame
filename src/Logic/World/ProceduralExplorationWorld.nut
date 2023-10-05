@@ -372,6 +372,6 @@
         if(regionEntry != null){
             regionEntry.setVisible(true);
         }
+        mGui_.mWorldMapDisplay_.mMapViewer_.notifyRegionFound(regionId);
     }
-
 };

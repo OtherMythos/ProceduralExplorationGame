@@ -127,6 +127,7 @@
             "Show river data",
             "Show land group",
             "Show edge vals",
+            "Show visible regions",
             "Show place locations",
         ];
         local checkboxListener = function(widget, action){
