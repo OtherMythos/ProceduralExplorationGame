@@ -3,6 +3,7 @@ enum DrawOptions{
     GROUND_TYPE,
     WATER_GROUPS,
     MOISTURE_MAP,
+    REGIONS,
     BLUE_NOISE,
     RIVER_DATA,
     LAND_GROUPS,
@@ -195,10 +196,17 @@ enum MapViewerColours{
             drawVal = ColourValue(valGroup, valGroup, valGroup, mOpacity_).getAsABGR();
         }
         if(mDrawOptions_[DrawOptions.MOISTURE_MAP]){
-            mMapData_.moistureBuffer.seek((xVox + yVox * mMapData_.width) * 4);
-            local moistureVal = mMapData_.moistureBuffer.readn('i');
+            mMapData_.secondaryVoxBuffer.seek((xVox + yVox * mMapData_.width) * 4);
+            local moistureVal = mMapData_.secondaryVoxBuffer.readn('i');
 
             local val = moistureVal.tofloat() / 0xFF;
+            drawVal = ColourValue(val, val, val, 1).getAsABGR();
+        }
+        if(mDrawOptions_[DrawOptions.REGIONS]){
+            mMapData_.secondaryVoxBuffer.seek((xVox + yVox * mMapData_.width) * 4);
+            local regionVal = (mMapData_.secondaryVoxBuffer.readn('i') >> 8) & 0xFF;
+
+            local val = regionVal.tofloat() / 0xFF;
             drawVal = ColourValue(val, val, val, 1).getAsABGR();
         }
         if(mDrawOptions_[DrawOptions.BLUE_NOISE]){

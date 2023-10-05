@@ -60,6 +60,22 @@
                 "value" : 2,
                 "mode" : "Transparent"
             }
+        },
+
+        "MaskedWorld":
+        {
+            "workflow": "metallic",
+            "blendblock": "transparentBlend",
+
+            "diffuse":
+            {
+                "value": [1, 1, 1]
+            },
+            "transparency" :
+            {
+                "value" : 2,
+                "mode" : "Transparent"
+            }
         }
     }
 }

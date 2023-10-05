@@ -70,9 +70,30 @@
         }
     }
 
-    function processBiomeTypes(blob, moistureBlob, data){
+    function determineRegions(secondaryBlob, data){
+        secondaryBlob.seek(0);
+
+        for(local y = 0; y < data.height; y++){
+            for(local x = 0; x < data.width; x++){
+                local pos = secondaryBlob.tell();
+                local originalVal = secondaryBlob.readn('i');
+
+                local targetRegion = (y / 40).tointeger();
+
+                //Write the biome for now, later keep track of the biome group after the flood fill.
+                local out = originalVal | (targetRegion << 8);
+
+                secondaryBlob.seek(pos);
+                secondaryBlob.writen(out, 'i');
+            }
+        }
+
+        return (data.height / 40).tointeger();
+    }
+
+    function processBiomeTypes(blob, secondaryBlob, data){
         blob.seek(0);
-        moistureBlob.seek(0);
+        secondaryBlob.seek(0);
 
         for(local y = 0; y < data.height; y++){
             for(local x = 0; x < data.width; x++){
@@ -80,7 +101,8 @@
                 local originalVal = blob.readn('i');
                 local altitude = originalVal & 0xFF;
                 local flags = (originalVal >> 8) & 0xFF;
-                local moisture = moistureBlob.readn('i');
+                local secondOriginal = secondaryBlob.readn('i');
+                local moisture = secondOriginal & 0xFF;
 
                 //The biome determines the type of the voxel as well as what gets placed, so instead determine the biome and pass off to that.
                 local targetBiome = BiomeId.DEEP_OCEAN;
@@ -114,7 +136,7 @@
             biomeData[data].startingVal = BiomeId.CHERRY_BLOSSOM_FOREST;
         }
     }
-    function populateFinalBiomes(noiseBlob, blueNoise, biomeData){
+    function populateFinalBiomes(noiseBlob, secondaryBlob, blueNoise, biomeData){
         local placementItems = [];
 
         local width = mData_.width;
@@ -128,10 +150,12 @@
                 noiseBlob.seek(pos);
                 local val = noiseBlob.readn('i');
                 local flags = (val >> 8) & ~MAP_VOXEL_MASK;
+                secondaryBlob.seek(pos);
+                local region = (secondaryBlob.readn('i') >> 8) & 0xFF;
 
                 local biome = ::Biomes[targetBiome];
                 local vox = biome.determineVoxFunction(val & 0xFF);
-                biome.placeObjectsFunction(placementItems, blueNoise, x, y, width, height, val & 0xFF, flags);
+                biome.placeObjectsFunction(placementItems, blueNoise, x, y, width, height, val & 0xFF, region, flags);
 
                 noiseBlob.seek(pos);
                 noiseBlob.writen((val & (0xFFFF00FF | MAP_VOXEL_MASK)) | vox << 8, 'i');
@@ -529,7 +553,7 @@
 
         return retLandmass;
     }
-    function determinePlaces_place(noiseBlob, landData, landWeighted, place, placeId){
+    function determinePlaces_place(noiseBlob, secondaryBlob, landData, landWeighted, place, placeId){
         local landmassId = determinePlaces_determineLandmassForPlace(landData, landWeighted, place);
         local landmass = landData[landmassId];
 
@@ -545,15 +569,22 @@
         }
         if(point == null) return null;
 
+        //Determine the region.
+        local originX = (point >> 16) & 0xFFFF;
+        local originY = point & 0xFFFF;
+        secondaryBlob.seek((originX + originY * mData_.width) * 4);
+        local region = ((secondaryBlob.readn('i') >> 8) & 0xFF);
+
         local placeData = {
             "originX": (point >> 16) & 0xFFFF,
             "originY": point & 0xFFFF,
             "originWrapped": point,
-            "placeId": placeId
+            "placeId": placeId,
+            "region": region
         };
         return placeData;
     }
-    function determinePlaces(noiseBlob, landData, landWeighted, data){
+    function determinePlaces(noiseBlob, secondaryBlob, landData, landWeighted, data){
         local placeData = [];
 
         foreach(c,freq in data.placeFrequency){
@@ -563,7 +594,7 @@
                 if(totalPlaces.len() == 0) break;
                 local targetPlace = totalPlaces[_random.randIndex(totalPlaces)];
                 local place = ::Places[targetPlace];
-                local addedPlace = determinePlaces_place(noiseBlob, landData, landWeighted, place, targetPlace);
+                local addedPlace = determinePlaces_place(noiseBlob, secondaryBlob, landData, landWeighted, place, targetPlace);
                 if(addedPlace == null) continue;
                 placeData.append(addedPlace);
             }
@@ -662,13 +693,13 @@
         assert(noiseBlob.len() == data.width*data.height*4);
 
         _random.seedPatternGenerator(data.moistureSeed);
-        local moistureBlob = _random.genPerlinNoise(data.width, data.height, 0.05, 4);
-        assert(moistureBlob.len() == data.width*data.height*4);
+        local secondaryBiomeBlob = _random.genPerlinNoise(data.width, data.height, 0.05, 4);
+        assert(secondaryBiomeBlob.len() == data.width*data.height*4);
 
         local blueNoise = _random.genPerlinNoise(data.width, data.height, 0.5, 1);
         assert(blueNoise.len() == data.width*data.height*4);
 
-        reduceMoisture(moistureBlob, data);
+        reduceMoisture(secondaryBiomeBlob, data);
         reduceNoise(noiseBlob, data);
         determineAltitude(noiseBlob, data);
         local waterData = floodFillWater(noiseBlob, data);
@@ -681,11 +712,12 @@
         calculateRivers(riverData, noiseBlob, data);
         local riverBuffer = riverDataToBlob(riverData);
         carveRivers(noiseBlob, riverBuffer);
-        local placeData = determinePlaces(noiseBlob, landData, landWeighted, data);
-        processBiomeTypes(noiseBlob, moistureBlob, data);
+        local numRegions = determineRegions(secondaryBiomeBlob, data);
+        processBiomeTypes(noiseBlob, secondaryBiomeBlob, data);
         local biomeData = floodFillBiomes(noiseBlob, data);
         determineFinalBiomes(noiseBlob, biomeData);
-        local placedItems = populateFinalBiomes(noiseBlob, blueNoise, biomeData);
+        local placedItems = populateFinalBiomes(noiseBlob, secondaryBiomeBlob, blueNoise, biomeData);
+        local placeData = determinePlaces(noiseBlob, secondaryBiomeBlob, landData, landWeighted, data);
 
         mTimer_.stop();
 
@@ -695,8 +727,8 @@
         printPlaceData(placeData);
 
         local outData = {
-            "moistureBuffer": moistureBlob,
             "voxelBuffer": noiseBlob,
+            "secondaryVoxBuffer": secondaryBiomeBlob,
             "blueNoiseBuffer": blueNoise,
             "width": data.width,
             "height": data.height,
@@ -707,6 +739,7 @@
             "seaLevel": data.seaLevel,
             "placeData": placeData,
             "placedItems": placedItems,
+            "numRegions": numRegions,
             "stats": {
                 "totalSeconds": mTimer_.getSeconds()
             }

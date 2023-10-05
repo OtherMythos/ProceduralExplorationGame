@@ -18,7 +18,6 @@
         mStartPos_.x += mDirection_.x;
         mStartPos_.z += mDirection_.y;
         mCreatorWorld_.mEntityFactory_.constructEXPOrb(mStartPos_);
-        print("Spawning " + mCount_);
 
         mCount_++;
 

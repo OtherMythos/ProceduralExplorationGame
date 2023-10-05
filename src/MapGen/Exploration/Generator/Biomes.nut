@@ -45,7 +45,7 @@ local Biome = class{
             return MapVoxelTypes.SAND;
         }
     },
-    function(placementItems, noise, x, y, width, height, altitude, flags){
+    function(placementItems, noise, x, y, width, height, altitude, region, flags){
         //Don't place trees on the sand.
         if(altitude >= 110){
             if(flags & MapVoxelTypes.RIVER) return;
@@ -55,6 +55,7 @@ local Biome = class{
                     "originX": x,
                     "originY": y,
                     "originWrapped": x << 16 | y,
+                    "region": region,
                     "type": PlacedItemId.TREE
                 });
             }
@@ -65,7 +66,7 @@ local Biome = class{
     function(altitude){
         return MapVoxelTypes.TREES;
     },
-    function(placementItems, noise, x, y, width, height, altitude, flags){
+    function(placementItems, noise, x, y, width, height, altitude, region, flags){
         if(flags & MapVoxelTypes.RIVER) return;
         if(processRValue(noise, x, y, width, height, 1)){
             printf("Placing tree %i, %i", x, y);
@@ -73,6 +74,7 @@ local Biome = class{
                 "originX": x,
                 "originY": y,
                 "originWrapped": x << 16 | y,
+                "region": region,
                 "type": PlacedItemId.TREE
             });
         }
@@ -82,13 +84,14 @@ local Biome = class{
     function(altitude){
         return MapVoxelTypes.TREES_CHERRY_BLOSSOM;
     },
-    function(placementItems, noise, x, y, width, height, altitude, flags){
+    function(placementItems, noise, x, y, width, height, altitude, region, flags){
         if(flags & MapVoxelTypes.RIVER) return;
         if(processRValue(noise, x, y, width, height, 1)){
             placementItems.append({
                 "originX": x,
                 "originY": y,
                 "originWrapped": x << 16 | y,
+                "region": region,
                 "type": PlacedItemId.CHERRY_BLOSSOM_TREE
             });
         }
@@ -98,7 +101,7 @@ local Biome = class{
     function(altitude){
         return MapVoxelTypes.SAND;
     },
-    function(placementItems, noise, x, y, width, height, altitude, flags){
+    function(placementItems, noise, x, y, width, height, altitude, region, flags){
 
     }
 );
@@ -106,7 +109,7 @@ local Biome = class{
     function(altitude){
         return MapVoxelTypes.SAND;
     },
-    function(placementItems, noise, x, y, width, height, altitude, flags){
+    function(placementItems, noise, x, y, width, height, altitude, region, flags){
 
     }
 );

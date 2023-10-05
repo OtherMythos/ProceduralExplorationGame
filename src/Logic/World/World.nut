@@ -629,6 +629,15 @@
         if(mGui_.mWorldMapDisplay_.mMapViewer_){
             mGui_.mWorldMapDisplay_.mMapViewer_.setPlayerPosition(playerPos.x, playerPos.z);
         }
+
+        local changed = mPlayerEntry_.checkVoxelChange();
+        if(changed){
+            notifyPlayerVoxelChange();
+        }
+    }
+
+    function notifyPlayerVoxelChange(){
+        //Stub
     }
 
     function notifyEnemyDestroyed(eid){

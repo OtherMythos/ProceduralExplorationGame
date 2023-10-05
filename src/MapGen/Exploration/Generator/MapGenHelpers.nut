@@ -35,6 +35,15 @@
 
         return false;
     }
+    function getRegionForData(worldData, pos){
+        local x = pos.x.tointeger();
+        local y = -pos.z.tointeger();
+
+        local voxBuff = worldData.secondaryVoxBuffer;
+        voxBuff.seek((x + y * worldData.width) * 4);
+        local val = ((voxBuff.readn('i') >> 8) & 0xFF);
+        return val;
+    }
 
     function getTraverseTerrainForPosition(worldData, pos){
         return getIsWaterForPosition(worldData, pos) ? EnemyTraversableTerrain.WATER : EnemyTraversableTerrain.LAND;

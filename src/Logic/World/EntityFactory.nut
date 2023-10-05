@@ -293,7 +293,7 @@
         return enemy;
     }
 
-    function constructPlacedItem(itemData, idx){
+    function constructPlacedItem(parentNode, itemData, idx){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = Vec3(itemData.originX, 0, -itemData.originY);
         targetPos.y = getZForPos(targetPos);
@@ -301,7 +301,7 @@
 
         //local entry = ActiveEnemyEntry(mConstructorWorld_, itemData.type, targetPos, en);
 
-        local placeNode = mBaseSceneNode_.createChildSceneNode();
+        local placeNode = parentNode.createChildSceneNode();
         local meshTarget = itemData.type == PlacedItemId.CHERRY_BLOSSOM_TREE ? "treeCherryBlossom.mesh" : "tree.mesh";
         placeNode.setPosition(targetPos);
         local item = _scene.createItem(meshTarget);

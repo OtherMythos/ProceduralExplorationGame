@@ -9,11 +9,51 @@
     mVoxMesh_ = null;
 
     mActivePlaces_ = null;
+    mCurrentFoundRegions_ = null;
+    mRegionEntries_ = null;
 
     mCloudManager_ = null;
 
+    ProceduralRegionEntry = class{
+        mLandNode_ = null;
+        mLandItem_ = null;
+        mDecoratioNode_ = null;
+        mVisible_ = false;
+        mPlaces_ = null;
+        constructor(node, decorationNode){
+            mLandNode_ = node;
+            mDecoratioNode_ = decorationNode;
+            if(mLandNode_){
+                mLandItem_ = mLandNode_.getAttachedObject(0);
+            }
+            mPlaces_ = [];
+        }
+        function setVisible(visible){
+            mVisible_ = visible;
+            setVisible_();
+        }
+        //Workaround to resolve the recursive setVisible from the world.
+        function setVisible_(){
+            if(mLandNode_){
+                mLandItem_.setDatablock(mVisible_ ? "baseVoxelMaterial" : "MaskedWorld");
+            }
+
+            foreach(i in mPlaces_){
+                //TODO this will be massively inefficient so improve that
+                i.getSceneNode().setVisible(mVisible_);
+            }
+            mDecoratioNode_.setVisible(mVisible_);
+        }
+        function pushPlace(place){
+            mPlaces_.append(place);
+        }
+    }
+
     constructor(worldId){
         base.constructor(worldId);
+
+        mCurrentFoundRegions_ = {};
+        mRegionEntries_ = {};
     }
 
     function setup(){
@@ -165,20 +205,36 @@
 
     function voxeliseMap(){
         assert(mMapData_ != null);
+
+        local parentVoxNode = mParentNode_.createChildSceneNode();
+        for(local i = 0; i < mMapData_.numRegions; i++){
+            local regionNode = parentVoxNode.createChildSceneNode();
+            local landNode = voxeliseMapRegion_(i, parentVoxNode);
+            local decorationNode = regionNode.createChildSceneNode();
+            mRegionEntries_.rawset(i, ProceduralRegionEntry(landNode, decorationNode));
+        }
+    }
+
+    function voxeliseMapRegion_(regionIdx, parentNode){
         local width = mMapData_.width;
         local height = mMapData_.height;
         local voxData = array(width * height * WORLD_DEPTH, null);
         local buf = mMapData_.voxelBuffer;
+        local bufSecond = mMapData_.secondaryVoxBuffer;
         buf.seek(0);
+        bufSecond.seek(0);
         local voxVals = [
             2, 112, 0, 147, 6
         ];
         local waterVal = 192;
+        local written = false;
         for(local y = 0; y < height; y++){
             for(local x = 0; x < width; x++){
-                local vox = buf.readn('i')
+                local vox = buf.readn('i');
+                local region = (bufSecond.readn('i') >> 8) & 0xFF;
                 local voxFloat = (vox & 0xFF).tofloat();
                 if(voxFloat <= mMapData_.seaLevel) continue;
+                if(region != regionIdx) continue;
                 //+1 because vox values at 0 still need to be drawn.
                 local altitude = (((voxFloat - mMapData_.seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger() + 1;
                 local voxelMeta = (vox >> 8) & MAP_VOXEL_MASK;
@@ -190,23 +246,28 @@
                 //if(voxFloat <= mMapData_.seaLevel) voxelMeta = 3;
                 for(local i = 0; i < altitude; i++){
                     voxData[x + (y * width) + (i*width*height)] = isRiver ? waterVal : voxVals[voxelMeta];
+                    written = true;
                 }
             }
         }
+        if(!written) return null;
         local vox = VoxToMesh(Timer(), 1 << 2, 0.4);
         //TODO get rid of this with the proper function to destory meshes.
         ::ExplorationCount++;
-        local meshObj = vox.createMeshForVoxelData("worldVox" + ::ExplorationCount, voxData, width, height, WORLD_DEPTH);
+        local meshObj = vox.createMeshForVoxelData(format("worldVox%i-%i", ::ExplorationCount, regionIdx), voxData, width, height, WORLD_DEPTH);
         mVoxMesh_ = meshObj;
 
         local item = _scene.createItem(meshObj);
         item.setRenderQueueGroup(30);
-        local landNode = mParentNode_.createChildSceneNode();
+        local landNode = parentNode.createChildSceneNode();
         landNode.attachObject(item);
         landNode.setScale(1, 1, 0.4);
         landNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
 
         vox.printStats();
+        landNode.setVisible(false);
+
+        return landNode;
     }
 
     function setupPlaces(){
@@ -215,12 +276,14 @@
         foreach(c,i in mMapData_.placeData){
             local placeEntry = mEntityFactory_.constructPlace(i, c, ::Base.mExplorationLogic.mGui_);
             mActivePlaces_.append(placeEntry);
+            mRegionEntries_[i.region].pushPlace(placeEntry);
         }
     }
 
     function createPlacedItems(){
         foreach(c,i in mMapData_.placedItems){
-            mEntityFactory_.constructPlacedItem(i, c);
+            local node = mRegionEntries_[i.region].mDecoratioNode_;
+            mEntityFactory_.constructPlacedItem(node, i, c);
             //mActivePlaces_.append(itemEntry);
         }
     }
@@ -236,5 +299,79 @@
         if(!active){
             destroyEnemyMap_(mActivePlaces_);
         }
+
+        //Re-check the visibility of the nodes.
+        foreach(i in mRegionEntries_){
+            i.setVisible_();
+        }
     }
+
+    function notifyPlayerVoxelChange(){
+        local playerPos = mPlayerEntry_.getPosition();
+        local radius = 4;
+
+        local circleX = playerPos.x;
+        local circleY = -playerPos.z;
+
+        //The coordinates of the circle's rectangle
+        local startX = circleX - radius;
+        local startY = circleY - radius;
+        local endX = circleX + radius;
+        local endY = circleY + radius;
+
+        //Find the actual chunk coordinates that lie within the circle's rectangle
+        local startXTile = floor(startX);
+        local startYTile = floor(startY);
+        local endXTile = ceil(endX);
+        local endYTile = ceil(endY);
+
+        //Hold a reference to the function to avoid the mapGenHelpers lookup each time.
+        local targetFunc = ::MapGenHelpers.getRegionForData;
+
+        local foundRegions = {};
+        for (local y = startYTile; y < endYTile; y++){
+            for (local x = startXTile; x < endXTile; x++){
+                //Go through these chunks to determine what to load.
+                if(_checkRectCircleCollision(x, y, radius, circleX, circleY)){
+                    //printf("Collided with %i %i", x, y);
+                    //Query the voxel data and determine what the region is.
+                    local targetRegion = targetFunc(mMapData_, playerPos);
+                    //print("Found target region " + targetRegion);
+                    foundRegions.rawset(targetRegion, true);
+                }
+            }
+        }
+
+        foreach(c,i in foundRegions){
+            if(!mCurrentFoundRegions_.rawin(c)){
+                mCurrentFoundRegions_.rawset(c, true);
+                print("Found new region " + c);
+                processFoundNewRegion(c);
+            }
+        }
+    }
+    function _checkRectCircleCollision(tileX, tileY, radius, circleX, circleY){
+        local distX = abs(circleX - (tileX)-0.5);
+        local distY = abs(circleY - (tileY)-0.5);
+
+        if(distX > (0.5 + radius)) return false;
+        if(distY > (0.5 + radius)) return false;
+
+        if(distX <= (0.5)) return true;
+        if(distY <= (0.5)) return true;
+
+        local dx = distX - 0.5;
+        local dy = distY - 0.5;
+
+        return (dx*dx+dy*dy<=(radius*radius));
+    }
+
+    function processFoundNewRegion(regionId){
+        assert(mRegionEntries_.rawin(regionId));
+        local regionEntry = mRegionEntries_[regionId];
+        if(regionEntry != null){
+            regionEntry.setVisible(true);
+        }
+    }
+
 };

@@ -131,6 +131,9 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
     mTargetCollisionWorld_ = 0;
     mCollisionPoint_ = null;
 
+    mVoxX_ = -1;
+    mVoxY_ = -1;
+
     mEntity_ = null;
 
     mPerformingEquippable_ = null;
@@ -148,6 +151,15 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         //if(typeof mEntity_ == "integer") return mEntity_;
         //return mEntity_.getId();
         return mEntity_;
+    }
+    function checkVoxelChange(){
+        local changed = false;
+        local voxX = (mPos_.x).tointeger();
+        local voxY = (mPos_.y).tointeger();
+        changed = mVoxX_ != voxX || mVoxY_ != voxY;
+        mVoxX_ = voxX;
+        mVoxY_ = voxY;
+        return changed;
     }
     function setPosition(pos){
         mPos_ = pos;
