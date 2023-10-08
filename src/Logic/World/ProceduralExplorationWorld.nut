@@ -81,6 +81,7 @@
             "height": 400,
             "numRivers": 24,
             "seaLevel": 100,
+            "numRegions": 8,
             "altitudeBiomes": [10, 100],
             "placeFrequency": [0, 1, 1, 4, 4, 30]
         };
@@ -207,7 +208,7 @@
         assert(mMapData_ != null);
 
         local parentVoxNode = mParentNode_.createChildSceneNode();
-        for(local i = 0; i < mMapData_.numRegions; i++){
+        for(local i = 0; i < mMapData_.regionData.len(); i++){
             local regionNode = parentVoxNode.createChildSceneNode();
             local landNode = voxeliseMapRegion_(i, parentVoxNode);
             local decorationNode = regionNode.createChildSceneNode();

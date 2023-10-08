@@ -128,6 +128,7 @@
             "Show land group",
             "Show edge vals",
             "Show visible regions",
+            "Show region seeds",
             "Show place locations",
         ];
         local checkboxListener = function(widget, action){
@@ -306,6 +307,7 @@
             "width": 400,
             "height": 400,
             "numRivers": 24,
+            "numRegions": 8,
             "seaLevel": 100,
             "altitudeBiomes": [10, 100],
             "placeFrequency": [0, 1, 1, 4, 4, 30]

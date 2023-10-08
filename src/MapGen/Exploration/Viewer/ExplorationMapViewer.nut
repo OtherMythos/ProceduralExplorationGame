@@ -9,6 +9,7 @@ enum DrawOptions{
     LAND_GROUPS,
     EDGE_VALS,
     VISIBLE_REGIONS, //NOTE: Generally only used during gameplay.
+    REGION_SEEDS,
     PLACE_LOCATIONS,
     VISIBLE_PLACES_MASK,
 
@@ -168,6 +169,14 @@ enum MapViewerColours{
             textureBox.seek((i.originX + i.originY * mMapData_.width) * 4);
             textureBox.writen(mColours_[MapViewerColours.COLOUR_BLACK], 'i');
         }
+        if(mDrawOptions_[DrawOptions.REGION_SEEDS]){
+            foreach(i in mMapData_.regionData.seedPoints){
+                local x = (i >> 16) & 0xFFFF;
+                local y = i & 0xFFFF;
+                textureBox.seek((x + y * mMapData_.width) * 4);
+                textureBox.writen(mColours_[MapViewerColours.COLOUR_MAGENTA], 'i');
+            }
+        }
     }
 
     function _getColourForVox(xVox, yVox){
@@ -214,7 +223,7 @@ enum MapViewerColours{
             mMapData_.secondaryVoxBuffer.seek((xVox + yVox * mMapData_.width) * 4);
             local regionVal = (mMapData_.secondaryVoxBuffer.readn('i') >> 8) & 0xFF;
 
-            local val = regionVal.tofloat() / 0xFF;
+            local val = regionVal.tofloat() / mMapData_.regionData.len();
             drawVal = ColourValue(val, val, val, 1).getAsABGR();
         }
         if(mDrawOptions_[DrawOptions.BLUE_NOISE]){

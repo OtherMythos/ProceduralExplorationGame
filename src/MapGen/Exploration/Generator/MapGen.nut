@@ -70,6 +70,7 @@
         }
     }
 
+    /*
     function determineRegions(secondaryBlob, data){
         secondaryBlob.seek(0);
 
@@ -89,6 +90,111 @@
         }
 
         return (data.height / 40).tointeger();
+    }
+    */
+
+    function determineRegionPoints_(secondaryBlob, landData, landWeighted, data){
+        local outPoints = [];
+
+        for(local i = 0; i < data.numRegions; i++){
+            //Determine a single point and retry if it's too close to the others.
+            local retLandmass = findRandomLandmassForSize(landData, landWeighted, 20);
+            local coordData = landData[retLandmass].coords;
+            local randIndex = _random.randIndex(coordData);
+            local randPoint = coordData[randIndex];
+            outPoints.append(randPoint);
+        }
+
+        return outPoints;
+    }
+    /*
+    function performLazyFloodFill_(x, y, width, height, regionId, secondaryBlob, floodVals, floodData){
+        if(x < 0 || y < 0 || x >= width || y >= height) return;
+        //secondaryBlob.seek((x + y * width) * 4);
+        local idx = x+y*width;
+        if(floodVals[idx] != 0xFF) return;
+
+        floodVals[idx] = regionId;
+        floodData.total++;
+        local wrappedPos = wrapWorldPos_(x, y);
+        floodData.coords.append(wrappedPos);
+        floodData.chance = floodData.chance * floodData.decay;
+        if(floodData.chance >= _random.randInt(100)) performLazyFloodFill_(x+1, y, width, height, regionId, secondaryBlob, floodVals, floodData);
+        if(floodData.chance >= _random.randInt(100)) performLazyFloodFill_(x-1, y, width, height, regionId, secondaryBlob, floodVals, floodData);
+        if(floodData.chance >= _random.randInt(100)) performLazyFloodFill_(x, y-1, width, height, regionId, secondaryBlob, floodVals, floodData);
+        if(floodData.chance >= _random.randInt(100)) performLazyFloodFill_(x, y+1, width, height, regionId, secondaryBlob, floodVals, floodData);
+    }
+    */
+    function lazyFloodFill_(x, y, dequeue, floodVals, width, height){
+        if(x < 0 || y < 0 || x >= width || y >= height) return;
+        if(floodVals[x+y*width] != 0xFF) return;
+        local wrappedPos = wrapWorldPos_(x, y);
+        dequeue.append(wrappedPos);
+    }
+    function performLazyFloodFill_(x, y, width, height, regionId, secondaryBlob, floodVals, floodData){
+        local dequeue = [(x << 16) | y];
+
+        while(dequeue.len() > 0){
+            local target = dequeue[0];
+            dequeue.remove(0);
+
+            local targetX = (target >> 16) & 0xFFFF;
+            local targetY = target & 0xFFFF;
+            local idx = targetX+targetY*width;
+            if(floodVals[idx] != 0xFF) continue;
+
+            floodData.coords.append(target);
+
+            floodVals[idx] = regionId;
+            if(floodData.chance >= _random.randInt(100)){
+                lazyFloodFill_(targetX+1, targetY, dequeue, floodVals, width, height);
+                lazyFloodFill_(targetX-1, targetY, dequeue, floodVals, width, height);
+                lazyFloodFill_(targetX, targetY+1, dequeue, floodVals, width, height);
+                lazyFloodFill_(targetX, targetY-1, dequeue, floodVals, width, height);
+            }
+            floodData.chance = floodData.chance * floodData.decay;
+        }
+    }
+    function determineRegions(secondaryBlob, landmassData, landWeighted, data){
+        local outData = [];
+        secondaryBlob.seek(0);
+        local vals = array(data.width*data.height, 0xFF);
+
+        local points = determineRegionPoints_(secondaryBlob, landmassData, landWeighted, data);
+        foreach(c,i in points){
+            local x = (i >> 16) & 0xFFFF;
+            local y = i & 0xFFFF;
+            local floodData = {
+                "id": c,
+                "total": 0,
+                "seedX": x,
+                "seedY": y,
+                "startingVal": i,
+                //"edges": [],
+                "coords": [],
+                "decay": 0.9995,
+                "chance": 200.0,
+            };
+            performLazyFloodFill_(x, y, data.width, data.height, c, secondaryBlob, vals, floodData);
+
+            //Write the values to the blob.
+            foreach(z in floodData.coords){
+                local pos = (((z >> 16) & 0xFFFF) + (z & 0xFFFF) * data.width) * 4;
+                secondaryBlob.seek(pos);
+                local val = secondaryBlob.readn('i');
+                secondaryBlob.seek(pos);
+                val = val | (c << 8);
+                //val = val | (100 << 8);
+                secondaryBlob.writen(val, 'i');
+            }
+            outData.append(floodData);
+        }
+
+        //return {
+        //    "seedPoints": points,
+        //    "numRegions": points.len()
+        //};
+        return outData;
     }
 
     function processBiomeTypes(blob, secondaryBlob, data){
@@ -712,7 +818,7 @@
         calculateRivers(riverData, noiseBlob, data);
         local riverBuffer = riverDataToBlob(riverData);
         carveRivers(noiseBlob, riverBuffer);
-        local numRegions = determineRegions(secondaryBiomeBlob, data);
+        local regionData = determineRegions(secondaryBiomeBlob, landData, landWeighted, data);
         processBiomeTypes(noiseBlob, secondaryBiomeBlob, data);
         local biomeData = floodFillBiomes(noiseBlob, data);
         determineFinalBiomes(noiseBlob, biomeData);
@@ -739,7 +845,7 @@
             "seaLevel": data.seaLevel,
             "placeData": placeData,
             "placedItems": placedItems,
-            "numRegions": numRegions,
+            "regionData": regionData
             "stats": {
                 "totalSeconds": mTimer_.getSeconds()
             }
