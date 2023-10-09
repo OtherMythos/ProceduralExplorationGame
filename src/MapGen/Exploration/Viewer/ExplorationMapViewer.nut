@@ -170,10 +170,8 @@ enum MapViewerColours{
             textureBox.writen(mColours_[MapViewerColours.COLOUR_BLACK], 'i');
         }
         if(mDrawOptions_[DrawOptions.REGION_SEEDS]){
-            foreach(i in mMapData_.regionData.seedPoints){
-                local x = (i >> 16) & 0xFFFF;
-                local y = i & 0xFFFF;
-                textureBox.seek((x + y * mMapData_.width) * 4);
+            foreach(i in mMapData_.regionData){
+                textureBox.seek((i.seedX + i.seedY * mMapData_.width) * 4);
                 textureBox.writen(mColours_[MapViewerColours.COLOUR_MAGENTA], 'i');
             }
         }

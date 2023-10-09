@@ -128,11 +128,14 @@
     function lazyFloodFill_(x, y, dequeue, floodVals, width, height){
         if(x < 0 || y < 0 || x >= width || y >= height) return;
         if(floodVals[x+y*width] != 0xFF) return;
+
         local wrappedPos = wrapWorldPos_(x, y);
         dequeue.append(wrappedPos);
     }
-    function performLazyFloodFill_(x, y, width, height, regionId, secondaryBlob, floodVals, floodData){
-        local dequeue = [(x << 16) | y];
+    function performLazyFloodFill_(startX, startY, width, height, regionId, blob, secondaryBlob, floodVals, floodData){
+        local dequeue = [(startX << 16) | startY];
+        //Flag to ensure the region draws something regardless of the random outcome.
+        local first = true;
 
         while(dequeue.len() > 0){
             local target = dequeue[0];
@@ -141,21 +144,32 @@
             local targetX = (target >> 16) & 0xFFFF;
             local targetY = target & 0xFFFF;
             local idx = targetX+targetY*width;
-            if(floodVals[idx] != 0xFF) continue;
+            if(floodVals[idx] != 0xFF){
+                if(first){
+                    printf("The entire region with id %i was abandoned", regionId);
+                    //assert(false);
+                }
+                continue;
+            }
 
             floodData.coords.append(target);
 
+            //The section is under the ocean so make it less likely to produce neighbour tiles.
+            local altitude = readAltitude_(blob, targetX, targetY, width)
+            local underwater = (altitude < mData_.seaLevel);
+
             floodVals[idx] = regionId;
-            if(floodData.chance >= _random.randInt(100)){
+            if(floodData.chance >= _random.randInt(underwater ? 300 : 100 || first)){
                 lazyFloodFill_(targetX+1, targetY, dequeue, floodVals, width, height);
                 lazyFloodFill_(targetX-1, targetY, dequeue, floodVals, width, height);
                 lazyFloodFill_(targetX, targetY+1, dequeue, floodVals, width, height);
                 lazyFloodFill_(targetX, targetY-1, dequeue, floodVals, width, height);
+                first = false;
             }
-            floodData.chance = floodData.chance * floodData.decay;
+            floodData.chance = floodData.chance * (underwater ? 0.9994 : floodData.decay);
         }
     }
-    function determineRegions(secondaryBlob, landmassData, landWeighted, data){
+    function determineRegions(voxelBlob, secondaryBlob, landmassData, landWeighted, data){
         local outData = [];
         secondaryBlob.seek(0);
         local vals = array(data.width*data.height, 0xFF);
@@ -165,7 +179,8 @@
             local x = (i >> 16) & 0xFFFF;
             local y = i & 0xFFFF;
             local floodData = {
-                "id": c,
+                //Add 1 so it doesn't try and populate for region 0, which is the default.
+                "id": c+1,
                 "total": 0,
                 "seedX": x,
                 "seedY": y,
@@ -175,7 +190,7 @@
                 "decay": 0.9995,
                 "chance": 200.0,
             };
-            performLazyFloodFill_(x, y, data.width, data.height, c, secondaryBlob, vals, floodData);
+            performLazyFloodFill_(x, y, data.width, data.height, c+1, voxelBlob, secondaryBlob, vals, floodData);
 
             //Write the values to the blob.
             foreach(z in floodData.coords){
@@ -188,6 +203,10 @@
                 secondaryBlob.writen(val, 'i');
             }
             outData.append(floodData);
+        }
+
+        foreach(i in outData){
+            print(i.coords.len());
         }
 
         //return {
@@ -818,7 +837,7 @@
         calculateRivers(riverData, noiseBlob, data);
         local riverBuffer = riverDataToBlob(riverData);
         carveRivers(noiseBlob, riverBuffer);
-        local regionData = determineRegions(secondaryBiomeBlob, landData, landWeighted, data);
+        local regionData = determineRegions(noiseBlob, secondaryBiomeBlob, landData, landWeighted, data);
         processBiomeTypes(noiseBlob, secondaryBiomeBlob, data);
         local biomeData = floodFillBiomes(noiseBlob, data);
         determineFinalBiomes(noiseBlob, biomeData);

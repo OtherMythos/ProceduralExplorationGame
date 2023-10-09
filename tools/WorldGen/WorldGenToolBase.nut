@@ -307,7 +307,7 @@
             "width": 400,
             "height": 400,
             "numRivers": 24,
-            "numRegions": 8,
+            "numRegions": 16,
             "seaLevel": 100,
             "altitudeBiomes": [10, 100],
             "placeFrequency": [0, 1, 1, 4, 4, 30]
