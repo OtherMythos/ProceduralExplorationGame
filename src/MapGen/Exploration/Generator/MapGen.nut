@@ -107,24 +107,25 @@
 
         return outPoints;
     }
-    /*
-    function performLazyFloodFill_(x, y, width, height, regionId, secondaryBlob, floodVals, floodData){
-        if(x < 0 || y < 0 || x >= width || y >= height) return;
-        //secondaryBlob.seek((x + y * width) * 4);
-        local idx = x+y*width;
-        if(floodVals[idx] != 0xFF) return;
+    function determineRegionPoint_(secondaryBlob, landData, landWeighted, data, floodVals){
+        //Attempt a few times, otherwise fail.
+        for(local i = 0; i < 10; i++){
+            //Determine a single point and retry if it's too close to the others.
+            local retLandmass = findRandomLandmassForSize(landData, landWeighted, 20);
+            local coordData = landData[retLandmass].coords;
+            local randIndex = _random.randIndex(coordData);
+            local randPoint = coordData[randIndex];
 
-        floodVals[idx] = regionId;
-        floodData.total++;
-        local wrappedPos = wrapWorldPos_(x, y);
-        floodData.coords.append(wrappedPos);
-        floodData.chance = floodData.chance * floodData.decay;
-        if(floodData.chance >= _random.randInt(100)) performLazyFloodFill_(x+1, y, width, height, regionId, secondaryBlob, floodVals, floodData);
-        if(floodData.chance >= _random.randInt(100)) performLazyFloodFill_(x-1, y, width, height, regionId, secondaryBlob, floodVals, floodData);
-        if(floodData.chance >= _random.randInt(100)) performLazyFloodFill_(x, y-1, width, height, regionId, secondaryBlob, floodVals, floodData);
-        if(floodData.chance >= _random.randInt(100)) performLazyFloodFill_(x, y+1, width, height, regionId, secondaryBlob, floodVals, floodData);
+            local xTarget = (randPoint >> 16) & 0xFFFF;
+            local yTarget = randPoint & 0xFFFF;
+            //Don't place a region seed on an already existing region.
+            if(floodVals[xTarget+yTarget*data.width] != 0xFF) continue;
+
+            return randPoint;
+        }
+
+        return null;
     }
-    */
     function lazyFloodFill_(x, y, dequeue, floodVals, width, height){
         if(x < 0 || y < 0 || x >= width || y >= height) return;
         if(floodVals[x+y*width] != 0xFF) return;
@@ -174,13 +175,16 @@
         secondaryBlob.seek(0);
         local vals = array(data.width*data.height, 0xFF);
 
-        local points = determineRegionPoints_(secondaryBlob, landmassData, landWeighted, data);
-        foreach(c,i in points){
+        for(local c = 0; c < data.numRegions; c++){
+            c++;
+            local i = determineRegionPoint_(secondaryBlob, landmassData, landWeighted, data, vals);
+            if(i == null) continue;
+            local regionId = outData.len();
             local x = (i >> 16) & 0xFFFF;
             local y = i & 0xFFFF;
             local floodData = {
                 //Add 1 so it doesn't try and populate for region 0, which is the default.
-                "id": c+1,
+                "id": regionId,
                 "total": 0,
                 "seedX": x,
                 "seedY": y,
@@ -190,7 +194,7 @@
                 "decay": 0.9995,
                 "chance": 200.0,
             };
-            performLazyFloodFill_(x, y, data.width, data.height, c+1, voxelBlob, secondaryBlob, vals, floodData);
+            performLazyFloodFill_(x, y, data.width, data.height, regionId, voxelBlob, secondaryBlob, vals, floodData);
 
             //Write the values to the blob.
             foreach(z in floodData.coords){
@@ -198,21 +202,13 @@
                 secondaryBlob.seek(pos);
                 local val = secondaryBlob.readn('i');
                 secondaryBlob.seek(pos);
-                val = val | (c << 8);
+                val = val | (regionId << 8);
                 //val = val | (100 << 8);
                 secondaryBlob.writen(val, 'i');
             }
             outData.append(floodData);
         }
 
-        foreach(i in outData){
-            print(i.coords.len());
-        }
-
-        //return {
-        //    "seedPoints": points,
-        //    "numRegions": points.len()
-        //};
         return outData;
     }
 
