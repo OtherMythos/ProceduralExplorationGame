@@ -259,6 +259,7 @@
     }
     function populateFinalBiomes(noiseBlob, secondaryBlob, blueNoise, biomeData){
         local placementItems = [];
+        local VOX_FLAG_MASK = (0xFFFF00FF | MAP_VOXEL_MASK);
 
         local width = mData_.width;
         local height = mData_.height;
@@ -279,7 +280,7 @@
                 biome.placeObjectsFunction(placementItems, blueNoise, x, y, width, height, val & 0xFF, region, flags);
 
                 noiseBlob.seek(pos);
-                noiseBlob.writen((val & (0xFFFF00FF | MAP_VOXEL_MASK)) | vox << 8, 'i');
+                noiseBlob.writen((val & VOX_FLAG_MASK) | (vox | flags) << 8, 'i');
             }
         }
 

@@ -175,6 +175,25 @@ enum MapViewerColours{
                 textureBox.writen(mColours_[MapViewerColours.COLOUR_MAGENTA], 'i');
             }
         }
+        if(mDrawOptions_[DrawOptions.RIVER_DATA]){
+            //local i = 0;
+            mMapData_.riverBuffer.seek(0);
+            local first = true;
+            while(true){
+                //local riverVal = mMapData_.riverBuffer[i];
+                local riverVal = mMapData_.riverBuffer.readn('i');
+                if(riverVal < 0){
+                    if(first) break;
+                    first = true;
+                }else{
+                    local x = (riverVal >> 16) & 0xFFFF;
+                    local y = riverVal & 0xFFFF;
+                    textureBox.seek((x + y * mMapData_.width) * 4);
+                    textureBox.writen(first ? mColours_[MapViewerColours.COLOUR_MAGENTA] : mColours_[MapViewerColours.COLOUR_BLACK], 'i');
+                    first = false;
+                }
+            }
+        }
     }
 
     function _getColourForVox(xVox, yVox){
@@ -229,28 +248,6 @@ enum MapViewerColours{
             local val = mMapData_.blueNoiseBuffer.readn('f');
 
             drawVal = ColourValue(val, val, val, 1).getAsABGR();
-        }
-        if(mDrawOptions_[DrawOptions.RIVER_DATA]){
-            //local i = 0;
-            mMapData_.riverBuffer.seek(0);
-            local first = true;
-            while(true){
-                //local riverVal = mMapData_.riverBuffer[i];
-                local riverVal = mMapData_.riverBuffer.readn('i');
-                if(first && riverVal < 0){
-                    break;
-                }
-                local x = (riverVal >> 16) & 0xFFFF;
-                local y = riverVal & 0xFFFF;
-                if(xVox == x && yVox == y){
-                    drawVal = first ? mColours_[MapViewerColours.COLOUR_MAGENTA] : mColours_[MapViewerColours.COLOUR_BLACK];
-                }
-                first = false;
-                //i++;
-                if(riverVal < 0){
-                    first = true;
-                }
-            }
         }
         if(mDrawOptions_[DrawOptions.LAND_GROUPS]){
             local landGroup = (voxVal >> 24) & 0xFF;
