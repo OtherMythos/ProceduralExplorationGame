@@ -73,6 +73,354 @@
         mVertexElemVec_.pushVertexElement(_VET_FLOAT2, _VES_TEXTURE_COORDINATES);
     }
 
+    function createTerrainFromVoxelBlob(meshBase, mapData){
+        if(mTimer_) mTimer_.start();
+
+        local width = mapData.width;
+        local height = mapData.height;
+        local seaLevel = mapData.seaLevel;
+        local buf = mapData.voxelBuffer;
+        local bufSecond = mapData.secondaryVoxBuffer;
+
+        local outMesh = _graphics.createManualMesh(meshBase);
+        local subMesh = outMesh.createSubMesh();
+
+        local WORLD_DEPTH = 20;
+        local ABOVE_GROUND = 0xFF - mapData.seaLevel;
+        //local MAP_VOXEL_MASK = 0x1F;
+
+        local verts = [];
+        local indices = [];
+
+        local numVerts = 0;
+        local index = 0;
+        local NUM_VERTS = 6;
+
+        buf.seek(0);
+        bufSecond.seek(0);
+        local voxVals = [
+            2, 112, 0, 147, 6
+        ];
+        local waterVal = 192;
+        local written = false;
+        local maxAltitude = 1;
+        for(local y = height; y != 0; y--){
+            for(local x = 0; x < width; x++){
+                local vox = buf.readn('i');
+                local region = (bufSecond.readn('i') >> 8) & 0xFF;
+                local voxFloat = (vox & 0xFF).tofloat();
+                if(voxFloat <= seaLevel) continue;
+                //if(region != regionIdx) continue;
+                local altitude = (((voxFloat - seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger() + 1;
+                local voxelMeta = (vox >> 8) & MAP_VOXEL_MASK;
+                local v = voxVals[voxelMeta];
+                local isRiver = (vox >> 8) & MapVoxelTypes.RIVER;
+                if(isRiver){
+                    //altitude-=8;
+                    //if(altitude < 1) altitude = 1;
+                    v = 192;
+                }
+
+                local texCoordX = ((v % COLS_WIDTH).tofloat() / COLS_WIDTH) + TILE_WIDTH;
+                local texCoordY = ((v.tofloat() / COLS_WIDTH) / COLS_HEIGHT) + TILE_HEIGHT;
+
+                if(altitude > maxAltitude) maxAltitude = altitude;
+
+                {
+                    local f = 0;
+                    for(local i = 0; i < 4; i++){
+                        local xx = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3] + x).tointeger();
+                        local zz = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 2] + y).tointeger();
+                        local yy = altitude;
+
+                        local val = xx | yy << 10 | zz << 20 | 3 << 30;
+                        verts.append(val);
+
+                        //TODO Magic number for now to avoid it breaking the regular materials.
+                        val = f << 29 | 0x15FBF7DB;
+                        verts.append(val);
+                        verts.append(0);
+                        //TODO just to pad it out, long term I shouldn't need this.
+                        verts.append(0);
+
+                        verts.append(texCoordX);
+                        verts.append(texCoordY);
+                        numVerts++;
+                    }
+                    indices.append(index + 2);
+                    indices.append(index + 1);
+                    indices.append(index + 0);
+                    indices.append(index + 0);
+                    indices.append(index + 3);
+                    indices.append(index + 2);
+                    index += 4;
+                    mNumTris_ += 2;
+                }
+
+                {
+                    //Check one just to start
+                    local start = buf.tell();
+                    local targetX = x;
+                    local targetY = y-1;
+                    //if(!(targetX < 0 || targetY < 0 || targetX >= width || targetY >= height)){
+                        buf.seek((targetX + (height-targetY) * width) * 4);
+                        local voxSecond = buf.readn('i');
+                        local voxFloatSecond = (voxSecond & 0xFF).tofloat();
+                        buf.seek(start);
+                        if(voxFloatSecond > seaLevel){
+                            local testAltitude = (((voxFloatSecond - seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger() + 1;
+                            if(testAltitude < altitude){
+                                //The altidue is lower so need to draw some triangles.
+                                local altitudeDelta = altitude - testAltitude;
+                                for(local zAlt = 0; zAlt < altitudeDelta; zAlt++){
+                                    //Loop down and draw the triangles.
+
+                                    local f = 2;
+                                    for(local i = 0; i < 4; i++){
+                                        local xx = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3] + x).tointeger();
+                                        local zz = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 2] + y).tointeger();
+                                        local yy = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 1] + (altitude-zAlt) -1).tointeger();
+                                        //print("yy " + yy);
+
+                                        local val = xx | yy << 10 | zz << 20 | 3 << 30;
+                                        verts.append(val);
+
+                                        //TODO Magic number for now to avoid it breaking the regular materials.
+                                        val = f << 29 | 0x15FBF7DB;
+                                        verts.append(val);
+                                        verts.append(0);
+                                        //TODO just to pad it out, long term I shouldn't need this.
+                                        verts.append(0);
+
+                                        verts.append(texCoordX);
+                                        verts.append(texCoordY);
+                                        numVerts++;
+                                    }
+                                    indices.append(index + 0);
+                                    indices.append(index + 1);
+                                    indices.append(index + 2);
+                                    indices.append(index + 2);
+                                    indices.append(index + 3);
+                                    indices.append(index + 0);
+                                    index += 4;
+                                    mNumTris_ += 2;
+                                }
+                            }
+                        }
+                    //}else{
+                    //    assert(false);
+                    //}
+                }
+                {
+                    //Check one just to start
+                    local start = buf.tell();
+                    local targetX = x;
+                    local targetY = y+1;
+                    //if(!(targetX < 0 || targetY < 0 || targetX >= width || targetY >= height)){
+                        buf.seek((targetX + (height-targetY) * width) * 4);
+                        local voxSecond = buf.readn('i');
+                        local voxFloatSecond = (voxSecond & 0xFF).tofloat();
+                        buf.seek(start);
+                        if(voxFloatSecond > seaLevel){
+                            local testAltitude = (((voxFloatSecond - seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger() + 1;
+                            if(testAltitude < altitude){
+                                //The altidue is lower so need to draw some triangles.
+                                local altitudeDelta = altitude - testAltitude;
+                                if(altitudeDelta > 1) assert(false);
+                                for(local zAlt = 0; zAlt < altitudeDelta; zAlt++){
+                                    //Loop down and draw the triangles.
+                                    local f = 3;
+                                    for(local i = 0; i < 4; i++){
+                                        local xx = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3] + x).tointeger();
+                                        local zz = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 2] + y).tointeger();
+                                        local yy = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 1] + (altitude-zAlt) -1).tointeger();
+                                        //print("yy " + yy);
+
+                                        local val = xx | yy << 10 | zz << 20 | 3 << 30;
+                                        verts.append(val);
+
+                                        //TODO Magic number for now to avoid it breaking the regular materials.
+                                        val = f << 29 | 0x15FBF7DB;
+                                        verts.append(val);
+                                        verts.append(0);
+                                        //TODO just to pad it out, long term I shouldn't need this.
+                                        verts.append(0);
+
+                                        verts.append(texCoordX);
+                                        verts.append(texCoordY);
+                                        numVerts++;
+                                    }
+                                    indices.append(index + 0);
+                                    indices.append(index + 1);
+                                    indices.append(index + 2);
+                                    indices.append(index + 2);
+                                    indices.append(index + 3);
+                                    indices.append(index + 0);
+                                    index += 4;
+                                    mNumTris_ += 2;
+                                }
+                            }
+                        }
+                    //}else{
+                    //    assert(false);
+                    //}
+                }
+                {
+                    //Check one just to start
+                    local start = buf.tell();
+                    local targetX = x+1;
+                    local targetY = y;
+                    //if(!(targetX < 0 || targetY < 0 || targetX >= width || targetY >= height)){
+                        buf.seek((targetX + (height-targetY) * width) * 4);
+                        local voxSecond = buf.readn('i');
+                        local voxFloatSecond = (voxSecond & 0xFF).tofloat();
+                        buf.seek(start);
+                        if(voxFloatSecond > seaLevel){
+                            local testAltitude = (((voxFloatSecond - seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger() + 1;
+                            if(testAltitude < altitude){
+                                //The altidue is lower so need to draw some triangles.
+                                local altitudeDelta = altitude - testAltitude;
+                                for(local zAlt = 0; zAlt < altitudeDelta; zAlt++){
+                                    //Loop down and draw the triangles.
+                                    local f = 4;
+                                    for(local i = 0; i < 4; i++){
+                                        local xx = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3] + x).tointeger();
+                                        local zz = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 2] + y).tointeger();
+                                        local yy = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 1] + (altitude-zAlt) -1).tointeger();
+                                        //print("yy " + yy);
+
+                                        local val = xx | yy << 10 | zz << 20 | 3 << 30;
+                                        verts.append(val);
+
+                                        //TODO Magic number for now to avoid it breaking the regular materials.
+                                        val = f << 29 | 0x15FBF7DB;
+                                        verts.append(val);
+                                        verts.append(0);
+                                        //TODO just to pad it out, long term I shouldn't need this.
+                                        verts.append(0);
+
+                                        verts.append(texCoordX);
+                                        verts.append(texCoordY);
+                                        numVerts++;
+                                    }
+                                    indices.append(index + 0);
+                                    indices.append(index + 1);
+                                    indices.append(index + 2);
+                                    indices.append(index + 2);
+                                    indices.append(index + 3);
+                                    indices.append(index + 0);
+                                    index += 4;
+                                    mNumTris_ += 2;
+                                }
+                            }
+                        }
+                    //}else{
+                    //    assert(false);
+                    //}
+                }
+                {
+                    //Check one just to start
+                    local start = buf.tell();
+                    local targetX = x-1;
+                    local targetY = y;
+                    //if(!(targetX < 0 || targetY < 0 || targetX >= width || targetY >= height)){
+                        buf.seek((targetX + (height-targetY) * width) * 4);
+                        local voxSecond = buf.readn('i');
+                        local voxFloatSecond = (voxSecond & 0xFF).tofloat();
+                        buf.seek(start);
+                        if(voxFloatSecond > seaLevel){
+                            local testAltitude = (((voxFloatSecond - seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger() + 1;
+                            if(testAltitude < altitude){
+                                //The altidue is lower so need to draw some triangles.
+                                local altitudeDelta = altitude - testAltitude;
+                                for(local zAlt = 0; zAlt < altitudeDelta; zAlt++){
+                                    //Loop down and draw the triangles.
+                                    local f = 5;
+                                    for(local i = 0; i < 4; i++){
+                                        local xx = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3] + x).tointeger();
+                                        local zz = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 2] + y).tointeger();
+                                        local yy = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 1] + (altitude-zAlt) -1).tointeger();
+                                        //print("yy " + yy);
+
+                                        local val = xx | yy << 10 | zz << 20 | 3 << 30;
+                                        verts.append(val);
+
+                                        //TODO Magic number for now to avoid it breaking the regular materials.
+                                        val = f << 29 | 0x15FBF7DB;
+                                        verts.append(val);
+                                        verts.append(0);
+                                        //TODO just to pad it out, long term I shouldn't need this.
+                                        verts.append(0);
+
+                                        verts.append(texCoordX);
+                                        verts.append(texCoordY);
+                                        numVerts++;
+                                    }
+                                    indices.append(index + 0);
+                                    indices.append(index + 1);
+                                    indices.append(index + 2);
+                                    indices.append(index + 2);
+                                    indices.append(index + 3);
+                                    indices.append(index + 0);
+                                    index += 4;
+                                    mNumTris_ += 2;
+                                }
+                            }
+                        }
+                    //}else{
+                    //    assert(false);
+                    //}
+                }
+            }
+        }
+
+        assert(numVerts == verts.len() / NUM_VERTS);
+
+        local b = blob(verts.len() * 4);
+        b.seek(0);
+        local intFloatCount = 0;
+        foreach(c,i in verts){
+            local valid = c % NUM_VERTS == 0;
+            if(valid){
+                intFloatCount = 3;
+            }
+            b.writen(i, intFloatCount > 0 ? 'i' : 'f');
+            intFloatCount--;
+        }
+        local indiceStride = index + 4 >= 0xFFFF ? 4 : 2;
+        local bb = blob(indices.len() * indiceStride);
+        bb.seek(0);
+        local strideVal = indiceStride == 2 ? 'w' : 'i';
+        foreach(i in indices){
+            bb.writen(i, strideVal);
+        }
+
+        local buffer = _graphics.createVertexBuffer(mVertexElemVec_, numVerts, numVerts, b);
+        local indexBuffer = _graphics.createIndexBuffer(indiceStride == 2 ? _IT_16BIT : _IT_32BIT, bb, indices.len());
+
+        local vao = _graphics.createVertexArrayObject(buffer, indexBuffer, _OT_TRIANGLE_LIST);
+
+        subMesh.pushMeshVAO(vao, _VP_NORMAL);
+        subMesh.pushMeshVAO(vao, _VP_SHADOW);
+
+        //TODO remove this later at some point.
+        local halfBounds = Vec3(width/2, maxAltitude/2, height/2);
+        local bounds = AABB(halfBounds, halfBounds);
+        outMesh.setBounds(bounds);
+        outMesh.setBoundingSphereRadius(bounds.getRadius());
+
+        subMesh.setMaterialName("baseVoxelMaterial");
+
+        if(mTimer_) mTimer_.stop();
+
+        local outData = [];
+        for(local i = 0; i < mapData.regionData.len(); i++){
+            outData.append(outMesh);
+        }
+
+        return outData;
+    }
+
 
     /**
      * Generate a mesh object from the provided voxel data.

@@ -208,12 +208,28 @@
         assert(mMapData_ != null);
 
         local parentVoxNode = mParentNode_.createChildSceneNode();
-        for(local i = 0; i < mMapData_.regionData.len(); i++){
+        //for(local i = 0; i < mMapData_.regionData.len(); i++){
             local regionNode = parentVoxNode.createChildSceneNode();
-            local landNode = voxeliseMapRegion_(i, parentVoxNode);
-            local decorationNode = regionNode.createChildSceneNode();
-            mRegionEntries_.rawset(i, ProceduralRegionEntry(landNode, decorationNode));
-        }
+            //local landNode = voxeliseMapRegion_(i, parentVoxNode);
+            local vox = VoxToMesh(Timer());
+            local meshes = vox.createTerrainFromVoxelBlob("test", mMapData_);
+            assert(meshes.len() == mMapData_.regionData.len());
+            foreach(c,i in meshes){
+                local decorationNode = regionNode.createChildSceneNode();
+
+                local item = _scene.createItem(i);
+                item.setRenderQueueGroup(30);
+                local landNode = regionNode.createChildSceneNode();
+                landNode.attachObject(item);
+                landNode.setScale(1, 0.4, 1);
+                landNode.setPosition(0, 0, -mMapData_.width);
+                //landNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
+                landNode.setOrientation(Quat(0, 0, 0, 1));
+                landNode.setVisible(true);
+
+                mRegionEntries_.rawset(c, ProceduralRegionEntry(landNode, decorationNode));
+            }
+        //}
     }
 
     function voxeliseMapRegion_(regionIdx, parentNode){

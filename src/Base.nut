@@ -67,7 +67,6 @@
         _doFile("res://src/System/PlayerStats.nut");
         mPlayerStats = ::PlayerStats();
 
-        _doFile("res://src/MapGen/Exploration/Generator/MapConstants.nut");
         _doFile("res://src/MapGen/Exploration/Generator/Biomes.nut");
         _doFile("res://src/MapGen/Exploration/Generator/MapGen.nut");
         _doFile("res://src/MapGen/MapViewer.nut");

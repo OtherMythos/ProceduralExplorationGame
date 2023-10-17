@@ -1,5 +1,6 @@
 function start(){
     _doFile("res://src/Constants.nut");
+    _doFile("res://src/MapGen/Exploration/Generator/MapConstants.nut");
 
     _doFile("res://src/System/CompositorManager.nut");
     ::CompositorManager.setup();
