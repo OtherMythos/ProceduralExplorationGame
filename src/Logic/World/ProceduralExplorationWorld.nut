@@ -213,6 +213,7 @@
             //local landNode = voxeliseMapRegion_(i, parentVoxNode);
             local vox = VoxToMesh(Timer());
             local meshes = vox.createTerrainFromVoxelBlob("test", mMapData_);
+            print("Time taken to generate voxel map " + vox.getStats().totalSeconds);
             assert(meshes.len() == mMapData_.regionData.len());
             foreach(c,i in meshes){
                 local decorationNode = regionNode.createChildSceneNode();

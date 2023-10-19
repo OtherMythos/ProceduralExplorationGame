@@ -73,33 +73,23 @@
         mVertexElemVec_.pushVertexElement(_VET_FLOAT2, _VES_TEXTURE_COORDINATES);
     }
 
-    //TODO remove ABOVE and DEPTH
-    function writeFaceToMesh(targetX, targetY, x, y, f, altitude, width, height, buf, seaLevel, ABOVE_GROUND, WORLD_DEPTH, texCoordX, texCoordY, verts, indices, vertData){
-        local committed = 0;
-        local index = indices.len();
-        //Check one just to start
-        local start = buf.tell();
-        //local targetX = x;
-        //local targetY = y-1;
+    function writeFaceToMesh(targetX, targetY, x, y, f, altitude, altitudes, width, height, texCoordX, texCoordY, verts, indices, vertData){
+        //Assuming there's no voxels around the outskirt this check can be avoided.
         //if(!(targetX < 0 || targetY < 0 || targetX >= width || targetY >= height)){
-            buf.seek((targetX + (height-targetY) * width) * 4);
-            local voxSecond = buf.readn('i');
-            local voxFloatSecond = (voxSecond & 0xFF).tofloat();
-            buf.seek(start);
-            if(voxFloatSecond > seaLevel){
-                local testAltitude = (((voxFloatSecond - seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger() + 1;
+            local vox = altitudes[targetX + targetY * width];
+            if(vox != null){
+                local testAltitude = vox & 0xFFFF;
                 if(testAltitude < altitude){
                     //The altidue is lower so need to draw some triangles.
                     local altitudeDelta = altitude - testAltitude;
                     for(local zAlt = 0; zAlt < altitudeDelta; zAlt++){
                         //Loop down and draw the triangles.
 
-                        //local f = 2;
                         for(local i = 0; i < 4; i++){
-                            local xx = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3] + x).tointeger();
-                            local zz = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 2] + y).tointeger();
-                            local yy = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 1] + (altitude-zAlt) -1).tointeger();
-                            //print("yy " + yy);
+                            local fv = FACES_VERTICES[f * 4 + i]*3;
+                            local xx = (VERTICES_POSITIONS[fv] + x).tointeger();
+                            local zz = (VERTICES_POSITIONS[fv + 2] + y).tointeger();
+                            local yy = (VERTICES_POSITIONS[fv + 1] + (altitude-zAlt) -1).tointeger();
 
                             local val = xx | yy << 10 | zz << 20 | 3 << 30;
                             verts.append(val);
@@ -113,7 +103,6 @@
 
                             verts.append(texCoordX);
                             verts.append(texCoordY);
-                            vertData.numVerts++;
                         }
                         local index = vertData.index;
                         indices.append(index + 0);
@@ -124,21 +113,18 @@
                         indices.append(index + 0);
                         vertData.index += 4;
                         vertData.numTris += 2;
-                        //index += 4;
-                        //mNumTris_ += 2;
-                        //committed++;
+                        vertData.numVerts+=4;
                     }
                 }
             }
-        //}else{
-        //    assert(false);
         //}
-
-        //return committed;
     }
     function createTerrainFromVoxelBlob(meshBase, mapData){
         if(mTimer_) mTimer_.start();
 
+        local voxVals = [
+            2, 112, 0, 147, 6, 6
+        ];
         local width = mapData.width;
         local height = mapData.height;
         local seaLevel = mapData.seaLevel;
@@ -159,6 +145,37 @@
         //local index = 0;
         local NUM_VERTS = 6;
 
+        //Calculate the altitudes upfront to optimise lookups.
+        local altitudes = array(width*height, null);
+        buf.seek(0);
+        local maxAltitude = 1;
+        //for(local y = height; y != 0; y--){
+        for(local y = 0; y < height; y++){
+            for(local x = 0; x < width; x++){
+                local vox = buf.readn('i');
+                //local region = (bufSecond.readn('i') >> 8) & 0xFF;
+                local voxFloat = (vox & 0xFF).tofloat();
+                if(voxFloat <= seaLevel){
+                    altitudes[x+y*width] = null;
+                    continue;
+                }
+                //if(region != regionIdx) continue;
+                local altitude = (((voxFloat - seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger() + 1;
+                local voxelMeta = (vox >> 8) & MAP_VOXEL_MASK;
+                local v = voxVals[voxelMeta];
+                local isRiver = (vox >> 8) & MapVoxelTypes.RIVER;
+                if(isRiver){
+                    altitude-=2;
+                    if(altitude < 1) altitude = 1;
+                    v = 192;
+                }
+
+                if(altitude > maxAltitude) maxAltitude = altitude;
+
+                altitudes[x+y*width] = altitude | v << 16;
+            }
+        }
+
         local vertData = {
             "index": 0,
             "numVerts": 0,
@@ -167,39 +184,32 @@
 
         buf.seek(0);
         bufSecond.seek(0);
-        local voxVals = [
-            2, 112, 0, 147, 6
-        ];
         local waterVal = 192;
         local written = false;
-        local maxAltitude = 1;
-        for(local y = height; y != 0; y--){
+        for(local y = height-1; y != 0; y--){
+        //for(local y = 0; y < height; y++){
             for(local x = 0; x < width; x++){
-                local vox = buf.readn('i');
+                //local vox = buf.readn('i');
+                //TODO might have to read this backwards as well.
                 local region = (bufSecond.readn('i') >> 8) & 0xFF;
-                local voxFloat = (vox & 0xFF).tofloat();
-                if(voxFloat <= seaLevel) continue;
-                //if(region != regionIdx) continue;
-                local altitude = (((voxFloat - seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger() + 1;
-                local voxelMeta = (vox >> 8) & MAP_VOXEL_MASK;
-                local v = voxVals[voxelMeta];
-                local isRiver = (vox >> 8) & MapVoxelTypes.RIVER;
-                if(isRiver){
-                    //altitude-=8;
-                    //if(altitude < 1) altitude = 1;
-                    v = 192;
-                }
+                local vox = altitudes[x + y * width];
+                if(vox == null) continue;
+                local altitude = vox & 0xFFFF;
+                local v = (vox >> 16) & 0xFF;
 
+                local yInverse = height-y;
+
+                //TODO should calculate these upfront.
                 local texCoordX = ((v % COLS_WIDTH).tofloat() / COLS_WIDTH) + TILE_WIDTH;
                 local texCoordY = ((v.tofloat() / COLS_WIDTH) / COLS_HEIGHT) + TILE_HEIGHT;
 
-                if(altitude > maxAltitude) maxAltitude = altitude;
                 //Write the upwards face.
                 {
                     local f = 0;
                     for(local i = 0; i < 4; i++){
-                        local xx = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3] + x).tointeger();
-                        local zz = (VERTICES_POSITIONS[FACES_VERTICES[f * 4 + i]*3 + 2] + y).tointeger();
+                        local fv = FACES_VERTICES[f * 4 + i]*3;
+                        local xx = (VERTICES_POSITIONS[fv] + x).tointeger();
+                        local zz = (VERTICES_POSITIONS[fv + 2] + yInverse).tointeger();
                         local yy = altitude;
 
                         local val = xx | yy << 10 | zz << 20 | 3 << 30;
@@ -214,7 +224,6 @@
 
                         verts.append(texCoordX);
                         verts.append(texCoordY);
-                        //numVerts++;
                     }
                     local index = vertData.index;
                     indices.append(index + 2);
@@ -227,10 +236,11 @@
                     vertData.numTris += 2;
                     vertData.numVerts += 4;
                 }
-                writeFaceToMesh(x, y-1, x, y, 2, altitude, width, height, buf, seaLevel, ABOVE_GROUND, WORLD_DEPTH, texCoordX, texCoordY, verts, indices, vertData);
-                writeFaceToMesh(x, y+1, x, y, 3, altitude, width, height, buf, seaLevel, ABOVE_GROUND, WORLD_DEPTH, texCoordX, texCoordY, verts, indices, vertData);
-                writeFaceToMesh(x+1, y, x, y, 4, altitude, width, height, buf, seaLevel, ABOVE_GROUND, WORLD_DEPTH, texCoordX, texCoordY, verts, indices, vertData);
-                writeFaceToMesh(x-1, y, x, y, 5, altitude, width, height, buf, seaLevel, ABOVE_GROUND, WORLD_DEPTH, texCoordX, texCoordY, verts, indices, vertData);
+                //Calculate the remaining altitude faces
+                writeFaceToMesh(x, y-1, x, yInverse, 3, altitude, altitudes, width, height, texCoordX, texCoordY, verts, indices, vertData);
+                writeFaceToMesh(x, y+1, x, yInverse, 2, altitude, altitudes, width, height, texCoordX, texCoordY, verts, indices, vertData);
+                writeFaceToMesh(x+1, y, x, yInverse, 4, altitude, altitudes, width, height, texCoordX, texCoordY, verts, indices, vertData);
+                writeFaceToMesh(x-1, y, x, yInverse, 5, altitude, altitudes, width, height, texCoordX, texCoordY, verts, indices, vertData);
             }
         }
 
