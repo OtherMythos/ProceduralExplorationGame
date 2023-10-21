@@ -85,13 +85,18 @@
                     for(local zAlt = 0; zAlt < altitudeDelta; zAlt++){
                         //Loop down and draw the triangles.
 
+                        local faceAltitude = (altitude-zAlt);
+                        local ambientMask = getVerticeBorderTerrain(faceAltitude, altitudes, f, x, y, width);
                         for(local i = 0; i < 4; i++){
                             local fv = FACES_VERTICES[f * 4 + i]*3;
                             local xx = (VERTICES_POSITIONS[fv] + x).tointeger();
-                            local zz = (VERTICES_POSITIONS[fv + 2] + y).tointeger();
-                            local yy = (VERTICES_POSITIONS[fv + 1] + (altitude-zAlt) -1).tointeger();
+                            local yy = (VERTICES_POSITIONS[fv + 1] + y).tointeger();
+                            local zz = (VERTICES_POSITIONS[fv + 2] + faceAltitude).tointeger();
 
-                            local val = xx | yy << 10 | zz << 20 | 3 << 30;
+                            local ambient = (ambientMask >> 8 * i) & 0xFF;
+                            assert(ambient >= 0 && ambient <= 3);
+
+                            local val = xx | yy << 10 | zz << 20 | ambient << 30;
                             verts.append(val);
 
                             //TODO Magic number for now to avoid it breaking the regular materials.
@@ -186,7 +191,8 @@
         bufSecond.seek(0);
         local waterVal = 192;
         local written = false;
-        for(local y = height-1; y != 0; y--){
+        //for(local y = height-1; y != 0; y--){
+        for(local y = 0; y < height; y++){
         //for(local y = 0; y < height; y++){
             for(local x = 0; x < width; x++){
                 //local vox = buf.readn('i');
@@ -197,7 +203,8 @@
                 local altitude = vox & 0xFFFF;
                 local v = (vox >> 16) & 0xFF;
 
-                local yInverse = height-y;
+                //local yInverse = height-y;
+                local yInverse = y;
 
                 //TODO should calculate these upfront.
                 local texCoordX = ((v % COLS_WIDTH).tofloat() / COLS_WIDTH) + TILE_WIDTH;
@@ -205,14 +212,21 @@
 
                 //Write the upwards face.
                 {
-                    local f = 0;
+                    local f = 3;
+                    local ambientMask = getVerticeBorderTerrain(altitude, altitudes, f, x, y, width);
                     for(local i = 0; i < 4; i++){
                         local fv = FACES_VERTICES[f * 4 + i]*3;
                         local xx = (VERTICES_POSITIONS[fv] + x).tointeger();
-                        local zz = (VERTICES_POSITIONS[fv + 2] + yInverse).tointeger();
-                        local yy = altitude;
+                        //local zz = (VERTICES_POSITIONS[fv + 2] + yInverse).tointeger();
+                        //local yy = altitude;
+                        local yy = (VERTICES_POSITIONS[fv + 1] + yInverse).tointeger();
+                        local zz = (VERTICES_POSITIONS[fv + 2] + altitude).tointeger();
 
-                        local val = xx | yy << 10 | zz << 20 | 3 << 30;
+                        local ambient = (ambientMask >> 8 * i) & 0xFF;
+                        assert(ambient >= 0 && ambient <= 3);
+
+                        //print("Ambient " + ambient);
+                        local val = xx | yy << 10 | zz << 20 | ambient << 30;
                         verts.append(val);
 
                         //TODO Magic number for now to avoid it breaking the regular materials.
@@ -226,19 +240,19 @@
                         verts.append(texCoordY);
                     }
                     local index = vertData.index;
-                    indices.append(index + 2);
+                    indices.append(index + 0);
                     indices.append(index + 1);
-                    indices.append(index + 0);
-                    indices.append(index + 0);
-                    indices.append(index + 3);
                     indices.append(index + 2);
+                    indices.append(index + 2);
+                    indices.append(index + 3);
+                    indices.append(index + 0);
                     vertData.index += 4;
                     vertData.numTris += 2;
                     vertData.numVerts += 4;
                 }
                 //Calculate the remaining altitude faces
-                writeFaceToMesh(x, y-1, x, yInverse, 3, altitude, altitudes, width, height, texCoordX, texCoordY, verts, indices, vertData);
-                writeFaceToMesh(x, y+1, x, yInverse, 2, altitude, altitudes, width, height, texCoordX, texCoordY, verts, indices, vertData);
+                writeFaceToMesh(x, y-1, x, yInverse, 0, altitude, altitudes, width, height, texCoordX, texCoordY, verts, indices, vertData);
+                writeFaceToMesh(x, y+1, x, yInverse, 1, altitude, altitudes, width, height, texCoordX, texCoordY, verts, indices, vertData);
                 writeFaceToMesh(x+1, y, x, yInverse, 4, altitude, altitudes, width, height, texCoordX, texCoordY, verts, indices, vertData);
                 writeFaceToMesh(x-1, y, x, yInverse, 5, altitude, altitudes, width, height, texCoordX, texCoordY, verts, indices, vertData);
             }
@@ -273,8 +287,8 @@
         subMesh.pushMeshVAO(vao, _VP_NORMAL);
         subMesh.pushMeshVAO(vao, _VP_SHADOW);
 
-        //TODO remove this later at some point.
-        local halfBounds = Vec3(width/2, maxAltitude/2, height/2);
+        //local halfBounds = Vec3(width/2, maxAltitude/2, height/2);
+        local halfBounds = Vec3(width/2, height/2, maxAltitude/2);
         local bounds = AABB(halfBounds, halfBounds);
         outMesh.setBounds(bounds);
         outMesh.setBoundingSphereRadius(bounds.getRadius());
@@ -335,7 +349,7 @@
                     local ambient = (ambientMask >> 8 * i) & 0xFF;
                     assert(ambient >= 0 && ambient <= 3);
 
-                    local val = x | y << 10 | z << 20 | ambient << 30;
+                    local val = x | y << 10 | z << 20 | 1 << 30;
                     verts.append(val);
 
                     //TODO Magic number for now to avoid it breaking the regular materials.
@@ -470,6 +484,33 @@
             assert(val >= 0 && val <= 3);
             //print("From function " + val);
             //Batch the results for all 4 vertices into the single return value.
+            ret = ret | val << (v * 8);
+        }
+        return ret;
+    }
+    function getVerticeBorderTerrain(altitude, altitudes, f, x, y, width){
+        local faceVal = f * 9 * 4;
+        local ret = 0;
+        for(local v = 0; v < 4; v++){
+            local faceBase = faceVal + v * 9;
+            for(local i = 0; i < 3; i++){
+                local xx = VERTICE_BORDERS[faceBase + i * 3];
+                local yy = VERTICE_BORDERS[faceBase + i * 3 + 1];
+                local zz = VERTICE_BORDERS[faceBase + i * 3 + 2];
+
+                //Note: Skip the sanity checks assuming the terrain will not touch the side vertices.
+                local targetAltitude = altitudes[(x + xx) + (y + yy) * width];
+                if(targetAltitude == null) continue;
+                local checkAltitude = (targetAltitude & 0xFFFF);
+                foundValsTemp[i] = checkAltitude >= (altitude + zz) ? 1 : 0;
+            }
+            local val = 0;
+            if(foundValsTemp[0] && foundValsTemp[1]){
+                val = 0;
+            }else{
+                val = 3 - (foundValsTemp[0] + foundValsTemp[1] + foundValsTemp[2]);
+            }
+            assert(val >= 0 && val <= 3);
             ret = ret | val << (v * 8);
         }
         return ret;
