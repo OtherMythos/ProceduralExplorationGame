@@ -1,3 +1,5 @@
+const NUM_VERTS = 6;
+
 /**
  * A helper class to generate a triangulated mesh from voxel data.
  */
@@ -73,6 +75,62 @@
         mVertexElemVec_.pushVertexElement(_VET_FLOAT2, _VES_TEXTURE_COORDINATES);
     }
 
+    RegionBufferEntry = class{
+        numActiveVox = 0;
+        mId_ = 0;
+
+        index = 0;
+        numVerts = 0;
+        numTris = 0;
+
+        verts = null;
+
+        constructor(id){
+            mId_ = id;
+        }
+
+        function prepareVertBuffer(){
+            assert(numActiveVox != 0);
+            verts = blob(((numActiveVox * ((NUM_VERTS * 4) * 5) * 4) * 2.5).tointeger());
+        }
+
+        function generateMesh(meshBaseName, elemVec, width, height, maxAltitude){
+            local outMesh = _graphics.createManualMesh(meshBaseName + "-region" + mId_.tostring());
+            local subMesh = outMesh.createSubMesh();
+
+            local vertBlocks = numVerts / 4;
+            local indiceStride = (vertBlocks * 6 * 4) + 4 >= 0xFFFF ? 4 : 2;
+            local indices = blob(((numActiveVox * ((NUM_VERTS * 4) * 5) * indiceStride) * 1.5).tointeger());
+            local writeFlag = indiceStride == 2 ? 'w' : 'i';
+            for(local i = 0; i < vertBlocks; i++){
+                local currIndex = i * 4;
+                indices.writen(currIndex + 0, writeFlag);
+                indices.writen(currIndex + 1, writeFlag);
+                indices.writen(currIndex + 2, writeFlag);
+                indices.writen(currIndex + 2, writeFlag);
+                indices.writen(currIndex + 3, writeFlag);
+                indices.writen(currIndex + 0, writeFlag);
+            }
+
+            local buffer = _graphics.createVertexBuffer(elemVec, numVerts, numVerts, verts);
+            local indexBuffer = _graphics.createIndexBuffer(indiceStride == 2 ? _IT_16BIT : _IT_32BIT, indices, vertBlocks * 6);
+
+            local vao = _graphics.createVertexArrayObject(buffer, indexBuffer, _OT_TRIANGLE_LIST);
+
+            subMesh.pushMeshVAO(vao, _VP_NORMAL);
+            subMesh.pushMeshVAO(vao, _VP_SHADOW);
+
+            //local halfBounds = Vec3(width/2, maxAltitude/2, height/2);
+            local halfBounds = Vec3(width/2, height/2, maxAltitude/2);
+            local bounds = AABB(halfBounds, halfBounds);
+            outMesh.setBounds(bounds);
+            outMesh.setBoundingSphereRadius(bounds.getRadius());
+
+            subMesh.setMaterialName("baseVoxelMaterial");
+
+            return outMesh;
+        }
+    };
     function writeFaceToMesh(targetX, targetY, x, y, f, altitude, altitudes, width, height, texCoordX, texCoordY, verts, vertData){
         //Assuming there's no voxels around the outskirt this check can be avoided.
         //if(!(targetX < 0 || targetY < 0 || targetX >= width || targetY >= height)){
@@ -126,24 +184,27 @@
         local buf = mapData.voxelBuffer;
         local bufSecond = mapData.secondaryVoxBuffer;
 
-        local outMesh = _graphics.createManualMesh(meshBase);
-        local subMesh = outMesh.createSubMesh();
-
         local WORLD_DEPTH = 20;
         local ABOVE_GROUND = 0xFF - mapData.seaLevel;
         //local MAP_VOXEL_MASK = 0x1F;
 
-        local NUM_VERTS = 6;
+        local numRegions = mapData.regionData.len();
+        local regionEntries = array(numRegions);
+        for(local i = 0; i < numRegions; i++){
+            regionEntries[i] = RegionBufferEntry(i);
+        }
 
         //Calculate the altitudes upfront to optimise lookups.
         local altitudes = array(width*height, null);
         buf.seek(0);
+        bufSecond.seek(0);
         local maxAltitude = 1;
-        local numActiveVox = 0;
         for(local y = 0; y < height; y++){
             for(local x = 0; x < width; x++){
                 local vox = buf.readn('i');
-                //local region = (bufSecond.readn('i') >> 8) & 0xFF;
+                local region = (bufSecond.readn('i') >> 8) & 0xFF;
+                local bufEntry = regionEntries[region];
+
                 local voxFloat = (vox & 0xFF).tofloat();
                 if(voxFloat <= seaLevel){
                     altitudes[x+y*width] = null;
@@ -163,18 +224,16 @@
                 if(altitude > maxAltitude) maxAltitude = altitude;
 
                 altitudes[x+y*width] = altitude | v << 16;
-                numActiveVox++;
+                bufEntry.numActiveVox++;
             }
         }
 
-        local vertData = {
-            "index": 0,
-            "numVerts": 0,
-            "numTris": 0
-        };
+        foreach(i in regionEntries){
+            i.prepareVertBuffer();
+        }
         //4 verts per quad, 5 quads (1 upper face assuming 4 surrounding it), 4 bytes to a float. 1.5 * for padding.
         //TODO there's no check to avoid buffer overflow, likely I'll need something like that.
-        local verts = blob(((numActiveVox * ((NUM_VERTS * 4) * 5) * 4) * 1.5).tointeger());
+        //local verts = blob(((numActiveVox * ((NUM_VERTS * 4) * 5) * 4) * 1.5).tointeger());
 
         buf.seek(0);
         bufSecond.seek(0);
@@ -182,7 +241,8 @@
             for(local x = 0; x < width; x++){
                 //local vox = buf.readn('i');
                 //TODO might have to read this backwards as well.
-                local region = (bufSecond.readn('i') >> 8) & 0xFF;
+                local regionId = (bufSecond.readn('i') >> 8) & 0xFF;
+                local regionBuf = regionEntries[regionId];
                 local vox = altitudes[x + y * width];
                 if(vox == null) continue;
                 local altitude = vox & 0xFFFF;
@@ -194,6 +254,8 @@
                 //TODO should calculate these upfront.
                 local texCoordX = ((v % COLS_WIDTH).tofloat() / COLS_WIDTH) + TILE_WIDTH;
                 local texCoordY = ((v.tofloat() / COLS_WIDTH) / COLS_HEIGHT) + TILE_HEIGHT;
+
+                local verts = regionBuf.verts;
 
                 //Write the upwards face.
                 {
@@ -220,53 +282,23 @@
                         verts.writen(texCoordX, 'f');
                         verts.writen(texCoordY, 'f');
                     }
-                    vertData.numTris += 2;
-                    vertData.numVerts += 4;
+                    regionBuf.numTris += 2;
+                    regionBuf.numVerts += 4;
                 }
                 //Calculate the remaining altitude faces
-                writeFaceToMesh(x, y-1, x, yInverse, 0, altitude, altitudes, width, height, texCoordX, texCoordY, verts, vertData);
-                writeFaceToMesh(x, y+1, x, yInverse, 1, altitude, altitudes, width, height, texCoordX, texCoordY, verts, vertData);
-                writeFaceToMesh(x+1, y, x, yInverse, 4, altitude, altitudes, width, height, texCoordX, texCoordY, verts, vertData);
-                writeFaceToMesh(x-1, y, x, yInverse, 5, altitude, altitudes, width, height, texCoordX, texCoordY, verts, vertData);
+                writeFaceToMesh(x, y-1, x, yInverse, 0, altitude, altitudes, width, height, texCoordX, texCoordY, verts, regionBuf);
+                writeFaceToMesh(x, y+1, x, yInverse, 1, altitude, altitudes, width, height, texCoordX, texCoordY, verts, regionBuf);
+                writeFaceToMesh(x+1, y, x, yInverse, 4, altitude, altitudes, width, height, texCoordX, texCoordY, verts, regionBuf);
+                writeFaceToMesh(x-1, y, x, yInverse, 5, altitude, altitudes, width, height, texCoordX, texCoordY, verts, regionBuf);
             }
         }
 
-        local vertBlocks = vertData.numVerts / 4;
-        local indiceStride = (vertBlocks * 6 * 4) + 4 >= 0xFFFF ? 4 : 2;
-        local indices = blob(((numActiveVox * ((NUM_VERTS * 4) * 5) * indiceStride) * 1.5).tointeger());
-        local writeFlag = indiceStride == 2 ? 'w' : 'i';
-        for(local i = 0; i < vertBlocks; i++){
-            local currIndex = i * 4;
-            indices.writen(currIndex + 0, writeFlag);
-            indices.writen(currIndex + 1, writeFlag);
-            indices.writen(currIndex + 2, writeFlag);
-            indices.writen(currIndex + 2, writeFlag);
-            indices.writen(currIndex + 3, writeFlag);
-            indices.writen(currIndex + 0, writeFlag);
+        local outData = array(mapData.regionData.len());
+        foreach(c,i in regionEntries){
+            outData[c] = i.generateMesh(meshBase, mVertexElemVec_, width, height, maxAltitude);
         }
-
-        local buffer = _graphics.createVertexBuffer(mVertexElemVec_, vertData.numVerts, vertData.numVerts, verts);
-        local indexBuffer = _graphics.createIndexBuffer(indiceStride == 2 ? _IT_16BIT : _IT_32BIT, indices, vertBlocks * 6);
-
-        local vao = _graphics.createVertexArrayObject(buffer, indexBuffer, _OT_TRIANGLE_LIST);
-
-        subMesh.pushMeshVAO(vao, _VP_NORMAL);
-        subMesh.pushMeshVAO(vao, _VP_SHADOW);
-
-        //local halfBounds = Vec3(width/2, maxAltitude/2, height/2);
-        local halfBounds = Vec3(width/2, height/2, maxAltitude/2);
-        local bounds = AABB(halfBounds, halfBounds);
-        outMesh.setBounds(bounds);
-        outMesh.setBoundingSphereRadius(bounds.getRadius());
-
-        subMesh.setMaterialName("baseVoxelMaterial");
 
         if(mTimer_) mTimer_.stop();
-
-        local outData = [];
-        for(local i = 0; i < mapData.regionData.len(); i++){
-            outData.append(outMesh);
-        }
 
         return outData;
     }
@@ -284,8 +316,6 @@
 
         local verts = [];
         local indices = [];
-
-        local NUM_VERTS = 6;
 
         local index = 0;
         local numVerts = 0;
