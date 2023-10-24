@@ -73,7 +73,7 @@
         mVertexElemVec_.pushVertexElement(_VET_FLOAT2, _VES_TEXTURE_COORDINATES);
     }
 
-    function writeFaceToMesh(targetX, targetY, x, y, f, altitude, altitudes, width, height, texCoordX, texCoordY, verts, indices, vertData){
+    function writeFaceToMesh(targetX, targetY, x, y, f, altitude, altitudes, width, height, texCoordX, texCoordY, verts, vertData){
         //Assuming there's no voxels around the outskirt this check can be avoided.
         //if(!(targetX < 0 || targetY < 0 || targetX >= width || targetY >= height)){
             local vox = altitudes[targetX + targetY * width];
@@ -97,25 +97,15 @@
                             assert(ambient >= 0 && ambient <= 3);
 
                             local val = xx | yy << 10 | zz << 20 | ambient << 30;
-                            verts.append(val);
-
                             //TODO Magic number for now to avoid it breaking the regular materials.
+                            verts.writen(val, 'i');
                             val = f << 29 | 0x15FBF7DB;
-                            verts.append(val);
-                            verts.append(0);
-                            //TODO just to pad it out, long term I shouldn't need this.
-                            verts.append(0);
-
-                            verts.append(texCoordX);
-                            verts.append(texCoordY);
+                            verts.writen(val, 'i');
+                            verts.writen(0, 'i');
+                            verts.writen(0, 'i');
+                            verts.writen(texCoordX, 'f');
+                            verts.writen(texCoordY, 'f');
                         }
-                        local index = vertData.index;
-                        indices.append(index + 0);
-                        indices.append(index + 1);
-                        indices.append(index + 2);
-                        indices.append(index + 2);
-                        indices.append(index + 3);
-                        indices.append(index + 0);
                         vertData.index += 4;
                         vertData.numTris += 2;
                         vertData.numVerts+=4;
@@ -143,18 +133,13 @@
         local ABOVE_GROUND = 0xFF - mapData.seaLevel;
         //local MAP_VOXEL_MASK = 0x1F;
 
-        local verts = [];
-        local indices = [];
-
-        //local numVerts = 0;
-        //local index = 0;
         local NUM_VERTS = 6;
 
         //Calculate the altitudes upfront to optimise lookups.
         local altitudes = array(width*height, null);
         buf.seek(0);
         local maxAltitude = 1;
-        //for(local y = height; y != 0; y--){
+        local numActiveVox = 0;
         for(local y = 0; y < height; y++){
             for(local x = 0; x < width; x++){
                 local vox = buf.readn('i');
@@ -178,6 +163,7 @@
                 if(altitude > maxAltitude) maxAltitude = altitude;
 
                 altitudes[x+y*width] = altitude | v << 16;
+                numActiveVox++;
             }
         }
 
@@ -186,14 +172,13 @@
             "numVerts": 0,
             "numTris": 0
         };
+        //4 verts per quad, 5 quads (1 upper face assuming 4 surrounding it), 4 bytes to a float. 1.5 * for padding.
+        //TODO there's no check to avoid buffer overflow, likely I'll need something like that.
+        local verts = blob(((numActiveVox * ((NUM_VERTS * 4) * 5) * 4) * 1.5).tointeger());
 
         buf.seek(0);
         bufSecond.seek(0);
-        local waterVal = 192;
-        local written = false;
-        //for(local y = height-1; y != 0; y--){
         for(local y = 0; y < height; y++){
-        //for(local y = 0; y < height; y++){
             for(local x = 0; x < width; x++){
                 //local vox = buf.readn('i');
                 //TODO might have to read this backwards as well.
@@ -225,62 +210,43 @@
                         local ambient = (ambientMask >> 8 * i) & 0xFF;
                         assert(ambient >= 0 && ambient <= 3);
 
-                        //print("Ambient " + ambient);
                         local val = xx | yy << 10 | zz << 20 | ambient << 30;
-                        verts.append(val);
-
+                        verts.writen(val, 'i');
                         //TODO Magic number for now to avoid it breaking the regular materials.
                         val = f << 29 | 0x15FBF7DB;
-                        verts.append(val);
-                        verts.append(0);
-                        //TODO just to pad it out, long term I shouldn't need this.
-                        verts.append(0);
-
-                        verts.append(texCoordX);
-                        verts.append(texCoordY);
+                        verts.writen(val, 'i');
+                        verts.writen(0, 'i');
+                        verts.writen(0, 'i');
+                        verts.writen(texCoordX, 'f');
+                        verts.writen(texCoordY, 'f');
                     }
-                    local index = vertData.index;
-                    indices.append(index + 0);
-                    indices.append(index + 1);
-                    indices.append(index + 2);
-                    indices.append(index + 2);
-                    indices.append(index + 3);
-                    indices.append(index + 0);
-                    vertData.index += 4;
                     vertData.numTris += 2;
                     vertData.numVerts += 4;
                 }
                 //Calculate the remaining altitude faces
-                writeFaceToMesh(x, y-1, x, yInverse, 0, altitude, altitudes, width, height, texCoordX, texCoordY, verts, indices, vertData);
-                writeFaceToMesh(x, y+1, x, yInverse, 1, altitude, altitudes, width, height, texCoordX, texCoordY, verts, indices, vertData);
-                writeFaceToMesh(x+1, y, x, yInverse, 4, altitude, altitudes, width, height, texCoordX, texCoordY, verts, indices, vertData);
-                writeFaceToMesh(x-1, y, x, yInverse, 5, altitude, altitudes, width, height, texCoordX, texCoordY, verts, indices, vertData);
+                writeFaceToMesh(x, y-1, x, yInverse, 0, altitude, altitudes, width, height, texCoordX, texCoordY, verts, vertData);
+                writeFaceToMesh(x, y+1, x, yInverse, 1, altitude, altitudes, width, height, texCoordX, texCoordY, verts, vertData);
+                writeFaceToMesh(x+1, y, x, yInverse, 4, altitude, altitudes, width, height, texCoordX, texCoordY, verts, vertData);
+                writeFaceToMesh(x-1, y, x, yInverse, 5, altitude, altitudes, width, height, texCoordX, texCoordY, verts, vertData);
             }
         }
 
-        assert(vertData.numVerts == verts.len() / NUM_VERTS);
-
-        local b = blob(verts.len() * 4);
-        b.seek(0);
-        local intFloatCount = 0;
-        foreach(c,i in verts){
-            local valid = c % NUM_VERTS == 0;
-            if(valid){
-                intFloatCount = 3;
-            }
-            b.writen(i, intFloatCount > 0 ? 'i' : 'f');
-            intFloatCount--;
-        }
-        local indiceStride = vertData.index + 4 >= 0xFFFF ? 4 : 2;
-        local bb = blob(indices.len() * indiceStride);
-        bb.seek(0);
-        local strideVal = indiceStride == 2 ? 'w' : 'i';
-        foreach(i in indices){
-            bb.writen(i, strideVal);
+        local vertBlocks = vertData.numVerts / 4;
+        local indiceStride = (vertBlocks * 6 * 4) + 4 >= 0xFFFF ? 4 : 2;
+        local indices = blob(((numActiveVox * ((NUM_VERTS * 4) * 5) * indiceStride) * 1.5).tointeger());
+        local writeFlag = indiceStride == 2 ? 'w' : 'i';
+        for(local i = 0; i < vertBlocks; i++){
+            local currIndex = i * 4;
+            indices.writen(currIndex + 0, writeFlag);
+            indices.writen(currIndex + 1, writeFlag);
+            indices.writen(currIndex + 2, writeFlag);
+            indices.writen(currIndex + 2, writeFlag);
+            indices.writen(currIndex + 3, writeFlag);
+            indices.writen(currIndex + 0, writeFlag);
         }
 
-        local buffer = _graphics.createVertexBuffer(mVertexElemVec_, vertData.numVerts, vertData.numVerts, b);
-        local indexBuffer = _graphics.createIndexBuffer(indiceStride == 2 ? _IT_16BIT : _IT_32BIT, bb, indices.len());
+        local buffer = _graphics.createVertexBuffer(mVertexElemVec_, vertData.numVerts, vertData.numVerts, verts);
+        local indexBuffer = _graphics.createIndexBuffer(indiceStride == 2 ? _IT_16BIT : _IT_32BIT, indices, vertBlocks * 6);
 
         local vao = _graphics.createVertexArrayObject(buffer, indexBuffer, _OT_TRIANGLE_LIST);
 
