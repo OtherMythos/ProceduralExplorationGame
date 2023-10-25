@@ -33,7 +33,7 @@
         }else{
             assert(false);
         }
-        mMapViewer_.displayMapData(data, false);
+        mMapViewer_.displayMapData(data, false, true);
         mMapViewer_.setLabelWindow(mMapViewerWindow_);
         mMapViewerPanel_.setDatablock(mMapViewer_.getDatablock());
         if(oldViewer != null) oldViewer.shutdown();

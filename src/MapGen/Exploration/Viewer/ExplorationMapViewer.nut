@@ -81,8 +81,8 @@ enum MapViewerColours{
         }
     }
 
-    function displayMapData(outData, showPlaceMarkers=true){
-        base.displayMapData(outData, showPlaceMarkers);
+    function displayMapData(outData, showPlaceMarkers=true, leanMap=false){
+        base.displayMapData(outData, showPlaceMarkers, leanMap);
 
         if(showPlaceMarkers){
             setupPlaceMarkers(outData);
@@ -153,7 +153,7 @@ enum MapViewerColours{
         mColours_ = colVals;
     }
 
-    function fillBufferWithMap(textureBox){
+    function fillBufferWithMapComplex_(textureBox){
         mMapData_.voxelBuffer.seek(0);
         mMapData_.secondaryVoxBuffer.seek(0);
         for(local y = 0; y < mMapData_.height; y++){
@@ -195,7 +195,52 @@ enum MapViewerColours{
             }
         }
     }
+    function fillBufferWithMapLean_(textureBox){
+        mMapData_.voxelBuffer.seek(0);
+        mMapData_.secondaryVoxBuffer.seek(0);
+        local division = 1;
+        local divWidth = mMapData_.width / division;
+        local divHeight = mMapData_.height / division;
 
+        local colourOcean = mColours_[MapViewerColours.OCEAN];
+        local colourFreshWater = mColours_[MapViewerColours.FRESH_WATER];
+
+        for(local y = 0; y < divHeight; y++){
+            //local yVal = (y.tofloat() / mMapData_.height) * 0x80;
+            for(local x = 0; x < divWidth; x++){
+
+                { //Inline the writing.
+                    local voxVal = mMapData_.voxelBuffer.readn('i');
+                    local altitude = voxVal & 0xFF;
+                    if(altitude < mMapData_.seaLevel){
+                        textureBox.writen(colourOcean, 'i');
+                        continue;
+                    }
+
+                    local voxelMeta = (voxVal >> 8);
+                    if(voxelMeta & MapVoxelTypes.RIVER){
+                        textureBox.writen(colourFreshWater, 'i');
+                    }else{
+                        textureBox.writen(mColours_[voxelMeta & MAP_VOXEL_MASK], 'i');
+                    }
+                }
+
+            }
+        }
+
+        //Now determine some of the individual pixels
+        foreach(i in mMapData_.placedItems){
+            textureBox.seek((i.originX + i.originY * mMapData_.width) * 4);
+            textureBox.writen(mColours_[MapViewerColours.COLOUR_BLACK], 'i');
+        }
+    }
+    function fillBufferWithMap(textureBox){
+        if(mLeanMap_){
+            fillBufferWithMapLean_(textureBox);
+        }else{
+            fillBufferWithMapComplex_(textureBox);
+        }
+    }
     function _getColourForVox(xVox, yVox){
         local voxVal = mMapData_.voxelBuffer.readn('i');
         local altitude = voxVal & 0xFF;

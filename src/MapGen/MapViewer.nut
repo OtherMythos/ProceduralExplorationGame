@@ -4,6 +4,7 @@
 ::MapViewer <- class{
 
     mMapData_ = null;
+    mLeanMap_ = false;
 
     mCompositorDatablock_ = null
     mCompositorTexture_ = null
@@ -112,8 +113,9 @@
         _graphics.destroyTexture(mCompositorTexture_);
     }
 
-    function displayMapData(outData, showPlaceMarkers=true){
+    function displayMapData(outData, showPlaceMarkers=true, leanMap=false){
         mMapData_ = outData;
+        mLeanMap_ = leanMap;
 
         setPlayerPosition(0.5, 0.5);
 
