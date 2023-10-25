@@ -20,6 +20,10 @@
         mDecoratioNode_ = null;
         mVisible_ = false;
         mPlaces_ = null;
+
+        mAnimCount_ = -1;
+        mMaxAnim_ = 30;
+
         constructor(node, decorationNode){
             mLandNode_ = node;
             mDecoratioNode_ = decorationNode;
@@ -27,6 +31,18 @@
                 mLandItem_ = mLandNode_.getAttachedObject(0);
             }
             mPlaces_ = [];
+        }
+        function update(){
+            if(mAnimCount_ < 0) return;
+            local animIdx = mAnimCount_.tofloat() / mMaxAnim_.tofloat();
+            mAnimCount_--;
+            local animPos = mAnimCount_ * -0.10;
+            mLandNode_.setPosition(0, animPos, 0);
+            mDecoratioNode_.setPosition(0, animPos, 0);
+        }
+        function performArrival(){
+            setVisible(true);
+            mAnimCount_ = mMaxAnim_;
         }
         function setVisible(visible){
             mVisible_ = visible;
@@ -124,6 +140,10 @@
         base.update();
 
         mCloudManager_.update();
+
+        foreach(c,i in mRegionEntries_){
+            i.update();
+        }
     }
 
     function updatePlayerPos(playerPos){
@@ -458,8 +478,7 @@
         assert(mRegionEntries_.rawin(regionId));
         local regionEntry = mRegionEntries_[regionId];
         if(regionEntry != null){
-            regionEntry.setVisible(true);
+            regionEntry.performArrival();
         }
-        mGui_.mWorldMapDisplay_.mMapViewer_.notifyRegionFound(regionId);
     }
 };

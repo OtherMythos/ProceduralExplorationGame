@@ -100,7 +100,7 @@ const NUM_VERTS = 6;
 
             local vertBlocks = numVerts / 4;
             local indiceStride = (vertBlocks * 6 * 4) + 4 >= 0xFFFF ? 4 : 2;
-            local indices = blob(((numActiveVox * ((NUM_VERTS * 4) * 5) * indiceStride) * 1.5).tointeger());
+            local indices = blob(((vertBlocks * 6 * indiceStride)).tointeger());
             local writeFlag = indiceStride == 2 ? 'w' : 'i';
             for(local i = 0; i < vertBlocks; i++){
                 local currIndex = i * 4;

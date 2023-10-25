@@ -73,7 +73,7 @@
             },
             "transparency" :
             {
-                "value" : 2,
+                "value" : 0.4,
                 "mode" : "Transparent"
             }
         }
