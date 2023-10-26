@@ -90,9 +90,9 @@
     function resetSessionGenMap(){
         local gen = ::MapGen();
         local data = {
-            "seed": _random.randInt(0, 1000),
-            "moistureSeed": _random.randInt(0, 1000),
-            "variation": _random.randInt(0, 1000),
+            "seed": 77749,
+            "moistureSeed": 84715,
+            "variation": 0,
             "width": 400,
             "height": 400,
             "numRivers": 24,
@@ -102,6 +102,7 @@
             "placeFrequency": [0, 1, 1, 4, 4, 30]
         };
         local outData = gen.generate(data);
+        print("World generation completed in " + outData.stats.totalSeconds);
 
         resetSession(outData);
     }

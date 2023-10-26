@@ -84,6 +84,7 @@ const NUM_VERTS = 6;
         numTris = 0;
 
         verts = null;
+        vertsFuncBind = null;
 
         constructor(id){
             mId_ = id;
@@ -92,6 +93,8 @@ const NUM_VERTS = 6;
         function prepareVertBuffer(){
             assert(numActiveVox != 0);
             verts = blob(((numActiveVox * ((NUM_VERTS * 4) * 5) * 4) * 2.5).tointeger());
+            //Bind the function to prevent string lookups.
+            vertsFuncBind = verts.writen.bindenv(verts);
         }
 
         function generateMesh(meshBaseName, elemVec, width, height, maxAltitude){
@@ -102,14 +105,15 @@ const NUM_VERTS = 6;
             local indiceStride = (vertBlocks * 6 * 4) + 4 >= 0xFFFF ? 4 : 2;
             local indices = blob(((vertBlocks * 6 * indiceStride)).tointeger());
             local writeFlag = indiceStride == 2 ? 'w' : 'i';
+            local indicesBindFunc = indices.writen.bindenv(indices);
             for(local i = 0; i < vertBlocks; i++){
                 local currIndex = i * 4;
-                indices.writen(currIndex + 0, writeFlag);
-                indices.writen(currIndex + 1, writeFlag);
-                indices.writen(currIndex + 2, writeFlag);
-                indices.writen(currIndex + 2, writeFlag);
-                indices.writen(currIndex + 3, writeFlag);
-                indices.writen(currIndex + 0, writeFlag);
+                indicesBindFunc(currIndex + 0, writeFlag);
+                indicesBindFunc(currIndex + 1, writeFlag);
+                indicesBindFunc(currIndex + 2, writeFlag);
+                indicesBindFunc(currIndex + 2, writeFlag);
+                indicesBindFunc(currIndex + 3, writeFlag);
+                indicesBindFunc(currIndex + 0, writeFlag);
             }
 
             local buffer = _graphics.createVertexBuffer(elemVec, numVerts, numVerts, verts);
@@ -131,7 +135,7 @@ const NUM_VERTS = 6;
             return outMesh;
         }
     };
-    function writeFaceToMesh(targetX, targetY, x, y, f, altitude, altitudes, width, height, texCoordX, texCoordY, verts, vertData){
+    function writeFaceToMesh(targetX, targetY, x, y, f, altitude, altitudes, width, height, texCoordX, texCoordY, vertsBind, vertData){
         //Assuming there's no voxels around the outskirt this check can be avoided.
         //if(!(targetX < 0 || targetY < 0 || targetX >= width || targetY >= height)){
             local vox = altitudes[targetX + targetY * width];
@@ -156,13 +160,13 @@ const NUM_VERTS = 6;
 
                             local val = xx | yy << 10 | zz << 20 | ambient << 30;
                             //TODO Magic number for now to avoid it breaking the regular materials.
-                            verts.writen(val, 'i');
+                            vertsBind(val, 'i');
                             val = f << 29 | 0x15FBF7DB;
-                            verts.writen(val, 'i');
-                            verts.writen(0, 'i');
-                            verts.writen(0, 'i');
-                            verts.writen(texCoordX, 'f');
-                            verts.writen(texCoordY, 'f');
+                            vertsBind(val, 'i');
+                            vertsBind(0, 'i');
+                            vertsBind(0, 'i');
+                            vertsBind(texCoordX, 'f');
+                            vertsBind(texCoordY, 'f');
                         }
                         vertData.index += 4;
                         vertData.numTris += 2;
@@ -198,11 +202,14 @@ const NUM_VERTS = 6;
         local altitudes = array(width*height, null);
         buf.seek(0);
         bufSecond.seek(0);
+        //Resolve the read write functions upfront to avoid string lookups.
+        local bufReadFunc = buf.readn.bindenv(buf);
+        local bufSecondReadFunc = bufSecond.readn.bindenv(bufSecond);
         local maxAltitude = 1;
         for(local y = 0; y < height; y++){
             for(local x = 0; x < width; x++){
-                local vox = buf.readn('i');
-                local region = (bufSecond.readn('i') >> 8) & 0xFF;
+                local vox = bufReadFunc('i');
+                local region = (bufSecondReadFunc('i') >> 8) & 0xFF;
                 local bufEntry = regionEntries[region];
 
                 local voxFloat = (vox & 0xFF).tofloat();
@@ -239,9 +246,7 @@ const NUM_VERTS = 6;
         bufSecond.seek(0);
         for(local y = 0; y < height; y++){
             for(local x = 0; x < width; x++){
-                //local vox = buf.readn('i');
-                //TODO might have to read this backwards as well.
-                local regionId = (bufSecond.readn('i') >> 8) & 0xFF;
+                local regionId = (bufSecondReadFunc('i') >> 8) & 0xFF;
                 local regionBuf = regionEntries[regionId];
                 local vox = altitudes[x + y * width];
                 if(vox == null) continue;
@@ -255,7 +260,8 @@ const NUM_VERTS = 6;
                 local texCoordX = ((v % COLS_WIDTH).tofloat() / COLS_WIDTH) + TILE_WIDTH;
                 local texCoordY = ((v.tofloat() / COLS_WIDTH) / COLS_HEIGHT) + TILE_HEIGHT;
 
-                local verts = regionBuf.verts;
+                //local verts = regionBuf.verts;
+                local vertsBind = regionBuf.vertsFuncBind;
 
                 //Write the upwards face.
                 {
@@ -273,23 +279,23 @@ const NUM_VERTS = 6;
                         assert(ambient >= 0 && ambient <= 3);
 
                         local val = xx | yy << 10 | zz << 20 | ambient << 30;
-                        verts.writen(val, 'i');
+                        vertsBind(val, 'i');
                         //TODO Magic number for now to avoid it breaking the regular materials.
                         val = f << 29 | 0x15FBF7DB;
-                        verts.writen(val, 'i');
-                        verts.writen(0, 'i');
-                        verts.writen(0, 'i');
-                        verts.writen(texCoordX, 'f');
-                        verts.writen(texCoordY, 'f');
+                        vertsBind(val, 'i');
+                        vertsBind(0, 'i');
+                        vertsBind(0, 'i');
+                        vertsBind(texCoordX, 'f');
+                        vertsBind(texCoordY, 'f');
                     }
                     regionBuf.numTris += 2;
                     regionBuf.numVerts += 4;
                 }
                 //Calculate the remaining altitude faces
-                writeFaceToMesh(x, y-1, x, yInverse, 0, altitude, altitudes, width, height, texCoordX, texCoordY, verts, regionBuf);
-                writeFaceToMesh(x, y+1, x, yInverse, 1, altitude, altitudes, width, height, texCoordX, texCoordY, verts, regionBuf);
-                writeFaceToMesh(x+1, y, x, yInverse, 4, altitude, altitudes, width, height, texCoordX, texCoordY, verts, regionBuf);
-                writeFaceToMesh(x-1, y, x, yInverse, 5, altitude, altitudes, width, height, texCoordX, texCoordY, verts, regionBuf);
+                writeFaceToMesh(x, y-1, x, yInverse, 0, altitude, altitudes, width, height, texCoordX, texCoordY, vertsBind, regionBuf);
+                writeFaceToMesh(x, y+1, x, yInverse, 1, altitude, altitudes, width, height, texCoordX, texCoordY, vertsBind, regionBuf);
+                writeFaceToMesh(x+1, y, x, yInverse, 4, altitude, altitudes, width, height, texCoordX, texCoordY, vertsBind, regionBuf);
+                writeFaceToMesh(x-1, y, x, yInverse, 5, altitude, altitudes, width, height, texCoordX, texCoordY, vertsBind, regionBuf);
             }
         }
 
