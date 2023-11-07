@@ -11,10 +11,6 @@
     mExplorationPaused_ = false;
     mExplorationActive_ = false;
 
-    mOrientatingCamera_ = false;
-    mPrevMouseX_ = null;
-    mPrevMouseY_ = null;
-
     mExplorationStats_ = null;
     mGatewayPercentage_ = 0.0;
 
@@ -148,8 +144,8 @@
         //TODO reset the exploration.
         mCurrentWorld_.update();
 
-        checkCameraChange();
-        checkOrientatingCamera();
+        //checkCameraChange();
+        //checkOrientatingCamera();
     }
 
     function notifyEnemyDestroyed(eid){
@@ -167,48 +163,6 @@
         ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_EXP_ORB_EFFECT, {"numOrbs": 1, "start": worldPos, "end": endPos, "orbScale": 0.2}));
     }
 
-    function setOrientatingCamera(orientate){
-        mOrientatingCamera_ = orientate;
-    }
-    function checkOrientatingCamera(){
-
-        if(_input.getMouseButton(1)){
-            //::Base.mExplorationLogic.spawnEXPOrbs(mPlayerEntry_.getPosition(), 4);
-            //mCurrentWorld_.spawnEXPOrbs(mCurrentWorld_.mPlayerEntry_.getPosition(), 1);
-
-            gatewayEndExploration();
-            //::Base.mExplorationLogic.pushWorld(::Base.mExplorationLogic.createWorldInstance(WorldTypes.PROCEDURAL_EXPLORATION_WORLD));
-        }
-        if(!mOrientatingCamera_) return;
-        print("orientating");
-
-        if(_input.getMouseButton(0)){
-            local mouseX = _input.getMouseX();
-            local mouseY = _input.getMouseY();
-            if(mPrevMouseX_ != null && mPrevMouseY_ != null){
-                local deltaX = mouseX - mPrevMouseX_;
-                local deltaY = mouseY - mPrevMouseY_;
-                printf("delta x: %f y: %f", deltaX, deltaY);
-                mCurrentWorld_.processCameraMove(deltaX*-0.2, deltaY*-0.2);
-            }
-            mPrevMouseX_ = mouseX;
-            mPrevMouseY_ = mouseY;
-        }else{
-            //Wait for the first move to happen.
-            if(mPrevMouseX_ != null && mPrevMouseY_ != null){
-                mPrevMouseX_ = null;
-                mPrevMouseY_ = null;
-                mOrientatingCamera_ = false;
-            }
-        }
-    }
-
-    function checkCameraChange(){
-        local modifier = 1;
-        local x = _input.getAxisActionX(mInputs_.camera, _INPUT_ANY);
-        local y = _input.getAxisActionY(mInputs_.camera, _INPUT_ANY);
-        mCurrentWorld_.processCameraMove(x*modifier, y*modifier);
-    }
 
     function setGuiObject(guiObj){
         mGui_ = guiObj;
@@ -272,5 +226,9 @@
     function sceneSafeUpdate(){
         if(!mExplorationActive_) return;
         mCurrentWorld_.sceneSafeUpdate();
+    }
+
+    function setOrientatingCamera(orientating){
+        mCurrentWorld_.setOrientatingCamera(orientating);
     }
 };
