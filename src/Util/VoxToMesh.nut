@@ -180,7 +180,7 @@ const NUM_VERTS = 6;
         if(mTimer_) mTimer_.start();
 
         local voxVals = [
-            2, 112, 0, 147, 6, 6
+            2, 112, 0, 147, 6
         ];
         local width = mapData.width;
         local height = mapData.height;

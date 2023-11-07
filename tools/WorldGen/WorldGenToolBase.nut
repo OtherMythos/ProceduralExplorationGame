@@ -269,15 +269,15 @@
         local buf = mCurrentMapData_.voxelBuffer;
         buf.seek(0);
         local voxVals = [
-            2, 112, 0, 192
-        ]
+            2, 112, 0, 147, 6, 192
+        ];
         for(local y = 0; y < height; y++){
             for(local x = 0; x < width; x++){
                 local vox = buf.readn('i')
                 local voxFloat = (vox & 0xFF).tofloat();
                 local altitude = ((voxFloat / 0xFF) * depth).tointeger();
-                local voxelMeta = (vox >> 8) & 0x7F;
-                if(voxFloat <= mCurrentMapData_.seaLevel) voxelMeta = 3;
+                local voxelMeta = (vox >> 8) & MAP_VOXEL_MASK;
+                if(voxFloat <= mCurrentMapData_.seaLevel) voxelMeta = 5;
                 for(local i = 0; i < altitude; i++){
                     voxData[x + (y * width) + (i*width*height)] = voxVals[voxelMeta];
                 }
