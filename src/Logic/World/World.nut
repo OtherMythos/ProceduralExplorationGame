@@ -178,6 +178,9 @@
     function getWorldId(){
         return mWorldId_;
     }
+    function getPlayerPosition(){
+        return mPlayerEntry_.getPosition();
+    }
 
     function shutdown(){
         foreach(i in mActiveEnemies_){
@@ -205,7 +208,7 @@
         mDamageCollisionWorld_ = CollisionWorldWrapper(this);
         mTriggerCollisionWorld_ = CollisionWorldWrapper(this);
 
-        mEntityManager_ = EntityManager.createEntityManager();
+        mEntityManager_ = EntityManager.createEntityManager(this);
     }
 
 

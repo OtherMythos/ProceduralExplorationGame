@@ -484,6 +484,8 @@
         animNode.setScale(1.5, 100, 1.5);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](parentNode, true));
 
+        manager.assignComponent(en, EntityComponents.PROXIMITY, ::EntityManager.Components[EntityComponents.PROXIMITY](ProximityComponentType.PLAYER, ::GenericCallbacks.placeBeaconDistance));
+
         item.setDatablock("PlaceBeacon");
 
         local animationInfo = _animation.createAnimationInfo([animNode]);

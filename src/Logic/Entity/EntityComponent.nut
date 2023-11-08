@@ -114,3 +114,17 @@
     }
 
 };
+
+::EntityManager.Components[EntityComponents.PROXIMITY] = class extends ::EntityManager.Component{
+
+    mType = ProximityComponentType.PLAYER;
+    mDistance = null;
+    mCallback = null;
+
+    constructor(proximityType=ProximityComponentType.PLAYER, callback=null){
+        mType = proximityType;
+        mCallback = callback;
+    }
+
+};
+

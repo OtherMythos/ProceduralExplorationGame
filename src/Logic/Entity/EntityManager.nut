@@ -13,6 +13,7 @@ enum EntityComponents{
     HEALTH,
     SCRIPT,
     SPOILS,
+    PROXIMITY,
 
     MAX
 
@@ -23,14 +24,17 @@ enum SpoilsComponentType{
     DROPPED_ITEMS,
     EXP_TRAIL,
 };
+enum ProximityComponentType{
+    PLAYER,
+};
 
 ::EntityManager <- {
 
     MAX_MANAGERS = 0xF
     mCurrentManagers = 0
 
-    function createEntityManager(){
-        local manager = EntityManager(mCurrentManagers);
+    function createEntityManager(creatorWorld){
+        local manager = EntityManager(mCurrentManagers, creatorWorld);
         mCurrentManagers++;
 
         return manager;
@@ -89,8 +93,11 @@ EntityManager.EntityManager <- class{
     mFreeList_ = null;
     mComponents_ = null;
 
-    constructor(id){
+    mCreatorWorld_ = null;
+
+    constructor(id, creatorWorld){
         mId = id;
+        mCreatorWorld_ = creatorWorld;
         mEntityComponentHashes_ = [];
         mEntityPositions_ = [];
         mVersions_ = [];
@@ -115,6 +122,7 @@ EntityManager.EntityManager <- class{
             if(i == null) continue;
             i.mScript.update(i.eid);
         }
+        processProximityComponent_();
     }
 
     function entityValid(eid){
@@ -298,6 +306,21 @@ EntityManager.EntityManager <- class{
                 else if(i == EntityComponents.BILLBOARD){
                     ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.mBillboardManager_.untrackNode(component.mBillboard);
                 }
+            }
+        }
+    }
+
+    function processProximityComponent_(){
+        local playerPos = mCreatorWorld_.getPlayerPosition();
+        //TODO could optimise this by including dirty flags.
+        foreach(i in mComponents_[EntityComponents.PROXIMITY].mComps_){
+            if(i == null) continue;
+            local eid = i.eid;
+            local currentPosition = mEntityPositions_[eid];
+            local distance = currentPosition.distance(playerPos);
+            i.mDistance = distance;
+            if(i.mCallback != null){
+                i.mCallback(this, eid, distance);
             }
         }
     }
