@@ -91,7 +91,7 @@
 
         local height = mMapData_.voxHeight.data[x + y * mMapData_.width];
 
-        return height * 0.4;
+        return height * PROCEDURAL_WORLD_UNIT_MULTIPLIER;
     }
 
     function getIsWaterForPosition(pos){

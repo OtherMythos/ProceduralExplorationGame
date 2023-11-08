@@ -198,7 +198,7 @@
         local altitude = (((voxFloat - mMapData_.seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger() + 1;
         local clampedAltitude = altitude < 0 ? 0 : altitude;
 
-        return clampedAltitude * 0.4;
+        return clampedAltitude * PROCEDURAL_WORLD_UNIT_MULTIPLIER;
     }
 
     function createScene(){
@@ -360,7 +360,7 @@
             }
         }
         if(!written) return null;
-        local vox = VoxToMesh(Timer(), 1 << 2, 0.4);
+        local vox = VoxToMesh(Timer(), 1 << 2);
         //TODO get rid of this with the proper function to destory meshes.
         ::ExplorationCount++;
         local meshObj = vox.createMeshForVoxelData(format("worldVox%i-%i", ::ExplorationCount, regionIdx), voxData, width, height, WORLD_DEPTH);
@@ -370,7 +370,7 @@
         item.setRenderQueueGroup(30);
         local landNode = parentNode.createChildSceneNode();
         landNode.attachObject(item);
-        landNode.setScale(1, 1, 0.4);
+        landNode.setScale(1, 1, PROCEDURAL_WORLD_UNIT_MULTIPLIER);
         landNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
 
         vox.printStats();

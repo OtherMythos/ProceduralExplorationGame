@@ -54,17 +54,15 @@ const NUM_VERTS = 6;
 
     mVertexElemVec_ = null;
     mFaceExclusionMask_ = 0;
-    mYMult_ = 1;
 
     mNumTris_ = 0;
 
     /**
      * @param exclusionMask Allows for certain faces to always be rejected, for instance not drawing the bottom face in a terrain.
      */
-    constructor(timer = null, exclusionMask = 0, yMult=1){
+    constructor(timer = null, exclusionMask = 0){
         mFaceExclusionMask_ = exclusionMask;
         mTimer_ = timer;
-        mYMult_ = yMult;
 
         TILE_WIDTH = (1.0 / COLS_WIDTH) / 2.0;
         TILE_HEIGHT = (1.0 / COLS_HEIGHT) / 2.0;

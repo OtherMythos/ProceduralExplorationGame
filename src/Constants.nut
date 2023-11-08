@@ -3,6 +3,8 @@
 const TRIGGER = 0;
 const DAMAGE = 1;
 
+const PROCEDURAL_WORLD_UNIT_MULTIPLIER = 0.4;
+
 const EFFECT_WINDOW_CAMERA_Z = 100;
 
 const SCREENS_START_Z = 40;
