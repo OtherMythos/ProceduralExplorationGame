@@ -49,9 +49,9 @@
 		int pos_x = as_type<int>(original & 0x3FF);
 		int pos_y = as_type<int>((original >> 10) & 0x3FF);
 		int pos_z = as_type<int>((original >> 20) & 0x3FF);
-		input.position.x = float(pos_x);
-		input.position.y = float(pos_y);
-		input.position.z = float(pos_z);
+		input.position.x = float(pos_x)-0.5;
+		input.position.y = float(pos_y)-0.5;
+		input.position.z = float(pos_z)-0.5;
 
 		//unsigned int vox = as_type<unsigned int>(originalSecond & 0xFFFF);
 		unsigned int norm = as_type<unsigned int>((originalSecond >> 29) & 0x3);
