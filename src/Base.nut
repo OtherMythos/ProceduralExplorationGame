@@ -139,6 +139,9 @@
         _doFile("res://src/GUI/RenderIconManager.nut");
         ::RenderIconManager.setup();
 
+        setupBaseMaterials();
+        setupBaseMeshes();
+
         ::InputManager.setup();
 
         mExplorationLogic = ExplorationLogic();
@@ -166,9 +169,6 @@
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.STORY_CONTENT_SCREEN, {"logic": ::StoryContentLogic(PlaceId.HAUNTED_WELL)}));
         //::ScreenManager.transitionToScreen(Screen.STORY_CONTENT_SCREEN);
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_END_SCREEN, {"totalFoundItems": 5, "totalDiscoveredPlaces": 4, "totalEncountered": 2, "totalDefeated": 1}), null, 1);
-
-        setupBaseMaterials();
-        setupBaseMeshes();
 
         //mExplorationLogic.resetExploration_();
     }

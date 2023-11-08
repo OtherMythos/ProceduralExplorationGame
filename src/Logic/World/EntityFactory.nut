@@ -468,4 +468,30 @@
         return en;
     }
 
+    function constructPlaceIndicatorBeacon(pos){
+        local manager = mConstructorWorld_.getEntityManager();
+        local targetPos = pos.copy();
+        targetPos.y = getZForPos(targetPos);
+
+        local en = manager.createEntity(targetPos);
+
+        local parentNode = mBaseSceneNode_.createChildSceneNode();
+        parentNode.setPosition(targetPos);
+        local item = _scene.createItem("EXPOrbMesh");
+        item.setRenderQueueGroup(30);
+        local animNode = parentNode.createChildSceneNode();
+        animNode.attachObject(item);
+        animNode.setScale(1.5, 100, 1.5);
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](parentNode, true));
+
+        item.setDatablock("PlaceBeacon");
+
+        local animationInfo = _animation.createAnimationInfo([animNode]);
+        local anim = _animation.createAnimation("PlaceBeaconIdle", animationInfo);
+        anim.setTime(_random.randInt(0, 180));
+        manager.assignComponent(en, EntityComponents.ANIMATION, ::EntityManager.Components[EntityComponents.ANIMATION](anim));
+
+        return en;
+    }
+
 };

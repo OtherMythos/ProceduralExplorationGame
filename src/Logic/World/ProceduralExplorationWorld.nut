@@ -239,99 +239,25 @@
         assert(mMapData_ != null);
 
         local parentVoxNode = mParentNode_.createChildSceneNode();
-        //for(local i = 0; i < mMapData_.regionData.len(); i++){
-            local regionNode = parentVoxNode.createChildSceneNode();
-            //local landNode = voxeliseMapRegion_(i, parentVoxNode);
-            local vox = VoxToMesh(Timer());
-            local meshes = vox.createTerrainFromVoxelBlob("test", mMapData_);
-            print("Time taken to generate voxel map " + vox.getStats().totalSeconds);
-            assert(meshes.len() == mMapData_.regionData.len());
-            foreach(c,i in meshes){
-                local decorationNode = regionNode.createChildSceneNode();
-
-                local item = _scene.createItem(i);
-                item.setRenderQueueGroup(30);
-                local landNode = regionNode.createChildSceneNode();
-                landNode.attachObject(item);
-                landNode.setScale(1, 1, 0.4);
-                //landNode.setPosition(0, 0, -mMapData_.width);
-                landNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
-                //landNode.setOrientation(Quat(0, 0, 0, 1));
-                //landNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
-                landNode.setVisible(true);
-
-                mRegionEntries_.rawset(c, ProceduralRegionEntry(landNode, decorationNode));
-            }
-        //}
-    }
-
-    function voxeliseMapOld(){
-        assert(mMapData_ != null);
-
-        local parentVoxNode = mParentNode_.createChildSceneNode();
-        for(local i = 0; i < mMapData_.regionData.len(); i++){
-            local regionNode = parentVoxNode.createChildSceneNode();
-            local landNode = voxeliseMapRegionOld_(i, parentVoxNode);
+        local regionNode = parentVoxNode.createChildSceneNode();
+        local vox = VoxToMesh(Timer());
+        local meshes = vox.createTerrainFromVoxelBlob("test", mMapData_);
+        print("Time taken to generate voxel map " + vox.getStats().totalSeconds);
+        assert(meshes.len() == mMapData_.regionData.len());
+        foreach(c,i in meshes){
             local decorationNode = regionNode.createChildSceneNode();
-            mRegionEntries_.rawset(i, ProceduralRegionEntry(landNode, decorationNode));
+
+            local item = _scene.createItem(i);
+            item.setRenderQueueGroup(30);
+            local landNode = regionNode.createChildSceneNode();
+            landNode.attachObject(item);
+            landNode.setScale(1, 1, PROCEDURAL_WORLD_UNIT_MULTIPLIER);
+            landNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
+            landNode.setVisible(true);
+
+            mRegionEntries_.rawset(c, ProceduralRegionEntry(landNode, decorationNode));
         }
     }
-    function voxeliseMapRegionOld_(regionIdx, parentNode){
-        local width = mMapData_.width;
-        local height = mMapData_.height;
-        local voxData = array(width * height * WORLD_DEPTH, null);
-        local buf = mMapData_.voxelBuffer;
-        local bufSecond = mMapData_.secondaryVoxBuffer;
-        buf.seek(0);
-        bufSecond.seek(0);
-        local voxVals = [
-            2, 112, 0, 147, 6
-        ];
-        local waterVal = 192;
-        local written = false;
-        for(local y = 0; y < height; y++){
-            for(local x = 0; x < width; x++){
-                local vox = buf.readn('i');
-                local region = (bufSecond.readn('i') >> 8) & 0xFF;
-                local voxFloat = (vox & 0xFF).tofloat();
-                if(voxFloat <= mMapData_.seaLevel) continue;
-                if(region != regionIdx) continue;
-                //+1 because vox values at 0 still need to be drawn.
-                local altitude = (((voxFloat - mMapData_.seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger() + 1;
-                local voxelMeta = (vox >> 8) & MAP_VOXEL_MASK;
-                local isRiver = (vox >> 8) & MapVoxelTypes.RIVER;
-                if(isRiver){
-                    altitude-=2;
-                    if(altitude < 1) altitude = 1;
-                }
-                //if(voxFloat <= mMapData_.seaLevel) voxelMeta = 3;
-                for(local i = 0; i < altitude; i++){
-                    //voxData[x + (y * width) + (i*width*height)] = isRiver ? waterVal : voxVals[voxelMeta];
-                    voxData[x + (y * width) + (i*width*height)] = 112;
-                    written = true;
-                }
-            }
-        }
-        if(!written) return null;
-        local vox = VoxToMesh(Timer(), 1 << 2, 0.4);
-        //TODO get rid of this with the proper function to destory meshes.
-        ::ExplorationCount++;
-        local meshObj = vox.createMeshForVoxelData(format("worldVox%i-%i", ::ExplorationCount, regionIdx), voxData, width, height, WORLD_DEPTH);
-        mVoxMesh_ = meshObj;
-
-        local item = _scene.createItem(meshObj);
-        item.setRenderQueueGroup(30);
-        local landNode = parentNode.createChildSceneNode();
-        landNode.attachObject(item);
-        landNode.setScale(1, 1, 0.4);
-        //landNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
-
-        vox.printStats();
-        landNode.setVisible(false);
-
-        return landNode;
-    }
-
 
     function voxeliseMapRegion_(regionIdx, parentNode){
         local width = mMapData_.width;
@@ -393,6 +319,7 @@
         mActivePlaces_ = [];
         foreach(c,i in mMapData_.placeData){
             local placeEntry = mEntityFactory_.constructPlace(i, c, ::Base.mExplorationLogic.mGui_);
+            local beaconEntity = mEntityFactory_.constructPlaceIndicatorBeacon(Vec3(i.originX, 0, -i.originY));
             mActivePlaces_.append(placeEntry);
             mRegionEntries_[i.region].pushPlace(placeEntry);
         }
