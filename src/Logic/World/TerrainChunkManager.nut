@@ -107,7 +107,7 @@
         local widthWithPadding = (mMapData_.width / mChunkDivisions_) + PADDING * 2;
         local heightWithPadding = (mMapData_.height / mChunkDivisions_) + PADDING * 2;
 
-        local vox = VoxToMesh(Timer(), 1 << 2, VISITED_WORLD_UNIT_MULTIPLIER);
+        local vox = VoxToMesh(Timer(), 1 << 2);
         //TODO get rid of this with the proper function to destory meshes.
         ::ExplorationCount++;
         local meshObj = vox.createMeshForVoxelData(format("terrainChunkManager%s%s", ::ExplorationCount.tostring(), targetIdx.tostring()), targetChunkArray, widthWithPadding, heightWithPadding, mMapData_.voxHeight.greatest);
@@ -216,7 +216,7 @@
         parentNode.setPosition((chunkX * -CHUNK_DEBUG_PADDING) + chunkX * width, 0, (chunkY * -CHUNK_DEBUG_PADDING) + -chunkY * height);
 
         parentNode.attachObject(item);
-        parentNode.setScale(1, 1, 0.4);
+        parentNode.setScale(1, 1, VISITED_WORLD_UNIT_MULTIPLIER);
         parentNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
 
         if(mNodesForChunk_.rawin(targetIdx)){

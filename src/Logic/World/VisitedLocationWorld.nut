@@ -10,8 +10,8 @@
 
     mCloudManager_ = null;
 
-    constructor(targetMap){
-        base.constructor();
+    constructor(worldId, targetMap){
+        base.constructor(worldId);
 
         mTerrainChunkManager_ = TerrainChunkManager();
 
@@ -170,6 +170,10 @@
     function checkForEnemyAppear(){
         //Stub to get enemies to stop spawning.
         return;
+    }
+    function checkForDistractionAppear(){
+        //Stub
+        return
     }
 
 };

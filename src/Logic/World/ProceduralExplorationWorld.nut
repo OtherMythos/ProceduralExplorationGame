@@ -151,6 +151,15 @@
         base.updatePlayerPos(playerPos);
 
         updateCameraPosition();
+
+        //Bodge some checks in.
+        if(_input.getMouseButton(1)){
+            //::Base.mExplorationLogic.spawnEXPOrbs(mPlayerEntry_.getPosition(), 4);
+            //mCurrentWorld_.spawnEXPOrbs(mCurrentWorld_.mPlayerEntry_.getPosition(), 1);
+
+            gatewayEndExploration();
+            //::Base.mExplorationLogic.pushWorld(::Base.mExplorationLogic.createWorldInstance(WorldTypes.PROCEDURAL_EXPLORATION_WORLD));
+        }
     }
 
     function updateCameraPosition(){

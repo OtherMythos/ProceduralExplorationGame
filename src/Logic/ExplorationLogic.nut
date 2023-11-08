@@ -12,7 +12,6 @@
     mExplorationActive_ = false;
 
     mExplorationStats_ = null;
-    mGatewayPercentage_ = 0.0;
 
     mCurrentTimer_ = null;
     mRunning_ = false;
@@ -79,6 +78,9 @@
                 break;
             case WorldTypes.PROCEDURAL_DUNGEON_WORLD:
                 created = ProceduralDungeonWorld(id);
+                break;
+            case WorldTypes.VISITED_LOCATION_WORLD:
+                created = VisitedLocationWorld(id, "testVillage");
                 break;
             default:
                 assert(false);
@@ -172,10 +174,6 @@
         print("Pausing exploration");
         mExplorationPaused_ = true;
         _state.setPauseState(0xFFFF);
-    }
-
-    function isGatewayReady(){
-        return mGatewayPercentage_ >= 1.0;
     }
 
     function notifyPlaceEnterState(id, entered){

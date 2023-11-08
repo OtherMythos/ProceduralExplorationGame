@@ -349,7 +349,7 @@ const NUM_VERTS = 6;
                     local ambient = (ambientMask >> 8 * i) & 0xFF;
                     assert(ambient >= 0 && ambient <= 3);
 
-                    local val = x | y << 10 | z << 20 | 1 << 30;
+                    local val = x | y << 10 | z << 20 | ambient << 30;
                     verts.append(val);
 
                     //TODO Magic number for now to avoid it breaking the regular materials.
