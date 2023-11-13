@@ -91,6 +91,7 @@
         _doFile("res://src/GUI/PopupManager.nut");
         _doFile("res://src/GUI/Popups/Popup.nut");
         _doFile("res://src/GUI/Popups/BottomOfScreenPopup.nut");
+        _doFile("res://src/GUI/Popups/RegionDiscoveredPopup.nut");
         ::PopupManager.setup();
 
         _doFile("res://src/GUI/EffectManager.nut");

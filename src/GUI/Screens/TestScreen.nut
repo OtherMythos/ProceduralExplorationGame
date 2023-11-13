@@ -11,10 +11,13 @@
 
         local layoutLine = _gui.createLayoutLine();
 
-        local buttonOptions = ["Trigger popup", "Trigger spread coin effect", "Trigger linear coin effect", "Trigger linear orb effect", "Generate render icon"];
+        local buttonOptions = ["Trigger popup", "Trigger Region Discovered popup", "Trigger spread coin effect", "Trigger linear coin effect", "Trigger linear orb effect", "Generate render icon"];
         local buttonFunctions = [
             function(widget, action){
                 ::PopupManager.displayPopup(Popup.BOTTOM_OF_SCREEN);
+            },
+            function(widget, action){
+                ::PopupManager.displayPopup(Popup.REGION_DISCOVERED);
             },
             function(widget, action){
                 ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"numCoins": 10, "start": Vec2(0, 0), "end": Vec2(-2, 0), "money": 10}));

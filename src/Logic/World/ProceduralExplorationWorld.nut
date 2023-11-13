@@ -426,6 +426,7 @@
         local regionEntry = mRegionEntries_[regionId];
         if(regionEntry != null){
             regionEntry.performArrival();
+            ::PopupManager.displayPopup(Popup.REGION_DISCOVERED);
         }
     }
 };
