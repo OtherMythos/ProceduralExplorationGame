@@ -486,7 +486,9 @@
 
         manager.assignComponent(en, EntityComponents.PROXIMITY, ::EntityManager.Components[EntityComponents.PROXIMITY](ProximityComponentType.PLAYER, ::GenericCallbacks.placeBeaconDistance));
 
-        item.setDatablock("PlaceBeacon");
+        local block = ::DatablockManager.cloneDatablock("PlaceBeacon", en);
+        item.setDatablock(block);
+        manager.assignComponent(en, EntityComponents.DATABLOCK, ::EntityManager.Components[EntityComponents.DATABLOCK](block));
 
         local animationInfo = _animation.createAnimationInfo([animNode]);
         local anim = _animation.createAnimation("PlaceBeaconIdle", animationInfo);

@@ -59,6 +59,8 @@
         _doFile("res://src/Character/CharacterGenerator.nut");
         _doFile("res://src/Character/CharacterModelTypes.nut");
 
+        _doFile("res://src/System/DatablockManager.nut");
+
         _doFile("res://src/System/DialogManager.nut");
         mDialogManager = DialogManager();
 

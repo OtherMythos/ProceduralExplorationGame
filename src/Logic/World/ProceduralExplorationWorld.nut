@@ -15,22 +15,27 @@
     mCloudManager_ = null;
 
     ProceduralRegionEntry = class{
+        mEntityManager_ = null;
         mLandNode_ = null;
         mLandItem_ = null;
         mDecoratioNode_ = null;
         mVisible_ = false;
+
         mPlaces_ = null;
+        mBeacons_ = null;
 
         mAnimCount_ = -1;
         mMaxAnim_ = 30;
 
-        constructor(node, decorationNode){
+        constructor(entityManager, node, decorationNode){
+            mEntityManager_ = entityManager;
             mLandNode_ = node;
             mDecoratioNode_ = decorationNode;
             if(mLandNode_){
                 mLandItem_ = mLandNode_.getAttachedObject(0);
             }
             mPlaces_ = [];
+            mBeacons_ = [];
         }
         function update(){
             if(mAnimCount_ < 0) return;
@@ -58,10 +63,15 @@
                 //TODO this will be massively inefficient so improve that
                 i.getSceneNode().setVisible(mVisible_);
             }
+            foreach(i in mBeacons_){
+                local node = mEntityManager_.getComponent(i, EntityComponents.SCENE_NODE).mNode;
+                node.setVisible(!mVisible_);
+            }
             mDecoratioNode_.setVisible(mVisible_);
         }
-        function pushPlace(place){
+        function pushPlace(place, beacon){
             mPlaces_.append(place);
+            mBeacons_.append(beacon);
         }
     }
 
@@ -255,7 +265,7 @@
             landNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
             landNode.setVisible(true);
 
-            mRegionEntries_.rawset(c, ProceduralRegionEntry(landNode, decorationNode));
+            mRegionEntries_.rawset(c, ProceduralRegionEntry(mEntityManager_, landNode, decorationNode));
         }
     }
 
@@ -321,7 +331,7 @@
             local placeEntry = mEntityFactory_.constructPlace(i, c, ::Base.mExplorationLogic.mGui_);
             local beaconEntity = mEntityFactory_.constructPlaceIndicatorBeacon(Vec3(i.originX, 0, -i.originY));
             mActivePlaces_.append(placeEntry);
-            mRegionEntries_[i.region].pushPlace(placeEntry);
+            mRegionEntries_[i.region].pushPlace(placeEntry, beaconEntity);
         }
     }
 

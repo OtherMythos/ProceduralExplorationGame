@@ -128,3 +128,12 @@
 
 };
 
+::EntityManager.Components[EntityComponents.DATABLOCK] = class extends ::EntityManager.Component{
+
+    mDatablock = null;
+
+    constructor(datablock){
+        mDatablock = datablock;
+    }
+
+};

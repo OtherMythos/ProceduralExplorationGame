@@ -14,6 +14,7 @@ enum EntityComponents{
     SCRIPT,
     SPOILS,
     PROXIMITY,
+    DATABLOCK,
 
     MAX
 
@@ -305,6 +306,9 @@ EntityManager.EntityManager <- class{
                 }
                 else if(i == EntityComponents.BILLBOARD){
                     ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.mBillboardManager_.untrackNode(component.mBillboard);
+                }
+                else if(i == EntityComponents.DATABLOCK){
+                    ::DatablockManager.removeDatablock(component.mDatablock);
                 }
             }
         }
