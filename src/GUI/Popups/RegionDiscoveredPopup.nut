@@ -49,7 +49,7 @@
         local animVal = 1.0-((pow(1 - currentPercentage, 2)));
         //print("anim val " + (animVal));
         mLabel_.setDefaultFontSize(mCurrentFontSize_ * animVal);
-        mLabel_.sizeToFit();
+        mLabel_.sizeToFit(_window.getWidth());
 
         //Fade in position.
         //local pos = getIntendedPosition();
