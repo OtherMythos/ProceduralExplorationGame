@@ -20,6 +20,7 @@
         mLandItem_ = null;
         mDecoratioNode_ = null;
         mVisible_ = false;
+        mWorldActive_ = false;
 
         mPlaces_ = null;
         mBeacons_ = null;
@@ -53,21 +54,26 @@
             mVisible_ = visible;
             setVisible_();
         }
+        function setWorldActive(active){
+            mWorldActive_ = active;
+            setVisible_();
+        }
         //Workaround to resolve the recursive setVisible from the world.
         function setVisible_(){
+            local vis = mWorldActive_ && mVisible_;
             if(mLandNode_){
-                mLandItem_.setDatablock(mVisible_ ? "baseVoxelMaterial" : "MaskedWorld");
+                mLandItem_.setDatablock(vis ? "baseVoxelMaterial" : "MaskedWorld");
             }
 
             foreach(i in mPlaces_){
                 //TODO this will be massively inefficient so improve that
-                i.getSceneNode().setVisible(mVisible_);
+                i.getSceneNode().setVisible(vis);
             }
             foreach(i in mBeacons_){
                 local node = mEntityManager_.getComponent(i, EntityComponents.SCENE_NODE).mNode;
-                node.setVisible(!mVisible_);
+                node.setVisible(mWorldActive_ && !mVisible_);
             }
-            mDecoratioNode_.setVisible(mVisible_);
+            mDecoratioNode_.setVisible(vis);
         }
         function pushPlace(place, beacon){
             mPlaces_.append(place);
@@ -351,13 +357,9 @@
     }
 
     function processActiveChange_(active){
-        if(!active){
-            destroyEnemyMap_(mActivePlaces_);
-        }
-
         //Re-check the visibility of the nodes.
         foreach(i in mRegionEntries_){
-            i.setVisible_();
+            i.setWorldActive(active);
         }
     }
 
