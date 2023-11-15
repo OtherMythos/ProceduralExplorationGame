@@ -81,8 +81,8 @@
         }
     }
 
-    constructor(worldId){
-        base.constructor(worldId);
+    constructor(worldId, preparer){
+        base.constructor(worldId, preparer);
 
         mCurrentFoundRegions_ = {};
         mRegionEntries_ = {};
@@ -123,6 +123,13 @@
         resetSession(outData);
     }
 
+    #Override
+    function notifyPreparationComplete_(){
+        mReady_ = true;
+        base.setup();
+        resetSession(mWorldPreparer_.getOutputData());
+    }
+
     function resetSession(mapData){
         //TODO would prefer to have the base call further up.
         createScene();
@@ -134,7 +141,6 @@
         mMapData_ = mapData;
 
         voxeliseMap();
-        //voxeliseMapOld();
 
         mCloudManager_ = CloudManager(mParentNode_, mMapData_.width, mMapData_.height);
 
@@ -154,6 +160,8 @@
     }
 
     function update(){
+        if(!isActive()) return;
+
         base.update();
 
         mCloudManager_.update();
@@ -163,6 +171,7 @@
         }
     }
 
+    #Override
     function updatePlayerPos(playerPos){
         base.updatePlayerPos(playerPos);
 
@@ -173,8 +182,10 @@
             //::Base.mExplorationLogic.spawnEXPOrbs(mPlayerEntry_.getPosition(), 4);
             //mCurrentWorld_.spawnEXPOrbs(mCurrentWorld_.mPlayerEntry_.getPosition(), 1);
 
-            gatewayEndExploration();
+            //gatewayEndExploration();
             //::Base.mExplorationLogic.pushWorld(::Base.mExplorationLogic.createWorldInstance(WorldTypes.PROCEDURAL_EXPLORATION_WORLD));
+
+            ::_applyDamageOther(mEntityManager_, mPlayerEntry_.getEID(), 10000);
         }
     }
 
@@ -211,6 +222,7 @@
         updateCameraPosition();
     }
 
+    #Override
     function getZForPos(pos){
         //Move somewhere else.
 
@@ -275,61 +287,6 @@
         }
     }
 
-    function voxeliseMapRegion_(regionIdx, parentNode){
-        local width = mMapData_.width;
-        local height = mMapData_.height;
-        local voxData = array(width * height * WORLD_DEPTH, null);
-        local buf = mMapData_.voxelBuffer;
-        local bufSecond = mMapData_.secondaryVoxBuffer;
-        buf.seek(0);
-        bufSecond.seek(0);
-        local voxVals = [
-            2, 112, 0, 147, 6
-        ];
-        local waterVal = 192;
-        local written = false;
-        for(local y = 0; y < height; y++){
-            for(local x = 0; x < width; x++){
-                local vox = buf.readn('i');
-                local region = (bufSecond.readn('i') >> 8) & 0xFF;
-                local voxFloat = (vox & 0xFF).tofloat();
-                if(voxFloat <= mMapData_.seaLevel) continue;
-                if(region != regionIdx) continue;
-                //+1 because vox values at 0 still need to be drawn.
-                local altitude = (((voxFloat - mMapData_.seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger() + 1;
-                local voxelMeta = (vox >> 8) & MAP_VOXEL_MASK;
-                local isRiver = (vox >> 8) & MapVoxelTypes.RIVER;
-                if(isRiver){
-                    altitude-=2;
-                    if(altitude < 1) altitude = 1;
-                }
-                //if(voxFloat <= mMapData_.seaLevel) voxelMeta = 3;
-                for(local i = 0; i < altitude; i++){
-                    voxData[x + (y * width) + (i*width*height)] = isRiver ? waterVal : voxVals[voxelMeta];
-                    written = true;
-                }
-            }
-        }
-        if(!written) return null;
-        local vox = VoxToMesh(Timer(), 1 << 2);
-        //TODO get rid of this with the proper function to destory meshes.
-        ::ExplorationCount++;
-        local meshObj = vox.createMeshForVoxelData(format("worldVox%i-%i", ::ExplorationCount, regionIdx), voxData, width, height, WORLD_DEPTH);
-        mVoxMesh_ = meshObj;
-
-        local item = _scene.createItem(meshObj);
-        item.setRenderQueueGroup(30);
-        local landNode = parentNode.createChildSceneNode();
-        landNode.attachObject(item);
-        landNode.setScale(1, 1, PROCEDURAL_WORLD_UNIT_MULTIPLIER);
-        landNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
-
-        vox.printStats();
-        landNode.setVisible(false);
-
-        return landNode;
-    }
-
     function setupPlaces(){
         //TODO see about getting rid of this.
         mActivePlaces_ = [];
@@ -356,7 +313,7 @@
         return ::MapGenHelpers.getIsWaterForPosition(mMapData_, pos);
     }
 
-    function processActiveChange_(active){
+    function processWorldActiveChange_(active){
         //Re-check the visibility of the nodes.
         foreach(i in mRegionEntries_){
             i.setWorldActive(active);

@@ -90,8 +90,9 @@
 
     mWorldId_ = null;
 
-    mHasEverBeenActive_ = false;
-    mActive_ = false;
+    mWorldPreparer_ = null;
+    mCurrent_ = false;
+    mReady_ = false;
 
     mPlayerEntry_ = null;
     mActiveEnemies_ = null;
@@ -136,8 +137,9 @@
 
     NUM_PLAYER_QUEUED_FLAGS = 1;
 
-    constructor(worldId){
+    constructor(worldId, preparer){
         mWorldId_ = worldId;
+        mWorldPreparer_ = preparer;
         mActiveEnemies_ = {};
         mLocationFlagNodes_ = {};
         mActiveGizmos_ = {};
@@ -180,6 +182,20 @@
     }
     function getPlayerPosition(){
         return mPlayerEntry_.getPosition();
+    }
+
+    function processPreparation(){
+        local result = mWorldPreparer_.processPreparation();
+        if(result){
+            notifyPreparationComplete_();
+        }
+        return result;
+    }
+    function preparationComplete(){
+        return mWorldPreparer_.preparationComplete();
+    }
+    #Stub
+    function notifyPreparationComplete_(){
     }
 
     function shutdown(){
@@ -257,43 +273,27 @@
         mTriggerCollisionWorld_.processCollision();
     }
 
-    function setActive(active){
-        mActive_ = active;
-        if(active){
-            if(!mHasEverBeenActive_){
-                setup();
-            }
-            mHasEverBeenActive_ = true;
+    function setCurrentWorld(current){
+        mCurrent_ = current;
+        if(current){
+
         }else{
-            //TODO this whole section could do with being better.
-            //destroyEnemyMap_(mActiveEnemies_);
-            //mPlayerEntry_.notifyDestroyed();
-            //::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.mBillboardManager_.untrackAllNodes();
+
         }
 
-        mParentNode_.setVisible(active, true);
-        processActiveChange_(active);
-
-    }
-    function destroyEnemyMap_(target){
-        local enemies = [];
-        //printf("%i current", target.len());
-        foreach(i in target){
-            enemies.append(i.mEntity_);
-        }
-        foreach(i in enemies){
-            mEntityManager_.destroyEntity(i);
-        }
-
-        foreach(i in target){
-            i.notifyDestroyed();
-        }
-        target.clear();
-        //assert(target.len() == 0);
+        //mParentNode_.setVisible(current, true);
+        processWorldCurrentChange_(current);
     }
 
-    function processActiveChange_(active){
-        //Stub
+    function notifyReady_(){
+        setup();
+    }
+
+    #Stub
+    function processWorldCurrentChange_(current){
+    }
+    #Stub
+    function processWorldActiveChange_(active){
     }
 
     function resetSession(){
@@ -336,6 +336,7 @@
     }
 
     function triggerPlayerMove(moveId){
+        if(!isActive()) return;
         assert(moveId >= 0 && moveId < mPlayerMoves.len());
         local targetMoveId = mPlayerMoves[moveId];
 
@@ -818,6 +819,10 @@
             local action = ::EXPTrailAction(this, playerPos, _random.randVec2()-0.5, data.mFirst);
             pushWorldAction(action);
         }
+    }
+
+    function isActive(){
+        return mCurrent_ && mReady_;
     }
 
     function updatePlayerPos(playerPos){

@@ -74,7 +74,7 @@
         local created = null;
         switch(worldType){
             case WorldTypes.PROCEDURAL_EXPLORATION_WORLD:
-                created = ProceduralExplorationWorld(id);
+                created = ProceduralExplorationWorld(id, ProceduralExplorationWorldPreparer());
                 break;
             case WorldTypes.PROCEDURAL_DUNGEON_WORLD:
                 created = ProceduralDungeonWorld(id);
@@ -92,7 +92,7 @@
      * Set the provided world to be active, de-activating and queuing the previous.
     */
     function pushWorld(worldInstance){
-        mCurrentWorld_.setActive(false);
+        mCurrentWorld_.setCurrentWorld(false);
         mQueuedWorlds_.append(mCurrentWorld_);
         setCurrentWorld_(worldInstance);
     }
@@ -103,9 +103,19 @@
     function setCurrentWorld_(worldInstance){
         mCurrentWorld_ = worldInstance;
         mCurrentWorld_.setGuiObject(mGui_);
-        mCurrentWorld_.setActive(true);
+        mCurrentWorld_.setCurrentWorld(true);
 
         mGui_.mWorldMapDisplay_.mBillboardManager_.setMaskVisible(0x1 << mCurrentWorld_.getWorldId());
+
+        _event.transmit(Event.CURRENT_WORLD_CHANGE, mCurrentWorld_);
+
+        if(mCurrentWorld_.preparationComplete()){
+            //Register the world as active as its preparation is already done.
+            notifyActiveChange();
+        }
+    }
+    function notifyActiveChange(){
+        mCurrentWorld_.processWorldActiveChange_(true);
 
         _event.transmit(Event.ACTIVE_WORLD_CHANGE, mCurrentWorld_);
     }
@@ -141,6 +151,8 @@
     }
 
     function tickUpdate(){
+        tickPreparation();
+
         if(mExplorationPaused_) return;
 
         //TODO reset the exploration.
@@ -148,6 +160,15 @@
 
         //checkCameraChange();
         //checkOrientatingCamera();
+    }
+
+    function tickPreparation(){
+        if(mCurrentWorld_.preparationComplete()) return;
+        local result = mCurrentWorld_.processPreparation();
+        if(result){
+            //Let the world know it's active.
+            notifyActiveChange();
+        }
     }
 
     function notifyEnemyDestroyed(eid){
@@ -189,9 +210,9 @@
             childNode.attachObject(item);
 
             //Do a coin effect.
-            local worldPos = ::EffectManager.getWorldPositionForWindowPos(mGui_.mWorldMapDisplay_.getPosition() + mGui_.mWorldMapDisplay_.getSize() / 2);
-            local endPos = mGui_.getMoneyCounter().getPositionWindowPos();
-            ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"cellSize": 2, "coinScale": 0.1, "numCoins": 5, "start": worldPos, "end": endPos, "money": 100}));
+            //local worldPos = ::EffectManager.getWorldPositionForWindowPos(mGui_.mWorldMapDisplay_.getPosition() + mGui_.mWorldMapDisplay_.getSize() / 2);
+            //local endPos = mGui_.getMoneyCounter().getPositionWindowPos();
+            //::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"cellSize": 2, "coinScale": 0.1, "numCoins": 5, "start": worldPos, "end": endPos, "money": 100}));
 
             mExplorationStats_.totalDiscoveredPlaces++;
             //notifyGatewayStatsChange();

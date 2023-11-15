@@ -122,6 +122,7 @@
         _doFile("res://src/GUI/Screens/CombatSpoilsPopupScreen.nut");
         _doFile("res://src/GUI/Screens/TestScreen.nut");
         _doFile("res://src/GUI/Screens/ExplorationTestScreen.nut");
+        _doFile("res://src/GUI/Screens/WorldGenerationStatusScreen.nut");
 
         _doFile("res://src/Logic/EntityTargetManager.nut");
         _doFile("res://src/Logic/ActiveEnemyEntry.nut");
@@ -131,6 +132,8 @@
         _doFile("res://src/Logic/World/VisitedLocationWorld.nut");
         _doFile("res://src/Logic/World/ProceduralExplorationWorld.nut");
         _doFile("res://src/Logic/World/ProceduralDungeonWorld.nut");
+        _doFile("res://src/Logic/World/WorldPreparer.nut");
+        _doFile("res://src/Logic/World/ProceduralExplorationWorldPreparer.nut");
         _doFile("res://src/Logic/ExplorationLogic.nut");
         _doFile("res://src/Logic/ExplorationProjectileManager.nut");
         _doFile("res://src/Logic/CombatLogic.nut");
@@ -163,6 +166,7 @@
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COMBAT_SCREEN, {"logic": mCombatLogic}));
         //::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);
+        //::ScreenManager.transitionToScreen(Screen.WORLD_GENERATION_STATUS_SCREEN);
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_TEST_SCREEN, {"logic": mExplorationLogic}));
         //::ScreenManager.transitionToScreen(Screen.WORLD_SCENE_SCREEN);
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.ENCOUNTER_POPUP_SCREEN, null), null, 1);
