@@ -15,6 +15,7 @@
 
         local susparam = null;
         if(mThread_ == null){
+            _event.transmit(Event.WORLD_PREPARATION_STATE_CHANGE, {"began": true, "ended": false});
             mThread_ = ::newthread(resetSessionGenMap);
             susparam = mThread_.call();
         }
@@ -25,7 +26,7 @@
             mOutData_ = susparam;
             mCurrentPercent_ = 1.0;
             mThread_ = null;
-            _event.transmit(Event.WORLD_GENERATION_PROGRESS, {
+            _event.transmit(Event.WORLD_PREPARATION_GENERATION_PROGRESS, {
                 "percentage": mCurrentPercent_,
                 "name": "done"
             });
@@ -33,9 +34,12 @@
             mCurrentPercent_ = susparam.percentage;
             print("PROCEDURAL WORLD GENERATION: " + (mCurrentPercent_ * 100).tointeger() + "% stage: " + susparam.name);
 
-            _event.transmit(Event.WORLD_GENERATION_PROGRESS, susparam);
+            _event.transmit(Event.WORLD_PREPARATION_GENERATION_PROGRESS, susparam);
         }
 
+        if(mCurrentPercent_ >= 1.0){
+            _event.transmit(Event.WORLD_PREPARATION_STATE_CHANGE, {"began": false, "ended": true});
+        }
         return mCurrentPercent_ >= 1.0;
     }
 

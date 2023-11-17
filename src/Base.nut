@@ -162,11 +162,11 @@
         //TODO temporary to setup the logic. Really a new combatData would be pushed at the start of a new combat.
         //mCombatLogic = CombatLogic(mCurrentCombatData);
 
-        //::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
-        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
+        ::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
+        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COMBAT_SCREEN, {"logic": mCombatLogic}));
         //::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);
-        ::ScreenManager.transitionToScreen(Screen.WORLD_GENERATION_STATUS_SCREEN, null, 1);
+        //::ScreenManager.transitionToScreen(Screen.WORLD_GENERATION_STATUS_SCREEN, null, 1);
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_TEST_SCREEN, {"logic": mExplorationLogic}));
         //::ScreenManager.transitionToScreen(Screen.WORLD_SCENE_SCREEN);
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.ENCOUNTER_POPUP_SCREEN, null), null, 1);

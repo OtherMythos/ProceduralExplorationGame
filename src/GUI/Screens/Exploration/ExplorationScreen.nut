@@ -136,7 +136,21 @@ enum ExplorationBusEvents{
             mExplorationMovesContainer_
         ];
 
+        _event.subscribe(Event.WORLD_PREPARATION_STATE_CHANGE, receivePreparationStateChange, this);
+        ::ScreenManager.transitionToScreen(Screen.WORLD_GENERATION_STATUS_SCREEN, null, 1);
+
+        //TOOD NOTE Workaround! This isn't how the paradigm should fit together
+        //Screen shouldn't dictate what the logic does other than let it know of events happening.
         ::Base.mExplorationLogic.resetExploration_();
+    }
+
+    function receivePreparationStateChange(id, data){
+        if(data.began){
+            ::ScreenManager.transitionToScreen(Screen.WORLD_GENERATION_STATUS_SCREEN, null, 1);
+        }else{
+            assert(data.ended);
+            ::ScreenManager.transitionToScreen(null, null, 1);
+        }
     }
 
     function update(){
