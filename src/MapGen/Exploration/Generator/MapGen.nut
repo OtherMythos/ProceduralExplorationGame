@@ -7,9 +7,8 @@
     mData_ = null;
     mTimer_ = null;
 
-    constructor(){
-        mTimer_ = Timer();
-    }
+    mStages_ = [];
+    mStagesNames_ = [];
 
     function reduceNoise_getHeightForPoint(input, x, y){
         local origin = 0.5;
@@ -804,6 +803,10 @@
         print("=============================");
     }
 
+    constructor(){
+        mTimer_ = Timer();
+    }
+
     function generate(data){
         mTimer_.start();
 
@@ -811,65 +814,114 @@
         _random.seedPatternGenerator(data.seed);
         _random.seed(data.variation);
 
-        local noiseBlob = _random.genPerlinNoise(data.width, data.height, 0.02, 4);
-        assert(noiseBlob.len() == data.width*data.height*4);
-
-        _random.seedPatternGenerator(data.moistureSeed);
-        local secondaryBiomeBlob = _random.genPerlinNoise(data.width, data.height, 0.05, 4);
-        assert(secondaryBiomeBlob.len() == data.width*data.height*4);
-
-        local blueNoise = _random.genPerlinNoise(data.width, data.height, 0.5, 1);
-        assert(blueNoise.len() == data.width*data.height*4);
-
-        reduceMoisture(secondaryBiomeBlob, data);
-        reduceNoise(noiseBlob, data);
-        determineAltitude(noiseBlob, data);
-        local waterData = floodFillWater(noiseBlob, data);
-        local landData = floodFillLand(noiseBlob, data);
-        removeRedundantIslands(noiseBlob, data, landData);
-        sortLandmassesBySize(landData);
-        local landWeighted = generateLandWeightedAverage(landData);
-        outlineEdges(noiseBlob, waterData, landData)
-        local riverData = determineRiverOrigins(noiseBlob, landData, landWeighted, data);
-        calculateRivers(riverData, noiseBlob, data);
-        local riverBuffer = riverDataToBlob(riverData);
-        carveRivers(noiseBlob, riverBuffer);
-        local regionData = determineRegions(noiseBlob, secondaryBiomeBlob, landData, landWeighted, data);
-        processBiomeTypes(noiseBlob, secondaryBiomeBlob, data);
-        local biomeData = floodFillBiomes(noiseBlob, data);
-        determineFinalBiomes(noiseBlob, biomeData);
-        local placedItems = populateFinalBiomes(noiseBlob, secondaryBiomeBlob, blueNoise, biomeData);
-        local placeData = determinePlaces(noiseBlob, secondaryBiomeBlob, landData, landWeighted, data);
+        local workspace = {
+            "data": data
+        };
+        foreach(c,i in mStages_){
+            i(workspace);
+            local currentPercent = c.tofloat() / mStages_.len().tofloat();
+            ::suspend({
+                "name": mStagesNames_[c],
+                "percentage": currentPercent,
+            });
+        }
 
         mTimer_.stop();
 
         //printFloodFillData_("water", waterData);
         //printFloodFillData_("land", landData);
 
-        printPlaceData(placeData);
+        printPlaceData(workspace.placeData);
 
         local outData = {
-            "voxelBuffer": noiseBlob,
-            "secondaryVoxBuffer": secondaryBiomeBlob,
-            "blueNoiseBuffer": blueNoise,
+            "voxelBuffer": workspace.noiseBlob,
+            "secondaryVoxBuffer": workspace.secondaryBiomeBlob,
+            "blueNoiseBuffer": workspace.blueNoise,
             "width": data.width,
             "height": data.height,
-            "waterData": waterData,
-            "landData": landData,
-            "biomeData": biomeData,
-            "riverBuffer": riverBuffer,
+            "waterData": workspace.waterData,
+            "landData": workspace.landData,
+            "biomeData": workspace.biomeData,
+            "riverBuffer": workspace.riverBuffer,
             "seaLevel": data.seaLevel,
-            "placeData": placeData,
-            "placedItems": placedItems,
-            "regionData": regionData
+            "placeData": workspace.placeData,
+            "placedItems": workspace.placedItems,
+            "regionData": workspace.regionData
             "stats": {
                 "totalSeconds": mTimer_.getSeconds()
             }
         };
 
         //Reset the seed
+        //TODO with threading this will need to be reset back and forth to maintain consistency
         _random.seed(_system.time());
         return outData;
     }
 
 };
+
+function registerGenerationStage(name, func){
+    ::MapGen.mStages_.append(func);
+    ::MapGen.mStagesNames_.append(name);
+}
+
+registerGenerationStage("Generate noise", function(workspace){
+    local data = workspace.data;
+    local noiseBlob = _random.genPerlinNoise(data.width, data.height, 0.02, 4);
+    assert(noiseBlob.len() == data.width*data.height*4);
+
+    _random.seedPatternGenerator(data.moistureSeed);
+    local secondaryBiomeBlob = _random.genPerlinNoise(data.width, data.height, 0.05, 4);
+    assert(secondaryBiomeBlob.len() == data.width*data.height*4);
+
+    local blueNoise = _random.genPerlinNoise(data.width, data.height, 0.5, 1);
+    assert(blueNoise.len() == data.width*data.height*4);
+
+    workspace.noiseBlob <- noiseBlob;
+    workspace.secondaryBiomeBlob <- secondaryBiomeBlob;
+    workspace.blueNoise <- blueNoise;
+});
+registerGenerationStage("Reduce noise", function(workspace){
+    reduceMoisture(workspace.secondaryBiomeBlob, workspace.data);
+    reduceNoise(workspace.noiseBlob, workspace.data);
+});
+registerGenerationStage("Altitude", function(workspace){
+    determineAltitude(workspace.noiseBlob, workspace.data);
+});
+registerGenerationStage("perform flood fill", function(workspace){
+    workspace.waterData <- floodFillWater(workspace.noiseBlob, workspace.data);
+    workspace.landData <- floodFillLand(workspace.noiseBlob, workspace.data);
+});
+registerGenerationStage("Remove redundant islands", function(workspace){
+    removeRedundantIslands(workspace.noiseBlob, workspace.data, workspace.landData);
+});
+registerGenerationStage("Weight and sort landmasses", function(workspace){
+    sortLandmassesBySize(workspace.landData);
+    workspace.landWeighted <- generateLandWeightedAverage(workspace.landData);
+});
+registerGenerationStage("Determine edges", function(workspace){
+    outlineEdges(workspace.noiseBlob, workspace.waterData, workspace.landData);
+});
+registerGenerationStage("Determine rivers", function(workspace){
+    local riverData = determineRiverOrigins(workspace.noiseBlob, workspace.landData, workspace.landWeighted, workspace.data);
+    calculateRivers(riverData, workspace.noiseBlob, workspace.data);
+    local riverBuffer = riverDataToBlob(riverData);
+    carveRivers(workspace.noiseBlob, riverBuffer);
+
+    workspace.riverData <- riverData;
+    workspace.riverBuffer <- riverBuffer;
+});
+registerGenerationStage("Determine biomes and regions", function(workspace){
+    local regionData = determineRegions(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.landData, workspace.landWeighted, workspace.data);
+    processBiomeTypes(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.data);
+    local biomeData = floodFillBiomes(workspace.noiseBlob, workspace.data);
+    determineFinalBiomes(workspace.noiseBlob, biomeData);
+    local placedItems = populateFinalBiomes(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.blueNoise, biomeData);
+
+    workspace.regionData <- regionData;
+    workspace.biomeData <- biomeData;
+    workspace.placedItems <- placedItems;
+});
+registerGenerationStage("Determine places", function(workspace){
+    workspace.placeData <- determinePlaces(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.landData, workspace.landWeighted, workspace.data);
+});

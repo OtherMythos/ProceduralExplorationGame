@@ -1,12 +1,14 @@
 ::ScreenManager.Screens[Screen.WORLD_GENERATION_STATUS_SCREEN] = class extends ::Screen{
 
+    mHealthBar_ = null;
+
     function setup(data){
         mWindow_ = _gui.createWindow();
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setPosition(0, 0);
         mWindow_.setClipBorders(0, 0, 0, 0);
         mWindow_.setZOrder(61);
-        mWindow_.setVisualsEnabled(false);
+        mWindow_.setDatablock("unlitBlack");
 
         local layoutLine = _gui.createLayoutLine();
 
@@ -28,13 +30,25 @@
         layoutLine.layout();
 
         healthBar.notifyLayout();
-        healthBar.setPercentage(0.5);
+        healthBar.setPercentage(0.0);
+        mHealthBar_ = healthBar;
+
+        _event.subscribe(Event.WORLD_GENERATION_PROGRESS, receiveGenerationProgress, this);
     }
 
     function update(){
     }
 
     function shutdown(){
+        base.shutdown();
+        _event.unsubscribe(Event.WORLD_GENERATION_PROGRESS, receiveGenerationProgress);
+    }
+
+    function receiveGenerationProgress(id, data){
+        mHealthBar_.setPercentage(data.percentage);
+        if(data.percentage >= 1.0){
+            ::ScreenManager.queueTransition(null, null, mLayerIdx);
+        }
     }
 
 };

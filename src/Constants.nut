@@ -66,6 +66,8 @@ enum Event{
 
     CURRENT_WORLD_CHANGE = 1014,
     ACTIVE_WORLD_CHANGE = 1015,
+
+    WORLD_GENERATION_PROGRESS = 1016,
 }
 
 enum FoundObjectType{

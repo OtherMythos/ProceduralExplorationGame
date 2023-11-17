@@ -3,6 +3,8 @@
 
     mOutData_ = null;
 
+    mThread_ = null;
+
     constructor(){
 
     }
@@ -11,14 +13,33 @@
     function processPreparation(){
         assert(mCurrentPercent_ < 1.0);
 
-        resetSessionGenMap();
+        local susparam = null;
+        if(mThread_ == null){
+            mThread_ = ::newthread(resetSessionGenMap);
+            susparam = mThread_.call();
+        }
+
+        susparam = mThread_.wakeup();
+
+        if(mThread_.getstatus()=="idle"){
+            mOutData_ = susparam;
+            mCurrentPercent_ = 1.0;
+            mThread_ = null;
+            _event.transmit(Event.WORLD_GENERATION_PROGRESS, {
+                "percentage": mCurrentPercent_,
+                "name": "done"
+            });
+        }else{
+            mCurrentPercent_ = susparam.percentage;
+            print("PROCEDURAL WORLD GENERATION: " + (mCurrentPercent_ * 100).tointeger() + "% stage: " + susparam.name);
+
+            _event.transmit(Event.WORLD_GENERATION_PROGRESS, susparam);
+        }
 
         return mCurrentPercent_ >= 1.0;
     }
 
     function resetSessionGenMap(){
-        mCurrentPercent_ = 0.0;
-
         local gen = ::MapGen();
         local data = {
             "seed": 77749,
@@ -35,10 +56,7 @@
         local outData = gen.generate(data);
         print("World generation completed in " + outData.stats.totalSeconds);
 
-        //resetSession(outData);
-        mOutData_ = outData;
-
-        mCurrentPercent_ = 1.0;
+        return outData;
     }
 
     function getOutputData(){

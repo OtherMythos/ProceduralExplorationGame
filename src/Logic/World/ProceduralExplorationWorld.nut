@@ -88,39 +88,12 @@
         mRegionEntries_ = {};
     }
 
-    function setup(){
-        base.setup();
-
-        resetSessionGenMap();
-    }
-
     function getMapData(){
         return mMapData_;
     }
 
     function getWorldType(){
         return WorldTypes.PROCEDURAL_EXPLORATION_WORLD;
-    }
-
-    //TODO long term remove this and generate the map data somewhere else so it can be threaded easier.
-    function resetSessionGenMap(){
-        local gen = ::MapGen();
-        local data = {
-            "seed": 77749,
-            "moistureSeed": 84715,
-            "variation": 0,
-            "width": 400,
-            "height": 400,
-            "numRivers": 24,
-            "seaLevel": 100,
-            "numRegions": 16,
-            "altitudeBiomes": [10, 100],
-            "placeFrequency": [0, 1, 1, 4, 4, 30]
-        };
-        local outData = gen.generate(data);
-        print("World generation completed in " + outData.stats.totalSeconds);
-
-        resetSession(outData);
     }
 
     #Override
