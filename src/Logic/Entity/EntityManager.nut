@@ -173,6 +173,17 @@ EntityManager.EntityManager <- class{
         mEntityComponentHashes_[idx] = null;
         mFreeList_.append(idx);
     }
+    function destroyAllEntities(){
+        foreach(c,i in mEntityComponentHashes_){
+            if(i == null) continue;
+            local eid = (c & 0x3FFFFFFF) | ((mVersions_[c] << 30) & 0x3FFFFFFF) | (mId << 60);
+
+            processEntityDestruction_(eid, c);
+            mEntityComponentHashes_[c] = null;
+            mVersions_[c]++;
+            mFreeList_.append(c);
+        }
+    }
 
     function assignComponent(eid, compType, component){
         //
@@ -286,6 +297,7 @@ EntityManager.EntityManager <- class{
         for(local i = 0; i < EntityComponents.MAX; i++){
             if(currentHash & (1 << i)){
                 local component = mComponents_[i].removeComponent(eid);
+                assert(component.eid == eid);
                 //Check if any logic has to be performed on the component.
                 if(i == EntityComponents.SCENE_NODE){
                     if(component.mDestroyOnDestruction){

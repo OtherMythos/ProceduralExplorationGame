@@ -202,6 +202,7 @@
         foreach(i in mActiveEnemies_){
             i.notifyDestroyed();
         }
+        mEntityManager_.destroyAllEntities();
         mPlayerEntry_.notifyDestroyed();
 
         mActiveEnemies_.clear();
