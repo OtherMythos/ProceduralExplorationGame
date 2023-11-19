@@ -332,7 +332,7 @@ EntityManager.EntityManager <- class{
         foreach(i in mComponents_[EntityComponents.PROXIMITY].mComps_){
             if(i == null) continue;
             local eid = i.eid;
-            local currentPosition = mEntityPositions_[eid];
+            local currentPosition = mEntityPositions_[eid & 0x3FFFFFFF];
             local distance = currentPosition.distance(playerPos);
             i.mDistance = distance;
             if(i.mCallback != null){

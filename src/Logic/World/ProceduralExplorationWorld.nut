@@ -79,6 +79,14 @@
             mPlaces_.append(place);
             mBeacons_.append(beacon);
         }
+        function destroy(){
+            if(mLandItem_ != null){
+                local name = mLandItem_.getName();
+                mLandNode_.destroyNodeAndChildren();
+                //Remove afterwards so there are no references to it.
+                _graphics.removeManualMesh(name);
+            }
+        }
     }
 
     constructor(worldId, preparer){
@@ -123,6 +131,16 @@
         mPlayerEntry_.setPosition(Vec3(mMapData_.width / 2, 0, -mMapData_.height / 2));
     }
 
+    function shutdown(){
+        //Destroy the land nodes before anything else so their items can be queried.
+        foreach(i in mRegionEntries_){
+            i.destroy();
+        }
+
+        base.shutdown();
+
+    }
+
     function getPositionForAppearEnemy_(enemyType){
         //TODO in future have a more sophisticated method to solve this, for instance spawn locations stored in entity defs.
         if(enemyType == EnemyId.SQUID){
@@ -155,10 +173,10 @@
             //::Base.mExplorationLogic.spawnEXPOrbs(mPlayerEntry_.getPosition(), 4);
             //mCurrentWorld_.spawnEXPOrbs(mCurrentWorld_.mPlayerEntry_.getPosition(), 1);
 
-            //gatewayEndExploration();
+            ::Base.mExplorationLogic.gatewayEndExploration();
             //::Base.mExplorationLogic.pushWorld(::Base.mExplorationLogic.createWorldInstance(WorldTypes.PROCEDURAL_EXPLORATION_WORLD));
 
-            ::_applyDamageOther(mEntityManager_, mPlayerEntry_.getEID(), 10000);
+            //::_applyDamageOther(mEntityManager_, mPlayerEntry_.getEID(), 10000);
         }
     }
 
