@@ -24,11 +24,16 @@
         layoutLine.addCell(title);
 
         //Add the buttons.
-        local buttonOptions = ["Explore again", "Back"];
+        local buttonOptions = ["Explore again", "Return to menu"];
         local buttonFunctions = [
             function(widget, action){
+                ::Base.mExplorationLogic.resetExploration();
+                ::ScreenManager.queueTransition(null, null, mLayerIdx);
             },
             function(widget, action){
+                ::ScreenManager.queueTransition(null, null, mLayerIdx);
+                ::ScreenManager.queueTransition(Screen.MAIN_MENU_SCREEN);
+                ::Base.mExplorationLogic.shutdown();
             }
         ];
         foreach(i,c in buttonOptions){

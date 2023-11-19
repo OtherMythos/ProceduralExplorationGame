@@ -45,7 +45,7 @@
     }
 
     function shutdown(){
-        if(mCurrentWorld_ == null) return;
+        if(mCurrentWorld_ == null || !mExplorationActive_) return;
         mCurrentWorld_.shutdown();
         foreach(i in mQueuedWorlds_){
             i.shutdown();
@@ -56,9 +56,11 @@
         _state.setPauseState(0);
 
         mExplorationActive_ = false;
+        mCurrentWorld_ = null;
     }
 
     function setup(){
+        if(mCurrentWorld_ != null || mExplorationActive_) return;
         mExplorationActive_ = true;
 
         _state.setPauseState(0);

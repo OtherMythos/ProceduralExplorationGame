@@ -81,6 +81,7 @@
         }
         function destroy(){
             if(mLandItem_ != null){
+                mLandNode_.getPosition();
                 local name = mLandItem_.getName();
                 mLandNode_.destroyNodeAndChildren();
                 //Remove afterwards so there are no references to it.
@@ -136,9 +137,9 @@
         foreach(i in mRegionEntries_){
             i.destroy();
         }
+        mRegionEntries_.clear();
 
         base.shutdown();
-
     }
 
     function getPositionForAppearEnemy_(enemyType){
@@ -173,10 +174,10 @@
             //::Base.mExplorationLogic.spawnEXPOrbs(mPlayerEntry_.getPosition(), 4);
             //mCurrentWorld_.spawnEXPOrbs(mCurrentWorld_.mPlayerEntry_.getPosition(), 1);
 
-            ::Base.mExplorationLogic.gatewayEndExploration();
+            //::Base.mExplorationLogic.gatewayEndExploration();
             //::Base.mExplorationLogic.pushWorld(::Base.mExplorationLogic.createWorldInstance(WorldTypes.PROCEDURAL_EXPLORATION_WORLD));
 
-            //::_applyDamageOther(mEntityManager_, mPlayerEntry_.getEID(), 10000);
+            ::_applyDamageOther(mEntityManager_, mPlayerEntry_.getEID(), 10000);
         }
     }
 
