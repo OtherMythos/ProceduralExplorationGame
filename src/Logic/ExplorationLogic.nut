@@ -79,7 +79,7 @@
                 created = ProceduralExplorationWorld(id, ProceduralExplorationWorldPreparer());
                 break;
             case WorldTypes.PROCEDURAL_DUNGEON_WORLD:
-                created = ProceduralDungeonWorld(id);
+                created = ProceduralDungeonWorld(id, ProceduralDungeonWorldPreparer());
                 break;
             case WorldTypes.VISITED_LOCATION_WORLD:
                 created = VisitedLocationWorld(id, "testVillage");

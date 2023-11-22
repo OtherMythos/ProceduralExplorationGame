@@ -6,29 +6,20 @@
     mMapData_ = null;
     mVoxMesh_ = null;
 
-    constructor(worldId){
-        base.constructor(worldId);
+    constructor(worldId, preparer){
+        base.constructor(worldId, preparer);
     }
 
+    #Override
     function getWorldType(){
         return WorldTypes.PROCEDURAL_DUNGEON_WORLD;
     }
 
-    function setup(){
+    #Override
+    function notifyPreparationComplete_(){
+        mReady_ = true;
         base.setup();
-
-        resetSessionGenMap();
-    }
-
-    function resetSessionGenMap(){
-        local gen = ::DungeonGen();
-        local data = {
-            "width": 50,
-            "height": 50,
-        };
-        local outData = gen.generate(data);
-
-        resetSession(outData);
+        resetSession(mWorldPreparer_.getOutputData());
     }
 
     function resetSession(mapData){
@@ -82,6 +73,7 @@
         updateCameraPosition();
     }
 
+    #Override
     function getZForPos(pos){
         return 1;
     }
@@ -129,6 +121,7 @@
         }
     }
 
+    #Override
     function getMapData(){
         return mMapData_;
     }
