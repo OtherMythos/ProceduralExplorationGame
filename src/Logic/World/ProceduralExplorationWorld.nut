@@ -378,6 +378,8 @@
         if(regionEntry != null){
             regionEntry.performArrival();
             ::PopupManager.displayPopup(Popup.REGION_DISCOVERED);
+
+            mGui_.mWorldMapDisplay_.mMapViewer_.notifyRegionFound(regionId);
         }
     }
 };

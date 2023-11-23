@@ -196,24 +196,38 @@ enum MapViewerColours{
         }
     }
     function fillBufferWithMapLean_(textureBox){
-        mMapData_.voxelBuffer.seek(0);
-        mMapData_.secondaryVoxBuffer.seek(0);
+        local buf = mMapData_.voxelBuffer;
+        local bufSecond = mMapData_.secondaryVoxBuffer;
+        buf.seek(0);
+        bufSecond.seek(0);
         local division = 1;
         local divWidth = mMapData_.width / division;
         local divHeight = mMapData_.height / division;
 
         local colourOcean = mColours_[MapViewerColours.OCEAN];
         local colourFreshWater = mColours_[MapViewerColours.FRESH_WATER];
+        local colourUndiscovered = mColours_[MapViewerColours.UNDISCOVRED_REGION];
+
+        local bufReadFunc = buf.readn.bindenv(buf);
+        local bufSecondReadFunc = bufSecond.readn.bindenv(bufSecond);
 
         for(local y = 0; y < divHeight; y++){
             //local yVal = (y.tofloat() / mMapData_.height) * 0x80;
             for(local x = 0; x < divWidth; x++){
 
                 { //Inline the writing.
-                    local voxVal = mMapData_.voxelBuffer.readn('i');
+                    local voxVal = bufReadFunc('i');
+                    //TODO split these up so I don't have to query each time.
+                    local region = (bufSecondReadFunc('i') >> 8) & 0xFF;
+
                     local altitude = voxVal & 0xFF;
                     if(altitude < mMapData_.seaLevel){
                         textureBox.writen(colourOcean, 'i');
+                        continue;
+                    }
+
+                    if(!mFoundRegions_.rawin(region)){
+                        textureBox.writen(colourUndiscovered, 'i');
                         continue;
                     }
 
@@ -229,8 +243,9 @@ enum MapViewerColours{
         }
 
         //Now determine some of the individual pixels
+        local width = mMapData_.width;
         foreach(i in mMapData_.placedItems){
-            textureBox.seek((i.originX + i.originY * mMapData_.width) * 4);
+            textureBox.seek((i.originX + i.originY * width) * 4);
             textureBox.writen(mColours_[MapViewerColours.COLOUR_BLACK], 'i');
         }
     }
