@@ -911,16 +911,18 @@ registerGenerationStage("Determine rivers", function(workspace){
     workspace.riverData <- riverData;
     workspace.riverBuffer <- riverBuffer;
 });
-registerGenerationStage("Determine biomes and regions", function(workspace){
-    local regionData = determineRegions(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.landData, workspace.landWeighted, workspace.data);
+registerGenerationStage("Determine regions", function(workspace){
+    workspace.regionData <- determineRegions(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.landData, workspace.landWeighted, workspace.data);
+});
+registerGenerationStage("Determine biomes", function(workspace){
     processBiomeTypes(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.data);
     local biomeData = floodFillBiomes(workspace.noiseBlob, workspace.data);
     determineFinalBiomes(workspace.noiseBlob, biomeData);
-    local placedItems = populateFinalBiomes(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.blueNoise, biomeData);
 
-    workspace.regionData <- regionData;
     workspace.biomeData <- biomeData;
-    workspace.placedItems <- placedItems;
+});
+registerGenerationStage("Place biome items", function(workspace){
+    workspace.placedItems <- populateFinalBiomes(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.blueNoise, workspace.biomeData);
 });
 registerGenerationStage("Determine places", function(workspace){
     workspace.placeData <- determinePlaces(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.landData, workspace.landWeighted, workspace.data);
