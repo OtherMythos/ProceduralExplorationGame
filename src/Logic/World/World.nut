@@ -35,6 +35,11 @@
     }
 };
 
+enum WorldMousePressContexts{
+    TARGET_ENEMY,
+    PLACING_FLAG,
+    ORIENTING_CAMERA
+};
 
 ::World <- class{
 
@@ -85,6 +90,49 @@
             return newNode;
         }
     };
+    /**
+     * A state machine to manage logic relating to mouse presses.
+     * If the player clicks an enemy the system shouldn't place location flags.
+     * Similarly if placing a flag the system shouldn't erroneously trigger a target.
+     */
+    MousePressContext = class{
+        mCurrentState_ = null;
+        mGui_ = null;
+
+        constructor(){
+
+        }
+        function update(){
+            //print("Mouse state: " + mCurrentState_);
+        }
+        function beginState_(state){
+            if(mCurrentState_ != null) return false;
+            mCurrentState_ = state;
+            if(mGui_) mGui_.notifyBlockInput(true);
+            return true;
+        }
+        function requestTargetEnemy(){
+            return beginState_(WorldMousePressContexts.TARGET_ENEMY);
+        }
+        function requestFlagLogic(){
+            return beginState_(WorldMousePressContexts.PLACING_FLAG);
+        }
+        function requestOrientingCamera(){
+            return beginState_(WorldMousePressContexts.ORIENTING_CAMERA);
+        }
+        function notifyMouseEnded(){
+            if(mCurrentState_ == null) return;
+            mCurrentState_ = null;
+            if(mGui_) mGui_.notifyBlockInput(false);
+        }
+        function getCurrentState(){
+            return mCurrentState_;
+        }
+        //TODO I don't like this, consider re-architecting
+        function setGuiObject(guiObj){
+            mGui_ = guiObj;
+        }
+    };
 
     mParentNode_ = null;
 
@@ -107,7 +155,6 @@
 
     mProjectileManager_ = null;
 
-    mRecentTargetEnemy_ = false;
     mPrevTargetEnemy_ = null;
     mCurrentTargetEnemy_ = null;
 
@@ -127,11 +174,9 @@
 
     mActiveGizmos_ = null;
 
-    mOrientatingCamera_ = false;
     mPrevMouseX_ = null;
     mPrevMouseY_ = null;
-
-    mPlacingMarker_ = false;
+    mMouseContext_ = null;
 
     mInputs_ = null;
 
@@ -144,6 +189,8 @@
         mLocationFlagNodes_ = {};
         mActiveGizmos_ = {};
         mActiveWorldActions_ = [];
+
+        mMouseContext_ = MousePressContext();
 
         mRotation_ = Vec2(PI*0.5, PI*0.4);
         mPosition_ = Vec3();
@@ -255,14 +302,21 @@
         checkCameraChange();
         checkOrientatingCamera();
         checkHighlightEnemy();
-        checkTargetEnemy();
         checkPlayerMove();
+        checkTargetEnemy();
+        checkForFlagPlacement();
+        checkForFlagUpdate();
         checkForEnemyAppear();
         checkForDistractionAppear();
         checkPlayerInputs();
 
         mProjectileManager_.update();
         mEntityManager_.update();
+
+        if(!_input.getMouseButton(0)){
+            mMouseContext_.notifyMouseEnded();
+        }
+        mMouseContext_.update();
 
         mPlayerEntry_.update();
         foreach(i in mActiveEnemies_){
@@ -321,6 +375,7 @@
 
     function setGuiObject(guiObject){
         mGui_ = guiObject;
+        mMouseContext_.setGuiObject(guiObject);
     }
 
     function performPlayerMove(moveId){
@@ -366,13 +421,8 @@
 
                     local enemy = getEntityForPosition(parent.getPositionVec3());
                     if(enemy != null){
-
-                        if(_input.getMouseButton(0)){
-                            setCurrentTargetEnemy_sceneSafe(enemy);
-                        }else{
-                            setCurrentHighlightEnemy(enemy);
-                            return;
-                        }
+                        setCurrentHighlightEnemy(enemy);
+                        return;
                     }
                 }
             }
@@ -394,16 +444,6 @@
     function setCurrentHighlightEnemy(enemy){
         mPreviousHighlightEnemy_ = mCurrentHighlightEnemy_;
         mCurrentHighlightEnemy_ = enemy;
-    }
-
-    function setCurrentTargetEnemy_sceneSafe(currentEnemy){
-        assert(currentEnemy != null);
-
-        mPrevTargetEnemy_ = mCurrentTargetEnemy_;
-        mCurrentTargetEnemy_ = currentEnemy;
-        mRecentTargetEnemy_ = true;
-
-        mTargetManager_.targetEntity(mActiveEnemies_[currentEnemy], mPlayerEntry_);
     }
 
     function notifyNewEntityHealth(entity, newHealth, newPercentage){
@@ -457,13 +497,6 @@
         if(mGui_) mGui_.notifyHighlightEnemy(enemy);
     }
 
-    //Unfortunately as the scene is safe when the target enemy is registered I have to check this later.
-    function checkTargetEnemy(){
-        if(!mRecentTargetEnemy_) return;
-        if(!mCurrentTargetEnemy_) return;
-
-        setTargetEnemy(mCurrentTargetEnemy_);
-    }
     function setTargetEnemy(target){
         if(mActiveEnemies_.rawin(mPrevTargetEnemy_)){
             mActiveEnemies_[mPrevTargetEnemy_].setGizmo(null);
@@ -474,6 +507,8 @@
             e = mActiveEnemies_[target];
             local gizmo = createGizmo(e.getPosition(), ExplorationGizmos.TARGET_ENEMY);
             e.setGizmo(gizmo);
+
+            mTargetManager_.targetEntity(mActiveEnemies_[target], mPlayerEntry_);
         }else{
             if(mActiveEnemies_.rawin(mCurrentTargetEnemy_)){
                 local entity = mActiveEnemies_[mCurrentTargetEnemy_];
@@ -485,8 +520,42 @@
         mGui_.notifyPlayerTarget(e);
     }
 
+    function checkTargetEnemy(){
+        if(!_input.getMouseButton(0) || mMouseContext_.getCurrentState() != null) return;
+        if(mCurrentHighlightEnemy_ == null) return;
+
+        setTargetEnemy(mCurrentHighlightEnemy_);
+
+        local result = mMouseContext_.requestTargetEnemy();
+        //Just because we've gone to the effort to check if the state is null.
+        assert(result);
+
+        mPrevTargetEnemy_ = mCurrentTargetEnemy_;
+        mCurrentTargetEnemy_ = mCurrentHighlightEnemy_;
+    }
+    function checkForFlagPlacement(){
+        if(!mGui_) return;
+        if(!_input.getMouseButton(0) || mMouseContext_.getCurrentState() != null) return;
+
+        local inWindow = mGui_.checkPlayerInputPosition(_input.getMouseX(), _input.getMouseY());
+        if(inWindow != null){
+            //The first touch of the mouse.
+            queuePlayerFlagForWindowTouch(inWindow);
+            local result = mMouseContext_.requestFlagLogic();
+            assert(result);
+        }
+    }
+    function checkForFlagUpdate(){
+        if(mMouseContext_.getCurrentState() == WorldMousePressContexts.PLACING_FLAG){
+            if(mGui_){
+                local inWindow = mGui_.checkPlayerInputPosition(_input.getMouseX(), _input.getMouseY());
+                if(inWindow != null){
+                    updatePositionOfCurrentFlag(inWindow);
+                }
+            }
+        }
+    }
     function checkPlayerMove(){
-        //TODO ewww clean this up.
         local moved = false;
         local xVal = _input.getAxisActionX(mInputs_.move, _INPUT_ANY);
         local yVal = _input.getAxisActionY(mInputs_.move, _INPUT_ANY);
@@ -505,7 +574,6 @@
         //Try and walk to the queued position.
         local targetIdx = -1;
         local targetPos = null;
-        //Perform first so the later checks will take precedent.
         if(mCurrentTargetEnemy_ != null){
             local targetEntity = mTargetManager_.getTargetForEntity(mPlayerEntry_);
             local enemyPos = targetEntity.getPosition();
@@ -516,45 +584,14 @@
                 targetPos = enemyPos + (Vec3(4, 0, 4) * dir);
             }
         }
-
-
-        if(_input.getMouseButton(0) && !mOrientatingCamera_ && !mRecentTargetEnemy_){
-            if(mGui_){
-                local inWindow = mGui_.checkPlayerInputPosition(_input.getMouseX(), _input.getMouseY());
-                if(inWindow != null){
-                    if(!mPlacingMarker_){
-                        //The first touch of the mouse.
-                        queuePlayerFlagForWindowTouch(inWindow);
-                    }else{
-                        updatePositionOfCurrentFlag(inWindow);
-                    }
-                    mPlacingMarker_ = true;
-
-                    mGui_.notifyBlockInput(true);
-                }
-            }
-        }else{
-            mPlacingMarker_ = false;
-            mGui_.notifyBlockInput(false);
-        }
         if(moved){
             movePlayer(dir);
-            return;
         }
-
-        mRecentTargetEnemy_ = false;
 
         for(local i = 0; i < NUM_PLAYER_QUEUED_FLAGS; i++){
             if(mQueuedFlags_[i] != null){
                 targetPos = mQueuedFlags_[i][0];
                 targetIdx = i;
-            }
-        }
-        if(targetPos == null){
-            local disableAutoMove = _settings.getUserSetting("disableAutoMove");
-            if(!disableAutoMove){
-                //If no queued flags were found use the system intended location.
-                targetPos = getSystemDeterminedFlag();
             }
         }
         if(targetPos != null){
@@ -567,8 +604,6 @@
                     removeLocationFlag(mQueuedFlags_[targetIdx][1]);
                     mQueuedFlags_[targetIdx] = null;
                 }
-
-                //if(mCurrentTargetEnemy_) performPlayerAttack();
             }
         }
     }
@@ -839,11 +874,10 @@
     }
 
     function setOrientatingCamera(orientate){
-        mOrientatingCamera_ = orientate;
+        mMouseContext_.requestOrientingCamera();
     }
     function checkOrientatingCamera(){
-
-        if(!mOrientatingCamera_) return;
+        if(mMouseContext_.getCurrentState() != WorldMousePressContexts.ORIENTING_CAMERA) return;
         print("orientating");
 
         if(_input.getMouseButton(0)){
@@ -862,7 +896,6 @@
             if(mPrevMouseX_ != null && mPrevMouseY_ != null){
                 mPrevMouseX_ = null;
                 mPrevMouseY_ = null;
-                mOrientatingCamera_ = false;
             }
         }
     }
