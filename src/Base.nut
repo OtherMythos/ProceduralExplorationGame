@@ -134,6 +134,7 @@
         _doFile("res://src/Logic/World/ProceduralDungeonWorld.nut");
         _doFile("res://src/Logic/World/WorldPreparer.nut");
         _doFile("res://src/Logic/World/ProceduralExplorationWorldPreparer.nut");
+        _doFile("res://src/Logic/World/ProceduralDungeonWorldPreparer.nut");
         _doFile("res://src/Logic/ExplorationLogic.nut");
         _doFile("res://src/Logic/ExplorationProjectileManager.nut");
         _doFile("res://src/Logic/CombatLogic.nut");
