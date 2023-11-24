@@ -46,9 +46,9 @@
     function resetSessionGenMap(){
         local gen = ::MapGen();
         local data = {
-            "seed": 77749,
-            "moistureSeed": 84715,
-            "variation": 0,
+            "seed": _random.randInt(1000),
+            "moistureSeed": _random.randInt(1000),
+            "variation": _random.randInt(1000),
             "width": 400,
             "height": 400,
             "numRivers": 24,
