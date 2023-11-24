@@ -1,4 +1,5 @@
 function start(){
+    _doFile("res://src/Versions.nut");
     _doFile("res://src/Constants.nut");
     _doFile("res://src/MapGen/Exploration/Generator/MapConstants.nut");
 

@@ -23,6 +23,7 @@
     }
 
     function setup(){
+        printVersionInfos();
         checkUserParams();
 
         //TODO move this somewhere else.
@@ -105,6 +106,7 @@
 
         _doFile("res://src/GUI/ScreenManager.nut");
         _doFile("res://src/GUI/EffectAnimationRenderWindow.nut");
+        _doFile("res://src/GUI/VersionInfoWindow.nut");
         ::ScreenManager.setup();
         _doFile("res://src/GUI/Screens/Screen.nut");
         _doFile("res://src/GUI/Screens/MainMenuScreen.nut");
@@ -224,6 +226,76 @@
     function setupBaseMaterials(){
         local datablock = _hlms.getDatablock("baseVoxelMaterial");
         datablock.setUserValue(0, 0.5, 0, 0, 0);
+    }
+
+    function determineGitHash(){
+        if(getconsttable().rawin("GIT_HASH")){
+            return getconsttable().rawget("GIT_HASH");
+        }
+
+        //Otherwise try and read it from the git directory.
+        local directory = _settings.getDataDirectory();
+        local path = directory + "/.git/refs/heads/master";
+        if(_system.exists(path)){
+            local f = File();
+            f.open(path);
+            local hash = f.getLine();
+            return hash.slice(0, 8);
+        }
+
+        return null;
+    }
+    function getVersionInfo(){
+        local hash = determineGitHash();
+        local suffix = VERSION_SUFFIX;
+        if(hash != null){
+            suffix += ("-" + hash);
+        }
+
+        local versionTotal = format("%i.%i.%i-%s", VERSION_MAX, VERSION_MIN, VERSION_PATCH, suffix);
+        local engine = _settings.getEngineVersion();
+        local engineVersionTotal = format("Engine: %i.%i.%i-%s", engine.major, engine.minor, engine.patch, engine.suffix);
+
+        return {
+            "info": versionTotal,
+            "engineInfo": engineVersionTotal
+        };
+    }
+
+    function printVersionInfos(){
+        local infos = getVersionInfo();
+        local strings = [];
+        strings.append(GAME_TITLE.toupper());
+        strings.append(infos.info);
+        strings.append(infos.engineInfo);
+
+        local max = 0;
+        foreach(i in strings){
+            local len = i.len();
+            if(len > max){
+                max = len;
+            }
+        }
+
+        local decorator = "";
+        local padding = "** ";
+        local paddingRight = " **";
+        local maxExtent = max + (padding.len() * 2);
+        for(local i = 0; i < maxExtent; i++){
+            decorator += "*";
+        }
+
+        print(decorator);
+        foreach(i in strings){
+            local starting = padding + i;
+            local remainder = maxExtent - starting.len() - padding.len();
+            local spaces = "";
+            for(local i = 0; i < remainder; i++){
+                spaces += " ";
+            }
+            print(starting + spaces + paddingRight);
+        }
+        print(decorator);
     }
 
 };
