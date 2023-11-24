@@ -163,8 +163,9 @@ local ObjAnim = class{
         local title = mWindow_.createLabel();
         title.setDefaultFontSize(title.getDefaultFontSize() * 2);
         title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
+        title.setGridLocation(_GRID_LOCATION_CENTER);
         title.setText("Exploration Complete");
-        title.setSize(winWidth, title.getSize().y);
+        title.sizeToFit(mWindow_.getSizeAfterClipping().x);
         title.setTextColour(0, 0, 0, 1);
         layoutLine.addCell(title);
 
