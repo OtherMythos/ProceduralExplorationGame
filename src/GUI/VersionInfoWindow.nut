@@ -16,7 +16,12 @@
         local totalText = versionData.info;
         label.setText(totalText);
 
-        label.setPosition(winSize - label.getSize());
+        if(::Base.getTargetInterface() == TargetInterface.MOBILE){
+            local labelSize = label.getSize();
+            label.setPosition(winSize.x / 2 - labelSize.x/2, winSize.y - labelSize.y);
+        }else{
+            label.setPosition(winSize - label.getSize());
+        }
     }
 
 };
