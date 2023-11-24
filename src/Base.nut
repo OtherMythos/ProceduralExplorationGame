@@ -110,6 +110,7 @@
         ::ScreenManager.setup();
         _doFile("res://src/GUI/Screens/Screen.nut");
         _doFile("res://src/GUI/Screens/MainMenuScreen.nut");
+        _doFile("res://src/GUI/Screens/HelpScreen.nut");
         _doFile("res://src/GUI/Screens/SaveSelectionScreen.nut");
         _doFile("res://src/GUI/Screens/GameplayMainMenuScreen.nut");
         _doFile("res://src/GUI/Screens/Exploration/ExplorationScreen.nut");
@@ -165,8 +166,9 @@
         //TODO temporary to setup the logic. Really a new combatData would be pushed at the start of a new combat.
         //mCombatLogic = CombatLogic(mCurrentCombatData);
 
-        //::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
-        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
+        ::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
+        //::ScreenManager.transitionToScreen(Screen.HELP_SCREEN);
+        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COMBAT_SCREEN, {"logic": mCombatLogic}));
         //::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);
         //::ScreenManager.transitionToScreen(Screen.WORLD_GENERATION_STATUS_SCREEN, null, 1);

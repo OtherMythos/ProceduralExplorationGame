@@ -13,7 +13,7 @@
         local title = mWindow_.createLabel();
         title.setDefaultFontSize(title.getDefaultFontSize() * 2);
         title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
-        title.setText("Text based game", false);
+        title.setText(GAME_TITLE, false);
         title.sizeToFit(_window.getWidth() * 0.9);
         layoutLine.addCell(title);
 
@@ -23,7 +23,7 @@
                 ::ScreenManager.transitionToScreen(Screen.SAVE_SELECTION_SCREEN);
             },
             function(widget, action){
-                print("Help");
+                ::ScreenManager.transitionToScreen(Screen.HELP_SCREEN);
             }
         ]
 
