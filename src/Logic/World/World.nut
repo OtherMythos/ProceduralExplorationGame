@@ -298,6 +298,18 @@ enum WorldMousePressContexts{
         mEntityManager_.moveTowards(sender, mPlayerEntry_.getPosition(), anim);
     }
 
+    function checkDebugBodges(){
+        if(_input.getMousePressed(1)){
+            //::Base.mExplorationLogic.spawnEXPOrbs(mPlayerEntry_.getPosition(), 4);
+            //mCurrentWorld_.spawnEXPOrbs(mCurrentWorld_.mPlayerEntry_.getPosition(), 1);
+
+            ::Base.mExplorationLogic.gatewayEndExploration();
+            //::Base.mExplorationLogic.pushWorld(::Base.mExplorationLogic.createWorldInstance(WorldTypes.PROCEDURAL_EXPLORATION_WORLD));
+
+            //::_applyDamageOther(mEntityManager_, mPlayerEntry_.getEID(), 10000);
+        }
+    }
+
     function update(){
         checkCameraChange();
         checkOrientatingCamera();
@@ -309,6 +321,8 @@ enum WorldMousePressContexts{
         checkForEnemyAppear();
         checkForDistractionAppear();
         checkPlayerInputs();
+
+        checkDebugBodges();
 
         mProjectileManager_.update();
         mEntityManager_.update();
