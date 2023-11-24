@@ -129,7 +129,12 @@
         setupPlaces();
         createPlacedItems();
 
-        mPlayerEntry_.setPosition(Vec3(mMapData_.width / 2, 0, -mMapData_.height / 2));
+        local startX = (mMapData_.playerStart >> 16) & 0xFFFF;
+        local startY = mMapData_.playerStart & 0xFFFF;
+        local pos = Vec3(startX, 0, -startY);
+        pos.y = getZForPos(pos);
+        mPlayerEntry_.setPosition(pos);
+        notifyPlayerMoved();
     }
 
     function shutdown(){
@@ -379,7 +384,9 @@
             regionEntry.performArrival();
             ::PopupManager.displayPopup(Popup.REGION_DISCOVERED);
 
-            mGui_.mWorldMapDisplay_.mMapViewer_.notifyRegionFound(regionId);
+            if(mGui_.mWorldMapDisplay_.mMapViewer_ != null){
+                mGui_.mWorldMapDisplay_.mMapViewer_.notifyRegionFound(regionId);
+            }
         }
     }
 };

@@ -611,6 +611,12 @@
         });
     }
 
+    function determinePlayerStart(landData, landWeighted){
+        //Just go with the biggest for now.
+        local data = landData[0];
+        return findRandomPointInLandmass(data);
+    }
+
     function findRandomPointInLandmass(landData){
         local randIndex = _random.randIndex(landData.coords);
         return landData.coords[randIndex];
@@ -846,7 +852,8 @@
             "seaLevel": data.seaLevel,
             "placeData": workspace.placeData,
             "placedItems": workspace.placedItems,
-            "regionData": workspace.regionData
+            "regionData": workspace.regionData,
+            "playerStart": workspace.playerStart,
             "stats": {
                 "totalSeconds": mTimer_.getSeconds()
             }
@@ -926,4 +933,7 @@ registerGenerationStage("Place biome items", function(workspace){
 });
 registerGenerationStage("Determine places", function(workspace){
     workspace.placeData <- determinePlaces(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.landData, workspace.landWeighted, workspace.data);
+});
+registerGenerationStage("Determine player start", function(workspace){
+    workspace.playerStart <- determinePlayerStart(workspace.landData, workspace.landWeighted);
 });
