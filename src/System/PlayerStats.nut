@@ -44,20 +44,25 @@
         mPlayerCombatStats.mEquippedItems.setEquipped(item, slot);
     }
 
+    function getPercentageEXP(exp){
+        local level = getLevelForEXP_(exp);
+        return getPercentageForLevel_(level, exp);
+    }
     function getLevelForEXP_(exp){
         foreach(c,i in EXP_LEVELS){
-            if(exp < i) return c-1;
+            if(exp < i) return c;
         }
         return EXP_LEVELS.len();
     }
     function getPercentageForLevel_(level, exp){
-        local currentLevel = EXP_LEVELS[level];
+        if(level >= EXP_LEVELS.len()-1) return 1.0;
+        local currentLevel = getEXPForLevel(level);
         assert(exp >= currentLevel);
-        if(currentLevel >= EXP_LEVELS.len()-1) return EXP_LEVELS.len();
 
-        local diff = EXP_LEVELS[level+1] - currentLevel;
+        local diff = getEXPForLevel(level+1) - currentLevel;
         local delta = exp-currentLevel;
         local percentage = delta.tofloat() / diff.tofloat();
+        assert(percentage <= 1.0);
 
         return percentage;
     }
@@ -66,21 +71,36 @@
         local prevLevel = getLevelForEXP_(prevEXP);
         mPlayerCurrentEXP_ += exp;
         local newLevel = getLevelForEXP_(prevEXP);
+        assert(prevLevel > 0);
+        assert(newLevel > 0);
 
-        local percentage = getPercentageForLevel_(newLevel, mPlayerCurrentEXP_);
-        local startPercentage = getPercentageForLevel_(prevLevel, prevEXP);
+        local percentage = getPercentageEXP(mPlayerCurrentEXP_);
+        local startPercentage = getPercentageEXP(prevEXP);
         local data = {
             "startLevel": prevLevel,
             "endLevel": newLevel,
             "startPercentage": startPercentage,
             "endPercentage": percentage,
+            "startEXP": prevEXP,
+            "endEXP": mPlayerCurrentEXP_
         }
 
         return data;
     }
+    function getEXPForLevel(level){
+        local target = level-1;
+        if(target < 0) return EXP_LEVELS[0];
+        return EXP_LEVELS[target];
+    }
+    function getEXPForSingleLevel(level){
+        local start = getEXPForLevel(level);
+        local end = getEXPForLevel(level+1);
+        return end - start;
+    }
 
 
     EXP_LEVELS = [
+        //NOTE: You're level 1 if you have 0 EXP, there is no level 0.
         0,
         83,
         174,

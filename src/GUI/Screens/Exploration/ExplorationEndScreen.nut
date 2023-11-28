@@ -89,26 +89,23 @@ local ObjAnim = class{
         mObjAnim_ = null;
 
         mOrbsToAdd_ = 0;
+        mOrbsAdded_ = 0;
 
         mStartPos_ = null;
         mEndPos_ = null;
         mLevelData_ = null;
         function start(data){
+            mTotalCount_ = data.data.foundEXPOrbs;
+            mOrbsToAdd_ = data.data.foundEXPOrbs;
+            mLevelData_ = ::Base.mPlayerStats.addEXP(mOrbsToAdd_);
+            setLabel(0, data);
+
             data.components[ExplorationScreenComponents.EXP_PROGRESS].setVisible(true);
 
             //TOOD assume the final is the xp orb counter, ensure this in future.
             mStartPos_ = ::EffectManager.getWorldPositionForWindowPos(data.components[ExplorationScreenComponents.TEXT_ENTRIES].top().getDerivedCentre());
             mEndPos_ = ::EffectManager.getWorldPositionForWindowPos(data.components[ExplorationScreenComponents.EXP_PROGRESS].getDerivedCentre());
 
-            mTotalCount_ = data.data.foundEXPOrbs;
-            mOrbsToAdd_ = data.data.foundEXPOrbs;
-
-            mLevelData_ = ::Base.mPlayerStats.addEXP(mOrbsToAdd_);
-
-            //"startLevel": prevLevel,
-            //"endLevel": endLevel,
-            //"levelPercentage": percentage,
-            //"startPercentage": startPercentage,
             data.components[ExplorationScreenComponents.EXP_PROGRESS].setPercentage(mLevelData_.startPercentage);
         }
         function update(p, data){
@@ -116,9 +113,21 @@ local ObjAnim = class{
                 ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_EXP_ORB_EFFECT, {"numOrbs": 1, "start": mStartPos_, "end": mEndPos_, "orbScale": 0.2}));
             }
             mOrbsToAdd_--;
+            mOrbsAdded_++;
 
-            local percentageDiff = mLevelData_.endPercentage - mLevelData_.startPercentage;
-            data.components[ExplorationScreenComponents.EXP_PROGRESS].setPercentage(mLevelData_.startPercentage + percentageDiff * p);
+            local currentEXP = mLevelData_.startEXP + mOrbsAdded_;
+            local finalAnim = ::Base.mPlayerStats.getPercentageEXP(currentEXP);
+
+            data.components[ExplorationScreenComponents.EXP_PROGRESS].setPercentage(finalAnim);
+            setLabel(currentEXP, data);
+        }
+        function setLabel(currentEXP, data){
+            local level = ::Base.mPlayerStats.getLevelForEXP_(currentEXP);
+            local expForLevel = ::Base.mPlayerStats.getEXPForLevel(level);
+            local total = ::Base.mPlayerStats.getEXPForSingleLevel(level+1);
+            local diff = currentEXP - expForLevel;
+
+            data.components[ExplorationScreenComponents.EXP_PROGRESS].setLabel(format("%i/%i", diff, total));
         }
     };
     ExplorationEndScreenAnimStateMachine.mStates_[ExplorationScreenComponents.END_BUTTONS] = class extends ::Util.State{
