@@ -1,5 +1,5 @@
 ::test_createDestroyEntity <- function(){
-    local manager = ::EntityManager.createEntityManager();
+    local manager = ::EntityManager.createEntityManager(null);
 
     local entity = manager.createEntity(Vec3());
     _test.assertEqual(entity, 0x0);
@@ -40,7 +40,7 @@
 }
 
 ::test_assignComponents <- function(){
-    local manager = ::EntityManager.createEntityManager();
+    local manager = ::EntityManager.createEntityManager(null);
 
     local entity = manager.createEntity(Vec3());
 
@@ -60,6 +60,39 @@
 
     manager.removeComponent(entity, EntityComponents.COLLISION_POINT);
     _test.assertFalse(manager.hasComponent(entity, EntityComponents.COLLISION_POINT));
+}
+
+::test_destroyAllEntities <- function(){
+    local manager = ::EntityManager.createEntityManager(null);
+
+    local createEntity = function(entities, i){
+        local entity = manager.createEntity(Vec3());
+        local healthVal = i * 10;
+        manager.assignComponent(entity, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](healthVal));
+        manager.assignComponent(entity, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](null, false));
+
+        _test.assertTrue(manager.hasComponent(entity, EntityComponents.HEALTH));
+        local component = manager.getComponent(entity, EntityComponents.HEALTH);
+        _test.assertNotEqual(component, null);
+        _test.assertEqual(component.mHealth, healthVal);
+
+        print(entity);
+        entities.append(entity);
+    }
+
+    //Create two entities, each with a component to test the logic.
+    local entities = [];
+    for(local i = 0; i < 2; i++){
+        createEntity(entities, i);
+    }
+
+    //Destroy one so there's one destroyed and one active.
+    manager.destroyEntity(entities[0]);
+
+    createEntity(entities, 0);
+
+    manager.destroyAllEntities();
+
 }
 
 //TODO check that destroying an entity destroys all its components.

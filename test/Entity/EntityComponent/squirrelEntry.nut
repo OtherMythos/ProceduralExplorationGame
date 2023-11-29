@@ -9,7 +9,8 @@ function start(){
 
     local tests = [
         test_createDestroyEntity,
-        test_assignComponents
+        test_assignComponents,
+        test_destroyAllEntities
     ];
     foreach(c,i in tests){
         printf("====== test %i ======", c);

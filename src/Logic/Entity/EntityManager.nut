@@ -176,7 +176,7 @@ EntityManager.EntityManager <- class{
     function destroyAllEntities(){
         foreach(c,i in mEntityComponentHashes_){
             if(i == null) continue;
-            local eid = (c & 0x3FFFFFFF) | ((mVersions_[c] << 30) & 0x3FFFFFFF) | (mId << 60);
+            local eid = (c & 0x3FFFFFFF) | ((mVersions_[c] << 30)) | (mId << 60);
 
             processEntityDestruction_(eid, c);
             mEntityComponentHashes_[c] = null;
