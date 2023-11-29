@@ -66,6 +66,7 @@
         _state.setPauseState(0);
 
         setCurrentWorld_(createWorldInstance(WorldTypes.PROCEDURAL_EXPLORATION_WORLD));
+        //setCurrentWorld_(createWorldInstance(WorldTypes.PROCEDURAL_DUNGEON_WORLD));
 
         _event.subscribe(Event.PLAYER_DIED, processPlayerDeath, this);
     }

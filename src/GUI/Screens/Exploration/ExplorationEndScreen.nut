@@ -98,7 +98,7 @@ local ObjAnim = class{
             mTotalCount_ = data.data.foundEXPOrbs;
             mOrbsToAdd_ = data.data.foundEXPOrbs;
             mLevelData_ = ::Base.mPlayerStats.addEXP(mOrbsToAdd_);
-            setLabel(0, data);
+            setLabel(mLevelData_.startEXP, data);
 
             data.components[ExplorationScreenComponents.EXP_PROGRESS].setVisible(true);
 
@@ -112,6 +112,7 @@ local ObjAnim = class{
             if(mOrbsToAdd_ > 0){
                 ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_EXP_ORB_EFFECT, {"numOrbs": 1, "start": mStartPos_, "end": mEndPos_, "orbScale": 0.2}));
             }
+            if(mOrbsToAdd_ <= 0) return;
             mOrbsToAdd_--;
             mOrbsAdded_++;
 
@@ -124,7 +125,7 @@ local ObjAnim = class{
         function setLabel(currentEXP, data){
             local level = ::Base.mPlayerStats.getLevelForEXP_(currentEXP);
             local expForLevel = ::Base.mPlayerStats.getEXPForLevel(level);
-            local total = ::Base.mPlayerStats.getEXPForSingleLevel(level+1);
+            local total = ::Base.mPlayerStats.getEXPForSingleLevel(level);
             local diff = currentEXP - expForLevel;
 
             data.components[ExplorationScreenComponents.EXP_PROGRESS].setLabel(format("%i/%i", diff, total));
