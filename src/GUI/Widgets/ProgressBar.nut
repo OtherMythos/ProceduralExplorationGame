@@ -83,6 +83,9 @@
     function getCentre(){
         return mParentContainer_.getCentre();
     }
+    function getDerivedPosition(){
+        return mParentContainer_.getDerivedPosition();
+    }
     function getDerivedCentre(){
         return mParentContainer_.getDerivedCentre();
     }

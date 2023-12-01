@@ -215,6 +215,9 @@ enum WorldMousePressContexts{
     function getWorldType(){
         return WorldTypes.WORLD;
     }
+    function getWorldTypeString(){
+        return "World";
+    }
     function getDamageWorld(){
         return mDamageCollisionWorld_;
     }
@@ -344,13 +347,6 @@ enum WorldMousePressContexts{
 
     function setCurrentWorld(current){
         mCurrent_ = current;
-        if(current){
-
-        }else{
-
-        }
-
-        //mParentNode_.setVisible(current, true);
         processWorldCurrentChange_(current);
     }
 

@@ -11,7 +11,7 @@
 
         local layoutLine = _gui.createLayoutLine();
 
-        local buttonOptions = ["Trigger popup", "Trigger Region Discovered popup", "Trigger spread coin effect", "Trigger linear coin effect", "Trigger linear orb effect", "Generate render icon"];
+        local buttonOptions = ["Trigger popup", "Trigger Region Discovered popup", "Trigger spread coin effect", "Trigger linear coin effect", "Trigger linear orb effect", "Trigger single text popup", "Generate render icon"];
         local buttonFunctions = [
             function(widget, action){
                 ::PopupManager.displayPopup(Popup.BOTTOM_OF_SCREEN);
@@ -27,6 +27,9 @@
             },
             function(widget, action){
                 ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_EXP_ORB_EFFECT, {"numOrbs": 10, "start": Vec2(0, 0), "end": Vec2(-4, -4), "orbScale": 0.1}));
+            },
+            function(widget, action){
+                ::PopupManager.displayPopup(::PopupManager.PopupData(Popup.SINGLE_TEXT, {"text": "You clicked the mouse", "posX": _input.getMouseX(), "posY": _input.getMouseY(), "fontMultiplier": 1.5, "lifespan": 50, "fadeInTime": 10}));
             },
             function(widget, action){
                 local renderIcon = ::RenderIconManager.createIcon("cube");

@@ -113,6 +113,7 @@ enum Popup{
     BOTTOM_OF_SCREEN,
     ENCOUNTER,
     REGION_DISCOVERED,
+    SINGLE_TEXT,
 
     MAX
 };
