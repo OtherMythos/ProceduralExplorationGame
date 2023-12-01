@@ -95,15 +95,16 @@
      * Set the provided world to be active, de-activating and queuing the previous.
     */
     function pushWorld(worldInstance){
+        printf("Pushing world instance '%s'", worldInstance.getWorldTypeString());
         mCurrentWorld_.setCurrentWorld(false);
         mQueuedWorlds_.append(mCurrentWorld_);
         setCurrentWorld_(worldInstance);
     }
     function setCurrentWorld(worldInstance){
-        if(mCurrentWorld_ != null) mCurrentWorld_.shutdown();
         setCurrentWorld_(worldInstance);
     }
     function setCurrentWorld_(worldInstance){
+        if(mCurrentWorld_ != null) mCurrentWorld_.processWorldActiveChange_(false);
         mCurrentWorld_ = worldInstance;
         mCurrentWorld_.setGuiObject(mGui_);
         mCurrentWorld_.setCurrentWorld(true);

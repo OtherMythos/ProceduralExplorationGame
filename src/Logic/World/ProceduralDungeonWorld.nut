@@ -14,6 +14,10 @@
     function getWorldType(){
         return WorldTypes.PROCEDURAL_DUNGEON_WORLD;
     }
+    #Override
+    function getWorldTypeString(){
+        return "Dungeon";
+    }
 
     #Override
     function notifyPreparationComplete_(){

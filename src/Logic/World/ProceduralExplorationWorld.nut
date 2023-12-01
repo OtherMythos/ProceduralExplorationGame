@@ -101,8 +101,13 @@
         return mMapData_;
     }
 
+    #Override
     function getWorldType(){
         return WorldTypes.PROCEDURAL_EXPLORATION_WORLD;
+    }
+    #Override
+    function getWorldTypeString(){
+        return "Procedural Exploration";
     }
 
     #Override
@@ -300,11 +305,16 @@
         return ::MapGenHelpers.getIsWaterForPosition(mMapData_, pos);
     }
 
+    #Override
     function processWorldActiveChange_(active){
         //Re-check the visibility of the nodes.
         foreach(i in mRegionEntries_){
             i.setWorldActive(active);
         }
+    }
+    #Override
+    function processWorldCurrentChange_(current){
+        if(mParentNode_ != null) mParentNode_.setVisible(current);
     }
 
     function notifyPlayerVoxelChange(){

@@ -18,8 +18,13 @@
         mTargetMap_ = targetMap;
     }
 
+    #Override
     function getWorldType(){
         return WorldTypes.VISITED_LOCATION_WORLD;
+    }
+    #Override
+    function getWorldTypeString(){
+        return "Visited Location";
     }
 
     function setup(){
