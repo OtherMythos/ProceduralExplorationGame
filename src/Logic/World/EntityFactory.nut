@@ -28,7 +28,7 @@
         local equipped = ::Combat.EquippedItems();
         local targetItem = ::Item(ItemId.SIMPLE_TWO_HANDED_SWORD);
         equipped.setEquipped(targetItem, EquippedSlotTypes.LEFT_HAND);
-        local combatData = ::Combat.CombatStats(EnemyId.NONE, 0, equipped);
+        //local combatData = ::Combat.CombatStats(EnemyId.NONE, 0, equipped);
         playerEntry.setTargetCollisionWorld(_COLLISION_ENEMY);
 
         playerEntry.setId(-1);

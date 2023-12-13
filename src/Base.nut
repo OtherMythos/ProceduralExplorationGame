@@ -1,13 +1,9 @@
 ::Base <- {
-    "mExplorationLogic": null,
-    "mCombatLogic": null,
+    mExplorationLogic = null
 
-    //TODO this will be created on encounter in the future.
-    "mCurrentCombatData": null,
-
-    "mInventory": null,
-    "mPlayerStats": null,
-    "mDialogManager": null,
+    mInventory = null
+    mPlayerStats = null
+    mDialogManager = null
     mInputManager = null
 
     mTargetInterface_ = TargetInterface.DESKTOP
@@ -34,7 +30,6 @@
 
         _gui.loadSkins("res://assets/skins/ui.json");
 
-        _doFile("res://src/Helpers.nut");
         _doFile("res://src/System/InputManager.nut");
         _doFile("res://src/Util/VoxToMesh.nut");
         _doFile("res://src/Util/IdPool.nut");
@@ -115,15 +110,10 @@
         _doFile("res://src/GUI/Screens/SaveSelectionScreen.nut");
         _doFile("res://src/GUI/Screens/GameplayMainMenuScreen.nut");
         _doFile("res://src/GUI/Screens/Exploration/ExplorationScreen.nut");
-        _doFile("res://src/GUI/Screens/EncounterPopupScreen.nut");
-        _doFile("res://src/GUI/Screens/Combat/CombatScreen.nut");
         _doFile("res://src/GUI/Screens/ItemInfoScreen.nut");
         _doFile("res://src/GUI/Screens/InventoryScreen.nut");
         _doFile("res://src/GUI/Screens/VisitedPlacesScreen.nut");
-        _doFile("res://src/GUI/Screens/PlaceInfoScreen.nut");
-        _doFile("res://src/GUI/Screens/StoryContentScreen.nut");
         _doFile("res://src/GUI/Screens/DialogScreen.nut");
-        _doFile("res://src/GUI/Screens/CombatSpoilsPopupScreen.nut");
         _doFile("res://src/GUI/Screens/TestScreen.nut");
         _doFile("res://src/GUI/Screens/ExplorationTestScreen.nut");
         _doFile("res://src/GUI/Screens/WorldGenerationStatusScreen.nut");
@@ -141,9 +131,6 @@
         _doFile("res://src/Logic/World/ProceduralDungeonWorldPreparer.nut");
         _doFile("res://src/Logic/ExplorationLogic.nut");
         _doFile("res://src/Logic/ExplorationProjectileManager.nut");
-        _doFile("res://src/Logic/CombatLogic.nut");
-        _doFile("res://src/Logic/Scene/CombatSceneLogic.nut");
-        _doFile("res://src/Logic/StoryContentLogic.nut");
 
         _doFile("res://src/Logic/World/Actions/WorldAction.nut");
         _doFile("res://src/Logic/World/Actions/EXPTrailAction.nut");
@@ -157,20 +144,10 @@
         ::InputManager.setup();
 
         mExplorationLogic = ExplorationLogic();
-        /*
-        local enemyData = [
-            ::Combat.CombatStats(EnemyId.GOBLIN, 20),
-            ::Combat.CombatStats(EnemyId.GOBLIN)
-        ];
-        mCurrentCombatData = ::Combat.CombatData(mPlayerStats.mPlayerCombatStats, enemyData);
-        */
-        //TODO temporary to setup the logic. Really a new combatData would be pushed at the start of a new combat.
-        //mCombatLogic = CombatLogic(mCurrentCombatData);
 
         //::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
         //::ScreenManager.transitionToScreen(Screen.HELP_SCREEN);
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
-        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COMBAT_SCREEN, {"logic": mCombatLogic}));
         //::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);
         //::ScreenManager.transitionToScreen(Screen.WORLD_GENERATION_STATUS_SCREEN, null, 1);
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_TEST_SCREEN, {"logic": mExplorationLogic}));
@@ -179,9 +156,6 @@
         //::ScreenManager.transitionToScreen(Screen.ITEM_INFO_SCREEN);
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, {"inventory": mInventory, "equipStats": ::Base.mPlayerStats.mPlayerCombatStats.mEquippedItems}));
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.VISITED_PLACES_SCREEN, {"stats": mPlayerStats}));
-        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLACE_INFO_SCREEN, {"logic": ::StoryContentLogic(PlaceId.HAUNTED_WELL)}));
-        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.STORY_CONTENT_SCREEN, {"logic": ::StoryContentLogic(PlaceId.HAUNTED_WELL)}));
-        //::ScreenManager.transitionToScreen(Screen.STORY_CONTENT_SCREEN);
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_END_SCREEN, {"totalFoundItems": 5, "totalDiscoveredPlaces": 4, "totalEncountered": 2, "totalDefeated": 1}), null, 1);
 
         //mExplorationLogic.resetExploration_();
@@ -191,15 +165,6 @@
         ::ScreenManager.update();
         ::PopupManager.update();
         ::EffectManager.update();
-    }
-
-    function notifyEncounter(combatData){
-        mCurrentCombatData = combatData;
-        mCombatLogic = ::CombatLogic(combatData);
-    }
-
-    function notifyEncounterEnded(){
-        mCombatLogic.shutdown();
     }
 
     function createLights(){
@@ -231,74 +196,5 @@
         datablock.setUserValue(0, 0.5, 0, 0, 0);
     }
 
-    function determineGitHash(){
-        if(getconsttable().rawin("GIT_HASH")){
-            return getconsttable().rawget("GIT_HASH");
-        }
-
-        //Otherwise try and read it from the git directory.
-        local directory = _settings.getDataDirectory();
-        local path = directory + "/.git/refs/heads/master";
-        if(_system.exists(path)){
-            local f = File();
-            f.open(path);
-            local hash = f.getLine();
-            return hash.slice(0, 8);
-        }
-
-        return null;
-    }
-    function getVersionInfo(){
-        local hash = determineGitHash();
-        local suffix = VERSION_SUFFIX;
-        if(hash != null){
-            suffix += ("-" + hash);
-        }
-
-        local versionTotal = format("%i.%i.%i-%s", VERSION_MAX, VERSION_MIN, VERSION_PATCH, suffix);
-        local engine = _settings.getEngineVersion();
-        local engineVersionTotal = format("Engine: %i.%i.%i-%s", engine.major, engine.minor, engine.patch, engine.suffix);
-
-        return {
-            "info": versionTotal,
-            "engineInfo": engineVersionTotal
-        };
-    }
-
-    function printVersionInfos(){
-        local infos = getVersionInfo();
-        local strings = [];
-        strings.append(GAME_TITLE.toupper());
-        strings.append(infos.info);
-        strings.append(infos.engineInfo);
-
-        local max = 0;
-        foreach(i in strings){
-            local len = i.len();
-            if(len > max){
-                max = len;
-            }
-        }
-
-        local decorator = "";
-        local padding = "** ";
-        local paddingRight = " **";
-        local maxExtent = max + (padding.len() * 2);
-        for(local i = 0; i < maxExtent; i++){
-            decorator += "*";
-        }
-
-        print(decorator);
-        foreach(i in strings){
-            local starting = padding + i;
-            local remainder = maxExtent - starting.len() - padding.len();
-            local spaces = "";
-            for(local i = 0; i < remainder; i++){
-                spaces += " ";
-            }
-            print(starting + spaces + paddingRight);
-        }
-        print(decorator);
-    }
 
 };

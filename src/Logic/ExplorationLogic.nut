@@ -161,9 +161,6 @@
 
         //TODO reset the exploration.
         mCurrentWorld_.update();
-
-        //checkCameraChange();
-        //checkOrientatingCamera();
     }
 
     function tickPreparation(){
@@ -219,7 +216,6 @@
             //::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"cellSize": 2, "coinScale": 0.1, "numCoins": 5, "start": worldPos, "end": endPos, "money": 100}));
 
             mExplorationStats_.totalDiscoveredPlaces++;
-            //notifyGatewayStatsChange();
         }
 
         local entity = placeEntry.getEntity();

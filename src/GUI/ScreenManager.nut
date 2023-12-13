@@ -49,7 +49,7 @@
         mFGEffectRenderWindow = EffectAnimationRenderWindow(CompositorSceneType.FG_EFFECT);
         mFGEffectRenderWindow.setZOrder(mScreensZOrder + MAX_SCREENS + 1);
 
-        mVersionInfoWindow_ = VersionInfoWindow(::Base.getVersionInfo());
+        mVersionInfoWindow_ = VersionInfoWindow(::getVersionInfo());
     }
 
     function _createScreenForId(screenData){

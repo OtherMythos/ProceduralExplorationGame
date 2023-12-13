@@ -10,8 +10,6 @@
         buttonThing = null;
 
         function buttonPressed(widget, action){
-            print("Going to " + ::Places[widget.getUserId()].getName());
-            ::ScreenManager.transitionToScreen(Screen.STORY_CONTENT_SCREEN);
         }
 
         constructor(parentWindow, stats){

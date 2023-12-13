@@ -1,6 +1,6 @@
 ::Inventory <- class{
     mInventoryItems_ = null;
-    mMoney_ = 300;
+    mMoney_ = 0;
 
     mInventorySize_ = 30;
 

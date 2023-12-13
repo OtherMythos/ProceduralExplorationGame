@@ -91,5 +91,3 @@
         return mEXPCounter_;
     }
 };
-
-_doFile("res://src/GUI/Screens/Exploration/ExplorationItemsContainerAnimator.nut");

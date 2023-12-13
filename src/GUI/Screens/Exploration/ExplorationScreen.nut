@@ -64,44 +64,16 @@ enum ExplorationBusEvents{
         }
         mWorldMapDisplay_.addToLayout(layoutLine);
 
-        //mExplorationProgressBar_ = ExplorationProgressBar(mWindow_, this);
-        //mExplorationProgressBar_.addToLayout(layoutLine);
-
         local layoutSize = _window.getSize();
         layoutLine.setHardMaxSize(layoutSize);
         layoutLine.setSize(layoutSize);
-        //layoutLine.setMarginForAllCells(0, 20);
-        //layoutLine.setPosition(_window.getWidth() * 0.05, 0);
         layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
-        //mMoneyCounter_.mMoneyLabel_.setMargin(0, 0);
-        //mMoneyCounter_.mMoneyLabel_.setGridLocation(_GRID_LOCATION_TOP_LEFT);
         layoutLine.layout();
 
-        //local targetSize = mExplorationItemsContainer_.getSize();
-        //mExplorationItemsContainer_.setSize(targetSize.x, targetSize.y/2);
-        //mExplorationItemsContainer_.sizeForButtons();
         mWorldMapDisplay_.notifyResize();
 
-        //mExplorationEnemiesContainer_.setSize(targetSize.x, targetSize.y/2);
-        //mExplorationEnemiesContainer_.setPosition(Vec2(mExplorationItemsContainer_.getPosition().x, 5 + mExplorationItemsContainer_.getPosition().y + mExplorationItemsContainer_.getSize().y));
-        //mExplorationEnemiesContainer_.sizeForButtons();
-
-        //mExplorationMovesContainer_.setSize(targetSize.x, targetSize.y/2);
-        //mExplorationMovesContainer_.setPosition(Vec2(mExplorationItemsContainer_.getPosition().x, 5 + mExplorationItemsContainer_.getPosition().y + mExplorationItemsContainer_.getSize().y));
-        //mExplorationMovesContainer_.setPosition(Vec2(0, 100));
         mExplorationStatsContainer_.sizeForButtons();
         mExplorationMovesContainer_.sizeForButtons();
-
-
-        mPlaceHelperLabel_ = mWindow_.createLabel();
-        mPlaceHelperLabel_.setPosition(0, 0);
-        mPlaceHelperLabel_.setText(" ");
-        mPlaceHelperButton_ = mWindow_.createButton();
-        mPlaceHelperButton_.setText("Visit");
-        mPlaceHelperButton_.setPosition(0, 40);
-        mPlaceHelperButton_.setHidden(true);
-        mPlaceHelperButton_.attachListenerForEvent(notifyPlaceVisitButton, _GUI_ACTION_PRESSED);
-
 
         if(::Base.getTargetInterface() == TargetInterface.MOBILE){
             mCameraButton_ = mWindow_.createButton();
@@ -112,20 +84,7 @@ enum ExplorationBusEvents{
             }, _GUI_ACTION_PRESSED, this);
         }
 
-        /*
-        mScrapAllButton_ = mWindow_.createButton();
-        mScrapAllButton_.setText("Scrap all");
-        mScrapAllButton_.setPosition(0, mExplorationItemsContainer_.getPosition().y - mScrapAllButton_.getSize().y);
-        mScrapAllButton_.attachListenerForEvent(function(widget, action){
-            //mLogicInterface_.scrapAllFoundObjects();
-            scrapAllObjects();
-        }, _GUI_ACTION_PRESSED, this);
-        */
-
-        //mLogicInterface_.continueOrResetExploration();
-
         mExplorationBus_.registerCallback(busCallback, this);
-        //mLogicInterface_.setup();
 
         mTooltipManager_ = TooltipManager();
 
@@ -155,11 +114,8 @@ enum ExplorationBusEvents{
 
     function update(){
         mLogicInterface_.tickUpdate();
-        //mExplorationItemsContainer_.update();
-        //mExplorationEnemiesContainer_.update();
         mExplorationMovesContainer_.update();
         mExplorationStatsContainer_.update();
-        //mMoneyCounter_.update();
         mWorldMapDisplay_.update();
 
         mTooltipManager_.update();
@@ -198,10 +154,6 @@ enum ExplorationBusEvents{
         return null;
     }
 
-    function notifyExplorationPercentage(percentage){
-        //mExplorationProgressBar_.setPercentage(percentage);
-    }
-
     function notifyObjectFound(foundObject, idx, position = null){
         local screenPos = position != null ? mWorldMapDisplay_.getWorldPositionInScreenSpace(position) : null;
         //mExplorationItemsContainer_.setObjectForIndex(foundObject, idx, screenPos);
@@ -215,42 +167,12 @@ enum ExplorationBusEvents{
         ::PopupManager.displayPopup(::PopupManager.PopupData(Popup.ENCOUNTER, data));
     }
 
-    function notifyExplorationEnd(){
-        //mExplorationProgressBar_.showButtons(true);
-    }
-
-    function notifyExplorationBegan(){
-        //mExplorationProgressBar_.showButtons(false);
-    }
-
-    function notifyFoundItemRemoved(idx){
-        //mExplorationItemsContainer_.setObjectForIndex(FoundObject(), idx, null);
-    }
-    function notifyQueuedEnemyRemoved(idx){
-        //mExplorationEnemiesContainer_.setObjectForIndex(null, idx, null);
-    }
-
     function notifyHighlightEnemy(enemy){
         if(enemy != null){
             local string = ::Enemies[enemy].getName();
             mTooltipManager_.setTooltip(string);
         }
         mTooltipManager_.setVisible(enemy != null);
-    }
-
-    function notifyGatewayStatsChange(gatewayPercentage){
-        print("Current gateway " + gatewayPercentage);
-    }
-
-    function notifyPlaceVisitButton(widget, action){
-        local data = {
-            "place": mCurrentPlace_,
-            "slotIdx": -1
-        };
-        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLACE_INFO_SCREEN, data));
-    }
-    function notifyPlaceGatewayButton(widget, action){
-        ::Base.mExplorationLogic.gatewayEndExploration();
     }
 
     function notifyPlaceEnterState(id, entered, firstTime, placeEnteredPos){
@@ -306,7 +228,7 @@ enum ExplorationBusEvents{
                 ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"cellSize": 2, "coinScale": 0.1, "numCoins": 2, "start": worldPos, "end": endPos, "money": 100}));
             }
             else if(data.type == FoundObjectType.PLACE){
-                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLACE_INFO_SCREEN, data));
+                //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLACE_INFO_SCREEN, data));
             }else{
                 assert(false);
             }
@@ -335,12 +257,7 @@ enum ExplorationBusEvents{
     }
 };
 
-_doFile("res://src/GUI/Screens/Exploration/ExplorationItemsContainer.nut");
-_doFile("res://src/GUI/Screens/Exploration/ExplorationEnemiesContainer.nut");
-_doFile("res://src/GUI/Screens/Exploration/ExplorationProgressBar.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationWorldMapDisplay.nut");
-_doFile("res://src/GUI/Screens/Exploration/ExplorationFoundItemWidget.nut");
-_doFile("res://src/GUI/Screens/Exploration/ExplorationFoundEnemyWidget.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationMovesContainer.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationEndScreen.nut");
 _doFile("res://src/GUI/Screens/Exploration/ExplorationPlayerDeathScreen.nut");
