@@ -10,13 +10,13 @@ enum CollisionWorldTriggerResponses{
 };
 
 
-::_applyDamageOther <- function(manager, entity, damage){
+::_applyHealthChangeOther <- function(manager, entity, damage){
     if(!manager.entityValid(entity)) return;
-    print("Applying damage " + damage);
-    //local newHealth = _component.user[Component.HEALTH].get(entity, 0) - damage;
-    //local maxHealth = _component.user[Component.HEALTH].get(entity, 1);
     local component = manager.getComponent(entity, EntityComponents.HEALTH);
-    local newHealth = component.mHealth - damage;
+    local newHealth = component.mHealth + damage;
+    if(newHealth > component.mMaxHealth){
+        newHealth = component.mMaxHealth;
+    }
     local newPercentage = newHealth.tofloat() / component.mMaxHealth.tofloat();
 
     component.mHealth = newHealth;
@@ -26,9 +26,16 @@ enum CollisionWorldTriggerResponses{
     ::Base.mExplorationLogic.mCurrentWorld_.notifyNewEntityHealth(entity, newHealth, newPercentage);
 
     if(newHealth <= 0){
-        //_entity.destroy(entity);
         manager.destroyEntity(entity);
     }
+}
+::_applyDamageOther <- function(manager, entity, damage){
+    print("Applying damage " + damage);
+    _applyHealthChangeOther(manager, entity, -damage);
+}
+::_applyHealthIncrease <- function(manager, entity, health){
+    print("Applying health increase " + health);
+    _applyHealthChangeOther(manager, entity, health);
 }
 
 /**

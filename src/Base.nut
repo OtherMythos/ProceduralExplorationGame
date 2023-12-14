@@ -188,7 +188,9 @@
 
         local voxData = array(1, 188);
 
-        local meshObj = voxMesh.createMeshForVoxelData("EXPOrbMesh", voxData, 1, 1, 1);
+        voxMesh.createMeshForVoxelData("EXPOrbMesh", voxData, 1, 1, 1);
+        voxData[0] = 216;
+        voxMesh.createMeshForVoxelData("HealthOrbMesh", voxData, 1, 1, 1);
     }
 
     function setupBaseMaterials(){

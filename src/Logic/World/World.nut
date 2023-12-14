@@ -707,10 +707,12 @@ enum WorldMousePressContexts{
         if(!foundSomething) return;
 
         //TODO rename or alter the method call.
-        local randIdx = _random.randInt(2);
+        local randIdx = _random.randInt(3);
         local target = getPositionForAppearEnemy_(EnemyId.GOBLIN);
         if(randIdx == 0){
             mEntityFactory_.constructPercentageEncounter(target, mGui_);
+        }else if(randIdx == 1){
+            mEntityFactory_.constructHealthOrbEncounter(target);
         }else{
             mEntityFactory_.constructEXPTrailEncounter(target);
         }
@@ -864,6 +866,9 @@ enum WorldMousePressContexts{
             local playerPos = mPlayerEntry_.getPosition().copy();
             local action = ::EXPTrailAction(this, playerPos, _random.randVec2()-0.5, data.mFirst);
             pushWorldAction(action);
+        }
+        else if(data.mType == SpoilsComponentType.ADD_HEALTH){
+            ::_applyHealthIncrease(mEntityManager_, mPlayerEntry_.getEntity(), data.mFirst);
         }
     }
 
