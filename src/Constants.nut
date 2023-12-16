@@ -152,6 +152,11 @@ enum ExplorationGizmos{
     MAX
 };
 
+enum WorldDistractionType{
+    PERCENTAGE_ENCOUNTER,
+    HEALTH_ORB,
+    EXP_ORB
+};
 
 //Characters --------
 enum CharacterModelType{

@@ -51,6 +51,35 @@ enum WorldMousePressContexts{
         MoveId.AREA
     ];
 
+    FoundObjectLogic = class{
+
+        mDataCount_ = null;
+        mData_ = null;
+
+        constructor(data){
+            mDataCount_ = array(data.len(), 0);
+            mData_ = data;
+        }
+        function update(){
+            for(local i = 0; i < mDataCount_.len(); i++){
+                mDataCount_[i]++;
+            }
+        }
+        function checkAppearForObject(object){
+            local maxIncrease = mData_[object].maxIncrease;
+            local maxEncounter = mData_[object].maxEncounter;
+
+            local targetIncrease = mDataCount_[object] >= maxIncrease ? maxIncrease : mDataCount_[object];
+            local rate = maxEncounter - targetIncrease;
+
+            local foundSomething = _random.randInt(rate) == 0;
+            if(foundSomething){
+                mDataCount_[object] = 0;
+            }
+            return foundSomething;
+        }
+    };
+
     CloudManager = class{
         mParentNode_ = null;
         NUM_CLOUDS = 9;
@@ -165,6 +194,8 @@ enum WorldMousePressContexts{
     mLocationFlagIds_ = 0;
     mLocationFlagNodes_ = null;
 
+    mAppearDistractionLogic_ = null;
+
     mPosition_ = null;
     mRotation_ = null;
     mCurrentZoomLevel_ = 30;
@@ -189,6 +220,22 @@ enum WorldMousePressContexts{
         mLocationFlagNodes_ = {};
         mActiveGizmos_ = {};
         mActiveWorldActions_ = [];
+
+        mAppearDistractionLogic_ = FoundObjectLogic([
+            {
+                "maxIncrease": 200,
+                "maxEncounter": 1000
+            },
+            {
+                "maxIncrease": 200,
+                "maxEncounter": 500
+            },
+            {
+                "maxIncrease": 100,
+                "maxEncounter": 500
+            },
+            WorldDistractionType.PERCENTAGE_ENCOUNTER
+        ]);
 
         mMouseContext_ = MousePressContext();
 
@@ -703,17 +750,18 @@ enum WorldMousePressContexts{
     }
 
     function checkForDistractionAppear(){
-        local foundSomething = _random.randInt(1000) == 0;
-        if(!foundSomething) return;
+        mAppearDistractionLogic_.update();
 
-        //TODO rename or alter the method call.
-        local randIdx = _random.randInt(3);
-        local target = getPositionForAppearEnemy_(EnemyId.GOBLIN);
-        if(randIdx == 0){
+        if(mAppearDistractionLogic_.checkAppearForObject(WorldDistractionType.PERCENTAGE_ENCOUNTER)){
+            local target = getPositionForAppearEnemy_(EnemyId.GOBLIN);
             mEntityFactory_.constructPercentageEncounter(target, mGui_);
-        }else if(randIdx == 1){
+        }
+        if(mAppearDistractionLogic_.checkAppearForObject(WorldDistractionType.HEALTH_ORB)){
+            local target = getPositionForAppearEnemy_(EnemyId.GOBLIN);
             mEntityFactory_.constructHealthOrbEncounter(target);
-        }else{
+        }
+        if(mAppearDistractionLogic_.checkAppearForObject(WorldDistractionType.EXP_ORB)){
+            local target = getPositionForAppearEnemy_(EnemyId.GOBLIN);
             mEntityFactory_.constructEXPTrailEncounter(target);
         }
     }
