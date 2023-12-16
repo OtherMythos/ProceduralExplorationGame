@@ -44,6 +44,10 @@
         mPlayerCombatStats.mEquippedItems.setEquipped(item, slot);
     }
 
+    function getLevel(){
+        return getLevelForEXP_(mPlayerCurrentEXP_);
+    }
+
     function getPercentageEXP(exp){
         local level = getLevelForEXP_(exp);
         return getPercentageForLevel_(level, exp);

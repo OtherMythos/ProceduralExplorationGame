@@ -3,6 +3,7 @@ enum ExplorationScreenComponents{
     INTRO,
     TITLE,
     TEXT_ENTRIES,
+    LEVEL_INDICATOR,
     EXP_PROGRESS,
     END_BUTTONS,
 
@@ -38,6 +39,7 @@ local ObjAnim = class{
             c[ExplorationScreenComponents.TITLE].setVisible(false);
             foreach(i in c[ExplorationScreenComponents.TEXT_ENTRIES]) { i.setVisible(false); }
             c[ExplorationScreenComponents.EXP_PROGRESS].setVisible(false);
+            c[ExplorationScreenComponents.LEVEL_INDICATOR].setVisible(false);
             foreach(i in c[ExplorationScreenComponents.END_BUTTONS]) { i.setVisible(false); }
         }
         function update(p, data){
@@ -56,7 +58,7 @@ local ObjAnim = class{
     };
     ExplorationEndScreenAnimStateMachine.mStates_[ExplorationScreenComponents.TEXT_ENTRIES] = class extends ::Util.State{
         mTotalCount_ = 30
-        mNextState_ = ExplorationScreenComponents.EXP_PROGRESS;
+        mNextState_ = ExplorationScreenComponents.LEVEL_INDICATOR;
         mObjAnim_ = null;
         mDiv_ = 0;
         function start(data){
@@ -79,6 +81,19 @@ local ObjAnim = class{
                     i.update(1.0);
                 }
             }
+        }
+    };
+    ExplorationEndScreenAnimStateMachine.mStates_[ExplorationScreenComponents.LEVEL_INDICATOR] = class extends ::Util.State{
+        mTotalCount_ = 10
+        mNextState_ = ExplorationScreenComponents.EXP_PROGRESS;
+        mObjAnim_ = null;
+        function start(data){
+            local indicator = data.components[ExplorationScreenComponents.LEVEL_INDICATOR];
+            indicator.setText("Level " + ::Base.mPlayerStats.getLevel());
+            mObjAnim_ = ObjAnim(indicator);
+        }
+        function update(p, data){
+            mObjAnim_.update(p);
         }
     };
     ExplorationEndScreenAnimStateMachine.mStates_[ExplorationScreenComponents.EXP_PROGRESS] = class extends ::Util.State{
@@ -126,6 +141,9 @@ local ObjAnim = class{
 
             //TODO make this a bit nicer
             mEXPOrbTotalLabel_.setText(format("    • Found %i EXP orbs", mOrbsToAdd_));
+
+            local indicator = data.components[ExplorationScreenComponents.LEVEL_INDICATOR];
+            indicator.setText("Level " + ::Base.mPlayerStats.getLevelForEXP_(currentEXP));
 
             data.components[ExplorationScreenComponents.EXP_PROGRESS].setPercentage(finalAnim);
             setLabel(currentEXP, data);
@@ -205,6 +223,13 @@ local ObjAnim = class{
             outText[c] = descText;
         }
         mScreenComponents_[ExplorationScreenComponents.TEXT_ENTRIES] <- outText;
+
+        local levelIndicator = mWindow_.createLabel();
+        levelIndicator.setText("Level 0");
+        //levelIndicator.setSize(200, 50);
+        levelIndicator.setTextColour(0, 0, 0, 1);
+        layoutLine.addCell(levelIndicator);
+        mScreenComponents_[ExplorationScreenComponents.LEVEL_INDICATOR] <- levelIndicator;
 
         local levelBar = ::GuiWidgets.ProgressBar(mWindow_);
         levelBar.setSize(200, 50);
