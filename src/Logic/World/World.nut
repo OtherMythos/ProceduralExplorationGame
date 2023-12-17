@@ -538,6 +538,15 @@ enum WorldMousePressContexts{
         }
     }
 
+    function spawnMoney(pos, num, spread=4){
+        for(local i = 0; i < num; i++){
+            local randDir = (_random.rand()*2-1) * PI;
+
+            local targetPos = pos + (Vec3(sin(randDir) * spread, 0, cos(randDir) * spread));
+            mEntityFactory_.constructMoneyObject(targetPos);
+        }
+    }
+
     function checkHighlightEnemy(){
         if(mCurrentHighlightEnemy_ == mPreviousHighlightEnemy_) return;
 
@@ -917,6 +926,17 @@ enum WorldMousePressContexts{
         }
         else if(data.mType == SpoilsComponentType.ADD_HEALTH){
             ::_applyHealthIncrease(mEntityManager_, mPlayerEntry_.getEntity(), data.mFirst);
+        }
+        else if(data.mType == SpoilsComponentType.GIVE_MONEY){
+
+            //local worldPos = ::EffectManager.getWorldPositionForWindowPos(mGui_.mWorldMapDisplay_.getPosition() + mGui_.mWorldMapDisplay_.getSize() / 2);
+            //local endPos = mGui_.getMoneyCounter().getPositionWindowPos();
+            //::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"cellSize": 2, "coinScale": 0.1, "numCoins": 5, "start": worldPos, "end": endPos, "money": 100}));
+
+            local worldPos = ::EffectManager.getWorldPositionForWindowPos(::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getPosition() + ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getSize() / 2);
+            local endPos = ::Base.mExplorationLogic.mGui_.getEXPCounter().getPositionWindowPos();
+
+            ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": 1, "start": worldPos, "end": endPos, "money": 1, "coinScale": 0.2}));
         }
     }
 

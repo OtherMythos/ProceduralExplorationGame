@@ -215,6 +215,8 @@
             //local endPos = mGui_.getMoneyCounter().getPositionWindowPos();
             //::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"cellSize": 2, "coinScale": 0.1, "numCoins": 5, "start": worldPos, "end": endPos, "money": 100}));
 
+            mCurrentWorld_.spawnMoney(placeEntry.getPosition(), 5);
+
             mExplorationStats_.totalDiscoveredPlaces++;
         }
 

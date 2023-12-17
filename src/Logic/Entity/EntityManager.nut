@@ -24,7 +24,8 @@ enum SpoilsComponentType{
     PERCENTAGE,
     DROPPED_ITEMS,
     EXP_TRAIL,
-    ADD_HEALTH
+    ADD_HEALTH,
+    GIVE_MONEY
 };
 enum ProximityComponentType{
     PLAYER,
