@@ -218,13 +218,17 @@
             mExplorationStats_.totalDiscoveredPlaces++;
         }
 
+        if(firstTime){
+            _event.transmit(Event.PLACE_DISCOVERED, {
+                "id": placeEntry.mEnemy_,
+                "pos": placeEntry.getPosition()
+            });
+        }
+
         local entity = placeEntry.getEntity();
         checkPlaceBillboardVisible(entity, entered);
 
         placeEntry.mEncountered_ = true;
-
-        //TODO will want to rename this from enemy at some point.
-        if(mGui_) mGui_.notifyPlaceEnterState(placeEntry.mEnemy_, entered, firstTime, placeEntry.mPos_);
     }
     function checkPlaceBillboardVisible(entity, visible){
         local billboardIdx = -1;

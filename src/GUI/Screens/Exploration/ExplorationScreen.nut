@@ -175,10 +175,6 @@ enum ExplorationBusEvents{
         mTooltipManager_.setVisible(enemy != null);
     }
 
-    function notifyPlaceEnterState(id, entered, firstTime, placeEnteredPos){
-
-    }
-
     function notifyEnemyEncounter(idx, enemy, position=null){
         local screenPos = position != null ? mWorldMapDisplay_.getWorldPositionInScreenSpace(position) : null;
         mExplorationEnemiesContainer_.setObjectForIndex(enemy, idx, screenPos);

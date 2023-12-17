@@ -18,6 +18,7 @@
         mMapViewerWindow_.setVisualsEnabled(false);
 
         _event.subscribe(Event.ACTIVE_WORLD_CHANGE, processActiveWorldChange, this);
+        _event.subscribe(Event.PLACE_DISCOVERED, notifyPlaceDiscovered, this);
     }
 
     function switchMapViewer(worldType, data){
@@ -42,6 +43,10 @@
         if(worldType == WorldTypes.PROCEDURAL_EXPLORATION_WORLD){
             mMapViewer_.setDrawOption(DrawOptions.VISIBLE_REGIONS, true);
         }
+    }
+
+    function notifyPlaceDiscovered(id, data){
+        mMapViewer_.notifyNewPlaceFound(data.id, data.pos);
     }
 
     function processActiveWorldChange(id, data){
@@ -72,6 +77,7 @@
         mMapViewer_.shutdown();
 
         _event.unsubscribe(Event.ACTIVE_WORLD_CHANGE, processActiveWorldChange, this);
+        _event.unsubscribe(Event.PLACE_DISCOVERED, notifyPlaceDiscovered, this);
     }
     function setupCompositor(){
         local winSize = mExplorationScenePanel_.getSize();
