@@ -25,7 +25,8 @@ enum SpoilsComponentType{
     DROPPED_ITEMS,
     EXP_TRAIL,
     ADD_HEALTH,
-    GIVE_MONEY
+    GIVE_MONEY,
+    SPAWN_EXP_ORBS
 };
 enum ProximityComponentType{
     PLAYER,
@@ -323,6 +324,9 @@ EntityManager.EntityManager <- class{
                 }
                 else if(i == EntityComponents.DATABLOCK){
                     ::DatablockManager.removeDatablock(component.mDatablock);
+                }
+                else if(i == EntityComponents.SPOILS){
+                    mCreatorWorld_.actuateSpoils(component, mEntityPositions_[idx]);
                 }
             }
         }

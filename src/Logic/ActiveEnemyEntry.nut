@@ -302,15 +302,6 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
                 mCreatorWorld_.mGui_.mWorldMapDisplay_.mBillboardManager_.updateHealth(billboardIdx, newPercentage);
             }
         }
-
-        if(newHealth <= 0){
-            //Drop spoils here.
-            local worldPos = ::EffectManager.getWorldPositionForWindowPos(::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getPosition() + ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getSize() / 2);
-            local endPos = ::Base.mExplorationLogic.mGui_.getMoneyCounter().getPositionWindowPos();
-
-            ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": 10, "start": worldPos, "end": endPos, "money": 10, "coinScale": 0.1}));
-            ::Base.mExplorationLogic.mCurrentWorld_.spawnEXPOrbs(mPos_, 8);
-        }
     }
     function setGizmo(gizmo){
         if(mGizmo_ != null){

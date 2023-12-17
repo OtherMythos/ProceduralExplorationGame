@@ -901,7 +901,7 @@ enum WorldMousePressContexts{
         }
     }
 
-    function actuateSpoils(data){
+    function actuateSpoils(data, position){
         if(data.mType == SpoilsComponentType.PERCENTAGE){
             local percentage = _random.randInt(0, 100);
             local first = percentage >= 0 && percentage < data.mFirst;
@@ -920,9 +920,11 @@ enum WorldMousePressContexts{
             }
         }
         else if(data.mType == SpoilsComponentType.EXP_TRAIL){
-            local playerPos = mPlayerEntry_.getPosition().copy();
-            local action = ::EXPTrailAction(this, playerPos, _random.randVec2()-0.5, data.mFirst);
+            local action = ::EXPTrailAction(this, position.copy(), _random.randVec2()-0.5, data.mFirst);
             pushWorldAction(action);
+        }
+        else if(data.mType == SpoilsComponentType.SPAWN_EXP_ORBS){
+            spawnEXPOrbs(position, data.mFirst);
         }
         else if(data.mType == SpoilsComponentType.ADD_HEALTH){
             ::_applyHealthIncrease(mEntityManager_, mPlayerEntry_.getEntity(), data.mFirst);
