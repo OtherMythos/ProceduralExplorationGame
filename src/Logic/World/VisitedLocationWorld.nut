@@ -10,12 +10,10 @@
 
     mCloudManager_ = null;
 
-    constructor(worldId, targetMap){
-        base.constructor(worldId);
+    constructor(worldId, preparer){
+        base.constructor(worldId, preparer);
 
         mTerrainChunkManager_ = TerrainChunkManager();
-
-        mTargetMap_ = targetMap;
     }
 
     #Override
@@ -27,14 +25,17 @@
         return "Visited Location";
     }
 
-    function setup(){
+    #Override
+    function notifyPreparationComplete_(){
+        mReady_ = true;
         base.setup();
-
-        resetSession();
+        resetSession(mWorldPreparer_.getOutputData());
     }
 
-    function resetSession(){
+    function resetSession(mapData){
         base.resetSession();
+
+        mMapData_ = mapData;
 
         createScene();
     }
@@ -88,41 +89,32 @@
         updateCameraPosition();
     }
 
+    #Override
     function getZForPos(pos){
         if(mMapData_ == null) return 0;
 
         local x = pos.x.tointeger();
         local y = -pos.z.tointeger();
 
-        local height = mMapData_.voxHeight.data[x + y * mMapData_.width];
+        local height = mMapData_.mapData.voxHeight.data[x + y * mMapData_.width];
 
         return height * PROCEDURAL_WORLD_UNIT_MULTIPLIER;
     }
 
+    #Override
     function getIsWaterForPosition(pos){
         return getZForPos(pos) == 0;
     }
 
     function createScene(){
         local targetNode = _scene.getRootSceneNode().createChildSceneNode();
-        local path = "res://assets/maps/" + mTargetMap_ + "/scene.avscene";
-        //_scene.insertSceneFile(path, targetNode);
+        local animData = _scene.insertParsedSceneFileGetAnimInfo(mMapData_.parsedSceneFile, targetNode);
 
-        local parsedFile = _scene.parseSceneFile(path);
-        local animData = _scene.insertParsedSceneFileGetAnimInfo(parsedFile, targetNode);
-
-        local path = "res://assets/maps/" + mTargetMap_ + "/sceneAnimation.xml";
-        _animation.loadAnimationFile(path);
         ::currentAnim <- _animation.createAnimation("sceneAnim", animData);
-
-        printf("Loading scene file with path '%s'", path);
-
-        local fileHandler = ::TerrainChunkFileHandler();
-        mMapData_ = fileHandler.readMapData("testVillage");
 
         mCloudManager_ = CloudManager(mParentNode_, mMapData_.width, mMapData_.height);
 
-        mTerrainChunkManager_.setup(targetNode, mMapData_, 4);
+        mTerrainChunkManager_.setup(targetNode, mMapData_.mapData, 4);
 
         local oceanNode = mParentNode_.createChildSceneNode();
         local oceanItem = _scene.createItem("plane");
@@ -138,44 +130,16 @@
         //character.moveQueryZ(Vec3(100, 0, -50));
     }
 
-    function parseFileToData_(file){
-        local outArray = [];
-        local height = 0;
-        local width = 0;
-        local greatest = 0;
-        while(!file.eof()){
-            local line = file.getLine();
-            local vals = split(line, ",");
-            local len = vals.len();
-            if(len == 0) continue;
-            width = len;
-            foreach(i in vals){
-                local intVal = i.tointeger();
-                outArray.append(intVal);
-                if(intVal > greatest){
-                    greatest = intVal;
-                }
-            }
-            height++;
-        }
-
-
-        return {
-            "width": width,
-            "height": height,
-            "greatest": greatest,
-            "data": outArray,
-        }
-    }
-
     function getMapData(){
         return mMapData_;
     }
 
+    #Override
     function checkForEnemyAppear(){
         //Stub to get enemies to stop spawning.
         return;
     }
+    #Override
     function checkForDistractionAppear(){
         //Stub
         return

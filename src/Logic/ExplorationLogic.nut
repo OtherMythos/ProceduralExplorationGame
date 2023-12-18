@@ -67,6 +67,7 @@
 
         setCurrentWorld_(createWorldInstance(WorldTypes.PROCEDURAL_EXPLORATION_WORLD));
         //setCurrentWorld_(createWorldInstance(WorldTypes.PROCEDURAL_DUNGEON_WORLD));
+        //setCurrentWorld_(createWorldInstance(WorldTypes.VISITED_LOCATION_WORLD));
 
         _event.subscribe(Event.PLAYER_DIED, processPlayerDeath, this);
     }
@@ -83,7 +84,7 @@
                 created = ProceduralDungeonWorld(id, ProceduralDungeonWorldPreparer());
                 break;
             case WorldTypes.VISITED_LOCATION_WORLD:
-                created = VisitedLocationWorld(id, "testVillage");
+                created = VisitedLocationWorld(id, VisitedLocationWorldPreparer("testVillage"));
                 break;
             default:
                 assert(false);
