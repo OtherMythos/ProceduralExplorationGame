@@ -20,6 +20,12 @@ enum EntityComponents{
 
 };
 
+enum EntityDestroyReason{
+    NONE,
+    LIFETIME,
+    NO_HEALTH
+};
+
 enum SpoilsComponentType{
     SPOILS_DATA,
     PERCENTAGE,
@@ -120,7 +126,7 @@ EntityManager.EntityManager <- class{
             if(i == null) continue;
             i.mLifetime--;
             if(i.mLifetime <= 0){
-                destroyEntity(i.eid);
+                destroyEntity(i.eid, EntityDestroyReason.LIFETIME);
             }
         }
         foreach(i in mComponents_[EntityComponents.SCRIPT].mComps_){
@@ -162,7 +168,7 @@ EntityManager.EntityManager <- class{
         return (mId << 60) | (entityVersion << 30) | entityIdx;
     }
 
-    function destroyEntity(eid){
+    function destroyEntity(eid, destroyReason=EntityDestroyReason.NONE){
         // NOTE: The duplication exists because Squirrel doesn't allow a way to inline this and it's a hot path
         local world = (eid >> 60) & 0xF;
         if(world != mId) throw "Entity does not belong to this world.";
@@ -171,7 +177,7 @@ EntityManager.EntityManager <- class{
         if(mVersions_[idx] != version) throw "Entity is invalid";
         //
 
-        processEntityDestruction_(eid, idx);
+        processEntityDestruction_(eid, idx, destroyReason);
 
         mVersions_[idx]++;
         mEntityComponentHashes_[idx] = null;
@@ -182,7 +188,7 @@ EntityManager.EntityManager <- class{
             if(i == null) continue;
             local eid = (c & 0x3FFFFFFF) | ((mVersions_[c] << 30)) | (mId << 60);
 
-            processEntityDestruction_(eid, c);
+            processEntityDestruction_(eid, c, EntityDestroyReason.NONE);
             mEntityComponentHashes_[c] = null;
             mVersions_[c]++;
             mFreeList_.append(c);
@@ -295,7 +301,7 @@ EntityManager.EntityManager <- class{
         }
     }
 
-    function processEntityDestruction_(eid, idx){
+    function processEntityDestruction_(eid, idx, reason){
         print("Destroying entity with eid " + eid);
         local currentHash = mEntityComponentHashes_[idx];
         for(local i = 0; i < EntityComponents.MAX; i++){
@@ -327,7 +333,9 @@ EntityManager.EntityManager <- class{
                     ::DatablockManager.removeDatablock(component.mDatablock);
                 }
                 else if(i == EntityComponents.SPOILS){
-                    mCreatorWorld_.actuateSpoils(component, mEntityPositions_[idx]);
+                    if(reason != EntityDestroyReason.LIFETIME){
+                        mCreatorWorld_.actuateSpoils(component, mEntityPositions_[idx]);
+                    }
                 }
             }
         }
