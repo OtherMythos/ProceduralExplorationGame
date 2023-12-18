@@ -21,6 +21,7 @@ enum EntityComponents{
 };
 
 enum SpoilsComponentType{
+    SPOILS_DATA,
     PERCENTAGE,
     DROPPED_ITEMS,
     EXP_TRAIL,

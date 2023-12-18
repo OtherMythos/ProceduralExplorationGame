@@ -34,6 +34,7 @@
         _doFile("res://src/Util/VoxToMesh.nut");
         _doFile("res://src/Util/IdPool.nut");
         _doFile("res://src/Logic/Util/PercentageEncounterHelper.nut");
+        _doFile("res://src/Logic/Util/SpoilsData.nut");
         _doFile("res://src/Logic/Entity/EntityManager.nut");
         _doFile("res://src/Logic/Entity/EntityComponent.nut");
 

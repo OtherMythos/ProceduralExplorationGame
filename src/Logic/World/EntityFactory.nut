@@ -258,7 +258,14 @@
         local totalHealth = 20;
         manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](totalHealth));
 
-        local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SPAWN_EXP_ORBS, 4 + _random.randInt(4), null, null);
+        //
+        local spoilsData = [
+            SpoilsEntry(SPOILS_ENTRIES.EXP_ORBS, 4 + _random.randInt(4)),
+            SpoilsEntry(SPOILS_ENTRIES.COINS, _random.randInt(4)),
+        ];
+        //
+
+        local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SPOILS_DATA, spoilsData, null, null);
         manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
 
         local worldMask = (0x1 << mConstructorWorld_.getWorldId());

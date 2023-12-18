@@ -902,7 +902,17 @@ enum WorldMousePressContexts{
     }
 
     function actuateSpoils(data, position){
-        if(data.mType == SpoilsComponentType.PERCENTAGE){
+        if(data.mType == SpoilsComponentType.SPOILS_DATA){
+            foreach(i in data.mFirst){
+                if(i.mType == SPOILS_ENTRIES.EXP_ORBS){
+                    spawnEXPOrbs(position, i.mFirst);
+                }
+                else if(i.mType == SPOILS_ENTRIES.COINS){
+                    spawnMoney(position, i.mFirst);
+                }
+            }
+        }
+        else if(data.mType == SpoilsComponentType.PERCENTAGE){
             local percentage = _random.randInt(0, 100);
             local first = percentage >= 0 && percentage < data.mFirst;
             local targetData = first ? data.mSecond : data.mThird;
