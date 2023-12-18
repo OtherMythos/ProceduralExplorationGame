@@ -1,6 +1,3 @@
-//TODO remove this.
-::ExplorationCount <- 0;
-
 enum TerrainEditState{
     NONE,
     HEIGHT,
@@ -37,7 +34,7 @@ enum TerrainEditState{
         local fileHandler = ::TerrainChunkFileHandler("res://../../assets/maps/");
         local outMapData = fileHandler.readMapData("testVillage");
 
-        mTerrainChunkManager = ::TerrainChunkManager();
+        mTerrainChunkManager = ::TerrainChunkManager(0);
         local targetParent = _scene.getRootSceneNode().createChildSceneNode();
         mTerrainChunkManager.setup(targetParent, outMapData, 4, true);
 

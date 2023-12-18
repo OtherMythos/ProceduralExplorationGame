@@ -1,6 +1,3 @@
-//TODO get rid of this.
-::ExplorationCount <- 0;
-
 ::VisitedLocationWorld <- class extends ::World{
 
     mMapData_ = null;
@@ -13,7 +10,7 @@
     constructor(worldId, preparer){
         base.constructor(worldId, preparer);
 
-        mTerrainChunkManager_ = TerrainChunkManager();
+        mTerrainChunkManager_ = TerrainChunkManager(worldId);
     }
 
     #Override

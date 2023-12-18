@@ -1,5 +1,6 @@
 ::TerrainChunkManager <- class{
 
+    mWorldId_ = 0;
     mMapData_ = null;
     mParentNode_ = null;
     mChunkDivisions_ = 1;
@@ -9,6 +10,7 @@
     mMapHeightDataCopy_ = null;
     mMapVoxTypeDataCopy_ = null;
     mNodesForChunk_ = null;
+    mItemsForChunk_ = null;
 
     mChunkWidth_ = null;
     mChunkHeight_ = null;
@@ -16,7 +18,8 @@
     PADDING = 1;
     PADDING_BOTH = null;
 
-    constructor(){
+    constructor(worldId){
+        mWorldId_ = worldId;
         PADDING_BOTH = PADDING * 2;
     }
 
@@ -29,6 +32,7 @@
         mChunkDivisions_ = chunkDivisions;
         mChunkColourData_ = {};
         mNodesForChunk_ = {};
+        mItemsForChunk_ = {};
 
         mChunkWidth_ = mMapData_.width / mChunkDivisions_;
         mChunkHeight_ = mMapData_.height / mChunkDivisions_;
@@ -108,9 +112,7 @@
         local heightWithPadding = (mMapData_.height / mChunkDivisions_) + PADDING * 2;
 
         local vox = VoxToMesh(Timer(), 1 << 2);
-        //TODO get rid of this with the proper function to destory meshes.
-        ::ExplorationCount++;
-        local meshObj = vox.createMeshForVoxelData(format("terrainChunkManager%s%s", ::ExplorationCount.tostring(), targetIdx.tostring()), targetChunkArray, widthWithPadding, heightWithPadding, mMapData_.voxHeight.greatest);
+        local meshObj = vox.createMeshForVoxelData(format("terrainChunkManager-%i-%i", mWorldId_, targetIdx), targetChunkArray, widthWithPadding, heightWithPadding, mMapData_.voxHeight.greatest);
         mVoxTerrainMesh_ = meshObj;
 
         local item = _scene.createItem(meshObj);
@@ -207,8 +209,17 @@
 
     function recreateChunk(chunkX, chunkY){
         local CHUNK_DEBUG_PADDING = 2;
-        local parentNode = mParentNode_.createChildSceneNode();
         local targetIdx = chunkX << 4 | chunkY;
+
+        if(mNodesForChunk_.rawin(targetIdx)){
+            //Assuming the node is populated so should the item be.
+            assert(mItemsForChunk_.rawin(targetIdx));
+            local oldItemName = mItemsForChunk_[targetIdx].getName();
+            mNodesForChunk_[targetIdx].destroyNodeAndChildren();
+            _graphics.removeManualMesh(oldItemName);
+        }
+
+        local parentNode = mParentNode_.createChildSceneNode();
         local item = voxeliseChunk_(chunkX, chunkY);
 
         local width = (mMapData_.width / mChunkDivisions_);
@@ -219,11 +230,8 @@
         parentNode.setScale(1, 1, VISITED_WORLD_UNIT_MULTIPLIER);
         parentNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
 
-        if(mNodesForChunk_.rawin(targetIdx)){
-            mNodesForChunk_[targetIdx].destroyNodeAndChildren();
-        }
         mNodesForChunk_.rawset(targetIdx, parentNode);
-
+        mItemsForChunk_.rawset(targetIdx, item);
     }
 
     function _getTouchedChunks(x, y, halfWidth, halfHeight){

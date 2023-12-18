@@ -1,6 +1,3 @@
-//TODO get rid of this.
-::ExplorationCount <- 0;
-
 ::ProceduralExplorationWorld <- class extends ::World{
     mMapData_ = null;
 

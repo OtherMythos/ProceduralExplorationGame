@@ -1,6 +1,7 @@
 
 function start(){
     _doFile("res://../VoxToMesh/fpsCamera.nut");
+    _doFile("res://../../src/Constants.nut");
     _doFile("res://sceneEditorFramework/SceneEditorBase.nut");
     _doFile("res://../../src/Logic/World/TerrainChunkManager.nut");
     _doFile("res://../../src/Logic/World/TerrainChunkFileHandler.nut");
