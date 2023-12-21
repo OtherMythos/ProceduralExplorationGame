@@ -47,24 +47,20 @@
         if(!("version" in saveTable)){
             throw "Could not read version header from save";
         }
-
-        print(saveTable.version);
         //Use the version to determine which parser to use.
 
         local hash = parseVersionStringToHash_(saveTable.version);
         local parserChain = findParserChain_(hash, mParsers_);
 
-        print(parserChain.len());
-
         assert(parserChain.len() > 0);
 
-        local parser = parserChain[0];
+        local parser = parserChain[0]();
         printf("Reading meta file at path '%s'", metaFilePath);
         local data = parser.readMetaFile(metaFilePath);
 
         if(parserChain.len() > 1){
             for(local i = 0; i < parserChain.len()-1; i++){
-                local parser = parserChain[i+1];
+                local parser = parserChain[i+1]();
                 data = parser.updateData(data);
             }
         }
@@ -77,7 +73,6 @@
         //TODO error checking
         for(local i = 0; i < result.len(); i++){
             result[i] = result[i].tointeger();
-            print(i);
         }
 
         return ::SaveHelpers.hashVersion(result[0], result[1], result[2]);
@@ -110,6 +105,9 @@
 
 
 };
+
+local targetPath = _system.getParentPath(getstackinfos(1).src);
+_doFile(format("%s/SaveConstants.nut", targetPath));
 
 function registerSaveParser(max, min, patch){
     local targetPath = _system.getParentPath(getstackinfos(1).src);

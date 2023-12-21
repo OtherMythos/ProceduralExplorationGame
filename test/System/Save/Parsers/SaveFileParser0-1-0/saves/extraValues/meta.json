@@ -1,0 +1,14 @@
+{
+    "version": "0.1.0",
+    "versionCount": 1,
+    "meta": "",
+
+    "playerEXP": 100,
+    "playerCoins": 100,
+
+    "playtimeSeconds": 100,
+
+    "firstExtra": 100,
+    "secondExtra": 300
+
+}

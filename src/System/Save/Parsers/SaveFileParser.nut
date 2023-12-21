@@ -2,6 +2,8 @@
 
     mVersion_ = 0;
 
+    mJSONSchema_ = null;
+
     constructor(max, min, patch){
         mVersion_ = ::SaveHelpers.hashVersion(max, min, patch);
     }
@@ -19,7 +21,37 @@
             throw e;
         }
 
+        local result = performSchemaCheck(json);
+        if(!result) throw "Failed schema check";
+
         return json;
+    }
+
+    function performSchemaCheckTable_(table, schemaTable){
+        //Loop through both schemaTable and checking table to ensure no keys are missing.
+        foreach(c,i in schemaTable){
+            if(!table.rawin(c)) return false;
+        }
+        foreach(c,i in table){
+            if(!schemaTable.rawin(c)) return false;
+
+            //Determine if the json schema includes a table.
+            local checkType = schemaTable.rawget(c);
+            local schemaType = typeof checkType;
+            schemaType = schemaType == OBJECT_TYPE.TABLE ? OBJECT_TYPE.TABLE : checkType;
+
+            local localType = (typeof i);
+            if(localType != schemaType) return false;
+            if(localType == OBJECT_TYPE.TABLE){
+                if(!performSchemaCheckTable_(i, checkType)) return false;
+            }
+        }
+
+        return true;
+    }
+    function performSchemaCheck(data){
+        assert(mJSONSchema_ != null);
+        return performSchemaCheckTable_(data, mJSONSchema_);
     }
 
     /**

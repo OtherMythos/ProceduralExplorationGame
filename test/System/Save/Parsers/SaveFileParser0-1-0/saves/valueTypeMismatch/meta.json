@@ -1,0 +1,10 @@
+{
+    "version": "0.1.0",
+    "versionCount": 1,
+    "meta": "",
+
+    "playerEXP": "a string where it shouldn't be",
+    "playerCoins": 100,
+
+    "playtimeSeconds": 100
+}
