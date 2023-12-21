@@ -5,6 +5,7 @@
     mPlayerStats = null
     mDialogManager = null
     mInputManager = null
+    mSaveManager = null
 
     mTargetInterface_ = TargetInterface.DESKTOP
 
@@ -19,6 +20,8 @@
     }
 
     function setup(){
+        _system.ensureUserDirectory();
+
         printVersionInfos();
         checkUserParams();
 
@@ -66,6 +69,10 @@
 
         _doFile("res://src/System/PlayerStats.nut");
         mPlayerStats = ::PlayerStats();
+
+        _doFile("res://src/System/Save/Parsers/SaveFileParser.nut");
+        _doFile("res://src/System/Save/SaveManager.nut");
+        mSaveManager = ::SaveManager();
 
         _doFile("res://src/MapGen/Exploration/Generator/Biomes.nut");
         _doFile("res://src/MapGen/Exploration/Generator/MapGen.nut");
@@ -161,6 +168,9 @@
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_END_SCREEN, {"totalFoundItems": 5, "totalDiscoveredPlaces": 4, "totalEncountered": 2, "totalDefeated": 1}), null, 1);
 
         //mExplorationLogic.resetExploration_();
+
+        //TODO to test
+        mSaveManager.readSaveAtPath("user://0");
     }
 
     function update(){
