@@ -100,10 +100,13 @@
         recentParser.writeMetaFile(backupWritePath + "/meta.json", data);
 
         //Now all that's done perform the atomic operations to setup the new save.
-        _system.rename(path, oldWritePath);
+        local saveExists = _system.exists(path);
+        if(saveExists){
+            _system.rename(path, oldWritePath);
+        }
         _system.rename(backupWritePath, path);
         //Now remove the old directory.
-        _system.removeAll(oldWritePath);
+        if(saveExists) _system.removeAll(oldWritePath);
     }
 
     function parseVersionStringToHash_(versionString){
@@ -143,6 +146,28 @@
 
     function getMostRecentParser(){
         return mParsers_[mParsers_.len()-1]();
+    }
+
+    function produceSave(){
+        return getMostRecentParser().getDefaultData();
+    }
+
+    function findViableSaves(){
+        local files = _system.getFilesInDirectory("user://");
+        print("Scanning for viable saves.");
+
+        local valid = [];
+        foreach(i in files){
+            try{
+                local value = i.tointeger();
+                valid.append(value);
+            }catch(e){
+                //Just ignore the value if the error is thrown.
+            }
+        }
+        print(_prettyPrint(valid));
+
+        return valid;
     }
 
 

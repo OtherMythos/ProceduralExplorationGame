@@ -12,6 +12,16 @@
 
             "playtimeSeconds": OBJECT_TYPE.INTEGER
         };
+        mDefaultData_ = {
+            "version": "0.1.0",
+            "versionCount": 1,
+            "meta": "",
+
+            "playerEXP": 0,
+            "playerCoins": 0,
+
+            "playtimeSeconds": 0
+        };
     }
 
     #Override

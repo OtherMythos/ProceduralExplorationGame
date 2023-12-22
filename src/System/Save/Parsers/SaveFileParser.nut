@@ -3,6 +3,7 @@
     mVersion_ = 0;
 
     mJSONSchema_ = null;
+    mDefaultData_ = null;
 
     constructor(max, min, patch){
         mVersion_ = ::SaveHelpers.hashVersion(max, min, patch);
@@ -74,6 +75,10 @@
 
     function getHashVersion(){
         return mVersion_;
+    }
+
+    function getDefaultData(){
+        return mDefaultData_;
     }
 
 
