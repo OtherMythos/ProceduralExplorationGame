@@ -27,6 +27,14 @@
         return json;
     }
 
+    function writeMetaFile(path, data){
+        printf("Writing to path '%s'", path);
+        _system.writeJsonAsFile(path, data);
+
+        //Try and read it back and check it passes the verification.
+        //local readValue = readMetaFile(path);
+    }
+
     function performSchemaCheckTable_(table, schemaTable){
         //Loop through both schemaTable and checking table to ensure no keys are missing.
         foreach(c,i in schemaTable){

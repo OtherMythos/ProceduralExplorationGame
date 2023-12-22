@@ -11,7 +11,15 @@
 
         local layoutLine = _gui.createLayoutLine();
 
-        local buttonOptions = ["Trigger popup", "Trigger Region Discovered popup", "Trigger spread coin effect", "Trigger linear coin effect", "Trigger linear orb effect", "Trigger single text popup", "Generate render icon"];
+        local buttonOptions = [
+            "Trigger popup",
+            "Trigger Region Discovered popup",
+            "Trigger spread coin effect",
+            "Trigger linear coin effect",
+            "Trigger linear orb effect",
+            "Trigger single text popup",
+            "Generate render icon"
+        ];
         local buttonFunctions = [
             function(widget, action){
                 ::PopupManager.displayPopup(Popup.BOTTOM_OF_SCREEN);

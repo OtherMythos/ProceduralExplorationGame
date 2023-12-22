@@ -1,21 +1,26 @@
 ::PlayerStats <- class{
 
-    mPlayerAchievements_ = null;
+    mCurrentData_ = null;
+
     mPlacesVisited_ = null;
     mLeanPlacesVisited_ = null;
 
     mPlayerCombatStats = null;
 
-    mPlayerCurrentEXP_ = 0;
-
     constructor(){
         _event.subscribe(Event.PLACE_VISITED, receivePlaceVisitedEvent, this);
 
-        mPlayerAchievements_ = {};
         mPlacesVisited_ = array(PlaceId.MAX, false);
         mLeanPlacesVisited_ = [];
 
         mPlayerCombatStats = ::Combat.CombatStats(EnemyId.NONE, 100);
+    }
+
+    function setSaveData(data){
+        mCurrentData_ = data;
+    }
+    function getSaveData(){
+        return mCurrentData_;
     }
 
     function alterPlayerHealth(amount){
@@ -45,7 +50,7 @@
     }
 
     function getLevel(){
-        return getLevelForEXP_(mPlayerCurrentEXP_);
+        return getLevelForEXP_(mCurrentData_.playerEXP);
     }
 
     function getPercentageEXP(exp){
@@ -71,14 +76,14 @@
         return percentage;
     }
     function addEXP(exp){
-        local prevEXP = mPlayerCurrentEXP_;
+        local prevEXP = mCurrentData_.playerEXP;
         local prevLevel = getLevelForEXP_(prevEXP);
-        mPlayerCurrentEXP_ += exp;
+        mCurrentData_.playerEXP += exp;
         local newLevel = getLevelForEXP_(prevEXP);
         assert(prevLevel > 0);
         assert(newLevel > 0);
 
-        local percentage = getPercentageEXP(mPlayerCurrentEXP_);
+        local percentage = getPercentageEXP(mCurrentData_.playerEXP);
         local startPercentage = getPercentageEXP(prevEXP);
         local data = {
             "startLevel": prevLevel,
@@ -86,7 +91,7 @@
             "startPercentage": startPercentage,
             "endPercentage": percentage,
             "startEXP": prevEXP,
-            "endEXP": mPlayerCurrentEXP_
+            "endEXP": mCurrentData_.playerEXP
         }
 
         return data;

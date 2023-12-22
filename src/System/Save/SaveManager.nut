@@ -68,6 +68,44 @@
         return data;
     }
 
+    function writeSaveAtPath(path, data){
+        /*
+        The writing procedure follows the steps of:
+            Write the files to a temporary directory,
+            Verify the written files by parsing them again,
+            Delete the old save directory and move the new one into its place
+        */
+
+
+        local resolvedPath = _system.resolveResPath(path);
+        print("Resolved path " + resolvedPath);
+        local filename = _system.getFilenamePath(resolvedPath);
+        print("filename " + filename);
+        local targetOutDir = filename + "-temp";
+        local oldOutDir = filename + "-old";
+        //local tempSaveDir = _system.getParentPath(resolvedPath);
+        //print("parent path " + tempSaveDir);
+
+        local oldWritePath = "user://" + oldOutDir;
+        local backupWritePath = "user://" + targetOutDir;
+        if(_system.exists(backupWritePath)){
+            throw "A temporary directory already exists!"
+        }
+        if(_system.exists(oldWritePath)){
+            throw "Old directory for this save already exists!"
+        }
+        _system.mkdir(backupWritePath);
+
+        local recentParser = getMostRecentParser();
+        recentParser.writeMetaFile(backupWritePath + "/meta.json", data);
+
+        //Now all that's done perform the atomic operations to setup the new save.
+        _system.rename(path, oldWritePath);
+        _system.rename(backupWritePath, path);
+        //Now remove the old directory.
+        _system.removeAll(oldWritePath);
+    }
+
     function parseVersionStringToHash_(versionString){
         local result = split(versionString, ".");
         //TODO error checking
@@ -101,6 +139,10 @@
         }
 
         return highestVal;
+    }
+
+    function getMostRecentParser(){
+        return mParsers_[mParsers_.len()-1];
     }
 
 

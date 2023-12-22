@@ -70,6 +70,7 @@
         _doFile("res://src/System/PlayerStats.nut");
         mPlayerStats = ::PlayerStats();
 
+        _doFile("res://src/System/Save/SaveConstants.nut");
         _doFile("res://src/System/Save/Parsers/SaveFileParser.nut");
         _doFile("res://src/System/Save/SaveManager.nut");
         mSaveManager = ::SaveManager();
@@ -123,6 +124,7 @@
         _doFile("res://src/GUI/Screens/VisitedPlacesScreen.nut");
         _doFile("res://src/GUI/Screens/DialogScreen.nut");
         _doFile("res://src/GUI/Screens/TestScreen.nut");
+        _doFile("res://src/GUI/Screens/SaveEditScreen.nut");
         _doFile("res://src/GUI/Screens/ExplorationTestScreen.nut");
         _doFile("res://src/GUI/Screens/WorldGenerationStatusScreen.nut");
 
@@ -156,8 +158,9 @@
 
         //::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
         //::ScreenManager.transitionToScreen(Screen.HELP_SCREEN);
-        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
+        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
         //::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);
+        ::ScreenManager.transitionToScreen(Screen.SAVE_EDIT_SCREEN);
         //::ScreenManager.transitionToScreen(Screen.WORLD_GENERATION_STATUS_SCREEN, null, 1);
         //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_TEST_SCREEN, {"logic": mExplorationLogic}));
         //::ScreenManager.transitionToScreen(Screen.WORLD_SCENE_SCREEN);
@@ -169,8 +172,6 @@
 
         //mExplorationLogic.resetExploration_();
 
-        //TODO to test
-        mSaveManager.readSaveAtPath("user://0");
     }
 
     function update(){
