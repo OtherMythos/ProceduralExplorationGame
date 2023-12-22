@@ -142,7 +142,7 @@
     }
 
     function getMostRecentParser(){
-        return mParsers_[mParsers_.len()-1];
+        return mParsers_[mParsers_.len()-1]();
     }
 
 

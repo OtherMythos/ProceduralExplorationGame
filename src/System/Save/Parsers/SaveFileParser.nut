@@ -32,7 +32,7 @@
         _system.writeJsonAsFile(path, data);
 
         //Try and read it back and check it passes the verification.
-        //local readValue = readMetaFile(path);
+        local readValue = readMetaFile(path);
     }
 
     function performSchemaCheckTable_(table, schemaTable){
