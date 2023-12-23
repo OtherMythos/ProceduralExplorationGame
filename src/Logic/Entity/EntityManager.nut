@@ -23,7 +23,8 @@ enum EntityComponents{
 enum EntityDestroyReason{
     NONE,
     LIFETIME,
-    NO_HEALTH
+    NO_HEALTH,
+    DESTROY_ALL
 };
 
 enum SpoilsComponentType{
@@ -188,7 +189,7 @@ EntityManager.EntityManager <- class{
             if(i == null) continue;
             local eid = (c & 0x3FFFFFFF) | ((mVersions_[c] << 30)) | (mId << 60);
 
-            processEntityDestruction_(eid, c, EntityDestroyReason.NONE);
+            processEntityDestruction_(eid, c, EntityDestroyReason.DESTROY_ALL);
             mEntityComponentHashes_[c] = null;
             mVersions_[c]++;
             mFreeList_.append(c);
@@ -333,7 +334,7 @@ EntityManager.EntityManager <- class{
                     ::DatablockManager.removeDatablock(component.mDatablock);
                 }
                 else if(i == EntityComponents.SPOILS){
-                    if(reason != EntityDestroyReason.LIFETIME){
+                    if(reason != EntityDestroyReason.LIFETIME && reason != EntityDestroyReason.DESTROY_ALL){
                         mCreatorWorld_.actuateSpoils(component, mEntityPositions_[idx]);
                     }
                 }
