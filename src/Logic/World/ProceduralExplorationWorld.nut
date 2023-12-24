@@ -247,7 +247,8 @@
         oceanItem.setRenderQueueGroup(30);
         oceanItem.setDatablock("oceanUnlit");
         oceanNode.attachObject(oceanItem);
-        oceanNode.setScale(500, 500, 500)
+        //NOTE: As we're re-orientating later 1 must be the scale for z
+        oceanNode.setScale(2000, 2000, 1);
         oceanNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
 
     }
