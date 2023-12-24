@@ -1,24 +1,5 @@
-@piece( custom_ps_functions )
-	float blendDarkenBase(float base, float blend) {
-		return min(blend,base);
-	}
-
-	float3 blendDarkenFloat3(float3 base, float3 blend) {
-		return float3(blendDarkenBase(base.r,blend.r),blendDarkenBase(base.g,blend.g),blendDarkenBase(base.b,blend.b));
-	}
-
-	float3 blendDarken(float3 base, float3 blend, float opacity) {
-		return (blendDarkenFloat3(base, blend) * opacity + base * (1.0 - opacity));
-	}
-@end
-
 @piece( custom_ps_preLights )
-	//finalColour = float3(1.0, 1.0, 1.0);
-	//float opacity = material.userValue[0].x;
 	finalColour = finalColour * inPs.diffuse.xyz;
-
-	//finalColour = (min(finalColour, finalColour - inPs.diffuse.xyz) * opacity + finalColour * (1.0 - opacity));
-	//finalColour = blendDarken(finalColour, inPs.diffuse.xyz, 0.5);
 @end
 
 @piece( custom_VStoPS )
@@ -34,34 +15,46 @@
         float3(-1, 0,  0),
     };
 
-	//outVs.diffuse = input.diffuse;
-	//input.normal = float3(0, 0, 0);
-	//inVs_normal = float3(0, 0, 0);
-	//float test = input.normal.x;
+	float4 inValues = inVs_vertex;
+	@property( syntax == metal )
+		uint original = as_type<uint>(inValues.x);
+		uint originalSecond = as_type<uint>(inValues.y);
+	@else
+		uint original = floatBitsToUint(inValues.x);
+		uint originalSecond = floatBitsToUint(inValues.y);
+	@end
 
-	unsigned int original = as_type<unsigned int>(input.position.x);
-	unsigned int originalSecond = as_type<unsigned int>(input.position.y);
-	unsigned int magicNumber = originalSecond & 0x1FFFFFFF;
+	uint magicNumber = originalSecond & 0x1FFFFFFF;
 	float3 normVal = float3(0, 0, 0);
 	#undef inVs_normal
 	#define inVs_normal normVal
-	if(magicNumber == 0x15FBF7DB){
-		int pos_x = as_type<int>(original & 0x3FF);
-		int pos_y = as_type<int>((original >> 10) & 0x3FF);
-		int pos_z = as_type<int>((original >> 20) & 0x3FF);
-		input.position.x = float(pos_x)-0.5;
-		input.position.y = float(pos_y)-0.5;
-		input.position.z = float(pos_z)-0.5;
 
-		//unsigned int vox = as_type<unsigned int>(originalSecond & 0xFFFF);
-		unsigned int norm = as_type<unsigned int>((originalSecond >> 29) & 0x3);
-		unsigned int ambient = as_type<unsigned int>((original >> 30) & 0x3);
+	#undef inVs_vertex
+	#define inVs_vertex inValues
+
+	if(magicNumber == 0x15FBF7DB){
+		int pos_x = int(original & 0x3FF);
+		int pos_y = int((original >> 10) & 0x3FF);
+		int pos_z = int((original >> 20) & 0x3FF);
+		inValues.x = float(pos_x)-0.5;
+		inValues.y = float(pos_y)-0.5;
+		inValues.z = float(pos_z)-0.5;
+
+		uint norm = uint((originalSecond >> 29) & 0x3);
+		uint ambient = uint((original >> 30) & 0x3);
 
 		normVal = FACES_NORMALS[norm];
 
-		float ambientVal = (float)ambient/3;
-		outVs.diffuse = float3(ambientVal, ambientVal, ambientVal);
+		//If the renderable does not require pixel shading because it is a shadow caster for instance, these settings won't always be available.
+		@property( !hlms_shadowcaster || !hlms_shadow_uses_depth_texture || alpha_test || exponential_shadow_maps )
+			float ambientVal = float(ambient/3);
+			outVs.diffuse = float3(ambientVal, ambientVal, ambientVal);
+		@end
 	}else{
-		outVs.diffuse = float3(1, 1, 1);
+		@property( !hlms_shadowcaster || !hlms_shadow_uses_depth_texture || alpha_test || exponential_shadow_maps )
+			outVs.diffuse = float3(1, 1, 1);
+		@end
 	}
+
+
 @end
