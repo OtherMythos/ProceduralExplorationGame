@@ -1,15 +1,62 @@
 ::ScreenManager.Screens[Screen.SAVE_SELECTION_SCREEN] = class extends ::Screen{
 
-    function saveSelectionCallback_(widget, action){
-        print(format("Selected save %i", widget.getUserId()));
+    SaveEntryScreen = class{
+        mWindow_ = null;
+        mButton_ = null;
+        mSaveData_ = null;
 
-        local viableSaves = ::Base.mSaveManager.findViableSaves();
-        local save = ::Base.mSaveManager.readSaveAtPath("user://" + viableSaves[widget.getUserId()].tostring());
-        ::Base.mPlayerStats.setSaveData(save);
+        mTitle_ = null;
+        mPlaytimeLabel_ = null;
+        mLevelLabel_ = null;
 
-        //There is no implementation for saves yet, so just switch the screen.
-        ::ScreenManager.transitionToScreen(Screen.GAMEPLAY_MAIN_MENU_SCREEN);
-    }
+        function saveSelectionCallback_(widget, action){
+            print(format("Selected save %i", widget.getUserId()));
+
+            local viableSaves = ::Base.mSaveManager.findViableSaves();
+            local save = ::Base.mSaveManager.readSaveAtPath("user://" + viableSaves[widget.getUserId()].tostring());
+            ::Base.mPlayerStats.setSaveData(save);
+
+            //There is no implementation for saves yet, so just switch the screen.
+            ::ScreenManager.transitionToScreen(Screen.GAMEPLAY_MAIN_MENU_SCREEN);
+        }
+
+        constructor(idx, window, data){
+            mWindow_ = window;
+            mSaveData_ = data;
+
+            local button = window.createButton();
+            button.setUserId(idx);
+            button.setExpandHorizontal(true);
+            button.setMinSize(0, 100);
+            mButton_ = button;
+            //layoutLine.addCell(button);
+
+            mTitle_ = mWindow_.createLabel();
+            mTitle_.setText(data.playerName);
+            mPlaytimeLabel_ = mWindow_.createLabel();
+            local seconds = data.playtimeSeconds;
+            mPlaytimeLabel_.setText(format("Playtime: %i:%i", (seconds / 60).tointeger(), seconds % 60));
+            mLevelLabel_ = mWindow_.createLabel();
+            mLevelLabel_.setText("Level " + data.playerLevel);
+
+            mButton_.setUserId(data.saveId);
+            button.attachListenerForEvent(saveSelectionCallback_, _GUI_ACTION_PRESSED);
+        }
+
+        function addToLayout(layout){
+            layout.addCell(mButton_);
+        }
+        function notifyLayout(){
+            local originPos = mButton_.getPosition();
+
+            mTitle_.setPosition(originPos);
+            local playtimeSize = mPlaytimeLabel_.getSize();
+            local newPos = originPos + Vec2(0, playtimeSize.y);
+            mPlaytimeLabel_.setPosition(newPos);
+            mLevelLabel_.setPosition(newPos + Vec2(playtimeSize.x + 50, 0));
+        }
+    };
+
     function newSaveCallback_(widget, action){
         local save = ::Base.mSaveManager.produceSave();
         ::Base.mPlayerStats.setSaveData(save);
@@ -32,10 +79,14 @@
         title.sizeToFit(_window.getWidth() * 0.9);
         layoutLine.addCell(title);
 
-        local viableSaves = ::Base.mSaveManager.findViableSaves();
+        //local viableSaves = ::Base.mSaveManager.findViableSaves();
+        local viableSaves = ::Base.mSaveManager.obtainViableSaveInfo();
 
+        local layoutWidgets = [];
         for(local i = 0; i < viableSaves.len(); i++){
-            createSaveEntry(i, mWindow_, layoutLine);
+            local widget = SaveEntryScreen(i, mWindow_, viableSaves[i]);
+            widget.addToLayout(layoutLine);
+            layoutWidgets.append(widget);
         }
 
         {
@@ -53,6 +104,10 @@
         layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
         layoutLine.setSize(_window.getWidth() * 0.9, _window.getHeight());
         layoutLine.layout();
+
+        foreach(i in layoutWidgets){
+            i.notifyLayout();
+        }
     }
 
     function createSaveEntry(idx, window, layoutLine){

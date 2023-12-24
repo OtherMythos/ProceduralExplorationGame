@@ -152,6 +152,26 @@
         return getMostRecentParser().getDefaultData();
     }
 
+    /**
+     * Determine all the viable saves and read some values from them to provide simple information.
+     */
+    function obtainViableSaveInfo(){
+        local retVals = [];
+
+        local viableSaves = findViableSaves();
+        foreach(i in viableSaves){
+            local saveData = readSaveAtPath("user://" + i);
+            local newData = {};
+            newData.playtimeSeconds <- saveData.playtimeSeconds;
+            newData.playerLevel <- ::Base.mPlayerStats.getLevelForEXP_(saveData.playerEXP).tostring();
+            newData.playerName <- "Some name";
+            newData.saveId <- i;
+            retVals.append(newData);
+        }
+
+        return retVals;
+    }
+
     function findViableSaves(){
         local files = _system.getFilesInDirectory("user://");
         print("Scanning for viable saves.");
