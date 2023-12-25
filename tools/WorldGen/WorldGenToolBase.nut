@@ -298,12 +298,12 @@
         mTimerLabel_.setText(format("total seconds: %.5f", mapData.stats.totalSeconds));
     }
 
-    function generate(){
+    function generate_(seed, variation, moisture){
         local gen = ::MapGen();
         local data = {
-            "seed": mSeed_,
-            "variation": mVariation_,
-            "moistureSeed": mMoistureSeed_,
+            "seed": seed,
+            "variation": variation,
+            "moistureSeed": moisture,
             "width": 400,
             "height": 400,
             "numRivers": 24,
@@ -313,9 +313,18 @@
             "placeFrequency": [0, 1, 1, 4, 4, 30]
         };
         local outData = gen.generate(data);
-        mCurrentMapData_ = outData;
+        return outData;
+    }
+    function generate(){
+        local thread = ::newthread(generate_);
+        thread.call(mSeed_, mVariation_, mMoistureSeed_);
 
-        mMapViewer_.displayMapData(outData);
-        updateTimeData(outData);
+        local finishedData = null;
+        while(thread.getstatus() != "idle"){
+            finishedData = thread.wakeup();
+        }
+
+        mMapViewer_.displayMapData(finishedData);
+        updateTimeData(finishedData);
     }
 };
