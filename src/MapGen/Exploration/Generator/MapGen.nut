@@ -429,9 +429,7 @@
         for(local i = 0; i < data.numRivers; i++){
             local landId = findRandomLandmassForSize(landData, landWeighted, 20);
             local landPoint = findPointOnCoast_(landData, landId);
-            origins[i] = {
-                "origin": landPoint
-            }
+            origins[i] = landPoint;
         }
 
         return origins;
@@ -510,13 +508,15 @@
         }
 
     }
-    function calculateRivers(riverData, voxBlob, data){
+    function calculateRivers(originData, voxBlob, data){
         local outCoords = [0, 0];
-        for(local river = 0; river < riverData.len(); river++){
+        local retData = [];
+        for(local river = 0; river < originData.len(); river++){
             local outData = [];
-            local rData = riverData[river];
-            local originX = (rData.origin >> 16) & 0xFFFF;
-            local originY = rData.origin & 0xFFFF;
+            local altitudes = {};
+            local rData = originData[river];
+            local originX = (rData >> 16) & 0xFFFF;
+            local originY = rData & 0xFFFF;
 
             local currentX = originX;
             local currentY = originY;
@@ -526,10 +526,21 @@
                 currentX = outCoords[0];
                 currentY = outCoords[1];
                 local totalId = wrapWorldPos_(currentX, currentY);
+                //We've visited this minimum altitude before so skip it.
+                if(altitudes.rawin(totalId)) break;
+                altitudes.rawset(totalId, false);
                 outData.append(totalId);
             }
-            rData.points <- outData;
+            if(outData.len() <= 15){
+                continue;
+            }
+            retData.append({
+                "origin": rData,
+                "points": outData
+            })
         }
+
+        return retData;
     }
 
     function riverDataToBlob(riverData){
@@ -910,8 +921,8 @@ registerGenerationStage("Determine edges", function(workspace){
     outlineEdges(workspace.noiseBlob, workspace.waterData, workspace.landData);
 });
 registerGenerationStage("Determine rivers", function(workspace){
-    local riverData = determineRiverOrigins(workspace.noiseBlob, workspace.landData, workspace.landWeighted, workspace.data);
-    calculateRivers(riverData, workspace.noiseBlob, workspace.data);
+    local originData = determineRiverOrigins(workspace.noiseBlob, workspace.landData, workspace.landWeighted, workspace.data);
+    local riverData = calculateRivers(originData, workspace.noiseBlob, workspace.data);
     local riverBuffer = riverDataToBlob(riverData);
     carveRivers(workspace.noiseBlob, riverBuffer);
 
