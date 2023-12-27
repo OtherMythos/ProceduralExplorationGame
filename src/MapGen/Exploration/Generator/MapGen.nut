@@ -174,11 +174,58 @@
         secondaryBlob.seek(0);
         local vals = array(data.width*data.height, 0xFF);
 
-        for(local c = 0; c < data.numRegions; c++){
-            c++;
+
+        local points = [];
+        for(local i = 0; i < data.numRegions; i++){
+            local i = determineRegionPoint_(secondaryBlob, landmassData, landWeighted, data, vals);
+            if(i == null) continue;
+            points.append(i);
+
+            outData.append({
+                "id": i,
+                "total": 0,
+                "seedX": 0,
+                "seedY": 0,
+            });
+        }
+        local width = data.width;
+        local height = data.height;
+        for(local y = 0; y < height; y++){
+            for(local x = 0; x < width; x++){
+                //Determine the closest of all the points.
+                local closest = 10000.0;
+                local closestIdx = -1;
+
+                //local pos = (((z >> 16) & 0xFFFF) + (z & 0xFFFF) * data.width) * 4;
+                local target = (x + y * width) * 4;
+                secondaryBlob.seek(target);
+                local val = secondaryBlob.readn('i');
+                secondaryBlob.seek(target);
+
+                foreach(c,z in points){
+                    local xTarget = (z >> 16) & 0xFFFF;
+                    local yTarget = z & 0xFFFF;
+
+                    local length = sqrt(pow(xTarget - x, 2) + pow(yTarget - y, 2));
+                    if(length < closest){
+                        closest = length;
+                        closestIdx = c;
+                    }
+                }
+                assert(closestIdx != -1);
+
+                val = val | (closestIdx << 8);
+                secondaryBlob.writen(val, 'i');
+            }
+        }
+
+        local splatterRegions = [];
+        //Splatter some flood fills around the place.
+        for(local c = 0; c < 6; c++){
             local i = determineRegionPoint_(secondaryBlob, landmassData, landWeighted, data, vals);
             if(i == null) continue;
             local regionId = outData.len();
+            splatterRegions.append(regionId);
             local x = (i >> 16) & 0xFFFF;
             local y = i & 0xFFFF;
             local floodData = {
@@ -201,20 +248,21 @@
                 secondaryBlob.seek(pos);
                 local val = secondaryBlob.readn('i');
                 secondaryBlob.seek(pos);
-                val = val | (regionId << 8);
+                val = (val & 0x00FF) | (regionId << 8);
                 //val = val | (100 << 8);
                 secondaryBlob.writen(val, 'i');
             }
             outData.append(floodData);
         }
 
-        return outData;
+        return [outData, splatterRegions];
     }
 
     function processBiomeTypes(blob, secondaryBlob, data){
         blob.seek(0);
         secondaryBlob.seek(0);
 
+        local seaLevel = data.seaLevel;
         for(local y = 0; y < data.height; y++){
             for(local x = 0; x < data.width; x++){
                 local pos = blob.tell();
@@ -226,7 +274,7 @@
 
                 //The biome determines the type of the voxel as well as what gets placed, so instead determine the biome and pass off to that.
                 local targetBiome = BiomeId.DEEP_OCEAN;
-                if(altitude >= data.seaLevel){
+                if(altitude >= seaLevel){
                     targetBiome = BiomeId.GRASS_LAND;
                     if(altitude >= 120 && altitude <= 150){
                         if(moisture >= 150) targetBiome = BiomeId.GRASS_FOREST;
@@ -256,12 +304,17 @@
             biomeData[data].startingVal = BiomeId.CHERRY_BLOSSOM_FOREST;
         }
     }
-    function populateFinalBiomes(noiseBlob, secondaryBlob, blueNoise, biomeData){
+    //function populateFinalBiomes(noiseBlob, secondaryBlob, blueNoise, biomeData){
+    function populateFinalBiomes(noiseBlob, secondaryBlob, blueNoise, splatterRegions){
         local placementItems = [];
         local VOX_FLAG_MASK = (0xFFFF00FF | MAP_VOXEL_MASK);
 
+        local targetRegion = _random.randIndex(splatterRegions);
+        targetRegion = splatterRegions[targetRegion];
+
         local width = mData_.width;
         local height = mData_.height;
+        /*
         foreach(i in biomeData){
             local targetBiome = i.startingVal;
             foreach(c,wrapped in i.coords){
@@ -277,6 +330,37 @@
                 local biome = ::Biomes[targetBiome];
                 local vox = biome.determineVoxFunction(val & 0xFF);
                 biome.placeObjectsFunction(placementItems, blueNoise, x, y, width, height, val & 0xFF, region, flags);
+
+                noiseBlob.seek(pos);
+                noiseBlob.writen((val & VOX_FLAG_MASK) | (vox | flags) << 8, 'i');
+            }
+        }
+        */
+
+        local biome = ::Biomes[BiomeId.GRASS_LAND];
+        local seaLevel = mData_.seaLevel;
+        for(local y = 0; y < height; y++){
+            for(local x = 0; x < width; x++){
+                local pos = (x + y * width) * 4;
+                noiseBlob.seek(pos);
+                local val = noiseBlob.readn('i');
+                local flags = (val >> 8) & ~MAP_VOXEL_MASK;
+                secondaryBlob.seek(pos);
+                local valSecond = secondaryBlob.readn('i');
+                local moisture = valSecond & 0xFF;
+                local region = (valSecond >> 8) & 0xFF;
+                local altitude = val & 0xFF;
+                if(altitude < seaLevel){
+                    continue;
+                }
+
+                local target = biome;
+                if(region == targetRegion){
+                    target = ::Biomes[BiomeId.CHERRY_BLOSSOM_FOREST];
+                }
+
+                local vox = target.determineVoxFunction(altitude, moisture);
+                target.placeObjectsFunction(placementItems, blueNoise, x, y, width, height, altitude, region, flags, moisture, mData_);
 
                 noiseBlob.seek(pos);
                 noiseBlob.writen((val & VOX_FLAG_MASK) | (vox | flags) << 8, 'i');
@@ -406,7 +490,7 @@
         for(local i = 0; i < landData.len(); i++){
             local e = landData[i];
             local size = e.total;
-            if(size <= 10){
+            if(size <= 30){
                 local checked = {};
                 floodFillLand_(e.seedX, e.seedY, data.width, data.height, floodFillLandComparisonFunction_, noiseBlob, checked);
                 landData[i] = null;
@@ -858,7 +942,7 @@
             "height": data.height,
             "waterData": workspace.waterData,
             "landData": workspace.landData,
-            "biomeData": workspace.biomeData,
+            //"biomeData": workspace.biomeData,
             "riverBuffer": workspace.riverBuffer,
             "seaLevel": data.seaLevel,
             "placeData": workspace.placeData,
@@ -930,17 +1014,21 @@ registerGenerationStage("Determine rivers", function(workspace){
     workspace.riverBuffer <- riverBuffer;
 });
 registerGenerationStage("Determine regions", function(workspace){
-    workspace.regionData <- determineRegions(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.landData, workspace.landWeighted, workspace.data);
+    local vals = determineRegions(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.landData, workspace.landWeighted, workspace.data);
+
+    workspace.regionData <- vals[0];
+    workspace.splatterRegions <- vals[1];
 });
 registerGenerationStage("Determine biomes", function(workspace){
     processBiomeTypes(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.data);
-    local biomeData = floodFillBiomes(workspace.noiseBlob, workspace.data);
-    determineFinalBiomes(workspace.noiseBlob, biomeData);
+    //local biomeData = floodFillBiomes(workspace.noiseBlob, workspace.data);
+    //determineFinalBiomes(workspace.noiseBlob, biomeData);
 
-    workspace.biomeData <- biomeData;
+    //workspace.biomeData <- biomeData;
 });
 registerGenerationStage("Place biome items", function(workspace){
-    workspace.placedItems <- populateFinalBiomes(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.blueNoise, workspace.biomeData);
+    //workspace.placedItems <- populateFinalBiomes(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.blueNoise, workspace.biomeData);
+    workspace.placedItems <- populateFinalBiomes(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.blueNoise, workspace.splatterRegions);
 });
 registerGenerationStage("Determine places", function(workspace){
     workspace.placeData <- determinePlaces(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.landData, workspace.landWeighted, workspace.data);

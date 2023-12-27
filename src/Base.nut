@@ -156,9 +156,10 @@
 
         mExplorationLogic = ExplorationLogic();
 
-        ::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
+        //::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
+        //::ScreenManager.transitionToScreen(Screen.SAVE_SELECTION_SCREEN);
         //::ScreenManager.transitionToScreen(Screen.HELP_SCREEN);
-        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
+        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
         //::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);
         //::ScreenManager.transitionToScreen(Screen.SAVE_EDIT_SCREEN);
         //::ScreenManager.transitionToScreen(Screen.WORLD_GENERATION_STATUS_SCREEN, null, 1);

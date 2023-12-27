@@ -38,19 +38,22 @@ local Biome = class{
 ::Biomes <- array(BiomeId.MAX, null);
 
 ::Biomes[BiomeId.GRASS_LAND] = Biome(
-    function(altitude){
+    function(altitude, moisture){
         if(altitude >= 110){
-            return MapVoxelTypes.DIRT;
+            if(moisture >= 150){
+                return MapVoxelTypes.TREES;
+            }else{
+                return MapVoxelTypes.DIRT;
+            }
         }else{
             return MapVoxelTypes.SAND;
         }
     },
-    function(placementItems, noise, x, y, width, height, altitude, region, flags){
+    function(placementItems, noise, x, y, width, height, altitude, region, flags, moisture, data){
         //Don't place trees on the sand.
         if(altitude >= 110){
             if(flags & MapVoxelTypes.RIVER) return;
-            if(processRValue(noise, x, y, width, height, 6)){
-                printf("Placing tree %i, %i", x, y);
+            if(processRValue(noise, x, y, width, height, moisture >= 150 ? 1 : 6)){
                 placementItems.append({
                     "originX": x,
                     "originY": y,
@@ -63,13 +66,12 @@ local Biome = class{
     }
 );
 ::Biomes[BiomeId.GRASS_FOREST] = Biome(
-    function(altitude){
+    function(altitude, moisture){
         return MapVoxelTypes.TREES;
     },
-    function(placementItems, noise, x, y, width, height, altitude, region, flags){
+    function(placementItems, noise, x, y, width, height, altitude, region, flags, moisture, data){
         if(flags & MapVoxelTypes.RIVER) return;
         if(processRValue(noise, x, y, width, height, 1)){
-            printf("Placing tree %i, %i", x, y);
             placementItems.append({
                 "originX": x,
                 "originY": y,
@@ -81,11 +83,13 @@ local Biome = class{
     }
 );
 ::Biomes[BiomeId.CHERRY_BLOSSOM_FOREST] = Biome(
-    function(altitude){
+    function(altitude, moisture){
+        if(altitude < 110) return MapVoxelTypes.SAND;
         return MapVoxelTypes.TREES_CHERRY_BLOSSOM;
     },
-    function(placementItems, noise, x, y, width, height, altitude, region, flags){
+    function(placementItems, noise, x, y, width, height, altitude, region, flags, moisture, data){
         if(flags & MapVoxelTypes.RIVER) return;
+        if(altitude < 110) return;
         if(processRValue(noise, x, y, width, height, 1)){
             placementItems.append({
                 "originX": x,
@@ -98,18 +102,18 @@ local Biome = class{
     }
 );
 ::Biomes[BiomeId.SHALLOW_OCEAN] = Biome(
-    function(altitude){
+    function(altitude, moisture){
         return MapVoxelTypes.SAND;
     },
-    function(placementItems, noise, x, y, width, height, altitude, region, flags){
+    function(placementItems, noise, x, y, width, height, altitude, region, flags, moisture, data){
 
     }
 );
 ::Biomes[BiomeId.DEEP_OCEAN] = Biome(
-    function(altitude){
+    function(altitude, moisture){
         return MapVoxelTypes.SAND;
     },
-    function(placementItems, noise, x, y, width, height, altitude, region, flags){
+    function(placementItems, noise, x, y, width, height, altitude, region, flags, moisture, data){
 
     }
 );

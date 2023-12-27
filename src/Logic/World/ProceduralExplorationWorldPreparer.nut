@@ -53,7 +53,7 @@
             "height": 400,
             "numRivers": 24,
             "seaLevel": 100,
-            "numRegions": 16,
+            "numRegions": 14,
             "altitudeBiomes": [10, 100],
             "placeFrequency": [0, 1, 1, 4, 4, 30]
         };
