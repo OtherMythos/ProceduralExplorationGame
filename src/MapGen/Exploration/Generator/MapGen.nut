@@ -169,7 +169,7 @@
             floodData.chance = floodData.chance * (underwater ? 0.9994 : floodData.decay);
         }
     }
-    function determineRegions(voxelBlob, secondaryBlob, landmassData, landWeighted, data){
+    function determineRegions(voxelBlob, secondaryBlob, landmassData, landWeighted, playerStart, gatewayLocation, data){
         local outData = [];
         secondaryBlob.seek(0);
         local vals = array(data.width*data.height, 0xFF);
@@ -221,13 +221,20 @@
 
         local splatterRegions = [];
         //Splatter some flood fills around the place.
-        for(local c = 0; c < 6; c++){
+        for(local c = 0; c < 5; c++){
             local i = determineRegionPoint_(secondaryBlob, landmassData, landWeighted, data, vals);
             if(i == null) continue;
             local regionId = outData.len();
-            splatterRegions.append(regionId);
             local x = (i >> 16) & 0xFFFF;
             local y = i & 0xFFFF;
+            if(c == 0){
+                x = (playerStart >> 16) & 0xFFFF;
+                y = playerStart & 0xFFFF;
+            }
+            else if(c == 1){
+                x = (gatewayLocation >> 16) & 0xFFFF;
+                y = gatewayLocation & 0xFFFF;
+            }
             local floodData = {
                 //Add 1 so it doesn't try and populate for region 0, which is the default.
                 "id": regionId,
@@ -241,6 +248,7 @@
                 "chance": 200.0,
             };
             performLazyFloodFill_(x, y, data.width, data.height, regionId, voxelBlob, secondaryBlob, vals, floodData);
+            if(floodData.coords.len() <= 0) continue;
 
             //Write the values to the blob.
             foreach(z in floodData.coords){
@@ -253,6 +261,10 @@
                 secondaryBlob.writen(val, 'i');
             }
             outData.append(floodData);
+
+            //Reset the values each time.
+            vals = array(data.width*data.height, 0xFF);
+            splatterRegions.append(regionId);
         }
 
         return [outData, splatterRegions];
@@ -309,8 +321,11 @@
         local placementItems = [];
         local VOX_FLAG_MASK = (0xFFFF00FF | MAP_VOXEL_MASK);
 
-        local targetRegion = _random.randIndex(splatterRegions);
-        targetRegion = splatterRegions[targetRegion];
+        local targetRegion = -1;
+        if(splatterRegions.len() > 0){
+            targetRegion = _random.randIndex(splatterRegions);
+            targetRegion = splatterRegions[targetRegion];
+        }
 
         local width = mData_.width;
         local height = mData_.height;
@@ -712,6 +727,31 @@
         return findRandomPointInLandmass(data);
     }
 
+    function determineGatewayPosition(landData, landWeighted, gatewayStart){
+        local retPoint = 0;
+        local distance = (mData_.width / 2).tointeger();
+
+        //Choose a position but make sure it's a decent distance from the player start position.
+        //Try 5 and if a suitable position can't be found then just use the most recent attempt.
+        for(local i = 0; i < 5; i++){
+            local landId = findRandomLandmassForSize(landData, landWeighted, 40);
+            retPoint = findRandomPointInLandmass(landData[landId]);
+
+            local x = (retPoint >> 16) & 0xFFFF;
+            local y = retPoint & 0xFFFF;
+
+            local gatewayX = (gatewayStart >> 16) & 0xFFFF;
+            local gatewayY = gatewayStart & 0xFFFF;
+
+            local distance = sqrt(pow(gatewayX - x, 2) + pow(gatewayY - y, 2));
+            if(distance > 200){
+                break;
+            }
+        }
+
+        return retPoint;
+    }
+
     function findRandomPointInLandmass(landData){
         local randIndex = _random.randIndex(landData.coords);
         return landData.coords[randIndex];
@@ -775,7 +815,7 @@
 
         return retLandmass;
     }
-    function determinePlaces_place(noiseBlob, secondaryBlob, landData, landWeighted, place, placeId){
+    function determinePlaces_place(noiseBlob, secondaryBlob, landData, landWeighted, place, placeId, gatewayLocation){
         local landmassId = determinePlaces_determineLandmassForPlace(landData, landWeighted, place);
         local landmass = landData[landmassId];
 
@@ -790,6 +830,10 @@
             }
         }
         if(point == null) return null;
+
+        if(placeId == PlaceId.GATEWAY){
+            point = gatewayLocation;
+        }
 
         //Determine the region.
         local originX = (point >> 16) & 0xFFFF;
@@ -806,7 +850,7 @@
         };
         return placeData;
     }
-    function determinePlaces(noiseBlob, secondaryBlob, landData, landWeighted, data){
+    function determinePlaces(noiseBlob, secondaryBlob, landData, landWeighted, gatewayLocation, data){
         local placeData = [];
 
         foreach(c,freq in data.placeFrequency){
@@ -816,7 +860,7 @@
                 if(totalPlaces.len() == 0) break;
                 local targetPlace = totalPlaces[_random.randIndex(totalPlaces)];
                 local place = ::Places[targetPlace];
-                local addedPlace = determinePlaces_place(noiseBlob, secondaryBlob, landData, landWeighted, place, targetPlace);
+                local addedPlace = determinePlaces_place(noiseBlob, secondaryBlob, landData, landWeighted, place, targetPlace, gatewayLocation);
                 if(addedPlace == null) continue;
                 placeData.append(addedPlace);
             }
@@ -1013,8 +1057,14 @@ registerGenerationStage("Determine rivers", function(workspace){
     workspace.riverData <- riverData;
     workspace.riverBuffer <- riverBuffer;
 });
+registerGenerationStage("Determine player start", function(workspace){
+    workspace.playerStart <- determinePlayerStart(workspace.landData, workspace.landWeighted);
+});
+registerGenerationStage("Determine gateway position", function(workspace){
+    workspace.gatewayPosition <- determineGatewayPosition(workspace.landData, workspace.landWeighted, workspace.playerStart);
+});
 registerGenerationStage("Determine regions", function(workspace){
-    local vals = determineRegions(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.landData, workspace.landWeighted, workspace.data);
+    local vals = determineRegions(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.landData, workspace.landWeighted, workspace.gatewayPosition, workspace.gatewayPosition, workspace.data);
 
     workspace.regionData <- vals[0];
     workspace.splatterRegions <- vals[1];
@@ -1031,8 +1081,5 @@ registerGenerationStage("Place biome items", function(workspace){
     workspace.placedItems <- populateFinalBiomes(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.blueNoise, workspace.splatterRegions);
 });
 registerGenerationStage("Determine places", function(workspace){
-    workspace.placeData <- determinePlaces(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.landData, workspace.landWeighted, workspace.data);
-});
-registerGenerationStage("Determine player start", function(workspace){
-    workspace.playerStart <- determinePlayerStart(workspace.landData, workspace.landWeighted);
+    workspace.placeData <- determinePlaces(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.landData, workspace.landWeighted, workspace.gatewayPosition, workspace.data);
 });

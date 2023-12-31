@@ -8,6 +8,7 @@ enum DrawOptions{
     RIVER_DATA,
     LAND_GROUPS,
     EDGE_VALS,
+    PLAYER_START_POSITION,
     VISIBLE_REGIONS, //NOTE: Generally only used during gameplay.
     REGION_SEEDS,
     PLACE_LOCATIONS,
@@ -29,6 +30,7 @@ enum MapViewerColours{
 
     COLOUR_BLACK,
     COLOUR_MAGENTA,
+    COLOUR_ORANGE,
 
     UNDISCOVRED_REGION,
 
@@ -145,6 +147,7 @@ enum MapViewerColours{
         colVals[MapViewerColours.WATER_GROUPS] = baseVal;
         colVals[MapViewerColours.COLOUR_BLACK] = baseVal;
         colVals[MapViewerColours.COLOUR_MAGENTA] = ColourValue(1, 0, 1, 1);
+        colVals[MapViewerColours.COLOUR_ORANGE] = ColourValue(0.85, 0.63, 0.03, 1);
         colVals[MapViewerColours.UNDISCOVRED_REGION] = ColourValue(0.1, 0.1, 0.1, 1);
 
         for(local i = 0; i < colVals.len(); i++){
@@ -191,6 +194,16 @@ enum MapViewerColours{
                     textureBox.seek((x + y * mMapData_.width) * 4);
                     textureBox.writen(first ? mColours_[MapViewerColours.COLOUR_MAGENTA] : mColours_[MapViewerColours.COLOUR_BLACK], 'i');
                     first = false;
+                }
+            }
+        }
+        if(mDrawOptions_[DrawOptions.PLAYER_START_POSITION]){
+            local startX = (mMapData_.playerStart >> 16) & 0xFFFF;
+            local startY = mMapData_.playerStart & 0xFFFF;
+            for(local y = -3; y < 3; y++){
+                for(local x = -3; x < 3; x++){
+                    textureBox.seek(((startX + x) + (startY + y) * mMapData_.width) * 4);
+                    textureBox.writen(mColours_[MapViewerColours.COLOUR_BLACK], 'i');
                 }
             }
         }

@@ -89,13 +89,18 @@ const NUM_VERTS = 6;
         }
 
         function prepareVertBuffer(){
-            assert(numActiveVox != 0);
+            if(numActiveVox == 0){
+                return;
+            }
             verts = blob(((numActiveVox * ((NUM_VERTS * 4) * 5) * 4) * 2.5).tointeger());
             //Bind the function to prevent string lookups.
             vertsFuncBind = verts.writen.bindenv(verts);
         }
 
         function generateMesh(meshBaseName, elemVec, width, height, maxAltitude){
+            if(numActiveVox == 0){
+                return null;
+            }
             local outMesh = _graphics.createManualMesh(meshBaseName + "-region" + mId_.tostring());
             local subMesh = outMesh.createSubMesh();
 
@@ -233,7 +238,7 @@ const NUM_VERTS = 6;
             }
         }
 
-        foreach(i in regionEntries){
+        foreach(c,i in regionEntries){
             i.prepareVertBuffer();
         }
         //4 verts per quad, 5 quads (1 upper face assuming 4 surrounding it), 4 bytes to a float. 1.5 * for padding.

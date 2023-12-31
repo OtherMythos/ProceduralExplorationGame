@@ -263,6 +263,7 @@
         print("Time taken to generate voxel map " + vox.getStats().totalSeconds);
         assert(meshes.len() == mMapData_.regionData.len());
         foreach(c,i in meshes){
+            if(i == null) continue;
             local decorationNode = regionNode.createChildSceneNode();
 
             local item = _scene.createItem(i);

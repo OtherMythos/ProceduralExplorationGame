@@ -127,6 +127,7 @@
             "Show river data",
             "Show land group",
             "Show edge vals",
+            "Show player start pos"
             "Show visible regions",
             "Show region seeds",
             "Show place locations",
