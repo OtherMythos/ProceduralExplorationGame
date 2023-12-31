@@ -270,7 +270,7 @@
         local buf = mCurrentMapData_.voxelBuffer;
         buf.seek(0);
         local voxVals = [
-            2, 112, 0, 147, 6, 192
+            2, 112, 0, 147, 6, 79, 78, 192
         ];
         for(local y = 0; y < height; y++){
             for(local x = 0; x < width; x++){
@@ -325,7 +325,8 @@
             finishedData = thread.wakeup();
         }
 
-        mMapViewer_.displayMapData(finishedData);
-        updateTimeData(finishedData);
+        mCurrentMapData_ = finishedData;
+        mMapViewer_.displayMapData(mCurrentMapData_);
+        updateTimeData(mCurrentMapData_);
     }
 };
