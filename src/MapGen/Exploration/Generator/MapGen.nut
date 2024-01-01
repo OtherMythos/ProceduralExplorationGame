@@ -800,25 +800,32 @@
 
         return retLandmass;
     }
-    function determinePlaces_place(noiseBlob, secondaryBlob, landData, landWeighted, place, placeId, gatewayLocation){
+    function determinePlaces_determinePointForPlace(collisionWorld, noiseBlob, landmassData){
+        local RADIUS = 10;
+        for(local i = 0; i < 100; i++){
+            local intended = findRandomPointInLandmass(landmassData);
+            local intendedX = (intended >> 16) & 0xFFFF;
+            local intendedY = intended & 0xFFFF;
+            //Try another point if it collides with the pre-existing points.
+            if(collisionWorld.checkCollisionPoint(intendedX, intendedY, RADIUS)) continue;
+            if(!checkPointValidForFlags(noiseBlob, intended, MapVoxelTypes.RIVER)) continue;
+            collisionWorld.addCollisionPoint(intendedX, intendedY, RADIUS);
+            return intended;
+        }
+        return null;
+    }
+    function determinePlaces_place(collisionWorld, noiseBlob, secondaryBlob, landData, landWeighted, place, placeId, gatewayLocation){
         local landmassId = determinePlaces_determineLandmassForPlace(landData, landWeighted, place);
         local landmass = landData[landmassId];
 
         local point = null;
-        //Avoid infinite loops incase of not finding a suitable place.
-        for(local i = 0; i < 100; i++){
-            local intended = findRandomPointInLandmass(landmass);
-            if(checkPointValidForFlags(noiseBlob, intended, MapVoxelTypes.RIVER)){
-                //In this case stop the check.
-                point = intended;
-                break;
-            }
-        }
-        if(point == null) return null;
-
         if(placeId == PlaceId.GATEWAY){
             point = gatewayLocation;
+        }else{
+            point = determinePlaces_determinePointForPlace(collisionWorld, noiseBlob, landmass);
         }
+
+        if(point == null) return null;
 
         //Determine the region.
         local originX = (point >> 16) & 0xFFFF;
@@ -838,6 +845,7 @@
     function determinePlaces(noiseBlob, secondaryBlob, landData, landWeighted, gatewayLocation, data){
         local placeData = [];
 
+        local placesCollisionWorld = CollisionWorld(_COLLISION_WORLD_BRUTE_FORCE);
         foreach(c,freq in data.placeFrequency){
             for(local i = 0; i < freq; i++){
                 //To get around the NONE.
@@ -845,7 +853,7 @@
                 if(totalPlaces.len() == 0) break;
                 local targetPlace = totalPlaces[_random.randIndex(totalPlaces)];
                 local place = ::Places[targetPlace];
-                local addedPlace = determinePlaces_place(noiseBlob, secondaryBlob, landData, landWeighted, place, targetPlace, gatewayLocation);
+                local addedPlace = determinePlaces_place(placesCollisionWorld, noiseBlob, secondaryBlob, landData, landWeighted, place, targetPlace, gatewayLocation);
                 if(addedPlace == null) continue;
                 placeData.append(addedPlace);
             }
