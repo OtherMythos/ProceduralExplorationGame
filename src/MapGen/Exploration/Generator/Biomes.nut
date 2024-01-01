@@ -88,8 +88,8 @@ local Biome = class{
         return MapVoxelTypes.TREES_CHERRY_BLOSSOM;
     },
     function(placementItems, noise, x, y, width, height, altitude, region, flags, moisture, data){
-        if(flags & MapVoxelTypes.RIVER) return;
         if(altitude < 110) return;
+        if(flags & MapVoxelTypes.RIVER) return;
         if(processRValue(noise, x, y, width, height, 1)){
             placementItems.append({
                 "originX": x,
@@ -99,6 +99,14 @@ local Biome = class{
                 "type": PlacedItemId.CHERRY_BLOSSOM_TREE
             });
         }
+    }
+);
+::Biomes[BiomeId.EXP_FIELD] = Biome(
+    function(altitude, moisture){
+        if(altitude < 110) return MapVoxelTypes.SAND_EXP_FIELD;
+        return MapVoxelTypes.DIRT_EXP_FIELD;
+    },
+    function(placementItems, noise, x, y, width, height, altitude, region, flags, moisture, data){
     }
 );
 ::Biomes[BiomeId.SHALLOW_OCEAN] = Biome(

@@ -6,7 +6,7 @@
 
     mLabel_ = null;
 
-    function setup(data){
+    function setup(regionType){
         mLifespan = 150;
         mFadeInTimer_ = mTotalFadeIn_;
 
@@ -19,7 +19,7 @@
         local currentFontSize = label.getDefaultFontSize() * 3;
         label.setDefaultFontSize(currentFontSize);
         label.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
-        label.setText("Discovered a place");
+        label.setText(getLabelForRegionType(regionType));
         label.setShadowOutline(true, ColourValue(0, 0, 0), Vec2(2, 2));
         mLabel_ = label;
         mCurrentFontSize_ = currentFontSize;
@@ -29,6 +29,13 @@
         label.setSize(targetSize)
 
         setSize(targetSize);
+    }
+
+    function getLabelForRegionType(regionType){
+        if(regionType == RegionType.EXP_FIELDS) return "Discovered the EXP Fields";
+        else if(regionType == RegionType.CHERRY_BLOSSOM_FOREST) return "Discovered the Cherry Blossom Forest";
+
+        return "Discovered a place";
     }
 
     function update(){

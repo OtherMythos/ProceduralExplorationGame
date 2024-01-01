@@ -376,13 +376,22 @@
         return (dx*dx+dy*dy<=(radius*radius));
     }
 
+    function processRegionCollectables_(regionEntry){
+        if(regionEntry.rawin("collectables")){
+            foreach(i in regionEntry.collectables){
+                mEntityFactory_.constructEXPTrailEncounter(Vec3(i.x, 0, -i.y));
+            }
+        }
+    }
     function processFoundNewRegion(regionId){
         assert(mRegionEntries_.rawin(regionId));
         local regionEntry = mRegionEntries_[regionId];
+        local regionData = mMapData_.regionData[regionId];
         if(regionEntry != null){
             regionEntry.performArrival();
-            ::PopupManager.displayPopup(Popup.REGION_DISCOVERED);
+            ::PopupManager.displayPopup(::PopupManager.PopupData(Popup.REGION_DISCOVERED, regionData.type));
 
+            processRegionCollectables_(regionData);
             if(mGui_.mWorldMapDisplay_.mMapViewer_ != null){
                 mGui_.mWorldMapDisplay_.mMapViewer_.notifyRegionFound(regionId);
             }

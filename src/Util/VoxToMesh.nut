@@ -182,9 +182,7 @@ const NUM_VERTS = 6;
     function createTerrainFromVoxelBlob(meshBase, mapData){
         if(mTimer_) mTimer_.start();
 
-        local voxVals = [
-            2, 112, 0, 147, 6
-        ];
+        local voxVals = ::VoxelValues;
         local width = mapData.width;
         local height = mapData.height;
         local seaLevel = mapData.seaLevel;

@@ -269,9 +269,7 @@
         local voxData = array(width * height * depth, null);
         local buf = mCurrentMapData_.voxelBuffer;
         buf.seek(0);
-        local voxVals = [
-            2, 112, 0, 147, 6, 79, 78, 192
-        ];
+        local voxVals = ::VoxelValues;
         for(local y = 0; y < height; y++){
             for(local x = 0; x < width; x++){
                 local vox = buf.readn('i')

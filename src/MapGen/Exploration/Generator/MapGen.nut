@@ -69,43 +69,6 @@
         }
     }
 
-    /*
-    function determineRegions(secondaryBlob, data){
-        secondaryBlob.seek(0);
-
-        for(local y = 0; y < data.height; y++){
-            for(local x = 0; x < data.width; x++){
-                local pos = secondaryBlob.tell();
-                local originalVal = secondaryBlob.readn('i');
-
-                local targetRegion = (y / 40).tointeger();
-
-                //Write the biome for now, later keep track of the biome group after the flood fill.
-                local out = originalVal | (targetRegion << 8);
-
-                secondaryBlob.seek(pos);
-                secondaryBlob.writen(out, 'i');
-            }
-        }
-
-        return (data.height / 40).tointeger();
-    }
-    */
-
-    function determineRegionPoints_(secondaryBlob, landData, landWeighted, data){
-        local outPoints = [];
-
-        for(local i = 0; i < data.numRegions; i++){
-            //Determine a single point and retry if it's too close to the others.
-            local retLandmass = findRandomLandmassForSize(landData, landWeighted, 20);
-            local coordData = landData[retLandmass].coords;
-            local randIndex = _random.randIndex(coordData);
-            local randPoint = coordData[randIndex];
-            outPoints.append(randPoint);
-        }
-
-        return outPoints;
-    }
     function determineRegionPoint_(secondaryBlob, landData, landWeighted, data, floodVals){
         //Attempt a few times, otherwise fail.
         for(local i = 0; i < 10; i++){
@@ -186,6 +149,8 @@
                 "total": 0,
                 "seedX": 0,
                 "seedY": 0,
+                "coords": [],
+                "type": RegionType.NONE
             });
         }
         local width = data.width;
@@ -213,6 +178,7 @@
                     }
                 }
                 assert(closestIdx != -1);
+                outData[closestIdx].coords.append(wrapWorldPos_(x, y));
 
                 val = val | (closestIdx << 8);
                 secondaryBlob.writen(val, 'i');
@@ -227,13 +193,16 @@
             local regionId = outData.len();
             local x = (i >> 16) & 0xFFFF;
             local y = i & 0xFFFF;
+            local targetType = RegionType.NONE;
             if(c == 0){
                 x = (playerStart >> 16) & 0xFFFF;
                 y = playerStart & 0xFFFF;
+                targetType = RegionType.PLAYER_START;
             }
             else if(c == 1){
                 x = (gatewayLocation >> 16) & 0xFFFF;
                 y = gatewayLocation & 0xFFFF;
+                targetType = RegionType.GATEWAY_DOMAIN;
             }
             local floodData = {
                 //Add 1 so it doesn't try and populate for region 0, which is the default.
@@ -246,6 +215,7 @@
                 "coords": [],
                 "decay": 0.9995,
                 "chance": 200.0,
+                "type": targetType
             };
             performLazyFloodFill_(x, y, data.width, data.height, regionId, voxelBlob, secondaryBlob, vals, floodData);
             if(floodData.coords.len() <= 0) continue;
@@ -268,6 +238,25 @@
         }
 
         return [outData, splatterRegions];
+    }
+
+    function determineRegionTypes(regionData){
+        //Make a list of regions to mutate.
+        local freeRegions = [];
+        foreach(c,i in regionData){
+            if(i.type != RegionType.NONE) continue;
+
+            freeRegions.append(c);
+            //i.type = RegionType.GRASSLAND;
+        }
+
+        //Add a few unique regions.
+        local regionsToAdd = [RegionType.CHERRY_BLOSSOM_FOREST, RegionType.EXP_FIELDS];
+        foreach(i in regionsToAdd){
+            local targetIdx = _random.randIndex(freeRegions);
+            regionData[targetIdx].type = i;
+            freeRegions.remove(targetIdx);
+        }
     }
 
     function processBiomeTypes(blob, secondaryBlob, data){
@@ -316,42 +305,23 @@
             biomeData[data].startingVal = BiomeId.CHERRY_BLOSSOM_FOREST;
         }
     }
-    //function populateFinalBiomes(noiseBlob, secondaryBlob, blueNoise, biomeData){
-    function populateFinalBiomes(noiseBlob, secondaryBlob, blueNoise, splatterRegions){
+    //NOTE likely temporary.
+    function getBiomeForRegionType_(regionType){
+        switch(regionType){
+            case RegionType.GRASSLAND: return ::Biomes[BiomeId.GRASS_LAND];
+            case RegionType.CHERRY_BLOSSOM_FOREST: return ::Biomes[BiomeId.CHERRY_BLOSSOM_FOREST];
+            case RegionType.EXP_FIELDS: return ::Biomes[BiomeId.EXP_FIELD];
+            default:{
+                return ::Biomes[BiomeId.GRASS_LAND];
+            }
+        }
+    }
+    function populateFinalBiomes(noiseBlob, secondaryBlob, blueNoise, splatterRegions, regionData){
         local placementItems = [];
         local VOX_FLAG_MASK = (0xFFFF00FF | MAP_VOXEL_MASK);
 
-        local targetRegion = -1;
-        if(splatterRegions.len() > 0){
-            targetRegion = _random.randIndex(splatterRegions);
-            targetRegion = splatterRegions[targetRegion];
-        }
-
         local width = mData_.width;
         local height = mData_.height;
-        /*
-        foreach(i in biomeData){
-            local targetBiome = i.startingVal;
-            foreach(c,wrapped in i.coords){
-                local x = (wrapped >> 16) & 0xFFFF;
-                local y = wrapped & 0xFFFF;
-                local pos = (x + y * width) * 4;
-                noiseBlob.seek(pos);
-                local val = noiseBlob.readn('i');
-                local flags = (val >> 8) & ~MAP_VOXEL_MASK;
-                secondaryBlob.seek(pos);
-                local region = (secondaryBlob.readn('i') >> 8) & 0xFF;
-
-                local biome = ::Biomes[targetBiome];
-                local vox = biome.determineVoxFunction(val & 0xFF);
-                biome.placeObjectsFunction(placementItems, blueNoise, x, y, width, height, val & 0xFF, region, flags);
-
-                noiseBlob.seek(pos);
-                noiseBlob.writen((val & VOX_FLAG_MASK) | (vox | flags) << 8, 'i');
-            }
-        }
-        */
-
         local biome = ::Biomes[BiomeId.GRASS_LAND];
         local seaLevel = mData_.seaLevel;
         for(local y = 0; y < height; y++){
@@ -369,13 +339,10 @@
                     continue;
                 }
 
-                local target = biome;
-                if(region == targetRegion){
-                    target = ::Biomes[BiomeId.CHERRY_BLOSSOM_FOREST];
-                }
+                local biome = getBiomeForRegionType_(regionData[region].type);
 
-                local vox = target.determineVoxFunction(altitude, moisture);
-                target.placeObjectsFunction(placementItems, blueNoise, x, y, width, height, altitude, region, flags, moisture, mData_);
+                local vox = biome.determineVoxFunction(altitude, moisture);
+                biome.placeObjectsFunction(placementItems, blueNoise, x, y, width, height, altitude, region, flags, moisture, mData_);
 
                 noiseBlob.seek(pos);
                 noiseBlob.writen((val & VOX_FLAG_MASK) | (vox | flags) << 8, 'i');
@@ -794,6 +761,24 @@
         return weighted;
     }
 
+    function placeRegionCollectables(regionData){
+        foreach(i in regionData){
+            if(i.type == RegionType.EXP_FIELDS){
+                local collectableData = [];
+                for(local z = 0; z < 10; z++){
+                    local position = i.coords[_random.randIndex(i.coords)];
+                    //local altitude = readAltitude_(, x, y, width);
+                    collectableData.append({
+                        "pos": position,
+                        "x": (position >> 16) & 0xFFFF,
+                        "y": position & 0xFFFF,
+                    });
+                }
+                i.collectables <- collectableData;
+            }
+        }
+    }
+
     function findRandomLandmassForSize(landData, landWeighted, size){
         //To avoid infinite loops.
         for(local i = 0; i < 100; i++){
@@ -1034,7 +1019,7 @@ registerGenerationStage("Reduce noise", function(workspace){
 registerGenerationStage("Altitude", function(workspace){
     determineAltitude(workspace.noiseBlob, workspace.data);
 });
-registerGenerationStage("perform flood fill", function(workspace){
+registerGenerationStage("Perform flood fill", function(workspace){
     workspace.waterData <- floodFillWater(workspace.noiseBlob, workspace.data);
     workspace.landData <- floodFillLand(workspace.noiseBlob, workspace.data);
 });
@@ -1069,16 +1054,14 @@ registerGenerationStage("Determine regions", function(workspace){
     workspace.regionData <- vals[0];
     workspace.splatterRegions <- vals[1];
 });
-registerGenerationStage("Determine biomes", function(workspace){
-    processBiomeTypes(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.data);
-    //local biomeData = floodFillBiomes(workspace.noiseBlob, workspace.data);
-    //determineFinalBiomes(workspace.noiseBlob, biomeData);
-
-    //workspace.biomeData <- biomeData;
+registerGenerationStage("Determine region types", function(workspace){
+    determineRegionTypes(workspace.regionData);
 });
 registerGenerationStage("Place biome items", function(workspace){
-    //workspace.placedItems <- populateFinalBiomes(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.blueNoise, workspace.biomeData);
-    workspace.placedItems <- populateFinalBiomes(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.blueNoise, workspace.splatterRegions);
+    workspace.placedItems <- populateFinalBiomes(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.blueNoise, workspace.splatterRegions, workspace.regionData);
+});
+registerGenerationStage("Place region collectables", function(workspace){
+    workspace.placedCollectables <- placeRegionCollectables(workspace.regionData);
 });
 registerGenerationStage("Determine places", function(workspace){
     workspace.placeData <- determinePlaces(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.landData, workspace.landWeighted, workspace.gatewayPosition, workspace.data);
