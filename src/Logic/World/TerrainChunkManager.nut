@@ -5,6 +5,7 @@
     mParentNode_ = null;
     mChunkDivisions_ = 1;
     mVoxTerrainMesh_ = null;
+    mUseThreading_ = false;
 
     mChunkColourData_ = null;
     mMapHeightDataCopy_ = null;
@@ -18,17 +19,17 @@
     PADDING = 1;
     PADDING_BOTH = null;
 
-    constructor(worldId){
+    constructor(worldId, useThreading){
         mWorldId_ = worldId;
+        mUseThreading_ = useThreading;
         PADDING_BOTH = PADDING * 2;
     }
 
     /**
      * @param copyData Duplicate height values per chunk. Only use if allowing for a level editor.
      */
-    function setup(parentNode, mapData, chunkDivisions, copyData=false){
+    function setup(mapData, chunkDivisions, copyData=false){
         mMapData_ = mapData;
-        mParentNode_ = parentNode;
         mChunkDivisions_ = chunkDivisions;
         mChunkColourData_ = {};
         mNodesForChunk_ = {};
@@ -53,7 +54,11 @@
         }
 
         constructDataForChunks();
-        generateInitialChunks();
+    }
+
+    function setupParentNode(parentNode){
+        mParentNode_ = parentNode;
+        generateInitialChunkNodes();
     }
 
     function constructDataForChunks(){
@@ -95,10 +100,24 @@
         }
     }
 
-    function generateInitialChunks(){
+    function generateInitialChunkNodes(){
         for(local y = 0; y < mChunkDivisions_; y++){
             for(local x = 0; x < mChunkDivisions_; x++){
-                recreateChunk(x, y);
+                //Assuming the items have already been generated.
+                recreateChunkNode(x, y);
+            }
+        }
+    }
+
+    function generateInitialItems(){
+        local total = (mChunkDivisions_ * mChunkDivisions_).tofloat();
+        for(local y = 0; y < mChunkDivisions_; y++){
+            for(local x = 0; x < mChunkDivisions_; x++){
+                recreateChunkItem(x, y);
+                suspendThread_({
+                    "name": format("Terrain chunk %i-%i", x, y),
+                    "percentage": (x + y * mChunkDivisions_).tofloat() / total,
+                });
             }
         }
     }
@@ -158,7 +177,7 @@
 
             //mNodesForChunk_[targetIdx].destroyNodeAndChildren();
             if(altered){
-                recreateChunk(chunkX, chunkY);
+                recreateChunkItem(chunkX, chunkY);
             }
         }
 
@@ -202,40 +221,85 @@
 
             //mNodesForChunk_[targetIdx].destroyNodeAndChildren();
             if(altered){
-                recreateChunk(chunkX, chunkY);
+                recreateChunkItem(chunkX, chunkY);
             }
         }
     }
 
-    function recreateChunk(chunkX, chunkY){
+    /**
+     * Recreate the chunk item, destroying the old one.
+     * If an older item exists it will be destroyed.
+     * If that item was attached to a node recreateChunkNode will be triggered.
+    */
+    function recreateChunkItem(chunkX, chunkY){
+        local targetIdx = chunkX << 4 | chunkY;
+
+        //If a node exists then that must be cleared of the child, otherwise a conflict will occur.
+        local nodeExists = mNodesForChunk_.rawin(targetIdx);
+        local itemExists = mItemsForChunk_.rawin(targetIdx);
+        local oldItemName = null;
+        if(itemExists){
+            //Get the item name before it's destroyed.
+            oldItemName = mItemsForChunk_[targetIdx].getName();
+        }
+        if(nodeExists){
+            local targetNode = mNodesForChunk_.rawget(targetIdx);
+            assert(targetNode.getNumAttachedObjects() == 1);
+            mNodesForChunk_[targetIdx].destroyNodeAndChildren();
+            mNodesForChunk_.rawdelete(targetIdx);
+        }
+        if(itemExists){
+            assert(oldItemName != null);
+            _graphics.removeManualMesh(oldItemName);
+        }
+
+        local item = voxeliseChunk_(chunkX, chunkY);
+        mItemsForChunk_.rawset(targetIdx, item);
+
+        if(nodeExists){
+            //Re-create the node with the new item.
+            recreateChunkNode(chunkX, chunkY);
+        }
+    }
+
+    /**
+     * Recreate just the chunk node, assuming the item has already been generated.
+     */
+    function recreateChunkNode(chunkX, chunkY){
         local CHUNK_DEBUG_PADDING = 2;
         local targetIdx = chunkX << 4 | chunkY;
 
         if(mNodesForChunk_.rawin(targetIdx)){
-            //Assuming the node is populated so should the item be.
-            assert(mItemsForChunk_.rawin(targetIdx));
-            local oldItemName = mItemsForChunk_[targetIdx].getName();
             mNodesForChunk_[targetIdx].destroyNodeAndChildren();
-            _graphics.removeManualMesh(oldItemName);
         }
 
         local parentNode = mParentNode_.createChildSceneNode();
-        local item = voxeliseChunk_(chunkX, chunkY);
 
         local width = (mMapData_.width / mChunkDivisions_);
         local height = (mMapData_.height / mChunkDivisions_);
         parentNode.setPosition((chunkX * -CHUNK_DEBUG_PADDING) + chunkX * width, 0, (chunkY * -CHUNK_DEBUG_PADDING) + -chunkY * height);
 
-        parentNode.attachObject(item);
+        assert(mItemsForChunk_.rawin(targetIdx));
+        parentNode.attachObject(mItemsForChunk_.rawget(targetIdx));
         parentNode.setScale(1, 1, VISITED_WORLD_UNIT_MULTIPLIER);
         parentNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
 
         mNodesForChunk_.rawset(targetIdx, parentNode);
-        mItemsForChunk_.rawset(targetIdx, item);
+    }
+
+    function recreateCompleteChunk(chunkX, chunkY){
+        //Recreate item re-generates the item and node if it's missing.
+        recreateChunkItem(chunkX, chunkY);
     }
 
     function _getTouchedChunks(x, y, halfWidth, halfHeight){
 
+    }
+
+    function suspendThread_(data){
+        if(mUseThreading_){
+            ::suspend(data);
+        }
     }
 
     function performSave(mapName){

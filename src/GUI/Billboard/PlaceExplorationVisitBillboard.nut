@@ -7,7 +7,7 @@
 
         button.attachListenerForEvent(function(widget, action){
             //::Base.mExplorationLogic.gatewayEndExploration();
-            local worldInstance = ::Base.mExplorationLogic.createWorldInstance(WorldTypes.PROCEDURAL_DUNGEON_WORLD);
+            local worldInstance = ::Base.mExplorationLogic.createWorldInstance(WorldTypes.VISITED_LOCATION_WORLD);
             ::Base.mExplorationLogic.pushWorld(worldInstance);
         }, _GUI_ACTION_PRESSED, this);
 

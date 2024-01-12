@@ -10,7 +10,8 @@
     constructor(worldId, preparer){
         base.constructor(worldId, preparer);
 
-        mTerrainChunkManager_ = TerrainChunkManager(worldId);
+        mTerrainChunkManager_ = TerrainChunkManager(worldId, true);
+        preparer.provideChunkManager(mTerrainChunkManager_)
     }
 
     #Override
@@ -48,6 +49,8 @@
     }
 
     function update(){
+        if(!isActive()) return;
+
         base.update();
 
         mCloudManager_.update();
@@ -93,6 +96,8 @@
         local x = pos.x.tointeger();
         local y = -pos.z.tointeger();
 
+        if(x < 0 || y < 0 || x >= mMapData_.width || y >= mMapData_.height) return 0;
+
         local height = mMapData_.mapData.voxHeight.data[x + y * mMapData_.width];
 
         return height * PROCEDURAL_WORLD_UNIT_MULTIPLIER;
@@ -111,7 +116,8 @@
 
         mCloudManager_ = CloudManager(mParentNode_, mMapData_.width, mMapData_.height);
 
-        mTerrainChunkManager_.setup(targetNode, mMapData_.mapData, 4);
+        //mTerrainChunkManager_.setup(targetNode, mMapData_.mapData, 4);
+        mTerrainChunkManager_.setupParentNode(targetNode);
 
         local oceanNode = mParentNode_.createChildSceneNode();
         local oceanItem = _scene.createItem("plane");
