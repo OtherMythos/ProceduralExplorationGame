@@ -1,7 +1,8 @@
 enum SPOILS_ENTRIES{
     NONE,
     EXP_ORBS,
-    COINS
+    COINS,
+    SPAWN_ENEMIES
 };
 
 ::SpoilsEntry <- class{

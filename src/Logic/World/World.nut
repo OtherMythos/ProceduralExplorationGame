@@ -547,6 +547,15 @@ enum WorldMousePressContexts{
         }
     }
 
+    function spawnEnemies(pos, num, spread=4){
+        for(local i = 0; i < num; i++){
+            local randDir = (_random.rand()*2-1) * PI;
+
+            local targetPos = pos + (Vec3(sin(randDir) * spread, 0, cos(randDir) * spread));
+            createEnemy(EnemyId.GOBLIN, targetPos);
+        }
+    }
+
     function checkHighlightEnemy(){
         if(mCurrentHighlightEnemy_ == mPreviousHighlightEnemy_) return;
 
@@ -788,6 +797,7 @@ enum WorldMousePressContexts{
         return Vec3();
     }
 
+    //TODO misleading, I should make it more obvious that I have to call create enemy rather than the factory directly.
     function createEnemy(enemyType, pos){
         local enemyEntry = mEntityFactory_.constructEnemy(enemyType, pos, mGui_);
         mActiveEnemies_.rawset(enemyEntry.mEntity_, enemyEntry);
@@ -909,6 +919,9 @@ enum WorldMousePressContexts{
                 }
                 else if(i.mType == SPOILS_ENTRIES.COINS){
                     spawnMoney(position, i.mFirst);
+                }
+                else if(i.mType == SPOILS_ENTRIES.SPAWN_ENEMIES){
+                    spawnEnemies(position, i.mFirst);
                 }
             }
         }

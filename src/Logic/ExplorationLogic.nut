@@ -84,7 +84,7 @@
                 created = ProceduralDungeonWorld(id, ProceduralDungeonWorldPreparer());
                 break;
             case WorldTypes.VISITED_LOCATION_WORLD:
-                created = VisitedLocationWorld(id, VisitedLocationWorldPreparer("testVillage"));
+                created = VisitedLocationWorld(id, VisitedLocationWorldPreparer("chestLocationFirst"));
                 break;
             default:
                 assert(false);
@@ -100,6 +100,15 @@
         mCurrentWorld_.setCurrentWorld(false);
         mQueuedWorlds_.append(mCurrentWorld_);
         setCurrentWorld_(worldInstance);
+    }
+    function popWorld(){
+        //There must be at least one world.
+        if(mQueuedWorlds_.len() <= 0) return;
+        mCurrentWorld_.setCurrentWorld(false);
+        //TODO destroy that world.
+        local current = mQueuedWorlds_.top();
+        mQueuedWorlds_.pop();
+        setCurrentWorld_(current);
     }
     function setCurrentWorld(worldInstance){
         setCurrentWorld_(worldInstance);

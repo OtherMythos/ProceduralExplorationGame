@@ -54,24 +54,39 @@
 
     function threadGenerateScene(targetMap, chunkManager){
         local fileHandler = ::TerrainChunkFileHandler();
-        local mapData = fileHandler.readMapData("testVillage");
+        local mapData = fileHandler.readMapData(targetMap);
 
         local path = "res://assets/maps/" + targetMap + "/scene.avscene";
-        printf("Loading scene file with path '%s'", path);
-        local parsedFile = _scene.parseSceneFile(path);
+        local parsedFile = null;
+        if(_system.exists(path)){
+            printf("Loading scene file with path '%s'", path);
+            parsedFile = _scene.parseSceneFile(path);
+        }
 
         //TODO properly give this a name.
-        local path = "res://assets/maps/" + targetMap + "/sceneAnimation.xml";
-        _animation.loadAnimationFile(path);
+        local animationPath = "res://assets/maps/" + targetMap + "/sceneAnimation.xml";
+        if(_system.exists(animationPath)){
+            _animation.loadAnimationFile(animationPath);
+        }
 
         chunkManager.setup(mapData, 4);
         chunkManager.generateInitialItems();
+
+        local scriptPath = "res://assets/maps/" + targetMap + "/script.nut";
+        local scriptObject = null;
+        if(_system.exists(scriptPath)){
+            assert(!getroottable().rawin("VisitedWorldScriptObject"));
+            _doFile(scriptPath);
+            scriptObject = ::VisitedWorldScriptObject;
+            getroottable().rawdelete("VisitedWorldScriptObject");
+        }
 
         local outData = {
             "mapData": mapData,
             "parsedSceneFile": parsedFile,
             "width": mapData.width,
             "height": mapData.height,
+            "scriptObject": scriptObject
         };
         return outData;
     }

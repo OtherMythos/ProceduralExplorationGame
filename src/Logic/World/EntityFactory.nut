@@ -575,4 +575,43 @@
         return en;
     }
 
+    function constructChestObject(pos){
+        local manager = mConstructorWorld_.getEntityManager();
+        local targetPos = pos.copy();
+        targetPos.y = getZForPos(targetPos);
+
+        local en = manager.createEntity(targetPos);
+
+        local parentNode = mBaseSceneNode_.createChildSceneNode();
+        parentNode.setScale(0.15, 0.15, 0.15);
+        parentNode.setPosition(targetPos);
+        local item = _scene.createItem("treasureChestBase.mesh");
+        //item.setRenderQueueGroup(30);
+        local baseNode = parentNode.createChildSceneNode();
+        baseNode.attachObject(item);
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](parentNode, true));
+
+        local triggerWorld = mConstructorWorld_.getTriggerWorld();
+        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.DIE, en, targetPos.x, targetPos.z, 4, _COLLISION_PLAYER);
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
+
+        local spoilsData = [
+            SpoilsEntry(SPOILS_ENTRIES.EXP_ORBS, 2 + _random.randInt(16)),
+            SpoilsEntry(SPOILS_ENTRIES.COINS, 24 + _random.randInt(12)),
+            SpoilsEntry(SPOILS_ENTRIES.SPAWN_ENEMIES, 1 + _random.randInt(2)),
+        ];
+        local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SPOILS_DATA, spoilsData, null, null);
+        manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
+
+        local lidNode = parentNode.createChildSceneNode();
+        item = _scene.createItem("treasureChestLid.mesh");
+        lidNode.attachObject(item);
+        lidNode.setPosition(0, 6, 0);
+
+        lidNode.setOrientation(Quat(-0.5, Vec3(1, 0, 0)));
+
+        return en;
+
+    }
+
 };

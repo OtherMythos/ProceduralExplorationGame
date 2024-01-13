@@ -38,6 +38,12 @@
         createScene();
     }
 
+    #Override
+    function processWorldActiveChange_(active){
+        if(mMapData_.scriptObject != null){
+            mMapData_.scriptObject.worldActiveChange(this, active);
+        }
+    }
     function getPositionForAppearEnemy_(enemyType){
         return Vec3();
     }
@@ -54,6 +60,12 @@
         base.update();
 
         mCloudManager_.update();
+
+        if(mMapData_.scriptObject != null){
+            mMapData_.scriptObject.update(this);
+        }
+
+        checkIfPlayerHasLeft();
     }
 
     function updateCameraPosition(){
@@ -71,6 +83,15 @@
 
         parentNode.setPosition(Vec3(mPosition_.x, zPos, mPosition_.z) + rot );
         camera.lookAt(mPosition_.x, zPos, mPosition_.z);
+    }
+
+    function checkIfPlayerHasLeft(){
+        local x = mPlayerEntry_.getPosition().x.tointeger();
+        local y = -mPlayerEntry_.getPosition().z.tointeger();
+        if(x < 0 || y < 0 || x >= mMapData_.width || y >= mMapData_.height){
+            local worldInstance = ::Base.mExplorationLogic.createWorldInstance(WorldTypes.VISITED_LOCATION_WORLD);
+            ::Base.mExplorationLogic.popWorld();
+        }
     }
 
     function processCameraMove(x, y){
@@ -110,9 +131,13 @@
 
     function createScene(){
         local targetNode = _scene.getRootSceneNode().createChildSceneNode();
-        local animData = _scene.insertParsedSceneFileGetAnimInfo(mMapData_.parsedSceneFile, targetNode);
-
-        ::currentAnim <- _animation.createAnimation("sceneAnim", animData);
+        local animData = null;
+        if(mMapData_.parsedSceneFile != null){
+            animData = _scene.insertParsedSceneFileGetAnimInfo(mMapData_.parsedSceneFile, targetNode);
+        }
+        if(animData != null){
+            ::currentAnim <- _animation.createAnimation("sceneAnim", animData);
+        }
 
         mCloudManager_ = CloudManager(mParentNode_, mMapData_.width, mMapData_.height);
 
