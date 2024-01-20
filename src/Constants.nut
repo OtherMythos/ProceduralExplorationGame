@@ -45,6 +45,21 @@ enum StatType{
     MAX
 };
 
+//Profiles define how the game should operate,
+//for instance if developing, profiles might help setup a development environment
+enum GameProfile{
+    RELEASE,
+    DEVELOPMENT_BEGIN_EXPLORATION,
+    TEST_SCREEN,
+
+    MAX
+};
+::GameProfileString <- [
+    "Release",
+    "DevelopmentBeginExploration",
+    "TestScreen"
+];
+
 enum Event{
     INVENTORY_CONTENTS_CHANGED = 1001,
     MONEY_CHANGED = 1002,

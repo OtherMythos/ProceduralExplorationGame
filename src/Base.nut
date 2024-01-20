@@ -19,6 +19,15 @@
         return mTargetInterface_;
     }
 
+    function getGameProfile(){
+        local profileVal = _settings.getUserSetting("profile");
+        for(local i = 0; i < GameProfile.MAX; i++){
+            if(profileVal == ::GameProfileString[i]) return i;
+        }
+
+        return GameProfile.RELEASE;
+    }
+
     function setup(){
         _system.ensureUserDirectory();
 
@@ -156,10 +165,12 @@
 
         mExplorationLogic = ExplorationLogic();
 
+        setupForProfile_(getGameProfile());
+
         //::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
         //::ScreenManager.transitionToScreen(Screen.SAVE_SELECTION_SCREEN);
         //::ScreenManager.transitionToScreen(Screen.HELP_SCREEN);
-        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
+        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
         //::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);
         //::ScreenManager.transitionToScreen(Screen.SAVE_EDIT_SCREEN);
         //::ScreenManager.transitionToScreen(Screen.WORLD_GENERATION_STATUS_SCREEN, null, 1);
@@ -173,6 +184,20 @@
 
         //mExplorationLogic.resetExploration_();
 
+    }
+
+    function setupForProfile_(profile){
+        switch(profile){
+            case GameProfile.DEVELOPMENT_BEGIN_EXPLORATION:
+                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
+                break;
+            case GameProfile.TEST_SCREEN:
+                ::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);
+                break;
+            default:
+                ::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
+                break;
+        }
     }
 
     function shutdown(){
