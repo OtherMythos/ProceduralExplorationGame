@@ -18,6 +18,15 @@
 
     function setup(){
         mActivePopups_ = [];
+
+        _event.subscribe(Event.SCREEN_CHANGED, recieveScreenChange, this);
+    }
+    function shutdown(){
+        _event.unsubscribe(Event.SCREEN_CHANGED, recieveScreenChange, this);
+    }
+
+    function recieveScreenChange(id, data){
+        killAllPopups();
     }
 
     function _wrapPopupData(data){
@@ -34,6 +43,13 @@
             return null;
         }
         return Popups[popupData.id](popupData);
+    }
+
+    function killAllPopups(){
+        foreach(i in mActivePopups_){
+            i.shutdown();
+        }
+        mActivePopups_.clear();
     }
 
     function displayPopup(popupId){

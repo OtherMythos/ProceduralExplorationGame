@@ -175,6 +175,10 @@
 
     }
 
+    function shutdown(){
+        ::PopupManager.shutdown();
+    }
+
     function update(){
         ::ScreenManager.update();
         ::PopupManager.update();

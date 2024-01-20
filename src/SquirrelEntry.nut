@@ -24,7 +24,7 @@ function update(){
 }
 
 function end(){
-
+    ::Base.shutdown();
 }
 
 function sceneSafeUpdate(){
