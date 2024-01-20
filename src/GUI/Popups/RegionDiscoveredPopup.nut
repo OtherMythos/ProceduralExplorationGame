@@ -9,6 +9,7 @@
     function setup(regionType){
         mLifespan = 150;
         mFadeInTimer_ = mTotalFadeIn_;
+        mForceSingleInstance = true;
 
         mPopupWin_ = _gui.createWindow();
         mPopupWin_.setZOrder(150);

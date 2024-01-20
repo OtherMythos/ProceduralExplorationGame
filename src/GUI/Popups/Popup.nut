@@ -2,11 +2,18 @@
     mPopupData_ = null;
     mPopupWin_ = null;
     mPopupSize_ = null;
+    mPopupId_ = null;
 
     mLifespan = 100;
+    mForceSingleInstance = false;
 
-    constructor(popupData){
+    constructor(popupData, id){
         mPopupData_ = popupData;
+        mPopupId_ = id;
+    }
+
+    function getId(){
+        return mPopupId_;
     }
 
     function createPopupBase_(){
