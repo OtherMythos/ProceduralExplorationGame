@@ -105,7 +105,7 @@
         //There must be at least one world.
         if(mQueuedWorlds_.len() <= 0) return;
         mCurrentWorld_.setCurrentWorld(false);
-        //TODO destroy that world.
+        mCurrentWorld_.shutdown();
         local current = mQueuedWorlds_.top();
         mQueuedWorlds_.pop();
         setCurrentWorld_(current);

@@ -89,7 +89,6 @@
         local x = mPlayerEntry_.getPosition().x.tointeger();
         local y = -mPlayerEntry_.getPosition().z.tointeger();
         if(x < 0 || y < 0 || x >= mMapData_.width || y >= mMapData_.height){
-            local worldInstance = ::Base.mExplorationLogic.createWorldInstance(WorldTypes.VISITED_LOCATION_WORLD);
             ::Base.mExplorationLogic.popWorld();
         }
     }
@@ -130,7 +129,7 @@
     }
 
     function createScene(){
-        local targetNode = _scene.getRootSceneNode().createChildSceneNode();
+        local targetNode = mParentNode_.createChildSceneNode();
         local animData = null;
         if(mMapData_.parsedSceneFile != null){
             animData = _scene.insertParsedSceneFileGetAnimInfo(mMapData_.parsedSceneFile, targetNode);
