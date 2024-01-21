@@ -57,6 +57,9 @@
             "altitudeBiomes": [10, 100],
             "placeFrequency": [0, 1, 1, 4, 4, 30]
         };
+        print("PROCEDURAL WORLD PREPARER: seed: " + data.seed.tostring())
+        print("PROCEDURAL WORLD PREPARER: moisture seed: " + data.moistureSeed.tostring())
+        print("PROCEDURAL WORLD PREPARER: variation: " + data.variation.tostring())
         local outData = gen.generate(data);
         print("World generation completed in " + outData.stats.totalSeconds);
 
