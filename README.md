@@ -29,3 +29,22 @@ Once built this project can be run like any other avEngine project
 ```bash
 ./av ~/template/avSetup.cfg
 ```
+
+## Developer tools
+A few helpful utilities are provided to help speed up development.
+
+### Profiles
+Profiles allow certain modifications to the game's operation.
+These might be used to allow switching directly to a screen on startup, showing more debug information or setting up testing gameplay features, among other things.
+
+Desired profiles should be enabled by defining a user setting:
+
+```json
+{
+    "UserSettings":{
+        "profile": "DevelopmentBeginExploration,DisplayWorldStats"
+    }
+}
+```
+
+It is recommended that these profiles are defined in the avSetupSecondary.cfg file, which can be included in the gitignore, so local settings do not get committed.
