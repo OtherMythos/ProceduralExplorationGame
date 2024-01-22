@@ -53,7 +53,11 @@
     }
 
     function shutdown(){
+        if(mBackgroundWindow_) _gui.destroy(mBackgroundWindow_);
         _gui.destroy(mWindow_);
+
+        mBackgroundWindow_ = null;
+        mWindow_ = null;
     }
 
     function createBackgroundScreen_(){
@@ -61,7 +65,7 @@
         win.setSize(_window.getWidth(), _window.getHeight());
         win.setVisualsEnabled(true);
 
-        return win;
+        mBackgroundWindow_ = win;
     }
 
     function setZOrder(idx){
