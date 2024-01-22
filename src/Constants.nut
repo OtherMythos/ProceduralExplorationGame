@@ -125,7 +125,6 @@ enum Screen{
 enum Popup{
     POPUP,
     BOTTOM_OF_SCREEN,
-    ENCOUNTER,
     REGION_DISCOVERED,
     SINGLE_TEXT,
 
