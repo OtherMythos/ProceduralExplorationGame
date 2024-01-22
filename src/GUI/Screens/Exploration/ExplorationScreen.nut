@@ -214,14 +214,6 @@ enum ExplorationBusEvents{
         //mExplorationItemsContainer_.setObjectForIndex(foundObject, idx, screenPos);
     }
 
-    function notifyEnemyCombatBegan(combatData, position){
-        local screenPos = ::EffectManager.getWorldPositionForWindowPos(mWorldMapDisplay_.getWorldPositionInScreenSpace(position));
-        local endPos = ::EffectManager.getWorldPositionForWindowPos(Vec2(_window.getWidth() / 2, _window.getHeight() / 2));
-
-        local data = {"combatData": combatData, "start": screenPos, "end": endPos};
-        ::PopupManager.displayPopup(::PopupManager.PopupData(Popup.ENCOUNTER, data));
-    }
-
     function notifyHighlightEnemy(enemy){
         if(enemy != null){
             local string = ::Enemies[enemy].getName();
