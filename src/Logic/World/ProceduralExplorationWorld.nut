@@ -397,4 +397,14 @@
             }
         }
     }
+
+
+    function getStatsString(){
+        local outString = "";
+        outString += format("World Seed: %i\n", mMapData_.seed);
+        outString += format("Moisture Seed: %i\n", mMapData_.moistureSeed);
+        outString += format("Variation Seed: %i\n", mMapData_.variationSeed);
+
+        return outString;
+    }
 };

@@ -6,6 +6,7 @@
     mDialogManager = null
     mInputManager = null
     mSaveManager = null
+    mGameProfiles_ = null
 
     mTargetInterface_ = TargetInterface.DESKTOP
 
@@ -19,13 +20,29 @@
         return mTargetInterface_;
     }
 
-    function getGameProfile(){
+    function determineGameProfiles(){
         local profileVal = _settings.getUserSetting("profile");
-        for(local i = 0; i < GameProfile.MAX; i++){
-            if(profileVal == ::GameProfileString[i]) return i;
+        if(profileVal == null || typeof profileVal != "string") return null;
+        local profilesSplit = split(profileVal, ",");
+
+        local activeProfiles = {};
+        foreach(i in profilesSplit){
+            local profile = getGameProfileForString_(i);
+            if(profile != null) activeProfiles.rawset(profile, true);
         }
 
-        return GameProfile.RELEASE;
+        local outProfiles = [];
+        foreach(c,i in activeProfiles){
+            outProfiles.append(c);
+        }
+
+        return outProfiles
+    }
+    function getGameProfileForString_(profile){
+        for(local i = 0; i < GameProfile.MAX; i++){
+            if(profile == ::GameProfileString[i]) return i;
+        }
+        return null;
     }
 
     function setup(){
@@ -165,7 +182,7 @@
 
         mExplorationLogic = ExplorationLogic();
 
-        setupForProfile_(getGameProfile());
+        setupProfiles_();
 
         //::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
         //::ScreenManager.transitionToScreen(Screen.SAVE_SELECTION_SCREEN);
@@ -186,7 +203,25 @@
 
     }
 
+    function setupProfiles_(){
+        mGameProfiles_ = determineGameProfiles();
+        if(mGameProfiles_ != null){
+            foreach(i in mGameProfiles_){
+                setupForProfile_(i);
+            }
+        }
+        if(::ScreenManager.getScreenForLayer() == null){
+            //If nothing was setup then switch to the main menu.
+            ::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
+        }
+    }
+
+    function getGameProfiles(){
+        return mGameProfiles_;
+    }
+
     function setupForProfile_(profile){
+        printf("Setting up game profile '%s'", ::GameProfileString[profile]);
         switch(profile){
             case GameProfile.DEVELOPMENT_BEGIN_EXPLORATION:
                 ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
@@ -195,7 +230,6 @@
                 ::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);
                 break;
             default:
-                ::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
                 break;
         }
     }

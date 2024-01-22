@@ -27,6 +27,51 @@ enum ExplorationBusEvents{
     mInsideGateway_ = false;
     mTooltipManager_ = null;
 
+    mWorldStatsScreen_ = null;
+
+    WorldStatsScreen = class{
+        mParent_ = null;
+        mWindow_ = null;
+        mInfoLabel_ = null;
+        constructor(parent){
+            mParent_ = parent;
+
+        }
+        function setup(){
+            mWindow_ = mParent_.createWindow();
+            mWindow_.setSize(100, 100);
+            mWindow_.setVisualsEnabled(false);
+            mWindow_.setClipBorders(0, 0, 0, 0);
+
+            mInfoLabel_ = mWindow_.createLabel();
+
+            displayWorldStats(" ");
+
+            _event.subscribe(Event.ACTIVE_WORLD_CHANGE, receiveWorldChange, this);
+        }
+        function shutdown(){
+            _gui.destroy(mWindow_);
+            _event.unsubscribe(Event.ACTIVE_WORLD_CHANGE, receiveWorldChange, this);
+        }
+        function displayWorldStats(stats){
+            mInfoLabel_.setText(stats != null ? stats : " ");
+
+            local labelSize = mInfoLabel_.getSize();
+            mWindow_.setPosition(10, _window.getHeight() - labelSize.y);
+            mWindow_.setSize(labelSize);
+        }
+        function setVisible(vis){
+            if(mWindow_ == null){
+                setup();
+            }
+            mWindow_.setVisible(vis);
+        }
+        function receiveWorldChange(id, data){
+            local statsString = data.getStatsString();
+            displayWorldStats(statsString);
+        }
+    };
+
     function setup(data){
         mLogicInterface_ = data.logic;
         mExplorationBus_ = ScreenBus();
@@ -90,6 +135,9 @@ enum ExplorationBusEvents{
 
         createInputBlockerOverlay();
 
+        mWorldStatsScreen_ = WorldStatsScreen(mWindow_);
+        checkWorldStatsVisible();
+
         mScreenInputCheckList_ = [
             mExplorationStatsContainer_,
             mExplorationMovesContainer_
@@ -134,6 +182,13 @@ enum ExplorationBusEvents{
         mInputBlockerWindow_.setZOrder(140);
         mInputBlockerWindow_.setVisualsEnabled(false);
         mInputBlockerWindow_.setVisible(false);
+    }
+
+    function checkWorldStatsVisible(){
+        local profiles = ::Base.getGameProfiles();
+        if(profiles.find(GameProfile.DISPLAY_WORLD_STATS) != null){
+            mWorldStatsScreen_.setVisible(true);
+        }
     }
 
     function checkIntersect_(x, y, widget){

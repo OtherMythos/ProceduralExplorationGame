@@ -972,6 +972,10 @@
         printPlaceData(workspace.placeData);
 
         local outData = {
+            "seed": data.seed,
+            "moistureSeed": data.moistureSeed,
+            "variationSeed": data.variation,
+
             "voxelBuffer": workspace.noiseBlob,
             "secondaryVoxBuffer": workspace.secondaryBiomeBlob,
             "blueNoiseBuffer": workspace.blueNoise,

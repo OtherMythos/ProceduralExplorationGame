@@ -965,6 +965,10 @@ enum WorldMousePressContexts{
         }
     }
 
+    function getStatsString(){
+        return null;
+    }
+
     function isActive(){
         return mCurrent_ && mReady_;
     }

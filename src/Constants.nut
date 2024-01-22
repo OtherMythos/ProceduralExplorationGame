@@ -51,13 +51,15 @@ enum GameProfile{
     RELEASE,
     DEVELOPMENT_BEGIN_EXPLORATION,
     TEST_SCREEN,
+    DISPLAY_WORLD_STATS,
 
     MAX
 };
 ::GameProfileString <- [
     "Release",
     "DevelopmentBeginExploration",
-    "TestScreen"
+    "TestScreen",
+    "DisplayWorldStats"
 ];
 
 enum Event{

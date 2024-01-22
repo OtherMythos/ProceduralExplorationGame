@@ -80,6 +80,10 @@
         return currentIdx;
     }
 
+    function getScreenForLayer(layerIdx=0){
+        return mActiveScreens_[layerIdx];
+    }
+
     /**
      * Immediate transition to a new screen.
      */
