@@ -52,6 +52,7 @@ enum GameProfile{
     DEVELOPMENT_BEGIN_EXPLORATION,
     TEST_SCREEN,
     DISPLAY_WORLD_STATS,
+    FORCE_MOBILE_INTERFACE,
 
     MAX
 };
@@ -59,7 +60,8 @@ enum GameProfile{
     "Release",
     "DevelopmentBeginExploration",
     "TestScreen",
-    "DisplayWorldStats"
+    "DisplayWorldStats",
+    "ForceMobileInterface"
 ];
 
 enum Event{

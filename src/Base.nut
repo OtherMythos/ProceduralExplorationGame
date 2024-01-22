@@ -229,6 +229,9 @@
             case GameProfile.TEST_SCREEN:
                 ::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);
                 break;
+            case GameProfile.FORCE_MOBILE_INTERFACE:
+                mTargetInterface_ = TargetInterface.MOBILE;
+                break;
             default:
                 break;
         }
