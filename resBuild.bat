@@ -1,6 +1,6 @@
 SET SCRIPT_DIR=%~dp0
 
-docker pull registry.gitlab.com/edherbert/avtools/asset-builder-image:latest
+docker build -t asset-builder-image-voxel util/
 
 ::Make sure the output exists.
 echo "Clearing build directory"
@@ -12,6 +12,6 @@ SET BUILD_INPUT="%SCRIPT_DIR%\assets"
 docker run -it --name asset-builder-container --rm ^
     -v "%BUILD_OUTPUT%:/buildOutput" ^
     -v "%BUILD_INPUT%:/buildInput" ^
-    registry.gitlab.com/edherbert/avtools/asset-builder-image --input /buildInput --output /buildOutput %*
+    asset-builder-image-voxel -m AssetModuleGox --input /buildInput --output /buildOutput %*
 
 @REM chmod -R 777 $BUILD_OUTPUT
