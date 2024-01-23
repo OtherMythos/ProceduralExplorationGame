@@ -186,8 +186,10 @@ enum ExplorationBusEvents{
 
     function checkWorldStatsVisible(){
         local profiles = ::Base.getGameProfiles();
-        if(profiles.find(GameProfile.DISPLAY_WORLD_STATS) != null){
-            mWorldStatsScreen_.setVisible(true);
+        if(profiles != null){
+            if(profiles.find(GameProfile.DISPLAY_WORLD_STATS) != null){
+                mWorldStatsScreen_.setVisible(true);
+            }
         }
     }
 
