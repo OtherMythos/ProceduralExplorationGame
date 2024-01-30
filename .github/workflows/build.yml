@@ -1,0 +1,20 @@
+name: Build Resources
+
+on:
+  push:
+    branches:  'master'
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build
+        run: |
+          git clone https://gitlab.com/edherbert/avtools /tmp
+          cd /tmp/avtools
+          docker build -t asset-builder-image -f Dockerfile .
+          cd ${{ github.workspace }}
+          ./resBuild.sh
