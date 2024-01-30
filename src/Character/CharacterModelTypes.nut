@@ -38,7 +38,7 @@ local ModelType = class{
 
 ::ModelTypes <- array(CharacterModelType.MAX, null);
 
-::ModelTypes[CharacterModelType.HUMANOID] = ModelType("assets/characterAnimations/baseAnimation.xml",
+::ModelTypes[CharacterModelType.HUMANOID] = ModelType("build/assets/characterAnimations/baseAnimation.xml",
     [
         Entry(
             "playerHead.mesh", CharacterModelPartType.HEAD, null, Vec3(0, 10, 0), Vec3(1, 1, 1)
@@ -67,7 +67,7 @@ local ModelType = class{
     ],
     [CharacterModelAnimId.BASE_ARMS_WALK, CharacterModelAnimId.BASE_LEGS_WALK, CharacterModelAnimId.BASE_ARMS_SWIM]
 );
-::ModelTypes[CharacterModelType.GOBLIN] = ModelType("assets/characterAnimations/baseAnimation.xml",
+::ModelTypes[CharacterModelType.GOBLIN] = ModelType("build/assets/characterAnimations/baseAnimation.xml",
     [
         Entry(
             "goblinBody.mesh", CharacterModelPartType.BODY, null, Vec3(0, 4, 0), Vec3(1.2, 1.2, 1.2)
@@ -94,7 +94,7 @@ local ModelType = class{
     ],
     [CharacterModelAnimId.BASE_ARMS_WALK, CharacterModelAnimId.BASE_LEGS_WALK, CharacterModelAnimId.BASE_ARMS_SWIM]
 );
-::ModelTypes[CharacterModelType.SQUID] = ModelType("assets/characterAnimations/squidAnimation.xml",
+::ModelTypes[CharacterModelType.SQUID] = ModelType("build/assets/characterAnimations/squidAnimation.xml",
     [
         Entry(
             "squidBody.mesh", CharacterModelPartType.BODY, null, Vec3(0, 0, 0), Vec3(1.0, 1.0, 1.0)
