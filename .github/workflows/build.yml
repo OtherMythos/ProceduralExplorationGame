@@ -2,12 +2,12 @@ name: Build Resources
 
 on:
   push:
-    paths:
-      - 'util/**'
+    branches: 'master'
 
 jobs:
   buildDockerContainer:
     runs-on: ubuntu-20.04
+    if: false
 
     env:
       REGISTRY: ghcr.io
