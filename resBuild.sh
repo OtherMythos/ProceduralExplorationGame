@@ -17,4 +17,4 @@ docker run --name asset-builder-container --rm \
     -v "$BUILD_INPUT:$BUILD_INPUT" \
     asset-builder-image-voxel -m AssetModuleGox --input $BUILD_INPUT --output $BUILD_OUTPUT $*
 
-chmod -R 777 $BUILD_OUTPUT
+#chmod -R 777 $BUILD_OUTPUT

@@ -18,3 +18,13 @@ jobs:
           docker build -t asset-builder-image -f Dockerfile .
           cd ${{ github.workspace }}
           ./resBuild.sh
+          mkdir /tmp/distribution
+          cp -r build /tmp/distribution
+          cp -r avSetup.cfg /tmp/distribution
+          cp -r OgreResources.cfg /tmp/distribution
+          cp -r src /tmp/distribution
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: distribution.zip
+          path: /tmp/distribution
