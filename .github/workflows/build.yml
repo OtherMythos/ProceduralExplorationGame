@@ -7,6 +7,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-20.04
+    if: false
 
     steps:
       - name: Checkout
@@ -28,3 +29,15 @@ jobs:
         with:
           name: distribution.zip
           path: /tmp/distribution
+
+  buildWindows:
+    runs-on: windows-2019
+    needs: build
+
+    steps:
+      - name: Clone Build
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          name: avEngineWindows.zip
+          repo: OtherMythos/avEngine
+          workflow: buildWindows.yml
