@@ -14,7 +14,7 @@
         height = null;
     };
 
-    constructor(mapsDir="res://build/assetsmaps/"){
+    constructor(mapsDir="res://build/assets/maps/"){
         mMapsDir_ = mapsDir;
     }
 
