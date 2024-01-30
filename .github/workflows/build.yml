@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Build
         run: |
-          git clone https://gitlab.com/edherbert/avtools /tmp
+          git clone https://gitlab.com/edherbert/avtools /tmp/avtools
           cd /tmp/avtools
           docker build -t asset-builder-image -f Dockerfile .
           cd ${{ github.workspace }}
