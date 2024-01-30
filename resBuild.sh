@@ -2,8 +2,8 @@
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-#docker pull registry.gitlab.com/edherbert/avtools/asset-builder-image:latest
-docker build -t asset-builder-image-voxel util/
+docker pull ghcr.io/othermythos/asset-builder-image-voxel:latest
+#docker build -t asset-builder-image-voxel util/
 
 #Make sure the output exists.
 echo "Clearing build directory"
@@ -15,6 +15,6 @@ BUILD_INPUT=${SCRIPT_DIR}/assets/
 docker run --name asset-builder-container --rm \
     -v "$BUILD_OUTPUT:$BUILD_OUTPUT" \
     -v "$BUILD_INPUT:$BUILD_INPUT" \
-    asset-builder-image-voxel -m AssetModuleGox --input $BUILD_INPUT --output $BUILD_OUTPUT $*
+    ghcr.io/othermythos/asset-builder-image-voxel:latest -m AssetModuleGox --input $BUILD_INPUT --output $BUILD_OUTPUT $*
 
 #chmod -R 777 $BUILD_OUTPUT
