@@ -7,7 +7,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-20.04
-    if: false
 
     steps:
       - name: Checkout
@@ -41,3 +40,6 @@ jobs:
           name: avEngineWindows.zip
           repo: OtherMythos/avEngine
           workflow: buildWindows.yml
+      - name: Assemble Deployable
+        run: |
+          ls
