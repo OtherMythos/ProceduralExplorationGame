@@ -53,11 +53,11 @@
 
         //TODO move this somewhere else.
         _animation.loadAnimationFile("res://build/assets/animation/baseAnimation.xml");
-        _animation.loadAnimationFile("res://assets/characterAnimations/equippableAnimation.xml");
+        _animation.loadAnimationFile("res://build/assetscharacterAnimations/equippableAnimation.xml");
 
         createLights();
 
-        _gui.loadSkins("res://assets/skins/ui.json");
+        _gui.loadSkins("res://build/assetsskins/ui.json");
 
         _doFile("res://src/System/InputManager.nut");
         _doFile("res://src/Util/VoxToMesh.nut");

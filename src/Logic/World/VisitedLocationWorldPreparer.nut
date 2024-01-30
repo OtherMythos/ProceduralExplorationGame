@@ -56,7 +56,7 @@
         local fileHandler = ::TerrainChunkFileHandler();
         local mapData = fileHandler.readMapData(targetMap);
 
-        local path = "res://assets/maps/" + targetMap + "/scene.avscene";
+        local path = "res://build/assetsmaps/" + targetMap + "/scene.avscene";
         local parsedFile = null;
         if(_system.exists(path)){
             printf("Loading scene file with path '%s'", path);
@@ -64,7 +64,7 @@
         }
 
         //TODO properly give this a name.
-        local animationPath = "res://assets/maps/" + targetMap + "/sceneAnimation.xml";
+        local animationPath = "res://build/assetsmaps/" + targetMap + "/sceneAnimation.xml";
         if(_system.exists(animationPath)){
             _animation.loadAnimationFile(animationPath);
         }
@@ -72,7 +72,7 @@
         chunkManager.setup(mapData, 4);
         chunkManager.generateInitialItems();
 
-        local scriptPath = "res://assets/maps/" + targetMap + "/script.nut";
+        local scriptPath = "res://build/assetsmaps/" + targetMap + "/script.nut";
         local scriptObject = null;
         if(_system.exists(scriptPath)){
             assert(!getroottable().rawin("VisitedWorldScriptObject"));
