@@ -2,7 +2,8 @@ name: Build Resources
 
 on:
   push:
-    branches:  'master'
+    paths:
+      - 'util/**'
 
 jobs:
   buildDockerContainer:
@@ -44,6 +45,7 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     needs: buildDockerContainer
+    if: ${{ always() }}
 
     steps:
       - name: Checkout
