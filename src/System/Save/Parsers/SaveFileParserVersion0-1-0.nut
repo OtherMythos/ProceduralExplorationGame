@@ -9,6 +9,7 @@
 
             "playerEXP": OBJECT_TYPE.INTEGER,
             "playerCoins": OBJECT_TYPE.INTEGER,
+            "playerName": OBJECT_TYPE.STRING,
 
             "playtimeSeconds": OBJECT_TYPE.INTEGER
         };
@@ -19,6 +20,7 @@
 
             "playerEXP": 0,
             "playerCoins": 0,
+            "playerName": "empty",
 
             "playtimeSeconds": 0
         };

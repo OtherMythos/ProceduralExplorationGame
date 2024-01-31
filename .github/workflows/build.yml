@@ -16,13 +16,14 @@ jobs:
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: Build
         run: |
-          ./resBuild.sh
           mkdir /tmp/distribution
-          cp -r build /tmp/distribution
           cp -r avSetup.cfg /tmp/distribution
           cp -r OgreResources.cfg /tmp/distribution
           cp -r src /tmp/distribution
+          echo test
           echo "const GIT_HASH = \"${{ steps.vars.outputs.sha_short }}\"" >> /tmp/distribution/src/Versions.nut
+          ./resBuild.sh
+          cp -r build /tmp/distribution
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
