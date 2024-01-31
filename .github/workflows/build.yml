@@ -20,7 +20,8 @@ jobs:
           cp -r avSetup.cfg /tmp/distribution
           cp -r OgreResources.cfg /tmp/distribution
           cp -r src /tmp/distribution
-          echo \n"const GIT_HASH = \"${{ steps.vars.outputs.sha_short }}\""\n >> /tmp/distribution/src/Versions.nut
+          echo >> /tmp/distribution/src/Versions.nut
+          echo "const GIT_HASH = \"${{ steps.vars.outputs.sha_short }}\"" >> /tmp/distribution/src/Versions.nut
           ./resBuild.sh
           cp -r build /tmp/distribution
       - name: Upload Artifacts
