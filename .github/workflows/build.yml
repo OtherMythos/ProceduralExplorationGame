@@ -30,7 +30,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: distribution
+          name: distribution-${{ steps.vars.outputs.sha_short }}
           path: /tmp/distribution
 
   buildWindows:
