@@ -20,7 +20,7 @@ jobs:
           cp -r avSetup.cfg /tmp/distribution
           cp -r OgreResources.cfg /tmp/distribution
           cp -r src /tmp/distribution
-          echo test
+          echo ${{ steps.vars.outputs.sha_short }}
           echo "const GIT_HASH = \"${{ steps.vars.outputs.sha_short }}\"" >> /tmp/distribution/src/Versions.nut
           ./resBuild.sh
           cp -r build /tmp/distribution
