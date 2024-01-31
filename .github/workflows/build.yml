@@ -8,6 +8,9 @@ jobs:
   build:
     runs-on: ubuntu-20.04
 
+    outputs:
+      sha_short: ${{ steps.vars.outputs.sha_short }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -48,5 +51,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: buildWindows-${{ steps.vars.outputs.sha_short }}.zip
+          name: buildWindows-${{ needs.build.outputs.sha_short }}.zip
           path: ${{ github.workspace }}
