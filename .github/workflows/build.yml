@@ -53,3 +53,34 @@ jobs:
         with:
           name: buildWindows-${{ needs.build.outputs.sha_short }}
           path: ${{ github.workspace }}
+
+  buildLinux:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Clone Build
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          name: avEngineLinux.zip
+          repo: OtherMythos/avEngine
+          workflow: buildLinux.yml
+      - name: Extract appimage
+        run: |
+          ./av-x86_64.AppImage --appimage-extract
+          ls
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: distribution-${{ needs.build.outputs.sha_short }}
+          path: squashfs-root/usr/bin
+      - name: Setup appimage
+        run: |
+          wget -O /usr/local/bin/appimagetool https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x /usr/local/bin/appimagetool
+          appimagetool squashfs-root/
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: av-x86_64.AppImage-${{ needs.build.outputs.sha_short }}
+          path: ${{ github.workspace }}
