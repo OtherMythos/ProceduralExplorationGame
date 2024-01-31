@@ -67,6 +67,7 @@ jobs:
           workflow: buildLinux.yml
       - name: Extract appimage
         run: |
+          chmod +x ./av-x86_64.AppImage
           ./av-x86_64.AppImage --appimage-extract
           ls
       - name: Download Artifact
