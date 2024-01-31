@@ -5,6 +5,7 @@
 
     "playerEXP": 0,
     "playerCoins": 100,
+    "playerName": "empty",
 
     "playtimeSeconds": 100
 }

@@ -19,6 +19,7 @@
 ::SaveManager <- class{
 
     mParsers_ = [];
+    mParserLookups_ = {};
 
     constructor(){
 
@@ -164,7 +165,7 @@
             local newData = {};
             newData.playtimeSeconds <- saveData.playtimeSeconds;
             newData.playerLevel <- ::Base.mPlayerStats.getLevelForEXP_(saveData.playerEXP).tostring();
-            newData.playerName <- "Some name";
+            newData.playerName <- saveData.playerName;
             newData.saveId <- i;
             retVals.append(newData);
         }
@@ -190,6 +191,18 @@
         return valid;
     }
 
+    function getParserObject(max, min, patch){
+        local hash = ::SaveHelpers.hashVersion(max, min, patch);
+        if(!mParserLookups_.rawin(hash)) return null;
+        local parserIdx = mParserLookups_.rawget(hash);
+        return mParsers_[parserIdx];
+    }
+
+    function registerParser(max, min, patch, parser){
+        local idx = mParsers_.len();
+        mParsers_.append(parser);
+        mParserLookups_.rawset(::SaveHelpers.hashVersion(max, min, patch), idx);
+    }
 
 };
 

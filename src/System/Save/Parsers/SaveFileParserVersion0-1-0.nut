@@ -1,4 +1,4 @@
-::SaveManager.mParsers_.append(class extends SaveFileParser{
+::SaveManager.registerParser(0, 1, 0, class extends SaveFileParser{
     constructor(){
         base.constructor(0, 1, 0);
 
@@ -31,5 +31,15 @@
         local data = base.readMetaFile(path);
 
         return data;
+    }
+
+    function validatePlayerName(text){
+        local value = strip(text);
+        value = split(value, "\n", true);
+        if(value.len() != 1) return null;
+        value = value[0];
+        local regex = regexp("^\\w*$");
+        if(!regex.match(value)) return null;
+        return value;
     }
 });

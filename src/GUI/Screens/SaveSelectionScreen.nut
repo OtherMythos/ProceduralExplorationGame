@@ -29,7 +29,6 @@
             button.setExpandHorizontal(true);
             button.setMinSize(0, 100);
             mButton_ = button;
-            //layoutLine.addCell(button);
 
             mTitle_ = mWindow_.createLabel();
             mTitle_.setText(data.playerName);
@@ -58,10 +57,11 @@
     };
 
     function newSaveCallback_(widget, action){
-        local save = ::Base.mSaveManager.produceSave();
-        ::Base.mPlayerStats.setSaveData(save);
+        //local save = ::Base.mSaveManager.produceSave();
+        //::Base.mPlayerStats.setSaveData(save);
 
-        ::ScreenManager.transitionToScreen(Screen.GAMEPLAY_MAIN_MENU_SCREEN);
+        //::ScreenManager.transitionToScreen(Screen.GAMEPLAY_MAIN_MENU_SCREEN);
+        ::ScreenManager.transitionToScreen(Screen.NEW_SAVE_VALUES_SCREEN, null, 1);
     }
 
     function setup(data){
@@ -79,7 +79,6 @@
         title.sizeToFit(_window.getWidth() * 0.9);
         layoutLine.addCell(title);
 
-        //local viableSaves = ::Base.mSaveManager.findViableSaves();
         local viableSaves = ::Base.mSaveManager.obtainViableSaveInfo();
 
         local layoutWidgets = [];
