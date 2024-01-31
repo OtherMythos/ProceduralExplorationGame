@@ -62,7 +62,7 @@ jobs:
       - name: Clone Build
         uses: dawidd6/action-download-artifact@v3
         with:
-          name: avEngineLinux.zip
+          name: av-x86_64.AppImage
           repo: OtherMythos/avEngine
           workflow: buildLinux.yml
       - name: Extract appimage
