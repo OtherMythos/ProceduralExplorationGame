@@ -80,7 +80,8 @@ jobs:
           cd /tmp
           wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
           chmod +x appimagetool-x86_64.AppImage
-          appimagetool-x86_64.AppImage --appimage-extract
+          ls
+          ./appimagetool-x86_64.AppImage --appimage-extract
           cd squashfs-root/usr/bin
           ./appimagetool ${{ github.workspace }}/squashfs-root
       - name: Upload Artifact
