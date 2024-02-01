@@ -89,8 +89,9 @@ jobs:
           #cd /tmp
           appimagetool squashfs-root
           rm -rf squashfs-root
+          mv av-x86_64.AppImage buildLinux-${{ needs.build.outputs.sha_short }}.AppImage
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: buildLinux-${{ needs.build.outputs.sha_short }}.AppImage
-          path: ${{ github.workspace }}
+          path: ${{ github.workspace }}/buildLinux-${{ needs.build.outputs.sha_short }}.AppImage
