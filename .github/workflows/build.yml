@@ -78,8 +78,8 @@ jobs:
       - name: Setup appimage
         run: |
           #cd /tmp
-          wget -O /usr/bin/appimagetool https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
-          chmod +x /usr/bin/appimagetool
+          wget -O /usr/local/bin/appimagetool https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x /usr/local/bin/appimagetool
           ls
           sudo apt update
           sudo apt install fuse libfuse2
