@@ -81,9 +81,13 @@ jobs:
           wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
           chmod +x appimagetool-x86_64.AppImage
           ls
+          sudo apt update
+          sudo apt install fuse libfuse2
           ./appimagetool-x86_64.AppImage --appimage-extract
           cd squashfs-root/usr/bin
-          ./appimagetool ${{ github.workspace }}/squashfs-root
+          ls
+          cd /tmp
+          ./appimagetool squashfs-root
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
