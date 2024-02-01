@@ -389,7 +389,7 @@
         local regionData = mMapData_.regionData[regionId];
         if(regionEntry != null){
             regionEntry.performArrival();
-            ::PopupManager.displayPopup(::PopupManager.PopupData(Popup.REGION_DISCOVERED, regionData.type));
+            //::PopupManager.displayPopup(::PopupManager.PopupData(Popup.REGION_DISCOVERED, regionData.type));
 
             processRegionCollectables_(regionData);
             if(mGui_.mWorldMapDisplay_.mMapViewer_ != null){
