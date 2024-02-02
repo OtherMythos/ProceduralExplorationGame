@@ -17,13 +17,16 @@
         title.sizeToFit(_window.getWidth() * 0.9);
         layoutLine.addCell(title);
 
-        local buttonOptions = ["play", "help"];
+        local buttonOptions = ["Play", "Help", "Quit to Desktop"];
         local buttonFunctions = [
             function(widget, action){
                 ::ScreenManager.transitionToScreen(Screen.SAVE_SELECTION_SCREEN);
             },
             function(widget, action){
                 ::ScreenManager.transitionToScreen(Screen.HELP_SCREEN);
+            },
+            function(widget, action){
+                _shutdownEngine();
             }
         ]
 
