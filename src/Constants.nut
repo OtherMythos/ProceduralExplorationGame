@@ -53,6 +53,9 @@ enum GameProfile{
     TEST_SCREEN,
     DISPLAY_WORLD_STATS,
     FORCE_MOBILE_INTERFACE,
+    SCREENSHOT_MODE,
+    DISABLE_ENEMY_SPAWN,
+    DISABLE_DISTRACTION_SPAWN,
 
     MAX
 };
@@ -61,7 +64,10 @@ enum GameProfile{
     "DevelopmentBeginExploration",
     "TestScreen",
     "DisplayWorldStats",
-    "ForceMobileInterface"
+    "ForceMobileInterface",
+    "ScreenshotMode",
+    "DisableEnemySpawn",
+    "DisableDistractionSpawn",
 ];
 
 enum Event{

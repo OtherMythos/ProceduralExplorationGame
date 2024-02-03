@@ -11,6 +11,10 @@
         setPercentage(1.0);
 
         panel.setZOrder(BillboardZOrder.HEALTH_BAR);
+
+        if(::Base.isProfileActive(GameProfile.SCREENSHOT_MODE)){
+            mPanel_.setVisible(false);
+        }
     }
 
     function destroy(){

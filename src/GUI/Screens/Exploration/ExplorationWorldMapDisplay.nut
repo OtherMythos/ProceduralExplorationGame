@@ -16,6 +16,9 @@
         mMapViewerWindow_ = parentWin.createWindow();
         mMapViewerPanel_ = mMapViewerWindow_.createPanel();
         mMapViewerWindow_.setVisualsEnabled(false);
+        if(::Base.isProfileActive(GameProfile.SCREENSHOT_MODE)){
+            mMapViewerWindow_.setVisible(false);
+        }
 
         _event.subscribe(Event.ACTIVE_WORLD_CHANGE, processActiveWorldChange, this);
         _event.subscribe(Event.PLACE_DISCOVERED, notifyPlaceDiscovered, this);

@@ -97,6 +97,13 @@
             mMoveButtons_[i].setSize(mSizerPanels_[i].getSize());
         }
     }
+
+    function setVisible(visible){
+        mBackground_.setVisible(visible);
+        foreach(i in mMoveButtons_){
+            i.setVisible(visible);
+        }
+    }
 };
 
 _doFile("res://src/GUI/Screens/Exploration/ExplorationMoveButton.nut");

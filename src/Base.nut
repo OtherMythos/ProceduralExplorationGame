@@ -220,6 +220,12 @@
     function getGameProfiles(){
         return mGameProfiles_;
     }
+    function isProfileActive(profile){
+        if(mGameProfiles_ != null){
+            if(mGameProfiles_.find(profile) != null) return true;
+        }
+        return false;
+    }
 
     function setupForProfile_(profile){
         printf("Setting up game profile '%s'", ::GameProfileString[profile]);
@@ -231,6 +237,9 @@
                 ::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);
                 break;
             case GameProfile.FORCE_MOBILE_INTERFACE:
+                mTargetInterface_ = TargetInterface.MOBILE;
+                break;
+            case GameProfile.SCREENSHOT_MODE:
                 mTargetInterface_ = TargetInterface.MOBILE;
                 break;
             default:

@@ -68,5 +68,9 @@
         mButton_.setDisabled(newPercent > 0);
     }
 
+    function setVisible(visible){
+        mButton_.setVisible(visible);
+    }
+
 
 };

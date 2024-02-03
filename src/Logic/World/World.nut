@@ -768,6 +768,8 @@ enum WorldMousePressContexts{
     }
 
     function checkForDistractionAppear(){
+        if(::Base.isProfileActive(GameProfile.DISABLE_DISTRACTION_SPAWN)) return;
+
         mAppearDistractionLogic_.update();
 
         if(mAppearDistractionLogic_.checkAppearForObject(WorldDistractionType.PERCENTAGE_ENCOUNTER)){
@@ -784,6 +786,8 @@ enum WorldMousePressContexts{
         }
     }
     function checkForEnemyAppear(){
+        if(::Base.isProfileActive(GameProfile.DISABLE_ENEMY_SPAWN)) return;
+
         local foundSomething = _random.randInt(100) == 0;
         if(!foundSomething) return;
         if(mActiveEnemies_.len() >= 20){

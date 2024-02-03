@@ -29,6 +29,9 @@ enum BillboardZOrder{
     function setVisible(visible){
         mVisible_ = visible;
         mPanel_.setVisible(visible);
+        if(::Base.isProfileActive(GameProfile.SCREENSHOT_MODE)){
+            mPanel_.setVisible(false);
+        }
     }
 
     function setMaskVisible(mask){

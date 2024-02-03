@@ -90,4 +90,7 @@
     function getEXPCounter(){
         return mEXPCounter_;
     }
+    function setVisible(visible){
+        mWindow_.setVisible(visible);
+    }
 };

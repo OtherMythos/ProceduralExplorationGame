@@ -138,6 +138,11 @@ enum ExplorationBusEvents{
         mWorldStatsScreen_ = WorldStatsScreen(mWindow_);
         checkWorldStatsVisible();
 
+        if(::Base.isProfileActive(GameProfile.SCREENSHOT_MODE)){
+            mExplorationStatsContainer_.setVisible(false);
+            mExplorationMovesContainer_.setVisible(false);
+        }
+
         mScreenInputCheckList_ = [
             mExplorationStatsContainer_,
             mExplorationMovesContainer_
@@ -185,11 +190,8 @@ enum ExplorationBusEvents{
     }
 
     function checkWorldStatsVisible(){
-        local profiles = ::Base.getGameProfiles();
-        if(profiles != null){
-            if(profiles.find(GameProfile.DISPLAY_WORLD_STATS) != null){
-                mWorldStatsScreen_.setVisible(true);
-            }
+        if(::Base.isProfileActive(GameProfile.DISPLAY_WORLD_STATS)){
+            mWorldStatsScreen_.setVisible(true);
         }
     }
 
