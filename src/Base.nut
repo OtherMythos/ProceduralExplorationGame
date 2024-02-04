@@ -50,6 +50,7 @@
 
         printVersionInfos();
         checkUserParams();
+        registerProfiles_();
 
         //TODO move this somewhere else.
         _animation.loadAnimationFile("res://build/assets/animation/baseAnimation.xml");
@@ -204,8 +205,10 @@
 
     }
 
-    function setupProfiles_(){
+    function registerProfiles_(){
         mGameProfiles_ = determineGameProfiles();
+    }
+    function setupProfiles_(){
         if(mGameProfiles_ != null){
             foreach(i in mGameProfiles_){
                 setupForProfile_(i);
@@ -237,9 +240,6 @@
                 ::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);
                 break;
             case GameProfile.FORCE_MOBILE_INTERFACE:
-                mTargetInterface_ = TargetInterface.MOBILE;
-                break;
-            case GameProfile.SCREENSHOT_MODE:
                 mTargetInterface_ = TargetInterface.MOBILE;
                 break;
             default:

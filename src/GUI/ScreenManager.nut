@@ -49,7 +49,9 @@
         mFGEffectRenderWindow = EffectAnimationRenderWindow(CompositorSceneType.FG_EFFECT);
         mFGEffectRenderWindow.setZOrder(mScreensZOrder + MAX_SCREENS + 1);
 
-        mVersionInfoWindow_ = VersionInfoWindow(::getVersionInfo());
+        if(!(::Base.isProfileActive(GameProfile.SCREENSHOT_MODE))){
+            mVersionInfoWindow_ = VersionInfoWindow(::getVersionInfo());
+        }
     }
 
     function _createScreenForId(screenData){
