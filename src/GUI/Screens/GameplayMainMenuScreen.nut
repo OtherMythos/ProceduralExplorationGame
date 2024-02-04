@@ -15,12 +15,16 @@
         title.sizeToFit(_window.getWidth() * 0.9);
         layoutLine.addCell(title);
 
-        local buttonOptions = ["Explore", "Inventory", "Visit"];
+        local buttonOptions = ["Explore"
+            //, "Inventory", "Visit"
+        ];
         local buttonFunctions = [
             function(widget, action){
                 print("Explore");
                 ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
-            },
+            }
+            /*
+            ,
             function(widget, action){
                 print("Inventory");
                 ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, {"inventory": ::Base.mInventory, "equipStats": ::Base.mPlayerStats.mPlayerCombatStats.mEquippedItems}));
@@ -29,6 +33,7 @@
                 print("Visit");
                 ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.VISITED_PLACES_SCREEN, {"stats": ::Base.mPlayerStats}));
             }
+            */
         ]
 
         foreach(i,c in buttonOptions){
