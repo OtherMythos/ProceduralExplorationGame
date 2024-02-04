@@ -1,16 +1,21 @@
-# Turn based game
-An un-named project for the avEngine.
+# Procedural Exploration Game
+An un-named game for the avEngine.
 
 This game is based on RPG mechanics and built around the idea of exploration.
-The gameplay loop focuses on the player exploring the world, finding items, places and combat encounters.
-I hope to have a large number of collectables and a variety of content in this game.
+The gameplay loop focuses on the player exploring a procedural world, finding items, places and combat encounters.
+The game is intended to distill the feeling of exploring a large world into a short, biting gameplay loop.
 
-Expected features include:
+Current features include:
  * Voxel graphics for character models, scenes, items, etc.
- * Turn based combat system.
+ * Point and click combat system.
+ * Procedural world, complete with regions which appear in sections.
+ * Designed around mobile, i.e quick bursts of play sessions.
+
+Future intended features include:
  * Copious amounts of collectables.
  * Quest and task system.
- * Designed around mobile, i.e quick bursts of play sessions.
+ * Character customisation.
+ * Improved variety in regions, enemies, characters, gameplay sessions.
 
 ## Building project
 Assets for this project need to be built before they can be used.
@@ -27,11 +32,11 @@ This script will produce an output directory named 'build', where the built asse
 ## Running
 Once built this project can be run like any other avEngine project
 ```bash
-./av ~/template/avSetup.cfg
+./av avSetup.cfg
 ```
 
 ## Developer tools
-A few helpful utilities are provided to help speed up development.
+A few utility features are provided to help speed up development.
 
 ### Profiles
 Profiles allow certain modifications to the game's operation.
