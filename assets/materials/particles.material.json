@@ -1,0 +1,9 @@
+{
+    "unlit" :
+    {
+        "ParticleWhite" :
+        {
+            "diffuse" : [1, 1, 1, 1]
+        }
+    }
+}

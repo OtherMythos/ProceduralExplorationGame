@@ -581,17 +581,21 @@
         local targetPos = pos.copy();
         targetPos.y = getZForPos(targetPos);
 
+        local OBJECT_SCALE = 0.1;
         //Construct this first so we know the radius to offset by.
         local item = _scene.createItem(wrappedItem.getMesh());
-        targetPos.y += item.getLocalRadius() * 0.1;
+        targetPos.y += item.getLocalRadius() * OBJECT_SCALE;
 
         local en = manager.createEntity(targetPos);
 
         local parentNode = mBaseSceneNode_.createChildSceneNode();
-        parentNode.setScale(0.1, 0.1, 0.1);
+        parentNode.setScale(OBJECT_SCALE, OBJECT_SCALE, OBJECT_SCALE);
         parentNode.setPosition(targetPos);
+        local particleSystem = _scene.createParticleSystem("particle_collectableItem");
+        particleSystem.setRenderQueueGroup(30);
         local animNode = parentNode.createChildSceneNode();
         animNode.attachObject(item);
+        animNode.attachObject(particleSystem);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](parentNode, true));
 
         local triggerWorld = mConstructorWorld_.getTriggerWorld();
