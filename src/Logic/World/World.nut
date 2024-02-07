@@ -547,6 +547,10 @@ enum WorldMousePressContexts{
         }
     }
 
+    function spawnDroppedItem(pos, wrappedItem){
+        mEntityFactory_.constructCollectableItemObject(pos, wrappedItem);
+    }
+
     function spawnEnemies(pos, num, spread=4){
         for(local i = 0; i < num; i++){
             local randDir = (_random.rand()*2-1) * PI;
@@ -927,6 +931,9 @@ enum WorldMousePressContexts{
                 else if(i.mType == SPOILS_ENTRIES.SPAWN_ENEMIES){
                     spawnEnemies(position, i.mFirst);
                 }
+                else if(i.mType == SPOILS_ENTRIES.DROPPED_ITEMS){
+                    spawnDroppedItem(position, i.mFirst);
+                }
             }
         }
         else if(data.mType == SpoilsComponentType.PERCENTAGE){
@@ -966,6 +973,9 @@ enum WorldMousePressContexts{
             local endPos = ::Base.mExplorationLogic.mGui_.getEXPCounter().getPositionWindowPos();
 
             ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": 1, "start": worldPos, "end": endPos, "money": 1, "coinScale": 0.2}));
+        }
+        else if(data.mType == SpoilsComponentType.GIVE_ITEM){
+            printf("Giving player item %s", data.mFirst.tostring());
         }
     }
 

@@ -1,8 +1,8 @@
 const GAME_TITLE = "Un-Named RPG game"
 
 const VERSION_MAX = 0
-const VERSION_MIN = 1
-const VERSION_PATCH = 1
+const VERSION_MIN = 2
+const VERSION_PATCH = 0
 const VERSION_SUFFIX = "alpha"
 
 //NOTE: This is expected to be populated by a script.

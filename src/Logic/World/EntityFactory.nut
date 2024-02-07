@@ -262,6 +262,7 @@
         local spoilsData = [
             SpoilsEntry(SPOILS_ENTRIES.EXP_ORBS, 4 + _random.randInt(4)),
             SpoilsEntry(SPOILS_ENTRIES.COINS, _random.randInt(4)),
+            SpoilsEntry(SPOILS_ENTRIES.DROPPED_ITEMS, ::Item(_random.randInt(2) == 0 ? ItemId.SIMPLE_SWORD : ItemId.SIMPLE_SHIELD)),
         ];
         //
 
@@ -569,6 +570,39 @@
 
         local animationInfo = _animation.createAnimationInfo([animNode]);
         local anim = _animation.createAnimation("PlaceBeaconIdle", animationInfo);
+        anim.setTime(_random.randInt(0, 180));
+        manager.assignComponent(en, EntityComponents.ANIMATION, ::EntityManager.Components[EntityComponents.ANIMATION](anim));
+
+        return en;
+    }
+
+    function constructCollectableItemObject(pos, wrappedItem){
+        local manager = mConstructorWorld_.getEntityManager();
+        local targetPos = pos.copy();
+        targetPos.y = getZForPos(targetPos);
+
+        //Construct this first so we know the radius to offset by.
+        local item = _scene.createItem(wrappedItem.getMesh());
+        targetPos.y += item.getLocalRadius() * 0.1;
+
+        local en = manager.createEntity(targetPos);
+
+        local parentNode = mBaseSceneNode_.createChildSceneNode();
+        parentNode.setScale(0.1, 0.1, 0.1);
+        parentNode.setPosition(targetPos);
+        local animNode = parentNode.createChildSceneNode();
+        animNode.attachObject(item);
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](parentNode, true));
+
+        local triggerWorld = mConstructorWorld_.getTriggerWorld();
+        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.DIE, en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
+
+        local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.GIVE_ITEM, wrappedItem, null, null);
+        manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
+
+        local animationInfo = _animation.createAnimationInfo([animNode]);
+        local anim = _animation.createAnimation("CollectableItemAnimation", animationInfo);
         anim.setTime(_random.randInt(0, 180));
         manager.assignComponent(en, EntityComponents.ANIMATION, ::EntityManager.Components[EntityComponents.ANIMATION](anim));
 

@@ -30,7 +30,7 @@ enum EntityDestroyReason{
 enum SpoilsComponentType{
     SPOILS_DATA,
     PERCENTAGE,
-    DROPPED_ITEMS,
+    GIVE_ITEM,
     EXP_TRAIL,
     ADD_HEALTH,
     GIVE_MONEY,
