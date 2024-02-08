@@ -99,6 +99,12 @@ compositor_node renderTexture30Node
 
             shadows default_simpleShadowNode
         }
+        //To render the particle systems.
+        pass render_scene
+        {
+            rq_first 110
+            rq_last 111
+        }
     }
 }
 
