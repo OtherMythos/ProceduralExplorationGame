@@ -53,3 +53,14 @@ Desired profiles should be enabled by defining a user setting:
 ```
 
 It is recommended that these profiles are defined in the avSetupSecondary.cfg file, which can be included in the gitignore, so local settings do not get committed.
+
+### Save Files
+Save files are written to the following directories for the following platforms:
+
+| Platform | Location |
+|----------|----------|
+| Linux | ~/.local/share/av/rpg-game |
+| Windows | %APPDATA%/av/rpg-game |
+| MacOS | ~/Library/Application Support/av/rpg-game |
+
+Save files are indexed with an integer value.
