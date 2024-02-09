@@ -592,7 +592,6 @@
         parentNode.setScale(OBJECT_SCALE, OBJECT_SCALE, OBJECT_SCALE);
         parentNode.setPosition(targetPos);
         local particleSystem = _scene.createParticleSystem("particle_collectableItem");
-        particleSystem.setRenderQueueGroup(30);
         local animNode = parentNode.createChildSceneNode();
         animNode.attachObject(item);
         animNode.attachObject(particleSystem);
