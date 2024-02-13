@@ -59,6 +59,7 @@
         createLights();
 
         _gui.loadSkins("res://build/assets/skins/ui.json");
+        _gui.loadSkins("res://build/assets/skins/itemSkins.json");
 
         _doFile("res://src/System/InputManager.nut");
         _doFile("res://src/Util/VoxToMesh.nut");

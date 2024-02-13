@@ -174,6 +174,7 @@ enum InventoryBusEvents{
         layoutLine.layout();
 
         mInventoryGrid_.notifyLayout();
+        mInventoryGrid_.setNewGridIcons(mInventory_.mInventoryItems_);
         //container.sizeInner();
     }
 

@@ -1,0 +1,79 @@
+{
+    "skins" :
+    {
+
+        "SpriteBase" :
+        {
+            "material" : "gui/spriteBase",
+            "tex_resolution" : [320, 320],
+            "borders" :
+            {
+                "all" : [0, 0]
+            },
+            "grid_uv" :
+            {
+                "all" : [0, 0, 32, 32]
+            }
+        },
+        "inventory_slot" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [224, 128, 16, 16]
+            }
+        },
+
+        "item_none" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [176, 128, 16, 16]
+            }
+        },
+        "item_apple" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [160, 128, 16, 16]
+            }
+        },
+        "item_banana" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [192, 144, 16, 16]
+            }
+        },
+        "item_redberries" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [160, 144, 16, 16]
+            }
+        },
+
+        "item_healthPotion" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [128, 144, 16, 16]
+            }
+        },
+        "item_largeHealthPotion" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [144, 144, 16, 16]
+            }
+        }
+
+    }
+
+}

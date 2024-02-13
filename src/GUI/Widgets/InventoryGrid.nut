@@ -9,6 +9,7 @@
     mOverlayWin_ = null;
 
     mWidgets_ = null;
+    mItemIcons_ = null;
 
     mLayout_ = null;
     //mItemHovered_ = false;
@@ -25,14 +26,16 @@
     Update the grid with icons based on an array of items.
     */
     function setNewGridIcons(inv){
-        for(local i = 0; i < INVENTORY_SIZE; i++){
-            if(inv[i] == InventoryItems.NONE){
-                //mWidgets_[i].setHidden(false);
-                //mWidgets_[i].setSkin("Invisible");
+        foreach(c,i in inv){
+            local widget = mItemIcons_[c];
+            if(i == null){
+                widget.setVisible(false);
+                //Skip this to save a bit of time.
+                //widget.setSkin("item_none");
                 continue;
             }
-            //mWidgets_[i].setHidden(false);
-            //mWidgets_[i].setSkin(::gui.InventoryScreen.getSkinForItem(inv[i]));
+            widget.setVisible(true);
+            widget.setSkin(i.getIcon());
         }
     }
 
@@ -40,12 +43,21 @@
         mWindow_ = parentWin.createWindow();
         mWindow_.setClipBorders(0, 0, 0, 0);
 
+        mItemIcons_ = array(inventoryWidth * inventoryHeight);
+
         for(local y = 0; y < inventoryHeight; y++){
             for(local x = 0; x < inventoryWidth; x++){
                 local background = mWindow_.createPanel();
                 background.setSize(64, 64);
                 background.setPosition(x * 64, y * 64);
                 background.setSkin("inventory_slot");
+
+                local iconPanel = mWindow_.createPanel();
+                iconPanel.setSize(48, 48);
+                iconPanel.setPosition(x * 64 + 8, y * 64 + 8);
+                iconPanel.setSkin("item_none");
+                iconPanel.setVisible(false);
+                mItemIcons_[x + y * inventoryWidth] = iconPanel;
 
                 local item = mWindow_.createButton();
                 item.setHidden(false);
