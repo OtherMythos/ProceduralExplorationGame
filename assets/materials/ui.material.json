@@ -9,6 +9,12 @@
             "dst_alpha_blend_factor": "one"
         }
     },
+    "samplers" : {
+        "gui/uiSpriteScale" :
+        {
+            "mag": "point"
+        }
+    },
 
     "unlit" :
     {
@@ -29,6 +35,20 @@
         "gui/progressBarRed" :
         {
             "diffuse" : [0.9, 0.1, 0.1, 1.0]
+        },
+        "gui/spriteBase" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse_map0" :
+            {
+                "sampler": "gui/uiSpriteScale",
+                "texture": "sprites.png"
+            }
+        },
+        "gui/inventoryHighlightCover" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse" : [0, 0, 0, 0.3]
         },
 
         "unlitBlack" :

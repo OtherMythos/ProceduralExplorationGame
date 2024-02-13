@@ -33,6 +33,28 @@
             "copy_from" : "ItemButton_idle"
         },
 
+        "SpriteBase" :
+        {
+            "material" : "gui/spriteBase",
+            "tex_resolution" : [320, 320],
+            "borders" :
+            {
+                "all" : [0, 0]
+            },
+            "grid_uv" :
+            {
+                "all" : [0, 0, 32, 32]
+            }
+        },
+        "inventory_slot" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [224, 128, 16, 16]
+            }
+        },
+
 
         "PlaceButton_skin":
         {
