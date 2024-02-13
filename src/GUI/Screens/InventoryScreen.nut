@@ -1,10 +1,8 @@
 enum InventoryBusEvents{
+    ITEM_HOVER_BEGAN,
+    ITEM_HOVER_ENDED,
     ITEM_SELECTED,
 };
-
-const INVENTORY_WIDTH = 5;
-const INVENTORY_SIZE = 25; //5*5
-const EQIPABLE_INVENTORY_SIZE = 5;
 
 ::ScreenManager.Screens[Screen.INVENTORY_SCREEN] = class extends ::Screen{
 
@@ -23,6 +21,8 @@ const EQIPABLE_INVENTORY_SIZE = 5;
 
         mTitleLabel_ = null;
         mDescriptionLabel_ = null;
+
+        mActive_ = false;
 
         constructor(overlayWindow){
             mHoverWin_ = overlayWindow.createWindow();
@@ -46,12 +46,21 @@ const EQIPABLE_INVENTORY_SIZE = 5;
             layout.layout();
         }
 
+        function update(){
+            if(mActive_){
+                local xx = _input.getMouseX().tofloat() / _window.getWidth().tofloat();
+                local yy = _input.getMouseY().tofloat() / _window.getHeight().tofloat();
+                setPosition((1920*xx), (1080*yy));
+            }
+        }
+
         function destroy(){
             _gui.destroy(actionMenuWin_);
         }
 
         function setVisible(vis){
-            mHoverWin_.setHidden(!vis);
+            mActive_ = vis;
+            mHoverWin_.setVisible(vis);
         }
 
         function setPosition(x, y){
@@ -59,149 +68,10 @@ const EQIPABLE_INVENTORY_SIZE = 5;
         }
 
         function setItem(item){
-            mTitleLabel_.setText("test" + item.getName());
-            //mTitleLabel_.setText(::_getInventoryItemName(item));
-            //mDescriptionLabel_.setText( ::_itemContent[item][ItemContentType.DESCRIPTION], false );
+            mTitleLabel_.setText(item.getName());
+            mDescriptionLabel_.setText(item.getDescription());
         }
     };
-
-    InventoryGrid = class{
-        mResolvedPos_ = null;
-
-        mHoverInfo_ = null;
-        mButtonCover_ = null;
-        mWindow_ = null;
-        mOverlayWin_ = null;
-
-        mWidgets_ = null;
-
-        mSelectedX_ = 0;
-        mSelectedY_ = 0;
-
-        mLayout_ = null;
-        mItemHovered_ = false;
-
-        constructor(hoverInfo, buttonCover){
-            //parentGridType_ = gridType;
-            mHoverInfo_ = hoverInfo;
-            mButtonCover_ = buttonCover;
-            //actionMenu_ = actionMenu;
-
-            mWidgets_ = [];
-        }
-
-        function getSelectedIdx(){
-            return mSelectedX_ + mSelectedY_ * INVENTORY_WIDTH;
-        }
-
-        /**
-        Update the grid with icons based on an array of items.
-        */
-        function setNewGridIcons(inv){
-            for(local i = 0; i < INVENTORY_SIZE; i++){
-                if(inv[i] == InventoryItems.NONE){
-                    //mWidgets_[i].setHidden(false);
-                    //mWidgets_[i].setSkin("Invisible");
-                    continue;
-                }
-                //mWidgets_[i].setHidden(false);
-                //mWidgets_[i].setSkin(::gui.InventoryScreen.getSkinForItem(inv[i]));
-            }
-        }
-
-        function initialise(parentWin, overlayWin){
-            mWindow_ = parentWin.createWindow();
-            mWindow_.setClipBorders(0, 0, 0, 0);
-
-            local numItems = 10;
-            for(local y = 0; y < numItems; y++){
-                for(local x = 0; x < numItems; x++){
-                    local background = mWindow_.createPanel();
-                    background.setSize(64, 64);
-                    background.setPosition(x * 64, y * 64);
-                    background.setSkin("inventory_slot");
-
-                    local item = mWindow_.createButton();
-                    item.setHidden(false);
-                    //item.setSize(48, 48);
-                    //item.setPosition(x * 64 + 8, y * 64 + 8);
-                    item.setSize(64, 64);
-                    item.setPosition(x * 64, y * 64);
-                    //item.setSkin("Invisible");
-                    item.setVisualsEnabled(false);
-                    item.setUserId(x | (y << 10));
-                    item.attachListener(inventoryItemListener, this);
-                    mWidgets_.append(item);
-                }
-            }
-        }
-
-        function update(){
-            if(mItemHovered_){
-                local xx = _input.getMouseX().tofloat() / _window.getWidth().tofloat();
-                local yy = _input.getMouseY().tofloat() / _window.getHeight().tofloat();
-                mHoverInfo_.setPosition((1920*xx), (1080*yy));
-            }
-        }
-
-        function inventoryItemListener(widget, action){
-            //if(actionMenu_.menuActive_) return;
-
-            local id = widget.getUserId();
-            local x = id & 0xF;
-            local y = id >> 10;
-            local targetItemIndex = x + y * INVENTORY_WIDTH;
-
-            if(action == _GUI_ACTION_HIGHLIGHTED){ //Hovered
-                mItemHovered_ = true;
-                mButtonCover_.setPosition(mResolvedPos_.x + x * 64, mResolvedPos_.y + y * 64);
-                //buttonCover_.setPosition(0, 0);
-                mButtonCover_.setHidden(false);
-                local success = setToMenuItem(targetItemIndex);
-                //if(!success) mItemHovered_ = false
-            }else if(action == _GUI_ACTION_CANCEL){ //hover ended
-                mItemHovered_ = false;
-                mButtonCover_.setHidden(true);
-            }else if(action == _GUI_ACTION_PRESSED){ //Pressed
-                /*
-                local targetArray = ::gui.InventoryScreen.getArrayForInventoryType(parentGridType_);
-                local targetItem = targetArray[targetItemIndex];
-                if(targetItem != InventoryItems.NONE){
-                    print("pressed");
-                    this.actionMenu_.setItem(targetItemIndex, parentGridType_);
-                    this.actionMenu_.show(true);
-                }
-                */
-            }
-
-
-            mHoverInfo_.setItem(::Item(ItemId.SIMPLE_SWORD));
-
-            mSelectedX_ = x;
-            mSelectedY_ = y;
-            mHoverInfo_.setVisible(mItemHovered_);
-            //mButtonCover_.setVisible(mItemHovered_);
-        }
-
-        function setToMenuItem(idx){
-            /*
-            local targetArray = ::gui.InventoryScreen.getArrayForInventoryType(parentGridType_);
-            local item = targetArray[idx];
-            if(item == InventoryItems.NONE) return false;
-            hoverInfo_.setItem(item);
-            return true;
-            */
-        }
-
-        function addToLayout(layout){
-            mLayout_ = layout;
-            mLayout_.addCell(mWindow_);
-        }
-
-        function notifyLayout(){
-            mResolvedPos_ = mWindow_.getDerivedPosition();
-        }
-    }
 
     InventoryContainer = class{
         mWindow_ = null;
@@ -291,8 +161,10 @@ const EQIPABLE_INVENTORY_SIZE = 5;
         local buttonCover = createButtonCover(mOverlayWindow_);
         mHoverInfo_ = HoverItemInfo(mOverlayWindow_);
 
-        mInventoryGrid_ = InventoryGrid(mHoverInfo_, buttonCover);
-        mInventoryGrid_.initialise(mWindow_, mOverlayWindow_);
+        mInventoryGrid_ = ::GuiWidgets.InventoryGrid(mInventoryBus_, mHoverInfo_, buttonCover);
+        local inventoryWidth = mInventory_.getInventorySize() / 5;
+        local inventoryHeight = mInventory_.getInventorySize() / inventoryWidth;
+        mInventoryGrid_.initialise(mWindow_, mOverlayWindow_, inventoryWidth, inventoryHeight);
         mInventoryGrid_.addToLayout(layoutLine);
 
         layoutLine.setMarginForAllCells(0, 5);
@@ -318,16 +190,33 @@ const EQIPABLE_INVENTORY_SIZE = 5;
     }
 
     function busCallback(event, data){
-        /*
         if(event == InventoryBusEvents.ITEM_SELECTED){
-            local item = mInventory_.getItemForIdx(data);
-            ::ScreenManager.queueTransition(::ScreenManager.ScreenData(Screen.ITEM_INFO_SCREEN, {
-                "mode": ItemInfoMode.USE,
-                "item": item,
-                "slotIdx": data
-            }));
         }
-        */
+        else if(event == InventoryBusEvents.ITEM_HOVER_BEGAN){
+            processItemHover(data);
+        }
+        else if(event == InventoryBusEvents.ITEM_HOVER_ENDED){
+            processItemHover(null);
+        }
+    }
+
+    function processItemHover(idx){
+        if(idx == null){
+            setHoverMenuToItem(null);
+            return;
+        }
+        local item = mInventory_.getItemForIdx(idx);
+        setHoverMenuToItem(item);
+    }
+    function setHoverMenuToItem(item){
+        //TODO this might be getting called twice.
+        //print(item);
+        if(item == null){
+            mHoverInfo_.setVisible(false);
+            return;
+        }
+        mHoverInfo_.setItem(item);
+        mHoverInfo_.setVisible(true);
     }
 
     function setZOrder(idx){
@@ -342,6 +231,9 @@ const EQIPABLE_INVENTORY_SIZE = 5;
     }
 
     function update(){
-        mInventoryGrid_.update();
+        //mInventoryGrid_.update();
+        mHoverInfo_.update();
     }
 };
+
+_doFile("res://src/GUI/Widgets/InventoryGrid.nut");

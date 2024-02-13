@@ -2,10 +2,10 @@
     mInventoryItems_ = null;
     mMoney_ = 0;
 
-    mInventorySize_ = 30;
+    mInventorySize_ = 35;
 
     constructor(){
-        mInventoryItems_ = array(mInventorySize_, ItemId.NONE);
+        mInventoryItems_ = array(mInventorySize_, null);
 
         mInventoryItems_[0] = ::Item(ItemId.HEALTH_POTION);
         mInventoryItems_[1] = ::Item(ItemId.LARGE_HEALTH_POTION);
@@ -51,6 +51,10 @@
         print(format("Adding %i to %i money, new is %i", money, mMoney_, mMoney_+money));
         mMoney_ += money;
         _event.transmit(Event.MONEY_CHANGED, mMoney_);
+    }
+
+    function getInventorySize(){
+        return mInventorySize_;
     }
 
     function getMoney(){
