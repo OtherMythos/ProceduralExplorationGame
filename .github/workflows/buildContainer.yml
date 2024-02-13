@@ -2,7 +2,8 @@ name: Build Container
 
 on:
   push:
-    branches: 'master'
+    paths:
+      - 'util/**'
 
 jobs:
   buildDockerContainer:
