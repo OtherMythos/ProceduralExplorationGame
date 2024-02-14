@@ -20,6 +20,14 @@
         return mTargetInterface_;
     }
 
+    function determineForcedScreen(){
+        local forcedScreen = _settings.getUserSetting("forceScreen");
+        if(forcedScreen == null || typeof forcedScreen != "string") return null;
+        foreach(c,i in ::ScreenString){
+            if(i == forcedScreen) return c;
+        }
+        return null;
+    }
     function determineGameProfiles(){
         local profileVal = _settings.getUserSetting("profile");
         if(profileVal == null || typeof profileVal != "string") return null;
@@ -43,6 +51,22 @@
             if(profile == ::GameProfileString[i]) return i;
         }
         return null;
+    }
+    function getScreenDataForForcedScreen(screenId){
+        local data = null;
+        if(screenId == Screen.INVENTORY_SCREEN){
+            data = {"inventory": mInventory, "equipStats": ::Base.mPlayerStats.mPlayerCombatStats.mEquippedItems}
+        }
+        else if(screenId == Screen.EXPLORATION_SCREEN){
+            data = {"logic": mExplorationLogic}
+        }
+        else if(screenId == Screen.EXPLORATION_TEST_SCREEN){
+            data = {"logic": mExplorationLogic}
+        }
+        else if(screenId == Screen.VISITED_PLACES_SCREEN){
+            data = {"stats": mPlayerStats}
+        }
+        return ::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, data);
     }
 
     function setup(){
@@ -185,39 +209,25 @@
 
         mExplorationLogic = ExplorationLogic();
 
-        setupProfiles_();
-
-        //::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
-        //::ScreenManager.transitionToScreen(Screen.SAVE_SELECTION_SCREEN);
-        //::ScreenManager.transitionToScreen(Screen.HELP_SCREEN);
-        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
-        //::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);
-        //::ScreenManager.transitionToScreen(Screen.SAVE_EDIT_SCREEN);
-        //::ScreenManager.transitionToScreen(Screen.WORLD_GENERATION_STATUS_SCREEN, null, 1);
-        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_TEST_SCREEN, {"logic": mExplorationLogic}));
-        //::ScreenManager.transitionToScreen(Screen.WORLD_SCENE_SCREEN);
-        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.ENCOUNTER_POPUP_SCREEN, null), null, 1);
-        //::ScreenManager.transitionToScreen(Screen.ITEM_INFO_SCREEN);
-        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, {"inventory": mInventory, "equipStats": ::Base.mPlayerStats.mPlayerCombatStats.mEquippedItems}));
-        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.VISITED_PLACES_SCREEN, {"stats": mPlayerStats}));
-        //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_END_SCREEN, {"totalFoundItems": 5, "totalDiscoveredPlaces": 4, "totalEncountered": 2, "totalDefeated": 1}), null, 1);
-
-        //mExplorationLogic.resetExploration_();
-
+        setupDeveloperWorkarounds_();
     }
 
     function registerProfiles_(){
         mGameProfiles_ = determineGameProfiles();
     }
-    function setupProfiles_(){
+    function setupDeveloperWorkarounds_(){
         if(mGameProfiles_ != null){
             foreach(i in mGameProfiles_){
                 setupForProfile_(i);
             }
         }
-        if(::ScreenManager.getScreenForLayer() == null){
+        local forcedScreen = determineForcedScreen();
+        if(forcedScreen == null && ::ScreenManager.getScreenForLayer() == null){
             //If nothing was setup then switch to the main menu.
             ::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
+        }
+        if(forcedScreen != null){
+            ::ScreenManager.transitionToScreen(getScreenDataForForcedScreen(forcedScreen));
         }
     }
 

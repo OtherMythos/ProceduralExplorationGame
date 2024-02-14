@@ -130,6 +130,26 @@ enum Screen{
 
     MAX
 };
+::ScreenString <- [
+    "screen",
+    "mainMenuScreen",
+    "helpScreen",
+    "saveSelectionScreen",
+    "gamePlaymainmenuScreen",
+    "explorationScreen",
+    "itemInfoScreen",
+    "inventoryScreen",
+    "visitedPlacesScreen",
+    "dialogScreen",
+    "testScreen",
+    "saveEditScreen",
+    "worldSceneScreen",
+    "explorationTestScreen",
+    "explorationEndScreen",
+    "playerDeathScreen",
+    "worldGenerationStatusScreen",
+    "newSaveValuesScreen",
+];
 
 enum Popup{
     POPUP,
