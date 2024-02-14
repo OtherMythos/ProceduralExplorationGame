@@ -24,6 +24,7 @@
     }
 
     function alterPlayerHealth(amount){
+        printf("Altering player health by %i", amount);
         mPlayerCombatStats.alterHealth(amount);
     }
 

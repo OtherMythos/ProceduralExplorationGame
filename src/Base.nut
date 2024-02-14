@@ -180,6 +180,7 @@
         _doFile("res://src/GUI/Screens/ExplorationTestScreen.nut");
         _doFile("res://src/GUI/Screens/WorldGenerationStatusScreen.nut");
         _doFile("res://src/GUI/Screens/NewSaveValuesScreen.nut");
+        _doFile("res://src/GUI/Screens/InventoryItemHelperScreen.nut");
 
         _doFile("res://src/Logic/EntityTargetManager.nut");
         _doFile("res://src/Logic/ActiveEnemyEntry.nut");

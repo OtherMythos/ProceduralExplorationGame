@@ -9,6 +9,9 @@
 
         mInventoryItems_[0] = ::Item(ItemId.HEALTH_POTION);
         mInventoryItems_[1] = ::Item(ItemId.LARGE_HEALTH_POTION);
+        for(local i = 0; i < 20; i++){
+            mInventoryItems_[i] = ::Item(i %2 == 0 ? ItemId.LARGE_HEALTH_POTION : ItemId.HEALTH_POTION);
+        }
     }
 
     /**
@@ -31,7 +34,7 @@
         if(expectedType != ItemId.NONE){
             assert(mInventoryItems_[slotIdx] == expectedType);
         }
-        setItemForIdx(ItemId.NONE, slotIdx);
+        setItemForIdx(null, slotIdx);
     }
 
     function setItemForIdx(item, idx){
@@ -44,7 +47,7 @@
     }
 
     function contentsChanged(){
-        _event.transmit(Event.INVENTORY_CONTENTS_CHANGED, null);
+        _event.transmit(Event.INVENTORY_CONTENTS_CHANGED, mInventoryItems_);
     }
 
     function addMoney(money){

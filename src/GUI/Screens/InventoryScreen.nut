@@ -2,6 +2,10 @@ enum InventoryBusEvents{
     ITEM_HOVER_BEGAN,
     ITEM_HOVER_ENDED,
     ITEM_SELECTED,
+
+    ITEM_INFO_REQUEST_EQUIP,
+    ITEM_INFO_REQUEST_USE,
+    ITEM_INFO_REQUEST_SCRAP,
 };
 
 ::ScreenManager.Screens[Screen.INVENTORY_SCREEN] = class extends ::Screen{
@@ -106,7 +110,7 @@ enum InventoryBusEvents{
     };
 
     function receiveInventoryChangedEvent(id, data){
-
+        mInventoryGrid_.setNewGridIcons(data);
     }
 
     function setup(data){
@@ -192,6 +196,7 @@ enum InventoryBusEvents{
 
     function busCallback(event, data){
         if(event == InventoryBusEvents.ITEM_SELECTED){
+            selectItem(data);
         }
         else if(event == InventoryBusEvents.ITEM_HOVER_BEGAN){
             processItemHover(data);
@@ -199,6 +204,35 @@ enum InventoryBusEvents{
         else if(event == InventoryBusEvents.ITEM_HOVER_ENDED){
             processItemHover(null);
         }
+        else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_USE){
+            local itemForIdx = mInventory_.getItemForIdx(data);
+            ::ItemHelper.actuateItem(itemForIdx);
+            mInventory_.removeFromInventory(data);
+        }
+        else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_SCRAP){
+            local scrapValue = mInventory_.getItemForIdx(data).getScrapVal();
+            mInventory_.addMoney(scrapValue);
+            mInventory_.removeFromInventory(data);
+        }
+    }
+
+    function selectItem(idx){
+        local selectedItem = mInventory_.getItemForIdx(idx);
+        if(selectedItem == null) return;
+        print("Selected item " + selectedItem.tostring());
+        setHoverMenuToItem(null);
+
+        local size = mInventoryGrid_.getSize();
+        local pos = mInventoryGrid_.getPosition();
+        local posForIdx = mInventoryGrid_.getPositionForIdx(idx);
+        local data = {
+            "pos": Vec2(posForIdx.x + 64, posForIdx.y),
+            "size": Vec2(200, size.y),
+            "item": selectedItem,
+            "idx": idx,
+            "bus": mInventoryBus_
+        };
+        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_ITEM_HELPER_SCREEN, data), null, 1);
     }
 
     function processItemHover(idx){

@@ -4,7 +4,6 @@
 
     mCurrentAnim_ = 0;
     mAnimTo_ = 0;
-    mAnimating_ = false;
 
     constructor(parent){
         setup(parent);
@@ -30,7 +29,12 @@
 
     function addForAnimation(amount){
         mAnimTo_ += amount;
-        mAnimating_ = true;
+    }
+
+    function setValueCancelAnim(value){
+        mAnimTo_ = value;
+        mCurrentAnim_ = value;
+        setLabelTo(value);
     }
 
     function getPositionWindowPos(){

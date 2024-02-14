@@ -77,7 +77,7 @@ enum ItemType{
     function getScrapVal(){ return mItem_.getScrapVal(); }
     function getIcon(){ return mItem_.getIcon(); }
     function toStats(){
-        return ::ItemHelper.itemToStats(getType());
+        return ::ItemHelper.itemToStats(mItemId_);
     }
     function _tostring(){
         return ::wrapToString(::Item, "Item", getName());
@@ -131,7 +131,7 @@ enum ItemType{
 ::Items[ItemId.NONE] = ItemDef("None", "None", null, null ItemType.NONE, 1, EquippableId.NONE);
 
 ::Items[ItemId.HEALTH_POTION] = ItemDef("Health Potion", "A potion of health. Bubbles gently inside a cast glass flask.", "smallPotion.mesh", "item_healthPotion", ItemType.CONSUMABLE, 5, EquippableId.NONE);
-::Items[ItemId.LARGE_HEALTH_POTION] = ItemDef("Large Health Potion", "A large potion of health.", "largePotion.mesh", "item_largeHealthPotion", ItemType.CONSUMABLE, 5, EquippableId.NONE);
+::Items[ItemId.LARGE_HEALTH_POTION] = ItemDef("Large Health Potion", "A large potion of health.", "largePotion.mesh", "item_largeHealthPotion", ItemType.CONSUMABLE, 10, EquippableId.NONE);
 
 ::Items[ItemId.SIMPLE_SWORD] = ItemDef("Simple Sword", "A cheap, weak sword. Relatively blunt for something claiming to be a sword.", "simpleSword.mesh", "icon_none", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SWORD, Vec3(0, 8, 0), Quat(2, Vec3(0, 1, 0)));
 ::Items[ItemId.SIMPLE_SHIELD] = ItemDef("Simple Shield", "An un-interesting shield. Provides minimal protection.", "simpleShield.mesh", "icon_none", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SHIELD, Vec3(-4, 0, 0), Quat(-PI*0.5, Vec3(0, 1, 0)), Vec3(1.4, 1.4, 1.0));
@@ -285,6 +285,11 @@ enum ItemType{
     mRestorativeHealth = 0;
     mAttack = 0;
     mDefense = 0;
+
+    function _tostring(){
+        local t = format("{restorativeHealth: %i, attack: %i, defense: %i}", mRestorativeHealth, mAttack, mDefense);
+        return ::wrapToString(::FoundObject, "ItemStat", t);
+    }
 
     function hasStatType(stat){
         switch(stat){

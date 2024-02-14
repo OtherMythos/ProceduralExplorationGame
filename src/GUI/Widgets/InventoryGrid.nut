@@ -106,6 +106,7 @@
                 this.actionMenu_.show(true);
             }
             */
+            mButtonCover_.setHidden(true);
             mBus_.notifyEvent(InventoryBusEvents.ITEM_SELECTED, id);
         }
 
@@ -139,5 +140,15 @@
 
     function busCallback(event, data){
 
+    }
+
+    function getSize(){
+        return mWindow_.getSize();
+    }
+    function getPosition(){
+        return mWindow_.getPosition();
+    }
+    function getPositionForIdx(idx){
+        return mWidgets_[idx].getDerivedPosition();
     }
 };
