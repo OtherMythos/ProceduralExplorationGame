@@ -18,6 +18,6 @@
 
     function shutdown(){
         _event.unsubscribe(Event.MONEY_ADDED, receiveMoneyAnimFinished, this);
-        _event.unsubscribe(Event.MONEY_CHANGED, receiveMoneyAnimFinished, this);
+        _event.unsubscribe(Event.MONEY_CHANGED, receiveMoneyChanged, this);
     }
 };

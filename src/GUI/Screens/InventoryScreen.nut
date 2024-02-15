@@ -185,7 +185,8 @@ enum InventoryBusEvents{
 
         local layoutHorizontal = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
         mInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID, mInventoryBus_, mHoverInfo_, buttonCover);
-        local inventoryWidth = mInventory_.getInventorySize() / 5;
+        //local inventoryWidth = mInventory_.getInventorySize() / 5;
+        local inventoryWidth = 5;
         local inventoryHeight = mInventory_.getInventorySize() / inventoryWidth;
         mInventoryGrid_.initialise(mWindow_, mOverlayWindow_, inventoryWidth, inventoryHeight);
         //mInventoryGrid_.addToLayout(layoutLine);
