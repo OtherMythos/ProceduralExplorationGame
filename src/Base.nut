@@ -60,13 +60,10 @@
         else if(screenId == Screen.EXPLORATION_SCREEN){
             data = {"logic": mExplorationLogic}
         }
-        else if(screenId == Screen.EXPLORATION_TEST_SCREEN){
-            data = {"logic": mExplorationLogic}
-        }
         else if(screenId == Screen.VISITED_PLACES_SCREEN){
             data = {"stats": mPlayerStats}
         }
-        return ::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, data);
+        return ::ScreenManager.ScreenData(screenId, data);
     }
 
     function setup(){
@@ -177,7 +174,6 @@
         _doFile("res://src/GUI/Screens/DialogScreen.nut");
         _doFile("res://src/GUI/Screens/TestScreen.nut");
         _doFile("res://src/GUI/Screens/SaveEditScreen.nut");
-        _doFile("res://src/GUI/Screens/ExplorationTestScreen.nut");
         _doFile("res://src/GUI/Screens/WorldGenerationStatusScreen.nut");
         _doFile("res://src/GUI/Screens/NewSaveValuesScreen.nut");
         _doFile("res://src/GUI/Screens/InventoryItemHelperScreen.nut");
