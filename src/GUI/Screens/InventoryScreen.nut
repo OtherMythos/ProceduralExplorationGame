@@ -25,6 +25,7 @@ enum InventoryBusEvents{
 
         mTitleLabel_ = null;
         mDescriptionLabel_ = null;
+        mStatsLabel_ = null;
 
         mActive_ = false;
 
@@ -44,8 +45,11 @@ enum InventoryBusEvents{
 
             mDescriptionLabel_ = mHoverWin_.createLabel();
             mDescriptionLabel_.setText(" ");
-            mDescriptionLabel_.setSize(350, 200-20);
             layout.addCell(mDescriptionLabel_);
+
+            mStatsLabel_ = mHoverWin_.createLabel();
+            mStatsLabel_.setText(" ");
+            layout.addCell(mStatsLabel_);
 
             layout.layout();
         }
@@ -73,7 +77,16 @@ enum InventoryBusEvents{
 
         function setItem(item){
             mTitleLabel_.setText(item.getName());
-            mDescriptionLabel_.setText(item.getDescription());
+            local descText = item.getDescription();
+
+            mDescriptionLabel_.setText(descText);
+
+            local stats = item.toStats();
+            local richTextDesc = stats.getDescriptionWithRichText();
+            mStatsLabel_.setText(richTextDesc[0]);
+            mStatsLabel_.setRichText(richTextDesc[1]);
+
+            mHoverWin_.setSize(mHoverWin_.calculateChildrenSize());
         }
     };
 

@@ -168,6 +168,12 @@ enum ItemType{
 //-------------------------------
 
 ::ItemHelper <- {
+    coloursForStats = []
+
+    function registerColourForStat(colValue){
+        coloursForStats.append(colValue.getAsABGR());
+    }
+
     function itemToStats(item){
         local stat = ItemStat();
 
@@ -314,17 +320,38 @@ enum ItemType{
     function getDescriptionForStat(stat){
         switch(stat){
             case StatType.RESTORATIVE_HEALTH:{
-                return format("  Restores %i health.", mRestorativeHealth);
+                return format("Restores %i health.", mRestorativeHealth);
             }
             case StatType.ATTACK:{
-                return format("  Increases attack by %i.", mAttack);
+                return format("Increases attack by %i.", mAttack);
             }
             case StatType.DEFENSE:{
-                return format("  Increases defense by %i.", mDefense);
+                return format("Increases defense by %i.", mDefense);
             }
             default:
                 assert(false);
         }
+    }
+
+    function getColourForStat(stat){
+        local statColour = ::ItemHelper.coloursForStats[stat];
+        return statColour;
+    }
+
+    function getDescriptionWithRichText(){
+        local outString = "";
+        local outRichText = [];
+        for(local i = 0; i < StatType.MAX; i++){
+            if(!hasStatType(i)) continue;
+            print(getDescriptionForStat(i));
+            local appendString = getDescriptionForStat(i) + "\n";
+
+            local colour = getColourForStat(i);
+            outRichText.append({"offset": outString.len(), "len": appendString.len(), "col": colour});
+            outString += appendString;
+        }
+
+        return [outString, outRichText];
     }
 
     /**
@@ -338,3 +365,7 @@ enum ItemType{
         return this;
     }
 };
+
+ItemHelper.registerColourForStat(ColourValue(1, 0, 0, 1));
+ItemHelper.registerColourForStat(ColourValue(0, 1, 0, 1));
+ItemHelper.registerColourForStat(ColourValue(0, 0, 1, 1));
