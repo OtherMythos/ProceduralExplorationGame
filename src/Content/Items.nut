@@ -133,7 +133,7 @@ enum ItemType{
 ::Items[ItemId.HEALTH_POTION] = ItemDef("Health Potion", "A potion of health. Bubbles gently inside a cast glass flask.", "smallPotion.mesh", "item_healthPotion", ItemType.CONSUMABLE, 5, EquippableId.NONE);
 ::Items[ItemId.LARGE_HEALTH_POTION] = ItemDef("Large Health Potion", "A large potion of health.", "largePotion.mesh", "item_largeHealthPotion", ItemType.CONSUMABLE, 10, EquippableId.NONE);
 
-::Items[ItemId.SIMPLE_SWORD] = ItemDef("Simple Sword", "A cheap, weak sword. Relatively blunt for something claiming to be a sword.", "simpleSword.mesh", "icon_none", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SWORD, Vec3(0, 8, 0), Quat(2, Vec3(0, 1, 0)));
+::Items[ItemId.SIMPLE_SWORD] = ItemDef("Simple Sword", "A cheap, weak sword. Relatively blunt for something claiming to be a sword.", "simpleSword.mesh", "item_simpleSword", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SWORD, Vec3(0, 8, 0), Quat(2, Vec3(0, 1, 0)));
 ::Items[ItemId.SIMPLE_SHIELD] = ItemDef("Simple Shield", "An un-interesting shield. Provides minimal protection.", "simpleShield.mesh", "icon_none", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SHIELD, Vec3(-4, 0, 0), Quat(-PI*0.5, Vec3(0, 1, 0)), Vec3(1.4, 1.4, 1.0));
 ::Items[ItemId.SIMPLE_TWO_HANDED_SWORD] = ItemDef("Simple Two Handed sword", "A two handed sword as blunt as it is big", "simpleTwoHandedSword.mesh", "icon_none", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_TWO_HANDED_SWORD, Vec3(0, 14, 0), Quat(-PI*0.5, Vec3(0, 1, 0)), Vec3(1.4, 1.4, 1.0));
 
@@ -256,8 +256,10 @@ enum ItemType{
     function actuateItem(item){
         local itemType = item.getType();
         if(itemType == ItemType.EQUIPPABLE){
-            local slotIdx = item.getEquippableSlot();
-            ::Base.mPlayerStats.equipItem(item, slotIdx);
+            local equipSlot = ::Equippables[item.getEquippableData()].getEquippedSlot();
+            //TODO give an option for which hand to equip the item into.
+            equipSlot = EquippedSlotTypes.LEFT_HAND;
+            ::Base.mPlayerStats.equipItem(item, equipSlot);
         }
         else if(itemType == ItemType.CONSUMABLE){
             local itemStats = item.toStats();

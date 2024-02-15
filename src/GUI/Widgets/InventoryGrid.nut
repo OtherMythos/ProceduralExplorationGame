@@ -1,49 +1,86 @@
 
 ::GuiWidgets.InventoryGrid <- class{
+    mInventoryType_ = null;
     mResolvedPos_ = null;
     mBus_ = null;
+
+    EQUIP_GRID_VALUES = [
+        "inventory_slot_head",
+        "inventory_slot_body",
+        "inventory_slot_left_hand",
+        "inventory_slot_right_hand",
+        "inventory_slot_legs",
+        "inventory_slot_feet",
+        "inventory_slot_accessory",
+        "inventory_slot_accessory"
+    ];
 
     mHoverInfo_ = null;
     mButtonCover_ = null;
     mWindow_ = null;
     mOverlayWin_ = null;
 
+    mBackgrounds_ = null;
     mWidgets_ = null;
     mItemIcons_ = null;
 
     mLayout_ = null;
     //mItemHovered_ = false;
 
-    constructor(bus, hoverInfo, buttonCover){
+    constructor(inventoryType, bus, hoverInfo, buttonCover){
+        mInventoryType_ = inventoryType;
         mBus_ = bus;
         mHoverInfo_ = hoverInfo;
         mButtonCover_ = buttonCover;
 
         mWidgets_ = [];
+        mBackgrounds_ = [];
     }
 
     /**
     Update the grid with icons based on an array of items.
     */
     function setNewGridIcons(inv){
-        foreach(c,i in inv){
-            local widget = mItemIcons_[c];
-            if(i == null){
+        //Skip the NONE
+        local offset = 0;
+        if(mInventoryType_ == InventoryGridType.INVENTORY_EQUIPPABLES){
+            offset = 1;
+        }
+
+        for(local i = offset; i < inv.len() - offset; i++){
+            local widget = mItemIcons_[i - offset];
+            local item = inv[i];
+
+            if(mInventoryType_ == InventoryGridType.INVENTORY_EQUIPPABLES){
+                local background = mBackgrounds_[i - offset];
+                setSkinForBackgroundEquippables(background, i-offset, item != null);
+            }
+            if(item == null){
                 widget.setVisible(false);
                 //Skip this to save a bit of time.
                 //widget.setSkin("item_none");
                 continue;
             }
             widget.setVisible(true);
-            widget.setSkin(i.getIcon());
+            widget.setSkin(item.getIcon());
         }
+    }
+
+    function setSkinForBackgroundEquippables(backgroundWidget, idx, populated){
+        backgroundWidget.setSkin(populated ? "inventory_slot" : EQUIP_GRID_VALUES[idx]);
     }
 
     function initialise(parentWin, overlayWin, inventoryWidth, inventoryHeight){
         mWindow_ = parentWin.createWindow();
         mWindow_.setClipBorders(0, 0, 0, 0);
 
-        mItemIcons_ = array(inventoryWidth * inventoryHeight);
+        if(mInventoryType_ == InventoryGridType.INVENTORY_GRID){
+            mItemIcons_ = array(inventoryWidth * inventoryHeight);
+        }else{
+            inventoryWidth = 1;
+            inventoryHeight = EquippedSlotTypes.MAX-2;
+            mItemIcons_ = array(inventoryHeight);
+        }
 
         for(local y = 0; y < inventoryHeight; y++){
             for(local x = 0; x < inventoryWidth; x++){
@@ -51,6 +88,7 @@
                 background.setSize(64, 64);
                 background.setPosition(x * 64, y * 64);
                 background.setSkin("inventory_slot");
+                mBackgrounds_.append(background);
 
                 local iconPanel = mWindow_.createPanel();
                 iconPanel.setSize(48, 48);
@@ -73,12 +111,19 @@
                 mWidgets_.append(item);
             }
         }
+
+        if(mInventoryType_ == InventoryGridType.INVENTORY_EQUIPPABLES){
+            for(local i = 0; i < inventoryHeight; i++){
+                setSkinForBackgroundEquippables(mBackgrounds_[i], i, false);
+            }
+        }
     }
 
     function inventoryItemListener(widget, action){
         //if(actionMenu_.menuActive_) return;
 
-        local id = widget.getUserId();
+        local idx = widget.getUserId();
+        local wrappedData = {"gridType": mInventoryType_, "id": idx};
         //local x = id & 0xF;
         //local y = id >> 10;
         //local targetItemIndex = x + y * INVENTORY_WIDTH;
@@ -90,12 +135,12 @@
             mButtonCover_.setPosition(derivedPos);
             //buttonCover_.setPosition(0, 0);
             mButtonCover_.setHidden(false);
-            mBus_.notifyEvent(InventoryBusEvents.ITEM_HOVER_BEGAN, id);
+            mBus_.notifyEvent(InventoryBusEvents.ITEM_HOVER_BEGAN, wrappedData);
             //local success = setToMenuItem(targetItemIndex);
             //if(!success) mItemHovered_ = false
         }else if(action == _GUI_ACTION_CANCEL){ //hover ended
             mButtonCover_.setHidden(true);
-            mBus_.notifyEvent(InventoryBusEvents.ITEM_HOVER_ENDED, id);
+            mBus_.notifyEvent(InventoryBusEvents.ITEM_HOVER_ENDED, wrappedData);
         }else if(action == _GUI_ACTION_PRESSED){ //Pressed
             /*
             local targetArray = ::gui.InventoryScreen.getArrayForInventoryType(parentGridType_);
@@ -107,7 +152,7 @@
             }
             */
             mButtonCover_.setHidden(true);
-            mBus_.notifyEvent(InventoryBusEvents.ITEM_SELECTED, id);
+            mBus_.notifyEvent(InventoryBusEvents.ITEM_SELECTED, wrappedData);
         }
 
 

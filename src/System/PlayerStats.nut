@@ -45,9 +45,15 @@
         notifyPlaceVisited(data);
     }
 
+    function getEquippedItem(slot){
+        return mPlayerCombatStats.mEquippedItems.getEquippedItem(slot);
+    }
+
     function equipItem(item, slot){
         print("Equipping player item: " + item.getName())
         mPlayerCombatStats.mEquippedItems.setEquipped(item, slot);
+
+        _event.transmit(Event.PLAYER_EQUIP_CHANGED, mPlayerCombatStats.mEquippedItems.mItems);
     }
 
     function getLevel(){

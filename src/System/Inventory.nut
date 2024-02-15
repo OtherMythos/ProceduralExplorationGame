@@ -12,6 +12,7 @@
         for(local i = 0; i < 20; i++){
             mInventoryItems_[i] = ::Item(i %2 == 0 ? ItemId.LARGE_HEALTH_POTION : ItemId.HEALTH_POTION);
         }
+        mInventoryItems_[0] = ::Item(ItemId.SIMPLE_SWORD);
     }
 
     /**

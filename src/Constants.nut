@@ -45,6 +45,11 @@ enum StatType{
     MAX
 };
 
+enum InventoryGridType{
+    INVENTORY_GRID,
+    INVENTORY_EQUIPPABLES
+};
+
 //Profiles define how the game should operate,
 //for instance if developing, profiles might help setup a development environment
 enum GameProfile{
@@ -94,6 +99,7 @@ enum Event{
     WORLD_PREPARATION_STATE_CHANGE = 1017,
 
     PLACE_DISCOVERED = 1018,
+    PLAYER_EQUIP_CHANGED = 1019
 }
 
 enum FoundObjectType{
@@ -172,8 +178,6 @@ enum EquippedSlotTypes{
     NONE,
     HEAD,
     BODY,
-    //TODO this whole equippable slot system could be reduced, as there's some duplication with the other equip system.
-    HAND,
     LEFT_HAND,
     RIGHT_HAND,
     LEGS,
@@ -181,7 +185,8 @@ enum EquippedSlotTypes{
     ACCESSORY_1,
     ACCESSORY_2,
 
-    MAX
+    MAX,
+    HAND
 };
 
 enum CombatOpponentAnims{

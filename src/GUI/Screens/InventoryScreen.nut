@@ -13,6 +13,7 @@ enum InventoryBusEvents{
     mWindow_ = null;
     mOverlayWindow_ = null;
     mInventoryGrid_ = null;
+    mInventoryEquippedGrid_ = null;
     mHoverInfo_ = null;
     mInventory_ = null;
     mMoneyCounter_ = null;
@@ -125,9 +126,13 @@ enum InventoryBusEvents{
     function receiveInventoryChangedEvent(id, data){
         mInventoryGrid_.setNewGridIcons(data);
     }
+    function receivePlayerEquipChangedEvent(id, data){
+        mInventoryEquippedGrid_.setNewGridIcons(data);
+    }
 
     function setup(data){
         _event.subscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent, this);
+        _event.subscribe(Event.PLAYER_EQUIP_CHANGED, receivePlayerEquipChangedEvent, this);
 
         mInventory_ = data.inventory;
         mPlayerStats_ = data.equipStats;
@@ -178,11 +183,22 @@ enum InventoryBusEvents{
         local buttonCover = createButtonCover(mOverlayWindow_);
         mHoverInfo_ = HoverItemInfo(mOverlayWindow_);
 
-        mInventoryGrid_ = ::GuiWidgets.InventoryGrid(mInventoryBus_, mHoverInfo_, buttonCover);
+        local layoutHorizontal = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
+        mInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID, mInventoryBus_, mHoverInfo_, buttonCover);
         local inventoryWidth = mInventory_.getInventorySize() / 5;
         local inventoryHeight = mInventory_.getInventorySize() / inventoryWidth;
         mInventoryGrid_.initialise(mWindow_, mOverlayWindow_, inventoryWidth, inventoryHeight);
-        mInventoryGrid_.addToLayout(layoutLine);
+        //mInventoryGrid_.addToLayout(layoutLine);
+        mInventoryGrid_.addToLayout(layoutHorizontal);
+
+        mInventoryEquippedGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_EQUIPPABLES, mInventoryBus_, mHoverInfo_, buttonCover);
+        mInventoryEquippedGrid_.initialise(mWindow_, mOverlayWindow_, null, null);
+        //mInventoryEquippedGrid_.addToLayout(layoutLine);
+        mInventoryEquippedGrid_.addToLayout(layoutHorizontal);
+
+
+        layoutHorizontal.setMarginForAllCells(10, 0);
+        layoutLine.addCell(layoutHorizontal);
 
         layoutLine.setMarginForAllCells(0, 5);
         layoutLine.setPosition(_window.getWidth() * 0.05, 50);
@@ -227,9 +243,15 @@ enum InventoryBusEvents{
             mInventory_.addMoney(scrapValue);
             mInventory_.removeFromInventory(data);
         }
+        else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP){
+            local itemForIdx = mInventory_.getItemForIdx(data);
+            mInventory_.removeFromInventory(data);
+            ::ItemHelper.actuateItem(itemForIdx);
+        }
     }
 
-    function selectItem(idx){
+    function selectItem(inventoryData){
+        local idx = inventoryData.id;
         local selectedItem = mInventory_.getItemForIdx(idx);
         if(selectedItem == null) return;
         print("Selected item " + selectedItem.tostring());
@@ -248,13 +270,20 @@ enum InventoryBusEvents{
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_ITEM_HELPER_SCREEN, data), null, 1);
     }
 
-    function processItemHover(idx){
-        if(idx == null){
+    function processItemHover(inventoryData){
+        if(inventoryData == null){
             setHoverMenuToItem(null);
             return;
         }
-        local item = mInventory_.getItemForIdx(idx);
-        setHoverMenuToItem(item);
+        local idx = inventoryData.id;
+        if(inventoryData.gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
+            //Skip the NONE object.
+            local item = ::Base.mPlayerStats.getEquippedItem(idx+1);
+            setHoverMenuToItem(item);
+        }else{
+            local item = mInventory_.getItemForIdx(idx);
+            setHoverMenuToItem(item);
+        }
     }
     function setHoverMenuToItem(item){
         //TODO this might be getting called twice.
@@ -276,6 +305,7 @@ enum InventoryBusEvents{
         mMoneyCounter_.shutdown();
         base.shutdown();
         _event.unsubscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent);
+        _event.unsubscribe(Event.PLAYER_EQUIP_CHANGED, receivePlayerEquipChangedEvent);
     }
 
     function update(){

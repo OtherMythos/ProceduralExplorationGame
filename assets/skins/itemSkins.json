@@ -23,6 +23,62 @@
                 "all" : [224, 128, 16, 16]
             }
         },
+        "inventory_slot_head" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [240, 128, 16, 16]
+            }
+        },
+        "inventory_slot_body" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [224, 144, 16, 16]
+            }
+        },
+        "inventory_slot_legs" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [240, 144, 16, 16]
+            }
+        },
+        "inventory_slot_feet" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [224, 160, 16, 16]
+            }
+        },
+        "inventory_slot_accessory" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [240, 160, 16, 16]
+            }
+        },
+        "inventory_slot_left_hand" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [224, 176, 16, 16]
+            }
+        },
+        "inventory_slot_right_hand" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [240, 176, 16, 16]
+            }
+        },
 
         "item_none" :
         {
@@ -71,6 +127,14 @@
             "grid_uv" :
             {
                 "all" : [144, 144, 16, 16]
+            }
+        },
+        "item_simpleSword" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [0, 128, 16, 16]
             }
         }
 

@@ -5,6 +5,10 @@
             mItems = array(EquippedSlotTypes.MAX, null);
         }
 
+        function getEquippedItem(item){
+            return mItems[item];
+        }
+
         function setEquipped(item, targetSlot){
             assert(targetSlot != EquippedSlotTypes.HAND);
             //TODO I don't particularly like any of the mismatches between enums.
@@ -22,6 +26,7 @@
                 }
             }
             mItems[targetSlot] = item;
+            printf("Succesfully equipped item %s to slot %i", item.tostring(), targetSlot);
         }
 
         function getTotalStats(){

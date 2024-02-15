@@ -57,11 +57,16 @@
             },
             function(widget, action){
                 closeScreen();
+            },
+            function(widget, action){
+                mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP, mData_.idx);
+                closeScreen();
             }
         ];
 
         if(itemType == ItemType.EQUIPPABLE){
             buttonOptions[0] = "Equip";
+            buttonFunctions[0] = buttonFunctions[buttonFunctions.len()-1];
         }
 
         return [buttonOptions, buttonFunctions];
