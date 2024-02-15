@@ -61,12 +61,21 @@
             function(widget, action){
                 mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP, mData_.idx);
                 closeScreen();
+            },
+            function(widget, action){
+                mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_UNEQUIP, mData_.idx);
+                closeScreen();
             }
         ];
 
         if(itemType == ItemType.EQUIPPABLE){
-            buttonOptions[0] = "Equip";
-            buttonFunctions[0] = buttonFunctions[buttonFunctions.len()-1];
+            if(mData_.gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
+                buttonOptions[0] = "UnEquip";
+                buttonFunctions[0] = buttonFunctions[buttonFunctions.len()-1];
+            }else{
+                buttonOptions[0] = "Equip";
+                buttonFunctions[0] = buttonFunctions[buttonFunctions.len()-2];
+            }
         }
 
         return [buttonOptions, buttonFunctions];

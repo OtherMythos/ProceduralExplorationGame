@@ -4,6 +4,7 @@ enum InventoryBusEvents{
     ITEM_SELECTED,
 
     ITEM_INFO_REQUEST_EQUIP,
+    ITEM_INFO_REQUEST_UNEQUIP,
     ITEM_INFO_REQUEST_USE,
     ITEM_INFO_REQUEST_SCRAP,
 };
@@ -245,27 +246,52 @@ enum InventoryBusEvents{
             mInventory_.removeFromInventory(data);
         }
         else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP){
-            local itemForIdx = mInventory_.getItemForIdx(data);
+            local item = mInventory_.getItemForIdx(data);
+            assert(item != null);
             mInventory_.removeFromInventory(data);
-            ::ItemHelper.actuateItem(itemForIdx);
+
+            local equipSlot = ::Equippables[item.getEquippableData()].getEquippedSlot();
+            //TODO give an option for which hand to equip the item into.
+            equipSlot = EquippedSlotTypes.LEFT_HAND;
+            local previousEquipped = ::Base.mPlayerStats.equipItem(item, equipSlot);
+            if(previousEquipped != null){
+                mInventory_.addToInventory(previousEquipped);
+            }
+        }
+        else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_UNEQUIP){
+            local idx = data+1;
+            local item = ::Base.mPlayerStats.getEquippedItem(idx);
+            ::Base.mPlayerStats.unEquipItem(idx);
+            //TODO check if the inventory has space.
+            mInventory_.addToInventory(item);
         }
     }
 
     function selectItem(inventoryData){
         local idx = inventoryData.id;
-        local selectedItem = mInventory_.getItemForIdx(idx);
+        local selectedItem = null;
+        local targetGrid = null;
+        if(inventoryData.gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
+            //TODO remove direct access, properly pass the player stats in some other point.
+            selectedItem = ::Base.mPlayerStats.getEquippedItem(idx+1);
+            targetGrid = mInventoryEquippedGrid_;
+        }else{
+            selectedItem = mInventory_.getItemForIdx(idx);
+            targetGrid = mInventoryGrid_;
+        }
         if(selectedItem == null) return;
         print("Selected item " + selectedItem.tostring());
         setHoverMenuToItem(null);
 
-        local size = mInventoryGrid_.getSize();
-        local pos = mInventoryGrid_.getPosition();
-        local posForIdx = mInventoryGrid_.getPositionForIdx(idx);
+        local size = targetGrid.getSize();
+        local pos = targetGrid.getPosition();
+        local posForIdx = targetGrid.getPositionForIdx(idx);
         local data = {
             "pos": Vec2(posForIdx.x + 64, posForIdx.y),
             "size": Vec2(200, size.y),
             "item": selectedItem,
             "idx": idx,
+            "gridType": inventoryData.gridType
             "bus": mInventoryBus_
         };
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_ITEM_HELPER_SCREEN, data), null, 1);

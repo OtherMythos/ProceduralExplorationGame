@@ -13,6 +13,7 @@
             mInventoryItems_[i] = ::Item(i %2 == 0 ? ItemId.LARGE_HEALTH_POTION : ItemId.HEALTH_POTION);
         }
         mInventoryItems_[0] = ::Item(ItemId.SIMPLE_SWORD);
+        mInventoryItems_[10] = ::Item(ItemId.SIMPLE_SWORD);
     }
 
     /**
@@ -20,7 +21,7 @@
      * @returns true if the item could be added, false if not, for example the inventory is full.
      */
     function addToInventory(item){
-        local idx = mInventoryItems_.find(ItemId.NONE);
+        local idx = mInventoryItems_.find(null);
         if(idx == null) return false;
         setItemForIdx(item, idx);
         return true;
@@ -30,9 +31,9 @@
      * Remove an item from the inventory based on slot idx.
      * Pass expected type as well to perform a check that the index provided contains the expected ItemId.
      */
-    function removeFromInventory(slotIdx, expectedType = ItemId.NONE){
+    function removeFromInventory(slotIdx, expectedType = null){
         assert(slotIdx >= 0 && slotIdx < mInventoryItems_.len());
-        if(expectedType != ItemId.NONE){
+        if(expectedType != null){
             assert(mInventoryItems_[slotIdx] == expectedType);
         }
         setItemForIdx(null, slotIdx);
@@ -40,6 +41,7 @@
 
     function setItemForIdx(item, idx){
         mInventoryItems_[idx] = item;
+        printf("Inventory setting item %s to idx %i", item == null ? "null" : item.tostring(), idx);
         contentsChanged();
     }
 

@@ -50,8 +50,16 @@
     }
 
     function equipItem(item, slot){
-        print("Equipping player item: " + item.getName())
+        printf("Equipping player item: %s", item.getName());
+        local prevEquipped = mPlayerCombatStats.mEquippedItems.getEquippedItem(slot);
         mPlayerCombatStats.mEquippedItems.setEquipped(item, slot);
+
+        _event.transmit(Event.PLAYER_EQUIP_CHANGED, mPlayerCombatStats.mEquippedItems.mItems);
+        return prevEquipped;
+    }
+    function unEquipItem(slot){
+        printf("UnEquipping player item at index: %i", slot);
+        mPlayerCombatStats.mEquippedItems.unEquipItem(slot);
 
         _event.transmit(Event.PLAYER_EQUIP_CHANGED, mPlayerCombatStats.mEquippedItems.mItems);
     }

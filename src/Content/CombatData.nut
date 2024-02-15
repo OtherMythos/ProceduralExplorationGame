@@ -29,6 +29,12 @@
             printf("Succesfully equipped item %s to slot %i", item.tostring(), targetSlot);
         }
 
+        function unEquipItem(targetSlot){
+            assert(targetSlot != EquippedSlotTypes.HAND);
+            mItems[targetSlot] = null;
+            printf("Succesfully unequipped item at slot %i", targetSlot);
+        }
+
         function getTotalStats(){
             local stats = ::ItemHelper.ItemStat();
             foreach(i in mItems){
