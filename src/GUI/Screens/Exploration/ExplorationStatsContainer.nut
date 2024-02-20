@@ -14,7 +14,6 @@
 
         //The window is only responsible for laying things out.
         mWindow_ = _gui.createWindow(parentWin);
-        mWindow_.setClipBorders(0, 0, 0, 0);
         mWindow_.setClickable(false);
         //mWindow_.setVisualsEnabled(false);
 
@@ -33,7 +32,7 @@
         mTargetEnemyWidget_ = ::GuiWidgets.TargetEnemyWidget(mWindow_);
         mTargetEnemyWidget_.addToLayout(mLayoutLine_);
 
-        //mLayoutLine_.setMarginForAllCells(10, 10);
+        mLayoutLine_.setMarginForAllCells(10, 10);
         //mLayoutLine_.layout();
 
         //TODO this is to get the layout to work but is a bit gross.
@@ -45,14 +44,6 @@
 
     function shutdown(){
         _event.unsubscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);
-    }
-
-    function addToLayout(layoutLine){
-        layoutLine.addCell(mWindow_);
-        mWindow_.setMargin(20, 20);
-        mWindow_.setExpandVertical(true);
-        mWindow_.setExpandHorizontal(true);
-        mWindow_.setProportionVertical(1);
     }
 
     function setPosition(pos){
@@ -73,11 +64,12 @@
         mEXPCounter_.update();
     }
 
-    function sizeForButtons(){
+    function sizeLayout(){
+        mPlayerHealthBar_.setMinSize(Vec2(mWindow_.getSizeAfterClipping().x, 50));
         mLayoutLine_.setSize(mWindow_.getSize());
         mLayoutLine_.layout();
 
-        mPlayerHealthBar_.setSize(mWindow_.getSizeAfterClipping().x, 50);
+        mPlayerHealthBar_.notifyLayout();
     }
 
     function playerHealthChanged(id, data){

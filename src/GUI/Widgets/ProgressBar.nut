@@ -99,6 +99,10 @@
         return mSize_;
     }
 
+    function setMinSize(size){
+        mParentContainer_.setMinSize(size);
+    }
+
     function processSize_(){
         mParentContainer_.setSize(mSize_);
         local intendedSize = mSize_ - Vec2(mBorder_ * 2, mBorder_ * 2);
@@ -123,7 +127,11 @@
     }
 
     function notifyLayout(){
+        mSize_ = mParentContainer_.getSize();
+
         local parentPos = mParentContainer_.getPosition();
         setPosition(parentPos.x, parentPos.y);
+
+        processSize_();
     }
 };

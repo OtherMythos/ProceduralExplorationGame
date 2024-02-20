@@ -117,7 +117,7 @@ enum ExplorationBusEvents{
 
         mWorldMapDisplay_.notifyResize();
 
-        mExplorationStatsContainer_.sizeForButtons();
+        mExplorationStatsContainer_.sizeLayout();
         mExplorationMovesContainer_.sizeForButtons();
 
         if(::Base.getTargetInterface() == TargetInterface.MOBILE){
