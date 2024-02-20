@@ -61,7 +61,6 @@
         mExplorationScenePanel_.setExpandVertical(true);
         mExplorationScenePanel_.setExpandHorizontal(true);
         mExplorationScenePanel_.setProportionVertical(4);
-        mExplorationScenePanel_.setMargin(4, 4);
     }
 
     function shutdownCompositor_(){
