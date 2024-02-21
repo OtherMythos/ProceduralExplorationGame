@@ -14,6 +14,8 @@
         }
         mInventoryItems_[0] = ::Item(ItemId.SIMPLE_SWORD);
         mInventoryItems_[10] = ::Item(ItemId.SIMPLE_SWORD);
+        mInventoryItems_[11] = ::Item(ItemId.SIMPLE_SHIELD);
+        mInventoryItems_[12] = ::Item(ItemId.SIMPLE_SHIELD);
     }
 
     /**

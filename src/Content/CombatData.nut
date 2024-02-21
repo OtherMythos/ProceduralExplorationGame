@@ -45,6 +45,10 @@
 
             return stats;
         }
+
+        function _tostring(){
+            return ::wrapToString(::Combat.EquippedItems, "EquippedItems", _prettyPrint(mItems));
+        }
     },
 
     /**

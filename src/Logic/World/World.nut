@@ -298,6 +298,7 @@ enum WorldMousePressContexts{
 
     function shutdown(){
         _event.unsubscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);
+        _event.unsubscribe(Event.PLAYER_EQUIP_CHANGED, playerEquipChanged, this);
 
         foreach(i in mActiveEnemies_){
             i.notifyDestroyed();
@@ -319,6 +320,7 @@ enum WorldMousePressContexts{
         //_world.createWorld();
 
         _event.subscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);
+        _event.subscribe(Event.PLAYER_EQUIP_CHANGED, playerEquipChanged, this);
 
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
         mEntityFactory_ = EntityFactory(this, mParentNode_, CharacterGenerator());
@@ -336,6 +338,10 @@ enum WorldMousePressContexts{
         local component = mEntityManager_.getComponent(mPlayerEntry_.getEntity(), EntityComponents.HEALTH);
         component.mHealth = data.health;
         mPlayerEntry_.notifyNewHealth(data.health, data.percentage);
+    }
+    function playerEquipChanged(id, data){
+        print(data);
+        mPlayerEntry_.getModel().equipDataToCharacterModel(data);
     }
 
     function processEXPOrb(entityId){

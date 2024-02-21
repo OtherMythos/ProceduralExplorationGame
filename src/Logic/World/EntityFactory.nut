@@ -48,13 +48,7 @@
         //_component.sceneNode.add(en, playerNode);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](playerNode));
         playerEntry.setModel(playerModel);
-
-        for(local i = EquippedSlotTypes.NONE+1; i < EquippedSlotTypes.MAX; i++){
-            local targetEquipNode = ::CharacterModel.___mapEquipSlotToEquipNode___(i);
-            if(targetEquipNode == EquippedSlotTypes.NONE) continue;
-            local targetItem = playerStats.getEquippedItem(i);
-            playerModel.equipToNode(targetItem, targetEquipNode);
-        }
+        playerModel.equipDataToCharacterModel(playerStats.mPlayerCombatStats.mEquippedItems);
         playerEntry.setCombatData(playerStats.mPlayerCombatStats);
         playerEntry.setTargetCollisionWorld(_COLLISION_ENEMY);
 

@@ -80,14 +80,17 @@
         local prevEquipped = mPlayerCombatStats.mEquippedItems.getEquippedItem(slot);
         mPlayerCombatStats.mEquippedItems.setEquipped(item, slot);
 
-        _event.transmit(Event.PLAYER_EQUIP_CHANGED, mPlayerCombatStats.mEquippedItems.mItems);
+        equipChanged_();
         return prevEquipped;
     }
     function unEquipItem(slot){
         printf("UnEquipping player item at index: %i", slot);
         mPlayerCombatStats.mEquippedItems.unEquipItem(slot);
 
-        _event.transmit(Event.PLAYER_EQUIP_CHANGED, mPlayerCombatStats.mEquippedItems.mItems);
+        equipChanged_();
+    }
+    function equipChanged_(){
+        _event.transmit(Event.PLAYER_EQUIP_CHANGED, mPlayerCombatStats.mEquippedItems);
     }
 
     function getLevel(){

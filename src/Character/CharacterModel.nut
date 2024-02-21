@@ -31,6 +31,15 @@
         }
     }
 
+    function equipDataToCharacterModel(data){
+        for(local i = EquippedSlotTypes.NONE+1; i < EquippedSlotTypes.MAX; i++){
+            local targetEquipNode = ::CharacterModel.___mapEquipSlotToEquipNode___(i);
+            if(targetEquipNode == EquippedSlotTypes.NONE) continue;
+            local targetItem = data.getEquippedItem(i);
+            equipToNode(targetItem, targetEquipNode);
+        }
+    }
+
     function destroy(){
         mCurrentAnimations_.clear();
         mParentNode_.destroyNodeAndChildren();

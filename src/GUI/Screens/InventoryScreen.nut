@@ -128,7 +128,7 @@ enum InventoryBusEvents{
         mInventoryGrid_.setNewGridIcons(data);
     }
     function receivePlayerEquipChangedEvent(id, data){
-        mInventoryEquippedGrid_.setNewGridIcons(data);
+        mInventoryEquippedGrid_.setNewGridIcons(data.mItems);
     }
 
     function setup(data){
