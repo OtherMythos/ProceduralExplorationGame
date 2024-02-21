@@ -255,7 +255,8 @@ enum WorldMousePressContexts{
                 _input.getButtonActionHandle("PerformMove3"),
                 _input.getButtonActionHandle("PerformMove4")
             ],
-            "canceltarget": _input.getButtonActionHandle("CancelTarget")
+            "canceltarget": _input.getButtonActionHandle("CancelTarget"),
+            "showInventory": _input.getButtonActionHandle("ShowInventory"),
         };
     }
 
@@ -864,6 +865,16 @@ enum WorldMousePressContexts{
         if(_input.getButtonAction(mInputs_.canceltarget, _INPUT_PRESSED)){
             setTargetEnemy(null);
         }
+        if(_input.getButtonAction(mInputs_.showInventory, _INPUT_PRESSED)){
+            showInventory();
+        }
+    }
+
+    function showInventory(){
+        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN,
+            {"inventory": ::Base.mInventory, "equipStats": ::Base.mPlayerStats.mPlayerCombatStats.mEquippedItems}),
+            null, 1);
+        ::Base.mExplorationLogic.pauseExploration();
     }
 
     //TODO remove flag logic at some point.

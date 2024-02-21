@@ -208,6 +208,12 @@
         _state.setPauseState(0xFFFF);
     }
 
+    function unPauseExploration(){
+        print("UnPausing exploration");
+        mExplorationPaused_ = false;
+        _state.setPauseState(0x0);
+    }
+
     function notifyPlaceEnterState(id, entered){
         local placeEntry = mCurrentWorld_.mActivePlaces_[id];
         local firstTime = !placeEntry.mEncountered_;

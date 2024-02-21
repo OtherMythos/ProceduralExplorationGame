@@ -135,6 +135,8 @@ enum InventoryBusEvents{
         _event.subscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent, this);
         _event.subscribe(Event.PLAYER_EQUIP_CHANGED, receivePlayerEquipChangedEvent, this);
 
+        createBackgroundScreen_();
+
         mInventory_ = data.inventory;
         mPlayerStats_ = data.equipStats;
 
@@ -151,7 +153,7 @@ enum InventoryBusEvents{
             inventoryButton.setText("Back");
             inventoryButton.setPosition(5, 25);
             inventoryButton.attachListenerForEvent(function(widget, action){
-                ::ScreenManager.backupScreen(0);
+                closeInventory();
             }, _GUI_ACTION_PRESSED, this);
         }
 
@@ -211,6 +213,8 @@ enum InventoryBusEvents{
         mInventoryGrid_.notifyLayout();
         mInventoryGrid_.setNewGridIcons(mInventory_.mInventoryItems_);
         //container.sizeInner();
+
+        ::InputManager.setActionSet(InputActionSets.MENU);
     }
 
     function createButtonCover(win){
@@ -294,7 +298,7 @@ enum InventoryBusEvents{
             "gridType": inventoryData.gridType
             "bus": mInventoryBus_
         };
-        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_ITEM_HELPER_SCREEN, data), null, 1);
+        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_ITEM_HELPER_SCREEN, data), null, mLayerIdx+1);
     }
 
     function processItemHover(inventoryData){
@@ -333,11 +337,23 @@ enum InventoryBusEvents{
         base.shutdown();
         _event.unsubscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent);
         _event.unsubscribe(Event.PLAYER_EQUIP_CHANGED, receivePlayerEquipChangedEvent);
+
+        ::InputManager.setActionSet(InputActionSets.EXPLORATION);
     }
 
     function update(){
         //mInventoryGrid_.update();
         mHoverInfo_.update();
+
+        if(_input.getButtonAction(::InputManager.menuBack, _INPUT_PRESSED)){
+            closeInventory();
+        }
+    }
+
+    function closeInventory(){
+        //::ScreenManager.backupScreen(mLayerIdx);
+        ::ScreenManager.transitionToScreen(null, null, mLayerIdx);
+        ::Base.mExplorationLogic.unPauseExploration();
     }
 };
 

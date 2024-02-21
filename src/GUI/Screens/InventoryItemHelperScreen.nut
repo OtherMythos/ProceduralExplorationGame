@@ -82,6 +82,6 @@
     }
 
     function closeScreen(){
-        ::ScreenManager.backupScreen(mLayerIdx);
+        ::ScreenManager.transitionToScreen(null, null, mLayerIdx);
     }
 }

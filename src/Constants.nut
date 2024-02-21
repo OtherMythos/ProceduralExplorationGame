@@ -18,6 +18,14 @@ enum TargetInterface{
     MAX
 };
 
+enum InputActionSets{
+    EXPLORATION,
+    MENU,
+
+    MAX
+
+};
+
 enum Component{
     HEALTH = 0,
     MISC = 1

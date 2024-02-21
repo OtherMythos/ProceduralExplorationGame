@@ -6,6 +6,7 @@
     mMoneyCounter_ = null;
     mEXPCounter_ = null;
     mTargetEnemyWidget_ = null;
+    mInventoryButton_ = null;
 
     mPlayerHealthBar_ = null;
 
@@ -23,6 +24,13 @@
         //mPlayerHealthBar_.setSize(100, 40);
         mPlayerHealthBar_.setPercentage(1.0);
         mPlayerHealthBar_.addToLayout(mLayoutLine_);
+
+        mInventoryButton_ = mWindow_.createButton();
+        mInventoryButton_.setText("Inventory");
+        mLayoutLine_.addCell(mInventoryButton_);
+        mInventoryButton_.attachListenerForEvent(function(widget, action){
+            ::Base.mExplorationLogic.mCurrentWorld_.showInventory();
+        }, _GUI_ACTION_PRESSED, this);
 
         mMoneyCounter_ = ::GuiWidgets.InventoryMoneyCounter(mWindow_);
         mMoneyCounter_.addToLayout(mLayoutLine_);
