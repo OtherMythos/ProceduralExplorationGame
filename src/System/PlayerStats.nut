@@ -26,6 +26,25 @@
     function alterPlayerHealth(amount){
         printf("Altering player health by %i", amount);
         mPlayerCombatStats.alterHealth(amount);
+        setPlayerHealth_(mPlayerCombatStats.mHealth);
+    }
+    function setPlayerHealth(health){
+        printf("Setting player health to %i", health);
+        setPlayerHealth_(health);
+    }
+    function setPlayerHealth_(health){
+        mPlayerCombatStats.setHealth(health);
+
+        local data = {
+            "health": health,
+            "percentage": mPlayerCombatStats.getPercentage()
+        };
+        //mPlayerEntry_.notifyNewHealth(newHealth, percentage);
+        _event.transmit(Event.PLAYER_HEALTH_CHANGED, data);
+
+        if(mPlayerCombatStats.mDead){
+            _event.transmit(Event.PLAYER_DIED, null);
+        }
     }
 
     function notifyPlaceVisited(place){

@@ -82,6 +82,10 @@
             alterHealth(moveDamage);
         }
 
+        function getPercentage(){
+            return mHealth.tofloat() / mMaxHealth.tofloat();
+        }
+
         function alterHealth(amount){
             setHealth(mHealth + amount);
         }

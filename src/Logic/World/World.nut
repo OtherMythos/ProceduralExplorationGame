@@ -297,6 +297,8 @@ enum WorldMousePressContexts{
     }
 
     function shutdown(){
+        _event.unsubscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);
+
         foreach(i in mActiveEnemies_){
             i.notifyDestroyed();
         }
@@ -316,6 +318,8 @@ enum WorldMousePressContexts{
     function setup(){
         //_world.createWorld();
 
+        _event.subscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);
+
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
         mEntityFactory_ = EntityFactory(this, mParentNode_, CharacterGenerator());
         //_developer.setRenderQueueForMeshGroup(30);
@@ -326,6 +330,13 @@ enum WorldMousePressContexts{
         mEntityManager_ = EntityManager.createEntityManager(this);
     }
 
+    function playerHealthChanged(id, data){
+        //TODO remove this duplication.
+        //Have a single place to store health and make sure it's set from a single function.
+        local component = mEntityManager_.getComponent(mPlayerEntry_.getEntity(), EntityComponents.HEALTH);
+        component.mHealth = data.health;
+        mPlayerEntry_.notifyNewHealth(data.health, data.percentage);
+    }
 
     function processEXPOrb(entityId){
         local sender = entityId;
@@ -518,16 +529,7 @@ enum WorldMousePressContexts{
 
     function checkEntityHealthImportant(entity, newHealth, percentage){
         if(entity == mPlayerEntry_.getEntity()){
-            local data = {
-                "health": newHealth,
-                "percentage": percentage
-            };
-            mPlayerEntry_.notifyNewHealth(newHealth, percentage);
-            _event.transmit(Event.PLAYER_HEALTH_CHANGED, data);
-
-            if(newHealth <= 0){
-                _event.transmit(Event.PLAYER_DIED, null);
-            }
+            ::Base.mPlayerStats.setPlayerHealth(newHealth);
         }
     }
 
