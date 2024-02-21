@@ -27,7 +27,7 @@
         title.setTextColour(0, 0, 0, 1);
         layoutLine.addCell(title);
 
-        local buttonData = getButtonOptionsForType(data.item.getType());
+        local buttonData = getButtonOptionsForItem(data.item);
         foreach(i,c in buttonData[0]){
             local button = mWindow_.createButton();
             button.setDefaultFontSize(button.getDefaultFontSize() * 1.1);
@@ -40,7 +40,9 @@
         layoutLine.layout();
     }
 
-    function getButtonOptionsForType(itemType){
+    function getButtonOptionsForItem(item){
+        local itemType = item.getType();
+
         local buttonOptions = [
             "Use",
             "Scrap",
@@ -73,8 +75,24 @@
                 buttonOptions[0] = "UnEquip";
                 buttonFunctions[0] = buttonFunctions[buttonFunctions.len()-1];
             }else{
-                buttonOptions[0] = "Equip";
-                buttonFunctions[0] = buttonFunctions[buttonFunctions.len()-2];
+                local equipData = ::Equippables[item.getEquippableData()];
+                local equipSlot = equipData.getEquippedSlot();
+                if(equipSlot == EquippedSlotTypes.HAND){
+                    //Give the option of which hand to equip to.
+                    buttonOptions[0] = "Equip Left Hand"
+                    buttonOptions.insert(1, "Equip Right Hand");
+                    buttonFunctions[0] = function(widget, action){
+                        mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP_LEFT_HAND, mData_.idx);
+                        closeScreen();
+                    };
+                    buttonFunctions.insert(1, function(widget, action){
+                        mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP_RIGHT_HAND, mData_.idx);
+                        closeScreen();
+                    });
+                }else{
+                    buttonOptions[0] = "Equip";
+                    buttonFunctions[0] = buttonFunctions[buttonFunctions.len()-2];
+                }
             }
         }
 

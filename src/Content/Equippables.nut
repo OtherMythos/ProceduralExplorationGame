@@ -40,7 +40,9 @@ enum EquippableId{
     function getEquippedSlot() { return mEquippedSlot_; }
     function getTotalFrames() { return mEquippedSlot_; }
 
-    function _tostring() { return "EquippableDef"; }
+    function _tostring() {
+        return ::wrapToString(::EquippableDef, "EquippableDef");
+    }
 }
 
 ::EquippablePerformance <- class{
