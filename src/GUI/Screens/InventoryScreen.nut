@@ -212,6 +212,7 @@ enum InventoryBusEvents{
 
         mInventoryGrid_.notifyLayout();
         mInventoryGrid_.setNewGridIcons(mInventory_.mInventoryItems_);
+        mInventoryEquippedGrid_.setNewGridIcons(mPlayerStats_.mPlayerCombatStats.mEquippedItems.mItems);
         //container.sizeInner();
 
         ::InputManager.setActionSet(InputActionSets.MENU);
@@ -257,15 +258,15 @@ enum InventoryBusEvents{
             local equipSlot = ::Equippables[item.getEquippableData()].getEquippedSlot();
             //TODO give an option for which hand to equip the item into.
             equipSlot = EquippedSlotTypes.LEFT_HAND;
-            local previousEquipped = ::Base.mPlayerStats.equipItem(item, equipSlot);
+            local previousEquipped = mPlayerStats_.equipItem(item, equipSlot);
             if(previousEquipped != null){
                 mInventory_.addToInventory(previousEquipped);
             }
         }
         else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_UNEQUIP){
             local idx = data+1;
-            local item = ::Base.mPlayerStats.getEquippedItem(idx);
-            ::Base.mPlayerStats.unEquipItem(idx);
+            local item = mPlayerStats_.getEquippedItem(idx);
+            mPlayerStats_.unEquipItem(idx);
             //TODO check if the inventory has space.
             mInventory_.addToInventory(item);
         }
@@ -277,7 +278,7 @@ enum InventoryBusEvents{
         local targetGrid = null;
         if(inventoryData.gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
             //TODO remove direct access, properly pass the player stats in some other point.
-            selectedItem = ::Base.mPlayerStats.getEquippedItem(idx+1);
+            selectedItem = mPlayerStats_.getEquippedItem(idx+1);
             targetGrid = mInventoryEquippedGrid_;
         }else{
             selectedItem = mInventory_.getItemForIdx(idx);
@@ -309,7 +310,7 @@ enum InventoryBusEvents{
         local idx = inventoryData.id;
         if(inventoryData.gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
             //Skip the NONE object.
-            local item = ::Base.mPlayerStats.getEquippedItem(idx+1);
+            local item = mPlayerStats_.getEquippedItem(idx+1);
             setHoverMenuToItem(item);
         }else{
             local item = mInventory_.getItemForIdx(idx);

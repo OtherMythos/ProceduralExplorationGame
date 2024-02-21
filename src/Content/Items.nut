@@ -114,6 +114,10 @@ enum ItemType{
         }
     }
 
+    function _tostring(){
+        return ::wrapToString(::ItemDef, "ItemDef", mName);
+    }
+
     function getType(){ return mType; }
     function getName(){ return mName; }
     function getDescription(){ return mDesc; }

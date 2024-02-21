@@ -14,6 +14,12 @@
         mLeanPlacesVisited_ = [];
 
         mPlayerCombatStats = ::Combat.CombatStats(EnemyId.NONE, 100);
+
+        equipItem(::Item(ItemId.SIMPLE_SWORD), EquippedSlotTypes.LEFT_HAND);
+    }
+
+    function _tostring(){
+        return ::wrapToString(::PlayerStats, "PlayerStats");
     }
 
     function setSaveData(data){

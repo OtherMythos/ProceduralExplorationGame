@@ -1,5 +1,8 @@
-::wrapToString <- function(obj, name, desc){
-    return format("(%s '%s: %s')", typeof obj, name, desc);
+::wrapToString <- function(obj, name, desc=null){
+    return (desc == null ?
+        format("(%s '%s')", typeof obj, name) :
+        format("(%s '%s: %s')", typeof obj, name, desc)
+    );
 }
 
 

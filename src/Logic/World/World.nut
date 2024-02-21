@@ -874,7 +874,7 @@ enum WorldMousePressContexts{
 
     function showInventory(){
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN,
-            {"inventory": ::Base.mInventory, "equipStats": ::Base.mPlayerStats.mPlayerCombatStats.mEquippedItems}),
+            {"inventory": ::Base.mInventory, "equipStats": ::Base.mPlayerStats}),
             null, 1);
         ::Base.mExplorationLogic.pauseExploration();
     }
