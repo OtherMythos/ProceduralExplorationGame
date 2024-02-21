@@ -334,6 +334,7 @@ enum InventoryBusEvents{
     }
 
     function shutdown(){
+        _gui.destroy(mOverlayWindow_);
         mMoneyCounter_.shutdown();
         base.shutdown();
         _event.unsubscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent);

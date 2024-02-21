@@ -36,69 +36,7 @@
         return playerEntry;
     }
 
-    function constructPlayer(explorationScreen){
-        /*
-        local en = _entity.create(SlotPosition());
-        if(!en.valid()) throw "Error creating entity";
-        local playerEntry = ActiveEnemyEntry(mConstructorWorld_, EnemyId.NONE, Vec3(0, 0, 0), en);
-
-        local playerNode = mBaseSceneNode_.createChildSceneNode();
-        local playerModel = mCharacterGenerator_.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, 30);
-        playerNode.setScale(0.5, 0.5, 0.5);
-        _component.sceneNode.add(en, playerNode);
-        playerEntry.setModel(playerModel);
-
-        local equipped = ::Combat.EquippedItems();
-        local targetItem = ::Item(ItemId.SIMPLE_TWO_HANDED_SWORD);
-        equipped.setEquipped(targetItem, EquippedSlotTypes.LEFT_HAND);
-        local combatData = ::Combat.CombatStats(EnemyId.NONE, 0, equipped);
-        //TODO tie this up a bit better with the rest of the code.
-        playerModel.equipToNode(targetItem, CharacterModelEquipNodeType.LEFT_HAND);
-        playerModel.equipToNode(::Item(ItemId.SIMPLE_SHIELD), CharacterModelEquipNodeType.RIGHT_HAND);
-        playerEntry.setCombatData(combatData);
-        playerEntry.setTargetCollisionWorld(_COLLISION_ENEMY);
-
-        local triggerWorld = mConstructorWorld_.getTriggerWorld();
-        local collisionPoint = triggerWorld.addCollisionReceiver(null, 0, 0, 1.5, _COLLISION_PLAYER);
-
-        local receiverInfo = {
-            "type" : _COLLISION_PLAYER
-        };
-        local shape = _physics.getSphereShape(2);
-
-        local collisionObject = _physics.collision[TRIGGER].createReceiver(receiverInfo, shape);
-        _physics.collision[TRIGGER].addObject(collisionObject);
-
-        //
-            local receiverInfo = {
-                "type" : _COLLISION_PLAYER
-            };
-            local shape = _physics.getSphereShape(2.1);
-
-            local damageReceiver = _physics.collision[DAMAGE].createReceiver(receiverInfo, shape);
-            _physics.collision[DAMAGE].addObject(damageReceiver);
-        //
-
-        playerEntry.setId(-1);
-
-        playerEntry.setCollisionPoint(collisionPoint);
-
-        _component.collision.add(en, collisionObject, damageReceiver);
-
-        local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(playerNode, ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_));
-        _component.user[Component.MISC].add(en);
-        _component.user[Component.MISC].set(en, 0, billboardIdx);
-
-        local totalHealth = 100;
-        _component.user[Component.HEALTH].add(en);
-        _component.user[Component.HEALTH].set(en, 0, totalHealth);
-        _component.user[Component.HEALTH].set(en, 1, totalHealth);
-
-        _component.script.add(en, "res://src/Content/Enemies/PlayerScript.nut");
-
-        return playerEntry;
-        */
-
+    function constructPlayer(explorationScreen, playerStats){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = Vec3();
         local en = manager.createEntity(targetPos);
@@ -111,14 +49,13 @@
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](playerNode));
         playerEntry.setModel(playerModel);
 
-        local equipped = ::Combat.EquippedItems();
-        local targetItem = ::Item(ItemId.SIMPLE_TWO_HANDED_SWORD);
-        equipped.setEquipped(targetItem, EquippedSlotTypes.LEFT_HAND);
-        local combatData = ::Combat.CombatStats(EnemyId.NONE, 0, equipped);
-        //TODO tie this up a bit better with the rest of the code.
-        playerModel.equipToNode(targetItem, CharacterModelEquipNodeType.LEFT_HAND);
-        playerModel.equipToNode(::Item(ItemId.SIMPLE_SHIELD), CharacterModelEquipNodeType.RIGHT_HAND);
-        playerEntry.setCombatData(combatData);
+        for(local i = EquippedSlotTypes.NONE+1; i < EquippedSlotTypes.MAX; i++){
+            local targetEquipNode = ::CharacterModel.___mapEquipSlotToEquipNode___(i);
+            if(targetEquipNode == EquippedSlotTypes.NONE) continue;
+            local targetItem = playerStats.getEquippedItem(i);
+            playerModel.equipToNode(targetItem, targetEquipNode);
+        }
+        playerEntry.setCombatData(playerStats.mPlayerCombatStats);
         playerEntry.setTargetCollisionWorld(_COLLISION_ENEMY);
 
         local triggerWorld = mConstructorWorld_.getTriggerWorld();

@@ -423,7 +423,7 @@ enum WorldMousePressContexts{
     }
 
     function resetSession(){
-        mPlayerEntry_ = mEntityFactory_.constructPlayer(mGui_);
+        mPlayerEntry_ = mEntityFactory_.constructPlayer(mGui_, ::Base.mPlayerStats);
 
         if(mProjectileManager_ != null) mProjectileManager_.shutdown();
         mProjectileManager_ = ExplorationProjectileManager(mDamageCollisionWorld_);

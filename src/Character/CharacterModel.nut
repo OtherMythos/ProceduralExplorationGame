@@ -19,6 +19,18 @@
         mCurrentAnimations_ = {};
     }
 
+    #Static
+    function ___mapEquipSlotToEquipNode___(slot){
+        switch(slot){
+            case EquippedSlotTypes.LEFT_HAND:
+                return CharacterModelEquipNodeType.LEFT_HAND;
+            case EquippedSlotTypes.RIGHT_HAND:
+                return CharacterModelEquipNodeType.RIGHT_HAND;
+            default:
+                return CharacterModelEquipNodeType.NONE;
+        }
+    }
+
     function destroy(){
         mCurrentAnimations_.clear();
         mParentNode_.destroyNodeAndChildren();

@@ -16,6 +16,7 @@
         mPlayerCombatStats = ::Combat.CombatStats(EnemyId.NONE, 100);
 
         equipItem(::Item(ItemId.SIMPLE_SWORD), EquippedSlotTypes.LEFT_HAND);
+        equipItem(::Item(ItemId.SIMPLE_SHIELD), EquippedSlotTypes.RIGHT_HAND);
     }
 
     function _tostring(){
