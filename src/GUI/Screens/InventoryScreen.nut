@@ -21,6 +21,7 @@ enum InventoryBusEvents{
     mInventory_ = null;
     mMoneyCounter_ = null;
     mPlayerStats_ = null;
+    mPlayerInspector_ = null;
 
     mInventoryBus_ = null;
 
@@ -202,6 +203,9 @@ enum InventoryBusEvents{
         //mInventoryEquippedGrid_.addToLayout(layoutLine);
         mInventoryEquippedGrid_.addToLayout(layoutHorizontal);
 
+        mPlayerInspector_ = ::GuiWidgets.InventoryPlayerInspector();
+        mPlayerInspector_.setup(mWindow_);
+        mPlayerInspector_.addToLayout(layoutHorizontal);
 
         layoutHorizontal.setMarginForAllCells(10, 0);
         layoutLine.addCell(layoutHorizontal);
@@ -216,6 +220,7 @@ enum InventoryBusEvents{
         mInventoryGrid_.setNewGridIcons(mInventory_.mInventoryItems_);
         mInventoryEquippedGrid_.setNewGridIcons(mPlayerStats_.mPlayerCombatStats.mEquippedItems.mItems);
         //container.sizeInner();
+        mPlayerInspector_.notifyLayout();
 
         ::InputManager.setActionSet(InputActionSets.MENU);
     }
@@ -360,6 +365,7 @@ enum InventoryBusEvents{
     function shutdown(){
         _gui.destroy(mOverlayWindow_);
         mMoneyCounter_.shutdown();
+        mPlayerInspector_.shutdown();
         base.shutdown();
         _event.unsubscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent);
         _event.unsubscribe(Event.PLAYER_EQUIP_CHANGED, receivePlayerEquipChangedEvent);
@@ -370,6 +376,7 @@ enum InventoryBusEvents{
     function update(){
         //mInventoryGrid_.update();
         mHoverInfo_.update();
+        mPlayerInspector_.update();
 
         if(_input.getButtonAction(::InputManager.menuBack, _INPUT_PRESSED)){
             closeInventory();
@@ -384,3 +391,4 @@ enum InventoryBusEvents{
 };
 
 _doFile("res://src/GUI/Widgets/InventoryGrid.nut");
+_doFile("res://src/GUI/Widgets/InventoryPlayerInspector.nut");

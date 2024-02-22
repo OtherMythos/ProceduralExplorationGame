@@ -27,6 +27,7 @@
     }
 
     function shutdown(){
+        //TODO see if this is ever actually called.
         mCombatScenePanel_.setDatablock("unlitEmpty");
         shutdownCompositor_();
     }

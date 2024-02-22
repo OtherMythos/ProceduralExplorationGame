@@ -2,12 +2,10 @@
 //Giving them a designated type allows for things like easy access to cameras and queries.
 enum CompositorSceneType{
     NONE,
-    COMBAT,
-    COMBAT_PLAYER,
     EXPLORATION,
-    WORLD_SCENE,
     BG_EFFECT,
     FG_EFFECT,
+    INVENTORY_PLAYER_INSPECTOR,
 
     MAX
 };

@@ -125,4 +125,22 @@
         model.setRenderQueueGroup(mRenderQueue_);
         attachNode.attachObject(model);
     }
+
+    function determineAABB(){
+        local startAABB = getAABBForNode_(mNodes_, 0);
+        for(local i = 1; i < mNodes_.len(); i++){
+            local mergeAABB = getAABBForNode_(mNodes_, i);
+            if(mergeAABB != null){
+                startAABB.merge(mergeAABB);
+            }
+        }
+        return startAABB;
+    }
+    function getAABBForNode_(nodes, idx){
+        local node = nodes[idx];
+        local attached = node.getNumAttachedObjects();
+        if(attached <= 0) return null;
+        local obj = node.getAttachedObject(0);
+        return obj.getLocalAabb();
+    }
 };
