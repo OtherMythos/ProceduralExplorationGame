@@ -28,15 +28,14 @@
 
             local characterGenerator = CharacterGenerator();
             local playerNode = _scene.getRootSceneNode().createChildSceneNode();
-            local playerModel = characterGenerator.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, 50);
+            mCharacterModel_ = characterGenerator.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, 50);
             //playerNode.setScale(0.5, 0.5, 0.5);
-            playerModel.equipDataToCharacterModel(::Base.mPlayerStats.mPlayerCombatStats.mEquippedItems);
-            mCharacterModel_ = playerModel;
+            updateForEquipChange(::Base.mPlayerStats.mPlayerCombatStats.mEquippedItems);
 
             mCharacterModel_.startAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
             mCharacterModel_.startAnimation(CharacterModelAnimId.BASE_ARMS_WALK);
 
-            mModelAABB_ = playerModel.determineAABB();
+            mModelAABB_ = mCharacterModel_.determineAABB();
             printf("Model aabb: %s", mModelAABB_.tostring());
         }
         function shutdown(){
@@ -62,6 +61,9 @@
             mCamera_.getParentNode().setPosition(modelCentre + Vec3(xPos, zPos, yPos));
             mCamera_.lookAt(modelCentre);
         }
+        function updateForEquipChange(equippedItems){
+            mCharacterModel_.equipDataToCharacterModel(equippedItems);
+        }
     }
 
     constructor(){
@@ -73,12 +75,19 @@
         mRenderPanel_ = mParentWin_.createPanel();
         mRenderPanel_.setMinSize(500, 500);
 
+        _event.subscribe(Event.PLAYER_EQUIP_CHANGED, receivePlayerEquipChangedEvent, this);
+
         mRenderManager_ = RenderManager();
     }
 
     function shutdown(){
         mRenderPanel_.setDatablock("unlitEmpty");
         mRenderManager_.shutdown();
+        _event.unsubscribe(Event.PLAYER_EQUIP_CHANGED, receivePlayerEquipChangedEvent, this);
+    }
+
+    function receivePlayerEquipChangedEvent(id, data){
+        mRenderManager_.updateForEquipChange(data);
     }
 
     function addToLayout(layout){
