@@ -248,9 +248,7 @@ enum InventoryBusEvents{
             mInventory_.removeFromInventory(data);
         }
         else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_SCRAP){
-            local scrapValue = mInventory_.getItemForIdx(data).getScrapVal();
-            mInventory_.addMoney(scrapValue);
-            mInventory_.removeFromInventory(data);
+            scrapItem(data);
         }
         else if(
             event == InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP ||
@@ -281,6 +279,21 @@ enum InventoryBusEvents{
             //TODO check if the inventory has space.
             mInventory_.addToInventory(item);
         }
+    }
+
+    function scrapItem(inventoryData){
+        local targetItem = null;
+        local idx = inventoryData.idx;
+        if(inventoryData.gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
+            targetItem = mPlayerStats_.getEquippedItem(idx+1);
+            mPlayerStats_.unEquipItem(idx+1);
+        }else{
+            targetItem = mInventory_.getItemForIdx(idx);
+            mInventory_.removeFromInventory(idx);
+        }
+        printf("Adding scrap value for item: %s", targetItem.tostring());
+        local scrapValue = targetItem.getScrapVal();
+        mInventory_.addMoney(scrapValue);
     }
 
     function selectItem(inventoryData){

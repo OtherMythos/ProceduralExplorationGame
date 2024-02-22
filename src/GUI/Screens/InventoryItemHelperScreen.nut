@@ -54,7 +54,8 @@
                 closeScreen();
             },
             function(widget, action){
-                mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_SCRAP, mData_.idx);
+                local data = {"idx": mData_.idx, "gridType": mData_.gridType};
+                mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_SCRAP, data);
                 closeScreen();
             },
             function(widget, action){
