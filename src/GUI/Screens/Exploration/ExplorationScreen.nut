@@ -41,7 +41,7 @@ enum ExplorationBusEvents{
             mWindow_ = mParent_.createWindow();
             mWindow_.setSize(100, 100);
             mWindow_.setVisualsEnabled(false);
-            mWindow_.setClipBorders(0, 0, 0, 0);
+            mWindow_.setSkinPack("WindowSkinNoBorder");
 
             mInfoLabel_ = mWindow_.createLabel();
 
@@ -81,7 +81,7 @@ enum ExplorationBusEvents{
         mWindow_ = _gui.createWindow();
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setVisualsEnabled(false);
-        mWindow_.setClipBorders(0, 0, 0, 0);
+        mWindow_.setSkinPack("WindowSkinNoBorder");
 
         local layoutLine = _gui.createLayoutLine();
 

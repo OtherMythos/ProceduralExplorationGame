@@ -9,7 +9,7 @@
         mCompositorType_ = compositorType;
         mWindow_ = _gui.createWindow();
         //this.mWindow_.setPosition(0, 400);
-        mWindow_.setClipBorders(0, 0, 0, 0);
+        mWindow_.setSkinPack("WindowSkinNoBorder");
         mWinSize_ = Vec2(_window.getWidth(), _window.getHeight());
         mWindow_.setSize(mWinSize_);
         mWindow_.setVisualsEnabled(false);

@@ -21,7 +21,7 @@
 
         //The window is only responsible for laying things out.
         mWindow_ = _gui.createWindow(parentWin);
-        mWindow_.setClipBorders(0, 0, 0, 0);
+        mWindow_.setSkinPack("WindowSkinNoBorder");
         mWindow_.setHidden(true);
         mWindow_.setClickable(false);
 

@@ -10,7 +10,7 @@
         mWindow_ = _gui.createWindow();
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setPosition(0, 0);
-        mWindow_.setClipBorders(0, 0, 0, 0);
+        mWindow_.setSkinPack("WindowSkinNoBorder");
         mWindow_.setZOrder(61);
         mWindow_.setDatablock("unlitBlack");
 

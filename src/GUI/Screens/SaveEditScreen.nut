@@ -10,7 +10,7 @@
         mWindow_ = _gui.createWindow();
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setVisualsEnabled(false);
-        mWindow_.setClipBorders(0, 0, 0, 0);
+        mWindow_.setSkinPack("WindowSkinNoBorder");
 
         local label = mWindow_.createLabel();
         label.setText(" ");

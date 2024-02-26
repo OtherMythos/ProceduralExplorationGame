@@ -149,7 +149,7 @@ enum InventoryBusEvents{
         mWindow_ = _gui.createWindow();
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setVisualsEnabled(false);
-        mWindow_.setClipBorders(0, 0, 0, 0);
+        mWindow_.setSkinPack("WindowSkinNoBorder");
 
         {
             local inventoryButton = mWindow_.createButton();
@@ -184,7 +184,7 @@ enum InventoryBusEvents{
         mOverlayWindow_.setSize(_window.getWidth(), _window.getHeight());
         mOverlayWindow_.setVisualsEnabled(false);
         mOverlayWindow_.setConsumeCursor(false);
-        mOverlayWindow_.setClipBorders(0, 0, 0, 0);
+        mOverlayWindow_.setSkinPack("WindowSkinNoBorder");
 
         local buttonCover = createButtonCover(mOverlayWindow_);
         mHoverInfo_ = HoverItemInfo(mOverlayWindow_);

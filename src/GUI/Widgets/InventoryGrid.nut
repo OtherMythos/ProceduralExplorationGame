@@ -72,7 +72,7 @@
 
     function initialise(parentWin, overlayWin, inventoryWidth, inventoryHeight){
         mWindow_ = parentWin.createWindow();
-        mWindow_.setClipBorders(0, 0, 0, 0);
+        mWindow_.setSkinPack("WindowSkinNoBorder");
 
         if(mInventoryType_ == InventoryGridType.INVENTORY_GRID){
             mItemIcons_ = array(inventoryWidth * inventoryHeight);

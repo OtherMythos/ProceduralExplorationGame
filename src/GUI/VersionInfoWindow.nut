@@ -4,7 +4,7 @@
 
     constructor(versionData){
         mWindow_ = _gui.createWindow();
-        mWindow_.setClipBorders(0, 0, 0, 0);
+        mWindow_.setSkinPack("WindowSkinNoBorder");
         local winSize = Vec2(_window.getWidth(), _window.getHeight());
         mWindow_.setSize(winSize);
         mWindow_.setVisualsEnabled(false);

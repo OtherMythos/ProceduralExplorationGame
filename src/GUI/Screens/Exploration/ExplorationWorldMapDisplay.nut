@@ -106,7 +106,7 @@
         local offset = ::Base.getTargetInterface() == TargetInterface.MOBILE ? 0.4 : 0.2;
         local targetSize = winSize * offset;
         targetSize.y = targetSize.x;
-        mMapViewerWindow_.setClipBorders(0, 0, 0, 0);
+        mMapViewerWindow_.setSkinPack("WindowSkinNoBorder");
         mMapViewerWindow_.setSize(targetSize);
         mMapViewerWindow_.setPosition((basePos.x + winSize.x) - mMapViewerWindow_.getSize().x, basePos.y);
         mMapViewerPanel_.setSize(targetSize);

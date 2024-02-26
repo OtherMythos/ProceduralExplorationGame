@@ -2,6 +2,16 @@
     "skins" :
     {
 
+        "WindowSkinNoBorder" :
+        {
+            "material" : "internal/WindowMaterial",
+            "borders" :
+            {
+                "all" : [0, 0]
+            }
+        },
+
+
         "ItemButton_skin":
         {
             "material" : "gui/basicButton"
@@ -132,6 +142,11 @@
         "ButtonRed" :
         {
             "auto" : "ButtonRed"
+        },
+        "WindowSkinNoBorder" :
+        {
+            "all" : "WindowSkinNoBorder"
         }
+
     }
 }

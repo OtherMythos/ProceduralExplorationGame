@@ -14,7 +14,8 @@
         mPopupWin_.setZOrder(150);
         mPopupWin_.setVisualsEnabled(false);
         mPopupWin_.setConsumeCursor(false);
-        mPopupWin_.setClipBorders(0, 0, 0, 0);
+        mPopupWin_.setSkinPack("WindowSkinNoBorder");
+
 
         local label = mPopupWin_.createLabel();
         label.setDefaultFontSize(label.getDefaultFontSize() * data.fontMultiplier);
