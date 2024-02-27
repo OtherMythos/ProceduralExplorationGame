@@ -1,4 +1,13 @@
 function start(){
+    _gui.setScrollSpeed(5.0);
+
+    ::canvasSize <- Vec2(1920, 1080);
+    ::winSize <- Vec2(_window.getWidth(), _window.getHeight());
+    ::resolutionMult <- _window.getActualSize() / _window.getSize();
+    //_gui.setCanvasSize(canvasSize, _window.getSize());
+    _gui.setCanvasSize(canvasSize, _window.getActualSize());
+    _gui.setDefaultFontSize26d6((_gui.getDefaultFontSize26d6() * ::resolutionMult.x).tointeger());
+
     _doFile("res://src/Versions.nut");
     _doFile("res://src/Constants.nut");
     _doFile("res://src/Helpers.nut");
@@ -10,10 +19,9 @@ function start(){
     _doFile("res://src/Util/StateMachine.nut");
     _doFile("res://src/Util/CombatStateMachine.nut");
 
-    _gui.setScrollSpeed(5.0);
+    //_gui.setCanvasSize(Vec2(1920, 1080), winSize);
 
-    local winSize = Vec2(_window.getWidth(), _window.getHeight());
-    _gui.setCanvasSize(winSize, winSize);
+    _event.subscribe(_EVENT_SYSTEM_WINDOW_RESIZE, recieveScreenChange, this);
 
     _doFile("res://src/Base.nut");
     ::Base.setup();
@@ -33,4 +41,9 @@ function sceneSafeUpdate(){
         //::Base.mExplorationLogic.mCurrentWorld_.sceneSafeUpdate();
         ::Base.mExplorationLogic.sceneSafeUpdate();
     }
+}
+
+function recieveScreenChange(id, data){
+    print("window resized");
+    _gui.setCanvasSize(canvasSize, _window.getActualSize());
 }

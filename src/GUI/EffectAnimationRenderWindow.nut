@@ -52,7 +52,7 @@
     function setupCompositor(){
         local compositorName = getCompositorTypeWorkspace(mCompositorType_);
 
-        local compId = ::CompositorManager.createCompositorWorkspace(compositorName, mWinSize_, mCompositorType_);
+        local compId = ::CompositorManager.createCompositorWorkspace(compositorName, mWinSize_ * ::resolutionMult, mCompositorType_);
         local datablock = ::CompositorManager.getDatablockForCompositor(compId);
         mCompositorId_ = compId;
         mCompositorPanel_.setDatablock(datablock);

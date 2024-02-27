@@ -82,7 +82,7 @@
         _event.unsubscribe(Event.PLACE_DISCOVERED, notifyPlaceDiscovered, this);
     }
     function setupCompositor(){
-        local winSize = mExplorationScenePanel_.getSize();
+        local winSize = mExplorationScenePanel_.getSize() * ::resolutionMult;
         local winPos = mExplorationScenePanel_.getPosition();
 
         local compId = ::CompositorManager.createCompositorWorkspace("renderTexture30Workspace", winSize, CompositorSceneType.EXPLORATION);
@@ -91,7 +91,7 @@
         mExplorationScenePanel_.setDatablock(datablock);
 
         local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION);
-        mBillboardManager_ = ::BillboardManager(camera, winSize, winPos);
+        mBillboardManager_ = ::BillboardManager(camera, mExplorationScenePanel_.getSize(), winPos);
     }
 
     function update(){
