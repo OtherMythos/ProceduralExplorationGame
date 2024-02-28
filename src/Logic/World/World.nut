@@ -297,8 +297,7 @@ enum WorldMousePressContexts{
     }
 
     function shutdown(){
-        _event.unsubscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);
-        _event.unsubscribe(Event.PLAYER_EQUIP_CHANGED, playerEquipChanged, this);
+        printf("Shutting down world of type %i with id %i", getWorldType(), getWorldId());
 
         foreach(i in mActiveEnemies_){
             i.notifyDestroyed();
@@ -319,9 +318,6 @@ enum WorldMousePressContexts{
     function setup(){
         //_world.createWorld();
 
-        _event.subscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);
-        _event.subscribe(Event.PLAYER_EQUIP_CHANGED, playerEquipChanged, this);
-
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
         mEntityFactory_ = EntityFactory(this, mParentNode_, CharacterGenerator());
         //_developer.setRenderQueueForMeshGroup(30);
@@ -332,15 +328,15 @@ enum WorldMousePressContexts{
         mEntityManager_ = EntityManager.createEntityManager(this);
     }
 
-    function playerHealthChanged(id, data){
+    function playerHealthChanged(data){
         //TODO remove this duplication.
         //Have a single place to store health and make sure it's set from a single function.
         local component = mEntityManager_.getComponent(mPlayerEntry_.getEntity(), EntityComponents.HEALTH);
         component.mHealth = data.health;
         mPlayerEntry_.notifyNewHealth(data.health, data.percentage);
     }
-    function playerEquipChanged(id, data){
-        print(data);
+    function playerEquipChanged(data){
+        printf("Player equip changed '%s'", data.tostring());
         mPlayerEntry_.getModel().equipDataToCharacterModel(data);
     }
 

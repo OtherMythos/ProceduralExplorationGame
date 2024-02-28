@@ -52,6 +52,8 @@
         }
 
         _event.unsubscribe(Event.PLAYER_DIED, processPlayerDeath, this);
+        _event.unsubscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);
+        _event.unsubscribe(Event.PLAYER_EQUIP_CHANGED, playerEquipChanged, this);
 
         _state.setPauseState(0);
 
@@ -70,6 +72,21 @@
         //setCurrentWorld_(createWorldInstance(WorldTypes.VISITED_LOCATION_WORLD));
 
         _event.subscribe(Event.PLAYER_DIED, processPlayerDeath, this);
+        _event.subscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);
+        _event.subscribe(Event.PLAYER_EQUIP_CHANGED, playerEquipChanged, this);
+    }
+
+    function playerHealthChanged(id, data){
+        mCurrentWorld_.playerHealthChanged(data);
+        foreach(i in mQueuedWorlds_){
+            i.playerHealthChanged(data);
+        }
+    }
+    function playerEquipChanged(id, data){
+        mCurrentWorld_.playerEquipChanged(data);
+        foreach(i in mQueuedWorlds_){
+            i.playerEquipChanged(data);
+        }
     }
 
     function createWorldInstance(worldType){
