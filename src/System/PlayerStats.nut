@@ -44,7 +44,7 @@
 
         local data = {
             "health": health,
-            "percentage": mPlayerCombatStats.getPercentage()
+            "percentage": mPlayerCombatStats.getHealthPercentage()
         };
         //mPlayerEntry_.notifyNewHealth(newHealth, percentage);
         _event.transmit(Event.PLAYER_HEALTH_CHANGED, data);
@@ -73,6 +73,13 @@
 
     function getEquippedItem(slot){
         return mPlayerCombatStats.mEquippedItems.getEquippedItem(slot);
+    }
+
+    function getPlayerHealth(){
+        return mPlayerCombatStats.mHealth;
+    }
+    function getPlayerHealthPercentage(){
+        return mPlayerCombatStats.getHealthPercentage();
     }
 
     function equipItem(item, slot){

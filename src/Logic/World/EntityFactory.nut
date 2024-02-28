@@ -69,13 +69,14 @@
         //_component.collision.add(en, collisionObject, damageReceiver);
 
         local worldMask = (0x1 << mConstructorWorld_.getWorldId());
-        local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(playerNode, ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_, worldMask));
+        local healthBarBillboard = ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_, worldMask);
+        healthBarBillboard.setPercentage(playerStats.getPlayerHealthPercentage());
+        local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(playerNode, healthBarBillboard);
         manager.assignComponent(en, EntityComponents.BILLBOARD, ::EntityManager.Components[EntityComponents.BILLBOARD](billboardIdx));
         //_component.user[Component.MISC].add(en);
         //_component.user[Component.MISC].set(en, 0, billboardIdx);
 
-        local totalHealth = 100;
-        manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](totalHealth));
+        manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](playerStats.getPlayerHealth()));
 
         //_component.script.add(en, "res://src/Content/Enemies/PlayerScript.nut");
 
