@@ -9,6 +9,7 @@
 
     constructor(){
         _event.subscribe(Event.PLACE_VISITED, receivePlaceVisitedEvent, this);
+        _event.subscribe(Event.PLAYER_DIED, receivePlayerDiedEvent, this);
 
         mPlacesVisited_ = array(PlaceId.MAX, false);
         mLeanPlacesVisited_ = [];
@@ -17,6 +18,11 @@
 
         equipItem(::Item(ItemId.SIMPLE_SWORD), EquippedSlotTypes.LEFT_HAND);
         equipItem(::Item(ItemId.SIMPLE_SHIELD), EquippedSlotTypes.RIGHT_HAND);
+    }
+
+    function shutdown(){
+        _event.unsubscribe(Event.PLACE_VISITED, receivePlaceVisitedEvent, this);
+        _event.unsubscribe(Event.PLAYER_DIED, receivePlayerDiedEvent, this);
     }
 
     function _tostring(){
@@ -69,6 +75,10 @@
 
     function receivePlaceVisitedEvent(id, data){
         notifyPlaceVisited(data);
+    }
+    function receivePlayerDiedEvent(id, data){
+        //If the player dies, reset the health to 100%
+        mPlayerCombatStats.setHealthToMax();
     }
 
     function getEquippedItem(slot){

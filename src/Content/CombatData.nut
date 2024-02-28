@@ -104,6 +104,9 @@
                 mHealth = mMaxHealth;
             }
         }
+        function setHealthToMax(){
+            setHealth(mMaxHealth);
+        }
     },
 
     /**

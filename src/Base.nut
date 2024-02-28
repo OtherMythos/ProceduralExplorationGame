@@ -257,6 +257,7 @@
 
     function shutdown(){
         ::PopupManager.shutdown();
+        mPlayerStats.shutdown();
     }
 
     function update(){
