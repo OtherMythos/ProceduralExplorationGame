@@ -24,10 +24,13 @@
         _event.subscribe(Event.PLACE_DISCOVERED, notifyPlaceDiscovered, this);
     }
 
-    function switchMapViewer(worldType, data){
+    function switchMapViewer(world){
+        local worldType = world.getWorldType();
+        local data = world.getMapData();
+
         local oldViewer = mMapViewer_;
         if(worldType == WorldTypes.PROCEDURAL_EXPLORATION_WORLD){
-            mMapViewer_ = ExplorationMapViewer();
+            mMapViewer_ = ExplorationMapViewer(world.getCurrentFoundRegions());
         }
         else if(worldType == WorldTypes.PROCEDURAL_DUNGEON_WORLD){
             mMapViewer_ = DungeonMapViewer();
@@ -53,7 +56,7 @@
     }
 
     function processActiveWorldChange(id, data){
-        switchMapViewer(data.getWorldType(), data.getMapData());
+        switchMapViewer(data);
     }
 
     function addToLayout(layoutLine){

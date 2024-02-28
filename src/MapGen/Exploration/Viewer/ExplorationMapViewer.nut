@@ -57,7 +57,7 @@ enum MapViewerColours{
     mLabelWindow_ = null;
     mFoundRegions_ = null;
 
-    constructor(){
+    constructor(currentFoundRegions=null){
         mDrawOptions_ = array(DrawOptions.MAX, false);
         mDrawOptions_[DrawOptions.WATER] = true;
         mDrawOptions_[DrawOptions.GROUND_TYPE] = true;
@@ -70,6 +70,12 @@ enum MapViewerColours{
         mPlaceMarkers_ = [];
         mFoundPlaces_ = [];
         mFoundRegions_ = {};
+
+        if(currentFoundRegions != null){
+            foreach(c,i in currentFoundRegions){
+                mFoundRegions_.rawset(c, i);
+            }
+        }
 
         setupBlendblock();
         setupColours();

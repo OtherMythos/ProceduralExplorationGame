@@ -398,6 +398,9 @@
         }
     }
 
+    function getCurrentFoundRegions(){
+        return mCurrentFoundRegions_;
+    }
 
     function getStatsString(){
         local outString = "";
