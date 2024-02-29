@@ -23,7 +23,7 @@
         local title = mWindow_.createLabel();
         //title.setGridLocation(_GRID_LOCATION_CENTER);
         title.setText(data.item.getName());
-        //title.sizeToFit(mWindow_.getSizeAfterClipping().x);
+        title.sizeToFit(mWindow_.getSizeAfterClipping().x);
         title.setTextColour(0, 0, 0, 1);
         layoutLine.addCell(title);
 
