@@ -138,8 +138,8 @@ enum ItemType{
 ::Items[ItemId.LARGE_HEALTH_POTION] = ItemDef("Large Health Potion", "A large potion of health.", "largePotion.mesh", "item_largeHealthPotion", ItemType.CONSUMABLE, 10, EquippableId.NONE);
 
 ::Items[ItemId.SIMPLE_SWORD] = ItemDef("Simple Sword", "A cheap, weak sword. Relatively blunt for something claiming to be a sword.", "simpleSword.mesh", "item_simpleSword", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SWORD, Vec3(0, 8, 0), Quat(2, Vec3(0, 1, 0)));
-::Items[ItemId.SIMPLE_SHIELD] = ItemDef("Simple Shield", "An un-interesting shield. Provides minimal protection.", "simpleShield.mesh", "icon_none", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SHIELD, Vec3(-4, 0, 0), Quat(-PI*0.5, Vec3(0, 1, 0)), Vec3(1.4, 1.4, 1.0));
-::Items[ItemId.SIMPLE_TWO_HANDED_SWORD] = ItemDef("Simple Two Handed sword", "A two handed sword as blunt as it is big", "simpleTwoHandedSword.mesh", "icon_none", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_TWO_HANDED_SWORD, Vec3(0, 14, 0), Quat(-PI*0.5, Vec3(0, 1, 0)), Vec3(1.4, 1.4, 1.0));
+::Items[ItemId.SIMPLE_SHIELD] = ItemDef("Simple Shield", "An un-interesting shield. Provides minimal protection.", "simpleShield.mesh", "item_simpleShield", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SHIELD, Vec3(-4, 0, 0), Quat(-PI*0.5, Vec3(0, 1, 0)), Vec3(1.4, 1.4, 1.0));
+::Items[ItemId.SIMPLE_TWO_HANDED_SWORD] = ItemDef("Simple Two Handed sword", "A two handed sword as blunt as it is big", "simpleTwoHandedSword.mesh", "item_simpleTwoHandedSword", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_TWO_HANDED_SWORD, Vec3(0, 14, 0), Quat(-PI*0.5, Vec3(0, 1, 0)), Vec3(1.4, 1.4, 1.0));
 
 ::Items[ItemId.BRONZE_SWORD] = ItemDef("Bronze Sword", "A sword made from bronze.", null, null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
 ::Items[ItemId.BRONZE_SHIELD] = ItemDef("Bronze Shield", "A shield made from bronze.", null, null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
@@ -193,6 +193,10 @@ enum ItemType{
             }
             case ItemId.SIMPLE_SWORD: {
                 stat.mAttack = 5;
+                return stat;
+            }
+            case ItemId.SIMPLE_TWO_HANDED_SWORD: {
+                stat.mAttack = 15;
                 return stat;
             }
             case ItemId.SIMPLE_SHIELD: {

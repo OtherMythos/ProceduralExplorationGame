@@ -136,6 +136,22 @@
             {
                 "all" : [0, 128, 16, 16]
             }
+        },
+        "item_simpleTwoHandedSword" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [32, 128, 16, 16]
+            }
+        },
+        "item_simpleShield" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [32, 144, 16, 16]
+            }
         }
 
     }
