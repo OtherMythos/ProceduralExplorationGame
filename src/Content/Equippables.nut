@@ -23,15 +23,22 @@ enum EquippableId{
     MAX
 };
 
+enum EquippableCharacteristics{
+    NONE = 0x0,
+    TWO_HANDED = 0x1
+};
+
 ::EquippableDef <- class{
 
     mEquippedSlot_ = EquippedSlotTypes.NONE;
+    mEquippableCharacteristics_ = null;
     mAttackFunction_ = null;
     mTotalFrames_ = 0;
     mAttackAnim_ = null;
 
-    constructor(equippedSlot, attackFunction, totalFrames, attackAnim){
+    constructor(equippedSlot, equippableCharacteristics, attackFunction, totalFrames, attackAnim){
         mEquippedSlot_ = equippedSlot;
+        mEquippableCharacteristics_ = equippableCharacteristics;
         mAttackFunction_ = attackFunction;
         mTotalFrames_ = totalFrames;
         mAttackAnim_ = attackAnim;
@@ -39,6 +46,7 @@ enum EquippableId{
 
     function getEquippedSlot() { return mEquippedSlot_; }
     function getTotalFrames() { return mEquippedSlot_; }
+    function getEquippableCharacteristics() { return mEquippableCharacteristics_; }
 
     function _tostring() {
         return ::wrapToString(::EquippableDef, "EquippableDef");
@@ -68,9 +76,9 @@ enum EquippableId{
 ::Equippables <- array(EquippableId.MAX, null);
 
 //-------------------------------
-::Equippables[EquippableId.NONE] = EquippableDef(EquippedSlotTypes.NONE, null, 0, CharacterModelAnimId.NONE);
+::Equippables[EquippableId.NONE] = EquippableDef(EquippedSlotTypes.NONE, EquippableCharacteristics.NONE, null, 0, CharacterModelAnimId.NONE);
 
-::Equippables[EquippableId.REGULAR_SWORD] = EquippableDef(EquippedSlotTypes.HAND, regularSwordBaseAttack, 20, CharacterModelAnimId.REGULAR_SWORD_SWING);
-::Equippables[EquippableId.REGULAR_SHIELD] = EquippableDef(EquippedSlotTypes.HAND, regularSwordBaseAttack, 20, CharacterModelAnimId.REGULAR_SWORD_SWING);
-::Equippables[EquippableId.REGULAR_TWO_HANDED_SWORD] = EquippableDef(EquippedSlotTypes.HAND, regularTwoHandedBaseAttack, 80, CharacterModelAnimId.REGULAR_TWO_HANDED_SWORD_SWING);
+::Equippables[EquippableId.REGULAR_SWORD] = EquippableDef(EquippedSlotTypes.HAND, EquippableCharacteristics.NONE, regularSwordBaseAttack, 20, CharacterModelAnimId.REGULAR_SWORD_SWING);
+::Equippables[EquippableId.REGULAR_SHIELD] = EquippableDef(EquippedSlotTypes.HAND, EquippableCharacteristics.NONE, regularSwordBaseAttack, 20, CharacterModelAnimId.REGULAR_SWORD_SWING);
+::Equippables[EquippableId.REGULAR_TWO_HANDED_SWORD] = EquippableDef(EquippedSlotTypes.HAND, EquippableCharacteristics.TWO_HANDED, regularTwoHandedBaseAttack, 80, CharacterModelAnimId.REGULAR_TWO_HANDED_SWORD_SWING);
 //-------------------------------

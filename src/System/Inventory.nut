@@ -62,6 +62,14 @@
         _event.transmit(Event.MONEY_CHANGED, mMoney_);
     }
 
+    function getNumSlotsFree(){
+        local num = 0;
+        foreach(i in mInventoryItems_){
+            if(i == null) num++;
+        }
+        return num;
+    }
+
     function getInventorySize(){
         return mInventorySize_;
     }

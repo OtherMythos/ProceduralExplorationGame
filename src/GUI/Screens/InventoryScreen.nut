@@ -264,14 +264,30 @@ enum InventoryBusEvents{
             assert(item != null);
             mInventory_.removeFromInventory(data);
 
-            local equipSlot = ::Equippables[item.getEquippableData()].getEquippedSlot();
-            ////TODO give an option for which hand to equip the item into.
+            local equippableData = ::Equippables[item.getEquippableData()];
+            local equipSlot = equippableData.getEquippedSlot();
             if(event == InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP_LEFT_HAND){
                 equipSlot = EquippedSlotTypes.LEFT_HAND;
             }
-            if(event == InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP_RIGHT_HAND){
+            else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP_RIGHT_HAND){
                 equipSlot = EquippedSlotTypes.RIGHT_HAND;
             }
+
+            if(equippableData.getEquippableCharacteristics() & EquippableCharacteristics.TWO_HANDED){
+                if(mInventory_.getNumSlotsFree() >= 2){
+                    local leftHandItem = mPlayerStats_.getEquippedItem(EquippedSlotTypes.LEFT_HAND);
+                    local rightHandItem = mPlayerStats_.getEquippedItem(EquippedSlotTypes.RIGHT_HAND);
+                    if(leftHandItem != null){
+                        mPlayerStats_.unEquipItem(EquippedSlotTypes.LEFT_HAND);
+                        mInventory_.addToInventory(leftHandItem);
+                    }
+                    if(rightHandItem != null){
+                        mPlayerStats_.unEquipItem(EquippedSlotTypes.RIGHT_HAND);
+                        mInventory_.addToInventory(rightHandItem);
+                    }
+                }
+            }
+
             local previousEquipped = mPlayerStats_.equipItem(item, equipSlot);
             if(previousEquipped != null){
                 mInventory_.addToInventory(previousEquipped);
