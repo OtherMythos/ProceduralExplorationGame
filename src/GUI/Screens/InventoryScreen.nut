@@ -138,7 +138,9 @@ enum InventoryBusEvents{
         _event.subscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent, this);
         _event.subscribe(Event.PLAYER_EQUIP_CHANGED, receivePlayerEquipChangedEvent, this);
 
-        createBackgroundScreen_();
+        if( !(data.rawin("disableBackground") && data.disableBackground) ){
+            createBackgroundScreen_();
+        }
 
         mInventory_ = data.inventory;
         mPlayerStats_ = data.equipStats;
@@ -401,7 +403,11 @@ enum InventoryBusEvents{
 
     function closeInventory(){
         //::ScreenManager.backupScreen(mLayerIdx);
-        ::ScreenManager.transitionToScreen(null, null, mLayerIdx);
+        if(mLayerIdx == 0){
+            ::ScreenManager.backupScreen(mLayerIdx);
+        }else{
+            ::ScreenManager.transitionToScreen(null, null, mLayerIdx);
+        }
         ::Base.mExplorationLogic.unPauseExploration();
     }
 };
