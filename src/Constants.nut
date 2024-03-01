@@ -69,6 +69,7 @@ enum GameProfile{
     SCREENSHOT_MODE,
     DISABLE_ENEMY_SPAWN,
     DISABLE_DISTRACTION_SPAWN,
+    ENABLE_RIGHT_CLICK_WORKAROUNDS,
 
     MAX
 };
@@ -81,6 +82,7 @@ enum GameProfile{
     "ScreenshotMode",
     "DisableEnemySpawn",
     "DisableDistractionSpawn",
+    "EnableRightClickWorkarounds",
 ];
 
 enum Event{

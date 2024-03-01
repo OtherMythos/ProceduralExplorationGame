@@ -388,7 +388,9 @@ enum WorldMousePressContexts{
         checkForDistractionAppear();
         checkPlayerInputs();
 
-        checkDebugBodges();
+        if(::Base.isProfileActive(GameProfile.ENABLE_RIGHT_CLICK_WORKAROUNDS)){
+            checkDebugBodges();
+        }
 
         mProjectileManager_.update();
         mEntityManager_.update();
