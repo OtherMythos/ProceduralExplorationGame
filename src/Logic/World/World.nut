@@ -426,6 +426,11 @@ enum WorldMousePressContexts{
 
     function resetSession(){
         mPlayerEntry_ = mEntityFactory_.constructPlayer(mGui_, ::Base.mPlayerStats);
+        local data = {
+            "health": ::Base.mPlayerStats.mPlayerCombatStats.mMaxHealth,
+            "percentage": ::Base.mPlayerStats.mPlayerCombatStats.getHealthPercentage()
+        };
+        _event.transmit(Event.PLAYER_HEALTH_CHANGED, data);
 
         if(mProjectileManager_ != null) mProjectileManager_.shutdown();
         mProjectileManager_ = ExplorationProjectileManager(mDamageCollisionWorld_);

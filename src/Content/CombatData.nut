@@ -99,12 +99,15 @@
             if(mHealth <= 0){
                 mHealth = 0;
                 mDead = true;
+            }else{
+                mDead = false;
             }
             if(mHealth > mMaxHealth){
                 mHealth = mMaxHealth;
             }
         }
         function setHealthToMax(){
+            printf("Setting health to %i", mMaxHealth);
             setHealth(mMaxHealth);
         }
     },
