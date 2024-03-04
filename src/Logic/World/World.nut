@@ -1000,6 +1000,7 @@ enum WorldMousePressContexts{
         }
         else if(data.mType == SpoilsComponentType.GIVE_ITEM){
             printf("Giving player item %s", data.mFirst.tostring());
+            ::Base.mInventory.addToInventory(data.mFirst);
         }
     }
 
