@@ -27,7 +27,6 @@ jobs:
           echo "const GIT_HASH = \"${{ steps.vars.outputs.sha_short }}\"" >> /tmp/distribution/src/Versions.nut
           ./resBuild.sh --clean
           cp -r build /tmp/distribution
-          chmod -R 777 /tmp/distribution
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -79,6 +78,7 @@ jobs:
       - name: Setup appimage
         run: |
           #cd /tmp
+          chmod -R 777 squashfs-root/usr/bin/build
           wget -O /usr/local/bin/appimagetool https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
           chmod +x /usr/local/bin/appimagetool
           ls
