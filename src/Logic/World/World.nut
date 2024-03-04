@@ -790,16 +790,15 @@ enum WorldMousePressContexts{
 
         mAppearDistractionLogic_.update();
 
+        local target = getPositionForAppearEnemy_(EnemyId.GOBLIN);
+        if(target == null) return;
         if(mAppearDistractionLogic_.checkAppearForObject(WorldDistractionType.PERCENTAGE_ENCOUNTER)){
-            local target = getPositionForAppearEnemy_(EnemyId.GOBLIN);
             mEntityFactory_.constructPercentageEncounter(target, mGui_);
         }
         if(mAppearDistractionLogic_.checkAppearForObject(WorldDistractionType.HEALTH_ORB)){
-            local target = getPositionForAppearEnemy_(EnemyId.GOBLIN);
             mEntityFactory_.constructHealthOrbEncounter(target);
         }
         if(mAppearDistractionLogic_.checkAppearForObject(WorldDistractionType.EXP_ORB)){
-            local target = getPositionForAppearEnemy_(EnemyId.GOBLIN);
             mEntityFactory_.constructEXPTrailEncounter(target);
         }
     }
@@ -826,6 +825,7 @@ enum WorldMousePressContexts{
     }
     function appearEnemy(enemyType){
         local target = getPositionForAppearEnemy_(enemyType);
+        if(target == null) return;
         createEnemy(enemyType, target);
     }
 
