@@ -149,7 +149,6 @@ enum MapViewerColours{
         colVals[MapViewerColours.VOXEL_GROUP_CHERRY_BLOSSOM_TREE] = ColourValue(0.94, 0.44, 0.91, 1);
         colVals[MapViewerColours.OCEAN] = ColourValue(0, 0, 1.0, mOpacity_);
         colVals[MapViewerColours.FRESH_WATER] = ColourValue(0.15, 0.15, 1.0, mOpacity_);
-        colVals[MapViewerColours.FRESH_WATER] = ColourValue(0.15, 0.15, 1.0, mOpacity_);
         colVals[MapViewerColours.WATER_GROUPS] = baseVal;
         colVals[MapViewerColours.COLOUR_BLACK] = baseVal;
         colVals[MapViewerColours.COLOUR_MAGENTA] = ColourValue(1, 0, 1, 1);
@@ -217,6 +216,7 @@ enum MapViewerColours{
     function fillBufferWithMapLean_(textureBox){
         local buf = mMapData_.voxelBuffer;
         local bufSecond = mMapData_.secondaryVoxBuffer;
+        local seaLevel = mMapData_.seaLevel;
         buf.seek(0);
         bufSecond.seek(0);
         local division = 1;
@@ -240,7 +240,7 @@ enum MapViewerColours{
                     local region = (bufSecondReadFunc('i') >> 8) & 0xFF;
 
                     local altitude = voxVal & 0xFF;
-                    if(altitude < mMapData_.seaLevel){
+                    if(altitude < seaLevel){
                         textureBox.writen(colourOcean, 'i');
                         continue;
                     }
