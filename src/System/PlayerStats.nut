@@ -81,10 +81,6 @@
         mPlayerCombatStats.setHealthToMax();
     }
 
-    function getEquippedItem(slot){
-        return mPlayerCombatStats.mEquippedItems.getEquippedItem(slot);
-    }
-
     function getPlayerHealth(){
         return mPlayerCombatStats.mHealth;
     }
@@ -92,6 +88,9 @@
         return mPlayerCombatStats.getHealthPercentage();
     }
 
+    function getEquippedItem(slot){
+        return mPlayerCombatStats.mEquippedItems.getEquippedItem(slot);
+    }
     function equipItem(item, slot){
         printf("Equipping player item: %s", item.getName());
         local prevEquipped = mPlayerCombatStats.mEquippedItems.getEquippedItem(slot);
@@ -105,6 +104,26 @@
         mPlayerCombatStats.mEquippedItems.unEquipItem(slot);
 
         equipChanged_();
+    }
+    function unequipTwoHandedItem(){
+        local first = unequipTwoHandedItem_(EquippedSlotTypes.LEFT_HAND);
+        local second = unequipTwoHandedItem_(EquippedSlotTypes.RIGHT_HAND);
+        //There can't possibly be two, two handed equippables at a time.
+        if(first != null && second != null) assert(false);
+        if(first) return first;
+        if(second) return second;
+        return null;
+    }
+    function unequipTwoHandedItem_(slot){
+        local item = getEquippedItem(slot);
+        if(item != null){
+            local equippableData = ::Equippables[item.getEquippableData()];
+            if(equippableData.getEquippableCharacteristics() & EquippableCharacteristics.TWO_HANDED){
+                unEquipItem(slot);
+                return item;
+            }
+        }
+        return null;
     }
     function equipChanged_(){
         _event.transmit(Event.PLAYER_EQUIP_CHANGED, mPlayerCombatStats.mEquippedItems);

@@ -275,6 +275,11 @@ enum InventoryBusEvents{
                 equipSlot = EquippedSlotTypes.RIGHT_HAND;
             }
 
+            if(equipSlot == EquippedSlotTypes.RIGHT_HAND || equipSlot == EquippedSlotTypes.LEFT_HAND){
+                local item = mPlayerStats_.unequipTwoHandedItem();
+                if(item != null) mInventory_.addToInventory(item);
+            }
+
             if(equippableData.getEquippableCharacteristics() & EquippableCharacteristics.TWO_HANDED){
                 if(mInventory_.getNumSlotsFree() >= 2){
                     local leftHandItem = mPlayerStats_.getEquippedItem(EquippedSlotTypes.LEFT_HAND);
