@@ -223,7 +223,8 @@ enum CharacterModelType{
     NONE,
     HUMANOID,
     GOBLIN,
-    SQUID
+    SQUID,
+    CRAB,
 
     MAX
 };
@@ -233,6 +234,7 @@ enum CharacterModelType{
         case CharacterModelType.HUMANOID: return "Humanoid";
         case CharacterModelType.GOBLIN: return "Goblin";
         case CharacterModelType.SQUID: return "Squid";
+        case CharacterModelType.CRAB: return "Crab";
         default:{
             assert(false);
         }
@@ -251,6 +253,11 @@ enum CharacterModelPartType{
     RIGHT_HAND,
     LEFT_FOOT,
     RIGHT_FOOT,
+
+    LEFT_MISC_1,
+    LEFT_MISC_2,
+    RIGHT_MISC_1,
+    RIGHT_MISC_2,
 
     MAX
 };
@@ -275,6 +282,7 @@ enum CharacterModelAnimId{
     REGULAR_TWO_HANDED_SWORD_SWING,
 
     SQUID_WALK,
+    CRAB_WALK,
 
     MAX
 };

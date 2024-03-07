@@ -17,3 +17,4 @@
 ::CharacterModelAnims[CharacterModelAnimId.REGULAR_TWO_HANDED_SWORD_SWING] = ::CharacterModelAnimDef("RegularTwoHandedSwordSwing", [CharacterModelPartType.LEFT_HAND, CharacterModelPartType.RIGHT_HAND]);
 
 ::CharacterModelAnims[CharacterModelAnimId.SQUID_WALK] = ::CharacterModelAnimDef("SquidWalk", [CharacterModelPartType.LEFT_HAND, CharacterModelPartType.RIGHT_HAND, CharacterModelPartType.BODY]);
+::CharacterModelAnims[CharacterModelAnimId.CRAB_WALK] = ::CharacterModelAnimDef("CrabWalk", [CharacterModelPartType.LEFT_MISC_1, CharacterModelPartType.LEFT_MISC_2, CharacterModelPartType.RIGHT_MISC_1, CharacterModelPartType.RIGHT_MISC_2]);

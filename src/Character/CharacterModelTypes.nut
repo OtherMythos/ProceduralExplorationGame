@@ -108,3 +108,25 @@ local ModelType = class{
     ],
     [CharacterModelAnimId.NONE, CharacterModelAnimId.SQUID_WALK, CharacterModelAnimId.SQUID_WALK]
 );
+::ModelTypes[CharacterModelType.CRAB] = ModelType("build/assets/characterAnimations/crabAnimation.xml",
+    [
+        Entry(
+            "crabBody.mesh", CharacterModelPartType.BODY, null
+        ),
+
+        Entry(
+            "crabFeetLeft.mesh", CharacterModelPartType.LEFT_MISC_1, null, Vec3(4, 1, 1.01)
+        ),
+        Entry(
+            "crabFeetLeft.mesh", CharacterModelPartType.LEFT_MISC_2, null, Vec3(3, 1, 4.01)
+        ),
+
+        Entry(
+            "crabFeetRight.mesh", CharacterModelPartType.RIGHT_MISC_1, null, Vec3(-6, 1, 1.01)
+        ),
+        Entry(
+            "crabFeetRight.mesh", CharacterModelPartType.RIGHT_MISC_2, null, Vec3(-5, 1, 4.01)
+        )
+    ],
+    [CharacterModelAnimId.NONE, CharacterModelAnimId.CRAB_WALK, CharacterModelAnimId.CRAB_WALK]
+);

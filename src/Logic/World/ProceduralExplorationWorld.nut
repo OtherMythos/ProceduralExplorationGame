@@ -224,7 +224,7 @@
         local altitude = (((voxFloat - mMapData_.seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger() + 1;
         local clampedAltitude = altitude < 0 ? 0 : altitude;
 
-        return clampedAltitude * PROCEDURAL_WORLD_UNIT_MULTIPLIER;
+        return 0.5 + clampedAltitude * PROCEDURAL_WORLD_UNIT_MULTIPLIER;
     }
 
     function createScene(){

@@ -1,0 +1,32 @@
+<AnimationSequence>
+    <data>
+        <targetNode0 type="SceneNode" name="leftLegFirst" />
+        <targetNode1 type="SceneNode" name="leftLegSecond" />
+        <targetNode2 type="SceneNode" name="rightLegFirst" />
+        <targetNode3 type="SceneNode" name="rightLegSecond" />
+    </data>
+    <animations>
+        <CrabWalk repeat="true" end="40">
+            <t type="transform" target="0">
+                <k t="0" rot="0, 0, 0"/>
+                <k t="20" rot="0, 0, -45"/>
+                <k t="40" rot="0, 0, 0"/>
+            </t>
+            <t type="transform" target="1">
+                <k t="0" rot="0, 0, 0"/>
+                <k t="20" rot="0, 0, 20"/>
+                <k t="40" rot="0, 0, 0"/>
+            </t>
+            <t type="transform" target="2">
+                <k t="0" rot="0, 0, 0"/>
+                <k t="20" rot="0, 0, -45"/>
+                <k t="40" rot="0, 0, 0"/>
+            </t>
+            <t type="transform" target="3">
+                <k t="0" rot="0, 0, 0"/>
+                <k t="20" rot="0, 0, 20"/>
+                <k t="40" rot="0, 0, 0"/>
+            </t>
+        </CrabWalk>
+    </animations>
+</AnimationSequence>
