@@ -1,6 +1,7 @@
 //A tool to inspect characters, alter their characteristics, etc.
 
 function start(){
+    parseProjectOgreResources();
 
     local winSize = Vec2(_window.getWidth(), _window.getHeight());
     _gui.setCanvasSize(winSize, winSize);
@@ -34,4 +35,15 @@ function update(){
 
 function end(){
 
+}
+
+function parseProjectOgreResources(){
+    local FILE_PATH = "res://../../OgreResources.cfg";
+    if(_system.exists(FILE_PATH)){
+        _resources.destroyResourceGroup("General");
+        _resources.parseOgreResourcesFile(FILE_PATH);
+        _resources.initialiseAllResourceGroups();
+    }else{
+        throw "Could not find Ogres resources file for the parent project";
+    }
 }
