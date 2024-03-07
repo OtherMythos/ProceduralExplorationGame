@@ -78,6 +78,7 @@ jobs:
       - name: Setup appimage
         run: |
           #cd /tmp
+          chmod -R 777 squashfs-root/usr/bin/build
           wget -O /usr/local/bin/appimagetool https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
           chmod +x /usr/local/bin/appimagetool
           ls
