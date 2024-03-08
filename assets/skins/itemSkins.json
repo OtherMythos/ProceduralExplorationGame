@@ -152,6 +152,14 @@
             {
                 "all" : [32, 144, 16, 16]
             }
+        },
+        "item_boneMace" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [48, 128, 16, 16]
+            }
         }
 
     }

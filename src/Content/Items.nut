@@ -6,6 +6,7 @@ enum ItemId{
     SIMPLE_SWORD,
     SIMPLE_SHIELD,
     SIMPLE_TWO_HANDED_SWORD,
+    BONE_MACE,
 
     BRONZE_SWORD,
     BRONZE_SHIELD,
@@ -140,6 +141,7 @@ enum ItemType{
 ::Items[ItemId.SIMPLE_SWORD] = ItemDef("Simple Sword", "A cheap, weak sword. Relatively blunt for something claiming to be a sword.", "simpleSword.mesh", "item_simpleSword", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SWORD, Vec3(0, 8, 0), Quat(2, Vec3(0, 1, 0)));
 ::Items[ItemId.SIMPLE_SHIELD] = ItemDef("Simple Shield", "An un-interesting shield. Provides minimal protection.", "simpleShield.mesh", "item_simpleShield", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SHIELD, Vec3(-4, 0, 0), Quat(-PI*0.5, Vec3(0, 1, 0)), Vec3(1.4, 1.4, 1.0));
 ::Items[ItemId.SIMPLE_TWO_HANDED_SWORD] = ItemDef("Simple Two Handed sword", "A two handed sword as blunt as it is big.", "simpleTwoHandedSword.mesh", "item_simpleTwoHandedSword", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_TWO_HANDED_SWORD, Vec3(0, 14, 0), Quat(-PI*0.5, Vec3(0, 1, 0)), Vec3(1.4, 1.4, 1.0));
+::Items[ItemId.BONE_MACE] = ItemDef("Bone Mace", "Large clobbering clump of ex-person erecter.", "boneMace.mesh", "item_boneMace", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SWORD, Vec3(0, 8, 0), Quat(1, Vec3(0, 1, 0)));
 
 ::Items[ItemId.BRONZE_SWORD] = ItemDef("Bronze Sword", "A sword made from bronze.", null, null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
 ::Items[ItemId.BRONZE_SHIELD] = ItemDef("Bronze Shield", "A shield made from bronze.", null, null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
@@ -191,6 +193,7 @@ enum ItemType{
                 stat.mRestorativeHealth = 20;
                 return stat;
             }
+            case ItemId.BONE_MACE:
             case ItemId.SIMPLE_SWORD: {
                 stat.mAttack = 5;
                 return stat;

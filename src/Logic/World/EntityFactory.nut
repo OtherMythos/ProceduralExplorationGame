@@ -84,75 +84,6 @@
     }
 
     function constructEnemyBase_(enemyType, pos, explorationScreen){
-        /*
-        local en = _entity.create(SlotPosition());
-        if(!en.valid()) throw "Error creating entity";
-        local zPos = getZForPos(pos);
-        local targetPos = Vec3(pos.x, zPos, pos.z);
-        local entry = ActiveEnemyEntry(mConstructorWorld_, enemyType, targetPos, en);
-
-        local enemyNode = mBaseSceneNode_.createChildSceneNode();
-
-        //TODO in future have entity defs which contain this information.
-        local modelType = CharacterModelType.GOBLIN;
-        if(enemyType == EnemyId.SQUID){
-            modelType = CharacterModelType.SQUID;
-        }
-        local characterModel = mCharacterGenerator_.createCharacterModel(enemyNode, {"type": modelType}, 30, 1 << 4);
-
-        entry.setTargetCollisionWorld(_COLLISION_PLAYER);
-
-        enemyNode.setScale(0.5, 0.5, 0.5);
-        _component.sceneNode.add(en, enemyNode);
-        entry.setModel(characterModel);
-
-        local senderTable = {
-            "func" : "receivePlayerSpotted",
-            "path" : "res://src/Content/Enemies/BasicEnemyScript.nut",
-            "type" : _COLLISION_PLAYER,
-            "event" : _COLLISION_ENTER | _COLLISION_LEAVE | _COLLISION_INSIDE
-        };
-        local shape = _physics.getCubeShape(16, 4, 16);
-        local collisionObject = _physics.collision[TRIGGER].createSender(senderTable, shape, pos);
-        _physics.collision[TRIGGER].addObject(collisionObject);
-
-        senderTable["func"] = "receivePlayerInner";
-        local innerShape = _physics.getCubeShape(3, 3, 3);
-        local innerCollisionObject = _physics.collision[TRIGGER].createSender(senderTable, innerShape, pos);
-        _physics.collision[TRIGGER].addObject(innerCollisionObject);
-
-        //
-            local receiverInfo = {
-                "type" : _COLLISION_ENEMY
-            };
-            local shape = _physics.getSphereShape(2);
-
-            local damageReceiver = _physics.collision[DAMAGE].createReceiver(receiverInfo, shape, pos);
-            _physics.collision[DAMAGE].addObject(damageReceiver);
-        //
-
-        _component.collision.add(en, collisionObject, innerCollisionObject, damageReceiver);
-
-        entry.setPosition(targetPos);
-
-        local totalHealth = 10;
-        _component.user[Component.HEALTH].add(en);
-        _component.user[Component.HEALTH].set(en, 0, totalHealth);
-        _component.user[Component.HEALTH].set(en, 1, totalHealth);
-
-        local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(enemyNode, ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_));
-        _component.user[Component.MISC].add(en);
-        _component.user[Component.MISC].set(en, 0, billboardIdx);
-
-        _component.script.add(en, "res://src/Content/Enemies/BasicEnemyScript.nut");
-
-        local machine = ::BasicEnemyMachine(en);
-        ::w.e.rawset(en.getId(), machine);
-
-        return entry;
-
-        */
-
         local enemyDef = ::Enemies[enemyType];
 
         local manager = mConstructorWorld_.getEntityManager();
@@ -188,17 +119,6 @@
         local totalHealth = 20;
         manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](totalHealth));
 
-        //
-        local spoilsData = [
-            SpoilsEntry(SPOILS_ENTRIES.EXP_ORBS, 4 + _random.randInt(4)),
-            SpoilsEntry(SPOILS_ENTRIES.COINS, _random.randInt(4)),
-            SpoilsEntry(SPOILS_ENTRIES.DROPPED_ITEMS, ::Item(_random.randInt(2) == 0 ? ItemId.SIMPLE_SWORD : ItemId.SIMPLE_SHIELD)),
-        ];
-        //
-
-        local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SPOILS_DATA, spoilsData, null, null);
-        manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
-
         local worldMask = (0x1 << mConstructorWorld_.getWorldId());
         local billboard = ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_, worldMask)
         local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(enemyNode, billboard);
@@ -212,24 +132,39 @@
 
         return entry;
     }
+    //Perform enemy type specific logic.
     function constructEnemy(enemyType, pos, explorationScreen){
         local enemy = constructEnemyBase_(enemyType, pos, explorationScreen);
 
-        if(enemyType == EnemyId.GOBLIN){
-            local equipped = ::Combat.EquippedItems();
-            local targetItem = ::Item(ItemId.SIMPLE_TWO_HANDED_SWORD);
-            equipped.setEquipped(targetItem, EquippedSlotTypes.LEFT_HAND);
-            local combatData = ::Combat.CombatStats(enemyType, 0, equipped);
-            enemy.setCombatData(combatData);
+        local spoilsData = [
+            ::SpoilsEntry(SPOILS_ENTRIES.EXP_ORBS, 4 + _random.randInt(4)),
+            ::SpoilsEntry(SPOILS_ENTRIES.COINS, _random.randInt(4)),
+        ];
 
-            local goblinModel = enemy.getModel();
-            //TODO tie this up a bit better with the rest of the code.
-            goblinModel.equipToNode(targetItem, CharacterModelEquipNodeType.LEFT_HAND);
-            //playerModel.equipToNode(::Item(ItemId.SIMPLE_SHIELD), CharacterModelEquipNodeType.LEFT_HAND);
-            goblinModel.equipToNode(::Item(ItemId.SIMPLE_SWORD), CharacterModelEquipNodeType.LEFT_HAND);
-            //goblinModel.equipToNode(::Item(ItemId.SIMPLE_TWO_HANDED_SWORD), CharacterModelEquipNodeType.LEFT_HAND);
-            if(_random.randInt(2) == 0)goblinModel.equipToNode(::Item(ItemId.SIMPLE_SHIELD), CharacterModelEquipNodeType.RIGHT_HAND);
+        local combatEquipped = null;
+        if(enemyType == EnemyId.GOBLIN){
+            combatEquipped = ::Combat.EquippedItems();
+            local targetItem = ::Item(ItemId.SIMPLE_TWO_HANDED_SWORD);
+            combatEquipped.setEquipped(targetItem, EquippedSlotTypes.LEFT_HAND);
+            if(_random.randInt(2) == 0) combatEquipped.setEquipped(::Item(ItemId.SIMPLE_SHIELD), EquippedSlotTypes.RIGHT_HAND);
+
+            if(_random.randInt(2) == 0) spoilsData.append(::SpoilsEntry(SPOILS_ENTRIES.DROPPED_ITEMS, ::Item(ItemId.SIMPLE_SWORD)));
         }
+        else if(enemyType == EnemyId.SKELETON){
+            combatEquipped = ::Combat.EquippedItems();
+            combatEquipped.setEquipped(::Item(ItemId.BONE_MACE), EquippedSlotTypes.LEFT_HAND);
+
+            if(_random.randInt(2) == 0) spoilsData.append(::SpoilsEntry(SPOILS_ENTRIES.DROPPED_ITEMS, ::Item(ItemId.BONE_MACE)));
+        }
+
+        if(combatEquipped != null){
+            local combatData = ::Combat.CombatStats(enemyType, 0, combatEquipped);
+            enemy.setCombatData(combatData);
+            enemy.getModel().equipDataToCharacterModel(combatEquipped);
+        }
+
+        local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SPOILS_DATA, spoilsData, null, null);
+        mConstructorWorld_.getEntityManager().assignComponent(enemy.getEntity(), EntityComponents.SPOILS, spoilsComponent);
 
         return enemy;
     }
