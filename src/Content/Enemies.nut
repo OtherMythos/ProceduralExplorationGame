@@ -19,23 +19,26 @@ enum EnemyTraversableTerrain{
 
 local EnemyDef = class{
     mName = null;
+    mCharacterModelType = null;
     mTraversableTerrain = EnemyTraversableTerrain.ALL;
     mAllowSwimState = true;
-    constructor(name, traversableTerrain=EnemyTraversableTerrain.ALL, allowSwimState=true){
+    constructor(name, characterModelType, traversableTerrain=EnemyTraversableTerrain.ALL, allowSwimState=true){
         mName = name;
+        mCharacterModelType = characterModelType;
         mTraversableTerrain = traversableTerrain;
         mAllowSwimState = allowSwimState;
     }
     function getName() { return mName; }
+    function getModelType() { return mCharacterModelType; }
     function getTraversableTerrain() { return mTraversableTerrain; }
     function getAllowSwimState() { return mAllowSwimState; }
 };
 
 ::Enemies <- array(EnemyId.MAX, null);
 
-::Enemies[EnemyId.NONE] = EnemyDef("None");
+::Enemies[EnemyId.NONE] = EnemyDef("None", null);
 
-::Enemies[EnemyId.GOBLIN] = EnemyDef("Goblin");
-::Enemies[EnemyId.SQUID] = EnemyDef("Squid", EnemyTraversableTerrain.WATER, false);
-::Enemies[EnemyId.CRAB] = EnemyDef("Crab");
-::Enemies[EnemyId.SKELETON] = EnemyDef("Skeleton");
+::Enemies[EnemyId.GOBLIN] = EnemyDef("Goblin", CharacterModelType.GOBLIN);
+::Enemies[EnemyId.SQUID] = EnemyDef("Squid", CharacterModelType.SQUID, EnemyTraversableTerrain.WATER, false);
+::Enemies[EnemyId.CRAB] = EnemyDef("Crab", CharacterModelType.CRAB);
+::Enemies[EnemyId.SKELETON] = EnemyDef("Skeleton", CharacterModelType.SKELETON, EnemyTraversableTerrain.LAND, false);

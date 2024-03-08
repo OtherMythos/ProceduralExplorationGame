@@ -153,6 +153,8 @@
 
         */
 
+        local enemyDef = ::Enemies[enemyType];
+
         local manager = mConstructorWorld_.getEntityManager();
         local zPos = getZForPos(pos);
         local targetPos = Vec3(pos.x, zPos, pos.z);
@@ -161,17 +163,7 @@
 
         local enemyNode = mBaseSceneNode_.createChildSceneNode();
 
-        //TODO in future have entity defs which contain this information.
-        local modelType = CharacterModelType.GOBLIN;
-        if(enemyType == EnemyId.SQUID){
-            modelType = CharacterModelType.SQUID;
-        }
-        else if(enemyType == EnemyId.CRAB){
-            modelType = CharacterModelType.CRAB;
-        }
-        else if(enemyType == EnemyId.SKELETON){
-            modelType = CharacterModelType.SKELETON;
-        }
+        local modelType = enemyDef.getModelType();
         local characterModel = mCharacterGenerator_.createCharacterModel(enemyNode, {"type": modelType}, 30, 1 << 4);
 
         entry.setTargetCollisionWorld(_COLLISION_PLAYER);
