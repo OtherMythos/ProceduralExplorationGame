@@ -130,3 +130,32 @@ local ModelType = class{
     ],
     [CharacterModelAnimId.NONE, CharacterModelAnimId.CRAB_WALK, CharacterModelAnimId.CRAB_WALK]
 );
+::ModelTypes[CharacterModelType.SKELETON] = ModelType("build/assets/characterAnimations/baseAnimation.xml",
+    [
+        Entry(
+            "skeletonHead.mesh", CharacterModelPartType.HEAD, null, Vec3(0, 10, 0), Vec3(1, 1, 1)
+        ),
+        Entry(
+            "skeletonBody.mesh", CharacterModelPartType.BODY, null, Vec3(0, 3, 0), Vec3(0.9, 1, 0.9)
+        ),
+
+        Entry(
+            "skeletonArm.mesh", CharacterModelPartType.LEFT_HAND,
+            [Entry(null, CharacterModelPartType.NONE, null, null, Vec3(0.8, 0.8, 0.8), CharacterModelEquipNodeType.LEFT_HAND)]
+            , Vec3(-8, 8, 0), Vec3(0.8, 0.8, 0.8)
+        ),
+        Entry(
+            "skeletonArm.mesh", CharacterModelPartType.RIGHT_HAND,
+            [Entry(null, CharacterModelPartType.NONE, null, null, Vec3(0.8, 0.8, 0.8), CharacterModelEquipNodeType.RIGHT_HAND)]
+            , Vec3(8, 8, 0), Vec3(0.8, 0.8, 0.8)
+        ),
+
+        Entry(
+            "skeletonFoot.mesh", CharacterModelPartType.LEFT_FOOT, null, Vec3(-1, 2, 0), Vec3(1, 1, 1)
+        ),
+        Entry(
+            "skeletonFoot.mesh", CharacterModelPartType.RIGHT_FOOT, null, Vec3(4.5, 2, 0), Vec3(1, 1, 1)
+        )
+    ],
+    [CharacterModelAnimId.BASE_ARMS_WALK, CharacterModelAnimId.BASE_LEGS_WALK, CharacterModelAnimId.BASE_ARMS_SWIM]
+);

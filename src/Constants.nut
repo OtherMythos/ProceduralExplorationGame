@@ -225,6 +225,7 @@ enum CharacterModelType{
     GOBLIN,
     SQUID,
     CRAB,
+    SKELETON,
 
     MAX
 };
@@ -235,6 +236,7 @@ enum CharacterModelType{
         case CharacterModelType.GOBLIN: return "Goblin";
         case CharacterModelType.SQUID: return "Squid";
         case CharacterModelType.CRAB: return "Crab";
+        case CharacterModelType.SKELETON: return "Skeleton";
         default:{
             assert(false);
         }

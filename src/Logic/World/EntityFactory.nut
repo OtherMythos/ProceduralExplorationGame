@@ -169,6 +169,9 @@
         else if(enemyType == EnemyId.CRAB){
             modelType = CharacterModelType.CRAB;
         }
+        else if(enemyType == EnemyId.SKELETON){
+            modelType = CharacterModelType.SKELETON;
+        }
         local characterModel = mCharacterGenerator_.createCharacterModel(enemyNode, {"type": modelType}, 30, 1 << 4);
 
         entry.setTargetCollisionWorld(_COLLISION_PLAYER);

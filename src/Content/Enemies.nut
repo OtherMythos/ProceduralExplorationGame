@@ -4,6 +4,7 @@ enum EnemyId{
     GOBLIN,
     SQUID,
     CRAB,
+    SKELETON,
 
     MAX
 };
@@ -37,3 +38,4 @@ local EnemyDef = class{
 ::Enemies[EnemyId.GOBLIN] = EnemyDef("Goblin");
 ::Enemies[EnemyId.SQUID] = EnemyDef("Squid", EnemyTraversableTerrain.WATER, false);
 ::Enemies[EnemyId.CRAB] = EnemyDef("Crab");
+::Enemies[EnemyId.SKELETON] = EnemyDef("Skeleton");
