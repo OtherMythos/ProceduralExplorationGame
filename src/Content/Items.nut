@@ -8,35 +8,6 @@ enum ItemId{
     SIMPLE_TWO_HANDED_SWORD,
     BONE_MACE,
 
-    BRONZE_SWORD,
-    BRONZE_SHIELD,
-    BRONZE_LEGGINGS,
-    BRONZE_CHESTPLATE,
-    BRONZE_HELMET,
-    BRONZE_BOOTS,
-    BRONZE_BATTLEAXE,
-    BRONZE_DAGGER,
-
-    IRON_SWORD,
-    IRON_SHIELD,
-    IRON_LEGGINGS,
-    IRON_CHESTPLATE,
-    IRON_HELMET,
-    IRON_BOOTS,
-    IRON_BATTLEAXE,
-    IRON_DAGGER,
-
-    STEEL_SWORD,
-    STEEL_SHIELD,
-    STEEL_LEGGINGS,
-    STEEL_CHESTPLATE,
-    STEEL_HELMET,
-    STEEL_BOOTS,
-    STEEL_BATTLEAXE,
-    STEEL_DAGGER,
-
-    LARGE_BAG_OF_COINS,
-
     MAX,
 };
 
@@ -142,35 +113,6 @@ enum ItemType{
 ::Items[ItemId.SIMPLE_SHIELD] = ItemDef("Simple Shield", "An un-interesting shield. Provides minimal protection.", "simpleShield.mesh", "item_simpleShield", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SHIELD, Vec3(-4, 0, 0), Quat(-PI*0.5, Vec3(0, 1, 0)), Vec3(1.4, 1.4, 1.0));
 ::Items[ItemId.SIMPLE_TWO_HANDED_SWORD] = ItemDef("Simple Two Handed sword", "A two handed sword as blunt as it is big.", "simpleTwoHandedSword.mesh", "item_simpleTwoHandedSword", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_TWO_HANDED_SWORD, Vec3(0, 14, 0), Quat(-PI*0.5, Vec3(0, 1, 0)), Vec3(1.4, 1.4, 1.0));
 ::Items[ItemId.BONE_MACE] = ItemDef("Bone Mace", "Large clobbering clump of ex-person erecter.", "boneMace.mesh", "item_boneMace", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SWORD, Vec3(0, 8, 0), Quat(1, Vec3(0, 1, 0)));
-
-::Items[ItemId.BRONZE_SWORD] = ItemDef("Bronze Sword", "A sword made from bronze.", null, null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
-::Items[ItemId.BRONZE_SHIELD] = ItemDef("Bronze Shield", "A shield made from bronze.", null, null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
-::Items[ItemId.BRONZE_LEGGINGS] = ItemDef("Bronze Leggings", "A set of leegings made from bronze.", null, null, ItemType.EQUIPPABLE, 15, EquippableId.NONE);
-::Items[ItemId.BRONZE_CHESTPLATE] = ItemDef("Bronze Chestplate", "A chestplate made from bronze.", null, null, ItemType.EQUIPPABLE, 15, EquippableId.NONE);
-::Items[ItemId.BRONZE_HELMET] = ItemDef("Bronze Helmet", "A helmet made from bronze.", null, null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
-::Items[ItemId.BRONZE_BOOTS] = ItemDef("Bronze Boots", "A pair of boots made from bronze.", null, null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
-::Items[ItemId.BRONZE_BATTLEAXE] = ItemDef("Bronze Battleaxe", "A battleaxe made from bronze.", null, null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
-::Items[ItemId.BRONZE_DAGGER] = ItemDef("Bronze Dagger", "A dagger made from bronze.", null, null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
-
-::Items[ItemId.IRON_SWORD] = ItemDef("Iron Sword", "A sword made from iron.", null, null, ItemType.EQUIPPABLE, 20, EquippableId.NONE);
-::Items[ItemId.IRON_SHIELD] = ItemDef("Iron Shield", "A shield made from iron.", null, null, ItemType.EQUIPPABLE, 20, EquippableId.NONE);
-::Items[ItemId.IRON_LEGGINGS] = ItemDef("Iron Leggings", "A set of leegings made from iron.", null, null, ItemType.EQUIPPABLE, 25, EquippableId.NONE);
-::Items[ItemId.IRON_CHESTPLATE] = ItemDef("Iron Chestplate", "A chestplate made from iron.", null, null, ItemType.EQUIPPABLE, 25, EquippableId.NONE);
-::Items[ItemId.IRON_HELMET] = ItemDef("Iron Helmet", "A helmet made from iron.", null, null, ItemType.EQUIPPABLE, 20, EquippableId.NONE);
-::Items[ItemId.IRON_BOOTS] = ItemDef("Iron Boots", "A pair of boots made from iron.", null, null, ItemType.EQUIPPABLE, 20, EquippableId.NONE);
-::Items[ItemId.IRON_BATTLEAXE] = ItemDef("Iron Battleaxe", "A battleaxe made from iron.", null, null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
-::Items[ItemId.IRON_DAGGER] = ItemDef("Iron Dagger", "A dagger made from iron.", null, null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
-
-::Items[ItemId.STEEL_SWORD] = ItemDef("Steel Sword", "A sword made from steel.", null, null, ItemType.EQUIPPABLE, 30, EquippableId.NONE);
-::Items[ItemId.STEEL_SHIELD] = ItemDef("Steel Shield", "A shield made from steel.", null, null, ItemType.EQUIPPABLE, 30, EquippableId.NONE);
-::Items[ItemId.STEEL_LEGGINGS] = ItemDef("Steel Leggings", "A set of leegings made from steel.", null, null, ItemType.EQUIPPABLE, 35, EquippableId.NONE);
-::Items[ItemId.STEEL_CHESTPLATE] = ItemDef("Steel Chestplate", "A chestplate made from steel.", null, null, ItemType.EQUIPPABLE, 35, EquippableId.NONE);
-::Items[ItemId.STEEL_HELMET] = ItemDef("Steel Helmet", "A helmet made from steel.", null, null, ItemType.EQUIPPABLE, 30, EquippableId.NONE);
-::Items[ItemId.STEEL_BOOTS] = ItemDef("Steel Boots", "A pair of boots made from steel.", null, null, ItemType.EQUIPPABLE, 30, EquippableId.NONE);
-::Items[ItemId.STEEL_BATTLEAXE] = ItemDef("Steel Battleaxe", "A battleaxe made from steel.", null, null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
-::Items[ItemId.STEEL_DAGGER] = ItemDef("Steel Dagger", "A dagger made from steel.", null, null, ItemType.EQUIPPABLE, 10, EquippableId.NONE);
-
-::Items[ItemId.LARGE_BAG_OF_COINS] = ItemDef("Large bag of coins", "A hefty bag of coins", "coinBag.mesh", null, ItemType.MONEY, 20, EquippableId.NONE);
 //-------------------------------
 
 ::ItemHelper <- {
@@ -204,57 +146,6 @@ enum ItemType{
             }
             case ItemId.SIMPLE_SHIELD: {
                 stat.mDefense = 5;
-                return stat;
-            }
-
-            case ItemId.BRONZE_SWORD:
-            case ItemId.BRONZE_DAGGER:
-            case ItemId.BRONZE_BATTLEAXE:
-            {
-                stat.mAttack = 10;
-                return stat;
-            }
-            case ItemId.BRONZE_SHIELD:
-            case ItemId.BRONZE_LEGGINGS:
-            case ItemId.BRONZE_CHESTPLATE:
-            case ItemId.BRONZE_HELMET:
-            case ItemId.BRONZE_BOOTS:
-            {
-                stat.mDefense = 10;
-                return stat;
-            }
-
-            case ItemId.IRON_SWORD:
-            case ItemId.IRON_DAGGER:
-            case ItemId.IRON_BATTLEAXE:
-            {
-                stat.mAttack = 20;
-                return stat;
-            }
-            case ItemId.IRON_SHIELD:
-            case ItemId.IRON_LEGGINGS:
-            case ItemId.IRON_CHESTPLATE:
-            case ItemId.IRON_HELMET:
-            case ItemId.IRON_BOOTS:
-            {
-                stat.mDefense = 20;
-                return stat;
-            }
-
-            case ItemId.STEEL_SWORD:
-            case ItemId.STEEL_DAGGER:
-            case ItemId.STEEL_BATTLEAXE:
-            {
-                stat.mAttack = 30;
-                return stat;
-            }
-            case ItemId.STEEL_SHIELD:
-            case ItemId.STEEL_LEGGINGS:
-            case ItemId.STEEL_CHESTPLATE:
-            case ItemId.STEEL_HELMET:
-            case ItemId.STEEL_BOOTS:
-            {
-                stat.mDefense = 30;
                 return stat;
             }
             default:
