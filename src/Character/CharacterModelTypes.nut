@@ -159,3 +159,32 @@ local ModelType = class{
     ],
     [CharacterModelAnimId.BASE_ARMS_WALK, CharacterModelAnimId.BASE_LEGS_WALK, CharacterModelAnimId.BASE_ARMS_SWIM]
 );
+::ModelTypes[CharacterModelType.FOREST_GUARDIAN] = ModelType("build/assets/characterAnimations/forestGuardianAnimation.xml",
+    [
+        Entry(
+            "forestGuardianHead.mesh", CharacterModelPartType.HEAD, null, Vec3(0, 19, 1), Vec3(1, 1, 1)
+        ),
+        Entry(
+            "forestGuardianBody.mesh", CharacterModelPartType.BODY, null, Vec3(0, 6, 0)
+        ),
+
+        Entry(
+            "forestGuardianArm.mesh", CharacterModelPartType.LEFT_HAND,
+            [Entry(null, CharacterModelPartType.NONE, null, null, Vec3(0.8, 0.8, 0.8), CharacterModelEquipNodeType.LEFT_HAND)]
+            , Vec3(-14, 17, 0), Vec3(0.8, 0.8, 0.8)
+        ),
+        Entry(
+            "forestGuardianArm.mesh", CharacterModelPartType.RIGHT_HAND,
+            [Entry(null, CharacterModelPartType.NONE, null, null, Vec3(0.8, 0.8, 0.8), CharacterModelEquipNodeType.RIGHT_HAND)]
+            , Vec3(14, 17, 0), Vec3(0.8, 0.8, 0.8)
+        ),
+
+        Entry(
+            "forestGuardianFoot.mesh", CharacterModelPartType.LEFT_FOOT, null, Vec3(-1, 2, 0), Vec3(1, 1, 1)
+        ),
+        Entry(
+            "forestGuardianFoot.mesh", CharacterModelPartType.RIGHT_FOOT, null, Vec3(4.5, 2, 0), Vec3(1, 1, 1)
+        )
+    ],
+    [CharacterModelAnimId.FOREST_GUARDIAN_ARMS_WALK, CharacterModelAnimId.FOREST_GUARDIAN_WALK, CharacterModelAnimId.BASE_ARMS_SWIM]
+);

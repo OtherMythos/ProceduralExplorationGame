@@ -226,6 +226,7 @@ enum CharacterModelType{
     SQUID,
     CRAB,
     SKELETON,
+    FOREST_GUARDIAN,
 
     MAX
 };
@@ -237,6 +238,7 @@ enum CharacterModelType{
         case CharacterModelType.SQUID: return "Squid";
         case CharacterModelType.CRAB: return "Crab";
         case CharacterModelType.SKELETON: return "Skeleton";
+        case CharacterModelType.FOREST_GUARDIAN: return "Forest Guardian";
         default:{
             assert(false);
         }
@@ -285,6 +287,8 @@ enum CharacterModelAnimId{
 
     SQUID_WALK,
     CRAB_WALK,
+    FOREST_GUARDIAN_WALK,
+    FOREST_GUARDIAN_ARMS_WALK,
 
     MAX
 };

@@ -18,3 +18,5 @@
 
 ::CharacterModelAnims[CharacterModelAnimId.SQUID_WALK] = ::CharacterModelAnimDef("SquidWalk", [CharacterModelPartType.LEFT_HAND, CharacterModelPartType.RIGHT_HAND, CharacterModelPartType.BODY]);
 ::CharacterModelAnims[CharacterModelAnimId.CRAB_WALK] = ::CharacterModelAnimDef("CrabWalk", [CharacterModelPartType.LEFT_MISC_1, CharacterModelPartType.LEFT_MISC_2, CharacterModelPartType.RIGHT_MISC_1, CharacterModelPartType.RIGHT_MISC_2]);
+::CharacterModelAnims[CharacterModelAnimId.FOREST_GUARDIAN_WALK] = ::CharacterModelAnimDef("ForestGuardianFeetWalk", [CharacterModelPartType.LEFT_FOOT, CharacterModelPartType.RIGHT_FOOT]);
+::CharacterModelAnims[CharacterModelAnimId.FOREST_GUARDIAN_ARMS_WALK] = ::CharacterModelAnimDef("ForestGuardianUpperWalk", [CharacterModelPartType.LEFT_HAND, CharacterModelPartType.RIGHT_HAND]);

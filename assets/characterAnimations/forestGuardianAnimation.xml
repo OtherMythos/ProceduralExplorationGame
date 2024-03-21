@@ -1,0 +1,32 @@
+<AnimationSequence>
+    <data>
+        <targetNode0 type="SceneNode" name="first" />
+        <targetNode1 type="SceneNode" name="second" />
+    </data>
+    <animations>
+        <ForestGuardianFeetWalk repeat="true" end="60">
+            <t type="transform" target="0">
+                <k t="0" position="-3.500000, 8.219453, 10.645091" quat="0.877850, -0.478936, 0.000000, 0.000000"/>
+                <k t="30" position="-3.500000, 4.487136, -9.998386" quat="0.868606, 0.495504, 0.000000, 0.000000"/>
+                <k t="60" position="-3.500000, 8.219453, 10.645091" quat="0.877850, -0.478936, 0.000000, 0.000000"/>
+            </t>
+            <t type="transform" target="1">
+                <k t="0" position="6.500000, 8.487136, -10.998386" quat="0.868606, 0.495504, 0.000000, 0.000000"/>
+                <k t="30" position="6.500000, 4.219453, 9.645091" quat="0.877850, -0.478936, 0.000000, 0.000000"/>
+                <k t="60" position="6.500000, 8.487136, -10.998386" quat="0.868606, 0.495504, 0.000000, 0.000000"/>
+            </t>
+        </ForestGuardianFeetWalk>
+        <ForestGuardianUpperWalk repeat="true" end="60">
+            <t type="transform" target="0">
+                <k t="0" position="-14.0, 16.0, -10.998386" quat="0.868606, 0.495504, 0.000000, 0.000000"/>
+                <k t="30" position="-14.0, 16.0, 8.645091" quat="0.877850, -0.478936, 0.000000, 0.000000"/>
+                <k t="60" position="-14.0, 16.0, -10.998386" quat="0.868606, 0.495504, 0.000000, 0.000000"/>
+            </t>
+            <t type="transform" target="1">
+                <k t="0" position="14.0, 16.0, 10.645091" quat="0.877850, -0.478936, 0.000000, 0.000000"/>
+                <k t="30" position="14.0, 16.0, -8.998386" quat="0.868606, 0.495504, 0.000000, 0.000000"/>
+                <k t="60" position="14.0, 16.0, 10.645091" quat="0.877850, -0.478936, 0.000000, 0.000000"/>
+            </t>
+        </ForestGuardianUpperWalk>
+    </animations>
+</AnimationSequence>
