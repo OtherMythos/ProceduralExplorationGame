@@ -3,7 +3,7 @@
     destroyed = false;
     constructor(parent){
         mBaseLabel_ = "Money";
-        mCurrentAnim_ = ::Base.mInventory.getMoney();
+        mCurrentAnim_ = ::Base.mPlayerStats.mInventory_.getMoney();
         setup(parent);
 
         _event.subscribe(Event.MONEY_ADDED, receiveMoneyAnimFinished, this);

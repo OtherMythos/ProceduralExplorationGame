@@ -1,7 +1,6 @@
 ::Base <- {
     mExplorationLogic = null
 
-    mInventory = null
     mPlayerStats = null
     mDialogManager = null
     mInputManager = null
@@ -55,7 +54,7 @@
     function getScreenDataForForcedScreen(screenId){
         local data = null;
         if(screenId == Screen.INVENTORY_SCREEN){
-            data = {"inventory": mInventory, "equipStats": ::Base.mPlayerStats}
+            data = {"stats": mPlayerStats}
         }
         else if(screenId == Screen.EXPLORATION_SCREEN){
             data = {"logic": mExplorationLogic}
@@ -114,7 +113,6 @@
         mDialogManager = DialogManager();
 
         _doFile("res://src/System/Inventory.nut");
-        mInventory = ::Inventory();
 
         _doFile("res://src/System/PlayerStats.nut");
         mPlayerStats = ::PlayerStats();

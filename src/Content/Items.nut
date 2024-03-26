@@ -38,6 +38,7 @@ enum ItemType{
     function getData() { return mData_; }
     function isNone() { return mItemId_ == ItemId.NONE; }
     function getDef(){ return mItem_; }
+    function getId(){ return mItem_.getId(); }
     function getType(){ return mItem_.getType(); }
     function getName(){ return mItem_.getName(); }
     function getMesh(){ return mItem_.getMesh(); }
@@ -56,6 +57,7 @@ enum ItemType{
     }
 }
 ::ItemDef <- class{
+    mId = null;
     mName = null;
     mDesc = null;
     mMesh = null;
@@ -90,6 +92,7 @@ enum ItemType{
         return ::wrapToString(::ItemDef, "ItemDef", mName);
     }
 
+    function getId(){ return mId; }
     function getType(){ return mType; }
     function getName(){ return mName; }
     function getDescription(){ return mDesc; }
@@ -114,6 +117,12 @@ enum ItemType{
 ::Items[ItemId.SIMPLE_TWO_HANDED_SWORD] = ItemDef("Simple Two Handed sword", "A two handed sword as blunt as it is big.", "simpleTwoHandedSword.mesh", "item_simpleTwoHandedSword", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_TWO_HANDED_SWORD, Vec3(0, 14, 0), Quat(-PI*0.5, Vec3(0, 1, 0)), Vec3(1.4, 1.4, 1.0));
 ::Items[ItemId.BONE_MACE] = ItemDef("Bone Mace", "Large clobbering clump of ex-person erecter.", "boneMace.mesh", "item_boneMace", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SWORD, Vec3(0, 8, 0), Quat(1, Vec3(0, 1, 0)));
 //-------------------------------
+
+function setupItemIds_(){
+    foreach(c,i in ::Items){
+        i.mId = c;
+    }
+}
 
 ::ItemHelper <- {
     coloursForStats = []
@@ -170,7 +179,7 @@ enum ItemType{
         }
         else if(itemType == ItemType.MONEY){
             local data = item.getData();
-            ::Base.mInventory.addMoney(data.money);
+            ::Base.mPlayerStats.mInventory_.addMoney(data.money);
         }else{
             assert(false);
         }
@@ -273,3 +282,5 @@ enum ItemType{
 ItemHelper.registerColourForStat(ColourValue(1, 0, 0, 1));
 ItemHelper.registerColourForStat(ColourValue(0, 1, 0, 1));
 ItemHelper.registerColourForStat(ColourValue(0, 0, 1, 1));
+
+setupItemIds_();

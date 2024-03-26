@@ -5,18 +5,25 @@
     mInventorySize_ = 35;
 
     constructor(){
-        mInventoryItems_ = array(mInventorySize_, null);
+        local items = array(mInventorySize_, null);
 
-        mInventoryItems_[0] = ::Item(ItemId.HEALTH_POTION);
-        mInventoryItems_[1] = ::Item(ItemId.LARGE_HEALTH_POTION);
+        items[0] = ::Item(ItemId.HEALTH_POTION);
+        items[1] = ::Item(ItemId.LARGE_HEALTH_POTION);
         for(local i = 0; i < 20; i++){
-            mInventoryItems_[i] = ::Item(i %2 == 0 ? ItemId.LARGE_HEALTH_POTION : ItemId.HEALTH_POTION);
+            items[i] = ::Item(i %2 == 0 ? ItemId.LARGE_HEALTH_POTION : ItemId.HEALTH_POTION);
         }
-        mInventoryItems_[0] = ::Item(ItemId.SIMPLE_SWORD);
-        mInventoryItems_[10] = ::Item(ItemId.SIMPLE_SWORD);
-        mInventoryItems_[11] = ::Item(ItemId.SIMPLE_SHIELD);
-        mInventoryItems_[12] = ::Item(ItemId.SIMPLE_SHIELD);
-        mInventoryItems_[13] = ::Item(ItemId.SIMPLE_TWO_HANDED_SWORD);
+        items[0] = ::Item(ItemId.SIMPLE_SWORD);
+        items[10] = ::Item(ItemId.SIMPLE_SWORD);
+        items[11] = ::Item(ItemId.SIMPLE_SHIELD);
+        items[12] = ::Item(ItemId.SIMPLE_SHIELD);
+        items[13] = ::Item(ItemId.SIMPLE_TWO_HANDED_SWORD);
+
+        rawSetItems(items);
+    }
+
+    //Set the initial items, not transmitting events upon change.
+    function rawSetItems(items){
+        mInventoryItems_ = items;
     }
 
     /**

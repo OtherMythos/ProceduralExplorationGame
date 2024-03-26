@@ -1,6 +1,7 @@
 ::PlayerStats <- class{
 
     mCurrentData_ = null;
+    mInventory_ = null;
 
     mPlacesVisited_ = null;
     mLeanPlacesVisited_ = null;
@@ -13,6 +14,7 @@
 
         mPlacesVisited_ = array(PlaceId.MAX, false);
         mLeanPlacesVisited_ = [];
+        mInventory_ = ::Inventory();
 
         mPlayerCombatStats = ::Combat.CombatStats(EnemyId.NONE, 100);
 
@@ -31,9 +33,23 @@
 
     function setSaveData(data){
         mCurrentData_ = data;
+        local inventoryData = data.inventory.apply(function(itemVal){
+            return itemVal == null ? null : ::Item(itemVal)
+        });
+        mInventory_.rawSetItems(inventoryData);
     }
     function getSaveData(){
+        //Sync up the inventory items to the data.
+        assert(mInventory_.mInventoryItems_.len() == mCurrentData_.inventory.len());
+        foreach(c,i in mInventory_.mInventoryItems_){
+            if(i == null) continue;
+            mCurrentData_.inventory[c] = i.getId();
+        }
         return mCurrentData_;
+    }
+
+    function addToInventory(item){
+        mInventory_.addToInventory(item);
     }
 
     function alterPlayerHealth(amount){

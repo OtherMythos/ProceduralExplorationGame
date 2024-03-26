@@ -3,6 +3,9 @@
     function hashVersion(max, min, patch){
         return ((max << 20) | (min << 10) | patch);
     }
+    function versionToString(max, min, patch){
+        return format("%i.%i.%i", max, min, patch);
+    }
 
     function readVersionMax(hash){
         return (hash >> 20) & 0x3FF;
@@ -55,14 +58,18 @@
 
         assert(parserChain.len() > 0);
 
-        local parser = parserChain[0]();
-        printf("Reading meta file at path '%s'", metaFilePath);
+        //Obtain the first suitable parser in the chain (the parser which can parse based on the version number)
+        local parser = parserChain[0];
+        printf("Reading meta file at path '%s' using parser '%s'", metaFilePath, parser.tostring());
         local data = parser.readMetaFile(metaFilePath);
 
         if(parserChain.len() > 1){
+            local prevParser = parser;
             for(local i = 0; i < parserChain.len()-1; i++){
-                local parser = parserChain[i+1]();
-                data = parser.updateData(data);
+                local upParser = parserChain[i+1];
+                printf("Updating meta file data from '%s' to '%s'", prevParser.tostring(), upParser.tostring());
+                data = upParser.updateData(data);
+                prevParser = upParser;
             }
         }
 
@@ -146,7 +153,7 @@
     }
 
     function getMostRecentParser(){
-        return mParsers_[mParsers_.len()-1]();
+        return mParsers_[mParsers_.len()-1];
     }
 
     function produceSave(){
@@ -191,6 +198,21 @@
         return valid;
     }
 
+    #Static
+    function getPreviousParserForObject(max, min, patch){
+        local hash = ::SaveHelpers.hashVersion(max, min, patch);
+        return getPreviousParserForObjectHash(hash);
+    }
+
+    #Static
+    function getPreviousParserForObjectHash(hash){
+        //Find where the current parser is in the list and work backwards
+        local minIdx = findMinimumParser_(hash, mParsers_);
+        if(minIdx == 0) return mParsers_[0];
+        if(minIdx < 0) return null;
+        return mParsers_[minIdx - 1];
+    }
+
     function getParserObject(max, min, patch){
         local hash = ::SaveHelpers.hashVersion(max, min, patch);
         if(!mParserLookups_.rawin(hash)) return null;
@@ -200,7 +222,7 @@
 
     function registerParser(max, min, patch, parser){
         local idx = mParsers_.len();
-        mParsers_.append(parser);
+        mParsers_.append(parser());
         mParserLookups_.rawset(::SaveHelpers.hashVersion(max, min, patch), idx);
     }
 
@@ -215,3 +237,4 @@ function registerSaveParser(max, min, patch){
 }
 
 registerSaveParser(0, 1, 0);
+registerSaveParser(0, 3, 0);

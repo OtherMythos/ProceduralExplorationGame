@@ -279,3 +279,14 @@
         _test.assertTrue(parser.performSchemaCheck(test));
     }
 }
+
+::test_getPreviousParserForObject <- function(){
+    local saveManager = ::SaveManager();
+    saveManager.mParsers_ = genTestParsers();
+
+    _test.assertEqual(saveManager.getPreviousParserForObject(1, 0, 0).getVersionString(), ::SaveHelpers.versionToString(0, 3, 2));
+    _test.assertEqual(saveManager.getPreviousParserForObject(0, 3, 2).getVersionString(), ::SaveHelpers.versionToString(0, 3, 1));
+    _test.assertEqual(saveManager.getPreviousParserForObject(2, 0, 0).getVersionString(), ::SaveHelpers.versionToString(1, 6, 0));
+    _test.assertEqual(saveManager.getPreviousParserForObject(1, 3, 2).getVersionString(), ::SaveHelpers.versionToString(1, 3, 1));
+
+}

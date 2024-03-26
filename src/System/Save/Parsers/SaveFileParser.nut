@@ -9,6 +9,14 @@
         mVersion_ = ::SaveHelpers.hashVersion(max, min, patch);
     }
 
+    function getVersionString(){
+        local max = ::SaveHelpers.readVersionMax(mVersion_);
+        local min = ::SaveHelpers.readVersionMin(mVersion_);
+        local patch = ::SaveHelpers.readVersionPatch(mVersion_);
+
+        return ::SaveHelpers.versionToString(max, min, patch);
+    }
+
     /**
      * Read a file from the disk, returning the parsed data as a table
      * @param path
@@ -24,6 +32,9 @@
 
         local result = performSchemaCheck(json);
         if(!result) throw "Failed schema check";
+
+        result = performDataCheck(json);
+        if(!result) throw "Failed data check";
 
         return json;
     }
@@ -81,5 +92,34 @@
         return mDefaultData_;
     }
 
+    function getPreviousParser(){
+        return ::SaveManager.getPreviousParserForObjectHash(mVersion_);
+    }
+
+    function getJSONSchema(){
+        return mJSONSchema_;
+    }
+    function getDefaultData(){
+        return mDefaultData_;
+    }
+
+    function validatePlayerName(text){
+        local value = strip(text);
+        value = split(value, "\n", true);
+        if(value.len() != 1) return null;
+        value = value[0];
+        local regex = regexp("^\\w*$");
+        if(!regex.match(value)) return null;
+        return value;
+    }
+
+    function _tostring(){
+        return ::wrapToString(this, "SaveFileParser", getVersionString());
+    }
+
+    //Perform any checks and logic on the input data.
+    function performDataCheck(json){
+        return true;
+    }
 
 };

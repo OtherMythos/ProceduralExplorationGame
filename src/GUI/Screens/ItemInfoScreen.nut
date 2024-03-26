@@ -101,13 +101,13 @@
             buttonOptions = ["Keep", "Scrap"];
             buttonFunctions = [
                 function(widget, action){
-                    ::Base.mInventory.addToInventory(mItem_);
+                    ::Base.mPlayerStats.addToInventory(mItem_);
                     //TODO would be nice to do these with events.
                     if(mItemSlotIdx_ >= 0) ::Base.mExplorationLogic.removeFoundItem(mItemSlotIdx_);
                     closeScreen();
                 },
                 function(widget, action){
-                    ::Base.mInventory.addMoney(mItem_.getScrapVal());
+                    ::Base.mPlayerStats.mInventory_.addMoney(mItem_.getScrapVal());
                     if(mItemSlotIdx_ >= 0) ::Base.mExplorationLogic.removeFoundItem(mItemSlotIdx_);
                     closeScreen();
                 }
@@ -130,7 +130,7 @@
             buttonOptions = ["Use"];
             buttonFunctions = [
                 function(widget, action){
-                    ::Base.mInventory.removeFromInventory(mItemSlotIdx_, mItem_);
+                    ::Base.mPlayerStats.mInventory_.removeFromInventory(mItemSlotIdx_, mItem_);
                     ::ItemHelper.actuateItem(mItem_);
                     closeScreen();
                 }

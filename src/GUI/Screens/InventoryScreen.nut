@@ -142,8 +142,8 @@ enum InventoryBusEvents{
             createBackgroundScreen_();
         }
 
-        mInventory_ = data.inventory;
-        mPlayerStats_ = data.equipStats;
+        mPlayerStats_ = data.stats;
+        mInventory_ = mPlayerStats_.mInventory_;
 
         mInventoryBus_ = InventoryInfoBus();
         mInventoryBus_.registerCallback(busCallback, this);

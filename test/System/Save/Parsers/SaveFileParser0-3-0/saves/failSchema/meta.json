@@ -1,0 +1,13 @@
+{
+    "version": "0.3.0",
+    "versionCount": 1,
+    "meta": "",
+
+    "playerEXP": 0,
+    "playerCoins": 100,
+    "playerName": "empty",
+
+    "playtimeSeconds": 100,
+
+    "inventoryyyyy": []
+}

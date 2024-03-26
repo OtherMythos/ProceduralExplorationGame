@@ -1,5 +1,6 @@
 function start(){
     _doFile("res://../../../../src/Constants.nut")
+    _doFile("res://../../../../src/Helpers.nut")
     _doFile("res://../../../../src/System/Save/SaveConstants.nut")
     _doFile("res://../../../../src/System/Save/Parsers/SaveFileParser.nut")
     _doFile("res://../../../../src/System/Save/SaveManager.nut")
@@ -28,7 +29,8 @@ function start(){
         test_findMinimumParser,
         test_findParserChain,
         test_performSchemaCheck,
-        test_performSchemaCheckNestedTables
+        test_performSchemaCheckNestedTables,
+        test_getPreviousParserForObject
     ];
     foreach(c,i in tests){
         printf("====== test %i ======", c);

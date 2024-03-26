@@ -26,12 +26,14 @@
         };
     }
 
+    /*
     #Override
     function readMetaFile(path){
         local data = base.readMetaFile(path);
 
         return data;
     }
+    */
 
     function validatePlayerName(text){
         local value = strip(text);

@@ -883,7 +883,7 @@ enum WorldMousePressContexts{
 
     function showInventory(){
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN,
-            {"inventory": ::Base.mInventory, "equipStats": ::Base.mPlayerStats}),
+            {"stats": ::Base.mPlayerStats}),
             null, 1);
         ::Base.mExplorationLogic.pauseExploration();
     }
@@ -1000,7 +1000,7 @@ enum WorldMousePressContexts{
         }
         else if(data.mType == SpoilsComponentType.GIVE_ITEM){
             printf("Giving player item %s", data.mFirst.tostring());
-            ::Base.mInventory.addToInventory(data.mFirst);
+            ::Base.mPlayerStats.addToInventory(data.mFirst);
         }
     }
 
