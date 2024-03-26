@@ -113,6 +113,16 @@
         return value;
     }
 
+    /**
+     * Ensure a provided array matches a certain size, shrinking the array if necessary or filling it with the provided value.
+     */
+    function ensureArrayToLength(a, len, fill=null){
+        local l = a.len();
+        if(l == len) return a;
+        a.resize(len, fill);
+        return a;
+    }
+
     function _tostring(){
         return ::wrapToString(this, "SaveFileParser", getVersionString());
     }

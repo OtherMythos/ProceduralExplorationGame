@@ -9,5 +9,6 @@
 
     "playtimeSeconds": 100,
 
-    "inventory": []
+    "inventory": [],
+    "playerEquipped": []
 }
