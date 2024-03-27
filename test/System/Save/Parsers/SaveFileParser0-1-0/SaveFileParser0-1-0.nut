@@ -1,24 +1,5 @@
-function start(){
-    _doFile("res://../../../../../src/Helpers.nut")
-    _doFile("res://../../../../../src/Constants.nut")
-    _doFile("res://../../../../../src/System/Save/SaveConstants.nut")
-    _doFile("res://../../../../../src/System/Save/Parsers/SaveFileParser.nut")
-    _doFile("res://../../../../../src/System/Save/SaveManager.nut")
 
-    local tests = [
-        test_parseBasicFile,
-        test_validatePlayerName
-    ];
-    foreach(c,i in tests){
-        printf("====== test %i ======", c);
-        i();
-        print("======");
-    }
-
-    _test.endTest();
-}
-
-function test_parseBasicFile(){
+_t("Parse Basic File", "Ensure a simple and complete save file can be parsed as expected.", function(){
     local saveManager = ::SaveManager();
 
     //Assume it doesn't throw an error.
@@ -41,9 +22,9 @@ function test_parseBasicFile(){
         _test.assertTrue(failed);
     }
 
-}
+});
 
-function test_validatePlayerName(){
+_t("Check 'validatePlayerName()'", "Ensure 'validatePlayerName()' returns the correct modifications to the player name", function(){
     local saveManager = ::SaveManager();
     local parser = saveManager.getParserObject(0, 1, 0);
 
@@ -65,4 +46,4 @@ function test_validatePlayerName(){
     foreach(i in values){
         _test.assertEqual(null, parser.validatePlayerName(i));
     }
-}
+});

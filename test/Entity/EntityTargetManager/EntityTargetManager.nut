@@ -1,5 +1,7 @@
 //A test to check the entity target manager functions as intended.
 
+::EIDCounter <- 0;
+
 ::MockEntity <- class{
     mEID_ = 0;
     mAttackers_ = null;
@@ -35,26 +37,7 @@
     }
 };
 
-function start(){
-    ::EIDCounter <- 0;
-    _doFile("res://../../../src/Logic/EntityTargetManager.nut")
-
-    local tests = [
-        test_targetRelease,
-        test_entityDestroyed,
-        test_entityDestroyedMultipleTargets,
-        test_entityDestroyedWithinAttackRange
-    ];
-    foreach(c,i in tests){
-        printf("====== test %i ======", c);
-        i();
-        print("======");
-    }
-
-    _test.endTest();
-}
-
-function test_targetRelease(){
+_t("targetRelease", "Check entities can be targeted and then released from the target", function(){
     local targetManager = EntityTargetManager();
     local player = MockEntity();
     local targetEntity = MockEntity();
@@ -70,9 +53,9 @@ function test_targetRelease(){
 
     _test.assertEqual(targetManager.mTargets_.len(), 0);
     _test.assertEqual(targetManager.mAggressors_.len(), 0);
-}
+});
 
-function test_entityDestroyed(){
+_t("Check Entity Destroyed", "Check the target manager can be notified of an entity's destruction and respond appropriately.", function(){
     local targetManager = EntityTargetManager();
     local player = MockEntity();
     local targetEntity = MockEntity();
@@ -82,9 +65,9 @@ function test_entityDestroyed(){
 
     _test.assertEqual(targetManager.mTargets_.len(), 0);
     _test.assertEqual(targetManager.mAggressors_.len(), 0);
-}
+});
 
-function test_entityDestroyedMultipleTargets(){
+_t("Entity Destroyed Multiple Targets", "Check that destroyed entities remove themselves from multiple targets.", function(){
     local targetManager = EntityTargetManager();
     local player = MockEntity();
     local targetEntity = MockEntity();
@@ -105,9 +88,9 @@ function test_entityDestroyedMultipleTargets(){
 
     _test.assertEqual(targetManager.mTargets_.len(), 1);
     _test.assertEqual(targetManager.mAggressors_.len(), 1);
-}
+});
 
-function test_entityDestroyedWithinAttackRange(){
+_t("Entity Destroyed Within Attack Range", "Check that when an entity is destroyed within the attack range the targets are updated", function(){
     local targetManager = EntityTargetManager();
     local player = MockEntity();
     local targetEntity = MockEntity();
@@ -136,4 +119,4 @@ function test_entityDestroyedWithinAttackRange(){
     _test.assertEqual(targetManager.mAggressors_.len(), 0);
 
     _test.assertEqual(player.mAttackers_.len(), 0);
-}
+});

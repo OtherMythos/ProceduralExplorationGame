@@ -1,4 +1,4 @@
-::test_createDestroyEntity <- function(){
+_t("createDestroyEntity", "Create an destroy entities as part of an EntityManager", function(){
     local manager = ::EntityManager.createEntityManager(null);
 
     local entity = manager.createEntity(Vec3());
@@ -37,9 +37,9 @@
     manager.destroyEntity(entity);
     _test.assertFalse(manager.entityValid(entity));
 
-}
+});
 
-::test_assignComponents <- function(){
+_t("assignComponents", "Assign components to an entity, ensuring they can be queried properly", function(){
     local manager = ::EntityManager.createEntityManager(null);
 
     local entity = manager.createEntity(Vec3());
@@ -60,9 +60,9 @@
 
     manager.removeComponent(entity, EntityComponents.COLLISION_POINT);
     _test.assertFalse(manager.hasComponent(entity, EntityComponents.COLLISION_POINT));
-}
+});
 
-::test_destroyAllEntities <- function(){
+_t("destroyAllEntities", "Check all entities can be destroyed at once.", function(){
     local manager = ::EntityManager.createEntityManager(null);
 
     local createEntity = function(entities, i){
@@ -93,6 +93,6 @@
 
     manager.destroyAllEntities();
 
-}
+});
 
 //TODO check that destroying an entity destroys all its components.
