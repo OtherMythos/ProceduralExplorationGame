@@ -112,10 +112,15 @@ jobs:
           name: av-x86_64.AppImage
           repo: OtherMythos/avEngine
           workflow: buildLinux.yml
-      - name: Checkout
+      - name: Checkout Game Code
         uses: actions/checkout@v4
         with:
           path: ./checkout
+      - name: Checkout avTools
+        uses: actions/checkout@v4
+        with:
+          path: ./avTools
+          repository: OtherMythos/avTools
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
@@ -124,5 +129,4 @@ jobs:
         run: |
           cp -r checkout/test .
           chmod +x ./av-x86_64.AppImage
-          ls
-          xvfb-run ./av-x86_64.AppImage test/System/PlayerStats/avSetup.cfg
+          xvfb-run python avTools/testRunner/testRunner.py -e ./av-x86_64.AppImage -p test/avTests.cfg
