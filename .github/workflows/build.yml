@@ -96,3 +96,33 @@ jobs:
         with:
           name: buildLinux-${{ needs.build.outputs.sha_short }}.AppImage
           path: ${{ github.workspace }}/buildLinux-${{ needs.build.outputs.sha_short }}.AppImage
+
+  runUnitTests:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Setup OpenGL
+        run: |
+          sudo apt update
+          sudo apt install mesa-utils xvfb fuse libfuse2
+      - name: Clone Build
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          name: av-x86_64.AppImage
+          repo: OtherMythos/avEngine
+          workflow: buildLinux.yml
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: ./checkout
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: distribution-${{ needs.build.outputs.sha_short }}
+      - name: Run tests
+        run: |
+          cp -r checkout/test .
+          chmod +x ./av-x86_64.AppImage
+          ls
+          xvfb-run ./av-x86_64.AppImage test/System/PlayerStats/avSetup.cfg
