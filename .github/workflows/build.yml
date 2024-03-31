@@ -129,4 +129,4 @@ jobs:
         run: |
           cp -r checkout/test .
           chmod +x ./av-x86_64.AppImage
-          xvfb-run python avTools/testRunner/testRunner.py -e ./av-x86_64.AppImage -p test/avTests.cfg
+          xvfb-run python avTools/testRunner/testRunner.py -e ./av-x86_64.AppImage -p test/avTests.cfg -o results.xml
