@@ -12,7 +12,7 @@
         constructor(parentWindow, item){
             print("Showing info for item: " + item.getName());
 
-            mWindow_ = _gui.createWindow(parentWindow);
+            mWindow_ = _gui.createWindow("ItemStatsContainer", parentWindow);
             mWindow_.setSize(100, 100);
             mWindow_.setExpandVertical(true);
             mWindow_.setExpandHorizontal(true);
@@ -52,7 +52,7 @@
         local itemName = mItem_.getName();
         local itemDescription = mItem_.getDescription();
 
-        mWindow_ = _gui.createWindow();
+        mWindow_ = _gui.createWindow("ItemInfoScreen");
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setVisualsEnabled(false);
         mWindow_.setSkinPack("WindowSkinNoBorder");

@@ -7,7 +7,7 @@
         mLifespan = 150;
         mFadeInTimer_ = mTotalFadeIn_;
 
-        mPopupWin_ = _gui.createWindow();
+        mPopupWin_ = _gui.createWindow("BottomOfScreenPopup");
         mPopupWin_.setZOrder(150);
 
         local label = mPopupWin_.createLabel();

@@ -20,7 +20,7 @@
         mBus_ = bus;
 
         //The window is only responsible for laying things out.
-        mWindow_ = _gui.createWindow(parentWin);
+        mWindow_ = _gui.createWindow("ExplorationMovesContainer", parentWin);
         mWindow_.setSkinPack("WindowSkinNoBorder");
         mWindow_.setHidden(true);
         mWindow_.setClickable(false);

@@ -12,7 +12,7 @@
         createBackgroundScreen_();
         mBackgroundWindow_.setColour(ColourValue(1, 1, 1, 0.8));
 
-        mWindow_ = _gui.createWindow();
+        mWindow_ = _gui.createWindow("InventoryItemHelperScreen");
         mWindow_.setSize(data.size);
         mWindow_.setPosition(data.pos);
         mWindow_.setClipBorders(10, 10, 10, 10);

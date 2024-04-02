@@ -10,7 +10,7 @@
         mTotalFadeIn_ = data.fadeInTime;
         mFadeInTimer_ = data.fadeInTime;
 
-        mPopupWin_ = _gui.createWindow();
+        mPopupWin_ = _gui.createWindow("SingleTextPopup");
         mPopupWin_.setZOrder(150);
         mPopupWin_.setVisualsEnabled(false);
         mPopupWin_.setConsumeCursor(false);

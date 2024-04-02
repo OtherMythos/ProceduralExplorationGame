@@ -4,7 +4,7 @@
     mTestRenderIcon_ = null;
 
     function setup(data){
-        mWindow_ = _gui.createWindow();
+        mWindow_ = _gui.createWindow("TestScreen");
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setVisualsEnabled(false);
         mWindow_.setSkinPack("WindowSkinNoBorder");

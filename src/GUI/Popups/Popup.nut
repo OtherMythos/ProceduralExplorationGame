@@ -38,7 +38,7 @@
     }
 
     function createBackgroundScreen_(){
-        local win = _gui.createWindow();
+        local win = _gui.createWindow("Popup");
         win.setSize(_window.getWidth(), _window.getHeight());
         win.setVisualsEnabled(false);
 

@@ -71,7 +71,7 @@
     }
 
     function initialise(parentWin, overlayWin, inventoryWidth, inventoryHeight){
-        mWindow_ = parentWin.createWindow();
+        mWindow_ = parentWin.createWindow("InventoryGrid");
         mWindow_.setSkinPack("WindowSkinNoBorder");
 
         if(mInventoryType_ == InventoryGridType.INVENTORY_GRID){

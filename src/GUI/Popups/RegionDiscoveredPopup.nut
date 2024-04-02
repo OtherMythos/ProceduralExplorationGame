@@ -11,7 +11,7 @@
         mFadeInTimer_ = mTotalFadeIn_;
         mForceSingleInstance = true;
 
-        mPopupWin_ = _gui.createWindow();
+        mPopupWin_ = _gui.createWindow("RegionDiscoveredPopup");
         mPopupWin_.setZOrder(150);
         mPopupWin_.setVisualsEnabled(false);
         mPopupWin_.setConsumeCursor(false);

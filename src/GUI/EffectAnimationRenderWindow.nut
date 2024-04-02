@@ -7,7 +7,7 @@
 
     constructor(compositorType){
         mCompositorType_ = compositorType;
-        mWindow_ = _gui.createWindow();
+        mWindow_ = _gui.createWindow("EffectAnimationRender");
         //this.mWindow_.setPosition(0, 400);
         mWindow_.setSkinPack("WindowSkinNoBorder");
         mWinSize_ = Vec2(_window.getWidth(), _window.getHeight());

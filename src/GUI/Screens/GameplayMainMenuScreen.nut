@@ -1,7 +1,7 @@
 ::ScreenManager.Screens[Screen.GAMEPLAY_MAIN_MENU_SCREEN] = class extends ::Screen{
 
     function setup(data){
-        mWindow_ = _gui.createWindow();
+        mWindow_ = _gui.createWindow("GameplayMainMenu");
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setVisualsEnabled(false);
         mWindow_.setSkinPack("WindowSkinNoBorder");

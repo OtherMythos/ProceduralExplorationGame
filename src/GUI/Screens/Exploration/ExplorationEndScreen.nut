@@ -194,7 +194,7 @@ local ObjAnim = class{
         //Create a window to block inputs for when the popup appears.
         createBackgroundScreen_();
 
-        mWindow_ = _gui.createWindow();
+        mWindow_ = _gui.createWindow("ExplorationEndScreen");
         mWindow_.setSize(winWidth, winHeight);
         mWindow_.setPosition(_window.getWidth() * 0.1, _window.getHeight() * 0.1);
         mWindow_.setClipBorders(10, 10, 10, 10);

@@ -14,7 +14,7 @@
         mBus_ = bus;
 
         //The window is only responsible for laying things out.
-        mWindow_ = _gui.createWindow(parentWin);
+        mWindow_ = _gui.createWindow("ExplorationScreen", parentWin);
         mWindow_.setClickable(false);
         //mWindow_.setVisualsEnabled(false);
 

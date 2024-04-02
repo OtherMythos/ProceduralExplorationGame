@@ -7,7 +7,7 @@
     function setup(data){
         mProgressLabels_ = [];
 
-        mWindow_ = _gui.createWindow();
+        mWindow_ = _gui.createWindow("WorldGenerationStatusScreen");
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setPosition(0, 0);
         mWindow_.setSkinPack("WindowSkinNoBorder");

@@ -14,7 +14,7 @@
 
         constructor(parentWindow, stats){
 
-            mWindow_ = _gui.createWindow(parentWindow);
+            mWindow_ = _gui.createWindow("VisitedPlacesContainer", parentWindow);
             mWindow_.setSize(100, 100);
 
             mLayoutTable_ = _gui.createLayoutLine();
@@ -57,7 +57,7 @@
     function setup(data){
         mPlayerStats_ = data.stats;
 
-        mWindow_ = _gui.createWindow();
+        mWindow_ = _gui.createWindow("VisitedPlacesScreen");
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setVisualsEnabled(false);
         mWindow_.setSkinPack("WindowSkinNoBorder");

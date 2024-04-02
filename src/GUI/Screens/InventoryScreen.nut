@@ -35,7 +35,7 @@ enum InventoryBusEvents{
         mActive_ = false;
 
         constructor(overlayWindow){
-            mHoverWin_ = overlayWindow.createWindow();
+            mHoverWin_ = overlayWindow.createWindow("InventoryOverlayWindow");
             mHoverWin_.setSize(400, 200);
             mHoverWin_.setHidden(true);
             mHoverWin_.setPosition(0, 0);
@@ -102,7 +102,7 @@ enum InventoryBusEvents{
 
         constructor(parentWindow, inventory, bus){
 
-            mWindow_ = _gui.createWindow(parentWindow);
+            mWindow_ = _gui.createWindow("InventoryContainer", parentWindow);
             mWindow_.setSize(100, 100);
 
             //mLayoutTable_.layout();
@@ -148,7 +148,7 @@ enum InventoryBusEvents{
         mInventoryBus_ = InventoryInfoBus();
         mInventoryBus_.registerCallback(busCallback, this);
 
-        mWindow_ = _gui.createWindow();
+        mWindow_ = _gui.createWindow("InventoryScreen");
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setVisualsEnabled(false);
         mWindow_.setSkinPack("WindowSkinNoBorder");
@@ -181,7 +181,7 @@ enum InventoryBusEvents{
         //local container = InventoryContainer(mWindow_, mInventory_, mInventoryBus_);
         //container.addToLayout(layoutLine);
 
-        mOverlayWindow_ = _gui.createWindow();
+        mOverlayWindow_ = _gui.createWindow("InventoryOverlayWindow");
         mOverlayWindow_.setPosition(0, 0);
         mOverlayWindow_.setSize(_window.getWidth(), _window.getHeight());
         mOverlayWindow_.setVisualsEnabled(false);

@@ -7,7 +7,7 @@
     mTooltip_ = " ";
 
     constructor(){
-        local window = _gui.createWindow();
+        local window = _gui.createWindow("ExplorationTooltip");
         window.setSize(200, 200);
         window.setZOrder(160);
         window.setVisualsEnabled(false);

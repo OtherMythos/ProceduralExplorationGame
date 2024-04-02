@@ -38,7 +38,7 @@ enum ExplorationBusEvents{
 
         }
         function setup(){
-            mWindow_ = mParent_.createWindow();
+            mWindow_ = mParent_.createWindow("WorldStatsScreen");
             mWindow_.setSize(100, 100);
             mWindow_.setVisualsEnabled(false);
             mWindow_.setSkinPack("WindowSkinNoBorder");
@@ -78,7 +78,7 @@ enum ExplorationBusEvents{
 
         mLogicInterface_.setGuiObject(this);
 
-        mWindow_ = _gui.createWindow();
+        mWindow_ = _gui.createWindow("ExplorationScreen");
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setVisualsEnabled(false);
         mWindow_.setSkinPack("WindowSkinNoBorder");
@@ -182,7 +182,7 @@ enum ExplorationBusEvents{
     }
 
     function createInputBlockerOverlay(){
-        mInputBlockerWindow_ = _gui.createWindow();
+        mInputBlockerWindow_ = _gui.createWindow("ExplorationScreen");
         mInputBlockerWindow_.setSize(_window.getWidth(), _window.getHeight());
         mInputBlockerWindow_.setZOrder(140);
         mInputBlockerWindow_.setVisualsEnabled(false);

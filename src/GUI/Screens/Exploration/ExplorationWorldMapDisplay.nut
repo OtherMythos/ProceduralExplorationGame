@@ -13,7 +13,7 @@
         mExplorationScenePanel_ = parentWin.createPanel();
         mExplorationScenePanel_.setPosition(0, 0);
 
-        mMapViewerWindow_ = parentWin.createWindow();
+        mMapViewerWindow_ = parentWin.createWindow("ExplorationWorldMapDisplay");
         mMapViewerPanel_ = mMapViewerWindow_.createPanel();
         mMapViewerWindow_.setVisualsEnabled(false);
         if(::Base.isProfileActive(GameProfile.SCREENSHOT_MODE)){

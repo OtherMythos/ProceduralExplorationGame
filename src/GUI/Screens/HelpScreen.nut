@@ -3,7 +3,7 @@
     mWindow_ = null;
 
     function setup(data){
-        mWindow_ = _gui.createWindow();
+        mWindow_ = _gui.createWindow("HelpScreen");
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setVisualsEnabled(false);
         mWindow_.setSkinPack("WindowSkinNoBorder");
