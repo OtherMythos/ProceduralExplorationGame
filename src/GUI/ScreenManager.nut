@@ -106,6 +106,9 @@
         screenObject.setZOrder(mScreensZOrder + layerId + 1);
 
         _event.transmit(Event.SCREEN_CHANGED, {"old": oldId, "new": screenId});
+
+        _gui.simulateMouseButton(_MB_LEFT, false);
+        _gui.reprocessMousePosition();
     }
 
     function _getPrevScreen(layerId){
