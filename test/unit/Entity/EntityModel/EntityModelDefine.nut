@@ -1,0 +1,1 @@
+::CharacterGeneratorPrefix = "res://../../../../";
