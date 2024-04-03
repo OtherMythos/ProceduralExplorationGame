@@ -10,19 +10,51 @@
         testName = null;
         testDescription = null;
         testClosure = null;
-        constructor(testName, testDescription, closure){
+        integration = false;
+
+        currentStep = 0;
+
+        constructor(testName, testDescription, closure, integration){
             this.testName = testName;
             this.testDescription = testDescription;
             this.testClosure = closure;
+            this.integration = integration;
+        }
+        function start(){
+            if(testClosure.rawin("start")){
+                testClosure.start();
+            }
+        }
+        function update(){
+            if(testClosure.rawin("update")){
+                testClosure.update();
+            }
+            if(testClosure.rawin("steps")){
+                processSteps();
+            }
+        }
+        function end(){
+            if(testClosure.rawin("end")){
+                testClosure.update();
+            }
+        }
+
+        function processSteps(){
+            local stepsArray = testClosure.rawget("steps");
+            stepsArray[currentStep]();
+            currentStep++;
+            if(currentStep >= stepsArray.len()){
+                _test.endTest();
+            }
         }
     }
 
     function registerTest(testName, testDescription, closure){
-        local testInstance = TestEntry(testName, testDescription, closure);
+        local testInstance = TestEntry(testName, testDescription, closure, false);
         testFuncs.append(testInstance);
     }
     function registerIntegrationTest(testName, testDescription, closure){
-        testFuncs = TestEntry(testName, testDescription, closure);
+        testFuncs = TestEntry(testName, testDescription, closure, true);
         integration = true
     }
 
@@ -30,9 +62,9 @@
         setupContext = context;
     }
 
-    function start() { if(testFuncs.testClosure.rawin("start")) testFuncs.testClosure.start(); setupContext.start(); }
-    function update() { if(testFuncs.testClosure.rawin("update")) testFuncs.testClosure.update(); setupContext.update(); }
-    function end() { if(testFuncs.testClosure.rawin("end")) testFuncs.testClosure.end(); setupContext.update(); }
+    function start() { if(integration) { testFuncs.start(); setupContext.start() } }
+    function update() { if(integration) { testFuncs.update(); setupContext.update() } }
+    function end() { if(integration) { testFuncs.end(); setupContext.end() } }
 };
 ::_t <- function(testName, testDescription, closure){
     ::_testSystem.registerTest(testName, testDescription, closure);
