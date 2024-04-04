@@ -45,5 +45,5 @@ function setupInitialCanvasSize(){
     ::canvasSize <- Vec2(1920, 1080);
     ::resolutionMult <- _window.getActualSize() / _window.getSize();
     _gui.setCanvasSize(canvasSize, _window.getActualSize());
-    _gui.setDefaultFontSize26d6((_gui.getDefaultFontSize26d6() * ::resolutionMult.x).tointeger());
+    _gui.setDefaultFontSize26d6((_gui.getOriginalDefaultFontSize26d6() * ::resolutionMult.x).tointeger());
 }
