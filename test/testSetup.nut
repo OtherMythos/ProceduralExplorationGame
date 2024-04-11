@@ -6,21 +6,151 @@
     integration = false
     setupContext = null
 
+    currentCalledEntry = null
+
+    /**
+    Steps can either define a function or a data block.
+    Functions are the simplest form, as they are called once and the step is jumped.
+    Data blocks can define things like repetitions to repeat the same group of steps.
+    Steps can be nested within data blocks and the step is only jumped when each of the steps has returned itself as having finished.
+    */
+    TestStepEntry = class{
+        currentWaitFrame = -1;
+        currentWaitFrameTotal = -1;
+
+        mFunction = null;
+
+        mRepeatCount = 0;
+        mRepeatCountTotal = 0;
+        mSteps = null;
+
+        constructor(i){
+            local t = typeof i;
+            if(t == "function"){
+                mFunction = i;
+            }
+            else if(t == "table"){
+                if(i.rawin("repeat")){
+                    mRepeatCountTotal = i.rawget("repeat");
+                    mRepeatCount = 0;
+                }
+                if(i.rawin("steps")){
+                    mSteps = ::_testSystem.TestSteps(i.rawget("steps"));
+                }
+            }else{
+                assert(false);
+            }
+        }
+        function update(){
+            local result = false;
+            if(currentWaitFrameTotal < 0){
+                if(mFunction != null){
+                    ::_testSystem.currentCalledEntry = this;
+                    mFunction();
+                    ::_testSystem.currentCalledEntry = null;
+                    //Check to see if a request to wait frames was called.
+                    //If it's still -1 then move on.
+                    if(currentWaitFrameTotal < 0){
+                        result = true;
+                    }
+                }else{
+                    if(mSteps.update()){
+                        result = jumpRepeat();
+                    }
+                }
+            }
+            if(currentWaitFrame > 0){
+                currentWaitFrame--;
+                if(currentWaitFrame <= 0){
+                    result = true;
+                }
+            }
+
+            return result;
+        }
+        function jumpRepeat(){
+            mRepeatCount++;
+            if(mRepeatCount >= mRepeatCountTotal){
+                print("finished repeats");
+                return true;
+            }
+            mSteps.resetSteps();
+            return false;
+        }
+        function waitFrames(frames){
+            //The general usecase is this is called each frame, so skip unless there has been a change in the requested count.
+            if(frames == currentWaitFrameTotal) return;
+            currentWaitFrameTotal = frames;
+            currentWaitFrame = currentWaitFrameTotal;
+        }
+        function reset(){
+            currentWaitFrame = -1;
+            currentWaitFrameTotal = -1;
+            mRepeatCount = 0;
+            if(mSteps != null){
+                mSteps.resetSteps();
+            }
+        }
+    }
+    /**
+    Stores a list of steps to complete.
+    An array will be used and each index will be represented by a TestStepEntry
+    Keeps track of which state is currently active and whether the steps are complete.
+    */
+    TestSteps = class{
+        mCurrentStep = 0;
+        mTotalSteps = 0;
+
+        mSteps = null;
+        constructor(steps){
+            local s = [];
+            foreach(i in steps){
+                s.append(::_testSystem.TestStepEntry(i));
+            }
+
+            mSteps = s;
+            mTotalSteps = mSteps.len();
+        }
+
+        function update(){
+            local result = mSteps[mCurrentStep].update();
+            if(result){
+                jumpStep();
+            }
+            return mCurrentStep >= mTotalSteps;
+        }
+
+        function jumpStep(){
+            mCurrentStep++;
+        }
+
+        function resetSteps(){
+            print("Resetting steps");
+            mCurrentStep = 0;
+            foreach(i in mSteps){
+                i.reset();
+            }
+        }
+    }
     TestEntry = class{
         testName = null;
         testDescription = null;
         testClosure = null;
         integration = false;
 
-        currentStep = 0;
-        currentWaitFrame = -1;
-        currentWaitFrameTotal = -1;
+        parentTestStep = null;
 
         constructor(testName, testDescription, closure, integration){
             this.testName = testName;
             this.testDescription = testDescription;
             this.testClosure = closure;
             this.integration = integration;
+
+            if(integration){
+                if(testClosure.rawin("steps")){
+                    initialiseSteps(testClosure.rawget("steps"));
+                }
+            }
         }
         function start(){
             if(testClosure.rawin("start")){
@@ -31,13 +161,24 @@
             if(testClosure.rawin("update")){
                 testClosure.update();
             }
-            if(testClosure.rawin("steps")){
-                processSteps();
+            if(parentTestStep != null){
+                local result = parentTestStep.update();
+                if(result){
+                    _test.endTest();
+                }
             }
         }
         function end(){
             if(testClosure.rawin("end")){
                 testClosure.update();
+            }
+        }
+
+        function initialiseSteps(steps){
+            if(typeof steps == "array"){
+                parentTestStep = ::_testSystem.TestSteps(steps);
+            }else if(typeof steps == "table"){
+                parentTestStep = ::_testSystem.TestStepEntry(steps);
             }
         }
 
@@ -66,13 +207,6 @@
             currentWaitFrame = -1;
             currentWaitFrameTotal = -1;
         }
-
-        function waitFrames(frames){
-            //The general usecase is this is called each frame, so skip unless there has been a change in the requested count.
-            if(frames == currentWaitFrameTotal) return;
-            currentWaitFrameTotal = frames;
-            currentWaitFrame = currentWaitFrameTotal;
-        }
     }
 
     function registerTest(testName, testDescription, closure){
@@ -89,7 +223,7 @@
     }
 
     function waitFrames(frames){
-        testFuncs.waitFrames(frames);
+        currentCalledEntry.waitFrames(frames);
     }
 
     function start() { if(integration) { testFuncs.start(); setupContext.start() } }
