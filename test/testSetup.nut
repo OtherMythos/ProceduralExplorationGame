@@ -13,6 +13,8 @@
         integration = false;
 
         currentStep = 0;
+        currentWaitFrame = -1;
+        currentWaitFrameTotal = -1;
 
         constructor(testName, testDescription, closure, integration){
             this.testName = testName;
@@ -41,11 +43,35 @@
 
         function processSteps(){
             local stepsArray = testClosure.rawget("steps");
-            stepsArray[currentStep]();
+            if(currentWaitFrameTotal < 0){
+                stepsArray[currentStep]();
+                //Check to see if a request to wait frames was called.
+                if(currentWaitFrameTotal < 0){
+                    jumpStep(stepsArray.len());
+                }
+            }
+            if(currentWaitFrame > 0){
+                currentWaitFrame--;
+                if(currentWaitFrame <= 0){
+                    jumpStep(stepsArray.len());
+                }
+            }
+        }
+
+        function jumpStep(totalSteps){
             currentStep++;
-            if(currentStep >= stepsArray.len()){
+            if(currentStep >= totalSteps){
                 _test.endTest();
             }
+            currentWaitFrame = -1;
+            currentWaitFrameTotal = -1;
+        }
+
+        function waitFrames(frames){
+            //The general usecase is this is called each frame, so skip unless there has been a change in the requested count.
+            if(frames == currentWaitFrameTotal) return;
+            currentWaitFrameTotal = frames;
+            currentWaitFrame = currentWaitFrameTotal;
         }
     }
 
@@ -60,6 +86,10 @@
 
     function registerSetupContext(context){
         setupContext = context;
+    }
+
+    function waitFrames(frames){
+        testFuncs.waitFrames(frames);
     }
 
     function start() { if(integration) { testFuncs.start(); setupContext.start() } }
@@ -155,6 +185,10 @@
     function mousePressWidgetForText(text){
         focusMouseToWidgetForText(text);
         _gui.simulateMouseButton(_MB_LEFT, true);
+    }
+
+    function waitFrames(frames){
+        ::_testSystem.waitFrames(frames);
     }
 
 };
