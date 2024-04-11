@@ -84,6 +84,78 @@
             }
         }
     }
+    function iterateComparisonFunction(first, second){
+        return second.tolower().find(first) != null;
+    }
+    function iterateWindow_(win, checkString, comparisonFunc){
+        for(local i = 0; i < win.getNumChildren(); i++){
+            local child = win.getChildForIdx(i);
+            local childType = child.getType();
+            if(childType == _GUI_WIDGET_WINDOW){
+                local result = iterateWindow_(child, checkString, comparisonFunc);
+                if(result != null){
+                    return result;
+                }
+                continue;
+            }
+            if(
+                childType == _GUI_WIDGET_BUTTON ||
+                childType == _GUI_WIDGET_LABEL ||
+                childType == _GUI_WIDGET_ANIMATED_LABEL ||
+                childType == _GUI_WIDGET_EDITBOX ||
+                childType == _GUI_WIDGET_CHECKBOX ||
+                childType == _GUI_WIDGET_SPINNER
+            ){
+                if(comparisonFunc(checkString, child.getText())){
+                    return child;
+                }
+            }
+        }
+
+        return null;
+    }
+    function getWidgetForText(text){
+        local targetText = text.tolower();
+        local numWindows = _gui.getNumWindows();
+        local foundWidget = null;
+        for(local i = 0; i < numWindows; i++){
+            local window = _gui.getWindowForIdx(i);
+            local result = iterateWindow_(window, targetText, iterateComparisonFunction);
+            if(result != null){
+                foundWidget = result;
+                break;
+            }
+        }
+
+        return foundWidget;
+    }
+
+    function queryTextExists(text){
+        if(getWidgetForText(text) == null){
+            throw format("No text found for '%s'", text);
+        }
+    }
+    function queryWindowExists(text){
+        if(queryWindow(text) == null){
+            throw format("No window found for '%s'", text);
+        }
+    }
+    function queryWindowDoesNotExist(text){
+        if(queryWindow(text) != null){
+            throw format("Window found for '%s' when none should be", text);
+        }
+    }
+
+    function focusMouseToWidgetForText(text){
+        local targetButton = ::_testHelper.getWidgetForText(text);
+        if(targetButton == null) throw format("No widget found for text '%s'", text);
+        _gui.simulateMousePosition(targetButton.getDerivedCentre());
+    }
+
+    function mousePressWidgetForText(text){
+        focusMouseToWidgetForText(text);
+        _gui.simulateMouseButton(_MB_LEFT, true);
+    }
 
 };
 
