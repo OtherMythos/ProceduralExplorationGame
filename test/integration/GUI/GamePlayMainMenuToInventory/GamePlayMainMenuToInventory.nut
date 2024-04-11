@@ -8,7 +8,6 @@ _tIntegration("GamePlayMainMenuToInventory", "Switch to the inventory screen fro
                 ::_testHelper.queryWindowExists("GameplayMainMenu");
 
                 ::_testHelper.waitFrames(20);
-                print("first");
             },
             function(){
                 ::_testHelper.mousePressWidgetForText("Inventory");
@@ -16,7 +15,6 @@ _tIntegration("GamePlayMainMenuToInventory", "Switch to the inventory screen fro
                 ::_testHelper.queryWindowExists("InventoryScreen");
 
                 ::_testHelper.waitFrames(20);
-                print("second");
             },
             function(){
                 ::_testHelper.mousePressWidgetForText("Back");
@@ -24,7 +22,6 @@ _tIntegration("GamePlayMainMenuToInventory", "Switch to the inventory screen fro
                 ::_testHelper.queryWindowExists("GameplayMainMenu");
 
                 ::_testHelper.waitFrames(20);
-                print("third");
             }
         ]
     }

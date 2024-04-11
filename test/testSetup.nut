@@ -375,3 +375,5 @@ function checkForAdditionalIncludes(){
         }
     }
 }
+
+_doFile("script://projectTestHelpers.nut");
