@@ -239,8 +239,7 @@ local ObjAnim = class{
         local buttonOptions = ["Explore again", "Return to menu"];
         local buttonFunctions = [
             function(widget, action){
-                //TODO temporary
-                ::SaveManager.writeSaveAtPath("user://0", ::Base.mPlayerStats.getSaveData());
+                ::SaveManager.writeSaveAtPath("user://" + ::Base.mPlayerStats.getSaveSlot(), ::Base.mPlayerStats.getSaveData());
 
                 ::Base.mExplorationLogic.resetExploration();
                 ::ScreenManager.queueTransition(null, null, mLayerIdx);

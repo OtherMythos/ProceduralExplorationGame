@@ -1,6 +1,7 @@
 ::PlayerStats <- class{
 
     mCurrentData_ = null;
+    mCurrentSaveSlot_ = -1;
     mInventory_ = null;
 
     mPlacesVisited_ = null;
@@ -31,12 +32,16 @@
         return ::wrapToString(::PlayerStats, "PlayerStats");
     }
 
-    function setSaveData(data){
+    function setSaveData(data, slotIdx){
+        mCurrentSaveSlot_ = slotIdx;
         mCurrentData_ = data;
         local inventoryData = data.inventory.apply(function(itemVal){
             return itemVal == null ? null : ::Item(itemVal)
         });
         mInventory_.rawSetItems(inventoryData);
+    }
+    function getSaveSlot(){
+        return mCurrentSaveSlot_;
     }
     function getSaveData(){
         //Sync up the inventory items to the data.

@@ -13,8 +13,9 @@
             print(format("Selected save %i", widget.getUserId()));
 
             local viableSaves = ::Base.mSaveManager.findViableSaves();
-            local save = ::Base.mSaveManager.readSaveAtPath("user://" + viableSaves[widget.getUserId()].tostring());
-            ::Base.mPlayerStats.setSaveData(save);
+            local saveSlot = widget.getUserId();
+            local save = ::Base.mSaveManager.readSaveAtPath("user://" + viableSaves[saveSlot].tostring());
+            ::Base.mPlayerStats.setSaveData(save, saveSlot);
 
             //There is no implementation for saves yet, so just switch the screen.
             ::ScreenManager.transitionToScreen(Screen.GAMEPLAY_MAIN_MENU_SCREEN);

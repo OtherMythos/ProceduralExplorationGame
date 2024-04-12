@@ -198,6 +198,19 @@
         return valid;
     }
 
+    function getFreeSaveSlot(){
+        local viableSaves = findViableSaves();
+
+        //Start from 0 and check each number until the earliest hole is found.
+        local count = 0;
+        while(true){
+            if(viableSaves.find(count) == null){
+                return count;
+            }
+            count++;
+        }
+    }
+
     #Static
     function getPreviousParserForObject(max, min, patch){
         local hash = ::SaveHelpers.hashVersion(max, min, patch);

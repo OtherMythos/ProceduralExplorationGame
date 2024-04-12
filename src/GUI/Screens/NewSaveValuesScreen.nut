@@ -43,10 +43,11 @@
                     });
                     return;
                 }
+                local freeSlot = ::SaveManager.getFreeSaveSlot();
                 local save = ::Base.mSaveManager.produceSave();
                 save.playerName = name;
-                ::Base.mPlayerStats.setSaveData(save);
-                ::SaveManager.writeSaveAtPath("user://0", ::Base.mPlayerStats.getSaveData());
+                ::Base.mPlayerStats.setSaveData(save, freeSlot);
+                ::SaveManager.writeSaveAtPath("user://" + freeSlot, ::Base.mPlayerStats.getSaveData());
 
                 ::ScreenManager.transitionToScreen(Screen.GAMEPLAY_MAIN_MENU_SCREEN);
                 ::ScreenManager.queueTransition(null, null, mLayerIdx);

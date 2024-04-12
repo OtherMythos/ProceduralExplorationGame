@@ -7,17 +7,6 @@
     constructor(){
         local items = array(mInventorySize_, null);
 
-        items[0] = ::Item(ItemId.HEALTH_POTION);
-        items[1] = ::Item(ItemId.LARGE_HEALTH_POTION);
-        for(local i = 0; i < 20; i++){
-            items[i] = ::Item(i %2 == 0 ? ItemId.LARGE_HEALTH_POTION : ItemId.HEALTH_POTION);
-        }
-        items[0] = ::Item(ItemId.SIMPLE_SWORD);
-        items[10] = ::Item(ItemId.SIMPLE_SWORD);
-        items[11] = ::Item(ItemId.SIMPLE_SHIELD);
-        items[12] = ::Item(ItemId.SIMPLE_SHIELD);
-        items[13] = ::Item(ItemId.SIMPLE_TWO_HANDED_SWORD);
-
         rawSetItems(items);
     }
 
