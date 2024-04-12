@@ -193,6 +193,7 @@
                 //Just ignore the value if the error is thrown.
             }
         }
+        valid.sort();
         print(_prettyPrint(valid));
 
         return valid;
