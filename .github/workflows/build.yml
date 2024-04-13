@@ -100,6 +100,9 @@ jobs:
   runUnitTests:
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      checks: write
+      pull-requests: write
 
     steps:
       - name: Setup OpenGL
@@ -130,20 +133,12 @@ jobs:
           cp -r checkout/test .
           chmod +x ./av-x86_64.AppImage
           xvfb-run python avTools/testRunner/testRunner.py -e ./av-x86_64.AppImage -p test/avTests.cfg -o /home/runner/work/results.xml
-
-  publishTestResults:
-    runs-on: ubuntu-latest
-    needs: runUnitTests
-    if: always()
-    permissions:
-      checks: write
-      pull-requests: write
-
-    steps:
       - name: Check results
+        if: always()
         run: |
           pwd
           cp /home/runner/work/results.xml .
+          ls
           cat results.xml
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
