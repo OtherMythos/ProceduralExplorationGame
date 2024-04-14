@@ -93,6 +93,9 @@
         _doFile("res://src/Content/Enemies/BasicEnemyScript.nut");
         _doFile("res://src/Content/GenericCallbacks.nut");
 
+        _doFile("res://src/DebugConsole.nut");
+        _doFile("res://src/Content/DebugCommands.nut");
+
         _doFile("res://src/Content/Enemies.nut");
         _doFile("res://src/Content/Projectiles.nut");
         _doFile("res://src/Content/Equippables.nut");
