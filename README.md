@@ -1,4 +1,8 @@
 # Procedural Exploration Game
+
+[![Build and Test](https://github.com/OtherMythos/ProceduralExplorationGame/actions/workflows/build.yml/badge.svg)](https://github.com/OtherMythos/ProceduralExplorationGame/actions/workflows/build.yml)
+[![Build Container](https://github.com/OtherMythos/ProceduralExplorationGame/actions/workflows/buildContainer.yml/badge.svg)](https://github.com/OtherMythos/ProceduralExplorationGame/actions/workflows/buildContainer.yml)
+
 An un-named game for the avEngine.
 
 This game is based on RPG mechanics and built around the idea of exploration.

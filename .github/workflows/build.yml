@@ -1,4 +1,4 @@
-name: Build Resources
+name: Build and Test
 
 on:
   push:
