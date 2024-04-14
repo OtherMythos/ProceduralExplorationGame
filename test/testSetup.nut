@@ -19,6 +19,7 @@
         currentWaitFrameTotal = -1;
 
         mFunction = null;
+        mCalledOnce = false;
 
         mRepeatCount = 0;
         mRepeatCountTotal = 0;
@@ -41,9 +42,13 @@
                 assert(false);
             }
         }
+        function prepareBegin(){
+            resetWaitFrame();
+        }
         function update(){
             local result = false;
-            if(currentWaitFrameTotal < 0){
+            if(!mCalledOnce){
+                mCalledOnce = true;
                 if(mFunction != null){
                     ::_testSystem.currentCalledEntry = this;
                     mFunction();
@@ -83,9 +88,13 @@
             currentWaitFrameTotal = frames;
             currentWaitFrame = currentWaitFrameTotal;
         }
+        function resetWaitFrame(){
+            currentWaitFrame = ::_testHelper.mDefaultWaitFrames;
+            currentWaitFrameTotal = ::_testHelper.mDefaultWaitFrames;
+        }
         function reset(){
-            currentWaitFrame = -1;
-            currentWaitFrameTotal = -1;
+            resetWaitFrame();
+            mCalledOnce = false;
             mRepeatCount = 0;
             if(mSteps != null){
                 mSteps.resetSteps();
@@ -122,6 +131,9 @@
 
         function jumpStep(){
             mCurrentStep++;
+            if(mCurrentStep < mTotalSteps){
+                mSteps[mCurrentStep].prepareBegin();
+            }
         }
 
         function resetSteps(){
@@ -181,32 +193,6 @@
                 parentTestStep = ::_testSystem.TestStepEntry(steps);
             }
         }
-
-        function processSteps(){
-            local stepsArray = testClosure.rawget("steps");
-            if(currentWaitFrameTotal < 0){
-                stepsArray[currentStep]();
-                //Check to see if a request to wait frames was called.
-                if(currentWaitFrameTotal < 0){
-                    jumpStep(stepsArray.len());
-                }
-            }
-            if(currentWaitFrame > 0){
-                currentWaitFrame--;
-                if(currentWaitFrame <= 0){
-                    jumpStep(stepsArray.len());
-                }
-            }
-        }
-
-        function jumpStep(totalSteps){
-            currentStep++;
-            if(currentStep >= totalSteps){
-                _test.endTest();
-            }
-            currentWaitFrame = -1;
-            currentWaitFrameTotal = -1;
-        }
     }
 
     function registerTest(testName, testDescription, closure){
@@ -237,6 +223,8 @@
     ::_testSystem.registerIntegrationTest(testName, testDescription, closure);
 };
 ::_testHelper <- {
+
+    mDefaultWaitFrames = -1
 
     function queryWindow(windowName){
         local numWindows = _gui.getNumWindows();
@@ -323,6 +311,10 @@
 
     function waitFrames(frames){
         ::_testSystem.waitFrames(frames);
+    }
+
+    function setDefaultWaitFrames(frames){
+        mDefaultWaitFrames = frames;
     }
 
 };
