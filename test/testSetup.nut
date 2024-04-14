@@ -44,11 +44,11 @@
         }
         function prepareBegin(){
             resetWaitFrame();
+            mCalledOnce = false;
         }
         function update(){
             local result = false;
             if(!mCalledOnce){
-                mCalledOnce = true;
                 if(mFunction != null){
                     ::_testSystem.currentCalledEntry = this;
                     mFunction();
@@ -58,6 +58,7 @@
                     if(currentWaitFrameTotal < 0){
                         result = true;
                     }
+                    mCalledOnce = true;
                 }else{
                     if(mSteps.update()){
                         result = jumpRepeat();
