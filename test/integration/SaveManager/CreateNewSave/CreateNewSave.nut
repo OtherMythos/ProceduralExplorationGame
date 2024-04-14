@@ -1,7 +1,7 @@
 _tIntegration("CreateNewSave", "Move through the gui screen and create a new save, making sure the game doesn't crash", {
     "start": function(){
         ::_testHelper.clearAllSaves();
-        ::_testHelper.waitFrames(20);
+        ::_testHelper.setDefaultWaitFrames(20);
 
         ::NAME <- "testPlayerName";
         ::createdNames <- [];

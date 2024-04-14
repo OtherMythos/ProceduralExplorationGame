@@ -210,6 +210,7 @@
     }
 
     function waitFrames(frames){
+        if(currentCalledEntry == null) throw "Only call 'waitFrames' within a step function.";
         currentCalledEntry.waitFrames(frames);
     }
 
