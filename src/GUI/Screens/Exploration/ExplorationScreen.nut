@@ -244,6 +244,7 @@ enum ExplorationBusEvents{
     }
 
     function shutdown(){
+        _event.unsubscribe(Event.WORLD_PREPARATION_STATE_CHANGE, receivePreparationStateChange, this);
         mLogicInterface_.shutdown();
         //mLogicInterface_.notifyLeaveExplorationScreen();
         mExplorationStatsContainer_.shutdown();
