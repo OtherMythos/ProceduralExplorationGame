@@ -1,6 +1,7 @@
 _tIntegration("CreateNewSave", "Move through the gui screen and create a new save, making sure the game doesn't crash", {
     "start": function(){
         ::_testHelper.clearAllSaves();
+        ::_testHelper.waitFrames(20);
 
         ::NAME <- "testPlayerName";
         ::createdNames <- [];
@@ -11,20 +12,14 @@ _tIntegration("CreateNewSave", "Move through the gui screen and create a new sav
             "repeat": 5,
             "steps":[
                 function(){
-                    ::_testHelper.waitFrames(20);
-
                     ::ScreenManager.transitionToScreen(Screen.SAVE_SELECTION_SCREEN);
                 },
                 function(){
-                    ::_testHelper.waitFrames(20);
-
                     ::_testHelper.mousePressWidgetForText("new save");
                     ::_testHelper.queryTextExists("confirm");
                     ::_testHelper.queryTextExists("cancel");
                 },
                 function(){
-                    ::_testHelper.waitFrames(20);
-
                     local screen = ::ScreenManager.getScreenForLayer(1);
                     local editbox = screen.mEditBox_;
                     local newName = ::NAME + ::createdNames.len();
