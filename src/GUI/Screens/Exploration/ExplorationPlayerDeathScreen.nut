@@ -32,7 +32,7 @@
             },
             function(widget, action){
                 ::ScreenManager.queueTransition(null, null, mLayerIdx);
-                ::ScreenManager.queueTransition(Screen.MAIN_MENU_SCREEN);
+                ::ScreenManager.queueTransition(Screen.GAMEPLAY_MAIN_MENU_SCREEN);
                 ::Base.mExplorationLogic.shutdown();
             }
         ];
