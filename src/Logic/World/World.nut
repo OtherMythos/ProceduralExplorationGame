@@ -745,6 +745,10 @@ enum WorldMousePressContexts{
         mQueuedFlags_.insert(0, [worldPos, flagId]);
     }
 
+    function movePlayer(amount){
+        local targetPos = mPlayerEntry_.mPos_ + Vec3(amount.x, 0, amount.y);
+        movePlayerToPos(targetPos);
+    }
     function movePlayerToPos(targetPos){
         mPlayerEntry_.moveToPoint(targetPos, 0.2);
 
