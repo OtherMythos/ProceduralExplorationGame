@@ -11,6 +11,11 @@ const EFFECT_WINDOW_CAMERA_Z = 100;
 const SCREENS_START_Z = 40;
 const POPUPS_START_Z = 60;
 
+enum FullscreenMode{
+    WINDOWED,
+    BORDERLESS_FULLSCREEN
+};
+
 enum TargetInterface{
     MOBILE,
     DESKTOP,

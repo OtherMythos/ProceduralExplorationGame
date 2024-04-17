@@ -8,6 +8,7 @@
     mGameProfiles_ = null
 
     mTargetInterface_ = TargetInterface.DESKTOP
+    mFullscreenMode_ = FullscreenMode.WINDOWED
 
     function checkUserParams(){
         //TODO work around the fact that I can't use multiple avSetup files to override this yet.
@@ -209,6 +210,9 @@
 
         setupDeveloperWorkarounds_();
     }
+    function setupFullscreen(){
+        setFullscreenState(FullscreenMode.BORDERLESS_FULLSCREEN);
+    }
 
     function registerProfiles_(){
         mGameProfiles_ = determineGameProfiles();
@@ -298,5 +302,26 @@
         datablock.setUserValue(0, 0.5, 0, 0, 0);
     }
 
+    function setFullscreenState(fullscreen){
+        mFullscreenMode_ = fullscreen;
+
+        if(mFullscreenMode_ == FullscreenMode.WINDOWED){
+            local targetIdx = _window.getWindowDisplayIndex();
+            local displaySize = _window.getDisplaySize(targetIdx);
+            local position = _window.getDisplayPositionCoordinates(targetIdx);
+
+            _window.setBorderless(false);
+            _window.setSize(::canvasSize);
+            _window.setPosition(displaySize / 2 - ::canvasSize / 2);
+        }else if(mFullscreenMode_ == FullscreenMode.BORDERLESS_FULLSCREEN){
+            local targetIdx = _window.getWindowDisplayIndex();
+            local position = _window.getDisplayPositionCoordinates(targetIdx);
+            local displaySize = _window.getDisplaySize(targetIdx);
+
+            _window.setBorderless(true);
+            _window.setSize(displaySize.x.tointeger(), displaySize.y.tointeger());
+            _window.setPosition(position.x.tointeger(), position.y.tointeger());
+        }
+    }
 
 };
