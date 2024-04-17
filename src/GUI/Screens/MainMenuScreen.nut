@@ -1,10 +1,8 @@
 ::ScreenManager.Screens[Screen.MAIN_MENU_SCREEN] = class extends ::Screen{
 
-    mWindow_ = null;
-
-    function setup(data){
+    function recreate(){
         mWindow_ = _gui.createWindow("MainMenuScreen");
-        mWindow_.setSize(_window.getWidth(), _window.getHeight());
+        mWindow_.setSize(::drawable);
         mWindow_.setVisualsEnabled(false);
         mWindow_.setSkinPack("WindowSkinNoBorder");
 
@@ -14,8 +12,9 @@
         title.setDefaultFontSize(title.getDefaultFontSize() * 2);
         title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
         title.setText(GAME_TITLE, false);
-        title.sizeToFit(_window.getWidth() * 0.9);
         layoutLine.addCell(title);
+
+        title.sizeToFit(::drawable.x * 0.9);
 
         local buttonOptions = ["Play", "Help", "Quit to Desktop"];
         local buttonFunctions = [
@@ -41,13 +40,10 @@
         }
 
         layoutLine.setMarginForAllCells(0, 20);
-        layoutLine.setPosition(_window.getWidth() * 0.05, _window.getHeight() * 0.1);
+        layoutLine.setPosition(::drawable.x * 0.05, ::drawable.y * 0.1);
         layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
-        layoutLine.setSize(_window.getWidth() * 0.9, _window.getHeight());
+        layoutLine.setSize(::drawable.x * 0.9, ::drawable.y);
         layoutLine.layout();
     }
 
-    function update(){
-
-    }
 };

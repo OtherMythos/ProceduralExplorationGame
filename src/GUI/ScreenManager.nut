@@ -14,6 +14,8 @@
     mFGEffectRenderWindow = null
     mVersionInfoWindow_ = null
 
+    mCurrentAspect = null
+
     mScreensZOrder = SCREENS_START_Z
 
     "Screens": array(Screen.MAX, null),
@@ -181,6 +183,39 @@
 
         foreach(i in mActiveScreens_){
             if(i != null) i.update();
+        }
+    }
+
+    function processResize(){
+        calculateAspectRatio();
+    }
+
+    function calculateAspectRatio(){
+        local defaultCoords = Vec2(1920, 1080);
+        //local defaultCoords = ::canvasSize;
+        local currentSize = _window.getSize();
+
+        local outCoords = Vec2(currentSize.x, currentSize.y);
+        local percentageX = (currentSize.x / defaultCoords.x);
+        local percentageY = (currentSize.y / defaultCoords.y);
+        if(percentageX < percentageY){
+            outCoords.x = currentSize.x;
+            outCoords.y = percentageX * defaultCoords.y;
+        }
+        else if(percentageY < percentageX){
+            outCoords.y = currentSize.y;
+            outCoords.x = percentageY * defaultCoords.x;
+        }
+
+        foreach(i in mActiveScreens_){
+            if(i == null) continue;
+            //i.setSize(0.5, 0.5);
+            local finishedSize = Vec2(outCoords.x / currentSize.x, outCoords.y / currentSize.y)
+            print("finished " + finishedSize);
+            ::drawable = finishedSize * currentSize;
+            i.notifyResize();
+            i.setSize(::drawable.x, ::drawable.y);
+            i.setPositionCentre(currentSize.x/2, currentSize.y/2);
         }
     }
 };

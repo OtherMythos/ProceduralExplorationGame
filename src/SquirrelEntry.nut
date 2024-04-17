@@ -14,7 +14,7 @@ function start(){
     _doFile("res://src/Util/StateMachine.nut");
     _doFile("res://src/Util/CombatStateMachine.nut");
 
-    _event.subscribe(_EVENT_SYSTEM_WINDOW_RESIZE, recieveScreenChange, this);
+    _event.subscribe(_EVENT_SYSTEM_WINDOW_RESIZE, recieveWindowResize, this);
 
     _doFile("res://src/Base.nut");
     ::Base.setup();
@@ -36,14 +36,19 @@ function sceneSafeUpdate(){
     }
 }
 
-function recieveScreenChange(id, data){
+function recieveWindowResize(id, data){
     print("window resized");
-    _gui.setCanvasSize(canvasSize, _window.getActualSize());
+    //_gui.setCanvasSize(canvasSize, _window.getActualSize());
+    _gui.setCanvasSize(_window.getSize(), _window.getActualSize());
+    canvasSize = _window.getSize();
+    ::ScreenManager.processResize();
 }
 
 function setupInitialCanvasSize(){
     ::canvasSize <- Vec2(1920, 1080);
+    ::drawable <- canvasSize.copy();
+    //::canvasSize <- Vec2(1, 1);
     ::resolutionMult <- _window.getActualSize() / _window.getSize();
-    _gui.setCanvasSize(canvasSize, _window.getActualSize());
+    _gui.setCanvasSize(_window.getSize(), _window.getActualSize());
     _gui.setDefaultFontSize26d6((_gui.getOriginalDefaultFontSize26d6() * ::resolutionMult.x).tointeger());
 }

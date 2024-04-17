@@ -40,6 +40,10 @@
         mScreenData_ = screenData;
     }
 
+    function setup(data){
+        recreate();
+    }
+
     function getScreenData(){
         return mScreenData_;
     }
@@ -71,5 +75,28 @@
     function setZOrder(idx){
         if(mBackgroundWindow_) mBackgroundWindow_.setZOrder(idx-1);
         mWindow_.setZOrder(idx);
+    }
+
+    function setPositionCentre(x, y){
+        if(mWindow_ == null) return;
+        mWindow_.setCentre(x, y);
+    }
+    function setSize(width, height){
+        if(mWindow_ == null) return;
+        mWindow_.setSize(width, height);
+    }
+
+    function notifyResize(){
+        if(mWindow_ != null) _gui.destroy(mWindow_);
+        mWindow_ = null;
+
+        recreate_();
+    }
+
+    function recreate_(){
+        recreate();
+    }
+    function recreate(){
+
     }
 };
