@@ -1,8 +1,8 @@
 ::ScreenManager.Screens[Screen.GAMEPLAY_MAIN_MENU_SCREEN] = class extends ::Screen{
 
-    function setup(data){
+    function recreate(){
         mWindow_ = _gui.createWindow("GameplayMainMenu");
-        mWindow_.setSize(_window.getWidth(), _window.getHeight());
+        mWindow_.setSize(::drawable.x, ::drawable.y);
         mWindow_.setVisualsEnabled(false);
         mWindow_.setSkinPack("WindowSkinNoBorder");
 
@@ -12,7 +12,7 @@
         title.setDefaultFontSize(title.getDefaultFontSize() * 2);
         title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
         title.setText("Main Menu", false);
-        title.sizeToFit(_window.getWidth() * 0.9);
+        title.sizeToFit(::drawable.x * 0.9);
         layoutLine.addCell(title);
 
         local buttonOptions = [
@@ -41,7 +41,7 @@
             local button = mWindow_.createButton();
             button.setDefaultFontSize(button.getDefaultFontSize() * 1.5);
             button.setText(c);
-            button.setSize(_window.getWidth() * 0.9, button.getSize().y * 1.5);
+            button.setSize(::drawable.x * 0.9, button.getSize().y * 1.5);
             button.attachListenerForEvent(buttonFunctions[i], _GUI_ACTION_PRESSED, this);
             button.setExpandHorizontal(true);
             button.setMinSize(0, 100);
@@ -49,9 +49,9 @@
         }
 
         layoutLine.setMarginForAllCells(0, 20);
-        layoutLine.setPosition(_window.getWidth() * 0.05, _window.getHeight() * 0.1);
+        layoutLine.setPosition(::drawable.x * 0.05, ::drawable.y * 0.1);
         layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
-        layoutLine.setSize(_window.getWidth() * 0.9, _window.getHeight());
+        layoutLine.setSize(::drawable.x * 0.9, ::drawable.y);
         layoutLine.layout();
     }
 

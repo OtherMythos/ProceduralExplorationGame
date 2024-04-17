@@ -106,6 +106,7 @@
         screenObject.mLayerIdx = layerId;
         screenObject.setup(screenData.data);
         screenObject.setZOrder(mScreensZOrder + layerId + 1);
+        screenObject.setPositionCentre(_window.getWidth()/2, _window.getHeight()/2);
 
         _event.transmit(Event.SCREEN_CHANGED, {"old": oldId, "new": screenId});
 
@@ -188,6 +189,7 @@
 
     function processResize(){
         calculateAspectRatio();
+        mVersionInfoWindow_.processResize();
     }
 
     function calculateAspectRatio(){
@@ -207,15 +209,16 @@
             outCoords.x = percentageY * defaultCoords.x;
         }
 
-        foreach(i in mActiveScreens_){
+        foreach(c,i in mActiveScreens_){
             if(i == null) continue;
             //i.setSize(0.5, 0.5);
             local finishedSize = Vec2(outCoords.x / currentSize.x, outCoords.y / currentSize.y)
             print("finished " + finishedSize);
             ::drawable = finishedSize * currentSize;
             i.notifyResize();
-            i.setSize(::drawable.x, ::drawable.y);
+            if(!i.mCustomSize_) i.setSize(::drawable.x, ::drawable.y);
             i.setPositionCentre(currentSize.x/2, currentSize.y/2);
+            i.setZOrder(mScreensZOrder + c + 1);
         }
     }
 };

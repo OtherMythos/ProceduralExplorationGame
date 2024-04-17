@@ -1,10 +1,8 @@
 ::ScreenManager.Screens[Screen.HELP_SCREEN] = class extends ::Screen{
 
-    mWindow_ = null;
-
-    function setup(data){
+    function recreate(){
         mWindow_ = _gui.createWindow("HelpScreen");
-        mWindow_.setSize(_window.getWidth(), _window.getHeight());
+        mWindow_.setSize(::drawable);
         mWindow_.setVisualsEnabled(false);
         mWindow_.setSkinPack("WindowSkinNoBorder");
 
@@ -15,7 +13,7 @@
         title.setDefaultFontSize(title.getDefaultFontSize() * 2.0);
         title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
         title.setText(GAME_TITLE, false);
-        title.sizeToFit(_window.getWidth() * (1.0 - MULTIPLIER_PADDING));
+        title.sizeToFit(::drawable.x * (1.0 - MULTIPLIER_PADDING));
         layoutLine.addCell(title);
         //title.setMargin(20, 20);
 
@@ -50,7 +48,7 @@ Bugs, issues and suggestions are best reported on discord, however email or GitH
         local label = mWindow_.createLabel();
         //label.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
         label.setText(text);
-        label.setSize(_window.getWidth() * (1.0 - MULTIPLIER_PADDING), _window.getHeight());
+        label.setSize(::drawable.x * (1.0 - MULTIPLIER_PADDING), drawable.y);
         layoutLine.addCell(label);
 
 
@@ -59,17 +57,17 @@ Bugs, issues and suggestions are best reported on discord, however email or GitH
         backButton.setDefaultFontSize(backButton.getDefaultFontSize() * 1.5);
         backButton.setText("back");
         local buttonSize = backButton.getSize();
-        buttonSize.x = _window.getWidth() / 2;
+        buttonSize.x = ::drawable.x / 2;
         backButton.setSize(buttonSize);
-        backButton.setPosition(_window.getWidth() / 2 - buttonSize.x / 2, _window.getHeight() - buttonSize.y - 30);
+        backButton.setPosition(::drawable.x / 2 - buttonSize.x / 2, ::drawable.y - buttonSize.y - 30);
         backButton.attachListenerForEvent(function(widget, action){
             ::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
         }, _GUI_ACTION_PRESSED, this);
 
         //layoutLine.setMarginForAllCells(0, 200);
-        layoutLine.setPosition(_window.getWidth() * (MULTIPLIER_PADDING / 2), _window.getHeight() * 0.02);
+        layoutLine.setPosition(::drawable.x * (MULTIPLIER_PADDING / 2), ::drawable.y * 0.02);
         layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
-        layoutLine.setSize(_window.getWidth() * (1.0 - MULTIPLIER_PADDING), _window.getHeight());
+        layoutLine.setSize(::drawable.x * (1.0 - MULTIPLIER_PADDING), ::drawable.y);
         layoutLine.layout();
     }
 

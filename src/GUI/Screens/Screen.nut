@@ -3,6 +3,7 @@
     mWindow_ = null;
     mScreenData_ = null;
     mLayerIdx = 0;
+    mCustomSize_ = false;
 
     mBackgroundWindow_ = null;
 
@@ -74,7 +75,7 @@
 
     function setZOrder(idx){
         if(mBackgroundWindow_) mBackgroundWindow_.setZOrder(idx-1);
-        mWindow_.setZOrder(idx);
+        if(mWindow_ != null) mWindow_.setZOrder(idx);
     }
 
     function setPositionCentre(x, y){
@@ -88,6 +89,7 @@
 
     function notifyResize(){
         if(mWindow_ != null) _gui.destroy(mWindow_);
+        if(mBackgroundWindow_ != null) _gui.destroy(mBackgroundWindow_);
         mWindow_ = null;
 
         recreate_();

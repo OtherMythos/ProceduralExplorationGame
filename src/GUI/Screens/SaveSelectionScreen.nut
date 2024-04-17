@@ -65,9 +65,9 @@
         ::ScreenManager.transitionToScreen(Screen.NEW_SAVE_VALUES_SCREEN, null, 1);
     }
 
-    function setup(data){
+    function recreate(){
         mWindow_ = _gui.createWindow("SaveSelectionScreen");
-        mWindow_.setSize(_window.getWidth(), _window.getHeight());
+        mWindow_.setSize(::drawable);
         mWindow_.setVisualsEnabled(false);
         mWindow_.setSkinPack("WindowSkinNoBorder");
 
@@ -77,7 +77,7 @@
         title.setDefaultFontSize(title.getDefaultFontSize() * 2);
         title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
         title.setText("Select a save", false);
-        title.sizeToFit(_window.getWidth() * 0.9);
+        title.sizeToFit(::drawable.x * 0.9);
         layoutLine.addCell(title);
 
         local viableSaves = ::Base.mSaveManager.obtainViableSaveInfo();
@@ -100,9 +100,9 @@
         }
 
         layoutLine.setMarginForAllCells(0, 20);
-        layoutLine.setPosition(_window.getWidth() * 0.05, _window.getHeight() * 0.1);
+        layoutLine.setPosition(::drawable.x * 0.05, ::drawable.y * 0.1);
         layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
-        layoutLine.setSize(_window.getWidth() * 0.9, _window.getHeight());
+        layoutLine.setSize(::drawable.x * 0.9, ::drawable.y);
         layoutLine.layout();
 
         foreach(i in layoutWidgets){
@@ -119,9 +119,5 @@
         button.setExpandHorizontal(true);
         button.setMinSize(0, 100);
         layoutLine.addCell(button);
-    }
-
-    function update(){
-
     }
 };
