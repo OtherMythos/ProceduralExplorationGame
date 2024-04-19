@@ -54,6 +54,8 @@
         if(!(::Base.isProfileActive(GameProfile.SCREENSHOT_MODE))){
             mVersionInfoWindow_ = VersionInfoWindow(::getVersionInfo());
         }
+
+        processResize();
     }
 
     function _createScreenForId(screenData){
@@ -106,7 +108,7 @@
         screenObject.mLayerIdx = layerId;
         screenObject.setup(screenData.data);
         screenObject.setZOrder(mScreensZOrder + layerId + 1);
-        screenObject.setPositionCentre(_window.getWidth()/2, _window.getHeight()/2);
+        if(!screenObject.mCustomPosition_) screenObject.setPositionCentre(_window.getWidth()/2, _window.getHeight()/2);
 
         _event.transmit(Event.SCREEN_CHANGED, {"old": oldId, "new": screenId});
 
@@ -209,16 +211,22 @@
             outCoords.x = percentageY * defaultCoords.x;
         }
 
+        local finishedSize = Vec2(outCoords.x / currentSize.x, outCoords.y / currentSize.y)
+        print("finished " + finishedSize);
+        ::drawable = finishedSize * currentSize;
+
         foreach(c,i in mActiveScreens_){
             if(i == null) continue;
             //i.setSize(0.5, 0.5);
-            local finishedSize = Vec2(outCoords.x / currentSize.x, outCoords.y / currentSize.y)
-            print("finished " + finishedSize);
-            ::drawable = finishedSize * currentSize;
             i.notifyResize();
             if(!i.mCustomSize_) i.setSize(::drawable.x, ::drawable.y);
-            i.setPositionCentre(currentSize.x/2, currentSize.y/2);
+            if(!i.mCustomPosition_) i.setPositionCentre(currentSize.x/2, currentSize.y/2);
             i.setZOrder(mScreensZOrder + c + 1);
         }
+    }
+
+    function calculateRatio(width){
+        local gridRatio = width.tofloat() / 1920.0;
+        return ::drawable.x * gridRatio;
     }
 };

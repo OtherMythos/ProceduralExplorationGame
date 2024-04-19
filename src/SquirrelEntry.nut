@@ -45,7 +45,7 @@ function recieveWindowResize(id, data){
 }
 
 function setupInitialCanvasSize(){
-    ::canvasSize <- Vec2(1920, 1080);
+    ::canvasSize <- _window.getSize();
     ::drawable <- canvasSize.copy();
     //::canvasSize <- Vec2(1, 1);
     ::resolutionMult <- _window.getActualSize() / _window.getSize();

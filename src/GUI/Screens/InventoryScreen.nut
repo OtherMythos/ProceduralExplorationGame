@@ -61,8 +61,8 @@ enum InventoryBusEvents{
 
         function update(){
             if(mActive_){
-                local xx = _input.getMouseX().tofloat() / _window.getWidth().tofloat();
-                local yy = _input.getMouseY().tofloat() / _window.getHeight().tofloat();
+                local xx = _input.getMouseX().tofloat() / ::drawable.x.tofloat();
+                local yy = _input.getMouseY().tofloat() / ::drawable.y.tofloat();
                 setPosition((1920*xx), (1080*yy));
             }
         }
@@ -149,7 +149,7 @@ enum InventoryBusEvents{
         mInventoryBus_.registerCallback(busCallback, this);
 
         mWindow_ = _gui.createWindow("InventoryScreen");
-        mWindow_.setSize(_window.getWidth(), _window.getHeight());
+        mWindow_.setSize(::drawable.x, ::drawable.y);
         mWindow_.setVisualsEnabled(false);
         mWindow_.setSkinPack("WindowSkinNoBorder");
 
@@ -168,7 +168,7 @@ enum InventoryBusEvents{
         title.setDefaultFontSize(title.getDefaultFontSize() * 2);
         title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
         title.setText("Inventory", false);
-        title.sizeToFit(_window.getWidth() * 0.9);
+        title.sizeToFit(::drawable.x * 0.9);
         title.setExpandHorizontal(true);
         layoutLine.addCell(title);
 
@@ -183,7 +183,7 @@ enum InventoryBusEvents{
 
         mOverlayWindow_ = _gui.createWindow("InventoryOverlayWindow");
         mOverlayWindow_.setPosition(0, 0);
-        mOverlayWindow_.setSize(_window.getWidth(), _window.getHeight());
+        mOverlayWindow_.setSize(::drawable.x, ::drawable.y);
         mOverlayWindow_.setVisualsEnabled(false);
         mOverlayWindow_.setConsumeCursor(false);
         mOverlayWindow_.setSkinPack("WindowSkinNoBorder");
@@ -213,9 +213,9 @@ enum InventoryBusEvents{
         layoutLine.addCell(layoutHorizontal);
 
         layoutLine.setMarginForAllCells(0, 5);
-        layoutLine.setPosition(_window.getWidth() * 0.05, 50);
-        layoutLine.setSize(_window.getWidth() * 0.9, _window.getHeight() * 0.9);
-        layoutLine.setHardMaxSize(_window.getWidth() * 0.9, _window.getHeight() * 0.9);
+        layoutLine.setPosition(::drawable.x * 0.05, 50);
+        layoutLine.setSize(::drawable.x * 0.9, ::drawable.y * 0.9);
+        layoutLine.setHardMaxSize(::drawable.x * 0.9, ::drawable.y * 0.9);
         layoutLine.layout();
 
         mInventoryGrid_.notifyLayout();
@@ -229,7 +229,8 @@ enum InventoryBusEvents{
 
     function createButtonCover(win){
         local cover = win.createPanel();
-        cover.setSize(64, 64);
+        local gridSize = ::ScreenManager.calculateRatio(64);
+        cover.setSize(gridSize, gridSize);
         cover.setDatablock("gui/inventoryHighlightCover");
         cover.setHidden(true);
         cover.setZOrder(155);
@@ -344,8 +345,8 @@ enum InventoryBusEvents{
         local pos = targetGrid.getPosition();
         local posForIdx = targetGrid.getPositionForIdx(idx);
         local data = {
-            "pos": Vec2(posForIdx.x + 64, posForIdx.y),
-            "size": Vec2(200, size.y),
+            "pos": Vec2(posForIdx.x + ::ScreenManager.calculateRatio(64), posForIdx.y),
+            "size": Vec2(::ScreenManager.calculateRatio(200), size.y),
             "item": selectedItem,
             "idx": idx,
             "gridType": inventoryData.gridType

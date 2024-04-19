@@ -82,17 +82,22 @@
             mItemIcons_ = array(inventoryHeight);
         }
 
+        //Get the size of a grid relative to some universal metric.
+        local gridSize = ::ScreenManager.calculateRatio(64);
+        local gridPadding = gridSize * (8.0 / 64.0);
+        local gridRemainder = gridSize - gridPadding;
+        local iconSize = ::ScreenManager.calculateRatio(48);
         for(local y = 0; y < inventoryHeight; y++){
             for(local x = 0; x < inventoryWidth; x++){
                 local background = mWindow_.createPanel();
-                background.setSize(64, 64);
-                background.setPosition(x * 64, y * 64);
+                background.setSize(gridSize, gridSize);
+                background.setPosition(x * gridSize, y * gridSize);
                 background.setSkin("inventory_slot");
                 mBackgrounds_.append(background);
 
                 local iconPanel = mWindow_.createPanel();
-                iconPanel.setSize(48, 48);
-                iconPanel.setPosition(x * 64 + 8, y * 64 + 8);
+                iconPanel.setSize(iconSize, iconSize);
+                iconPanel.setPosition(x * gridSize + gridPadding, y * gridSize + gridPadding);
                 iconPanel.setSkin("item_none");
                 iconPanel.setVisible(false);
                 mItemIcons_[x + y * inventoryWidth] = iconPanel;
@@ -101,8 +106,8 @@
                 item.setHidden(false);
                 //item.setSize(48, 48);
                 //item.setPosition(x * 64 + 8, y * 64 + 8);
-                item.setSize(64, 64);
-                item.setPosition(x * 64, y * 64);
+                item.setSize(gridSize, gridSize);
+                item.setPosition(x * gridSize, y * gridSize);
                 //item.setSkin("Invisible");
                 item.setVisualsEnabled(false);
                 //item.setUserId(x | (y << 10));

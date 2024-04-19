@@ -8,11 +8,13 @@
         mProgressLabels_ = [];
 
         mWindow_ = _gui.createWindow("WorldGenerationStatusScreen");
-        mWindow_.setSize(_window.getWidth(), _window.getHeight());
-        mWindow_.setPosition(0, 0);
+        mWindow_.setSize(::drawable);
         mWindow_.setSkinPack("WindowSkinNoBorder");
         mWindow_.setZOrder(61);
         mWindow_.setDatablock("unlitBlack");
+
+        createBackgroundScreen_();
+        mBackgroundWindow_.setDatablock("unlitBlack");
 
         local layoutLine = _gui.createLayoutLine();
 
@@ -20,17 +22,17 @@
         title.setDefaultFontSize(title.getDefaultFontSize() * 2);
         title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
         title.setText("Generating world", false);
-        title.sizeToFit(_window.getWidth() * 0.9);
+        title.sizeToFit(::drawable.x * 0.9);
         layoutLine.addCell(title);
 
         local progressBar = ::GuiWidgets.ProgressBar(mWindow_);
-        progressBar.setSize(_window.getWidth() * 0.5, 50);
+        progressBar.setSize(::drawable.x * 0.5, ::ScreenManager.calculateRatio(50));
         progressBar.addToLayout(layoutLine);
 
         layoutLine.setMarginForAllCells(0, 20);
-        layoutLine.setPosition(_window.getWidth() * 0.05, _window.getHeight() * 0.1);
+        layoutLine.setPosition(::drawable.x * 0.05, ::drawable.y * 0.1);
         layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
-        layoutLine.setSize(_window.getWidth() * 0.9, _window.getHeight());
+        layoutLine.setSize(::drawable.x * 0.9, ::drawable.y);
         layoutLine.layout();
 
         progressBar.notifyLayout();
@@ -58,13 +60,13 @@
         label.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
         label.setDefaultFontSize(label.getDefaultFontSize() * 1.5);
         label.setText(labelText, false);
-        label.sizeToFit(_window.getWidth());
+        label.sizeToFit(::drawable.x);
         label.setZOrder(40);
         mLabelLayout_.addCell(label);
 
         mProgressLabels_.append(label);
 
-        mLabelLayout_.setSize(mWindow_.getSize());
+        mLabelLayout_.setSize(::drawable);
         mLabelLayout_.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
         mLabelLayout_.layout();
 
@@ -73,13 +75,13 @@
             totalSize += i.getSize().y
         }
 
-        local offset = _window.getHeight() - totalSize;
+        local offset = ::drawable.y - totalSize;
         foreach(c,i in mProgressLabels_){
             local pos = i.getPosition();
             local newY = pos.y + offset;
             i.setPosition(pos.x, newY);
 
-            local animVal = newY / _window.getHeight();
+            local animVal = newY / ::drawable.y;
             i.setTextColour(1, 1, 1, tan(animVal)/2);
         }
 

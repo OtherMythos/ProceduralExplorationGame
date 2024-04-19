@@ -2,15 +2,15 @@
 
     function setup(data){
 
-        local winWidth = _window.getWidth() * 0.8;
-        local winHeight = _window.getHeight() * 0.8;
+        local winWidth = ::drawable.x * 0.8;
+        local winHeight = ::drawable.y * 0.8;
 
         //Create a window to block inputs for when the popup appears.
         createBackgroundScreen_();
 
         mWindow_ = _gui.createWindow("PlayerDeathScreen");
         mWindow_.setSize(winWidth, winHeight);
-        mWindow_.setPosition(_window.getWidth() * 0.1, _window.getHeight() * 0.1);
+        mWindow_.setPosition(::drawable.x * 0.1, ::drawable.y * 0.1);
         mWindow_.setClipBorders(10, 10, 10, 10);
 
         local layoutLine = _gui.createLayoutLine();

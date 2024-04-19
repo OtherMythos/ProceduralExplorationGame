@@ -4,6 +4,7 @@
     mScreenData_ = null;
     mLayerIdx = 0;
     mCustomSize_ = false;
+    mCustomPosition_ = false;
 
     mBackgroundWindow_ = null;
 
