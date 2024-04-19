@@ -73,7 +73,7 @@
     function setup(parentWin){
         mParentWin_ = parentWin;
         mRenderPanel_ = mParentWin_.createPanel();
-        local sizeRatio = (500.0 / 1920.0) * ::drawable.x;
+        local sizeRatio = ::ScreenManager.calculateRatio(500);
         mRenderPanel_.setMinSize(sizeRatio, sizeRatio);
 
         _event.subscribe(Event.PLAYER_EQUIP_CHANGED, receivePlayerEquipChangedEvent, this);
