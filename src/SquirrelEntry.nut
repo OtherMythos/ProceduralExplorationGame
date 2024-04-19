@@ -17,6 +17,7 @@ function start(){
     _event.subscribe(_EVENT_SYSTEM_WINDOW_RESIZE, recieveWindowResize, this);
 
     _doFile("res://src/Base.nut");
+    ::Base.setupFullscreen();
     ::Base.setup();
 }
 
