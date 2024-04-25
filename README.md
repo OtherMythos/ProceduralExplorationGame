@@ -2,7 +2,10 @@
 
 [![Build and Test](https://github.com/OtherMythos/ProceduralExplorationGame/actions/workflows/build.yml/badge.svg)](https://github.com/OtherMythos/ProceduralExplorationGame/actions/workflows/build.yml)
 [![Build Container](https://github.com/OtherMythos/ProceduralExplorationGame/actions/workflows/buildContainer.yml/badge.svg)](https://github.com/OtherMythos/ProceduralExplorationGame/actions/workflows/buildContainer.yml)
+
 [![Join the Discord](https://img.shields.io/badge/Join%20the%20Discord-purple?logo=discord&logoColor=ffffff)](https://discord.gg/P47ykcg5ed)
+[![Subscribe on YouTube](https://img.shields.io/badge/Subscribe%20on%20YouTube-red?logo=youtube&logoColor=ffffff)](https://www.youtube.com/channel/UCUIWHmJMVfNSahrnPKzli3Q?sub_confirmation=1)
+
 
 
 An un-named game for the avEngine.
