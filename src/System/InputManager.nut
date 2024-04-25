@@ -12,6 +12,7 @@
                     "PerformMove4": "#PerformMove4",
                     "CancelTarget": "#CancelTarget",
                     "ShowInventory": "#ShowInventory",
+                    "PauseGame": "#PauseGame",
                 },
                 "StickPadGyro" : {
                     "Move":"#Move",
@@ -45,6 +46,7 @@
         ::InputManager.performMove4 <- _input.getButtonActionHandle("PerformMove4");
         ::InputManager.cancelTarget <- _input.getButtonActionHandle("CancelTarget");
         ::InputManager.showInventory <- _input.getButtonActionHandle("ShowInventory");
+        ::InputManager.pauseGame <- _input.getButtonActionHandle("PauseGame");
 
         ::InputManager.menuInteract <- _input.getButtonActionHandle("MenuInteract");
         ::InputManager.menuBack <- _input.getButtonActionHandle("MenuBack");
@@ -57,6 +59,8 @@
         _input.mapControllerInput(_B_Y, this.performMove4);
         _input.mapControllerInput(_B_LEFTSHOULDER, this.cancelTarget);
         _input.mapControllerInput(_B_RIGHTSHOULDER, this.cancelTarget);
+        _input.mapControllerInput(_B_BACK, this.showInventory);
+        _input.mapControllerInput(_B_GUIDE, this.pauseGame);
 
         _input.mapControllerInput(_B_B, this.menuBack);
 
@@ -67,8 +71,9 @@
         _input.mapKeyboardInput(_K_2, this.performMove2);
         _input.mapKeyboardInput(_K_3, this.performMove3);
         _input.mapKeyboardInput(_K_4, this.performMove4);
-        _input.mapKeyboardInput(_K_ESCAPE, this.cancelTarget);
+        //_input.mapKeyboardInput(_K_ESCAPE, this.cancelTarget);
         _input.mapKeyboardInput(_K_E, this.showInventory);
+        _input.mapKeyboardInput(_K_ESCAPE, this.pauseGame);
 
         _input.mapKeyboardInput(_K_ESCAPE, this.menuBack);
 

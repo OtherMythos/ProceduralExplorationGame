@@ -38,7 +38,9 @@
 enum WorldMousePressContexts{
     TARGET_ENEMY,
     PLACING_FLAG,
-    ORIENTING_CAMERA
+    ORIENTING_CAMERA,
+    //In the case of a window that takes the full screen with exploration in the back, ensure clicks to leave don't result in a flag press.
+    POPUP_WINDOW,
 };
 
 ::World <- class{
@@ -149,6 +151,9 @@ enum WorldMousePressContexts{
         function requestOrientingCamera(){
             return beginState_(WorldMousePressContexts.ORIENTING_CAMERA);
         }
+        function requestPopupWindow(){
+            return beginState_(WorldMousePressContexts.POPUP_WINDOW);
+        }
         function notifyMouseEnded(){
             if(mCurrentState_ == null) return;
             mCurrentState_ = null;
@@ -257,6 +262,7 @@ enum WorldMousePressContexts{
             ],
             "canceltarget": _input.getButtonActionHandle("CancelTarget"),
             "showInventory": _input.getButtonActionHandle("ShowInventory"),
+            "pauseGame": _input.getButtonActionHandle("PauseGame"),
         };
     }
 
@@ -883,9 +889,13 @@ enum WorldMousePressContexts{
         if(_input.getButtonAction(mInputs_.showInventory, _INPUT_PRESSED)){
             showInventory();
         }
+        if(_input.getButtonAction(mInputs_.pauseGame, _INPUT_PRESSED)){
+            ::Base.mExplorationLogic.setGamePaused(true);
+        }
     }
 
     function showInventory(){
+        notifyModalPopupScreen();
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN,
             {"stats": ::Base.mPlayerStats}),
             null, 1);
@@ -1059,6 +1069,10 @@ enum WorldMousePressContexts{
         local x = _input.getAxisActionX(mInputs_.camera, _INPUT_ANY);
         local y = _input.getAxisActionY(mInputs_.camera, _INPUT_ANY);
         processCameraMove(x*modifier, y*modifier);
+    }
+
+    function notifyModalPopupScreen(){
+        mMouseContext_.requestPopupWindow();
     }
 
 };

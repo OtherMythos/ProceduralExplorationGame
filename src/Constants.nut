@@ -147,6 +147,7 @@ enum Screen{
     WORLD_GENERATION_STATUS_SCREEN,
     NEW_SAVE_VALUES_SCREEN,
     INVENTORY_ITEM_HELPER_SCREEN,
+    PAUSE_SCREEN,
 
     MAX
 };
@@ -167,6 +168,8 @@ enum Screen{
     "playerDeathScreen",
     "worldGenerationStatusScreen",
     "newSaveValuesScreen",
+    "inventoryItemHelperScreen",
+    "pauseScreen"
 ];
 
 enum Popup{

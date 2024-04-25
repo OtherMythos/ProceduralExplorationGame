@@ -289,4 +289,15 @@
     function setOrientatingCamera(orientating){
         mCurrentWorld_.setOrientatingCamera(orientating);
     }
+
+    function setGamePaused(pause){
+        if(pause){
+            pauseExploration();
+            ::ScreenManager.transitionToScreen(Screen.PAUSE_SCREEN, null, 2);
+            mCurrentWorld_.notifyModalPopupScreen();
+        }else{
+            unPauseExploration();
+            ::ScreenManager.transitionToScreen(Screen.PAUSE_SCREEN, null, 2);
+        }
+    }
 };
