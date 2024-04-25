@@ -67,9 +67,11 @@
 
         _state.setPauseState(0);
 
-        setCurrentWorld_(createWorldInstance(WorldTypes.PROCEDURAL_EXPLORATION_WORLD));
-        //setCurrentWorld_(createWorldInstance(WorldTypes.PROCEDURAL_DUNGEON_WORLD));
-        //setCurrentWorld_(createWorldInstance(WorldTypes.VISITED_LOCATION_WORLD));
+        local targetWorld = ::Base.determineForcedWorld();
+        if(targetWorld == null){
+            targetWorld = WorldTypes.PROCEDURAL_EXPLORATION_WORLD;
+        }
+        setCurrentWorld_(createWorldInstance(targetWorld));
 
         _event.subscribe(Event.PLAYER_DIED, processPlayerDeath, this);
         _event.subscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);

@@ -43,7 +43,12 @@ enum WorldTypes{
     PROCEDURAL_DUNGEON_WORLD,
     VISITED_LOCATION_WORLD,
 };
-
+::WorldTypeStrings <- [
+    "World",
+    "ProceduralExplorationWorld",
+    "ProceduralDungeonWorld",
+    "VisitedLocationWorld",
+];
 
 enum ObjectType{
     SCREEN_DATA = "ScreenData",

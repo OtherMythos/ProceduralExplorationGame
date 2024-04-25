@@ -63,6 +63,14 @@ Desired profiles should be enabled by defining a user setting:
 
 It is recommended that these profiles are defined in the ```avSetupSecondary.cfg``` file, which can be included in the gitignore, so local settings do not get committed.
 
+### Developer Flags
+Registered flags can be specified in the ```avSetupSecondary.cfg``` file to setup certain types of logic. The following table describes the available flags and their use.
+
+| Flag | Values | Description |
+|----------|----------|----------|
+| ```forceScreen``` | Any string from ```::ScreenString``` | Force a screen at startup rather than the usual gameplay path |
+| ```forceWorld``` | Any string from ```::WorldTypeStrings``` | Force gameplay to initiate with the specified world type. |
+
 ### Developer Functions
 A number of functions have been exposed for use in the ```developerTools.nut``` script file.
 This file is included in the git ignore and is meant to implement developer specific workarounds for common problems.

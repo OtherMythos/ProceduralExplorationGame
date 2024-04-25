@@ -28,6 +28,14 @@
         }
         return null;
     }
+    function determineForcedWorld(){
+        local forcedWorld = _settings.getUserSetting("forceWorld");
+        if(forcedWorld == null || typeof forcedWorld != "string") return null;
+        foreach(c,i in ::WorldTypeStrings){
+            if(i == forcedWorld) return c;
+        }
+        return null;
+    }
     function determineGameProfiles(){
         local profileVal = _settings.getUserSetting("profile");
         if(profileVal == null || typeof profileVal != "string") return null;
