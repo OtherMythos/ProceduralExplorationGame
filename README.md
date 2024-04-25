@@ -68,8 +68,18 @@ Registered flags can be specified in the ```avSetupSecondary.cfg``` file to setu
 
 | Flag | Values | Description |
 |----------|----------|----------|
-| ```forceScreen``` | Any string from ```::ScreenString``` | Force a screen at startup rather than the usual gameplay path |
+| ```forceScreen``` | Any string from ```::ScreenString``` | Force a screen at startup rather than the usual gameplay path. |
 | ```forceWorld``` | Any string from ```::WorldTypeStrings``` | Force gameplay to initiate with the specified world type. |
+
+example:
+```json
+{
+    "UserSettings":{
+        "forceScreen": "helpScreen",
+        "forceWorld": "ProceduralDungeonWorld"
+    }
+}
+```
 
 ### Developer Functions
 A number of functions have been exposed for use in the ```developerTools.nut``` script file.
