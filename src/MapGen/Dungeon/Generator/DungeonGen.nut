@@ -41,6 +41,7 @@
                 targetWidth += roomMinWidth;
                 targetHeight += roomMinHeight;
 
+                //TODO base this generation around a seed value.
                 local roomX = _random.randInt(w);
                 local roomY = _random.randInt(h);
 
