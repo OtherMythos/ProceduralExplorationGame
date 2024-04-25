@@ -39,7 +39,7 @@ Once built this project can be run like any other avEngine project
 ./av avSetup.cfg
 ```
 
-## Developer tools
+## Developer Tools
 A few utility features are provided to help speed up development.
 
 ### Profiles
@@ -56,7 +56,21 @@ Desired profiles should be enabled by defining a user setting:
 }
 ```
 
-It is recommended that these profiles are defined in the avSetupSecondary.cfg file, which can be included in the gitignore, so local settings do not get committed.
+It is recommended that these profiles are defined in the ```avSetupSecondary.cfg``` file, which can be included in the gitignore, so local settings do not get committed.
+
+### Developer Functions
+A number of functions have been exposed for use in the ```developerTools.nut``` script file.
+This file is included in the git ignore and is meant to implement developer specific workarounds for common problems.
+
+An example file would look like this:
+
+```c
+::developerTools_ <- {
+    function checkRightClickWorkarounds(){
+        print("I am called when right click workarounds are enabled");
+    }
+};
+```
 
 ### Save Files
 Save files are written to the following directories for the following platforms:

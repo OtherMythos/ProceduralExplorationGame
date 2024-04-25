@@ -368,20 +368,6 @@ enum WorldMousePressContexts{
         mEntityManager_.moveTowards(sender, mPlayerEntry_.getPosition(), anim);
     }
 
-    function checkDebugBodges(){
-        if(_input.getMousePressed(1)){
-            //::Base.mExplorationLogic.spawnEXPOrbs(mPlayerEntry_.getPosition(), 4);
-            //mCurrentWorld_.spawnEXPOrbs(mCurrentWorld_.mPlayerEntry_.getPosition(), 1);
-
-            //::Base.mExplorationLogic.gatewayEndExploration();
-            //::Base.mExplorationLogic.pushWorld(::Base.mExplorationLogic.createWorldInstance(WorldTypes.PROCEDURAL_EXPLORATION_WORLD));
-
-            ::_applyDamageOther(mEntityManager_, mPlayerEntry_.getEID(), 10000);
-
-            //spawnDroppedItem(mPlayerEntry_.getPosition() + Vec3(5, 0, 0), ::Item(ItemId.SIMPLE_SWORD));
-        }
-    }
-
     function update(){
         checkCameraChange();
         checkOrientatingCamera();
@@ -395,7 +381,13 @@ enum WorldMousePressContexts{
         checkPlayerInputs();
 
         if(::Base.isProfileActive(GameProfile.ENABLE_RIGHT_CLICK_WORKAROUNDS)){
-            checkDebugBodges();
+            if(_input.getMousePressed(_MB_RIGHT)){
+                if(getroottable().rawin("developerTools_")){
+                    if(getroottable().developerTools_.rawin("checkRightClickWorkarounds")){
+                        ::developerTools_.checkRightClickWorkarounds();
+                    }
+                }
+            }
         }
 
         mProjectileManager_.update();
