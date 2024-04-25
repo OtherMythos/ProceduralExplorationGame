@@ -21,3 +21,25 @@ variationSeed: %i";
 
     return out;
 });
+::DebugConsole.registerCommand("give", "Give the player an item of id", 1, "i", function(command){
+    local itemId = command[0].tointeger();
+    if(itemId >= ItemId.MAX){
+        throw format("Invalid item idx '%i'", itemId);
+    }
+    ::Base.mPlayerStats.addToInventory(::Item(itemId));
+
+    return format("Giving player '%s'", ::Items[itemId].getName());
+});
+
+::DebugConsole.registerCommand("health", "Set the player's health to a value. Max health if no number provided.", 1, "i", function(command){
+    local health = 1000000000;
+    local healthDesc = "max";
+    if(command.len() >= 1){
+        health = command[0].tointeger();
+        healthDesc = health.tostring();
+    }
+
+    ::Base.mPlayerStats.setPlayerHealth(health);
+
+    return "Setting player health to " + healthDesc;
+});

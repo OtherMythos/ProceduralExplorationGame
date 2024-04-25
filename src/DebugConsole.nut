@@ -23,7 +23,14 @@
             mCallback = callback;
         }
         function actuateCommand(command){
-            return mCallback(command);
+            local result = null;
+            try{
+                result = mCallback(command);
+            }catch(e){
+                result = ("Error: " + e);
+            }
+
+            return result;
         }
     }
 
@@ -96,7 +103,7 @@
 
     function actuateCommand(command){
         local splitVals = split(command, " ");
-        print(_prettyPrint(command));
+        print(_prettyPrint(splitVals));
         pushOutput(format("%s%s", COMMAND_POINTER, command));
         if(splitVals.len() <= 0){
             return;

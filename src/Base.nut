@@ -102,9 +102,6 @@
         _doFile("res://src/Content/Enemies/BasicEnemyScript.nut");
         _doFile("res://src/Content/GenericCallbacks.nut");
 
-        _doFile("res://src/DebugConsole.nut");
-        _doFile("res://src/Content/DebugCommands.nut");
-
         _doFile("res://src/Content/Enemies.nut");
         _doFile("res://src/Content/Projectiles.nut");
         _doFile("res://src/Content/Equippables.nut");
@@ -113,6 +110,9 @@
         _doFile("res://src/Content/FoundObject.nut");
         _doFile("res://src/Content/CombatData.nut");
         _doFile("res://src/Content/Moves.nut");
+
+        _doFile("res://src/DebugConsole.nut");
+        _doFile("res://src/Content/DebugCommands.nut");
 
         _doFile("res://src/Character/CharacterModelAnimations.nut");
         _doFile("res://src/Character/CharacterModel.nut");

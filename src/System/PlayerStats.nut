@@ -70,7 +70,7 @@
         mPlayerCombatStats.setHealth(health);
 
         local data = {
-            "health": health,
+            "health": mPlayerCombatStats.mHealth,
             "percentage": mPlayerCombatStats.getHealthPercentage()
         };
         //mPlayerEntry_.notifyNewHealth(newHealth, percentage);
