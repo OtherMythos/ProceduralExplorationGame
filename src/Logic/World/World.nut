@@ -376,9 +376,9 @@ enum WorldMousePressContexts{
             //::Base.mExplorationLogic.gatewayEndExploration();
             //::Base.mExplorationLogic.pushWorld(::Base.mExplorationLogic.createWorldInstance(WorldTypes.PROCEDURAL_EXPLORATION_WORLD));
 
-            //::_applyDamageOther(mEntityManager_, mPlayerEntry_.getEID(), 10000);
+            ::_applyDamageOther(mEntityManager_, mPlayerEntry_.getEID(), 10000);
 
-            spawnDroppedItem(mPlayerEntry_.getPosition() + Vec3(5, 0, 0), ::Item(ItemId.SIMPLE_SWORD));
+            //spawnDroppedItem(mPlayerEntry_.getPosition() + Vec3(5, 0, 0), ::Item(ItemId.SIMPLE_SWORD));
         }
     }
 

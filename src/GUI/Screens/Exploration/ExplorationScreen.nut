@@ -182,7 +182,7 @@ enum ExplorationBusEvents{
     }
 
     function createInputBlockerOverlay(){
-        mInputBlockerWindow_ = _gui.createWindow("ExplorationScreen");
+        mInputBlockerWindow_ = _gui.createWindow("InputBlocker");
         mInputBlockerWindow_.setSize(_window.getWidth(), _window.getHeight());
         mInputBlockerWindow_.setZOrder(140);
         mInputBlockerWindow_.setVisualsEnabled(false);

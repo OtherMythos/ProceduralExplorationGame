@@ -27,6 +27,7 @@
             },
             function(widget, action){
                 ::Base.mExplorationLogic.setGamePaused(false);
+                ::Base.mExplorationLogic.shutdown();
                 closeScreen();
                 ::ScreenManager.queueTransition(Screen.GAMEPLAY_MAIN_MENU_SCREEN);
             }
@@ -47,11 +48,25 @@
         layoutLine.setSize(::drawable.x * 0.9, ::drawable.y * 0.9);
         layoutLine.setHardMaxSize(::drawable.x * 0.9, ::drawable.y * 0.9);
         layoutLine.layout();
+
+        //TODO rather than doing this in screens it would make more sense to have a system to manage it.
+        ::InputManager.setActionSet(InputActionSets.MENU);
+    }
+
+    function shutdown(){
+        base.shutdown();
+        ::InputManager.setActionSet(InputActionSets.EXPLORATION);
     }
 
     function closeScreen(){
         ::ScreenManager.queueTransition(null, null, mLayerIdx);
         ::Base.mExplorationLogic.setGamePaused(false);
+    }
+
+    function update(){
+        if(_input.getButtonAction(::InputManager.menuBack, _INPUT_PRESSED)){
+            closeScreen();
+        }
     }
 
 }
