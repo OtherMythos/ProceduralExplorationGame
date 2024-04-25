@@ -6,6 +6,8 @@
     mCommands_ = null
     mOutput_ = null
 
+    mActive_ = false
+
     DebugCommandEntry = class{
         mName = null;
         mNumParams = null;
@@ -19,6 +21,28 @@
         }
         function actuateCommand(command){
             return mCallback(command);
+        }
+    }
+
+    function toggleActive(){
+        setActive(!mActive_);
+    }
+
+    function setActive(active){
+        mActive_ = active;
+        mParentWindow_.setVisible(active);
+
+        mCommandBox_.setText("");
+        if(active){
+            mCommandBox_.setFocus();
+        }
+
+        ::InputManager.setActionSet(active ? InputActionSets.DEBUG_CONSOLE : InputActionSets.EXPLORATION);
+    }
+
+    function update(){
+        if(_input.getButtonAction(::InputManager.debugConsoleCloseConsole, _INPUT_PRESSED)){
+            toggleActive();
         }
     }
 

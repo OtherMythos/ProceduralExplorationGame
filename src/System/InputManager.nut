@@ -13,6 +13,7 @@
                     "CancelTarget": "#CancelTarget",
                     "ShowInventory": "#ShowInventory",
                     "PauseGame": "#PauseGame",
+                    "ShowDebugConsole": "#ShowDebugConsole",
                 },
                 "StickPadGyro" : {
                     "Move":"#Move",
@@ -28,14 +29,21 @@
                     "MoveLeft": "#MoveLeft",
                     "MoveRight": "#MoveRight",
                 }
+            },
+            "DebugConsole" : {
+                "Buttons" : {
+                    "closeConsole": "#closeConsole"
+                }
             }
         });
 
         ::InputManager.actionSetGameplay <- _input.getActionSetHandle("Exploration");
         ::InputManager.actionSetMenu <- _input.getActionSetHandle("Menu");
+        ::InputManager.actionSetDebugConsole <- _input.getActionSetHandle("DebugConsole");
 
         mActionSets_.append(::InputManager.actionSetGameplay);
         mActionSets_.append(::InputManager.actionSetMenu);
+        mActionSets_.append(::InputManager.actionSetDebugConsole);
 
         //Exploration
         ::InputManager.explorationMove <- _input.getAxisActionHandle("Move");
@@ -47,9 +55,12 @@
         ::InputManager.cancelTarget <- _input.getButtonActionHandle("CancelTarget");
         ::InputManager.showInventory <- _input.getButtonActionHandle("ShowInventory");
         ::InputManager.pauseGame <- _input.getButtonActionHandle("PauseGame");
+        ::InputManager.showDebugConsole <- _input.getButtonActionHandle("ShowDebugConsole");
 
         ::InputManager.menuInteract <- _input.getButtonActionHandle("MenuInteract");
         ::InputManager.menuBack <- _input.getButtonActionHandle("MenuBack");
+
+        ::InputManager.debugConsoleCloseConsole <- _input.getButtonActionHandle("closeConsole");
 
         _input.mapControllerInput(_BA_LEFT, this.explorationMove);
         _input.mapControllerInput(_BA_RIGHT, this.explorationCamera);
@@ -74,8 +85,12 @@
         //_input.mapKeyboardInput(_K_ESCAPE, this.cancelTarget);
         _input.mapKeyboardInput(_K_E, this.showInventory);
         _input.mapKeyboardInput(_K_ESCAPE, this.pauseGame);
+        _input.mapKeyboardInput(_K_TAB, this.showDebugConsole);
 
         _input.mapKeyboardInput(_K_ESCAPE, this.menuBack);
+
+        _input.mapKeyboardInput(_K_TAB, this.debugConsoleCloseConsole);
+        _input.mapKeyboardInput(_K_ESCAPE, this.debugConsoleCloseConsole);
 
         //_input.setActionSetForDevice(_ANY_INPUT_DEVICE, ::InputManager.actionSetGameplay);
         setActionSet(InputActionSets.EXPLORATION);

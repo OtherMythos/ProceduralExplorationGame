@@ -274,6 +274,7 @@
         ::ScreenManager.update();
         ::PopupManager.update();
         ::EffectManager.update();
+        ::DebugConsole.update();
     }
 
     function createLights(){

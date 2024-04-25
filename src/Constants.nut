@@ -26,6 +26,7 @@ enum TargetInterface{
 enum InputActionSets{
     EXPLORATION,
     MENU,
+    DEBUG_CONSOLE,
 
     MAX
 

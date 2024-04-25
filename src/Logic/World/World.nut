@@ -263,6 +263,7 @@ enum WorldMousePressContexts{
             "canceltarget": _input.getButtonActionHandle("CancelTarget"),
             "showInventory": _input.getButtonActionHandle("ShowInventory"),
             "pauseGame": _input.getButtonActionHandle("PauseGame"),
+            "showDebugConsole": _input.getButtonActionHandle("ShowDebugConsole"),
         };
     }
 
@@ -884,6 +885,10 @@ enum WorldMousePressContexts{
         if(_input.getButtonAction(mInputs_.pauseGame, _INPUT_PRESSED)){
             ::Base.mExplorationLogic.setGamePaused(true);
         }
+        if(_input.getButtonAction(::InputManager.showDebugConsole, _INPUT_PRESSED)){
+            ::DebugConsole.toggleActive();
+        }
+
     }
 
     function showInventory(){
