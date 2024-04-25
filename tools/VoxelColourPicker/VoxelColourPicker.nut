@@ -20,7 +20,7 @@ function start(){
 
 function update(){
     local size = _window.getSize();
-    if(_input.getMousePressed(_MouseButtonLeft)){
+    if(_input.getMousePressed(_MB_LEFT)){
         local mouseX = _input.getMouseX();
         local mouseY = _input.getMouseY();
 
