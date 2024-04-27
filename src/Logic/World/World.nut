@@ -948,8 +948,14 @@ enum WorldMousePressContexts{
         }
 
         if(finishedActions != null){
+            //Remove the values from the list.
             foreach(i in finishedActions){
-                mActiveWorldActions_.remove(i);
+                mActiveWorldActions_[i] = null;
+            }
+            while(true){
+                local idx = mActiveWorldActions_.find(null);
+                if(idx == null) break;
+                mActiveWorldActions_.remove(idx);
             }
         }
     }
