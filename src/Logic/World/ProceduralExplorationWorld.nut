@@ -307,7 +307,8 @@
     function getIsWaterForPosition(pos){
         local x = pos.x;
         local y = -pos.z;
-        if(x < 0 || y < 0 || x >= mMapData_.width || y >= mMapData_.height) return false;
+        //The endless ocean...
+        if(x < 0 || y < 0 || x >= mMapData_.width || y >= mMapData_.height) return true;
         return ::MapGenHelpers.getIsWaterForPosition(mMapData_, pos);
     }
 

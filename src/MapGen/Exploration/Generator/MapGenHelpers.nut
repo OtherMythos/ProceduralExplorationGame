@@ -5,6 +5,8 @@
         local x = pos.x.tointeger();
         local y = -pos.z.tointeger();
 
+        if(x < 0 || y < 0 || x >= worldData.width || y >= worldData.height) return null;
+
         local buf = worldData.voxelBuffer;
         buf.seek((x + y * worldData.width) * 4);
         local landGroup = ((buf.readn('i') >> 24) & 0xFF);
