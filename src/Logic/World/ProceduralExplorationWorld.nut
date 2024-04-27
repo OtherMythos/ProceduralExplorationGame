@@ -218,8 +218,12 @@
         local x = pos.x.tointeger();
         local y = -pos.z.tointeger();
 
+        local width = mMapData_.width;
+        local height = mMapData_.height;
+        if(x < 0 || y < 0 || x >= width || y >= height) return 0;
+
         local buf = mMapData_.voxelBuffer;
-        buf.seek((x + y * mMapData_.width) * 4);
+        buf.seek((x + y * width) * 4);
         local voxFloat = (buf.readn('i') & 0xFF).tofloat();
         local altitude = (((voxFloat - mMapData_.seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger() + 1;
         local clampedAltitude = altitude < 0 ? 0 : altitude;
@@ -301,6 +305,9 @@
         return ::MapGenHelpers.getTraverseTerrainForPosition(mMapData_, pos);
     }
     function getIsWaterForPosition(pos){
+        local x = pos.x;
+        local y = -pos.z;
+        if(x < 0 || y < 0 || x >= mMapData_.width || y >= mMapData_.height) return false;
         return ::MapGenHelpers.getIsWaterForPosition(mMapData_, pos);
     }
 
@@ -343,7 +350,7 @@
             for (local x = startXTile; x < endXTile; x++){
                 //Go through these chunks to determine what to load.
                 if(_checkRectCircleCollision(x, y, radius, circleX, circleY)){
-                    //printf("Collided with %i %i", x, y);
+                    if(x < 0 || y < 0 || x >= mMapData_.width || y >= mMapData_.height) continue;
                     //Query the voxel data and determine what the region is.
                     local targetRegion = targetFunc(mMapData_, playerPos);
                     //print("Found target region " + targetRegion);

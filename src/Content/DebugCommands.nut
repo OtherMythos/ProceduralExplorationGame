@@ -43,3 +43,13 @@ variationSeed: %i";
 
     return "Setting player health to " + healthDesc;
 });
+
+::DebugConsole.registerCommand("tp", "Teleport the player to the provided coordinates", 2, "ii", function(command){
+    local x = command[0].tofloat();
+    local y = command[1].tofloat();
+
+    local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+    currentWorld.setPlayerPosition(x, y);
+
+    return format("Teleporting player to '%f,%f'", x, y);
+});

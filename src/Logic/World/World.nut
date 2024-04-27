@@ -288,6 +288,11 @@ enum WorldMousePressContexts{
     function getPlayerPosition(){
         return mPlayerEntry_.getPosition();
     }
+    function setPlayerPosition(x, y){
+        local target = Vec3(x, 0, y);
+        mPlayerEntry_.setPosition(target);
+        updatePlayerPos(target);
+    }
 
     function processPreparation(){
         local result = mWorldPreparer_.processPreparation();
