@@ -180,6 +180,12 @@ function setupItemIds_(){
         else if(itemType == ItemType.MONEY){
             local data = item.getData();
             ::Base.mPlayerStats.mInventory_.addMoney(data.money);
+        }
+        else if(itemType == ItemType.NONE){
+            //Easter egg
+            ::Base.mPlayerStats.setPlayerHealth(1);
+            local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+            currentWorld.spawnEnemies(currentWorld.getPlayerPosition(), 10, 5);
         }else{
             assert(false);
         }
