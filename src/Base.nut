@@ -81,6 +81,10 @@
         checkUserParams();
         registerProfiles_();
 
+        if(!(::Base.isProfileActive(GameProfile.FORCE_WINDOWED))){
+            setupFullscreen();
+        }
+
         //TODO move this somewhere else.
         _animation.loadAnimationFile("res://build/assets/animation/baseAnimation.xml");
         _animation.loadAnimationFile("res://build/assets/characterAnimations/equippableAnimation.xml");

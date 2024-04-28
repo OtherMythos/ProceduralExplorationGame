@@ -81,6 +81,7 @@ enum GameProfile{
     DISABLE_ENEMY_SPAWN,
     DISABLE_DISTRACTION_SPAWN,
     ENABLE_RIGHT_CLICK_WORKAROUNDS,
+    FORCE_WINDOWED,
 
     MAX
 };
@@ -94,6 +95,7 @@ enum GameProfile{
     "DisableEnemySpawn",
     "DisableDistractionSpawn",
     "EnableRightClickWorkarounds",
+    "ForceWindowed",
 ];
 
 enum Event{
