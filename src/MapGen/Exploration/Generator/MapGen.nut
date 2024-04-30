@@ -147,8 +147,8 @@
             outData.append({
                 "id": i,
                 "total": 0,
-                "seedX": 0,
-                "seedY": 0,
+                "seedX": (i >> 16) & 0xFFFF,
+                "seedY": i & 0xFFFF,
                 "coords": [],
                 "type": RegionType.NONE
             });

@@ -292,6 +292,7 @@ enum WorldMousePressContexts{
         local target = Vec3(x, 0, y);
         mPlayerEntry_.setPosition(target);
         updatePlayerPos(target);
+        notifyPlayerMoved();
     }
 
     function processPreparation(){
