@@ -323,6 +323,9 @@
     function setFullscreenState(fullscreen){
         mFullscreenMode_ = fullscreen;
 
+        _window.setFullscreen(mFullscreenMode_ == FullscreenMode.BORDERLESS_FULLSCREEN ? _WINDOW_FULLSCREEN_BORDERLESS : _WINDOW_WINDOWED);
+
+        /*
         if(mFullscreenMode_ == FullscreenMode.WINDOWED){
             local targetIdx = _window.getWindowDisplayIndex();
             local displaySize = _window.getDisplaySize(targetIdx);
@@ -340,6 +343,7 @@
             _window.setSize(displaySize.x.tointeger(), displaySize.y.tointeger());
             _window.setPosition(position.x.tointeger(), position.y.tointeger());
         }
+        */
     }
 
 };
