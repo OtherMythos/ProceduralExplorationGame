@@ -24,6 +24,7 @@
         mRepeatCount = 0;
         mRepeatCountTotal = 0;
         mSteps = null;
+        mStepsFinished = false;
 
         constructor(i){
             local t = typeof i;
@@ -60,19 +61,44 @@
                     }
                     mCalledOnce = true;
                 }else{
-                    if(mSteps.update()){
-                        result = jumpRepeat();
+                    if(!mStepsFinished){
+                        if(mSteps.update()){
+                            mStepsFinished = true;
+                        }
                     }
                 }
             }
             if(currentWaitFrame > 0){
-                currentWaitFrame--;
-                if(currentWaitFrame <= 0){
-                    result = true;
+                //We have steps, wait for them to finish before processing the wait frame.
+                if(mFunction == null){
+                    if(mStepsFinished){
+                        local waitCompleted = processWaitFrame_()
+                        if(waitCompleted){
+                            result = jumpRepeat();
+                        }
+                    }
+                }else{
+                    //Otherwise just process the wait frame like normal.
+                    result = processWaitFrame_()
+                }
+            }
+            if(currentWaitFrameTotal < 0){
+                //In the case of no wait frame.
+                if(mFunction == null){
+                    if(mStepsFinished){
+                        result = jumpRepeat();
+                    }
                 }
             }
 
             return result;
+        }
+        function processWaitFrame_(){
+            currentWaitFrame--;
+            if(currentWaitFrame <= 0){
+                return true;
+            }
+            return false;
         }
         function jumpRepeat(){
             mRepeatCount++;
@@ -80,6 +106,10 @@
                 print("finished repeats");
                 return true;
             }
+
+            resetWaitFrame();
+
+            mStepsFinished = false;
             mSteps.resetSteps();
             return false;
         }
@@ -97,6 +127,7 @@
             resetWaitFrame();
             mCalledOnce = false;
             mRepeatCount = 0;
+            mStepsFinished = false;
             if(mSteps != null){
                 mSteps.resetSteps();
             }
@@ -138,7 +169,6 @@
         }
 
         function resetSteps(){
-            print("Resetting steps");
             mCurrentStep = 0;
             foreach(i in mSteps){
                 i.reset();
@@ -190,6 +220,7 @@
         function initialiseSteps(steps){
             if(typeof steps == "array"){
                 parentTestStep = ::_testSystem.TestSteps(steps);
+                parentTestStep.resetSteps();
             }else if(typeof steps == "table"){
                 parentTestStep = ::_testSystem.TestStepEntry(steps);
             }
