@@ -4,6 +4,8 @@
     mCurrentSaveSlot_ = -1;
     mInventory_ = null;
 
+    mLastSaveTime_ = -1;
+
     mPlacesVisited_ = null;
     mLeanPlacesVisited_ = null;
 
@@ -32,12 +34,29 @@
         return ::wrapToString(::PlayerStats, "PlayerStats");
     }
 
+    function initTime(){
+        mLastSaveTime_ = _system.time();
+        printf("Init time is %i", mLastSaveTime_);
+    }
+    function processTime(){
+        if(mLastSaveTime_ < 0) return;
+
+        local newTime = _system.time();
+        local delta = newTime - mLastSaveTime_;
+        if(delta > 0){
+            mCurrentData_.playtimeSeconds += delta;
+            printf("Playtime delta is %i for total seconds %i", delta, mCurrentData_.playtimeSeconds);
+        }
+        mLastSaveTime_ = newTime;
+    }
+
     function setSaveData(data, slotIdx){
         mCurrentSaveSlot_ = slotIdx;
         mCurrentData_ = data;
         local inventoryData = data.inventory.apply(function(itemVal){
             return itemVal == null ? null : ::Item(itemVal)
         });
+        initTime();
         mInventory_.rawSetItems(inventoryData);
     }
     function getSaveSlot(){
@@ -50,6 +69,7 @@
             if(i == null) continue;
             mCurrentData_.inventory[c] = i.getId();
         }
+        processTime();
         return mCurrentData_;
     }
 
