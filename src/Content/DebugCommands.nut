@@ -45,10 +45,24 @@ variationSeed: %i";
 });
 
 ::DebugConsole.registerCommand("tp", "Teleport the player to the provided coordinates", 2, "ii", function(command){
-    local x = command[0].tofloat();
-    local y = command[1].tofloat();
+    local x = 0.0;
+    local y = 0.0;
 
     local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+
+    local first = command[0];
+    if(first == "gateway"){
+        local worldType = currentWorld.getWorldType();
+        if(worldType == WorldTypes.PROCEDURAL_EXPLORATION_WORLD){
+            local gatewayPos = currentWorld.getMapData().gatewayPosition;
+            x = (gatewayPos >> 16) & 0xFFFF;
+            y = -(gatewayPos & 0xFFFF);
+        }
+    }else{
+        x = command[0].tofloat();
+        y = command[1].tofloat();
+    }
+
     currentWorld.setPlayerPosition(x, y);
 
     return format("Teleporting player to '%f,%f'", x, y);

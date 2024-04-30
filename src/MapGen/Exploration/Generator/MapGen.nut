@@ -990,6 +990,7 @@
             "placedItems": workspace.placedItems,
             "regionData": workspace.regionData,
             "playerStart": workspace.playerStart,
+            "gatewayPosition": workspace.gatewayPosition,
             "stats": {
                 "totalSeconds": mTimer_.getSeconds()
             }
