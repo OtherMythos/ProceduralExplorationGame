@@ -274,6 +274,7 @@
         local foundWidget = null;
         for(local i = 0; i < numWindows; i++){
             local window = _gui.getWindowForIdx(i);
+            if(window.getQueryName() == "DebugConsole") continue;
             local result = iterateWindow_(window, targetText, iterateComparisonFunction);
             if(result != null){
                 foundWidget = result;

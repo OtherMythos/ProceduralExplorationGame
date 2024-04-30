@@ -60,7 +60,7 @@
         mCommands_ = [];
         mOutput_ = [];
 
-        mParentWindow_ = _gui.createWindow();
+        mParentWindow_ = _gui.createWindow("DebugConsole");
         mParentWindow_.setPosition(0, 0);
         mParentWindow_.setSize(1920, 1080);
         mParentWindow_.setZOrder(200);
