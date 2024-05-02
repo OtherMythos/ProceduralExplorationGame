@@ -63,7 +63,7 @@ enum InventoryBusEvents{
             if(mActive_){
                 local xx = _input.getMouseX().tofloat() / ::drawable.x.tofloat();
                 local yy = _input.getMouseY().tofloat() / ::drawable.y.tofloat();
-                setPosition((1920*xx), (1080*yy));
+                setPosition((::drawable.x*xx), (::drawable.y*yy));
             }
         }
 
