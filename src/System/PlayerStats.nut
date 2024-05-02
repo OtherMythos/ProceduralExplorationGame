@@ -20,9 +20,6 @@
         mInventory_ = ::Inventory();
 
         mPlayerCombatStats = ::Combat.CombatStats(EnemyId.NONE, 100);
-
-        equipItem(::Item(ItemId.SIMPLE_SWORD), EquippedSlotTypes.LEFT_HAND);
-        equipItem(::Item(ItemId.SIMPLE_SHIELD), EquippedSlotTypes.RIGHT_HAND);
     }
 
     function shutdown(){
@@ -54,10 +51,14 @@
         mCurrentSaveSlot_ = slotIdx;
         mCurrentData_ = data;
         local inventoryData = data.inventory.apply(function(itemVal){
-            return itemVal == null ? null : ::Item(itemVal)
+            return itemVal == null ? null : ::Item(itemVal);
+        });
+        local equipData = data.playerEquipped.apply(function(itemVal){
+            return itemVal == null ? null : ::Item(itemVal);
         });
         initTime();
         mInventory_.rawSetItems(inventoryData);
+        mPlayerCombatStats.mEquippedItems.rawSetItems(equipData);
     }
     function getSaveSlot(){
         return mCurrentSaveSlot_;
@@ -66,8 +67,11 @@
         //Sync up the inventory items to the data.
         assert(mInventory_.mInventoryItems_.len() == mCurrentData_.inventory.len());
         foreach(c,i in mInventory_.mInventoryItems_){
+            mCurrentData_.inventory[c] = (i == null ? null : i.getId());
+        }
+        foreach(c,i in mPlayerCombatStats.mEquippedItems.mItems){
             if(i == null) continue;
-            mCurrentData_.inventory[c] = i.getId();
+            mCurrentData_.playerEquipped[c] = (i == null ? null : i.getId());
         }
         processTime();
         return mCurrentData_;

@@ -12,7 +12,7 @@
 
     //Set the initial items, not transmitting events upon change.
     function rawSetItems(items){
-        mInventoryItems_ = items;
+        mInventoryItems_ = clone items;
     }
 
     /**

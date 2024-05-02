@@ -156,8 +156,18 @@
         return mParsers_[mParsers_.len()-1];
     }
 
+    function getDefaultData(){
+        local defaultData = getMostRecentParser().getDefaultData();
+
+        //Give the player some items by default.
+        defaultData.playerEquipped[EquippedSlotTypes.LEFT_HAND] = ItemId.SIMPLE_SWORD;
+        defaultData.playerEquipped[EquippedSlotTypes.RIGHT_HAND] = ItemId.SIMPLE_SHIELD;
+
+        return defaultData;
+    }
+
     function produceSave(){
-        return getMostRecentParser().getDefaultData();
+        return getDefaultData();
     }
 
     /**

@@ -9,6 +9,13 @@
             return mItems[item];
         }
 
+        function rawSetItems(items){
+            assert(items.len() == mItems.len());
+            for(local i = 0; i < items.len(); i++){
+                mItems[i] = items[i];
+            }
+        }
+
         function setEquipped(item, targetSlot){
             assert(targetSlot != EquippedSlotTypes.HAND);
             //TODO I don't particularly like any of the mismatches between enums.
