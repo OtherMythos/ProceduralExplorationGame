@@ -172,6 +172,7 @@ local ObjAnim = class{
             foreach(i in vals){
                 i.setVisible(true);
             }
+            _gui.reprocessMousePosition();
         }
         function update(p, data){
         }
