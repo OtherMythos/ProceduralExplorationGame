@@ -30,6 +30,7 @@
         local editbox = mWindow_.createEditbox();
         editbox.setMinSize(winWidth, 100);
         editbox.setMargin(0, 10);
+        editbox.attachListenerForEvent(editboxCallback, _GUI_ACTION_VALUE_CHANGED, this);
         mEditBox_ = editbox;
         layoutLine.addCell(editbox);
 
@@ -72,6 +73,8 @@
         layoutLine.setSize(winWidth, winHeight);
         layoutLine.setPosition(0, 0);
         layoutLine.layout();
+
+        editbox.setFocus();
     }
 
     function obtainPlayerName(){
@@ -80,5 +83,18 @@
         if(!parser.validatePlayerName(value)) return null;
 
         return value;
+    }
+
+    function editboxCallback(widget, action){
+        local value = widget.getText();
+        if(value.len() > MAX_PLAYER_NAME_LENGTH){
+            value = value.slice(0, MAX_PLAYER_NAME_LENGTH);
+            widget.setText(value);
+        }
+        local newlineLocation = value.find("\n");
+        if(newlineLocation != null){
+            value = value.slice(0, newlineLocation);
+            widget.setText(value);
+        }
     }
 }
