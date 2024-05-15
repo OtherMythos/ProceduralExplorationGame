@@ -80,6 +80,7 @@
         printVersionInfos();
         checkUserParams();
         registerProfiles_();
+        setupDeveloperWorkaroundsPre_();
 
         if(!(::Base.isProfileActive(GameProfile.FORCE_WINDOWED))){
             setupFullscreen();
@@ -225,7 +226,7 @@
 
         mExplorationLogic = ExplorationLogic();
 
-        setupDeveloperWorkarounds_();
+        setupDeveloperWorkaroundsPost_();
     }
     function setupFullscreen(){
         setFullscreenState(FullscreenMode.BORDERLESS_FULLSCREEN);
@@ -234,10 +235,18 @@
     function registerProfiles_(){
         mGameProfiles_ = determineGameProfiles();
     }
-    function setupDeveloperWorkarounds_(){
+    //Split developer workarounds into two sections for tasks which need to be completed before base setup or after.
+    function setupDeveloperWorkaroundsPre_(){
         if(mGameProfiles_ != null){
             foreach(i in mGameProfiles_){
-                setupForProfile_(i);
+                setupForProfilePre_(i);
+            }
+        }
+    }
+    function setupDeveloperWorkaroundsPost_(){
+        if(mGameProfiles_ != null){
+            foreach(i in mGameProfiles_){
+                setupForProfilePost_(i);
             }
         }
         local forcedScreen = determineForcedScreen();
@@ -260,17 +269,25 @@
         return false;
     }
 
-    function setupForProfile_(profile){
-        printf("Setting up game profile '%s'", ::GameProfileString[profile]);
+    function setupForProfilePre_(profile){
+        printf("Setting up game profile pre setup '%s'", ::GameProfileString[profile]);
+        switch(profile){
+            case GameProfile.FORCE_MOBILE_INTERFACE:
+                mTargetInterface_ = TargetInterface.MOBILE;
+                break;
+            default:
+                break;
+        }
+    }
+
+    function setupForProfilePost_(profile){
+        printf("Setting up game profile post setup '%s'", ::GameProfileString[profile]);
         switch(profile){
             case GameProfile.DEVELOPMENT_BEGIN_EXPLORATION:
                 ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
                 break;
             case GameProfile.TEST_SCREEN:
                 ::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);
-                break;
-            case GameProfile.FORCE_MOBILE_INTERFACE:
-                mTargetInterface_ = TargetInterface.MOBILE;
                 break;
             default:
                 break;
