@@ -26,7 +26,8 @@
         layoutLine.addCell(title);
 
         local progressBar = ::GuiWidgets.ProgressBar(mWindow_);
-        progressBar.setSize(::drawable.x * 0.5, ::ScreenManager.calculateRatio(50));
+        local ratio = ::ScreenManager.calculateRatio(50);
+        progressBar.setSize(::drawable.x * 0.5, ratio < 40 ? 40 : ratio);
         progressBar.addToLayout(layoutLine);
 
         layoutLine.setMarginForAllCells(0, 20);
