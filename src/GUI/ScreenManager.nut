@@ -195,8 +195,13 @@
     }
 
     function calculateAspectRatio(){
-        local defaultCoords = Vec2(1920, 1080);
-        //local defaultCoords = ::canvasSize;
+        local defaultCoords = null;
+        if(::Base.getTargetInterface() == TargetInterface.MOBILE){
+            defaultCoords = Vec2(_window.getWidth(), _window.getHeight());
+        }else{
+            defaultCoords = Vec2(1920, 1080);
+        }
+
         local currentSize = _window.getSize();
 
         local outCoords = Vec2(currentSize.x, currentSize.y);
