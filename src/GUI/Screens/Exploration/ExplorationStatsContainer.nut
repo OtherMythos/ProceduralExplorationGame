@@ -52,6 +52,7 @@
 
     function shutdown(){
         _event.unsubscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);
+        mTargetEnemyWidget_.shutdown();
     }
 
     function setPosition(pos){

@@ -23,7 +23,7 @@
     }
 
     function shutdown(){
-        _event.unsubscribe(Event.PLAYER_HEALTH_CHANGED, playerTargetChanged, this);
+        _event.unsubscribe(Event.PLAYER_TARGET_CHANGE, playerTargetChanged, this);
     }
 
     function cancelButtonPressed(widget, action){
