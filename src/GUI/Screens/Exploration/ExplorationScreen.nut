@@ -90,7 +90,7 @@ enum ExplorationBusEvents{
 
         mExplorationStatsContainer_ = ExplorationStatsContainer(mWindow_, mExplorationBus_);
         if(::Base.getTargetInterface() == TargetInterface.MOBILE){
-            mExplorationStatsContainer_.addToLayout(layoutLine);
+            //mExplorationStatsContainer_.addToLayout(layoutLine);
         }else{
             mExplorationStatsContainer_.setPosition(Vec2(0, 110));
             mExplorationStatsContainer_.setSize(400, 140);

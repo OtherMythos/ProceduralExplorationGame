@@ -23,7 +23,7 @@
         mWindow_.setSize(winSize);
         if(::Base.getTargetInterface() == TargetInterface.MOBILE){
             local labelSize = mLabel_.getSize();
-            label.setPosition(winSize.x / 2 - mLabel_.x/2, winSize.y - mLabel_.y);
+            mLabel_.setPosition(winSize.x / 2 - labelSize.x/2, winSize.y - labelSize.y);
         }else{
             mLabel_.setPosition(winSize - mLabel_.getSize());
         }

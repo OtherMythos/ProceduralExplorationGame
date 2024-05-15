@@ -27,13 +27,19 @@
             function(widget, action){
                 _shutdownEngine();
             }
-        ]
+        ];
 
-        foreach(i,c in buttonOptions){
+        //Remove the 'quit to desktop' button on mobile.
+        if(::Base.getTargetInterface() == TargetInterface.MOBILE){
+            buttonOptions.remove(buttonOptions.len()-1);
+            buttonFunctions.remove(buttonFunctions.len()-1);
+        }
+
+        foreach(c,i in buttonOptions){
             local button = mWindow_.createButton();
             button.setDefaultFontSize(button.getDefaultFontSize() * 1.5);
-            button.setText(c);
-            button.attachListenerForEvent(buttonFunctions[i], _GUI_ACTION_PRESSED, this);
+            button.setText(i);
+            button.attachListenerForEvent(buttonFunctions[c], _GUI_ACTION_PRESSED, this);
             button.setExpandHorizontal(true);
             button.setMinSize(0, 100);
             layoutLine.addCell(button);
