@@ -42,9 +42,26 @@
         mActive_ = active;
         mParentWindow_.setVisible(active);
 
-        mCommandBox_.setText(COMMAND_POINTER);
+        //Defer the creation of the command box until the console is actually needed to avoid it claiming text input.
         if(active){
+            assert(mCommandBox_ == null);
+
+            //Create the command box.
+            local actual = mParentWindow_.getSizeAfterClipping();
+            mCommandBox_ = mParentWindow_.createEditbox();
+            mCommandBox_.setSize(actual.x, 100);
+            mCommandBox_.setPosition(0, actual.y - 100);
+
+            mCommandBox_.setText(COMMAND_POINTER);
             mCommandBox_.setFocus();
+
+            mCommandBox_.attachListenerForEvent(editboxCallback, _GUI_ACTION_VALUE_CHANGED, this);
+
+            positionOutputLabel();
+        }else{
+            assert(mCommandBox_ != null);
+            _gui.destroy(mCommandBox_);
+            mCommandBox_ = null;
         }
 
         ::InputManager.setActionSet(active ? InputActionSets.DEBUG_CONSOLE : InputActionSets.EXPLORATION);
@@ -65,15 +82,8 @@
         mParentWindow_.setSize(1920, 1080);
         mParentWindow_.setZOrder(200);
 
-        local actual = mParentWindow_.getSizeAfterClipping();
-        mCommandBox_ = mParentWindow_.createEditbox();
-        mCommandBox_.setSize(actual.x, 100);
-        mCommandBox_.setPosition(0, actual.y - 100);
-
         mOutputLabel_ = mParentWindow_.createLabel();
         positionOutputLabel();
-
-        mCommandBox_.attachListenerForEvent(editboxCallback, _GUI_ACTION_VALUE_CHANGED, this);
 
         pushOutput(format("'%s' %s", GAME_TITLE, ::getVersionInfo().info));
         pushOutput("Type 'help' for more information.");
