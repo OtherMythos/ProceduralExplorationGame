@@ -120,6 +120,7 @@ enum ExplorationBusEvents{
         mExplorationStatsContainer_.sizeLayout();
         mExplorationMovesContainer_.sizeForButtons();
 
+        /*
         if(::Base.getTargetInterface() == TargetInterface.MOBILE){
             mCameraButton_ = mWindow_.createButton();
             mCameraButton_.setText("Camera");
@@ -128,6 +129,7 @@ enum ExplorationBusEvents{
                 mLogicInterface_.setOrientatingCamera(true);
             }, _GUI_ACTION_PRESSED, this);
         }
+        */
 
         mExplorationBus_.registerCallback(busCallback, this);
 

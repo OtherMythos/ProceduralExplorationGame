@@ -386,6 +386,7 @@ enum WorldMousePressContexts{
         //checkTargetEnemy();
         //checkForFlagPlacement();
         //checkForFlagUpdate();
+        checkForPlayerMoveBegin();
         checkForEnemyAppear();
         checkForDistractionAppear();
         checkPlayerInputs();
@@ -634,6 +635,17 @@ enum WorldMousePressContexts{
 
         mPrevTargetEnemy_ = mCurrentTargetEnemy_;
         mCurrentTargetEnemy_ = mCurrentHighlightEnemy_;
+    }
+    function checkForPlayerMoveBegin(){
+        if(!mGui_) return;
+        if(!_input.getMouseButton(0) || mMouseContext_.getCurrentState() != null) return;
+
+        local inWindow = mGui_.checkPlayerInputPosition(_input.getMouseX(), _input.getMouseY());
+        if(inWindow != null){
+            local result = mMouseContext_.requestOrientingCamera();
+
+            assert(result);
+        }
     }
     function checkForFlagPlacement(){
         if(!mGui_) return;
@@ -1072,9 +1084,6 @@ enum WorldMousePressContexts{
 
     function setOrientatingCamera(orientate){
         mMouseContext_.requestOrientingCamera();
-
-        mMovementCooldown_ = 0;
-        mMovementCooldownTotal_ = 50;
     }
     function checkOrientatingCamera(){
         if(mMouseContext_.getCurrentState() != WorldMousePressContexts.ORIENTING_CAMERA) return;
