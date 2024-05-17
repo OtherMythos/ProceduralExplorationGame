@@ -19,6 +19,8 @@
 
         mParentWin_ = window;
         mLabel_ = label;
+
+        setVisible(false);
     }
 
     function update(){
@@ -33,7 +35,7 @@
 
     function setVisible(visible){
         mVisible_ = visible;
-        mParentWin_.setHidden(!visible);
+        mParentWin_.setVisible(visible);
     }
 
 };
