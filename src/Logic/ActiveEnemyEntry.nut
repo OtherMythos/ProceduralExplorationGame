@@ -219,14 +219,13 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
 
         return traverseTypes & traverse;
     }
-    function move(amount){
+    function move_(pos, amount){
         //First check if that section of the map is walkable.
-        local intended = mPos_ + amount;
-        if(!isPositionWalkable(intended)){
+        if(!isPositionWalkable(pos)){
             return false;
         }
 
-        setPosition(intended);
+        setPosition(pos);
         if(mModel_){
             local orientation = Quat(atan2(amount.x, amount.z), Vec3(0, 1, 0));
             mModel_.setOrientation(orientation);
@@ -245,13 +244,18 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
 
         return true;
     }
+    function move(amount){
+        local intended = mPos_ + amount;
+        return move_(intended, amount);
+    }
     function moveQueryZ(amount, inWater=false){
-        local zQuery = mCreatorWorld_.getZForPos(mPos_ + amount);
-        mPos_.y = zQuery;
+        local intended = mPos_ + amount;
+        local zQuery = mCreatorWorld_.getZForPos(intended);
+        intended.y = zQuery;
         if(inWater){
-            if(::Enemies[mEnemy_].getAllowSwimState()) mPos_.y = -1.4;
+            if(::Enemies[mEnemy_].getAllowSwimState()) intended.y = -1.4;
         }
-        move(amount);
+        move_(intended, amount);
     }
     function moveToPoint(point, amount){
         local dir = point - mPos_;

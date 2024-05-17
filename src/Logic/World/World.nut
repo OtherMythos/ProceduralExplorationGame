@@ -196,6 +196,9 @@ enum WorldMousePressContexts{
     mTriggerCollisionWorld_ = null;
     mEntityManager_ = null;
 
+    mMovementCooldown_ = 0;
+    mMovementCooldownTotal_ = 30;
+
     mLocationFlagIds_ = 0;
     mLocationFlagNodes_ = null;
 
@@ -687,15 +690,23 @@ enum WorldMousePressContexts{
             movePlayer(dir);
         }
 
+        if(mMovementCooldown_ > 0){
+            mMovementCooldown_--;
+        }
         if(mMouseContext_.getCurrentState() == WorldMousePressContexts.ORIENTING_CAMERA){
+            mMovementCooldown_ = mMovementCooldownTotal_;
+        }
+
+        if(mMovementCooldown_ > 0){
             local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
 
             local targetForward = camera.getOrientation() * Vec3(0, 0, -1);
             targetForward.y = 0;
             targetForward = Vec2(targetForward.x, targetForward.z);
 
-            //print(targetForward);
-            movePlayer(targetForward);
+            local movementPercentage = mMovementCooldown_.tofloat() / mMovementCooldownTotal_.tofloat();
+
+            movePlayer(targetForward, 0.2 * sin(movementPercentage));
         }
 
         for(local i = 0; i < NUM_PLAYER_QUEUED_FLAGS; i++){
@@ -762,12 +773,12 @@ enum WorldMousePressContexts{
         mQueuedFlags_.insert(0, [worldPos, flagId]);
     }
 
-    function movePlayer(amount){
+    function movePlayer(amount, speed=0.2){
         local targetPos = mPlayerEntry_.mPos_ + Vec3(amount.x, 0, amount.y);
-        movePlayerToPos(targetPos);
+        movePlayerToPos(targetPos, speed);
     }
-    function movePlayerToPos(targetPos){
-        mPlayerEntry_.moveToPoint(targetPos, 0.2);
+    function movePlayerToPos(targetPos, speed=0.2){
+        mPlayerEntry_.moveToPoint(targetPos, speed);
 
         notifyPlayerMoved();
 
@@ -1061,6 +1072,9 @@ enum WorldMousePressContexts{
 
     function setOrientatingCamera(orientate){
         mMouseContext_.requestOrientingCamera();
+
+        mMovementCooldown_ = 0;
+        mMovementCooldownTotal_ = 50;
     }
     function checkOrientatingCamera(){
         if(mMouseContext_.getCurrentState() != WorldMousePressContexts.ORIENTING_CAMERA) return;
