@@ -380,9 +380,9 @@ enum WorldMousePressContexts{
         checkOrientatingCamera();
         checkHighlightEnemy();
         checkPlayerMove();
-        checkTargetEnemy();
-        checkForFlagPlacement();
-        checkForFlagUpdate();
+        //checkTargetEnemy();
+        //checkForFlagPlacement();
+        //checkForFlagUpdate();
         checkForEnemyAppear();
         checkForDistractionAppear();
         checkPlayerInputs();
@@ -492,6 +492,7 @@ enum WorldMousePressContexts{
     }
 
     function sceneSafeUpdate(){
+        return;
         if(mGui_){
             local inWindow = mGui_.checkPlayerInputPosition(_input.getMouseX(), _input.getMouseY());
             if(inWindow != null){
@@ -684,6 +685,17 @@ enum WorldMousePressContexts{
         }
         if(moved){
             movePlayer(dir);
+        }
+
+        if(mMouseContext_.getCurrentState() == WorldMousePressContexts.ORIENTING_CAMERA){
+            local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
+
+            local targetForward = camera.getOrientation() * Vec3(0, 0, -1);
+            targetForward.y = 0;
+            targetForward = Vec2(targetForward.x, targetForward.z);
+
+            //print(targetForward);
+            movePlayer(targetForward);
         }
 
         for(local i = 0; i < NUM_PLAYER_QUEUED_FLAGS; i++){
