@@ -18,6 +18,8 @@
 
     mScreensZOrder = SCREENS_START_Z
 
+    mDefaultCoords_ = null
+
     "Screens": array(Screen.MAX, null),
 
     /**
@@ -201,6 +203,7 @@
         }else{
             defaultCoords = Vec2(1920, 1080);
         }
+        mDefaultCoords_ = defaultCoords;
 
         local currentSize = _window.getSize();
 
@@ -231,7 +234,7 @@
     }
 
     function calculateRatio(width){
-        local gridRatio = width.tofloat() / 1920.0;
+        local gridRatio = width.tofloat() / mDefaultCoords_.x;
         return ::drawable.x * gridRatio;
     }
 };

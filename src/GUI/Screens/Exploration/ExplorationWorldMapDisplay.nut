@@ -63,7 +63,7 @@
         layoutLine.addCell(mExplorationScenePanel_);
         mExplorationScenePanel_.setExpandVertical(true);
         mExplorationScenePanel_.setExpandHorizontal(true);
-        mExplorationScenePanel_.setProportionVertical(4);
+        mExplorationScenePanel_.setProportionVertical(6);
     }
 
     function shutdownCompositor_(){

@@ -11,6 +11,7 @@
 
     function setup(parent){
         mLabel_ = parent.createLabel();
+        mLabel_.setMargin(10, 10);
         mAnimTo_ = mCurrentAnim_;
         setLabelTo(mCurrentAnim_);
 

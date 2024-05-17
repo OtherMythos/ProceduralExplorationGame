@@ -2,6 +2,7 @@
     mWindow_ = null;
     mBus_ = null;
     mLayoutLine_ = null;
+    mHorizontalLayoutLine_ = null;
 
     mMoneyCounter_ = null;
     mEXPCounter_ = null;
@@ -25,20 +26,32 @@
         mPlayerHealthBar_.setPercentage(1.0);
         mPlayerHealthBar_.addToLayout(mLayoutLine_);
 
+        local mobileInterface = (::Base.getTargetInterface() == TargetInterface.MOBILE);
+        local targetLayout = mLayoutLine_;
+        if(mobileInterface){
+            mHorizontalLayoutLine_ = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
+            targetLayout = mHorizontalLayoutLine_;
+        }
+
         mInventoryButton_ = mWindow_.createButton();
         mInventoryButton_.setText("Inventory");
-        mLayoutLine_.addCell(mInventoryButton_);
+        targetLayout.addCell(mInventoryButton_);
         mInventoryButton_.attachListenerForEvent(function(widget, action){
             ::Base.mExplorationLogic.mCurrentWorld_.showInventory();
         }, _GUI_ACTION_PRESSED, this);
 
         mMoneyCounter_ = ::GuiWidgets.InventoryMoneyCounter(mWindow_);
-        mMoneyCounter_.addToLayout(mLayoutLine_);
+        mMoneyCounter_.addToLayout(targetLayout);
         mEXPCounter_ = ::GuiWidgets.InventoryEXPCounter(mWindow_);
-        mEXPCounter_.addToLayout(mLayoutLine_);
+        mEXPCounter_.addToLayout(targetLayout);
 
         mTargetEnemyWidget_ = ::GuiWidgets.TargetEnemyWidget(mWindow_);
-        mTargetEnemyWidget_.addToLayout(mLayoutLine_);
+        mTargetEnemyWidget_.addToLayout(targetLayout);
+
+        if(mobileInterface){
+            mLayoutLine_.addCell(targetLayout);
+            targetLayout.setMarginForAllCells(10, 10);
+        }
 
         mLayoutLine_.setMarginForAllCells(10, 10);
         //mLayoutLine_.layout();
@@ -53,6 +66,14 @@
     function shutdown(){
         _event.unsubscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);
         mTargetEnemyWidget_.shutdown();
+    }
+
+    function addToLayout(layout){
+        layout.addCell(mWindow_);
+        mWindow_.setMargin(10, 10);
+        mWindow_.setExpandVertical(true);
+        mWindow_.setExpandHorizontal(true);
+        mWindow_.setProportionVertical(1);
     }
 
     function setPosition(pos){
@@ -76,7 +97,13 @@
     function sizeLayout(){
         mPlayerHealthBar_.setMinSize(Vec2(mWindow_.getSizeAfterClipping().x, 50));
         mLayoutLine_.setSize(mWindow_.getSize());
+        if(mHorizontalLayoutLine_){
+            mHorizontalLayoutLine_.setSize(mWindow_.getSize());
+        }
         mLayoutLine_.layout();
+        if(mHorizontalLayoutLine_){
+            mHorizontalLayoutLine_.layout();
+        }
 
         mPlayerHealthBar_.notifyLayout();
     }

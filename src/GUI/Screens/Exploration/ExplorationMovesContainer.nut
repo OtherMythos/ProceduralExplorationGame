@@ -54,7 +54,7 @@
 
     function addToLayout(layoutLine){
         layoutLine.addCell(mWindow_);
-        mWindow_.setMargin(20, 20);
+        mWindow_.setMargin(10, 0);
         mWindow_.setExpandVertical(true);
         mWindow_.setExpandHorizontal(true);
         mWindow_.setProportionVertical(1);
