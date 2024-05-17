@@ -67,3 +67,17 @@ variationSeed: %i";
 
     return format("Teleporting player to '%f,%f'", x, y);
 });
+::DebugConsole.registerCommand("listWin", "List all the windows that currently exist.", 0, "", function(command){
+    local output = "";
+    local numWindows = _gui.getNumWindows();
+    for(local i = 0; i < numWindows; i++){
+        local window = _gui.getWindowForIdx(i);
+        local queryName = window.getQueryName();
+        print(queryName);
+        local pos = window.getPosition();
+        local size = window.getSize();
+        output += format("%s - x:%i,y:%i - width:%i,height:%i - %s\n", queryName, pos.x, pos.y, size.x, size.y, window.getVisible() ? "visible" : "hidden");
+    }
+
+    return output;
+});
