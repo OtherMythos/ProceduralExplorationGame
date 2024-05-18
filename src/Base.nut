@@ -116,6 +116,7 @@
         _doFile("res://src/Content/CombatData.nut");
         _doFile("res://src/Content/Moves.nut");
 
+        _doFile("res://src/DebugOverlayManager.nut");
         _doFile("res://src/DebugConsole.nut");
         _doFile("res://src/Content/DebugCommands.nut");
 
@@ -288,6 +289,9 @@
                 break;
             case GameProfile.TEST_SCREEN:
                 ::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);
+                break;
+            case GameProfile.DEBUG_OVERLAY_COMBAT:
+                ::DebugOverlayManager.setupOverlay(DebugOverlayId.COMBAT);
                 break;
             default:
                 break;

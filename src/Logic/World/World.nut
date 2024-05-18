@@ -423,13 +423,13 @@ enum WorldMousePressContexts{
         }
         updateWorldActions();
 
-        print(getTotalTargetedEnemies());
+        ::DebugOverlayManager.appendText(DebugOverlayId.COMBAT, getTotalTargetedEnemies());
         if(mPlayerTargetRadius_.len() > 0){
-            print("====");
+            ::DebugOverlayManager.appendText(DebugOverlayId.COMBAT, "====");
             foreach(c,i in mPlayerTargetRadius_){
-                print("id " + c);
+                ::DebugOverlayManager.appendText(DebugOverlayId.COMBAT, "id " + c);
             }
-            print("====");
+            ::DebugOverlayManager.appendText(DebugOverlayId.COMBAT, "====");
         }
 
         mDamageCollisionWorld_.processCollision();

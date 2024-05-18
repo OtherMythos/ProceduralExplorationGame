@@ -25,6 +25,10 @@ enum TargetInterface{
     MAX
 };
 
+enum DebugOverlayId{
+    COMBAT
+};
+
 enum InputActionSets{
     EXPLORATION,
     MENU,
@@ -84,6 +88,7 @@ enum GameProfile{
     DISABLE_DISTRACTION_SPAWN,
     ENABLE_RIGHT_CLICK_WORKAROUNDS,
     FORCE_WINDOWED,
+    DEBUG_OVERLAY_COMBAT,
 
     MAX
 };
@@ -98,6 +103,7 @@ enum GameProfile{
     "DisableDistractionSpawn",
     "EnableRightClickWorkarounds",
     "ForceWindowed",
+    "DebugOverlayCombat"
 ];
 
 enum Event{
