@@ -351,7 +351,6 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         local equippedSword = mCombatData_.mEquippedItems.mItems[EquippedSlotTypes.LEFT_HAND];
         //TODO in future have some base attack.
         if(equippedSword == null){
-            print("IS NULL");
             return;
         }
 

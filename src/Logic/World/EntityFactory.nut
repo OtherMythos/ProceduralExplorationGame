@@ -64,7 +64,15 @@
         local damageWorld = mConstructorWorld_.getDamageWorld();
         local damagePoint = damageWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
 
-        manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO, ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](collisionPoint, damagePoint, triggerWorld, damageWorld));
+        local combatTargetWorld = mConstructorWorld_.getCombatTargetWorld();
+        local combatTargetPoint = combatTargetWorld.addCollisionSender(CollisionWorldTriggerResponses.BASIC_ENEMY_PLAYER_TARGET_RADIUS, en, targetPos.x, targetPos.z, 10, _COLLISION_ENEMY);
+
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT_THREE,
+            ::EntityManager.Components[EntityComponents.COLLISION_POINT_THREE](
+                collisionPoint, damagePoint, combatTargetPoint,
+                triggerWorld, damageWorld, combatTargetWorld
+            )
+        );
 
         //_component.collision.add(en, collisionObject, damageReceiver);
 
@@ -112,7 +120,15 @@
         local damagePoint = damageWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_ENEMY);
         //manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](damagePoint, damageWorld));
 
-        manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO, ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](playerSpottedOutline, damagePoint, triggerWorld, damageWorld));
+        local combatTargetWorld = mConstructorWorld_.getCombatTargetWorld();
+        local combatTargetPoint = combatTargetWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_ENEMY);
+
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT_THREE,
+            ::EntityManager.Components[EntityComponents.COLLISION_POINT_THREE](
+                playerSpottedOutline, damagePoint, combatTargetPoint,
+                triggerWorld, damageWorld, combatTargetWorld
+            )
+        );
 
         entry.setPosition(targetPos);
 

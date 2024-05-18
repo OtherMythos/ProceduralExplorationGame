@@ -6,6 +6,7 @@ enum EntityComponents{
 
     COLLISION_POINT,
     COLLISION_POINT_TWO,
+    COLLISION_POINT_THREE,
     SCENE_NODE,
     LIFETIME,
     ANIMATION,
@@ -300,6 +301,12 @@ EntityManager.EntityManager <- class{
             comp.mCreatorFirst.mCollisionWorld_.setPositionForPoint(comp.mPointFirst, newPos.x, newPos.z);
             comp.mCreatorSecond.mCollisionWorld_.setPositionForPoint(comp.mPointSecond, newPos.x, newPos.z);
         }
+        if(mEntityComponentHashes_[idx] & (1<<EntityComponents.COLLISION_POINT_THREE)){
+            local comp = mComponents_[EntityComponents.COLLISION_POINT_THREE].getCompForEid(eid);
+            comp.mCreatorFirst.mCollisionWorld_.setPositionForPoint(comp.mPointFirst, newPos.x, newPos.z);
+            comp.mCreatorSecond.mCollisionWorld_.setPositionForPoint(comp.mPointSecond, newPos.x, newPos.z);
+            comp.mCreatorThird.mCollisionWorld_.setPositionForPoint(comp.mPointThird, newPos.x, newPos.z);
+        }
     }
 
     function processEntityDestruction_(eid, idx, reason){
@@ -310,6 +317,7 @@ EntityManager.EntityManager <- class{
                 local component = mComponents_[i].removeComponent(eid);
                 assert(component.eid == eid);
                 //Check if any logic has to be performed on the component.
+                //TODO convert to a switch statement.
                 if(i == EntityComponents.SCENE_NODE){
                     if(component.mDestroyOnDestruction){
                         component.mNode.destroyNodeAndChildren();
@@ -321,6 +329,11 @@ EntityManager.EntityManager <- class{
                 else if(i == EntityComponents.COLLISION_POINT_TWO){
                     component.mCreatorFirst.removeCollisionPoint(component.mPointFirst);
                     component.mCreatorSecond.removeCollisionPoint(component.mPointSecond);
+                }
+                else if(i == EntityComponents.COLLISION_POINT_THREE){
+                    component.mCreatorFirst.removeCollisionPoint(component.mPointFirst);
+                    component.mCreatorSecond.removeCollisionPoint(component.mPointSecond);
+                    component.mCreatorThird.removeCollisionPoint(component.mPointThird);
                 }
                 else if(i == EntityComponents.SCRIPT){
                     if("destroyed" in component.mScript){

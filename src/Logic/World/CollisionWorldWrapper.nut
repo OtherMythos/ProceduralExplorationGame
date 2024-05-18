@@ -4,6 +4,7 @@ enum CollisionWorldTriggerResponses{
     OVERWORLD_VISITED_PLACE,
     PROJECTILE_DAMAGE,
     BASIC_ENEMY_RECEIVE_PLAYER_SPOTTED,
+    BASIC_ENEMY_PLAYER_TARGET_RADIUS,
     DIE,
 
     MAX = 100
@@ -99,6 +100,17 @@ enum CollisionWorldTriggerResponses{
             local comp = manager.getComponent(entityId, EntityComponents.SCRIPT);
             if(collisionStatus == 0x1) comp.mScript.receivePlayerSpotted(true);
             else if(collisionStatus == 0x2) comp.mScript.receivePlayerSpotted(false);
+        });
+        mTriggerResponses_[CollisionWorldTriggerResponses.BASIC_ENEMY_PLAYER_TARGET_RADIUS] <- TriggerResponse(function(world, entityId, second, collisionStatus){
+            if(collisionStatus == 0x0) return;
+            world.processEntityCombatTarget(second, collisionStatus == 0x1);
+            /*
+            local manager = world.getEntityManager();
+            assert(manager.hasComponent(entityId, EntityComponents.SCRIPT));
+            local comp = manager.getComponent(entityId, EntityComponents.SCRIPT);
+            if(collisionStatus == 0x1) comp.mScript.receivePlayerSpotted(true);
+            else if(collisionStatus == 0x2) comp.mScript.receivePlayerSpotted(false);
+            */
         });
         mTriggerResponses_[CollisionWorldTriggerResponses.DIE] <- TriggerResponse(function(world, entityId, second, collisionStatus){
             if(collisionStatus != 0x1) return;

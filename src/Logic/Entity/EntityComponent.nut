@@ -34,6 +34,26 @@
 
 };
 
+::EntityManager.Components[EntityComponents.COLLISION_POINT_THREE] = class extends ::EntityManager.Component{
+
+    mPointFirst = null;
+    mPointSecond = null;
+    mPointThird = null;
+    mCreatorFirst = null;
+    mCreatorSecond = null;
+    mCreatorThird = null;
+
+    constructor(first, second, third, creatorFirst, creatorSecond, creatorThird){
+        mPointFirst = first;
+        mPointSecond = second;
+        mPointThird = third;
+        mCreatorFirst = creatorFirst;
+        mCreatorSecond = creatorSecond;
+        mCreatorThird = creatorThird;
+    }
+
+};
+
 ::EntityManager.Components[EntityComponents.SCENE_NODE] = class extends ::EntityManager.Component{
 
     mNode = null;

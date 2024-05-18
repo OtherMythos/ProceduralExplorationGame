@@ -194,6 +194,7 @@ enum WorldMousePressContexts{
 
     mDamageCollisionWorld_ = null;
     mTriggerCollisionWorld_ = null;
+    mCombatTargetCollisionWorld_ = null;
     mEntityManager_ = null;
 
     mMovementCooldown_ = 0;
@@ -217,6 +218,8 @@ enum WorldMousePressContexts{
     mPrevMouseY_ = null;
     mMouseContext_ = null;
 
+    mPlayerTargetRadius_ = null;
+
     mInputs_ = null;
 
     NUM_PLAYER_QUEUED_FLAGS = 1;
@@ -228,6 +231,7 @@ enum WorldMousePressContexts{
         mLocationFlagNodes_ = {};
         mActiveGizmos_ = {};
         mActiveWorldActions_ = [];
+        mPlayerTargetRadius_ = {};
 
         mAppearDistractionLogic_ = FoundObjectLogic([
             {
@@ -281,6 +285,9 @@ enum WorldMousePressContexts{
     }
     function getTriggerWorld(){
         return mTriggerCollisionWorld_;
+    }
+    function getCombatTargetWorld(){
+        return mCombatTargetCollisionWorld_;
     }
     function getEntityManager(){
         return mEntityManager_;
@@ -340,6 +347,7 @@ enum WorldMousePressContexts{
 
         mDamageCollisionWorld_ = CollisionWorldWrapper(this);
         mTriggerCollisionWorld_ = CollisionWorldWrapper(this);
+        mCombatTargetCollisionWorld_ = CollisionWorldWrapper(this);
 
         mEntityManager_ = EntityManager.createEntityManager(this);
     }
@@ -415,8 +423,18 @@ enum WorldMousePressContexts{
         }
         updateWorldActions();
 
+        print(getTotalTargetedEnemies());
+        if(mPlayerTargetRadius_.len() > 0){
+            print("====");
+            foreach(c,i in mPlayerTargetRadius_){
+                print("id " + c);
+            }
+            print("====");
+        }
+
         mDamageCollisionWorld_.processCollision();
         mTriggerCollisionWorld_.processCollision();
+        mCombatTargetCollisionWorld_.processCollision();
     }
 
     function setCurrentWorld(current){
@@ -998,6 +1016,25 @@ enum WorldMousePressContexts{
                 if(idx == null) break;
                 mActiveWorldActions_.remove(idx);
             }
+        }
+    }
+
+    function getTotalTargetedEnemies(){
+        return mPlayerTargetRadius_.len();
+    }
+    function processEntityCombatTarget(en, entered){
+        if(entered){
+            if(mPlayerTargetRadius_.rawin(en)){
+                print("ERROR! Attempting to target an enemy which is already targeted!");
+                return;
+            }
+            mPlayerTargetRadius_.rawset(en, true);
+        }else{
+            if(!mPlayerTargetRadius_.rawin(en)){
+                print("ERROR! Attempting to untarget an enemy which is not targeted");
+                return;
+            }
+            mPlayerTargetRadius_.rawdelete(en);
         }
     }
 
