@@ -23,6 +23,8 @@ enum InventoryBusEvents{
     mPlayerStats_ = null;
     mPlayerInspector_ = null;
 
+    mInventoryWidth = 5;
+
     mInventoryBus_ = null;
 
     HoverItemInfo = class{
@@ -134,6 +136,12 @@ enum InventoryBusEvents{
         mInventoryEquippedGrid_.setNewGridIcons(data.mItems);
     }
 
+    function calculateGridSize(){
+        local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
+
+        return mobile ? (::drawable.x / (mInventoryWidth+2)) : 64;
+    }
+
     function setup(data){
         _event.subscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent, this);
         _event.subscribe(Event.PLAYER_EQUIP_CHANGED, receivePlayerEquipChangedEvent, this);
@@ -193,15 +201,13 @@ enum InventoryBusEvents{
         local buttonCover = createButtonCover(mOverlayWindow_);
         mHoverInfo_ = HoverItemInfo(mOverlayWindow_);
 
-        local inventoryWidth = 5;
         //Add one for the equippables slot and another for general padding.
-        local gridSize = mobile ? (::drawable.x / (inventoryWidth+2)) : 64;
+        local gridSize = calculateGridSize();
 
         local layoutHorizontal = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
         mInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID, mInventoryBus_, mHoverInfo_, buttonCover);
-        //local inventoryWidth = mInventory_.getInventorySize() / 5;
-        local inventoryHeight = mInventory_.getInventorySize() / inventoryWidth;
-        mInventoryGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, inventoryWidth, inventoryHeight);
+        local inventoryHeight = mInventory_.getInventorySize() / mInventoryWidth;
+        mInventoryGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, mInventoryWidth, inventoryHeight);
         //mInventoryGrid_.addToLayout(layoutLine);
         mInventoryGrid_.addToLayout(layoutHorizontal);
 
@@ -348,12 +354,20 @@ enum InventoryBusEvents{
         print("Selected item " + selectedItem.tostring());
         setHoverMenuToItem(null);
 
-        local size = targetGrid.getSize();
-        local pos = targetGrid.getPosition();
+        local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
+        local pos = null;
+        local size = Vec2(::ScreenManager.calculateRatio(200), targetGrid.getSize().y);
         local posForIdx = targetGrid.getPositionForIdx(idx);
+        if(mobile){
+            size = ::drawable * 0.75;
+            pos = ::drawable / 2 - size / 2;
+        }else{
+            pos = Vec2(posForIdx.x + ::ScreenManager.calculateRatio(calculateGridSize()), posForIdx.y);
+        }
+
         local data = {
-            "pos": Vec2(posForIdx.x + ::ScreenManager.calculateRatio(64), posForIdx.y),
-            "size": Vec2(::ScreenManager.calculateRatio(200), size.y),
+            "pos": pos,
+            "size": size,
             "item": selectedItem,
             "idx": idx,
             "gridType": inventoryData.gridType
