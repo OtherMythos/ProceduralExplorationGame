@@ -70,7 +70,7 @@
         backgroundWidget.setSkin(populated ? "inventory_slot" : EQUIP_GRID_VALUES[idx]);
     }
 
-    function initialise(parentWin, overlayWin, inventoryWidth, inventoryHeight){
+    function initialise(parentWin, gridSize, overlayWin, inventoryWidth, inventoryHeight){
         mWindow_ = parentWin.createWindow("InventoryGrid");
         mWindow_.setSkinPack("WindowSkinNoBorder");
 
@@ -82,22 +82,24 @@
             mItemIcons_ = array(inventoryHeight);
         }
 
+        local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
+
         //Get the size of a grid relative to some universal metric.
-        local gridSize = ::ScreenManager.calculateRatio(64);
-        local gridPadding = gridSize * (8.0 / 64.0);
-        local gridRemainder = gridSize - gridPadding;
-        local iconSize = ::ScreenManager.calculateRatio(48);
+        local gridRatio = ::ScreenManager.calculateRatio(gridSize);
+        local gridPadding = gridRatio * 0.125;
+        local iconSize = ::ScreenManager.calculateRatio(gridSize.tofloat() * 0.75);
+        mButtonCover_.setSize(gridRatio, gridRatio);
         for(local y = 0; y < inventoryHeight; y++){
             for(local x = 0; x < inventoryWidth; x++){
                 local background = mWindow_.createPanel();
-                background.setSize(gridSize, gridSize);
-                background.setPosition(x * gridSize, y * gridSize);
+                background.setSize(gridRatio, gridRatio);
+                background.setPosition(x * gridRatio, y * gridRatio);
                 background.setSkin("inventory_slot");
                 mBackgrounds_.append(background);
 
                 local iconPanel = mWindow_.createPanel();
                 iconPanel.setSize(iconSize, iconSize);
-                iconPanel.setPosition(x * gridSize + gridPadding, y * gridSize + gridPadding);
+                iconPanel.setPosition(x * gridRatio + gridPadding, y * gridRatio + gridPadding);
                 iconPanel.setSkin("item_none");
                 iconPanel.setVisible(false);
                 mItemIcons_[x + y * inventoryWidth] = iconPanel;
@@ -106,8 +108,8 @@
                 item.setHidden(false);
                 //item.setSize(48, 48);
                 //item.setPosition(x * 64 + 8, y * 64 + 8);
-                item.setSize(gridSize, gridSize);
-                item.setPosition(x * gridSize, y * gridSize);
+                item.setSize(gridRatio, gridRatio);
+                item.setPosition(x * gridRatio, y * gridRatio);
                 //item.setSkin("Invisible");
                 item.setVisualsEnabled(false);
                 //item.setUserId(x | (y << 10));

@@ -181,6 +181,8 @@ enum InventoryBusEvents{
         //local container = InventoryContainer(mWindow_, mInventory_, mInventoryBus_);
         //container.addToLayout(layoutLine);
 
+        local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
+
         mOverlayWindow_ = _gui.createWindow("InventoryOverlayWindow");
         mOverlayWindow_.setPosition(0, 0);
         mOverlayWindow_.setSize(::drawable.x, ::drawable.y);
@@ -191,23 +193,28 @@ enum InventoryBusEvents{
         local buttonCover = createButtonCover(mOverlayWindow_);
         mHoverInfo_ = HoverItemInfo(mOverlayWindow_);
 
+        local inventoryWidth = 5;
+        //Add one for the equippables slot and another for general padding.
+        local gridSize = mobile ? (::drawable.x / (inventoryWidth+2)) : 64;
+
         local layoutHorizontal = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
         mInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID, mInventoryBus_, mHoverInfo_, buttonCover);
         //local inventoryWidth = mInventory_.getInventorySize() / 5;
-        local inventoryWidth = 5;
         local inventoryHeight = mInventory_.getInventorySize() / inventoryWidth;
-        mInventoryGrid_.initialise(mWindow_, mOverlayWindow_, inventoryWidth, inventoryHeight);
+        mInventoryGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, inventoryWidth, inventoryHeight);
         //mInventoryGrid_.addToLayout(layoutLine);
         mInventoryGrid_.addToLayout(layoutHorizontal);
 
         mInventoryEquippedGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_EQUIPPABLES, mInventoryBus_, mHoverInfo_, buttonCover);
-        mInventoryEquippedGrid_.initialise(mWindow_, mOverlayWindow_, null, null);
+        mInventoryEquippedGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, null, null);
         //mInventoryEquippedGrid_.addToLayout(layoutLine);
         mInventoryEquippedGrid_.addToLayout(layoutHorizontal);
 
-        mPlayerInspector_ = ::GuiWidgets.InventoryPlayerInspector();
-        mPlayerInspector_.setup(mWindow_);
-        mPlayerInspector_.addToLayout(layoutHorizontal);
+        if(!mobile){
+            mPlayerInspector_ = ::GuiWidgets.InventoryPlayerInspector();
+            mPlayerInspector_.setup(mWindow_);
+            mPlayerInspector_.addToLayout(mobile ? layoutLine : layoutHorizontal);
+        }
 
         layoutHorizontal.setMarginForAllCells(10, 0);
         layoutLine.addCell(layoutHorizontal);
@@ -222,15 +229,15 @@ enum InventoryBusEvents{
         mInventoryGrid_.setNewGridIcons(mInventory_.mInventoryItems_);
         mInventoryEquippedGrid_.setNewGridIcons(mPlayerStats_.mPlayerCombatStats.mEquippedItems.mItems);
         //container.sizeInner();
-        mPlayerInspector_.notifyLayout();
+        if(!mobile){
+            mPlayerInspector_.notifyLayout();
+        }
 
         ::InputManager.setActionSet(InputActionSets.MENU);
     }
 
     function createButtonCover(win){
         local cover = win.createPanel();
-        local gridSize = ::ScreenManager.calculateRatio(64);
-        cover.setSize(gridSize, gridSize);
         cover.setDatablock("gui/inventoryHighlightCover");
         cover.setHidden(true);
         cover.setZOrder(155);
@@ -389,7 +396,9 @@ enum InventoryBusEvents{
     function shutdown(){
         _gui.destroy(mOverlayWindow_);
         mMoneyCounter_.shutdown();
-        mPlayerInspector_.shutdown();
+        if(mPlayerInspector_ != null){
+            mPlayerInspector_.shutdown();
+        }
         base.shutdown();
         _event.unsubscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent);
         _event.unsubscribe(Event.PLAYER_EQUIP_CHANGED, receivePlayerEquipChangedEvent);
@@ -400,7 +409,9 @@ enum InventoryBusEvents{
     function update(){
         //mInventoryGrid_.update();
         mHoverInfo_.update();
-        mPlayerInspector_.update();
+        if(mPlayerInspector_ != null){
+            mPlayerInspector_.update();
+        }
 
         if(_input.getButtonAction(::InputManager.menuBack, _INPUT_PRESSED)){
             closeInventory();
