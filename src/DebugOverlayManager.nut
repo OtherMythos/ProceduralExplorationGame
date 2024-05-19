@@ -15,6 +15,7 @@
 
             mWindow_ = _gui.createWindow("DebugOverlay" + id);
             mWindow_.setZOrder(199);
+            mWindow_.setVisible(false);
 
             mLabel_ = mWindow_.createLabel();
             mLabel_.setText("test");
@@ -27,6 +28,7 @@
         function appendText(text){
             mText_ += (text + "\n");
             mDirty_ = true;
+            mWindow_.setVisible(true);
         }
 
         function update(){
