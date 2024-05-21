@@ -345,9 +345,9 @@ enum WorldMousePressContexts{
         mEntityFactory_ = EntityFactory(this, mParentNode_, CharacterGenerator());
         //_developer.setRenderQueueForMeshGroup(30);
 
-        mDamageCollisionWorld_ = CollisionWorldWrapper(this);
-        mTriggerCollisionWorld_ = CollisionWorldWrapper(this);
-        mCombatTargetCollisionWorld_ = CollisionWorldWrapper(this);
+        mDamageCollisionWorld_ = CollisionWorldWrapper(this, 0);
+        mTriggerCollisionWorld_ = CollisionWorldWrapper(this, 1);
+        mCombatTargetCollisionWorld_ = CollisionWorldWrapper(this, 2);
 
         mEntityManager_ = EntityManager.createEntityManager(this);
     }
