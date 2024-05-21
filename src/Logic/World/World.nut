@@ -1127,6 +1127,8 @@ enum WorldMousePressContexts{
         print("orientating");
 
         if(_input.getMouseButton(0)){
+            _window.grabCursor(true);
+
             local mouseX = _input.getMouseX();
             local mouseY = _input.getMouseY();
             if(mPrevMouseX_ != null && mPrevMouseY_ != null){
@@ -1143,6 +1145,8 @@ enum WorldMousePressContexts{
                 mPrevMouseX_ = null;
                 mPrevMouseY_ = null;
             }
+
+            _window.grabCursor(false);
         }
     }
     function checkCameraChange(){
