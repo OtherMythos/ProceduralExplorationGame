@@ -300,6 +300,7 @@ enum ExplorationBusEvents{
 
     function notifyPlayerDeath(){
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLAYER_DEATH_SCREEN, null), null, 1);
+        _window.grabCursor(false);
     }
 
     function notifyPlayerTarget(target){
