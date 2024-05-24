@@ -66,6 +66,7 @@
         mMaxHealth = 10;
         mEnemyType = EnemyId.NONE;
         mEquippedItems = null;
+        mWieldActive = true;
 
         mDead = false;
 
@@ -91,6 +92,10 @@
             moveDamage += equipped.mDefense;
             print("Final damage in move: " + moveDamage);
             alterHealth(moveDamage);
+        }
+
+        function setWieldActive(active){
+            mWieldActive = active;
         }
 
         function getHealthPercentage(){

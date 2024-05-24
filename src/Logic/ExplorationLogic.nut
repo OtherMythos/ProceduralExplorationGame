@@ -54,6 +54,7 @@
         _event.unsubscribe(Event.PLAYER_DIED, processPlayerDeath, this);
         _event.unsubscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);
         _event.unsubscribe(Event.PLAYER_EQUIP_CHANGED, playerEquipChanged, this);
+        _event.unsubscribe(Event.PLAYER_WIELD_ACTIVE_CHANGED, playerWieldActiveChanged, this);
 
         _state.setPauseState(0);
 
@@ -76,12 +77,19 @@
         _event.subscribe(Event.PLAYER_DIED, processPlayerDeath, this);
         _event.subscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);
         _event.subscribe(Event.PLAYER_EQUIP_CHANGED, playerEquipChanged, this);
+        _event.subscribe(Event.PLAYER_WIELD_ACTIVE_CHANGED, playerWieldActiveChanged, this);
     }
 
     function playerHealthChanged(id, data){
         mCurrentWorld_.playerHealthChanged(data);
         foreach(i in mQueuedWorlds_){
             i.playerHealthChanged(data);
+        }
+    }
+    function playerWieldActiveChanged(id, data){
+        mCurrentWorld_.playerWieldChanged(data);
+        foreach(i in mQueuedWorlds_){
+            i.playerWieldChanged(data);
         }
     }
     function playerEquipChanged(id, data){
@@ -290,6 +298,10 @@
 
     function setOrientatingCamera(orientating){
         mCurrentWorld_.setOrientatingCamera(orientating);
+    }
+
+    function toggleWieldActive(){
+        ::Base.mExplorationLogic.toggleWieldActive();
     }
 
     function setGamePaused(pause){

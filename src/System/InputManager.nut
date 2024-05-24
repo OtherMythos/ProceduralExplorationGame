@@ -12,6 +12,7 @@
                     "PerformMove4": "#PerformMove4",
                     "CancelTarget": "#CancelTarget",
                     "ShowInventory": "#ShowInventory",
+                    "toggleWieldActive": "#toggleWieldActive",
                     "PauseGame": "#PauseGame",
                     "ShowDebugConsole": "#ShowDebugConsole",
                 },
@@ -54,6 +55,7 @@
         ::InputManager.performMove4 <- _input.getButtonActionHandle("PerformMove4");
         ::InputManager.cancelTarget <- _input.getButtonActionHandle("CancelTarget");
         ::InputManager.showInventory <- _input.getButtonActionHandle("ShowInventory");
+        ::InputManager.toggleWieldActive <- _input.getButtonActionHandle("toggleWieldActive");
         ::InputManager.pauseGame <- _input.getButtonActionHandle("PauseGame");
         ::InputManager.showDebugConsole <- _input.getButtonActionHandle("ShowDebugConsole");
 
@@ -69,8 +71,8 @@
         _input.mapControllerInput(_B_X, this.performMove3);
         _input.mapControllerInput(_B_Y, this.performMove4);
         _input.mapControllerInput(_B_LEFTSHOULDER, this.cancelTarget);
-        _input.mapControllerInput(_B_RIGHTSHOULDER, this.cancelTarget);
         _input.mapControllerInput(_B_BACK, this.showInventory);
+        _input.mapControllerInput(_B_RIGHTSHOULDER, this.toggleWieldActive);
         _input.mapControllerInput(_B_GUIDE, this.pauseGame);
 
         _input.mapControllerInput(_B_B, this.menuBack);
@@ -84,6 +86,7 @@
         _input.mapKeyboardInput(_K_4, this.performMove4);
         //_input.mapKeyboardInput(_K_ESCAPE, this.cancelTarget);
         _input.mapKeyboardInput(_K_E, this.showInventory);
+        _input.mapKeyboardInput(_K_R, this.toggleWieldActive);
         _input.mapKeyboardInput(_K_ESCAPE, this.pauseGame);
         _input.mapKeyboardInput(_K_TAB, this.showDebugConsole);
 

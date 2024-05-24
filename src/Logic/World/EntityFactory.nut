@@ -176,7 +176,6 @@
         if(combatEquipped != null){
             local combatData = ::Combat.CombatStats(enemyType, 0, combatEquipped);
             enemy.setCombatData(combatData);
-            enemy.getModel().equipDataToCharacterModel(combatEquipped);
         }
 
         local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SPOILS_DATA, spoilsData, null, null);

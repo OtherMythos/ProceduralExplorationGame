@@ -105,6 +105,15 @@
         }
     }
 
+    function toggleWieldActive(){
+        setWieldActive(!mPlayerCombatStats.mWieldActive);
+    }
+    function setWieldActive(active){
+        mPlayerCombatStats.setWieldActive(active);
+
+        _event.transmit(Event.PLAYER_WIELD_ACTIVE_CHANGED, active);
+    }
+
     function notifyPlaceVisited(place){
         if(mPlacesVisited_[place]) return;
 

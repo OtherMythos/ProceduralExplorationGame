@@ -38,13 +38,16 @@ local ModelType = class{
 
 ::ModelTypes <- array(CharacterModelType.MAX, null);
 
+//TODO make it possible to assign orientation to nodes.
 ::ModelTypes[CharacterModelType.HUMANOID] = ModelType("build/assets/characterAnimations/baseAnimation.xml",
     [
         Entry(
             "playerHead.mesh", CharacterModelPartType.HEAD, null, Vec3(0, 10, 0), Vec3(1, 1, 1)
         ),
         Entry(
-            "playerBody.mesh", CharacterModelPartType.BODY, null, Vec3(0, 3, 0), Vec3(0.9, 1, 0.9)
+            "playerBody.mesh", CharacterModelPartType.BODY,
+            [Entry(null, CharacterModelPartType.NONE, null, Vec3(0, 0, -3), Vec3(0.8, 0.8, 0.8), CharacterModelEquipNodeType.WEAPON_STORE)]
+            , Vec3(0, 3, 0), Vec3(0.9, 1, 0.9)
         ),
 
         Entry(

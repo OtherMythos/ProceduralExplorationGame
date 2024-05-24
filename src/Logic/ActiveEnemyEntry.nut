@@ -203,6 +203,15 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
     }
     function setCombatData(combatData){
         mCombatData_ = combatData;
+        if(mModel_){
+            mModel_.equipDataToCharacterModel(combatData.mEquippedItems);
+        }
+    }
+    function setWieldActive(active){
+        mCombatData_.setWieldActive(active);
+        if(mModel_ != null){
+            mModel_.equipDataToCharacterModel(mCombatData_.mEquippedItems, active);
+        }
     }
     function setCollisionPoint(point){
         mCollisionPoint_ = point;
@@ -261,13 +270,16 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         local dir = point - mPos_;
         dir.normalise();
 
-        dir *= (amount * getSlowFactor(mInWater_));
+        dir *= (amount * getSlowFactor(mInWater_, mCombatData_.mWieldActive));
         moveQueryZ(dir, mInWater_);
     }
-    function getSlowFactor(inWater){
+    function getSlowFactor(inWater, wieldActive){
         local slow = 1.0;
         if(inWater){
-            slow = ::Enemies[mEnemy_].getAllowSwimState() ? 0.5 : 1.0;
+            slow *= ::Enemies[mEnemy_].getAllowSwimState() ? 0.5 : 1.0;
+        }
+        if(wieldActive){
+            slow *= 0.8;
         }
         return slow;
     }

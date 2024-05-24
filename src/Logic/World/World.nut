@@ -269,6 +269,7 @@ enum WorldMousePressContexts{
             ],
             "canceltarget": _input.getButtonActionHandle("CancelTarget"),
             "showInventory": _input.getButtonActionHandle("ShowInventory"),
+            "toggleWieldActive": _input.getButtonActionHandle("toggleWieldActive"),
             "pauseGame": _input.getButtonActionHandle("PauseGame"),
             "showDebugConsole": _input.getButtonActionHandle("ShowDebugConsole"),
         };
@@ -362,6 +363,9 @@ enum WorldMousePressContexts{
     function playerEquipChanged(data){
         printf("Player equip changed '%s'", data.tostring());
         mPlayerEntry_.getModel().equipDataToCharacterModel(data);
+    }
+    function playerWieldChanged(active){
+        mPlayerEntry_.setWieldActive(active);
     }
 
     function processEXPOrb(entityId){
@@ -941,6 +945,9 @@ enum WorldMousePressContexts{
         if(_input.getButtonAction(mInputs_.showInventory, _INPUT_PRESSED)){
             showInventory();
         }
+        if(_input.getButtonAction(mInputs_.toggleWieldActive, _INPUT_PRESSED)){
+            ::Base.mPlayerStats.toggleWieldActive();
+        }
         if(_input.getButtonAction(mInputs_.pauseGame, _INPUT_PRESSED)){
             ::Base.mExplorationLogic.setGamePaused(true);
         }
@@ -1029,12 +1036,21 @@ enum WorldMousePressContexts{
                 return;
             }
             mPlayerTargetRadius_.rawset(en, true);
+
+            if(mActiveEnemies_.rawin(en)){
+                local activeEnemy = mActiveEnemies_[en];
+                local gizmo = createGizmo(activeEnemy.getPosition(), ExplorationGizmos.TARGET_ENEMY);
+                activeEnemy.setGizmo(gizmo);
+            }
         }else{
             if(!mPlayerTargetRadius_.rawin(en)){
                 print("ERROR! Attempting to untarget an enemy which is not targeted");
                 return;
             }
             mPlayerTargetRadius_.rawdelete(en);
+            if(mActiveEnemies_.rawin(en)){
+                mActiveEnemies_[en].setGizmo(null);
+            }
         }
     }
 

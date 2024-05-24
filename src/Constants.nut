@@ -130,7 +130,8 @@ enum Event{
     WORLD_PREPARATION_STATE_CHANGE = 1017,
 
     PLACE_DISCOVERED = 1018,
-    PLAYER_EQUIP_CHANGED = 1019
+    PLAYER_EQUIP_CHANGED = 1019,
+    PLAYER_WIELD_ACTIVE_CHANGED = 1020,
 }
 
 enum FoundObjectType{
@@ -295,6 +296,9 @@ enum CharacterModelEquipNodeType{
 
     LEFT_HAND,
     RIGHT_HAND,
+
+    //Place where weapons are put when not active.
+    WEAPON_STORE,
 
     MAX
 };

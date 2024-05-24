@@ -8,6 +8,7 @@
     mEXPCounter_ = null;
     mTargetEnemyWidget_ = null;
     mInventoryButton_ = null;
+    mWieldPutAway_ = null;
 
     mPlayerHealthBar_ = null;
 
@@ -38,6 +39,13 @@
         targetLayout.addCell(mInventoryButton_);
         mInventoryButton_.attachListenerForEvent(function(widget, action){
             ::Base.mExplorationLogic.mCurrentWorld_.showInventory();
+        }, _GUI_ACTION_PRESSED, this);
+
+        mWieldPutAway_ = mWindow_.createButton();
+        mWieldPutAway_.setText("Wield");
+        targetLayout.addCell(mWieldPutAway_);
+        mWieldPutAway_.attachListenerForEvent(function(widget, action){
+            ::Base.mPlayerStats.toggleWieldActive();
         }, _GUI_ACTION_PRESSED, this);
 
         mMoneyCounter_ = ::GuiWidgets.InventoryMoneyCounter(mWindow_);

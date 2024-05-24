@@ -30,13 +30,26 @@
                 return CharacterModelEquipNodeType.NONE;
         }
     }
+    #Static
+    function ___mapEquipSlotToEquipNodeInactiveWield___(slot){
+        local targetSlot = ___mapEquipSlotToEquipNode___(slot);
 
-    function equipDataToCharacterModel(data){
+        if(targetSlot == CharacterModelEquipNodeType.LEFT_HAND || targetSlot == CharacterModelEquipNodeType.RIGHT_HAND){
+            targetSlot = CharacterModelEquipNodeType.WEAPON_STORE;
+        }
+
+        return targetSlot;
+    }
+
+    function equipDataToCharacterModel(data, wieldActive=true){clearEquipNodes()
+        clearEquipNodes();
         for(local i = EquippedSlotTypes.NONE+1; i < EquippedSlotTypes.MAX; i++){
-            local targetEquipNode = ::CharacterModel.___mapEquipSlotToEquipNode___(i);
-            if(targetEquipNode == EquippedSlotTypes.NONE) continue;
+            local targetEquipNode = wieldActive ? ::CharacterModel.___mapEquipSlotToEquipNode___(i) : ::CharacterModel.___mapEquipSlotToEquipNodeInactiveWield___(i);
+            //local targetEquipNode = ::CharacterModel.___mapEquipSlotToEquipNodeInactiveWield___(i);
+            if(targetEquipNode == CharacterModelEquipNodeType.NONE) continue;
+            local append = targetEquipNode == CharacterModelEquipNodeType.WEAPON_STORE;
             local targetItem = data.getEquippedItem(i);
-            equipToNode(targetItem, targetEquipNode);
+            equipToNode(targetItem, targetEquipNode, append);
         }
     }
 
@@ -93,10 +106,18 @@
         return _animation.createAnimation(target.mName, animationInfo);
     }
 
-    function equipToNode(item, targetNodeType){
+    function clearEquipNodes(){
+        for(local i = CharacterModelEquipNodeType.NONE+1; i < CharacterModelEquipNodeType.MAX; i++){
+            local targetNode = mEquipNodes_[i];
+            targetNode.recursiveDestroyChildren();
+        }
+    }
+    function equipToNode(item, targetNodeType, append=false){
         if(!mEquipNodes_.rawin(targetNodeType)) return;
         local targetNode = mEquipNodes_[targetNodeType];
-        targetNode.recursiveDestroyChildren();
+        if(!append){
+            targetNode.recursiveDestroyChildren();
+        }
 
         if(item == null) return;
         local meshName = item.getMesh();
