@@ -18,6 +18,16 @@ enum ItemType{
     MONEY
 };
 
+//Separate rotation parameters into re-useable objects.
+enum ItemEquipTransformType{
+    NONE,
+    BASIC_SWORD,
+    BASIC_SHIELD,
+    BASIC_TWO_HANDED_SWORD,
+
+    MAX
+};
+
 /**
  * Item objects.
  * This separates items from itemDefs.
@@ -66,11 +76,9 @@ enum ItemType{
     mIcon = null;
 
     mEquippableData = EquippableId.NONE;
-    mEquippablePosition = null;
-    mEquippableOrientation = null;
-    mEquippableScale = null;
+    mEquipTransformType = ItemEquipTransformType.NONE;
 
-    constructor(name, desc, mesh, icon, type, scrapVal, equippableData, equippablePosition=null, equippableOrientation=null, equippableScale=null){
+    constructor(name, desc, mesh, icon, type, scrapVal, equippableData, equippableTransformType=ItemEquipTransformType.NONE){
         mName = name;
         mDesc = desc;
         mMesh = mesh;
@@ -78,9 +86,7 @@ enum ItemType{
         mIcon = icon;
         mScrapVal = scrapVal;
         mEquippableData = equippableData;
-        mEquippablePosition = equippablePosition;
-        mEquippableOrientation = equippableOrientation;
-        mEquippableScale = equippableScale;
+        mEquipTransformType = equippableTransformType;
 
         //Sanity checks.
         if(mType == ItemType.CONSUMABLE){
@@ -99,9 +105,9 @@ enum ItemType{
     function getMesh(){ return mMesh; }
     function getScrapVal(){ return mScrapVal; }
     function getEquippableData(){ return mEquippableData; }
-    function getEquippablePosition(){ return mEquippablePosition; }
-    function getEquippableOrientation(){ return mEquippableOrientation; }
-    function getEquippableScale(){ return mEquippableScale; }
+    function getEquippablePosition(){ return ::ItemEquipTransforms[mEquipTransformType].mPosition; }
+    function getEquippableOrientation(){ return ::ItemEquipTransforms[mEquipTransformType].mOrientation; }
+    function getEquippableScale(){ return ::ItemEquipTransforms[mEquipTransformType].mScale; }
     function getIcon(){ return mIcon == null ? "icon_none" : mIcon; }
 }
 ::Items <- array(ItemId.MAX, null);
@@ -112,11 +118,30 @@ enum ItemType{
 ::Items[ItemId.HEALTH_POTION] = ItemDef("Health Potion", "A potion of health. Bubbles gently inside a cast glass flask.", "smallPotion.mesh", "item_healthPotion", ItemType.CONSUMABLE, 5, EquippableId.NONE);
 ::Items[ItemId.LARGE_HEALTH_POTION] = ItemDef("Large Health Potion", "A large potion of health.", "largePotion.mesh", "item_largeHealthPotion", ItemType.CONSUMABLE, 10, EquippableId.NONE);
 
-::Items[ItemId.SIMPLE_SWORD] = ItemDef("Simple Sword", "A cheap, weak sword. Relatively blunt for something claiming to be a sword.", "simpleSword.mesh", "item_simpleSword", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SWORD, Vec3(0, 8, 0), Quat(2, Vec3(0, 1, 0)));
-::Items[ItemId.SIMPLE_SHIELD] = ItemDef("Simple Shield", "An un-interesting shield. Provides minimal protection.", "simpleShield.mesh", "item_simpleShield", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SHIELD, Vec3(-4, 0, 0), Quat(-PI*0.5, Vec3(0, 1, 0)), Vec3(1.4, 1.4, 1.0));
-::Items[ItemId.SIMPLE_TWO_HANDED_SWORD] = ItemDef("Simple Two Handed sword", "A two handed sword as blunt as it is big.", "simpleTwoHandedSword.mesh", "item_simpleTwoHandedSword", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_TWO_HANDED_SWORD, Vec3(0, 14, 0), Quat(-PI*0.5, Vec3(0, 1, 0)), Vec3(1.4, 1.4, 1.0));
-::Items[ItemId.BONE_MACE] = ItemDef("Bone Mace", "Large clobbering clump of ex-person erecter.", "boneMace.mesh", "item_boneMace", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SWORD, Vec3(0, 8, 0), Quat(1, Vec3(0, 1, 0)));
+::Items[ItemId.SIMPLE_SWORD] = ItemDef("Simple Sword", "A cheap, weak sword. Relatively blunt for something claiming to be a sword.", "simpleSword.mesh", "item_simpleSword", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SWORD, ItemEquipTransformType.BASIC_SWORD);
+::Items[ItemId.SIMPLE_SHIELD] = ItemDef("Simple Shield", "An un-interesting shield. Provides minimal protection.", "simpleShield.mesh", "item_simpleShield", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SHIELD, ItemEquipTransformType.BASIC_SHIELD);
+::Items[ItemId.SIMPLE_TWO_HANDED_SWORD] = ItemDef("Simple Two Handed sword", "A two handed sword as blunt as it is big.", "simpleTwoHandedSword.mesh", "item_simpleTwoHandedSword", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_TWO_HANDED_SWORD, ItemEquipTransformType.BASIC_TWO_HANDED_SWORD);
+::Items[ItemId.BONE_MACE] = ItemDef("Bone Mace", "Large clobbering clump of ex-person erecter.", "boneMace.mesh", "item_boneMace", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SWORD, ItemEquipTransformType.BASIC_SWORD);
 //-------------------------------
+
+::ItemEquipTransform <- class{
+    mPosition = null;
+    mOrientation = null;
+    mScale = null;
+    constructor(position, orientation=null, scale=null){
+        mPosition = position;
+        mOrientation = orientation;
+        mScale = scale;
+    }
+};
+
+::ItemEquipTransforms <- array(ItemEquipTransformType.MAX, null);
+
+::ItemEquipTransforms[ItemEquipTransformType.NONE] = ::ItemEquipTransform(Vec3(0, 0, 0));
+
+::ItemEquipTransforms[ItemEquipTransformType.BASIC_SWORD] = ::ItemEquipTransform(Vec3(0, 8, 0), Quat(2, Vec3(0, 1, 0)));
+::ItemEquipTransforms[ItemEquipTransformType.BASIC_SHIELD] = ::ItemEquipTransform(Vec3(-4, 0, 0), Quat(-PI*0.5, Vec3(0, 1, 0)), Vec3(1.4, 1.4, 1.0));
+::ItemEquipTransforms[ItemEquipTransformType.BASIC_TWO_HANDED_SWORD] = ::ItemEquipTransform(Vec3(0, 14, 0), Quat(-PI*0.5, Vec3(0, 1, 0)), Vec3(1.4, 1.4, 1.0));
 
 function setupItemIds_(){
     foreach(c,i in ::Items){
