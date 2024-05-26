@@ -107,9 +107,8 @@
     }
 
     function clearEquipNodes(){
-        for(local i = CharacterModelEquipNodeType.NONE+1; i < CharacterModelEquipNodeType.MAX; i++){
-            local targetNode = mEquipNodes_[i];
-            targetNode.recursiveDestroyChildren();
+        foreach(c,i in mEquipNodes_){
+            i.recursiveDestroyChildren();
         }
     }
     function equipToNode(item, targetNodeType, append=false){

@@ -270,7 +270,8 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         local dir = point - mPos_;
         dir.normalise();
 
-        dir *= (amount * getSlowFactor(mInWater_, mCombatData_.mWieldActive));
+        local wieldActive = mCombatData_ == null ? false : mCombatData_.mWieldActive;
+        dir *= (amount * getSlowFactor(mInWater_, wieldActive));
         moveQueryZ(dir, mInWater_);
     }
     function getSlowFactor(inWater, wieldActive){
