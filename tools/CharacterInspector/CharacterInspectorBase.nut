@@ -120,8 +120,9 @@ enum CharacterInspectorWidgetTypes{
         fpsCamera.start(Vec3(10, 10, 20), Vec3(245.45, -15.9, 0));
 
         mCurrentData_ = {
-            "type": CharacterModelType.SQUID,
-            "equip": array(CharacterModelEquipNodeType.MAX, ItemId.NONE)
+            "type": CharacterModelType.HUMANOID,
+            "equip": array(CharacterModelEquipNodeType.MAX, ItemId.NONE),
+            "wieldActive": false
         }
         mCurrentData_.equip[CharacterModelEquipNodeType.LEFT_HAND] = ItemId.SIMPLE_TWO_HANDED_SWORD;
 
@@ -143,6 +144,13 @@ enum CharacterInspectorWidgetTypes{
         }else{
             mInspectedModel_.stopAnimation(widget.getUserId());
         }
+    }
+
+    function toggleWieldActive(widget, action){
+        mCurrentData_.wieldActive = widget.getValue();
+        printf("Setting wield active to %s", mCurrentData_.wieldActive ? "true" : "false");
+
+        processEquipTypeChange();
     }
 
     function guiCreateTitle(title, layout){
@@ -204,6 +212,12 @@ enum CharacterInspectorWidgetTypes{
             ::CharacterInspectorWidgets[equipVal] <- equip;
         }
 
+        //Wield active state toggle.
+        local wieldActiveStateToggle = ::containerWin.createCheckbox();
+        wieldActiveStateToggle.attachListenerForEvent(toggleWieldActive, _GUI_ACTION_RELEASED, this);
+        wieldActiveStateToggle.setText("Wield active");
+        layout.addCell(wieldActiveStateToggle);
+
         layout.layout();
     }
 
@@ -219,9 +233,18 @@ enum CharacterInspectorWidgetTypes{
     }
 
     function processEquipTypeChange(){
+        mInspectedModel_.clearEquipNodes();
+
+        local wieldActive = mCurrentData_.wieldActive;
         for(local i = CharacterModelEquipNodeType.NONE+1; i < CharacterModelEquipNodeType.MAX; i++){
             local item = ::Items[mCurrentData_.equip[i]];
-            mInspectedModel_.equipToNode(item.getType() == ItemId.NONE ? null : item, i);
+            local target = i;
+            if(wieldActive){
+                if(target == CharacterModelEquipNodeType.LEFT_HAND || target == CharacterModelEquipNodeType.RIGHT_HAND){
+                    target = CharacterModelEquipNodeType.WEAPON_STORE;
+                }
+            }
+            mInspectedModel_.equipToNode(item.getType() == ItemId.NONE ? null : item, target, target == CharacterModelEquipNodeType.WEAPON_STORE);
         }
     }
 

@@ -41,7 +41,7 @@
         return targetSlot;
     }
 
-    function equipDataToCharacterModel(data, wieldActive=true){clearEquipNodes()
+    function equipDataToCharacterModel(data, wieldActive=true){
         clearEquipNodes();
         for(local i = EquippedSlotTypes.NONE+1; i < EquippedSlotTypes.MAX; i++){
             local targetEquipNode = wieldActive ? ::CharacterModel.___mapEquipSlotToEquipNode___(i) : ::CharacterModel.___mapEquipSlotToEquipNodeInactiveWield___(i);
