@@ -48,6 +48,7 @@
                     local modelNode = modelNode.createChildSceneNode();
                     if(e.mPos) modelNode.setPosition(e.mPos);
                     if(e.mScale) modelNode.setScale(e.mScale);
+                    if(e.mOrientation) modelNode.setOrientation(e.mOrientation);
                     equipNodes.rawset(e.mEquipType, modelNode);
                 }
             }
