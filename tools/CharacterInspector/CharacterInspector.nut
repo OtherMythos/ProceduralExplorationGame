@@ -13,6 +13,7 @@ function start(){
     ::generateFloorGrid();
 
     _doFile("res://../../src/Constants.nut");
+    _doFile("res://../../src/Helpers.nut");
     _doFile("res://../../src/Content/Equippables.nut");
     _doFile("res://../../src/Content/Items.nut");
 

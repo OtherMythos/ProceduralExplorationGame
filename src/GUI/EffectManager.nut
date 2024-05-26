@@ -22,7 +22,7 @@
     function setup(){
         mActiveEffects_ = [];
         mQueuedDestructionEffects_ = [];
-        mTestPlane_ = Plane(Vec3(0, 0, 1), Vec3(0, 0, 0));
+        mTestPlane_ = Plane(::Vec3_UNIT_Z, Vec3(0, 0, 0));
 
         _event.subscribe(Event.SCREEN_CHANGED, function(id, data){
             destroyAllEffects();

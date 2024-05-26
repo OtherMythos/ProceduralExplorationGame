@@ -236,11 +236,11 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
 
         setPosition(pos);
         if(mModel_){
-            local orientation = Quat(atan2(amount.x, amount.z), Vec3(0, 1, 0));
+            local orientation = Quat(atan2(amount.x, amount.z), ::Vec3_UNIT_Y);
             mModel_.setOrientation(orientation);
         }else{
             if(mEntity_ != null){
-                local orientation = Quat(atan2(amount.x, amount.z), Vec3(0, 1, 0));
+                local orientation = Quat(atan2(amount.x, amount.z), ::Vec3_UNIT_Y);
                 getSceneNode().setOrientation(orientation);
             }
         }

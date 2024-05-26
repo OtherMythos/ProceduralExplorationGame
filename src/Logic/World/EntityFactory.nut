@@ -525,7 +525,7 @@
         lidNode.attachObject(item);
         lidNode.setPosition(0, 6, 0);
 
-        lidNode.setOrientation(Quat(-0.5, Vec3(1, 0, 0)));
+        lidNode.setOrientation(Quat(-0.5, ::Vec3_UNIT_X));
 
         return en;
 

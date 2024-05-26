@@ -130,13 +130,13 @@
         local secondTarget = targetNode;
         if(targetNodeType == CharacterModelEquipNodeType.RIGHT_HAND){
             secondTarget = secondTarget.createChildSceneNode();
-            secondTarget.setOrientation(Quat(PI, Vec3(0, 1, 0)));
+            secondTarget.setOrientation(Quat(PI, ::Vec3_UNIT_Y));
             attachNode = secondTarget;
         }
         if(offsetPos != null || offsetOrientation != null || offsetScale != null){
             local childNode = secondTarget.createChildSceneNode();
             childNode.setPosition(offsetPos != null ? offsetPos : Vec3());
-            childNode.setScale(offsetScale != null ? offsetScale : Vec3(1, 1, 1));
+            childNode.setScale(offsetScale != null ? offsetScale : ::Vec3_UNIT_SCALE);
             childNode.setOrientation(offsetOrientation != null ? offsetOrientation : Quat());
 
             attachNode = childNode;

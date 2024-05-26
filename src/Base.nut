@@ -323,7 +323,7 @@
         //light.setPowerScale(PI * 0.8);
 
         local val = 2.0;
-        _scene.setAmbientLight(ColourValue(val, val, val, 1.0), ColourValue(val, val, val, 1.0), Vec3(0, 1, 0));
+        _scene.setAmbientLight(ColourValue(val, val, val, 1.0), ColourValue(val, val, val, 1.0), ::Vec3_UNIT_Y);
     }
 
     function setupBaseMeshes(){

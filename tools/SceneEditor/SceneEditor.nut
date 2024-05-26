@@ -65,7 +65,7 @@ enum TerrainEditState{
         if(mEditingTerrain){
             local mousePos = Vec2(_input.getMouseX(), _input.getMouseY())
             if(mEditorBase.checkMousePositionValid(mousePos)){
-                local mTestPlane_ = Plane(Vec3(0, 1, 0), Vec3(0, 0, 0));
+                local mTestPlane_ = Plane(::Vec3_UNIT_Y, Vec3(0, 0, 0));
                 mousePos /= _window.getSize();
                 local ray = _camera.getCameraToViewportRay(mousePos.x, mousePos.y);
                 local point = ray.intersects(mTestPlane_);

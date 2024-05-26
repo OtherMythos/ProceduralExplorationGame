@@ -98,8 +98,8 @@ _t("Entity Destroyed Within Attack Range", "Check that when an entity is destroy
     local targetId = targetManager.targetEntity(targetEntity, player);
     local targetIdSecond = targetManager.targetEntity(player, targetEntity);
 
-    player.setPosition(Vec3(1, 0, 0));
-    targetEntity.setPosition(Vec3(1, 0, 0));
+    player.setPosition(::Vec3_UNIT_X);
+    targetEntity.setPosition(::Vec3_UNIT_X);
 
     targetManager.notifyEntityPositionChange(player);
 

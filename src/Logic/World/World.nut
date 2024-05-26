@@ -117,7 +117,7 @@ enum WorldMousePressContexts{
             outPos.y = 50;
             newNode.setPosition(outPos);
             newNode.setScale(2, 2, 2);
-            //newNode.setOrientation(Quat(_random.rand() * PI, Vec3(0, 0, 1)));
+            //newNode.setOrientation(Quat(_random.rand() * PI, ::Vec3_UNIT_Z));
             return newNode;
         }
     };
@@ -768,7 +768,7 @@ enum WorldMousePressContexts{
         if(inWindow != null){
             local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
             assert(camera != null);
-            local mTestPlane_ = Plane(Vec3(0, 1, 0), Vec3(0, 0, 0));
+            local mTestPlane_ = Plane(::Vec3_UNIT_Y, Vec3(0, 0, 0));
             local ray = camera.getCameraToViewportRay(touchCoords.x, touchCoords.y);
             local point = ray.intersects(mTestPlane_);
             if(point == false){

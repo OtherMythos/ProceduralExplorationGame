@@ -139,9 +139,9 @@ enum ItemEquipTransformType{
 
 ::ItemEquipTransforms[ItemEquipTransformType.NONE] = ::ItemEquipTransform(Vec3(0, 0, 0));
 
-::ItemEquipTransforms[ItemEquipTransformType.BASIC_SWORD] = ::ItemEquipTransform(Vec3(0, 8, 0), Quat(2, Vec3(0, 1, 0)));
-::ItemEquipTransforms[ItemEquipTransformType.BASIC_SHIELD] = ::ItemEquipTransform(Vec3(-4, 0, 0), Quat(-PI*0.5, Vec3(0, 1, 0)), Vec3(1.4, 1.4, 1.0));
-::ItemEquipTransforms[ItemEquipTransformType.BASIC_TWO_HANDED_SWORD] = ::ItemEquipTransform(Vec3(0, 14, 0), Quat(-PI*0.5, Vec3(0, 1, 0)), Vec3(1.4, 1.4, 1.0));
+::ItemEquipTransforms[ItemEquipTransformType.BASIC_SWORD] = ::ItemEquipTransform(Vec3(0, 8, 0), Quat(2, ::Vec3_UNIT_Y));
+::ItemEquipTransforms[ItemEquipTransformType.BASIC_SHIELD] = ::ItemEquipTransform(Vec3(-4, 0, 0), Quat(-PI*0.5, ::Vec3_UNIT_Y), Vec3(1.4, 1.4, 1.0));
+::ItemEquipTransforms[ItemEquipTransformType.BASIC_TWO_HANDED_SWORD] = ::ItemEquipTransform(Vec3(0, 14, 0), Quat(), Vec3(1.4, 1.4, 1.0));
 
 function setupItemIds_(){
     foreach(c,i in ::Items){

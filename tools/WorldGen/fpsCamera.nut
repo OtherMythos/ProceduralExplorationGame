@@ -111,11 +111,11 @@
 
         local node = mCamera_.getParentNode();
         if(xVal > 0.2){
-            target = node.getOrientation() * Vec3(1, 0, 0);
+            target = node.getOrientation() * ::Vec3_UNIT_X;
             target *= 2;
         }
         else if(xVal < -0.2){
-            target = -(node.getOrientation() * Vec3(1, 0, 0));
+            target = -(node.getOrientation() * ::Vec3_UNIT_X);
             target *= 2;
         }
 

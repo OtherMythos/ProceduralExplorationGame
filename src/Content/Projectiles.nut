@@ -19,5 +19,5 @@ enum ProjectileId{
 ::Projectiles <- array(ProjectileId.MAX, null);
 
 ::Projectiles[ProjectileId.NONE] = ProjectileDef(10);
-::Projectiles[ProjectileId.FIREBALL] = ProjectileDef(10, Vec3(1, 1, 1));
+::Projectiles[ProjectileId.FIREBALL] = ProjectileDef(10, ::Vec3_UNIT_SCALE);
 ::Projectiles[ProjectileId.AREA] = ProjectileDef(10, Vec3(5, 5, 5));

@@ -36,7 +36,7 @@ const FOUND_ITEM_IDLE_EFFECT_Z = 12;
         mCount_ += 0.01;
 
         local percentage = getCurrentPercentage();
-        local orientation = Quat(mCount_, Vec3(0, 0, 1));
+        local orientation = Quat(mCount_, ::Vec3_UNIT_Z);
 
         local anim = (1 - percentage);
         local animVal = 1 - pow(1 - anim, 5);

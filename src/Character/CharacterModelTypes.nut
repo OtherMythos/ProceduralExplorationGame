@@ -44,11 +44,11 @@ local ModelType = class{
 ::ModelTypes[CharacterModelType.HUMANOID] = ModelType("build/assets/characterAnimations/baseAnimation.xml",
     [
         Entry(
-            "playerHead.mesh", CharacterModelPartType.HEAD, null, Vec3(0, 10, 0), Vec3(1, 1, 1)
+            "playerHead.mesh", CharacterModelPartType.HEAD, null, Vec3(0, 10, 0), ::Vec3_UNIT_SCALE
         ),
         Entry(
             "playerBody.mesh", CharacterModelPartType.BODY,
-            [Entry(null, CharacterModelPartType.NONE, null, Vec3(0, 2, -4), Vec3(0.6, 0.6, 0.6), Quat(2, Vec3(0, 1, 0)), CharacterModelEquipNodeType.WEAPON_STORE)]
+            [Entry(null, CharacterModelPartType.NONE, null, Vec3(0, 2, -4), Vec3(0.6, 0.6, 0.6), Quat(2, ::Vec3_UNIT_Y), CharacterModelEquipNodeType.WEAPON_STORE)]
             , Vec3(0, 3, 0), Vec3(0.9, 1, 0.9)
         ),
 
@@ -64,10 +64,10 @@ local ModelType = class{
         ),
 
         Entry(
-            "playerFoot.mesh", CharacterModelPartType.LEFT_FOOT, null, Vec3(-1, 2, 0), Vec3(1, 1, 1)
+            "playerFoot.mesh", CharacterModelPartType.LEFT_FOOT, null, Vec3(-1, 2, 0), ::Vec3_UNIT_SCALE
         ),
         Entry(
-            "playerFoot.mesh", CharacterModelPartType.RIGHT_FOOT, null, Vec3(4.5, 2, 0), Vec3(1, 1, 1)
+            "playerFoot.mesh", CharacterModelPartType.RIGHT_FOOT, null, Vec3(4.5, 2, 0), ::Vec3_UNIT_SCALE
         )
     ],
     [CharacterModelAnimId.BASE_ARMS_WALK, CharacterModelAnimId.BASE_LEGS_WALK, CharacterModelAnimId.BASE_ARMS_SWIM]
@@ -90,10 +90,10 @@ local ModelType = class{
         ),
 
         Entry(
-            "goblinFoot.mesh", CharacterModelPartType.LEFT_FOOT, null, Vec3(-1, 2, 0), Vec3(1, 1, 1)
+            "goblinFoot.mesh", CharacterModelPartType.LEFT_FOOT, null, Vec3(-1, 2, 0), ::Vec3_UNIT_SCALE
         ),
         Entry(
-            "goblinFoot.mesh", CharacterModelPartType.RIGHT_FOOT, null, Vec3(4.5, 2, 0), Vec3(1, 1, 1)
+            "goblinFoot.mesh", CharacterModelPartType.RIGHT_FOOT, null, Vec3(4.5, 2, 0), ::Vec3_UNIT_SCALE
         )
 
     ],
@@ -138,7 +138,7 @@ local ModelType = class{
 ::ModelTypes[CharacterModelType.SKELETON] = ModelType("build/assets/characterAnimations/baseAnimation.xml",
     [
         Entry(
-            "skeletonHead.mesh", CharacterModelPartType.HEAD, null, Vec3(0, 10, 0), Vec3(1, 1, 1)
+            "skeletonHead.mesh", CharacterModelPartType.HEAD, null, Vec3(0, 10, 0), ::Vec3_UNIT_SCALE
         ),
         Entry(
             "skeletonBody.mesh", CharacterModelPartType.BODY, null, Vec3(0, 3, 0), Vec3(0.9, 1, 0.9)
@@ -156,10 +156,10 @@ local ModelType = class{
         ),
 
         Entry(
-            "skeletonFoot.mesh", CharacterModelPartType.LEFT_FOOT, null, Vec3(-1, 2, 0), Vec3(1, 1, 1)
+            "skeletonFoot.mesh", CharacterModelPartType.LEFT_FOOT, null, Vec3(-1, 2, 0), ::Vec3_UNIT_SCALE
         ),
         Entry(
-            "skeletonFoot.mesh", CharacterModelPartType.RIGHT_FOOT, null, Vec3(4.5, 2, 0), Vec3(1, 1, 1)
+            "skeletonFoot.mesh", CharacterModelPartType.RIGHT_FOOT, null, Vec3(4.5, 2, 0), ::Vec3_UNIT_SCALE
         )
     ],
     [CharacterModelAnimId.BASE_ARMS_WALK, CharacterModelAnimId.BASE_LEGS_WALK, CharacterModelAnimId.BASE_ARMS_SWIM]
@@ -167,7 +167,7 @@ local ModelType = class{
 ::ModelTypes[CharacterModelType.FOREST_GUARDIAN] = ModelType("build/assets/characterAnimations/forestGuardianAnimation.xml",
     [
         Entry(
-            "forestGuardianHead.mesh", CharacterModelPartType.HEAD, null, Vec3(0, 19, 1), Vec3(1, 1, 1)
+            "forestGuardianHead.mesh", CharacterModelPartType.HEAD, null, Vec3(0, 19, 1), ::Vec3_UNIT_SCALE
         ),
         Entry(
             "forestGuardianBody.mesh", CharacterModelPartType.BODY, null, Vec3(0, 6, 0)
@@ -185,10 +185,10 @@ local ModelType = class{
         ),
 
         Entry(
-            "forestGuardianFoot.mesh", CharacterModelPartType.LEFT_FOOT, null, Vec3(-1, 2, 0), Vec3(1, 1, 1)
+            "forestGuardianFoot.mesh", CharacterModelPartType.LEFT_FOOT, null, Vec3(-1, 2, 0), ::Vec3_UNIT_SCALE
         ),
         Entry(
-            "forestGuardianFoot.mesh", CharacterModelPartType.RIGHT_FOOT, null, Vec3(4.5, 2, 0), Vec3(1, 1, 1)
+            "forestGuardianFoot.mesh", CharacterModelPartType.RIGHT_FOOT, null, Vec3(4.5, 2, 0), ::Vec3_UNIT_SCALE
         )
     ],
     [CharacterModelAnimId.FOREST_GUARDIAN_ARMS_WALK, CharacterModelAnimId.FOREST_GUARDIAN_WALK, CharacterModelAnimId.BASE_ARMS_SWIM]

@@ -116,11 +116,11 @@
         }
 
         if(xVal > 0.2){
-            target = _camera.getOrientation() * Vec3(1, 0, 0);
+            target = _camera.getOrientation() * ::Vec3_UNIT_X;
             target *= speed;
         }
         else if(xVal < -0.2){
-            target = -(_camera.getOrientation() * Vec3(1, 0, 0));
+            target = -(_camera.getOrientation() * ::Vec3_UNIT_X);
             target *= speed;
         }
 
