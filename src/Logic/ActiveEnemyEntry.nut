@@ -39,15 +39,18 @@ enum ActiveEnemyAnimationStage{
 
     function processPerformance_(alternativeAnim=null){
         if(mEquippablePerformance_ != null){
-            local anim = mEquippablePerformance_.getEquippableAttackAnim();
-            mCurrentEquippableAnim_ = anim;
-            mModel_.startAnimation(anim);
+            if(mCurrentEquippableAnim_ == CharacterModelAnimId.NONE){
+                local anim = mEquippablePerformance_.getEquippableAttackAnim();
+                mCurrentEquippableAnim_ = anim;
+                mModel_.startAnimation(anim);
+            }
             if(alternativeAnim != null){
                 mModel_.stopAnimationBaseType(alternativeAnim);
             }
         }else{
             if(mCurrentEquippableAnim_ != CharacterModelAnimId.NONE){
                 mModel_.stopAnimation(mCurrentEquippableAnim_);
+                mCurrentEquippableAnim_ = CharacterModelAnimId.NONE;
                 if(alternativeAnim != null){
                     mModel_.startAnimationBaseType(alternativeAnim);
                 }
@@ -140,6 +143,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
 
     mAttackers_ = null;
     mInWater_ = false;
+    mAttackActive_ = false;
 
     constructor(creatorWorld, enemyType, enemyPos, entity){
         mCreatorWorld_ = creatorWorld;
@@ -248,7 +252,6 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         if(mMoving_ <= 0 && mStateMachineModel_){
             mStateMachineModel_.notify(ActiveEnemyAnimationEvents.STARTED_MOVING);
         }
-        mPerformingEquippable_ = null;
         mMoving_ = 10;
 
         return true;
@@ -358,7 +361,8 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         }
     }
     function performAttack(){
-        if(mPerformingEquippable_) return;
+        if(mPerformingEquippable_ != null) return;
+        if(mId_ == -1) print(mPerformingEquippable_);
         if(mCombatData_ == null) return;
         //TODO determine which weapon takes presidence
         local equippedSword = mCombatData_.mEquippedItems.mItems[EquippedSlotTypes.LEFT_HAND];
@@ -373,8 +377,24 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         mPerformingEquippable_ = performance;
     }
 
+    function checkAttackState(attacking){
+        if(attacking && !mAttackActive_){
+            beginAttack();
+        }
+        else if (!attacking && mAttackActive_){
+            endAttack();
+        }
+    }
+    function beginAttack(){
+        mAttackActive_ = true;
+    }
+    function endAttack(){
+        mAttackActive_ = false;
+    }
+
     function isMidAttack(){
-        return mAttackers_ != null;
+        //return mAttackActive_;
+        return mAttackers_ != null || mAttackActive_;
     }
     function isMidAttackWithAttacker(attackerId){
         if(mAttackers_ == null) return false;

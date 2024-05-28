@@ -402,6 +402,7 @@ enum WorldMousePressContexts{
         checkForEnemyAppear();
         checkForDistractionAppear();
         checkPlayerInputs();
+        checkPlayerCombatLogic();
 
         if(::Base.isProfileActive(GameProfile.ENABLE_RIGHT_CLICK_WORKAROUNDS)){
             if(_input.getMousePressed(_MB_RIGHT)){
@@ -955,6 +956,11 @@ enum WorldMousePressContexts{
             ::DebugConsole.toggleActive();
         }
 
+    }
+
+    function checkPlayerCombatLogic(){
+        //Iterate the player targets and perform attacks relevant to that.
+        mPlayerEntry_.checkAttackState(mPlayerTargetRadius_.len() >= 1);
     }
 
     function showInventory(){
