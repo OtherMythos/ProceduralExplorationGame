@@ -35,7 +35,7 @@ function update(){
 }
 
 function end(){
-
+    ::mBase.saveCurrentSettings();
 }
 
 function parseProjectOgreResources(){

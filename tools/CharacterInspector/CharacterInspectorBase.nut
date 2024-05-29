@@ -119,12 +119,7 @@ enum CharacterInspectorWidgetTypes{
     constructor(){
         fpsCamera.start(Vec3(10, 10, 20), Vec3(245.45, -15.9, 0));
 
-        mCurrentData_ = {
-            "type": CharacterModelType.HUMANOID,
-            "equip": array(CharacterModelEquipNodeType.MAX, ItemId.NONE),
-            "wieldActive": false
-        }
-        mCurrentData_.equip[CharacterModelEquipNodeType.LEFT_HAND] = ItemId.SIMPLE_TWO_HANDED_SWORD;
+        mCurrentData_ = obtainCurrentData();
 
         createGui();
 
@@ -137,6 +132,32 @@ enum CharacterInspectorWidgetTypes{
         fpsCamera.update();
     }
 
+    function obtainCurrentData(){
+        local outData = null;
+
+        local resolvedPath = getSettingsPath();
+        if(_system.exists(resolvedPath)){
+            local saveTable = null;
+            try{
+                saveTable = _system.readJSONAsTable(resolvedPath);
+            }catch(e){
+                print(e);
+            }
+            outData = saveTable;
+            print(_prettyPrint(outData));
+        }
+
+        if(outData == null){
+            outData = {
+                "type": CharacterModelType.HUMANOID,
+                "equip": array(CharacterModelEquipNodeType.MAX, ItemId.NONE),
+                "wieldActive": false
+            }
+            outData.equip[CharacterModelEquipNodeType.LEFT_HAND] = ItemId.SIMPLE_TWO_HANDED_SWORD;
+        }
+
+        return outData;
+    }
 
     function animCheckboxCallback(widget, action){
         if(widget.getValue()){
@@ -265,5 +286,20 @@ enum CharacterInspectorWidgetTypes{
         }
 
         processEquipTypeChange();
+    }
+
+    function saveCurrentSettings(){
+        _system.ensureUserDirectory();
+
+        local resolvedPath = getSettingsPath();
+        if(!_system.exists(resolvedPath)){
+            _system.createBlankFile(resolvedPath);
+        }
+        _system.writeJsonAsFile(resolvedPath, mCurrentData_);
+    }
+
+    function getSettingsPath(){
+        local path = "user://currentSettings.json";
+        return _system.resolveResPath(path);
     }
 };
