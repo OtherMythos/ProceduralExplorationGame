@@ -89,6 +89,7 @@ enum GameProfile{
     ENABLE_RIGHT_CLICK_WORKAROUNDS,
     FORCE_WINDOWED,
     DEBUG_OVERLAY_COMBAT,
+    FORCE_SMALL_WORLD,
 
     MAX
 };
@@ -103,7 +104,8 @@ enum GameProfile{
     "DisableDistractionSpawn",
     "EnableRightClickWorkarounds",
     "ForceWindowed",
-    "DebugOverlayCombat"
+    "DebugOverlayCombat",
+    "ForceSmallWorld"
 ];
 
 enum Event{

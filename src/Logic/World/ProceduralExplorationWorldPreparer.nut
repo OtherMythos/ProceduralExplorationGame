@@ -44,13 +44,15 @@
     }
 
     function resetSessionGenMap(){
+        local smallWorld = ::Base.isProfileActive(GameProfile.FORCE_SMALL_WORLD);
+
         local gen = ::MapGen();
         local data = {
             "seed": _random.randInt(1000),
             "moistureSeed": _random.randInt(1000),
             "variation": _random.randInt(1000),
-            "width": 400,
-            "height": 400,
+            "width": smallWorld ? 200 : 600,
+            "height": smallWorld ? 200 : 600,
             "numRivers": 24,
             "seaLevel": 100,
             "numRegions": 14,

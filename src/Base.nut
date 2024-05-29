@@ -9,6 +9,7 @@
 
     mTargetInterface_ = TargetInterface.DESKTOP
     mFullscreenMode_ = FullscreenMode.WINDOWED
+    mForceSmallWorld = false
 
     function checkUserParams(){
         //TODO work around the fact that I can't use multiple avSetup files to override this yet.
@@ -275,6 +276,9 @@
         switch(profile){
             case GameProfile.FORCE_MOBILE_INTERFACE:
                 mTargetInterface_ = TargetInterface.MOBILE;
+                break;
+            case GameProfile.FORCE_SMALL_WORLD:
+                mForceSmallWorld = true;
                 break;
             default:
                 break;
