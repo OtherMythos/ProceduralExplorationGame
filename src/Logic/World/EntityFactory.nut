@@ -175,6 +175,7 @@
 
         if(combatEquipped != null){
             local combatData = ::Combat.CombatStats(enemyType, 0, combatEquipped);
+            combatEquipped.calculateEquippedStats();
             enemy.setCombatData(combatData);
         }
 

@@ -2,6 +2,8 @@
 
 function regularSwordBaseAttack(p, entry, pos){
     if(p % 5 == 0){
+        local attackValue = entry.mCombatData_.mEquippedItems.mEquippedStats.getStatType(StatType.ATTACK);
+
         ::Base.mExplorationLogic.mCurrentWorld_.performLocalMove(entry, ::Combat.CombatMove(1));
     }
 }

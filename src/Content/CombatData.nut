@@ -1,6 +1,7 @@
 ::Combat <- {
     "EquippedItems": class{
         mItems = null;
+        mEquippedStats = null;
         constructor(){
             mItems = array(EquippedSlotTypes.MAX, null);
         }
@@ -44,13 +45,21 @@
 
         function getTotalStats(){
             local stats = ::StatsEntry();
+
+            return stats;
+        }
+
+        function calculateEquippedStats(){
+            if(mEquippedStats == null){
+                mEquippedStats = StatsEntry();
+            }
+            mEquippedStats.clear();
+
             foreach(i in mItems){
                 if(i == null) continue;
                 local newStats = i.toStats();
-                stats += newStats;
+                mEquippedStats += newStats;
             }
-
-            return stats;
         }
 
         function _tostring(){
@@ -107,6 +116,9 @@
         function setHealthToMax(){
             printf("Setting health to %i", mMaxHealth);
             setHealth(mMaxHealth);
+        }
+        function calculateEquippedStats(){
+            mEquippedItems.calculateEquippedStats();
         }
     },
 

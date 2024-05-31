@@ -12,6 +12,12 @@
         return ::wrapToString(::FoundObject, "ItemStat", t);
     }
 
+    function clear(){
+        mRestorativeHealth = 0;
+        mAttack = 0;
+        mDefense = 0;
+    }
+
     function hasStatType(stat){
         switch(stat){
             case StatType.RESTORATIVE_HEALTH: return mRestorativeHealth != 0;

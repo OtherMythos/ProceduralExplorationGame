@@ -59,6 +59,7 @@
         initTime();
         mInventory_.rawSetItems(inventoryData);
         mPlayerCombatStats.mEquippedItems.rawSetItems(equipData);
+        mPlayerCombatStats.calculateEquippedStats();
     }
     function getSaveSlot(){
         return mCurrentSaveSlot_;
@@ -180,6 +181,8 @@
         return null;
     }
     function equipChanged_(){
+        mPlayerCombatStats.calculateEquippedStats();
+
         _event.transmit(Event.PLAYER_EQUIP_CHANGED, mPlayerCombatStats.mEquippedItems);
     }
 
