@@ -116,6 +116,7 @@
         _doFile("res://src/Content/FoundObject.nut");
         _doFile("res://src/Content/CombatData.nut");
         _doFile("res://src/Content/Moves.nut");
+        _doFile("res://src/Content/StatsEntry.nut");
 
         _doFile("res://src/DebugOverlayManager.nut");
         _doFile("res://src/DebugConsole.nut");

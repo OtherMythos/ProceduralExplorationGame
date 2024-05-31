@@ -43,7 +43,7 @@
         }
 
         function getTotalStats(){
-            local stats = ::ItemHelper.ItemStat();
+            local stats = ::StatsEntry();
             foreach(i in mItems){
                 if(i == null) continue;
                 local newStats = i.toStats();
