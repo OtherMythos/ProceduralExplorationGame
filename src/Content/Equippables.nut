@@ -1,14 +1,14 @@
 //Items define the name and descriptions, equippables define information about how the item is equipped in a shareable format.
 
 function regularSwordBaseAttack(p, entry, pos){
-    if(p == 15){
-        ::Base.mExplorationLogic.mCurrentWorld_.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, Vec3(), ::Combat.CombatMove(3), entry.getTargetCollisionWorld());
+    if(p % 5 == 0){
+        ::Base.mExplorationLogic.mCurrentWorld_.performLocalMove(entry, ::Combat.CombatMove(1));
     }
 }
 
 function regularTwoHandedBaseAttack(p, entry, pos){
     if(p == 52){
-        ::Base.mExplorationLogic.mCurrentWorld_.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, Vec3(), ::Combat.CombatMove(10), entry.getTargetCollisionWorld());
+        ::Base.mExplorationLogic.mCurrentWorld_.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, ::Vec3_ZERO, ::Combat.CombatMove(10), entry.getTargetCollisionWorld());
     }
 }
 

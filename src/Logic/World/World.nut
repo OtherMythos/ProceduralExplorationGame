@@ -471,20 +471,6 @@ enum WorldMousePressContexts{
 
     }
 
-    //-------
-    function performPlayerAttack(){
-        entityPerformAttack_(mPlayerEntry_);
-    }
-    function entityPerformAttack(eid){
-        assert(mActiveEnemies_.rawin(eid));
-        local enemy = mActiveEnemies_[eid];
-        entityPerformAttack_(enemy);
-    }
-    function entityPerformAttack_(entityObject){
-        //Determine which item the entity has equipped and determine the attack from there.
-        //entityObject.performAttack();
-    }
-
     function setGuiObject(guiObject){
         mGui_ = guiObject;
         mMouseContext_.setGuiObject(guiObject);
@@ -905,20 +891,6 @@ enum WorldMousePressContexts{
     }
 
 
-
-    function performPlayerAttack(){
-        entityPerformAttack_(mPlayerEntry_);
-    }
-    function entityPerformAttack(eid){
-        assert(mActiveEnemies_.rawin(eid));
-        local enemy = mActiveEnemies_[eid];
-        entityPerformAttack_(enemy);
-    }
-    function entityPerformAttack_(entityObject){
-        //Determine which item the entity has equipped and determine the attack from there.
-        //entityObject.performAttack();
-    }
-
     function performPlayerMove(moveId){
         local playerPos = mPlayerEntry_.mPos_.copy();
         performMove(moveId, playerPos, null, _COLLISION_ENEMY);
@@ -930,6 +902,33 @@ enum WorldMousePressContexts{
         if(targetProjectile != null){
             mProjectileManager_.spawnProjectile(targetProjectile, pos, dir, ::Combat.CombatMove(5), collisionType);
         }
+    }
+
+    //Perform a move targeting local enemies, i.e not an area attack.
+    function performLocalMove(attackingEnemy, combatMove){
+
+        local targetEnemy = null;
+        if(attackingEnemy.getId() == -1){
+            local targetRadiusLen = mPlayerTargetRadius_.len();
+            if(targetRadiusLen > 0){
+                //The player is attacking, so find an enemy within the attack radius and perform the attack.
+
+                //TODO it would be much better to maintain this list separately.
+                local targetArray = array(targetRadiusLen);
+                local count = 0;
+                foreach(c,i in mPlayerTargetRadius_){
+                    targetArray[count] = c;
+                    count++;
+                }
+                targetEnemy = targetArray[_random.randIndex(targetArray)];
+            }
+        }else{
+            targetEnemy = mPlayerEntry_.getEID();
+        }
+        if(targetEnemy == null) return;
+
+        local combatDamage = combatMove.getDamage();
+        _applyDamageOther(mEntityManager_, targetEnemy, combatDamage);
     }
 
     function checkPlayerInputs(){

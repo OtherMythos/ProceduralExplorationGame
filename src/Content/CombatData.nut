@@ -80,20 +80,6 @@
             }
         }
 
-        function alterHealthWithMove(move, dealerStats = null){
-            //Here, apply damage based on the equipped.
-            //Take both the recipient and dealer's equipped items into account.
-            local moveDamage = move.getDamage();
-
-            local dealerEquipped = dealerStats.mEquippedItems.getTotalStats();
-            local equipped = mEquippedItems.getTotalStats();
-
-            moveDamage -= dealerEquipped.mAttack;
-            moveDamage += equipped.mDefense;
-            print("Final damage in move: " + moveDamage);
-            alterHealth(moveDamage);
-        }
-
         function setWieldActive(active){
             mWieldActive = active;
         }
@@ -136,66 +122,6 @@
 
         function getDamage(){
             return mDamage;
-        }
-    },
-
-    /**
-     * Encapsulates all the data needed for an individual combat scene.
-     * This includes, the player's stats, enemy stats, any other combat attributes which might effect the combat outcome.
-     */
-    "CombatData": class{
-        mPlayerStats = null;
-        mOpponentStats = null;
-
-        mCombatSpoils = null;
-        mSpoilsAvailable = false;
-
-        constructor(playerStats, opponentStats){
-            mPlayerStats = playerStats;
-            mOpponentStats = opponentStats;
-            mCombatSpoils = array(4, null);
-        }
-
-        function resetSpoils(){
-            for(local i = 0; i < mCombatSpoils.len(); i++){
-                mCombatSpoils[i] = null;
-            }
-            mSpoilsAvailable = false;
-        }
-
-        function setSpoilForIdx(spoil, idx){
-            mCombatSpoils[idx] = spoil;
-            mSpoilsAvailable = true;
-        }
-
-        function getNumOpponents(){
-            return mOpponentStats.len();
-        }
-
-        function getNumAliveOpponents(){
-            local count = 0;
-            foreach(i in mOpponentStats){
-                if(!i.mDead) count++;
-            }
-            return count;
-        }
-
-        function performAttackOnOpponent(damage, opponentId){
-            local stats = mOpponentStats[opponentId];
-            return _performAttackOnStats(damage, stats, mPlayerStats);
-        }
-
-        function performAttackOnPlayer(damage, opponentId){
-            local stats = mOpponentStats[opponentId];
-            return _performAttackOnStats(damage, mPlayerStats, stats);
-        }
-
-        function _performAttackOnStats(damage, stats, dealerStats){
-            local dead = stats.mDead;
-            stats.alterHealthWithMove(damage, dealerStats);
-
-            //The opponent died as a result of this attack.
-            return (dead != stats.mDead);
         }
     }
 };
