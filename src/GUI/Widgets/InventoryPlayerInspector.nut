@@ -30,7 +30,8 @@
             local playerNode = _scene.getRootSceneNode().createChildSceneNode();
             mCharacterModel_ = characterGenerator.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, 50);
             //playerNode.setScale(0.5, 0.5, 0.5);
-            updateForEquipChange(::Base.mPlayerStats.mPlayerCombatStats.mEquippedItems);
+            local combatStats = ::Base.mPlayerStats.mPlayerCombatStats;
+            updateForEquipChange(combatStats.mEquippedItems, combatStats.mWieldActive);
 
             mCharacterModel_.startAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
             mCharacterModel_.startAnimation(CharacterModelAnimId.BASE_ARMS_WALK);
@@ -61,8 +62,8 @@
             mCamera_.getParentNode().setPosition(modelCentre + Vec3(xPos, zPos, yPos));
             mCamera_.lookAt(modelCentre);
         }
-        function updateForEquipChange(equippedItems){
-            mCharacterModel_.equipDataToCharacterModel(equippedItems);
+        function updateForEquipChange(equippedItems, wieldActive){
+            mCharacterModel_.equipDataToCharacterModel(equippedItems, wieldActive);
         }
     }
 
@@ -88,7 +89,7 @@
     }
 
     function receivePlayerEquipChangedEvent(id, data){
-        mRenderManager_.updateForEquipChange(data);
+        mRenderManager_.updateForEquipChange(data.items, data.wieldActive);
     }
 
     function addToLayout(layout){

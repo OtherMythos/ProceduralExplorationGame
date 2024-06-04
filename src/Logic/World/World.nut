@@ -361,8 +361,8 @@ enum WorldMousePressContexts{
         mPlayerEntry_.notifyNewHealth(data.health, data.percentage);
     }
     function playerEquipChanged(data){
-        printf("Player equip changed '%s'", data.tostring());
-        mPlayerEntry_.getModel().equipDataToCharacterModel(data);
+        printf("Player equip changed '%s'", data.items.tostring());
+        mPlayerEntry_.getModel().equipDataToCharacterModel(data.items, data.wieldActive);
     }
     function playerWieldChanged(active){
         mPlayerEntry_.setWieldActive(active);

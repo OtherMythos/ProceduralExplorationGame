@@ -183,7 +183,10 @@
     function equipChanged_(){
         mPlayerCombatStats.calculateEquippedStats();
 
-        _event.transmit(Event.PLAYER_EQUIP_CHANGED, mPlayerCombatStats.mEquippedItems);
+        _event.transmit(Event.PLAYER_EQUIP_CHANGED, {
+            "items": mPlayerCombatStats.mEquippedItems,
+            "wieldActive": mPlayerCombatStats.mWieldActive
+        });
     }
 
     function getLevel(){
