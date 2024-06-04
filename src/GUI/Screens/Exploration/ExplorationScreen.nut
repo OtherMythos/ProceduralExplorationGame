@@ -18,7 +18,7 @@ enum ExplorationBusEvents{
     mPlaceHelperButton_ = null;
     mCurrentPlace_ = null;
     mScrapAllButton_ = null;
-    mCameraButton_ = null;
+    mWieldActiveButton = null;
 
     mScreenInputCheckList_ = null;
 
@@ -120,16 +120,20 @@ enum ExplorationBusEvents{
         mExplorationStatsContainer_.sizeLayout();
         mExplorationMovesContainer_.sizeForButtons();
 
-        /*
+        mScreenInputCheckList_ = [
+            mExplorationStatsContainer_,
+            mExplorationMovesContainer_
+        ];
+
         if(::Base.getTargetInterface() == TargetInterface.MOBILE){
-            mCameraButton_ = mWindow_.createButton();
-            mCameraButton_.setText("Camera");
-            mCameraButton_.setPosition(_window.getWidth() / 2 - mCameraButton_.getSize().x/2, _window.getHeight() - mCameraButton_.getSize().y*2);
-            mCameraButton_.attachListenerForEvent(function(widget, action){
-                mLogicInterface_.setOrientatingCamera(true);
+            mWieldActiveButton = mWindow_.createButton();
+            mWieldActiveButton.setText("Wield");
+            mWieldActiveButton.setPosition(_window.getWidth() / 2 - mWieldActiveButton.getSize().x/2, _window.getHeight() - mWieldActiveButton.getSize().y*2);
+            mWieldActiveButton.attachListenerForEvent(function(widget, action){
+                ::Base.mPlayerStats.toggleWieldActive();
             }, _GUI_ACTION_PRESSED, this);
+            mScreenInputCheckList_.append(mWieldActiveButton);
         }
-        */
 
         mExplorationBus_.registerCallback(busCallback, this);
 
@@ -144,11 +148,6 @@ enum ExplorationBusEvents{
             mExplorationStatsContainer_.setVisible(false);
             mExplorationMovesContainer_.setVisible(false);
         }
-
-        mScreenInputCheckList_ = [
-            mExplorationStatsContainer_,
-            mExplorationMovesContainer_
-        ];
 
         _event.subscribe(Event.WORLD_PREPARATION_STATE_CHANGE, receivePreparationStateChange, this);
         ::ScreenManager.transitionToScreen(Screen.WORLD_GENERATION_STATUS_SCREEN, null, 1);

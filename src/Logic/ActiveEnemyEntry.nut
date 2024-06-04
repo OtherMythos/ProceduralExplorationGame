@@ -283,7 +283,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
             slow *= ::Enemies[mEnemy_].getAllowSwimState() ? 0.5 : 1.0;
         }
         if(wieldActive){
-            slow *= 0.8;
+            slow *= 0.6;
         }
         return slow;
     }
@@ -393,7 +393,11 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
     }
 
     function isMidAttack(){
-        //return mAttackActive_;
+        if(mCombatData_ != null){
+            if(!mCombatData_.mWieldActive){
+                return false;
+            }
+        }
         return mAttackers_ != null || mAttackActive_;
     }
     function isMidAttackWithAttacker(attackerId){

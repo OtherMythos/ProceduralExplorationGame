@@ -41,12 +41,14 @@
             ::Base.mExplorationLogic.mCurrentWorld_.showInventory();
         }, _GUI_ACTION_PRESSED, this);
 
-        mWieldPutAway_ = mWindow_.createButton();
-        mWieldPutAway_.setText("Wield");
-        targetLayout.addCell(mWieldPutAway_);
-        mWieldPutAway_.attachListenerForEvent(function(widget, action){
-            ::Base.mPlayerStats.toggleWieldActive();
-        }, _GUI_ACTION_PRESSED, this);
+        if(::Base.getTargetInterface() != TargetInterface.MOBILE){
+            mWieldPutAway_ = mWindow_.createButton();
+            mWieldPutAway_.setText("Wield");
+            targetLayout.addCell(mWieldPutAway_);
+            mWieldPutAway_.attachListenerForEvent(function(widget, action){
+                ::Base.mPlayerStats.toggleWieldActive();
+            }, _GUI_ACTION_PRESSED, this);
+        }
 
         mMoneyCounter_ = ::GuiWidgets.InventoryMoneyCounter(mWindow_);
         mMoneyCounter_.addToLayout(targetLayout);

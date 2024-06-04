@@ -161,14 +161,14 @@
         if(enemyType == EnemyId.GOBLIN){
             combatEquipped = ::Combat.EquippedItems();
             local targetItem = ::Item(ItemId.SIMPLE_TWO_HANDED_SWORD);
-            combatEquipped.setEquipped(targetItem, EquippedSlotTypes.LEFT_HAND);
-            if(_random.randInt(2) == 0) combatEquipped.setEquipped(::Item(ItemId.SIMPLE_SHIELD), EquippedSlotTypes.RIGHT_HAND);
+            combatEquipped.setEquipped(targetItem, EquippedSlotTypes.RIGHT_HAND);
+            if(_random.randInt(2) == 0) combatEquipped.setEquipped(::Item(ItemId.SIMPLE_SHIELD), EquippedSlotTypes.LEFT_HAND);
 
             if(_random.randInt(2) == 0) spoilsData.append(::SpoilsEntry(SPOILS_ENTRIES.DROPPED_ITEMS, ::Item(ItemId.SIMPLE_SWORD)));
         }
         else if(enemyType == EnemyId.SKELETON){
             combatEquipped = ::Combat.EquippedItems();
-            combatEquipped.setEquipped(::Item(ItemId.BONE_MACE), EquippedSlotTypes.LEFT_HAND);
+            combatEquipped.setEquipped(::Item(ItemId.BONE_MACE), EquippedSlotTypes.RIGHT_HAND);
 
             if(_random.randInt(2) == 0) spoilsData.append(::SpoilsEntry(SPOILS_ENTRIES.DROPPED_ITEMS, ::Item(ItemId.BONE_MACE)));
         }
