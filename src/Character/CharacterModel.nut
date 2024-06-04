@@ -49,7 +49,7 @@
             if(targetEquipNode == CharacterModelEquipNodeType.NONE) continue;
             local append = targetEquipNode == CharacterModelEquipNodeType.WEAPON_STORE;
             local targetItem = data.getEquippedItem(i);
-            equipToNode(targetItem, targetEquipNode, append);
+            equipToNode(targetItem, targetEquipNode, append, i == EquippedSlotTypes.LEFT_HAND);
         }
     }
 
@@ -111,7 +111,7 @@
             i.recursiveDestroyChildren();
         }
     }
-    function equipToNode(item, targetNodeType, append=false){
+    function equipToNode(item, targetNodeType, append=false, leftHand=false){
         if(!mEquipNodes_.rawin(targetNodeType)) return;
         local targetNode = mEquipNodes_[targetNodeType];
         if(!append){
@@ -123,21 +123,28 @@
         if(meshName == null) throw format("Item '%s' does not define a mesh.", item.getName());
 
         local model = _scene.createItem(meshName);
-        local offsetPos = item.getEquippablePosition();
-        local offsetOrientation = item.getEquippableOrientation();
-        local offsetScale = item.getEquippableScale();
+
+        local equipTransforms = item.getEquipTransforms(leftHand, !append);
+
         local attachNode = targetNode;
-        local secondTarget = targetNode;
-        if(targetNodeType == CharacterModelEquipNodeType.RIGHT_HAND){
-            secondTarget = secondTarget.createChildSceneNode();
-            secondTarget.setOrientation(Quat(PI, ::Vec3_UNIT_Y));
-            attachNode = secondTarget;
-        }
-        if(offsetPos != null || offsetOrientation != null || offsetScale != null){
-            local childNode = secondTarget.createChildSceneNode();
-            childNode.setPosition(offsetPos != null ? offsetPos : Vec3());
+        if(equipTransforms != null){
+            local offsetPos = equipTransforms.mPosition;
+            local offsetOrientation = equipTransforms.mOrientation;
+            local offsetScale = equipTransforms.mScale;
+
+            local childNode = targetNode.createChildSceneNode();
+            if(offsetPos != null){
+                local alteredPos = offsetPos;
+                if(leftHand){
+                    //Add a tiny bit of an offset for the left hand to avoid z fighting issues.
+                    alteredPos = offsetPos + Vec3(0, 0, 0.05);
+                }
+                childNode.setPosition(alteredPos);
+            }else{
+                childNode.setPosition(::Vec3_ZERO);
+            }
             childNode.setScale(offsetScale != null ? offsetScale : ::Vec3_UNIT_SCALE);
-            childNode.setOrientation(offsetOrientation != null ? offsetOrientation : Quat());
+            childNode.setOrientation(offsetOrientation != null ? offsetOrientation : ::Quat_IDENTITY);
 
             attachNode = childNode;
         }

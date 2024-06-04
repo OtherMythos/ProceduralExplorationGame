@@ -48,19 +48,19 @@ local ModelType = class{
         ),
         Entry(
             "playerBody.mesh", CharacterModelPartType.BODY,
-            [Entry(null, CharacterModelPartType.NONE, null, Vec3(0, 2, -4), Vec3(0.6, 0.6, 0.6), Quat(2, ::Vec3_UNIT_Y), CharacterModelEquipNodeType.WEAPON_STORE)]
+            [Entry(null, CharacterModelPartType.NONE, null, Vec3(0, 2, -4), Vec3(0.6, 0.6, 0.6), null, CharacterModelEquipNodeType.WEAPON_STORE)]
             , Vec3(0, 3, 0), Vec3(0.9, 1, 0.9)
         ),
 
         Entry(
             "playerArm.mesh", CharacterModelPartType.LEFT_HAND,
             [Entry(null, CharacterModelPartType.NONE, null, null, Vec3(0.8, 0.8, 0.8), null, CharacterModelEquipNodeType.LEFT_HAND)]
-            , Vec3(-8, 8, 0), Vec3(0.8, 0.8, 0.8)
+            , Vec3(8, 8, 0), Vec3(0.8, 0.8, 0.8)
         ),
         Entry(
             "playerArm.mesh", CharacterModelPartType.RIGHT_HAND,
             [Entry(null, CharacterModelPartType.NONE, null, null, Vec3(0.8, 0.8, 0.8), null, CharacterModelEquipNodeType.RIGHT_HAND)]
-            , Vec3(8, 8, 0), Vec3(0.8, 0.8, 0.8)
+            , Vec3(-8, 8, 0), Vec3(0.8, 0.8, 0.8)
         ),
 
         Entry(
@@ -81,12 +81,12 @@ local ModelType = class{
         Entry(
             "goblinArm.mesh", CharacterModelPartType.LEFT_HAND,
             [Entry(null, CharacterModelPartType.NONE, null, null, Vec3(0.4, 0.4, 0.4), null, CharacterModelEquipNodeType.LEFT_HAND)]
-            , Vec3(-8, 8, 0), Vec3(1.2, 1.2, 1.2)
+            , Vec3(8, 8, 0), Vec3(1.2, 1.2, 1.2)
         ),
         Entry(
             "goblinArm.mesh", CharacterModelPartType.RIGHT_HAND,
             [Entry(null, CharacterModelPartType.NONE, null, null, Vec3(0.4, 0.4, 0.4), null, CharacterModelEquipNodeType.RIGHT_HAND)]
-            , Vec3(8, 8, 0), Vec3(1.2, 1.2, 1.2)
+            , Vec3(-8, 8, 0), Vec3(1.2, 1.2, 1.2)
         ),
 
         Entry(
@@ -147,12 +147,12 @@ local ModelType = class{
         Entry(
             "skeletonArm.mesh", CharacterModelPartType.LEFT_HAND,
             [Entry(null, CharacterModelPartType.NONE, null, null, Vec3(0.8, 0.8, 0.8), null, CharacterModelEquipNodeType.LEFT_HAND)]
-            , Vec3(-8, 8, 0), Vec3(0.8, 0.8, 0.8)
+            , Vec3(8, 8, 0), Vec3(0.8, 0.8, 0.8)
         ),
         Entry(
             "skeletonArm.mesh", CharacterModelPartType.RIGHT_HAND,
             [Entry(null, CharacterModelPartType.NONE, null, null, Vec3(0.8, 0.8, 0.8), null, CharacterModelEquipNodeType.RIGHT_HAND)]
-            , Vec3(8, 8, 0), Vec3(0.8, 0.8, 0.8)
+            , Vec3(-8, 8, 0), Vec3(0.8, 0.8, 0.8)
         ),
 
         Entry(
@@ -170,18 +170,20 @@ local ModelType = class{
             "forestGuardianHead.mesh", CharacterModelPartType.HEAD, null, Vec3(0, 19, 1), ::Vec3_UNIT_SCALE
         ),
         Entry(
-            "forestGuardianBody.mesh", CharacterModelPartType.BODY, null, Vec3(0, 6, 0)
+            "forestGuardianBody.mesh", CharacterModelPartType.BODY,
+            [Entry(null, CharacterModelPartType.NONE, null, Vec3(0, 5, -2), Vec3(0.6, 0.6, 0.6), null, CharacterModelEquipNodeType.WEAPON_STORE)]
+            , Vec3(0, 6, 0)
         ),
 
         Entry(
             "forestGuardianArm.mesh", CharacterModelPartType.LEFT_HAND,
             [Entry(null, CharacterModelPartType.NONE, null, null, Vec3(0.8, 0.8, 0.8), null, CharacterModelEquipNodeType.LEFT_HAND)]
-            , Vec3(-14, 17, 0), Vec3(0.8, 0.8, 0.8)
+            , Vec3(14, 17, 0), Vec3(0.8, 0.8, 0.8)
         ),
         Entry(
             "forestGuardianArm.mesh", CharacterModelPartType.RIGHT_HAND,
             [Entry(null, CharacterModelPartType.NONE, null, null, Vec3(0.8, 0.8, 0.8), null, CharacterModelEquipNodeType.RIGHT_HAND)]
-            , Vec3(14, 17, 0), Vec3(0.8, 0.8, 0.8)
+            , Vec3(-14, 17, 0), Vec3(0.8, 0.8, 0.8)
         ),
 
         Entry(

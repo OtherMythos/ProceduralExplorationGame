@@ -235,6 +235,7 @@ enum CharacterInspectorWidgetTypes{
 
         //Wield active state toggle.
         local wieldActiveStateToggle = ::containerWin.createCheckbox();
+        wieldActiveStateToggle.setValue(mCurrentData_.wieldActive);
         wieldActiveStateToggle.attachListenerForEvent(toggleWieldActive, _GUI_ACTION_RELEASED, this);
         wieldActiveStateToggle.setText("Wield active");
         layout.addCell(wieldActiveStateToggle);
@@ -265,7 +266,7 @@ enum CharacterInspectorWidgetTypes{
                     target = CharacterModelEquipNodeType.WEAPON_STORE;
                 }
             }
-            mInspectedModel_.equipToNode(item.getType() == ItemId.NONE ? null : item, target, target == CharacterModelEquipNodeType.WEAPON_STORE);
+            mInspectedModel_.equipToNode(item.getType() == ItemId.NONE ? null : item, target, target == CharacterModelEquipNodeType.WEAPON_STORE, i == CharacterModelEquipNodeType.LEFT_HAND);
         }
     }
 

@@ -54,9 +54,7 @@ enum ItemEquipTransformType{
     function getMesh(){ return mItem_.getMesh(); }
     function getDescription(){ return mItem_.getDescription(); }
     function getEquippableData(){ return mItem_.getEquippableData(); }
-    function getEquippablePosition(){ return mItem_.getEquippablePosition(); }
-    function getEquippableOrientation(){ return mItem_.getEquippableOrientation(); }
-    function getEquippableScale(){ return mItem_.getEquippableScale(); }
+    function getEquipTransforms(wield, wieldActive){ return mItem_.getEquipTransforms(wield, wieldActive); }
     function getScrapVal(){ return mItem_.getScrapVal(); }
     function getIcon(){ return mItem_.getIcon(); }
     function toStats(){
@@ -105,9 +103,14 @@ enum ItemEquipTransformType{
     function getMesh(){ return mMesh; }
     function getScrapVal(){ return mScrapVal; }
     function getEquippableData(){ return mEquippableData; }
-    function getEquippablePosition(){ return ::ItemEquipTransforms[mEquipTransformType].mPosition; }
-    function getEquippableOrientation(){ return ::ItemEquipTransforms[mEquipTransformType].mOrientation; }
-    function getEquippableScale(){ return ::ItemEquipTransforms[mEquipTransformType].mScale; }
+    function getEquipTransforms(left, wieldActive){
+        if(left){
+            return wieldActive ? ItemTransforms_WieldActive_LEFT[mEquipTransformType] : ItemTransforms_WieldInactive_LEFT[mEquipTransformType];
+        }else{
+            return wieldActive ? ItemTransforms_WieldActive_RIGHT[mEquipTransformType] : ItemTransforms_WieldInactive_RIGHT[mEquipTransformType];
+        }
+    }
+
     function getIcon(){ return mIcon == null ? "icon_none" : mIcon; }
 }
 ::Items <- array(ItemId.MAX, null);
@@ -133,15 +136,52 @@ enum ItemEquipTransformType{
         mOrientation = orientation;
         mScale = scale;
     }
+
+    function copy(position, orientation=null, scale=null){
+        return ::ItemEquipTransform(
+            position == null ? mPosition : position,
+            orientation == null ? mOrientation : orientation,
+            scale == null ? mScale : scale
+        );
+    }
+
+    function _tostring(){
+        return ::wrapToString(::ItemEquipTransform, "ItemEquipTransform", format(
+            "{pos: %s, orientation: %s, scale: %s",
+            mPosition ? mPosition.tostring() : "null",
+            mOrientation ? mOrientation.tostring() : "null",
+            mScale ? mScale.tostring() : "null"
+        ));
+    }
 };
 
-::ItemEquipTransforms <- array(ItemEquipTransformType.MAX, null);
+::ItemTransforms_WieldActive_RIGHT <- array(ItemEquipTransformType.MAX, null);
+::ItemTransforms_WieldInactive_RIGHT <- array(ItemEquipTransformType.MAX, null);
+::ItemTransforms_WieldActive_LEFT <- array(ItemEquipTransformType.MAX, null);
+::ItemTransforms_WieldInactive_LEFT <- array(ItemEquipTransformType.MAX, null);
 
-::ItemEquipTransforms[ItemEquipTransformType.NONE] = ::ItemEquipTransform(Vec3(0, 0, 0));
+//Common values
+local commonScale = Vec3(1.4, 1.4, 1.0);
 
-::ItemEquipTransforms[ItemEquipTransformType.BASIC_SWORD] = ::ItemEquipTransform(Vec3(0, 8, 0), Quat(2, ::Vec3_UNIT_Y));
-::ItemEquipTransforms[ItemEquipTransformType.BASIC_SHIELD] = ::ItemEquipTransform(Vec3(-4, 0, 0), Quat(-PI*0.5, ::Vec3_UNIT_Y), Vec3(1.4, 1.4, 1.0));
-::ItemEquipTransforms[ItemEquipTransformType.BASIC_TWO_HANDED_SWORD] = ::ItemEquipTransform(Vec3(0, 14, 0), Quat(), Vec3(1.4, 1.4, 1.0));
+//--Transforms for active wield items--
+::ItemTransforms_WieldActive_RIGHT[ItemEquipTransformType.BASIC_SWORD] = ::ItemEquipTransform(Vec3(0, 8, 0), Quat(2, ::Vec3_UNIT_Y));
+::ItemTransforms_WieldActive_RIGHT[ItemEquipTransformType.BASIC_SHIELD] = ::ItemEquipTransform(Vec3(-4, 0, 0), Quat(-PI*0.5, ::Vec3_UNIT_Y), commonScale);
+::ItemTransforms_WieldActive_RIGHT[ItemEquipTransformType.BASIC_TWO_HANDED_SWORD] = ::ItemEquipTransform(Vec3(0, 14, 0), Quat(PI*0.6, ::Vec3_UNIT_Y), commonScale);
+
+//---Wield active left---
+::ItemTransforms_WieldActive_LEFT[ItemEquipTransformType.BASIC_SWORD] = ::ItemTransforms_WieldActive_RIGHT[ItemEquipTransformType.BASIC_SWORD].copy(null, Quat(-2, ::Vec3_UNIT_Y), null);
+::ItemTransforms_WieldActive_LEFT[ItemEquipTransformType.BASIC_SHIELD] = ::ItemTransforms_WieldActive_RIGHT[ItemEquipTransformType.BASIC_SHIELD].copy(Vec3(4, 0, 0), Quat(PI*0.5, ::Vec3_UNIT_Y), null);
+::ItemTransforms_WieldActive_LEFT[ItemEquipTransformType.BASIC_TWO_HANDED_SWORD] = ::ItemTransforms_WieldActive_RIGHT[ItemEquipTransformType.BASIC_TWO_HANDED_SWORD].copy(null, Quat(-PI*0.6, ::Vec3_UNIT_Y), null);
+
+//--Transforms for wield inactive right--
+::ItemTransforms_WieldInactive_RIGHT[ItemEquipTransformType.BASIC_SWORD] = ::ItemEquipTransform(Vec3(0, 8, -3.5), Quat(PI, ::Vec3_UNIT_Y) * Quat(PI+PI/6, ::Vec3_UNIT_Z));
+::ItemTransforms_WieldInactive_RIGHT[ItemEquipTransformType.BASIC_SHIELD] = ::ItemEquipTransform(Vec3(-4, 3, -5), Quat(PI, ::Vec3_UNIT_Y) * Quat(PI/6, ::Vec3_UNIT_Z), commonScale);
+::ItemTransforms_WieldInactive_RIGHT[ItemEquipTransformType.BASIC_TWO_HANDED_SWORD] = ::ItemEquipTransform(Vec3(0, 8, -3.5), Quat(0, ::Vec3_UNIT_Y) * Quat(PI/6, ::Vec3_UNIT_Z), commonScale);
+
+//---Wield inactive left---
+::ItemTransforms_WieldInactive_LEFT[ItemEquipTransformType.BASIC_SWORD] = ::ItemTransforms_WieldInactive_RIGHT[ItemEquipTransformType.BASIC_SWORD].copy(null, Quat(PI, ::Vec3_UNIT_Y) * Quat(PI-PI/6, ::Vec3_UNIT_Z));
+::ItemTransforms_WieldInactive_LEFT[ItemEquipTransformType.BASIC_SHIELD] = ::ItemTransforms_WieldInactive_RIGHT[ItemEquipTransformType.BASIC_SHIELD].copy(null, Quat(PI, ::Vec3_UNIT_Y) * Quat(PI/6, ::Vec3_UNIT_Z));
+::ItemTransforms_WieldInactive_LEFT[ItemEquipTransformType.BASIC_TWO_HANDED_SWORD] = ::ItemTransforms_WieldInactive_RIGHT[ItemEquipTransformType.BASIC_TWO_HANDED_SWORD].copy(null, Quat(PI, ::Vec3_UNIT_Y) * Quat(PI/6, ::Vec3_UNIT_Z));
 
 function setupItemIds_(){
     foreach(c,i in ::Items){
