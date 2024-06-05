@@ -418,7 +418,7 @@ enum WorldMousePressContexts{
         mProjectileManager_.update();
         mEntityManager_.update();
 
-        if(!_input.getMouseButton(0)){
+        if(!_input.getMouseButton(_MB_LEFT)){
             mMouseContext_.notifyMouseEnded();
         }
         mMouseContext_.update();
@@ -634,7 +634,7 @@ enum WorldMousePressContexts{
     }
 
     function checkTargetEnemy(){
-        if(!_input.getMouseButton(0) || mMouseContext_.getCurrentState() != null) return;
+        if(!_input.getMouseButton(_MB_LEFT) || mMouseContext_.getCurrentState() != null) return;
         if(mCurrentHighlightEnemy_ == null) return;
 
         setTargetEnemy(mCurrentHighlightEnemy_);
@@ -648,7 +648,7 @@ enum WorldMousePressContexts{
     }
     function checkForPlayerMoveBegin(){
         if(!mGui_) return;
-        if(!_input.getMouseButton(0) || mMouseContext_.getCurrentState() != null) return;
+        if(!_input.getMouseButton(_MB_LEFT) || mMouseContext_.getCurrentState() != null) return;
 
         local inWindow = mGui_.checkPlayerInputPosition(_input.getMouseX(), _input.getMouseY());
         if(inWindow != null){
@@ -659,7 +659,7 @@ enum WorldMousePressContexts{
     }
     function checkForFlagPlacement(){
         if(!mGui_) return;
-        if(!_input.getMouseButton(0) || mMouseContext_.getCurrentState() != null) return;
+        if(!_input.getMouseButton(_MB_LEFT) || mMouseContext_.getCurrentState() != null) return;
 
         local inWindow = mGui_.checkPlayerInputPosition(_input.getMouseX(), _input.getMouseY());
         if(inWindow != null){
@@ -1162,7 +1162,7 @@ enum WorldMousePressContexts{
         if(mMouseContext_.getCurrentState() != WorldMousePressContexts.ORIENTING_CAMERA) return;
         print("orientating");
 
-        if(_input.getMouseButton(0)){
+        if(_input.getMouseButton(_MB_LEFT)){
             _window.grabCursor(true);
 
             local mouseX = _input.getMouseX();

@@ -39,7 +39,7 @@
         local yCamera = 0;
 
         local mostRecentDevice = _input.getMostRecentDevice();
-        local right = _input.getMouseButton(1);
+        local right = _input.getMouseButton(_MB_RIGHT);
 
         if(!right){
             //TODO limit the values returned here with deadspots.

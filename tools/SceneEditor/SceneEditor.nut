@@ -75,7 +75,7 @@ enum TerrainEditState{
                     local chunkX = worldPoint.x.tointeger();
                     local chunkY = -worldPoint.z.tointeger();
 
-                    if(_input.getMouseButton(0)){
+                    if(_input.getMouseButton(_MB_LEFT)){
                         if(getTerrainEditState() == TerrainEditState.HEIGHT){
                             mTerrainChunkManager.drawHeightValues(chunkX, chunkY, 1, 1, [1]);
                         }
