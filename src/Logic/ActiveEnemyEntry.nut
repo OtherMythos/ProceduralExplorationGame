@@ -382,7 +382,14 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
             }
         }
         if(isDashing()){
-            moveToPoint(mPos_ + Vec3(mDashDirection_.x, 0, mDashDirection_.y), 1);
+            local wieldActive = mCombatData_ == null ? false : mCombatData_.mWieldActive;
+            local slowFactor = getSlowFactor(mInWater_, wieldActive);
+            local DAMPER = 0.5;
+            local speedValue = ((1 - DAMPER) + (slowFactor * DAMPER)) * 0.5;
+            if(!wieldActive){
+                speedValue *= 0.8;
+            }
+            moveToPoint(mPos_ + Vec3(mDashDirection_.x, 0, mDashDirection_.y), speedValue);
             mCreatorWorld_.notifyPlayerMoved();
         }
         if(isMidAttack()){
