@@ -10,6 +10,7 @@
                     "PerformMove2": "#PerformMove2",
                     "PerformMove3": "#PerformMove3",
                     "PerformMove4": "#PerformMove4",
+                    "Dash": "#Dash",
                     "CancelTarget": "#CancelTarget",
                     "ShowInventory": "#ShowInventory",
                     "toggleWieldActive": "#toggleWieldActive",
@@ -53,6 +54,7 @@
         ::InputManager.performMove2 <- _input.getButtonActionHandle("PerformMove2");
         ::InputManager.performMove3 <- _input.getButtonActionHandle("PerformMove3");
         ::InputManager.performMove4 <- _input.getButtonActionHandle("PerformMove4");
+        ::InputManager.dash <- _input.getButtonActionHandle("Dash");
         ::InputManager.cancelTarget <- _input.getButtonActionHandle("CancelTarget");
         ::InputManager.showInventory <- _input.getButtonActionHandle("ShowInventory");
         ::InputManager.toggleWieldActive <- _input.getButtonActionHandle("toggleWieldActive");
@@ -85,6 +87,7 @@
         _input.mapKeyboardInput(_K_3, this.performMove3);
         _input.mapKeyboardInput(_K_4, this.performMove4);
         //_input.mapKeyboardInput(_K_ESCAPE, this.cancelTarget);
+        _input.mapKeyboardInput(_K_SPACE, this.dash);
         _input.mapKeyboardInput(_K_E, this.showInventory);
         _input.mapKeyboardInput(_K_R, this.toggleWieldActive);
         _input.mapKeyboardInput(_K_ESCAPE, this.pauseGame);

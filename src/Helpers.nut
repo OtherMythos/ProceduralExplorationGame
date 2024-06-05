@@ -2,6 +2,9 @@
 ::Vec3_UNIT_X <- Vec3(1, 0, 0);
 ::Vec3_UNIT_Y <- Vec3(0, 1, 0);
 ::Vec3_UNIT_Z <- Vec3(0, 0, 1);
+::Vec3_NEGATIVE_UNIT_X <- Vec3(-1, 0, 0);
+::Vec3_NEGATIVE_UNIT_Y <- Vec3(0, -1, 0);
+::Vec3_NEGATIVE_UNIT_Z <- Vec3(0, 0, -1);
 ::Vec3_UNIT_SCALE <- Vec3(1, 1, 1);
 ::Quat_IDENTITY <- Quat();
 

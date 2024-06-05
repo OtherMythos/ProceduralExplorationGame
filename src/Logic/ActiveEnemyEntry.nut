@@ -4,6 +4,7 @@ enum ActiveEnemyAnimationEvents{
     STARTED_MOVING,
     STOPPED_MOVING,
     WATER_STATE_CHANGE,
+    REQUEST_DASH,
 
     EQUIPPABLE_PERFORMANCE_STATE_CHANGE,
 
@@ -15,6 +16,7 @@ enum ActiveEnemyAnimationStage{
     IDLE,
     WALKING,
     SWIMMING,
+    DASHING,
 
     MAX
 };
@@ -22,6 +24,7 @@ enum ActiveEnemyAnimationStage{
     mStates_ = array(ActiveEnemyAnimationStage.MAX);
     mModel_ = null;
     mInWater_ = false;
+    mCount_ = 0;
 
     mEquippablePerformance_ = null;
     mCurrentEquippableAnim_ = CharacterModelAnimId.NONE;
@@ -70,6 +73,9 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.IDLE] = clas
         else if(event == ActiveEnemyAnimationEvents.EQUIPPABLE_PERFORMANCE_STATE_CHANGE){
             ctx.processPerformance_(null);
         }
+        else if(event == ActiveEnemyAnimationEvents.REQUEST_DASH){
+            return ActiveEnemyAnimationStage.DASHING;
+        }
     }
     function end(ctx){
     }
@@ -91,6 +97,10 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.WALKING] = c
         else if(event == ActiveEnemyAnimationEvents.EQUIPPABLE_PERFORMANCE_STATE_CHANGE){
             ctx.processPerformance_(CharacterModelAnimBaseType.UPPER_WALK);
         }
+        else if(event == ActiveEnemyAnimationEvents.REQUEST_DASH){
+            return ActiveEnemyAnimationStage.DASHING;
+        }
+
     }
     function end(ctx){
         ctx.mModel_.stopAnimationBaseType(CharacterModelAnimBaseType.UPPER_WALK);
@@ -113,10 +123,29 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         else if(event == ActiveEnemyAnimationEvents.EQUIPPABLE_PERFORMANCE_STATE_CHANGE){
             ctx.processPerformance_(CharacterModelAnimBaseType.UPPER_SWIM);
         }
+        else if(event == ActiveEnemyAnimationEvents.REQUEST_DASH){
+            return ActiveEnemyAnimationStage.DASHING;
+        }
     }
     function end(ctx){
         //ctx.mModel_.stopAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
         ctx.mModel_.stopAnimationBaseType(CharacterModelAnimBaseType.UPPER_SWIM);
+    }
+};
+//TODO note, this state machine is supposed to manage animations, but here is responsible for logic. This will need changing or the naming updated.
+ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = class extends ::Util.SimpleState{
+    function start(ctx){
+        ctx.mCount_ = 15;
+    }
+    function update(ctx){
+        ctx.mCount_--;
+        print("dashing count" + ctx.mCount_);
+        if(ctx.mCount_ <= 0) return ActiveEnemyAnimationStage.WALKING;
+    }
+    function notify(ctx, event){
+    }
+    function end(ctx){
+        ctx.mCount_ = 0;
     }
 };
 
@@ -133,6 +162,8 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
     mCombatData_ = null;
     mTargetCollisionWorld_ = 0;
     mCollisionPoint_ = null;
+
+    mDashDirection_ = null;
 
     mVoxX_ = -1;
     mVoxY_ = -1;
@@ -155,6 +186,11 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         //if(typeof mEntity_ == "integer") return mEntity_;
         //return mEntity_.getId();
         return mEntity_;
+    }
+    function performDash(direction){
+        print("Attempting dash");
+        mStateMachineModel_.notify(ActiveEnemyAnimationEvents.REQUEST_DASH);
+        mDashDirection_ = direction;
     }
     function checkVoxelChange(){
         local changed = false;
@@ -345,6 +381,10 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
                 }
             }
         }
+        if(isDashing()){
+            moveToPoint(mPos_ + Vec3(mDashDirection_.x, 0, mDashDirection_.y), 1);
+            mCreatorWorld_.notifyPlayerMoved();
+        }
         if(isMidAttack()){
             performAttack();
         }
@@ -390,6 +430,10 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
     }
     function endAttack(){
         mAttackActive_ = false;
+    }
+
+    function isDashing(){
+        return mStateMachineModel_.mCurrentState_ == ActiveEnemyAnimationStage.DASHING;
     }
 
     function isMidAttack(){

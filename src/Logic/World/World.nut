@@ -267,6 +267,7 @@ enum WorldMousePressContexts{
                 _input.getButtonActionHandle("PerformMove3"),
                 _input.getButtonActionHandle("PerformMove4")
             ],
+            "dash": _input.getButtonActionHandle("Dash"),
             "canceltarget": _input.getButtonActionHandle("CancelTarget"),
             "showInventory": _input.getButtonActionHandle("ShowInventory"),
             "toggleWieldActive": _input.getButtonActionHandle("toggleWieldActive"),
@@ -678,6 +679,18 @@ enum WorldMousePressContexts{
             }
         }
     }
+    function performPlayerDash(){
+        local direction = getCameraDirection();
+        mPlayerEntry_.performDash(direction);
+    }
+    function getCameraDirection(){
+        local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
+
+        local targetForward = camera.getOrientation() * ::Vec3_NEGATIVE_UNIT_Z;
+        targetForward.y = 0;
+        targetForward = Vec2(targetForward.x, targetForward.z);
+        return targetForward;
+    }
     function checkPlayerMove(){
         local moved = false;
         local xVal = _input.getAxisActionX(mInputs_.move, _INPUT_ANY);
@@ -719,11 +732,7 @@ enum WorldMousePressContexts{
         }
 
         if(mMovementCooldown_ > 0){
-            local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
-
-            local targetForward = camera.getOrientation() * Vec3(0, 0, -1);
-            targetForward.y = 0;
-            targetForward = Vec2(targetForward.x, targetForward.z);
+            local targetForward = getCameraDirection();
 
             local movementPercentage = mMovementCooldown_.tofloat() / mMovementCooldownTotal_.tofloat();
 
@@ -803,12 +812,15 @@ enum WorldMousePressContexts{
 
         notifyPlayerMoved();
 
+        //NOTE: left over from the flag system, scheduled for removal.
+        /*
         local newPos = mPlayerEntry_.mPos_.copy();
         local newTarget = targetPos.copy();
         newPos.y = 0;
         newTarget.y = 0;
         local distance = newTarget.distance(newPos);
         return distance < 0.4;
+        */
     }
 
     function notifyPlayerMoved(){
@@ -953,6 +965,9 @@ enum WorldMousePressContexts{
         }
         if(_input.getButtonAction(::InputManager.showDebugConsole, _INPUT_PRESSED)){
             ::DebugConsole.toggleActive();
+        }
+        if(_input.getButtonAction(mInputs_.dash, _INPUT_PRESSED)){
+            performPlayerDash();
         }
 
     }
