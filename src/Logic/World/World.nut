@@ -130,11 +130,15 @@ enum WorldMousePressContexts{
         mCurrentState_ = null;
         mGui_ = null;
 
+        mDoubleClickTimer_ = 0;
+        mDoubleClick_ = false;
+
         constructor(){
 
         }
         function update(){
             //print("Mouse state: " + mCurrentState_);
+            if(mDoubleClickTimer_ > 0) mDoubleClickTimer_--;
         }
         function beginState_(state){
             if(mCurrentState_ != null) return false;
@@ -149,7 +153,15 @@ enum WorldMousePressContexts{
             return beginState_(WorldMousePressContexts.PLACING_FLAG);
         }
         function requestOrientingCamera(){
-            return beginState_(WorldMousePressContexts.ORIENTING_CAMERA);
+            local stateBegan = beginState_(WorldMousePressContexts.ORIENTING_CAMERA);
+            if(stateBegan){
+                if(mDoubleClickTimer_ > 0){
+                    //Register that the double click took place.
+                    mDoubleClick_ = true;
+                }
+                mDoubleClickTimer_ = 20;
+            }
+            return stateBegan;
         }
         function requestPopupWindow(){
             return beginState_(WorldMousePressContexts.POPUP_WINDOW);
@@ -165,6 +177,11 @@ enum WorldMousePressContexts{
         //TODO I don't like this, consider re-architecting
         function setGuiObject(guiObj){
             mGui_ = guiObj;
+        }
+        function checkDoubleClick(){
+            local retVal = mDoubleClick_;
+            mDoubleClick_ = false;
+            return retVal;
         }
     };
 
@@ -655,6 +672,13 @@ enum WorldMousePressContexts{
             local result = mMouseContext_.requestOrientingCamera();
 
             assert(result);
+
+            if(::Base.getTargetInterface() == TargetInterface.MOBILE){
+                local double = mMouseContext_.checkDoubleClick();
+                if(double){
+                    performPlayerDash();
+                }
+            }
         }
     }
     function checkForFlagPlacement(){
