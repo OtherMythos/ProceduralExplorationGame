@@ -68,13 +68,15 @@
 
         _input.mapControllerInput(_BA_LEFT, this.explorationMove);
         _input.mapControllerInput(_BA_RIGHT, this.explorationCamera);
-        _input.mapControllerInput(_B_A, this.performMove1);
-        _input.mapControllerInput(_B_B, this.performMove2);
-        _input.mapControllerInput(_B_X, this.performMove3);
-        _input.mapControllerInput(_B_Y, this.performMove4);
-        _input.mapControllerInput(_B_LEFTSHOULDER, this.cancelTarget);
-        _input.mapControllerInput(_B_BACK, this.showInventory);
-        _input.mapControllerInput(_B_RIGHTSHOULDER, this.toggleWieldActive);
+        _input.mapControllerInput(_B_A, this.dash);
+        _input.mapControllerInput(_B_B, this.toggleWieldActive);
+        _input.mapControllerInput(_B_X, this.showInventory);
+        //_input.mapControllerInput(_B_Y, this.performMove4);
+        _input.mapControllerInput(_B_LEFTSHOULDER, this.performMove1);
+        _input.mapControllerInput(_B_RIGHTSHOULDER, this.performMove2);
+        //TODO NOTE I want to map the triggers just as regular buttons, but the engine does not allow that currently.
+        //_input.mapControllerInput(_BT_LEFT, this.performMove3);
+        //_input.mapControllerInput(_BT_RIGHT, this.performMove4);
         _input.mapControllerInput(_B_GUIDE, this.pauseGame);
 
         _input.mapControllerInput(_B_B, this.menuBack);
