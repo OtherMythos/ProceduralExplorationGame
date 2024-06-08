@@ -911,6 +911,7 @@ enum WorldMousePressContexts{
     function createEnemy(enemyType, pos){
         local enemyEntry = mEntityFactory_.constructEnemy(enemyType, pos, mGui_);
         mActiveEnemies_.rawset(enemyEntry.mEntity_, enemyEntry);
+        return enemyEntry;
     }
     function appearEnemy(enemyType){
         local target = getPositionForAppearEnemy_(enemyType);

@@ -255,6 +255,9 @@
 ::_tIntegration <- function(testName, testDescription, closure){
     ::_testSystem.registerIntegrationTest(testName, testDescription, closure);
 };
+::_tStress <- function(testName, testDescription, closure){
+    ::_testSystem.registerIntegrationTest(testName, testDescription, closure);
+};
 ::_testHelper <- {
 
     mDefaultWaitFrames = -1
