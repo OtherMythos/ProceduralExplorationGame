@@ -52,29 +52,25 @@
         playerEntry.setCombatData(playerStats.mPlayerCombatStats);
         playerEntry.setTargetCollisionWorld(_COLLISION_ENEMY);
 
-        local triggerWorld = mConstructorWorld_.getTriggerWorld();
-        local collisionPoint = triggerWorld.addCollisionReceiver(null, 0, 0, 1.5, _COLLISION_PLAYER);
-
-        //TODO collision logic.
-
         playerEntry.setId(-1);
 
-        //playerEntry.setCollisionPoint(collisionPoint);
+        if(!::Base.isProfileActive(GameProfile.PLAYER_GHOST)){
+            local triggerWorld = mConstructorWorld_.getTriggerWorld();
+            local collisionPoint = triggerWorld.addCollisionReceiver(null, 0, 0, 1.5, _COLLISION_PLAYER);
 
-        local damageWorld = mConstructorWorld_.getDamageWorld();
-        local damagePoint = damageWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
+            local combatTargetWorld = mConstructorWorld_.getCombatTargetWorld();
+            local combatTargetPoint = combatTargetWorld.addCollisionSender(CollisionWorldTriggerResponses.BASIC_ENEMY_PLAYER_TARGET_RADIUS, en, targetPos.x, targetPos.z, 10, _COLLISION_ENEMY);
 
-        local combatTargetWorld = mConstructorWorld_.getCombatTargetWorld();
-        local combatTargetPoint = combatTargetWorld.addCollisionSender(CollisionWorldTriggerResponses.BASIC_ENEMY_PLAYER_TARGET_RADIUS, en, targetPos.x, targetPos.z, 10, _COLLISION_ENEMY);
+            local damageWorld = mConstructorWorld_.getDamageWorld();
+            local damagePoint = damageWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
 
-        manager.assignComponent(en, EntityComponents.COLLISION_POINT_THREE,
-            ::EntityManager.Components[EntityComponents.COLLISION_POINT_THREE](
-                collisionPoint, damagePoint, combatTargetPoint,
-                triggerWorld, damageWorld, combatTargetWorld
-            )
-        );
-
-        //_component.collision.add(en, collisionObject, damageReceiver);
+            manager.assignComponent(en, EntityComponents.COLLISION_POINT_THREE,
+                ::EntityManager.Components[EntityComponents.COLLISION_POINT_THREE](
+                    collisionPoint, damagePoint, combatTargetPoint,
+                    triggerWorld, damageWorld, combatTargetWorld
+                )
+            );
+        }
 
         local worldMask = (0x1 << mConstructorWorld_.getWorldId());
         local healthBarBillboard = ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_, worldMask);
