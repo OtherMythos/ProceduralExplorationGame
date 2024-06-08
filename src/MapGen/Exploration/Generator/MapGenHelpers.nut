@@ -41,6 +41,8 @@
         local x = pos.x.tointeger();
         local y = -pos.z.tointeger();
 
+        if(x < 0 || y < 0 || x >= worldData.width || y >= worldData.height) return -1;
+
         local voxBuff = worldData.secondaryVoxBuffer;
         voxBuff.seek((x + y * worldData.width) * 4);
         local val = ((voxBuff.readn('i') >> 8) & 0xFF);

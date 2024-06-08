@@ -27,19 +27,22 @@ _tIntegration("VisitAllRegions", "Iterate all regions and teleport the player to
             "repeat": 500,
             "steps": [
                 function(){
-                    _testHelper.waitFrames(30);
+                    _testHelper.waitFrames(1);
 
                     local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
                     local mapData = currentWorld.getMapData();
 
-                    //local region = mapData.regionData[regionStage];
-                    //currentWorld.setPlayerPosition(region.seedX, -region.seedY);
+                    local STEP = 10.0;
 
-                    local region = mapData.regionData[regionStage];
-                    print("Moving to region idx " + regionStage);
-                    currentWorld.setPlayerPosition(region.seedX, -region.seedY);
+                    local stepX = (mapData.width / STEP).tointeger();
+                    local stepY = (mapData.height / STEP).tointeger();
+                    local currentX = (regionStage % STEP).tointeger();
+                    local currentY = (regionStage / STEP).tointeger();
+
+                    currentWorld.setPlayerPosition(currentX * stepX, -currentY * stepY);
                     ::regionStage++;
-                    if(regionStage >= mapData.regionData.len()){
+
+                    if(currentY > STEP){
                         _test.endTest();
                     }
                 }

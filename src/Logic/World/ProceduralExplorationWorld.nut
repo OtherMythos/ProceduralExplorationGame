@@ -346,14 +346,18 @@
         //Hold a reference to the function to avoid the mapGenHelpers lookup each time.
         local targetFunc = ::MapGenHelpers.getRegionForData;
 
+        //local mapWidth = mMapData_.width;
+        //local mapHeight = mMapData_.height;
+
         local foundRegions = {};
         for (local y = startYTile; y < endYTile; y++){
             for (local x = startXTile; x < endXTile; x++){
                 //Go through these chunks to determine what to load.
                 if(_checkRectCircleCollision(x, y, radius, circleX, circleY)){
-                    if(x < 0 || y < 0 || x >= mMapData_.width || y >= mMapData_.height) continue;
+                    //if(x < 0 || y < 0 || x >= mapWidth || y >= mapHeight) continue;
                     //Query the voxel data and determine what the region is.
                     local targetRegion = targetFunc(mMapData_, playerPos);
+                    if(targetRegion < 0) continue;
                     //print("Found target region " + targetRegion);
                     foundRegions.rawset(targetRegion, true);
                 }
@@ -392,17 +396,19 @@
         }
     }
     function processFoundNewRegion(regionId){
-        assert(mRegionEntries_.rawin(regionId));
-        local regionEntry = mRegionEntries_[regionId];
         local regionData = mMapData_.regionData[regionId];
-        if(regionEntry != null){
-            regionEntry.performArrival();
-            //::PopupManager.displayPopup(::PopupManager.PopupData(Popup.REGION_DISCOVERED, regionData.type));
-
-            processRegionCollectables_(regionData);
-            if(mGui_.mWorldMapDisplay_.mMapViewer_ != null){
-                mGui_.mWorldMapDisplay_.mMapViewer_.notifyRegionFound(regionId);
+        if(mRegionEntries_.rawin(regionId)){
+            //A mesh for this region is present so perform the animation.
+            local regionEntry = mRegionEntries_[regionId];
+            if(regionEntry != null){
+                regionEntry.performArrival();
+                //::PopupManager.displayPopup(::PopupManager.PopupData(Popup.REGION_DISCOVERED, regionData.type));
             }
+        }
+
+        processRegionCollectables_(regionData);
+        if(mGui_.mWorldMapDisplay_.mMapViewer_ != null){
+            mGui_.mWorldMapDisplay_.mMapViewer_.notifyRegionFound(regionId);
         }
     }
 
