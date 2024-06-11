@@ -1221,6 +1221,10 @@ enum WorldMousePressContexts{
         mMouseContext_.requestPopupWindow();
     }
 
+    function _tostring() {
+        return ::wrapToString(::World, "World", getWorldTypeString());
+    }
+
 };
 
 _doFile("res://src/Logic/World/CollisionWorldWrapper.nut");

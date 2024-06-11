@@ -50,6 +50,7 @@
             mMapViewerPanel_.setDatablock(mapDatablock);
         }
         if(oldViewer != null) oldViewer.shutdown();
+        mMapViewerPanel_.setVisible(worldType != WorldTypes.TESTING_WORLD);
 
         //Have to do this later so it doesn't try and re-generate without the map data.
         if(worldType == WorldTypes.PROCEDURAL_EXPLORATION_WORLD){

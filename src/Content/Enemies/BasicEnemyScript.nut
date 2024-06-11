@@ -25,7 +25,9 @@ BasicEnemyMachine = class extends ::CombatStateMachine{
     chasingPlayerState = {
         "start": function(ctx, e) {
             //TODO remove direct access.
-            ctx.targetingId = ::Base.mExplorationLogic.mCurrentWorld_.mTargetManager_.targetEntity(::Base.mExplorationLogic.mCurrentWorld_.mPlayerEntry_, ::Base.mExplorationLogic.mCurrentWorld_.mActiveEnemies_[e]);
+            local world = ::Base.mExplorationLogic.mCurrentWorld_;
+            local activeEnemy = world.mActiveEnemies_[e];
+            ctx.targetingId = world.mTargetManager_.targetEntity(world.mPlayerEntry_, activeEnemy);
         },
         "update": function(ctx, e, data) {
             ::Base.mExplorationLogic.mCurrentWorld_.moveEnemyToPlayer(e);
