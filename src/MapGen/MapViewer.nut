@@ -104,8 +104,6 @@
     };
 
     constructor(){
-        //This is an abstract class.
-        assert(false);
     }
 
     function shutdown(){
@@ -114,6 +112,7 @@
     }
 
     function displayMapData(outData, showPlaceMarkers=true, leanMap=false){
+        if(outData == null) return;
         mMapData_ = outData;
         mLeanMap_ = leanMap;
 
@@ -178,8 +177,8 @@
     }
 
     function shutdown(){
-        _hlms.destroyDatablock(mCompositorDatablock_);
-        _graphics.destroyTexture(mCompositorTexture_);
+        if(mCompositorDatablock_ != null) _hlms.destroyDatablock(mCompositorDatablock_);
+        if(mCompositorTexture_ != null) _graphics.destroyTexture(mCompositorTexture_);
 
         if(mPlayerLocationPanel_ != null){
             mPlayerLocationPanel_.shutdown();

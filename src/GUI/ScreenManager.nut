@@ -220,7 +220,6 @@
         }
 
         local finishedSize = Vec2(outCoords.x / currentSize.x, outCoords.y / currentSize.y)
-        print("finished " + finishedSize);
         ::drawable = finishedSize * currentSize;
 
         foreach(c,i in mActiveScreens_){

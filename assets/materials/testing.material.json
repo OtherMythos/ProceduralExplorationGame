@@ -1,0 +1,25 @@
+{
+    "samplers" :
+    {
+        "wrapSampler" :
+        {
+            "u" : "wrap",
+            "v" : "wrap",
+            "w" : "wrap"
+        }
+    },
+
+    "pbs" :
+    {
+        "testingFloor" :
+        {
+            "workflow" : "metallic",
+            "detail_diffuse0" :
+            {
+                "scale": [30, 30],
+                "texture": "checkerPattern.png",
+                "sampler": "wrapSampler"
+            }
+        }
+    }
+}

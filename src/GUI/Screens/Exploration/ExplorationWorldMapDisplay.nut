@@ -37,12 +37,18 @@
         }
         else if(worldType == WorldTypes.VISITED_LOCATION_WORLD){
             mMapViewer_ = VisitedLocationMapViewer();
+        }
+        else if(worldType == WorldTypes.TESTING_WORLD){
+            mMapViewer_ = MapViewer();
         }else{
             assert(false);
         }
         mMapViewer_.displayMapData(data, false, true);
         mMapViewer_.setLabelWindow(mMapViewerWindow_);
-        mMapViewerPanel_.setDatablock(mMapViewer_.getDatablock());
+        local mapDatablock = mMapViewer_.getDatablock();
+        if(mapDatablock != null){
+            mMapViewerPanel_.setDatablock(mapDatablock);
+        }
         if(oldViewer != null) oldViewer.shutdown();
 
         //Have to do this later so it doesn't try and re-generate without the map data.

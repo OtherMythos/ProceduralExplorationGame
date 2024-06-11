@@ -11,7 +11,9 @@
     }
 
     function processPreparation(){
-
+        mCurrentPercent_ = 1.0;
+        _event.transmit(Event.WORLD_PREPARATION_STATE_CHANGE, {"began": false, "ended": true});
+        return true;
     }
 
     function preparationComplete(){

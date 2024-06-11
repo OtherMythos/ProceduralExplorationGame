@@ -113,6 +113,9 @@
             case WorldTypes.VISITED_LOCATION_WORLD:
                 created = VisitedLocationWorld(id, VisitedLocationWorldPreparer("chestLocationFirst"));
                 break;
+            case WorldTypes.TESTING_WORLD:
+                created = TestingWorld(id, WorldPreparer());
+                break;
             default:
                 assert(false);
         }

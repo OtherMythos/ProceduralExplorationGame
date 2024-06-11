@@ -205,6 +205,7 @@
         _doFile("res://src/Logic/World/VisitedLocationWorld.nut");
         _doFile("res://src/Logic/World/ProceduralExplorationWorld.nut");
         _doFile("res://src/Logic/World/ProceduralDungeonWorld.nut");
+        _doFile("res://src/Logic/World/TestingWorld.nut");
         _doFile("res://src/Logic/World/WorldPreparer.nut");
         _doFile("res://src/Logic/World/ProceduralExplorationWorldPreparer.nut");
         _doFile("res://src/Logic/World/ProceduralDungeonWorldPreparer.nut");
