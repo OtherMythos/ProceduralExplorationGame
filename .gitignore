@@ -9,3 +9,4 @@ __substance_*
 .vscode/
 avSetupSecondary.cfg
 developerTools.nut
+testingWorldScript.nut

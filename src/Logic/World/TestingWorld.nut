@@ -7,6 +7,8 @@
     function resetSession(){
         base.resetSession();
 
+        callLogicScript();
+
         createScene();
     }
 
@@ -103,6 +105,13 @@
     function checkForDistractionAppear(){
         //Stub
         return
+    }
+
+    function callLogicScript(){
+        local scriptPath = "res://testingWorldScript.nut";
+        if(_system.exists(scriptPath)){
+            _doFile(scriptPath);
+        }
     }
 
 };
