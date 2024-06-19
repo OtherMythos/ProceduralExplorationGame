@@ -411,15 +411,14 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         if(mPerformingEquippable_ != null) return;
         if(mId_ == -1) print(mPerformingEquippable_);
         if(mCombatData_ == null) return;
-        //TODO determine which weapon takes presidence
-        local equippedSword = mCombatData_.mEquippedItems.mItems[EquippedSlotTypes.LEFT_HAND];
-        //TODO in future have some base attack.
-        if(equippedSword == null){
+
+        local equippedItems = mCombatData_.mEquippedItems.mItems;
+        local equipDef = ::ItemHelper.determineEquippableDefForEquipped(equippedItems);
+        if(equipDef == null){
             return;
         }
 
-        local equippable = ::Equippables[equippedSword.getEquippableData()];
-        local performance = ::EquippablePerformance(equippable, this);
+        local performance = ::EquippablePerformance(equipDef, this);
         mStateMachineModel_.notifyEquippablePerformance(performance);
         mPerformingEquippable_ = performance;
     }

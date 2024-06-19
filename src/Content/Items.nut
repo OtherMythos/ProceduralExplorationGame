@@ -256,6 +256,31 @@ function setupItemIds_(){
         }
     }
 
+    function determineEquippableDefForEquipped(equippedItems){
+        local rightHand = equippedItems[EquippedSlotTypes.RIGHT_HAND];
+        local leftHand = equippedItems[EquippedSlotTypes.LEFT_HAND];
+
+        rightHand = rightHand == null ? null : rightHand.getEquippableData();
+        leftHand = leftHand == null ? null : leftHand.getEquippableData();
+
+        if(
+            leftHand == EquippableId.REGULAR_TWO_HANDED_SWORD ||
+            rightHand == EquippableId.REGULAR_TWO_HANDED_SWORD
+        )
+        {
+            return ::Equippables[EquippableId.REGULAR_TWO_HANDED_SWORD];
+        }
+
+        if(rightHand == EquippableId.REGULAR_SWORD){
+            return ::Equippables[rightHand];
+        }
+        if(leftHand == EquippableId.REGULAR_SWORD){
+            return ::Equippables[leftHand];
+        }
+
+        return null;
+    }
+
     function nameToItemId(itemName){
         foreach(c,i in ::Items){
             if(i.getName() == itemName){
