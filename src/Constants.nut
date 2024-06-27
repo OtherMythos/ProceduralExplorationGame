@@ -26,7 +26,8 @@ enum TargetInterface{
 };
 
 enum DebugOverlayId{
-    COMBAT
+    COMBAT,
+    INPUT
 };
 
 enum InputActionSets{
@@ -91,6 +92,7 @@ enum GameProfile{
     ENABLE_RIGHT_CLICK_WORKAROUNDS,
     FORCE_WINDOWED,
     DEBUG_OVERLAY_COMBAT,
+    DEBUG_OVERLAY_INPUT,
     FORCE_SMALL_WORLD,
     PLAYER_GHOST,
 
@@ -108,6 +110,7 @@ enum GameProfile{
     "EnableRightClickWorkarounds",
     "ForceWindowed",
     "DebugOverlayCombat",
+    "DebugOverlayInput",
     "ForceSmallWorld",
     "PlayerGhost"
 ];

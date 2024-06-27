@@ -1,5 +1,8 @@
 function start(){
     _gui.setScrollSpeed(5.0);
+    local deadzone = 0.2;
+    _input.setDefaultAxisDeadzone(deadzone);
+    _input.setAxisDeadzone(deadzone, _ANY_INPUT_DEVICE);
 
     _doFile("res://src/Versions.nut");
     _doFile("res://src/Constants.nut");

@@ -299,6 +299,9 @@
             case GameProfile.DEBUG_OVERLAY_COMBAT:
                 ::DebugOverlayManager.setupOverlay(DebugOverlayId.COMBAT);
                 break;
+            case GameProfile.DEBUG_OVERLAY_INPUT:
+                ::DebugOverlayManager.setupOverlay(DebugOverlayId.INPUT);
+                break;
             default:
                 break;
         }

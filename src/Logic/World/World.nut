@@ -719,6 +719,7 @@ enum WorldMousePressContexts{
         local moved = false;
         local xVal = _input.getAxisActionX(mInputs_.move, _INPUT_ANY);
         local yVal = _input.getAxisActionY(mInputs_.move, _INPUT_ANY);
+        ::DebugOverlayManager.appendText(DebugOverlayId.INPUT, format("move x: %f y: %f", xVal, yVal));
 
         local dir = Vec2(xVal, yVal);
         moved = (xVal != 0 || yVal != 0);
@@ -1214,6 +1215,7 @@ enum WorldMousePressContexts{
         local modifier = 1;
         local x = _input.getAxisActionX(mInputs_.camera, _INPUT_ANY);
         local y = _input.getAxisActionY(mInputs_.camera, _INPUT_ANY);
+        ::DebugOverlayManager.appendText(DebugOverlayId.INPUT, format("camera x: %f y: %f", x, y));
         processCameraMove(x*modifier, y*modifier);
     }
 
