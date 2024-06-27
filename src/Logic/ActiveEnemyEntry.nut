@@ -153,6 +153,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
     mCreatorWorld_ = null;
     mEnemy_ = EnemyId.NONE;
     mPos_ = null;
+    mOrientation_ = null;
     mId_ = null;
     mEncountered_ = false;
     mModel_ = null;
@@ -181,6 +182,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         mEnemy_ = enemyType;
         mPos_ = enemyPos;
         mEntity_ = entity;
+        mOrientation_ = ::Quat_IDENTITY.copy();
     }
     function getEID(){
         //if(typeof mEntity_ == "integer") return mEntity_;
@@ -230,6 +232,9 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
     function getPosition(){
         return mPos_;
     }
+    function getOrientation(){
+        return mOrientation_;
+    }
     function getEntity(){
         return mEntity_;
     }
@@ -275,15 +280,11 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         }
 
         setPosition(pos);
+        local orientation = Quat(atan2(amount.x, amount.z), ::Vec3_UNIT_Y);
         if(mModel_){
-            local orientation = Quat(atan2(amount.x, amount.z), ::Vec3_UNIT_Y);
             mModel_.setOrientation(orientation);
-        }else{
-            if(mEntity_ != null){
-                local orientation = Quat(atan2(amount.x, amount.z), ::Vec3_UNIT_Y);
-                getSceneNode().setOrientation(orientation);
-            }
         }
+        mOrientation_ = orientation;
 
         if(mMoving_ <= 0 && mStateMachineModel_){
             mStateMachineModel_.notify(ActiveEnemyAnimationEvents.STARTED_MOVING);

@@ -704,14 +704,19 @@ enum WorldMousePressContexts{
         }
     }
     function performPlayerDash(){
-        local direction = getCameraDirection();
+        //local direction = getCameraDirection();
+        local direction = getPlayerDirection();
         mPlayerEntry_.performDash(direction);
+    }
+    function getPlayerDirection(){
+        local targetForward = mPlayerEntry_.getOrientation() * ::Vec3_UNIT_Z;
+        targetForward = Vec2(targetForward.x, targetForward.z);
+        return targetForward;
     }
     function getCameraDirection(){
         local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
 
         local targetForward = camera.getOrientation() * ::Vec3_NEGATIVE_UNIT_Z;
-        targetForward.y = 0;
         targetForward = Vec2(targetForward.x, targetForward.z);
         return targetForward;
     }
