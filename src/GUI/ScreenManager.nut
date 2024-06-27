@@ -193,7 +193,9 @@
 
     function processResize(){
         calculateAspectRatio();
-        mVersionInfoWindow_.processResize();
+        if(mVersionInfoWindow_ != null){
+            mVersionInfoWindow_.processResize();
+        }
     }
 
     function calculateAspectRatio(){
