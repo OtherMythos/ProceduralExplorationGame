@@ -1,10 +1,9 @@
 _tIntegration("MainMenuToExplorationWithSaveSelection", "Move from the main menu through to the exploration screen, selecting a save on the way.", {
-    "start": function(){
-        ::_testHelper.generateSimpleSaves(5);
-        ::_testHelper.setDefaultWaitFrames(20);
-    },
-
     "steps": [
+        function(){
+            ::_testHelper.generateSimpleSaves(5);
+            ::_testHelper.setDefaultWaitFrames(20);
+        },
         function(){
             ::_testHelper.queryWindowExists("MainMenuScreen");
         },

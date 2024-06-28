@@ -46,8 +46,8 @@ _t("targetRelease", "Check entities can be targeted and then released from the t
 
     _test.assertEqual(targetManager.mTargets_.len(), 1);
     _test.assertEqual(targetManager.mAggressors_.len(), 1);
-    _test.assertEqual(targetManager.mTargets_[player.getEID()], targetEntity.getEID());
-    _test.assertEqual(targetManager.mAggressors_[targetEntity.getEID()], player.getEID());
+    _test.assertEqual(targetManager.mTargets_[player.getEID()][0].getEID(), targetEntity.getEID());
+    _test.assertEqual(targetManager.mAggressors_[targetEntity.getEID()][0].getEID(), player.getEID());
 
     targetManager.releaseTarget(player, targetId);
 
@@ -79,7 +79,7 @@ _t("Entity Destroyed Multiple Targets", "Check that destroyed entities remove th
     _test.assertEqual(targetManager.mTargets_.len(), 1);
     //The player is targeting two,
     _test.assertEqual(targetManager.mTargets_[player.getEID()].len(), 2);
-    _test.assertEqual(targetManager.mAggressors_.rawin(player.getEID()), 0);
+    _test.assertFalse(targetManager.mAggressors_.rawin(player.getEID()));
     _test.assertEqual(targetManager.mAggressors_[targetEntity.getEID()].len(), 1);
     _test.assertEqual(targetManager.mAggressors_[targetEntitySecond.getEID()].len(), 1);
     _test.assertEqual(targetManager.mAggressors_.len(), 2);

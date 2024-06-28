@@ -365,11 +365,13 @@ function start(){
 
     checkForAdditionalIncludes();
 
+    //Run the test script itself.
     local setupFile = _settings.getUserSetting("SetupFile")
     if(typeof setupFile != "string") throw "No test setup file was provided.";
     _doFile(setupFile);
 
     if(::_testSystem.integration){
+        //Run the base setup for the integration project.
         local contextTable = {};
         _doFileWithContext("script://../src/SquirrelEntry.nut", contextTable);
         ::_testSystem.registerSetupContext(contextTable);
