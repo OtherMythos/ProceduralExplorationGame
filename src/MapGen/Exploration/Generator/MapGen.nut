@@ -972,25 +972,25 @@
         printPlaceData(workspace.placeData);
 
         local outData = {
-            "seed": data.seed,
-            "moistureSeed": data.moistureSeed,
-            "variationSeed": data.variation,
+            "seed": data.seed, //
+            "moistureSeed": data.moistureSeed, //
+            "variationSeed": data.variation, //
 
-            "voxelBuffer": workspace.noiseBlob,
-            "secondaryVoxBuffer": workspace.secondaryBiomeBlob,
-            "blueNoiseBuffer": workspace.blueNoise,
-            "width": data.width,
-            "height": data.height,
+            "voxelBuffer": workspace.noiseBlob, //
+            "secondaryVoxBuffer": workspace.secondaryBiomeBlob, //
+            "blueNoiseBuffer": workspace.blueNoise, //
+            "width": data.width, //
+            "height": data.height, //
             "waterData": workspace.waterData,
             "landData": workspace.landData,
             //"biomeData": workspace.biomeData,
-            "riverBuffer": workspace.riverBuffer,
-            "seaLevel": data.seaLevel,
+            "riverBuffer": workspace.riverBuffer, //
+            "seaLevel": data.seaLevel, //
             "placeData": workspace.placeData,
             "placedItems": workspace.placedItems,
             "regionData": workspace.regionData,
-            "playerStart": workspace.playerStart,
-            "gatewayPosition": workspace.gatewayPosition,
+            "playerStart": workspace.playerStart, //
+            "gatewayPosition": workspace.gatewayPosition, //
             "stats": {
                 "totalSeconds": mTimer_.getSeconds()
             }

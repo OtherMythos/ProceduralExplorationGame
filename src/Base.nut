@@ -76,6 +76,7 @@
     }
 
     function setup(){
+        checkForGameCorePlugin();
         _system.ensureUserDirectory();
 
         printVersionInfos();
@@ -374,6 +375,13 @@
             _window.setPosition(position.x.tointeger(), position.y.tointeger());
         }
         */
+    }
+
+    function checkForGameCorePlugin(){
+        if(!getroottable().rawin("_gameCore")){
+            //The gamecore namespace was not found, so assume the plugin was not loaded correctly.
+            assert(false);
+        }
     }
 
 };

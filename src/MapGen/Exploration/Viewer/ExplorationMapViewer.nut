@@ -270,7 +270,22 @@ enum MapViewerColours{
     }
     function fillBufferWithMap(textureBox){
         if(mLeanMap_){
-            fillBufferWithMapLean_(textureBox);
+
+            local nativeMapData = _gameCore.tableToExplorationMapData(mMapData_);
+            local timer = Timer();
+            timer.start();
+
+            //fillBufferWithMapLean_(textureBox);
+            _gameCore.fillBufferWithMapLean(textureBox, nativeMapData);
+
+            timer.stop();
+            local outTime = timer.getSeconds();
+            printf("Time taken minimap %f seconds", outTime);
+
+
+            //fillBufferWithMapLean_(textureBox);
+            //local nativeMapData = _gameCore.tableToExplorationMapData(mMapData_);
+            //_gameCore.fillBufferWithMapLean(textureBox, nativeMapData);
         }else{
             fillBufferWithMapComplex_(textureBox);
         }
