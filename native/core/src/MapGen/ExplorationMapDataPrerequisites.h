@@ -1,12 +1,11 @@
 #pragma once
 
 #include "System/EnginePrerequisites.h"
+#include "GamePrerequisites.h"
 
 namespace ProceduralExplorationGameCore{
 
-    typedef AV::uint32 WorldPoint;
-
-    enum MapVoxelTypes{
+    enum class MapVoxelTypes{
         SAND,
         DIRT,
         SNOW,
@@ -19,8 +18,44 @@ namespace ProceduralExplorationGameCore{
         EDGE = 0x40,
         RIVER = 0x20,
     };
+
+    enum class BiomeId{
+        NONE,
+
+        GRASS_LAND,
+        GRASS_FOREST,
+        CHERRY_BLOSSOM_FOREST,
+        EXP_FIELD,
+
+        SHALLOW_OCEAN,
+        DEEP_OCEAN,
+
+        MAX
+    };
+
+    enum class RegionType{
+        NONE,
+
+        GRASSLAND,
+        CHERRY_BLOSSOM_FOREST,
+        EXP_FIELDS,
+        GATEWAY_DOMAIN,
+        PLAYER_START,
+
+        MAX
+    };
+
     //The mask is used to include the edge and river flags.
     static const AV::uint32 MAP_VOXEL_MASK = 0x1F;
+
+    struct RegionData{
+        RegionId id;
+        AV::uint32 total;
+        AV::uint16 seedX;
+        AV::uint16 seedY;
+        RegionType type;
+        std::vector<WorldPoint> coords;
+    };
 
     struct ExplorationMapData{
         AV::uint32 width;
@@ -39,6 +74,8 @@ namespace ProceduralExplorationGameCore{
         void* secondaryVoxelBuffer;
         void* blueNoiseBuffer;
         void* riverBuffer;
+
+        std::vector<RegionData> regionData;
 
         struct BufferData{
             size_t size;

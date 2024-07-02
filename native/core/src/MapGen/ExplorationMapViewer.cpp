@@ -3,6 +3,8 @@
 #include "OgreTextureBox.h"
 
 #include "ExplorationMapDataPrerequisites.h"
+#include "GameplayState.h"
+
 #include "System/Util/Timer/Timer.h"
 
 namespace ProceduralExplorationGameCore{
@@ -73,15 +75,13 @@ namespace ProceduralExplorationGameCore{
                 }
 
                 //TODO have some way to specify the found regions so this logic can be performed.
-                /*
-                if(!mFoundRegions_.rawin(region)){
-                    textureBox.writen(colourUndiscovered, 'i');
+                if(!GameplayState::getFoundRegion(regionId)){
+                    (*texPtr++) = valueColours[MapViewerColours::UNDISCOVRED_REGION];
                     continue;
                 }
-                 */
 
                 Ogre::uint8 voxelMeta = ((vox >> 8) & 0xFF);
-                if(voxelMeta & MapVoxelTypes::RIVER){
+                if(voxelMeta & static_cast<Ogre::uint8>(MapVoxelTypes::RIVER)){
                     (*texPtr++) = valueColours[MapViewerColours::FRESH_WATER];
                 }else{
                     (*texPtr++) = valueColours[voxelMeta & MAP_VOXEL_MASK];

@@ -115,6 +115,9 @@
     }
 
     function resetSession(mapData){
+        local nativeMapData = _gameCore.tableToExplorationMapData(mapData);
+        ::currentNativeMapData <- nativeMapData;
+        _gameCore.setNewMapData(nativeMapData);
         //TODO would prefer to have the base call further up.
         createScene();
 
@@ -396,6 +399,7 @@
         }
     }
     function processFoundNewRegion(regionId){
+        _gameCore.setRegionFound(regionId, true);
         local regionData = mMapData_.regionData[regionId];
         if(mRegionEntries_.rawin(regionId)){
             //A mesh for this region is present so perform the animation.

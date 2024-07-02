@@ -2,6 +2,8 @@
 
 #include "Scripting/ScriptNamespace/ScriptUtils.h"
 #include "ExplorationMapDataUserData.h"
+#include "GameplayState.h"
+#include "GamePrerequisites.h"
 
 #include "Scripting/ScriptNamespace/Classes/Ogre/Graphics/TextureBoxUserData.h"
 
@@ -31,6 +33,73 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger _processRegionTable(HSQUIRRELVM vm, ProceduralExplorationGameCore::RegionData& region){
+        sq_pushnull(vm);
+        while(SQ_SUCCEEDED(sq_next(vm,-2))){
+            const SQChar *k;
+            sq_getstring(vm, -2, &k);
+
+            SQObjectType t = sq_gettype(vm, -1);
+            if(t == OT_INTEGER){
+                SQInteger val;
+                sq_getinteger(vm, -1, &val);
+                if(strcmp(k, "id") == 0){
+                    region.id = val;
+                }
+                else if(strcmp(k, "total") == 0){
+                    region.total = static_cast<AV::uint32>(val);
+                }
+                else if(strcmp(k, "seedX") == 0){
+                    region.seedX = static_cast<AV::uint32>(val);
+                }
+                else if(strcmp(k, "seedY") == 0){
+                    region.seedY = static_cast<AV::uint32>(val);
+                }
+                else if(strcmp(k, "type") == 0){
+                    region.type = static_cast<ProceduralExplorationGameCore::RegionType>(val);
+                }
+            }
+            else if(t == OT_ARRAY){
+                if(strcmp(k, "coords") == 0){
+                    SQInteger arraySize = sq_getsize(vm, -1);
+                    region.coords.resize(arraySize);
+                    for(SQInteger i = 0; i < arraySize; i++){
+                        sq_pushinteger(vm, i);
+                        sq_get(vm, -2);
+
+                        SQInteger worldPoint;
+                        sq_getinteger(vm, -1, &worldPoint);
+                        region.coords[i] = static_cast<ProceduralExplorationGameCore::WorldPoint>(worldPoint);
+
+                        sq_pop(vm,1);
+                    }
+
+                }
+            }
+
+            sq_pop(vm,2); //pop the key and value
+            AV::ScriptUtils::_debugStack(vm);
+        }
+        sq_pop(vm,1); //pops the null iterator
+
+        AV::ScriptUtils::_debugStack(vm);
+    }
+    SQInteger _processRegionData(HSQUIRRELVM vm, ProceduralExplorationGameCore::ExplorationMapData* data){
+        SQInteger arraySize = sq_getsize(vm, -1);
+        for(SQInteger i = 0; i < arraySize; i++){
+            sq_pushinteger(vm, i);
+            sq_get(vm, -2);
+
+            SQObjectType t = sq_gettype(vm, -1);
+            assert(t == OT_TABLE);
+
+            ProceduralExplorationGameCore::RegionData region;
+            _processRegionTable(vm, region);
+            data->regionData.push_back(region);
+
+            sq_pop(vm, 1);
+        }
+    }
     SQInteger GameCoreNamespace::tableToExplorationMapData(HSQUIRRELVM vm){
         ProceduralExplorationGameCore::ExplorationMapData* data = new ProceduralExplorationGameCore::ExplorationMapData();
 
@@ -104,6 +173,9 @@ namespace ProceduralExplorationGamePlugin{
                 sqstd_getblob(vm, -1, &buffer);
                 data->blueNoiseBuffer = static_cast<void*>(buffer);
             }
+            else if(strcmp(k, "regionData") == 0){
+                _processRegionData(vm, data);
+            }
             sq_pop(vm,2); //pop the key and value
         }
         sq_pop(vm,1); //pops the null iterator
@@ -115,11 +187,32 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger GameCoreNamespace::setRegionFound(HSQUIRRELVM vm){
+        SQInteger regionId;
+        sq_getinteger(vm, 2, &regionId);
+        SQBool found;
+        sq_getbool(vm, 3, &found);
+
+        ProceduralExplorationGameCore::RegionId region = static_cast<ProceduralExplorationGameCore::RegionId>(regionId);
+
+        ProceduralExplorationGameCore::GameplayState::setRegionFound(region, found);
+    }
+
+
+    SQInteger GameCoreNamespace::setNewMapData(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::ExplorationMapData* mapData;
+        SCRIPT_CHECK_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, -1, &mapData));
+
+        ProceduralExplorationGameCore::GameplayState::setNewMapData(mapData);
+    }
+
     void GameCoreNamespace::setupNamespace(HSQUIRRELVM vm){
         AV::ScriptUtils::addFunction(vm, getGameCoreVersion, "getGameCoreVersion");
 
         AV::ScriptUtils::addFunction(vm, fillBufferWithMapLean, "fillBufferWithMapLean", 3, ".uu");
         AV::ScriptUtils::addFunction(vm, tableToExplorationMapData, "tableToExplorationMapData", 2, ".t");
+        AV::ScriptUtils::addFunction(vm, setRegionFound, "setRegionFound", 3, ".ib");
+        AV::ScriptUtils::addFunction(vm, setNewMapData, "setNewMapData", 2, ".u");
     }
 
 };

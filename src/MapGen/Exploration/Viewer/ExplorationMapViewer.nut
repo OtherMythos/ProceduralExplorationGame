@@ -271,12 +271,11 @@ enum MapViewerColours{
     function fillBufferWithMap(textureBox){
         if(mLeanMap_){
 
-            local nativeMapData = _gameCore.tableToExplorationMapData(mMapData_);
             local timer = Timer();
             timer.start();
 
             //fillBufferWithMapLean_(textureBox);
-            _gameCore.fillBufferWithMapLean(textureBox, nativeMapData);
+            _gameCore.fillBufferWithMapLean(textureBox, ::currentNativeMapData);
 
             timer.stop();
             local outTime = timer.getSeconds();

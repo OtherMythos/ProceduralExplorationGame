@@ -1,3 +1,6 @@
+//TODO temporary
+::currentNativeMapData <- null;
+
 ::Base <- {
     mExplorationLogic = null
 
