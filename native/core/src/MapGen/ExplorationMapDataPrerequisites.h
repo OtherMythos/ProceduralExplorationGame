@@ -3,6 +3,8 @@
 #include "System/EnginePrerequisites.h"
 #include "GamePrerequisites.h"
 
+#include <vector>
+
 namespace ProceduralExplorationGameCore{
 
     enum class MapVoxelTypes{
@@ -17,6 +19,10 @@ namespace ProceduralExplorationGameCore{
 
         EDGE = 0x40,
         RIVER = 0x20,
+    };
+
+    static const AV::uint8 MapVoxelColour[] = {
+        2, 112, 0, 147, 6, 198, 199,
     };
 
     enum class BiomeId{

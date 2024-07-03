@@ -4,8 +4,10 @@
 #include "ExplorationMapDataUserData.h"
 #include "GameplayState.h"
 #include "GamePrerequisites.h"
+#include "Voxeliser/Voxeliser.h"
 
 #include "Scripting/ScriptNamespace/Classes/Ogre/Graphics/TextureBoxUserData.h"
+#include "Scripting/ScriptNamespace/Classes/Ogre/Graphics/MeshUserData.h"
 
 #include "MapGen/ExplorationMapViewer.h"
 #include "MapGen/ExplorationMapDataPrerequisites.h"
@@ -206,6 +208,32 @@ namespace ProceduralExplorationGamePlugin{
         ProceduralExplorationGameCore::GameplayState::setNewMapData(mapData);
     }
 
+    SQInteger GameCoreNamespace::createTerrainFromMapData(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::ExplorationMapData* mapData;
+        SCRIPT_CHECK_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, -1, &mapData));
+
+        ProceduralExplorationGameCore::Voxeliser vox;
+        //TOOD constant for max number of regions.
+        Ogre::MeshPtr outPtrs[0xFF];
+        AV::uint32 numRegions = 0;
+        vox.createTerrainFromMapData("terrain", mapData, &outPtrs[0], &numRegions);
+
+        sq_newarray(vm, numRegions);
+        for(int i = 0; i < numRegions; i++){
+            sq_pushinteger(vm, i);
+            if(outPtrs[i].isNull()){
+                sq_pushnull(vm);
+            }else{
+                AV::MeshUserData::MeshToUserData(vm, outPtrs[i]);
+            }
+
+            AV::ScriptUtils::_debugStack(vm);
+            sq_set(vm, -3);
+        }
+
+        return 1;
+    }
+
     void GameCoreNamespace::setupNamespace(HSQUIRRELVM vm){
         AV::ScriptUtils::addFunction(vm, getGameCoreVersion, "getGameCoreVersion");
 
@@ -213,6 +241,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, tableToExplorationMapData, "tableToExplorationMapData", 2, ".t");
         AV::ScriptUtils::addFunction(vm, setRegionFound, "setRegionFound", 3, ".ib");
         AV::ScriptUtils::addFunction(vm, setNewMapData, "setNewMapData", 2, ".u");
+        AV::ScriptUtils::addFunction(vm, createTerrainFromMapData, "createTerrainFromMapData", 3, ".su");
     }
 
 };
