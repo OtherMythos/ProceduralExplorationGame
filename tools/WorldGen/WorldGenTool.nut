@@ -10,6 +10,9 @@ function start(){
     _doFile("res://../../src/MapGen/MapViewer.nut");
     _doFile("res://../../src/MapGen/Exploration/Viewer/ExplorationMapViewer.nut");
 
+    ::GuiWidgets <- {};
+    _doFile("res://../../src/GUI/Widgets/ProgressBar.nut");
+
     _doFile("res://WorldGenToolBase.nut");
     _doFile("res://fpsCamera.nut");
 

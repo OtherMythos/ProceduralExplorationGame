@@ -11,10 +11,13 @@
 
 #include "MapGen/ExplorationMapViewer.h"
 #include "MapGen/ExplorationMapDataPrerequisites.h"
+#include "MapGen/MapGen.h"
 
 #include <sqstdblob.h>
 
 namespace ProceduralExplorationGamePlugin{
+
+    ProceduralExplorationGameCore::MapGen* GameCoreNamespace::currentMapGen = 0;
 
     SQInteger GameCoreNamespace::getGameCoreVersion(HSQUIRRELVM vm){
 
@@ -234,6 +237,47 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger GameCoreNamespace::beginMapGen(HSQUIRRELVM vm){
+        if(GameCoreNamespace::currentMapGen != 0){
+            return sq_throwerror(vm, "Map gen is already in process");
+        }
+        GameCoreNamespace::currentMapGen = new ProceduralExplorationGameCore::MapGen();
+
+        currentMapGen->beginMapGen();
+
+        return 0;
+    }
+
+    SQInteger GameCoreNamespace::getMapGenStage(HSQUIRRELVM vm){
+        if(!GameCoreNamespace::currentMapGen){
+            return sq_throwerror(vm, "Map gen is not active.");
+        }
+        sq_pushinteger(vm, GameCoreNamespace::currentMapGen->getCurrentStage());
+
+        return 1;
+    }
+
+    SQInteger GameCoreNamespace::getTotalMapGenStages(HSQUIRRELVM vm){
+        sq_pushinteger(vm, ProceduralExplorationGameCore::MapGen::getNumTotalStages());
+
+        return 1;
+    }
+
+    SQInteger GameCoreNamespace::checkClaimMapGen(HSQUIRRELVM vm){
+        if(!GameCoreNamespace::currentMapGen){
+            return sq_throwerror(vm, "Map gen is not active.");
+        }
+
+        if(currentMapGen->isFinished()){
+            //TODO for now.
+            sq_pushbool(vm, true);
+        }else{
+            sq_pushnull(vm);
+        }
+
+        return 1;
+    }
+
     void GameCoreNamespace::setupNamespace(HSQUIRRELVM vm){
         AV::ScriptUtils::addFunction(vm, getGameCoreVersion, "getGameCoreVersion");
 
@@ -242,6 +286,11 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, setRegionFound, "setRegionFound", 3, ".ib");
         AV::ScriptUtils::addFunction(vm, setNewMapData, "setNewMapData", 2, ".u");
         AV::ScriptUtils::addFunction(vm, createTerrainFromMapData, "createTerrainFromMapData", 3, ".su");
+
+        AV::ScriptUtils::addFunction(vm, beginMapGen, "beginMapGen");
+        AV::ScriptUtils::addFunction(vm, getMapGenStage, "getMapGenStage");
+        AV::ScriptUtils::addFunction(vm, checkClaimMapGen, "checkClaimMapGen");
+        AV::ScriptUtils::addFunction(vm, getTotalMapGenStages, "getTotalMapGenStages");
     }
 
 };

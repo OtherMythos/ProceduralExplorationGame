@@ -10,6 +10,7 @@
     mMoistureSeedLabel_ = null
     mMoistureSeedEditbox_ = null
     mVariationSeedEditbox_ = null
+    mGenerationPopup_ = null
 
     mMapViewer_ = null
 
@@ -28,10 +29,68 @@
     mMoistureSeed_ = 0
     mVariation_ = 0
 
+    mGenerationInProgress_ = false
+
     mWinWidth_ = 1920
     mWinHeight_ = 1080
 
+    GenerationPopup = class{
+        mBackgroundWindow_ = null;
+        mMainWindow_ = null;
+        mProgressBar_ = null;
+        constructor(){
+            local layoutLine = _gui.createLayoutLine();
+
+            local win = _gui.createWindow("GenerationPopupBackground");
+            win.setSize(_window.getWidth(), _window.getHeight());
+            win.setVisualsEnabled(true);
+            mBackgroundWindow_ = win;
+
+            win = _gui.createWindow("GenerationPopupWindow");
+            win.setSize(_window.getWidth() * 0.5, _window.getHeight() * 0.5);
+            win.setVisualsEnabled(true);
+            mMainWindow_ = win;
+
+            local mainWinSize = mMainWindow_.getSize();
+
+            local label = win.createLabel();
+            label.setDefaultFontSize(label.getDefaultFontSize() * 2.0);
+            label.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
+            label.setText("Generating", false);
+            label.sizeToFit(mainWinSize.x * 0.9);
+            layoutLine.addCell(label);
+
+            mProgressBar_ = ::GuiWidgets.ProgressBar(win);
+            mProgressBar_.setSize(mainWinSize.x * 0.9, 50);
+            mProgressBar_.setPosition(mainWinSize.x * 0.05, 150);
+            mProgressBar_.addToLayout(layoutLine);
+
+            layoutLine.setMarginForAllCells(0, 20);
+            layoutLine.setPosition(mainWinSize.x * 0.05, 0);
+            layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
+            layoutLine.setSize(mainWinSize.x * 0.9, mainWinSize.y);
+            layoutLine.layout();
+
+            local calculatedSize = mMainWindow_.calculateChildrenSize();
+            mMainWindow_.setSize(mMainWindow_.getSize().x, calculatedSize.y + 10);
+            mMainWindow_.setCentre(_window.getSize() / 2);
+
+            mProgressBar_.notifyLayout();
+        }
+
+        function shutdown(){
+            _gui.destroy(mBackgroundWindow_);
+            _gui.destroy(mMainWindow_);
+        }
+
+        function setPercentage(percentage){
+            mProgressBar_.setPercentage(percentage);
+        }
+    }
+
     function setup(){
+        checkForGameCorePlugin();
+
         setupGui();
 
         setRandomSeed();
@@ -41,6 +100,16 @@
 
     function update(){
         if(mModelFPSCamera_) mModelFPSCamera_.update();
+        if(mGenerationInProgress_){
+            local stage = _gameCore.getMapGenStage();
+            local result = _gameCore.checkClaimMapGen();
+            assert(mGenerationPopup_ != null);
+            local percentage = _gameCore.getMapGenStage().tofloat() / _gameCore.getTotalMapGenStages().tofloat();
+            mGenerationPopup_.setPercentage(percentage);
+            if(result == true){
+                setGeneratioInProgress(false);
+            }
+        }
     }
 
     function setupGui(){
@@ -317,6 +386,9 @@
         return outData;
     }
     function generate(){
+        _gameCore.beginMapGen();
+        setGeneratioInProgress(true);
+        /*
         local thread = ::newthread(generate_);
         thread.call(mSeed_, mVariation_, mMoistureSeed_);
 
@@ -328,5 +400,25 @@
         mCurrentMapData_ = finishedData;
         mMapViewer_.displayMapData(mCurrentMapData_);
         updateTimeData(mCurrentMapData_);
+        */
+    }
+
+    function checkForGameCorePlugin(){
+        if(!getroottable().rawin("_gameCore")){
+            //The gamecore namespace was not found, so assume the plugin was not loaded correctly.
+            assert(false);
+        }
+    }
+
+    function setGeneratioInProgress(gen){
+        mGenerationInProgress_ = gen;
+
+        if(gen){
+            assert(mGenerationPopup_ == null);
+            mGenerationPopup_ = GenerationPopup();
+        }else{
+            assert(mGenerationPopup_ != null);
+            mGenerationPopup_.shutdown();
+        }
     }
 };
