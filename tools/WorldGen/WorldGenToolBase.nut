@@ -46,6 +46,8 @@
     function setupGui(){
         mMapViewer_ = ::ExplorationMapViewer();
 
+        mWinWidth_ = _window.getWidth();
+        mWinHeight_ = _window.getHeight();
         local winWidth = 0.4;
 
         mControlsWindow_ = _gui.createWindow();
