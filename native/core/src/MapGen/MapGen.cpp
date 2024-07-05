@@ -8,13 +8,14 @@
 #include "MapGen/Steps/MapGenStep.h"
 #include "MapGen/Steps/SetupBuffersMapGenStep.h"
 #include "MapGen/Steps/GenerateNoiseMapGenStep.h"
+#include "MapGen/Steps/ReduceNoiseMapGenStep.h"
 
 namespace ProceduralExplorationGameCore{
 
     static const std::vector<std::pair<std::string, MapGenStep*>> MAP_GEN_STEPS = {
         {"Setup Buffers", new SetupBuffersMapGenStep()},
         {"Generate Noise", new GenerateNoiseMapGenStep()},
-        //{"Reduce Noise", new MapGenStep()},
+        {"Reduce Noise", new ReduceNoiseMapGenStep()},
         //{"Altitiude", new MapGenStep()},
     };
 
