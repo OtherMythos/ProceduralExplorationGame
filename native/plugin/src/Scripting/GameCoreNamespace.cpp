@@ -83,11 +83,8 @@ namespace ProceduralExplorationGamePlugin{
             }
 
             sq_pop(vm,2); //pop the key and value
-            AV::ScriptUtils::_debugStack(vm);
         }
         sq_pop(vm,1); //pops the null iterator
-
-        AV::ScriptUtils::_debugStack(vm);
     }
     SQInteger _processRegionData(HSQUIRRELVM vm, ProceduralExplorationGameCore::ExplorationMapData* data){
         SQInteger arraySize = sq_getsize(vm, -1);
@@ -215,8 +212,6 @@ namespace ProceduralExplorationGamePlugin{
             }else{
                 AV::MeshUserData::MeshToUserData(vm, outPtrs[i]);
             }
-
-            AV::ScriptUtils::_debugStack(vm);
         }
 
         return 1;

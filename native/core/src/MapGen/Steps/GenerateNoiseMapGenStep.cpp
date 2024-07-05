@@ -4,6 +4,7 @@
 
 #include "System/Util/Random/PatternHelper.h"
 #include "System/Util/Random/PerlinNoise.h"
+#include "PerlinNoise.h"
 
 namespace ProceduralExplorationGameCore{
 
@@ -39,25 +40,39 @@ namespace ProceduralExplorationGameCore{
     }
 
     void GenerateNoiseMapGenJob::processJob(ExplorationMapData* mapData, AV::uint32 xa, AV::uint32 ya, AV::uint32 xb, AV::uint32 yb){
-        float* voxPtr = static_cast<float*>(mapData->voxelBuffer);
-        for(AV::uint32 y = ya; y < yb; y++){
-            for(AV::uint32 x = xa; x < xb; x++){
-                *(voxPtr + (x+y*mapData->width)) = AV::Perlin::perlin2d(x, y, 0.02, 4);
+
+        {
+            PerlinNoise noiseGen(mapData->seed);
+
+            float* voxPtr = static_cast<float*>(mapData->voxelBuffer);
+            for(AV::uint32 y = ya; y < yb; y++){
+                for(AV::uint32 x = xa; x < xb; x++){
+                    *(voxPtr + (x+y*mapData->width)) = noiseGen.perlin2d(x, y, 0.02, 4);
+                }
             }
         }
 
-        float* secondaryPtr = static_cast<float*>(mapData->secondaryVoxelBuffer);
-        for(AV::uint32 y = ya; y < yb; y++){
-            for(AV::uint32 x = xa; x < xb; x++){
-                *(secondaryPtr + (x+y*mapData->width)) = AV::Perlin::perlin2d(x, y, 0.05, 4);
+        {
+            PerlinNoise noiseGen(mapData->moistureSeed);
+
+            float* secondaryPtr = static_cast<float*>(mapData->secondaryVoxelBuffer);
+            for(AV::uint32 y = ya; y < yb; y++){
+                for(AV::uint32 x = xa; x < xb; x++){
+                    *(secondaryPtr + (x+y*mapData->width)) = noiseGen.perlin2d(x, y, 0.05, 4);
+                }
             }
         }
 
-        float* blueNoisePtr = static_cast<float*>(mapData->blueNoiseBuffer);
-        for(AV::uint32 y = ya; y < yb; y++){
-            for(AV::uint32 x = xa; x < xb; x++){
-                *(blueNoisePtr + (x+y*mapData->width)) = AV::Perlin::perlin2d(x, y, 0.5, 1);
+        {
+            PerlinNoise noiseGen(mapData->variationSeed);
+
+            float* blueNoisePtr = static_cast<float*>(mapData->blueNoiseBuffer);
+            for(AV::uint32 y = ya; y < yb; y++){
+                for(AV::uint32 x = xa; x < xb; x++){
+                    *(blueNoisePtr + (x+y*mapData->width)) = noiseGen.perlin2d(x, y, 0.5, 1);
+                }
             }
         }
+
     }
 }

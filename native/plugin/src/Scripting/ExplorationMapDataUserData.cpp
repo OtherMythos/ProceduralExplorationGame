@@ -83,8 +83,6 @@ namespace ProceduralExplorationGamePlugin{
         pushBuffer(vm, "secondaryVoxBuffer", mapData->secondaryVoxelBuffer, mapData->secondaryVoxelBufferSize);
         pushBuffer(vm, "blueNoiseBuffer", mapData->blueNoiseBuffer, mapData->blueNoiseBufferSize);
 
-        AV::ScriptUtils::_debugStack(vm);
-
         return 1;
     }
 
