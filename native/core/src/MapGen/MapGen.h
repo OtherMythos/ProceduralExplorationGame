@@ -5,6 +5,9 @@
 
 namespace ProceduralExplorationGameCore{
 
+    struct ExplorationMapData;
+    struct ExplorationMapInputData;
+
     class MapGen{
     public:
         MapGen();
@@ -12,14 +15,18 @@ namespace ProceduralExplorationGameCore{
 
         int getCurrentStage() const;
         bool isFinished() const;
-        void beginMapGen();
+        void beginMapGen(const ExplorationMapInputData* input);
         static int getNumTotalStages();
+
+        ExplorationMapData* claimMapData();
 
     private:
         std::atomic<int> mCurrentStage;
         std::thread* parentThread;
 
-        void beginMapGen_();
+        ExplorationMapData* mMapData;
+
+        void beginMapGen_(const ExplorationMapInputData* input);
     };
 
 };

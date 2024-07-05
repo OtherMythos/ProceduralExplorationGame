@@ -59,8 +59,8 @@ enum MapViewerColours{
 
     constructor(currentFoundRegions=null){
         mDrawOptions_ = array(DrawOptions.MAX, false);
-        mDrawOptions_[DrawOptions.WATER] = true;
-        mDrawOptions_[DrawOptions.GROUND_TYPE] = true;
+        mDrawOptions_[DrawOptions.WATER] = false;
+        mDrawOptions_[DrawOptions.GROUND_TYPE] = false;
         mDrawOptions_[DrawOptions.VISIBLE_PLACES_MASK] = false;
         mDrawLocationOptions_ = array(PlaceType.MAX, true);
         mDrawLocationOptions_[PlaceType.CITY] = true;

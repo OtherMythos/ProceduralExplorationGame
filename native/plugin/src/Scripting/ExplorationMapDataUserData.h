@@ -21,7 +21,7 @@ namespace ProceduralExplorationGamePlugin{
     private:
         static SQObject ExplorationMapDataDelegateTableObject;
 
-        static SQInteger setNamedConstant(HSQUIRRELVM vm);
+        static SQInteger explorationMapDataToTable(HSQUIRRELVM vm);
 
         static SQInteger ExplorationMapDataObjectReleaseHook(SQUserPointer p, SQInteger size);
     };

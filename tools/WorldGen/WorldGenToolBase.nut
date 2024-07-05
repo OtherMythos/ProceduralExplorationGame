@@ -103,11 +103,18 @@
         if(mGenerationInProgress_){
             local stage = _gameCore.getMapGenStage();
             local result = _gameCore.checkClaimMapGen();
-            assert(mGenerationPopup_ != null);
-            local percentage = _gameCore.getMapGenStage().tofloat() / _gameCore.getTotalMapGenStages().tofloat();
-            mGenerationPopup_.setPercentage(percentage);
-            if(result == true){
-                setGeneratioInProgress(false);
+            if(result != null){
+                setGenerationInProgress(false);
+
+                mCurrentMapData_ = result.explorationMapDataToTable();
+                print(mCurrentMapData_);
+                print(mCurrentMapData_.width);
+                mMapViewer_.displayMapData(mCurrentMapData_);
+                updateTimeData(mCurrentMapData_);
+            }else{
+                assert(mGenerationPopup_ != null);
+                local percentage = _gameCore.getMapGenStage().tofloat() / _gameCore.getTotalMapGenStages().tofloat();
+                mGenerationPopup_.setPercentage(percentage);
             }
         }
     }
@@ -365,7 +372,7 @@
     }
 
     function updateTimeData(mapData){
-        mTimerLabel_.setText(format("total seconds: %.5f", mapData.stats.totalSeconds));
+        //mTimerLabel_.setText(format("total seconds: %.5f", mapData.stats.totalSeconds));
     }
 
     function generate_(seed, variation, moisture){
@@ -387,7 +394,7 @@
     }
     function generate(){
         _gameCore.beginMapGen();
-        setGeneratioInProgress(true);
+        setGenerationInProgress(true);
         /*
         local thread = ::newthread(generate_);
         thread.call(mSeed_, mVariation_, mMoistureSeed_);
@@ -410,7 +417,7 @@
         }
     }
 
-    function setGeneratioInProgress(gen){
+    function setGenerationInProgress(gen){
         mGenerationInProgress_ = gen;
 
         if(gen){
@@ -419,6 +426,7 @@
         }else{
             assert(mGenerationPopup_ != null);
             mGenerationPopup_.shutdown();
+            mGenerationPopup_ = null;
         }
     }
 };

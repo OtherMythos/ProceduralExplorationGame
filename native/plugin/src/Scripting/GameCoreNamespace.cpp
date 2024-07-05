@@ -141,21 +141,6 @@ namespace ProceduralExplorationGamePlugin{
         }
         sq_pop(vm,1); //pops the null iterator
 
-        /*
-        ProceduralExplorationGameCore::ExplorationMapData::BufferData bufData;
-        data->calculateBuffer(&bufData);
-        void* bufferData = malloc(bufData.size);
-        memset(bufferData, 0x0, bufData.size);
-         */
-
-        /*
-        data->voxelBuffer = bufferData;
-        data->secondaryVoxelBuffer = static_cast<AV::uint32*>(bufferData) + bufData.secondaryVoxel;
-        data->blueNoiseBuffer = static_cast<AV::uint32*>(bufferData) + bufData.blueNoise;
-         */
-
-
-
         sq_pushnull(vm);
         while(SQ_SUCCEEDED(sq_next(vm,-2))){
             //here -1 is the value and -2 is the key
@@ -191,6 +176,7 @@ namespace ProceduralExplorationGamePlugin{
 
         return 1;
     }
+
 
     SQInteger GameCoreNamespace::setRegionFound(HSQUIRRELVM vm){
         SQInteger regionId;
@@ -231,7 +217,6 @@ namespace ProceduralExplorationGamePlugin{
             }
 
             AV::ScriptUtils::_debugStack(vm);
-            sq_set(vm, -3);
         }
 
         return 1;
@@ -239,11 +224,21 @@ namespace ProceduralExplorationGamePlugin{
 
     SQInteger GameCoreNamespace::beginMapGen(HSQUIRRELVM vm){
         if(GameCoreNamespace::currentMapGen != 0){
-            return sq_throwerror(vm, "Map gen is already in process");
+            return sq_throwerror(vm, "Map gen is already in progress");
         }
         GameCoreNamespace::currentMapGen = new ProceduralExplorationGameCore::MapGen();
 
-        currentMapGen->beginMapGen();
+        ProceduralExplorationGameCore::ExplorationMapInputData* inputData = new ProceduralExplorationGameCore::ExplorationMapInputData();
+        inputData->seed = 100;
+        inputData->variationSeed = 200;
+        inputData->moistureSeed = 300;
+        inputData->width = 400;
+        inputData->height = 400;
+        inputData->seaLevel = 100;
+        inputData->numRivers = 24;
+        inputData->numRegions = 16;
+        //inputData->placeFrequency = {0, 1, 1, 4, 4, 30};
+        currentMapGen->beginMapGen(inputData);
 
         return 0;
     }
@@ -269,8 +264,10 @@ namespace ProceduralExplorationGamePlugin{
         }
 
         if(currentMapGen->isFinished()){
-            //TODO for now.
-            sq_pushbool(vm, true);
+            ProceduralExplorationGameCore::ExplorationMapData* mapData = GameCoreNamespace::currentMapGen->claimMapData();
+            ExplorationMapDataUserData::ExplorationMapDataToUserData(vm, mapData);
+            delete GameCoreNamespace::currentMapGen;
+            GameCoreNamespace::currentMapGen = 0;
         }else{
             sq_pushnull(vm);
         }

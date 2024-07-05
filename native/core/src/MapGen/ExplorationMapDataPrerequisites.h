@@ -63,6 +63,22 @@ namespace ProceduralExplorationGameCore{
         std::vector<WorldPoint> coords;
     };
 
+    struct ExplorationMapInputData{
+        AV::uint32 width;
+        AV::uint32 height;
+
+        AV::uint32 seed;
+        AV::uint32 moistureSeed;
+        AV::uint32 variationSeed;
+
+        AV::uint32 numRivers;
+        AV::uint32 numRegions;
+        AV::uint8 seaLevel;
+
+        //TODO properly define how many place types are available.
+        AV::uint32 placeFrequency[10];
+    };
+
     struct ExplorationMapData{
         AV::uint32 width;
         AV::uint32 height;
@@ -79,6 +95,9 @@ namespace ProceduralExplorationGameCore{
         void* voxelBuffer;
         void* secondaryVoxelBuffer;
         void* blueNoiseBuffer;
+        size_t voxelBufferSize;
+        size_t secondaryVoxelBufferSize;
+        size_t blueNoiseBufferSize;
         void* riverBuffer;
 
         std::vector<RegionData> regionData;
@@ -98,10 +117,6 @@ namespace ProceduralExplorationGameCore{
             buf->size += voxTotal * sizeof(AV::uint32);
             buf->blueNoise = buf->size;
         }
-
-        //~ExplorationMapData(){
-            //free(voxelBuffer);
-        //}
     };
 
 }
