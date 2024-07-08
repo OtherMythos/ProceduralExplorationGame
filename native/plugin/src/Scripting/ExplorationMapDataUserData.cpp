@@ -3,6 +3,7 @@
 #include "ProceduralExplorationGameCorePluginScriptTypeTags.h"
 
 #include <sqstdblob.h>
+#include <vector>
 
 #include "MapGen/ExplorationMapDataPrerequisites.h"
 
@@ -43,12 +44,61 @@ namespace ProceduralExplorationGamePlugin{
     inline void pushInteger(HSQUIRRELVM vm, const char* key, SQInteger value){
         sq_pushstring(vm, key, -1);
         sq_pushinteger(vm, value);
-        sq_rawset(vm, 2);
+        sq_rawset(vm, -3);
     }
-    inline void pushArray(HSQUIRRELVM vm, const char* key){
+    inline void pushBool(HSQUIRRELVM vm, const char* key, SQInteger value){
+        sq_pushstring(vm, key, -1);
+        sq_pushinteger(vm, value);
+        sq_rawset(vm, -3);
+    }
+    inline void pushEmptyArray(HSQUIRRELVM vm, const char* key){
         sq_pushstring(vm, key, -1);
         sq_newarray(vm, 0);
-        sq_rawset(vm, 2);
+        sq_rawset(vm, -3);
+    }
+    template<typename T>
+    inline void pushArray(HSQUIRRELVM vm, const char* key, const std::vector<T>& vec){
+        sq_pushstring(vm, key, -1);
+        sq_newarray(vm, vec.size());
+        for(size_t i = 0; i < vec.size(); i++){
+            sq_pushinteger(vm, i);
+            sq_pushinteger(vm, vec[i]);
+            sq_rawset(vm, -3);
+        }
+        sq_rawset(vm, -3);
+    }
+    inline void pushFloodData(HSQUIRRELVM vm, const char* key, std::vector<ProceduralExplorationGameCore::FloodFillEntry*>& waterData){
+        sq_pushstring(vm, key, -1);
+        sq_newarray(vm, waterData.size());
+        for(size_t i = 0; i < waterData.size(); i++){
+            sq_pushinteger(vm, i);
+
+            const ProceduralExplorationGameCore::FloodFillEntry& e = *waterData[i];
+            sq_newtable(vm);
+
+            pushInteger(vm, "id", e.id);
+            pushInteger(vm, "total", e.total);
+            pushInteger(vm, "seedX", e.seedX);
+            pushInteger(vm, "seedY", e.seedY);
+            pushBool(vm, "nextToWorldEdge", e.nextToWorldEdge);
+            pushArray<ProceduralExplorationGameCore::WorldPoint>(vm, "coords", e.coords);
+            pushArray<ProceduralExplorationGameCore::WorldPoint>(vm, "edges", e.edges);
+
+/*
+            "id": currentIdx,
+            "total": 0,
+            "seedX": x,
+            "seedY": y,
+            "startingVal": checkingVal,
+            "nextToWorldEdge": false,
+            "edges": [],
+            "coords": []
+*/
+
+
+            sq_rawset(vm, -3);
+        }
+        sq_rawset(vm, -3);
     }
     inline void pushBuffer(HSQUIRRELVM vm, const char* key, void* buf, size_t size){
         sq_pushstring(vm, key, -1);
@@ -73,11 +123,12 @@ namespace ProceduralExplorationGamePlugin{
         pushInteger(vm, "playerStart", mapData->playerStart);
         pushInteger(vm, "gatewayPosition", mapData->gatewayPosition);
 
-        pushArray(vm, "waterData");
-        pushArray(vm, "landData");
-        pushArray(vm, "placeData");
-        pushArray(vm, "regionData");
-        pushArray(vm, "placedItems");
+        //pushEmptyArray(vm, "waterData");
+        pushFloodData(vm, "waterData", mapData->waterData);
+        pushFloodData(vm, "landData", mapData->landData);
+        pushEmptyArray(vm, "placeData");
+        pushEmptyArray(vm, "regionData");
+        pushEmptyArray(vm, "placedItems");
 
         pushBuffer(vm, "voxelBuffer", mapData->voxelBuffer, mapData->voxelBufferSize);
         pushBuffer(vm, "secondaryVoxBuffer", mapData->secondaryVoxelBuffer, mapData->secondaryVoxelBufferSize);

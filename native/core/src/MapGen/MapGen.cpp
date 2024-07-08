@@ -9,6 +9,9 @@
 #include "MapGen/Steps/SetupBuffersMapGenStep.h"
 #include "MapGen/Steps/GenerateNoiseMapGenStep.h"
 #include "MapGen/Steps/ReduceNoiseMapGenStep.h"
+#include "MapGen/Steps/PerformFloodFillMapGenStep.h"
+
+#include "System/Util/Timer/Timer.h"
 
 namespace ProceduralExplorationGameCore{
 
@@ -16,7 +19,7 @@ namespace ProceduralExplorationGameCore{
         {"Setup Buffers", new SetupBuffersMapGenStep()},
         {"Generate Noise", new GenerateNoiseMapGenStep()},
         {"Reduce Noise", new ReduceNoiseMapGenStep()},
-        //{"Altitiude", new MapGenStep()},
+        {"Perform Flood Fill", new PerformFloodFillMapGenStep()},
     };
 
     MapGen::MapGen(){
@@ -34,12 +37,18 @@ namespace ProceduralExplorationGameCore{
     void MapGen::beginMapGen(const ExplorationMapInputData* input){
         assert(!mMapData);
         mMapData = new ExplorationMapData();
-        std::thread* parentThread = new std::thread(&MapGen::beginMapGen_, this, input);
+        //std::thread* parentThread = new std::thread(&MapGen::beginMapGen_, this, input);
+        beginMapGen_(input);
     }
 
     void MapGen::beginMapGen_(const ExplorationMapInputData* input){
         for(int i = 0; i < MAP_GEN_STEPS.size(); i++){
+            AV::Timer t;
+            t.start();
             MAP_GEN_STEPS[i].second->processStep(input, mMapData);
+            t.stop();
+            //TODO have a plugin print function.
+            std::cout << "Time taken for stage '" << MAP_GEN_STEPS[i].first.c_str() << "' was " << t.getTimeTotal() << std::endl;
             mCurrentStage++;
         }
     }

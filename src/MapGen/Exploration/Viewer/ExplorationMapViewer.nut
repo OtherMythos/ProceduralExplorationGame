@@ -344,8 +344,12 @@ enum MapViewerColours{
         }
         if(mDrawOptions_[DrawOptions.LAND_GROUPS]){
             local landGroup = (voxVal >> 24) & 0xFF;
-            local valGroup = landGroup.tofloat() / mMapData_.landData.len();
-            drawVal = ColourValue(valGroup, valGroup, valGroup, mOpacity_).getAsABGR();
+            if(landGroup == 0xFF){
+                drawVal = mColours_[MapViewerColours.COLOUR_BLACK];
+            }else{
+                local valGroup = landGroup.tofloat() / mMapData_.landData.len();
+                drawVal = ColourValue(valGroup, valGroup, valGroup, mOpacity_).getAsABGR();
+            }
         }
         if(mDrawOptions_[DrawOptions.EDGE_VALS]){
             local edgeVox = (voxVal >> 8) & 0x80;

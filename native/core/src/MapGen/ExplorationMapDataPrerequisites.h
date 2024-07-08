@@ -63,6 +63,17 @@ namespace ProceduralExplorationGameCore{
         std::vector<WorldPoint> coords;
     };
 
+    struct FloodFillEntry{
+        AV::uint32 id;
+        AV::uint32 total;
+        AV::uint32 seedX;
+        AV::uint32 seedY;
+        //AV::uint32 startingVal; //TODO figure out
+        bool nextToWorldEdge = false;
+        std::vector<WorldPoint> edges;
+        std::vector<WorldPoint> coords;
+    };
+
     struct ExplorationMapInputData{
         AV::uint32 width;
         AV::uint32 height;
@@ -101,6 +112,8 @@ namespace ProceduralExplorationGameCore{
         void* riverBuffer;
 
         std::vector<RegionData> regionData;
+        std::vector<FloodFillEntry*> waterData;
+        std::vector<FloodFillEntry*> landData;
 
         struct BufferData{
             size_t size;
@@ -118,5 +131,9 @@ namespace ProceduralExplorationGameCore{
             buf->blueNoise = buf->size;
         }
     };
+
+    static WorldPoint WRAP_WORLD_POS(AV::uint32 x, AV::uint32 y){
+        return ((x & 0xFFFF) << 16) | (y & 0xFFFF);
+    }
 
 }
