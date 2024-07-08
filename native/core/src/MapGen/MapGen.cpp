@@ -37,8 +37,7 @@ namespace ProceduralExplorationGameCore{
     void MapGen::beginMapGen(const ExplorationMapInputData* input){
         assert(!mMapData);
         mMapData = new ExplorationMapData();
-        //std::thread* parentThread = new std::thread(&MapGen::beginMapGen_, this, input);
-        beginMapGen_(input);
+        std::thread* parentThread = new std::thread(&MapGen::beginMapGen_, this, input);
     }
 
     void MapGen::beginMapGen_(const ExplorationMapInputData* input){

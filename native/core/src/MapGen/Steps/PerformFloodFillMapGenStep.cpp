@@ -2,6 +2,7 @@
 
 #include "MapGen/ExplorationMapDataPrerequisites.h"
 
+#include <stack>
 #include <cassert>
 #include <iostream>
 
@@ -41,7 +42,7 @@ namespace ProceduralExplorationGameCore{
         return val < mapData->seaLevel;
     }
     template<typename T, typename C>
-    AV::uint8 floodFill_(int x, int y, AV::uint32 width, AV::uint32 height, T comparisonFunction, C readFunction, std::vector<RegionId>* vals, ExplorationMapData* mapData, AV::uint32 currentIdx, FloodFillEntry* floodData){
+    AV::uint8 floodFill_(std::stack<WorldPoint>& points, int x, int y, AV::uint32 width, AV::uint32 height, T comparisonFunction, C readFunction, std::vector<RegionId>* vals, ExplorationMapData* mapData, AV::uint32 currentIdx, FloodFillEntry* floodData){
         if(x < 0 || y < 0 || x >= width || y >= height) return 0;
         size_t idx = x+y*width;
         assert(idx < vals->size());
@@ -60,17 +61,20 @@ namespace ProceduralExplorationGameCore{
 
         (*vals)[idx] = currentIdx;
         floodData->total++;
-        WorldPoint wrappedPos = WRAP_WORLD_POS(x, y);
+        WorldPoint wrappedPos = WRAP_WORLD_POINT(x, y);
         floodData->coords.push_back(wrappedPos);
         AV::uint8 isEdge = 0;
-        isEdge = isEdge | floodFill_<T, C>(x-1, y, width, height, comparisonFunction, readFunction, vals, mapData, currentIdx, floodData);
-        isEdge = isEdge | floodFill_<T, C>(x+1, y, width, height, comparisonFunction, readFunction, vals, mapData, currentIdx, floodData);
-        isEdge = isEdge | floodFill_<T, C>(x, y-1, width, height, comparisonFunction, readFunction, vals, mapData, currentIdx, floodData);
-        isEdge = isEdge | floodFill_<T, C>(x, y+1, width, height, comparisonFunction, readFunction, vals, mapData, currentIdx, floodData);
+        points.push(WRAP_WORLD_POINT(x-1, y));
+        points.push(WRAP_WORLD_POINT(x+1, y));
+        points.push(WRAP_WORLD_POINT(x, y-1));
+        points.push(WRAP_WORLD_POINT(x, y+1));
 
+        //TODO Properly add the edge logic.
+        /*
         if(isEdge){
             floodData->edges.push_back(wrappedPos);
         }
+         */
 
         return 0;
     }
@@ -87,15 +91,25 @@ namespace ProceduralExplorationGameCore{
 
                 if(comparisonFunction(mapData, altitude)){
                     if(vals[x+y*mapData->width] == 0xFF){
+                        std::stack<WorldPoint> points;
+                        points.push(WRAP_WORLD_POINT(x, y));
                         //TODO prevent pointers.
                         FloodFillEntry* floodData = new FloodFillEntry();
                         floodData->id = currentIdx;
                         floodData->seedX = x;
                         floodData->seedY = y;
                         floodData->nextToWorldEdge = false;
+
+                        while(!points.empty()){
+                            AV::uint32 xx, yy;
+                            WorldPoint p = points.top();
+                            points.pop();
+                            READ_WORLD_POINT(p, xx, yy);
+                            floodFill_<bool(ExplorationMapData*, AV::uint8),AV::uint8(ExplorationMapData*, AV::uint32, AV::uint32)>
+                                (points, xx, yy, mapData->width, mapData->height, comparisonFunction, readFunction, &vals, mapData, currentIdx, floodData);
+                        }
+
                         //Designate this as a newly found region.
-                        floodFill_<bool(ExplorationMapData*, AV::uint8),AV::uint8(ExplorationMapData*, AV::uint32, AV::uint32)>
-                            (x, y, mapData->width, mapData->height, comparisonFunction, readFunction, &vals, mapData, currentIdx, floodData);
                         outData.push_back(floodData);
                         currentIdx++;
                     }

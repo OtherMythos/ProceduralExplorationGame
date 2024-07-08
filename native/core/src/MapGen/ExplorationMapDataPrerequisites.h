@@ -132,8 +132,13 @@ namespace ProceduralExplorationGameCore{
         }
     };
 
-    static WorldPoint WRAP_WORLD_POS(AV::uint32 x, AV::uint32 y){
+    static inline WorldPoint WRAP_WORLD_POINT(AV::uint32 x, AV::uint32 y){
         return ((x & 0xFFFF) << 16) | (y & 0xFFFF);
+    }
+
+    static inline void READ_WORLD_POINT(WorldPoint point, AV::uint32& xx, AV::uint32& yy){
+        xx = (point >> 16) & 0xFFFF;
+        yy = point & 0xFFFF;
     }
 
 }
