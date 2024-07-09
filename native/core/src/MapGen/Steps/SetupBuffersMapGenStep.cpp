@@ -38,8 +38,6 @@ namespace ProceduralExplorationGameCore{
         mapData->voxelBufferSize = VOX_BUF_SIZE;
         mapData->secondaryVoxelBufferSize = SECONDARY_VOX_BUF_SIZE;
         mapData->blueNoiseBufferSize = BLUE_NOISE_BUF_SIZE;
-
-        memset(startPtr, 0x0, BUF_SIZE);
     }
 
 }

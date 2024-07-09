@@ -10,6 +10,7 @@
 #include "MapGen/Steps/GenerateNoiseMapGenStep.h"
 #include "MapGen/Steps/ReduceNoiseMapGenStep.h"
 #include "MapGen/Steps/PerformFloodFillMapGenStep.h"
+#include "MapGen/Steps/RemoveRedundantIslandsMapGenStep.h"
 
 #include "System/Util/Timer/Timer.h"
 
@@ -20,6 +21,7 @@ namespace ProceduralExplorationGameCore{
         {"Generate Noise", new GenerateNoiseMapGenStep()},
         {"Reduce Noise", new ReduceNoiseMapGenStep()},
         {"Perform Flood Fill", new PerformFloodFillMapGenStep()},
+        {"Remove Redundant Islands", new RemoveRedundantIslandsMapGenStep()},
     };
 
     MapGen::MapGen(){

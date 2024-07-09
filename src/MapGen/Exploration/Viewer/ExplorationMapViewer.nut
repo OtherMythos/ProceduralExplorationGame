@@ -319,8 +319,12 @@ enum MapViewerColours{
             }
         }
         if(mDrawOptions_[DrawOptions.WATER_GROUPS]){
-            local valGroup = waterGroup.tofloat() / mMapData_.waterData.len();
-            drawVal = ColourValue(valGroup, valGroup, valGroup, mOpacity_).getAsABGR();
+            if(waterGroup == 0xFF){
+                drawVal = mColours_[MapViewerColours.COLOUR_BLACK];
+            }else{
+                local valGroup = waterGroup.tofloat() / mMapData_.waterData.len();
+                drawVal = ColourValue(valGroup, valGroup, valGroup, mOpacity_).getAsABGR();
+            }
         }
         if(mDrawOptions_[DrawOptions.MOISTURE_MAP]){
             mMapData_.secondaryVoxBuffer.seek((xVox + yVox * mMapData_.width) * 4);

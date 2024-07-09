@@ -141,4 +141,38 @@ namespace ProceduralExplorationGameCore{
         yy = point & 0xFFFF;
     }
 
+    static inline AV::uint32* FULL_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
+        AV::uint32 xx;
+        AV::uint32 yy;
+        READ_WORLD_POINT(p, xx, yy);
+        return (reinterpret_cast<AV::uint32*>(mapData->voxelBuffer) + xx + yy * mapData->height);
+    }
+    static inline AV::uint8* VOX_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
+        return reinterpret_cast<AV::uint8*>(FULL_PTR_FOR_COORD(mapData, p));
+    }
+    static inline AV::uint8* WATER_GROUP_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
+        return reinterpret_cast<AV::uint8*>(FULL_PTR_FOR_COORD(mapData, p)) + 2;
+    }
+    static inline AV::uint8* LAND_GROUP_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
+        return reinterpret_cast<AV::uint8*>(FULL_PTR_FOR_COORD(mapData, p)) + 3;
+    }
+
+
+    static inline const AV::uint32* FULL_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
+        AV::uint32 xx;
+        AV::uint32 yy;
+        READ_WORLD_POINT(p, xx, yy);
+        return reinterpret_cast<const AV::uint32*>(mapData->voxelBuffer) + xx + yy * mapData->height;
+    }
+    static inline const AV::uint8* VOX_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
+        return reinterpret_cast<const AV::uint8*>(FULL_PTR_FOR_COORD_CONST(mapData, p));
+    }
+    static inline const AV::uint8* WATER_GROUP_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
+        return reinterpret_cast<const AV::uint8*>(FULL_PTR_FOR_COORD_CONST(mapData, p)) + 2;
+    }
+    static inline const AV::uint8* LAND_GROUP_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
+        return reinterpret_cast<const AV::uint8*>(FULL_PTR_FOR_COORD_CONST(mapData, p)) + 3;
+    }
+
+
 }

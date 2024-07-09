@@ -84,18 +84,6 @@ namespace ProceduralExplorationGamePlugin{
             pushArray<ProceduralExplorationGameCore::WorldPoint>(vm, "coords", e.coords);
             pushArray<ProceduralExplorationGameCore::WorldPoint>(vm, "edges", e.edges);
 
-/*
-            "id": currentIdx,
-            "total": 0,
-            "seedX": x,
-            "seedY": y,
-            "startingVal": checkingVal,
-            "nextToWorldEdge": false,
-            "edges": [],
-            "coords": []
-*/
-
-
             sq_rawset(vm, -3);
         }
         sq_rawset(vm, -3);
