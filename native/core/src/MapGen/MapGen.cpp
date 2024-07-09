@@ -12,6 +12,7 @@
 #include "MapGen/Steps/PerformFloodFillMapGenStep.h"
 #include "MapGen/Steps/RemoveRedundantIslandsMapGenStep.h"
 #include "MapGen/Steps/WeightAndSortLandmassesMapGenStep.h"
+#include "MapGen/Steps/DeterminePlayerStartMapGenStep.h"
 
 #include "System/Util/Timer/Timer.h"
 
@@ -24,6 +25,7 @@ namespace ProceduralExplorationGameCore{
         {"Perform Flood Fill", new PerformFloodFillMapGenStep()},
         {"Remove Redundant Islands", new RemoveRedundantIslandsMapGenStep()},
         {"Weight And Sort Landmasses", new WeightAndSortLandmassesMapGenStep()},
+        {"Determine Player Start", new DeterminePlayerStartMapGenStep()},
     };
 
     MapGen::MapGen(){

@@ -145,6 +145,13 @@ namespace ProceduralExplorationGameCore{
         yy = point & 0xFFFF;
     }
 
+    static inline WorldPoint findRandomPointInLandmass(const FloodFillEntry* e){
+        //NOTE Build this in with proper isolated random functions in future to prevent differentiators on the seeds.
+        size_t idx = 0 + (rand() % static_cast<int>(e->coords.size() - 0 + 1));
+
+        return e->coords[idx];
+    }
+
     static inline AV::uint32* FULL_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
         AV::uint32 xx;
         AV::uint32 yy;
