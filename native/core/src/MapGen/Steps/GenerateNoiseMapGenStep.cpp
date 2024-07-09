@@ -16,7 +16,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void GenerateNoiseMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData){
+    void GenerateNoiseMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         //TODO look into separating these into individual jobs.
         //AV::PatternHelper::GenPerlinNoise(mapData->width, mapData->height, static_cast<float*>(mapData->voxelBuffer), 0.02, 4);
 
@@ -40,7 +40,6 @@ namespace ProceduralExplorationGameCore{
     }
 
     void GenerateNoiseMapGenJob::processJob(ExplorationMapData* mapData, AV::uint32 xa, AV::uint32 ya, AV::uint32 xb, AV::uint32 yb){
-        //return;
 
         {
             PerlinNoise noiseGen(mapData->seed);

@@ -11,6 +11,7 @@
 #include "MapGen/Steps/ReduceNoiseMapGenStep.h"
 #include "MapGen/Steps/PerformFloodFillMapGenStep.h"
 #include "MapGen/Steps/RemoveRedundantIslandsMapGenStep.h"
+#include "MapGen/Steps/WeightAndSortLandmassesMapGenStep.h"
 
 #include "System/Util/Timer/Timer.h"
 
@@ -22,6 +23,7 @@ namespace ProceduralExplorationGameCore{
         {"Reduce Noise", new ReduceNoiseMapGenStep()},
         {"Perform Flood Fill", new PerformFloodFillMapGenStep()},
         {"Remove Redundant Islands", new RemoveRedundantIslandsMapGenStep()},
+        {"Weight And Sort Landmasses", new WeightAndSortLandmassesMapGenStep()},
     };
 
     MapGen::MapGen(){
@@ -43,10 +45,11 @@ namespace ProceduralExplorationGameCore{
     }
 
     void MapGen::beginMapGen_(const ExplorationMapInputData* input){
+        ExplorationMapGenWorkspace workspace;
         for(int i = 0; i < MAP_GEN_STEPS.size(); i++){
             AV::Timer t;
             t.start();
-            MAP_GEN_STEPS[i].second->processStep(input, mMapData);
+            MAP_GEN_STEPS[i].second->processStep(input, mMapData, &workspace);
             t.stop();
             //TODO have a plugin print function.
             std::cout << "Time taken for stage '" << MAP_GEN_STEPS[i].first.c_str() << "' was " << t.getTimeTotal() << std::endl;

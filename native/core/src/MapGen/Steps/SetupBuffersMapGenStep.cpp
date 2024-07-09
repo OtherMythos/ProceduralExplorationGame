@@ -12,7 +12,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void SetupBuffersMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData){
+    void SetupBuffersMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         mapData->width = input->width;
         mapData->height = input->height;
         mapData->seaLevel = input->seaLevel;

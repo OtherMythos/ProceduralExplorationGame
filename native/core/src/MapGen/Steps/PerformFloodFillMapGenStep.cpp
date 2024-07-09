@@ -16,7 +16,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void PerformFloodFillMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData){
+    void PerformFloodFillMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         //TODO in future one thread gets land and another water.
         PerformFloodFillMapGenJob floodFillWater;
         floodFillWater.processJob(mapData);

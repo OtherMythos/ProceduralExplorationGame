@@ -12,7 +12,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void MapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData){
+    void MapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 

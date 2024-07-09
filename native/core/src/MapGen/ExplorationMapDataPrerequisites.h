@@ -132,6 +132,10 @@ namespace ProceduralExplorationGameCore{
         }
     };
 
+    struct ExplorationMapGenWorkspace{
+        std::vector<LandId> landWeighted;
+    };
+
     static inline WorldPoint WRAP_WORLD_POINT(AV::uint32 x, AV::uint32 y){
         return ((x & 0xFFFF) << 16) | (y & 0xFFFF);
     }

@@ -14,7 +14,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void ReduceNoiseMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData){
+    void ReduceNoiseMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         int div = 4;
         int divHeight = input->height / div;
         for(int i = 0; i < 4; i++){
