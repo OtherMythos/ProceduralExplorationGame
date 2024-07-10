@@ -265,9 +265,16 @@
 
         local parentVoxNode = mParentNode_.createChildSceneNode();
         local regionNode = parentVoxNode.createChildSceneNode();
-        local vox = VoxToMesh(Timer());
-        local meshes = vox.createTerrainFromVoxelBlob("test", mMapData_);
-        print("Time taken to generate voxel map " + vox.getStats().totalSeconds);
+        //local vox = VoxToMesh(Timer());
+
+        local t = Timer();
+        t.start();
+        local meshes = _gameCore.createTerrainFromMapData("test", currentNativeMapData);
+        //local meshes = vox.createTerrainFromVoxelBlob("test", mMapData_);
+        t.stop();
+        print("Time taken to generate voxel map " + t.getSeconds());
+
+        //print("Time taken to generate voxel map " + vox.getStats().totalSeconds);
         assert(meshes.len() == mMapData_.regionData.len());
         foreach(c,i in meshes){
             if(i == null) continue;

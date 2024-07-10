@@ -212,6 +212,7 @@ namespace ProceduralExplorationGamePlugin{
             }else{
                 AV::MeshUserData::MeshToUserData(vm, outPtrs[i]);
             }
+            sq_rawset(vm, -3);
         }
 
         return 1;
