@@ -111,11 +111,13 @@
     function notifyPreparationComplete_(){
         mReady_ = true;
         base.setup();
-        resetSession(mWorldPreparer_.getOutputData());
+        resetSession(mWorldPreparer_.getOutputData(), mWorldPreparer_.getOutputNativeData());
     }
 
-    function resetSession(mapData){
-        local nativeMapData = _gameCore.tableToExplorationMapData(mapData);
+    function resetSession(mapData, nativeMapData){
+        //local nativeMapData = _gameCore.tableToExplorationMapData(mapData);
+        //::currentNativeMapData <- nativeMapData;
+        //_gameCore.setNewMapData(nativeMapData);
         ::currentNativeMapData <- nativeMapData;
         _gameCore.setNewMapData(nativeMapData);
         //TODO would prefer to have the base call further up.
@@ -275,7 +277,6 @@
         print("Time taken to generate voxel map " + t.getSeconds());
 
         //print("Time taken to generate voxel map " + vox.getStats().totalSeconds);
-        assert(meshes.len() == mMapData_.regionData.len());
         foreach(c,i in meshes){
             if(i == null) continue;
             local decorationNode = regionNode.createChildSceneNode();

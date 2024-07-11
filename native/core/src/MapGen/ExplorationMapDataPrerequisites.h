@@ -152,38 +152,63 @@ namespace ProceduralExplorationGameCore{
         return e->coords[idx];
     }
 
-    static inline AV::uint32* FULL_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
+    template<typename T, typename D>
+    static inline T FULL_PTR_FOR_COORD(D mapData, WorldPoint p){
         AV::uint32 xx;
         AV::uint32 yy;
         READ_WORLD_POINT(p, xx, yy);
         return (reinterpret_cast<AV::uint32*>(mapData->voxelBuffer) + xx + yy * mapData->height);
     }
+
+    template<typename T, typename D, int N>
+    static inline T UINT8_PTR_FOR_COORD(D mapData, WorldPoint p){
+        return reinterpret_cast<AV::uint8*>(FULL_PTR_FOR_COORD<AV::uint32*, D>(mapData, p)) + N;
+    }
+
     static inline AV::uint8* VOX_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
-        return reinterpret_cast<AV::uint8*>(FULL_PTR_FOR_COORD(mapData, p));
+        return UINT8_PTR_FOR_COORD<AV::uint8*, ExplorationMapData*, 0>(mapData, p);
     }
     static inline AV::uint8* WATER_GROUP_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
-        return reinterpret_cast<AV::uint8*>(FULL_PTR_FOR_COORD(mapData, p)) + 2;
+        return UINT8_PTR_FOR_COORD<AV::uint8*, ExplorationMapData*, 2>(mapData, p);
     }
     static inline AV::uint8* LAND_GROUP_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
-        return reinterpret_cast<AV::uint8*>(FULL_PTR_FOR_COORD(mapData, p)) + 3;
+        return UINT8_PTR_FOR_COORD<AV::uint8*, ExplorationMapData*, 3>(mapData, p);
     }
-
-
-    static inline const AV::uint32* FULL_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
-        AV::uint32 xx;
-        AV::uint32 yy;
-        READ_WORLD_POINT(p, xx, yy);
-        return reinterpret_cast<const AV::uint32*>(mapData->voxelBuffer) + xx + yy * mapData->height;
-    }
+    //Const
     static inline const AV::uint8* VOX_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
-        return reinterpret_cast<const AV::uint8*>(FULL_PTR_FOR_COORD_CONST(mapData, p));
+        return UINT8_PTR_FOR_COORD<const AV::uint8*, const ExplorationMapData*, 0>(mapData, p);
     }
     static inline const AV::uint8* WATER_GROUP_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
-        return reinterpret_cast<const AV::uint8*>(FULL_PTR_FOR_COORD_CONST(mapData, p)) + 2;
+        return UINT8_PTR_FOR_COORD<const AV::uint8*, const ExplorationMapData*, 2>(mapData, p);
     }
     static inline const AV::uint8* LAND_GROUP_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
-        return reinterpret_cast<const AV::uint8*>(FULL_PTR_FOR_COORD_CONST(mapData, p)) + 3;
+        return UINT8_PTR_FOR_COORD<const AV::uint8*, const ExplorationMapData*, 3>(mapData, p);
     }
 
+    static inline AV::uint8* REGION_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
+        return UINT8_PTR_FOR_COORD<AV::uint8*, ExplorationMapData*, 1>(mapData, p);
+    }
+    static inline const AV::uint8* REGION_PTR_FOR_COORD_CONST(ExplorationMapData* mapData, WorldPoint p){
+        return UINT8_PTR_FOR_COORD<const AV::uint8*, const ExplorationMapData*, 1>(mapData, p);
+    }
+
+    static size_t mapGenRandomIntMinMax(size_t min, size_t max){
+        return min + (rand() % static_cast<size_t>(max - min + 1));
+    }
+    template<typename T>
+    static size_t mapGenRandomIndex(const std::vector<T>& list){
+        return mapGenRandomIntMinMax(0, list.size());
+    }
+    static LandId findRandomLandmassForSize(const std::vector<FloodFillEntry*>& landData, const std::vector<LandId>& landWeighted, AV::uint32 size){
+        //To avoid infinite loops.
+        for(int i = 0; i < 100; i++){
+            size_t randIndex = mapGenRandomIndex<LandId>(landWeighted);
+            LandId idx = landWeighted[randIndex];
+            if(landData[idx]->total >= size){
+                return idx;
+            }
+        }
+        return INVALID_LAND_ID;
+    }
 
 }

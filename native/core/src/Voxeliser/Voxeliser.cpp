@@ -194,7 +194,7 @@ namespace ProceduralExplorationGameCore{
         AV::uint32 ret = 0;
         for(AV::uint32 v = 0; v < 4; v++){
             AV::uint32 faceBase = faceVal + v * 9;
-            AV::uint8 foundValsTemp[3];
+            AV::uint8 foundValsTemp[3] = {0x0, 0x0, 0x0};
             for(AV::uint8 i = 0; i < 3; i++){
                 int xx = VERTICE_BORDERS[faceBase + i * 3];
                 int yy = VERTICE_BORDERS[faceBase + i * 3 + 1];

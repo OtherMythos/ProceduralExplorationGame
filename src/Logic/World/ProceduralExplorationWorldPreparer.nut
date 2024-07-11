@@ -2,8 +2,10 @@
 ::ProceduralExplorationWorldPreparer <- class extends ::WorldPreparer{
 
     mOutData_ = null;
+    mOutNativeData_ = null;
 
-    mThread_ = null;
+    //mThread_ = null;
+    mStarted_ = false;
 
     constructor(){
 
@@ -11,6 +13,42 @@
 
     #Override
     function processPreparation(){
+        assert(mCurrentPercent_ < 1.0);
+
+        if(!mStarted_){
+            _event.transmit(Event.WORLD_PREPARATION_STATE_CHANGE, {"began": true, "ended": false});
+            _gameCore.beginMapGen();
+            mStarted_ = true;
+        }
+
+        local mapClaim = _gameCore.checkClaimMapGen();
+        if(mapClaim != null){
+            mOutNativeData_ = mapClaim;
+            mOutData_ = mapClaim.explorationMapDataToTable();
+            mCurrentPercent_ = 1.0;
+            _event.transmit(Event.WORLD_PREPARATION_GENERATION_PROGRESS, {
+                "percentage": mCurrentPercent_,
+                "name": "done"
+            });
+        }else{
+            mCurrentPercent_ = _gameCore.getMapGenStage().tofloat() / _gameCore.getTotalMapGenStages().tofloat();
+            //Fill this in.
+            local stageName = "TODO";
+            print("PROCEDURAL WORLD GENERATION: " + (mCurrentPercent_ * 100).tointeger() + "% stage: " + stageName);
+
+            _event.transmit(Event.WORLD_PREPARATION_GENERATION_PROGRESS, {
+                "percentage": mCurrentPercent_,
+                "name": stageName
+            });
+        }
+
+        if(mCurrentPercent_ >= 1.0){
+            _event.transmit(Event.WORLD_PREPARATION_STATE_CHANGE, {"began": false, "ended": true});
+        }
+        return mCurrentPercent_ >= 1.0;
+
+
+        /*
         assert(mCurrentPercent_ < 1.0);
 
         local susparam = null;
@@ -41,8 +79,10 @@
             _event.transmit(Event.WORLD_PREPARATION_STATE_CHANGE, {"began": false, "ended": true});
         }
         return mCurrentPercent_ >= 1.0;
+        */
     }
 
+    /*
     function resetSessionGenMap(){
         local smallWorld = ::Base.isProfileActive(GameProfile.FORCE_SMALL_WORLD);
 
@@ -67,9 +107,13 @@
 
         return outData;
     }
+    */
 
     function getOutputData(){
         return mOutData_;
+    }
+    function getOutputNativeData(){
+        return mOutNativeData_;
     }
 
 }

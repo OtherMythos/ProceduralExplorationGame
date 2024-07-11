@@ -29,7 +29,8 @@ namespace ProceduralExplorationGamePlugin{
             return AV::USER_DATA_GET_TYPE_MISMATCH;
         }
 
-        *outData = *((ProceduralExplorationGameCore::ExplorationMapData**)pointer);
+        ProceduralExplorationGameCore::ExplorationMapData** p = (ProceduralExplorationGameCore::ExplorationMapData**)pointer;
+        *outData = *p;
 
         return AV::USER_DATA_GET_SUCCESS;
     }
@@ -88,6 +89,27 @@ namespace ProceduralExplorationGamePlugin{
         }
         sq_rawset(vm, -3);
     }
+    inline void pushRegionData(HSQUIRRELVM vm, const char* key, std::vector<ProceduralExplorationGameCore::RegionData>& regionData){
+        sq_pushstring(vm, key, -1);
+        sq_newarray(vm, regionData.size());
+        for(size_t i = 0; i < regionData.size(); i++){
+            sq_pushinteger(vm, i);
+
+            const ProceduralExplorationGameCore::RegionData& e = regionData[i];
+            sq_newtable(vm);
+
+            pushInteger(vm, "id", e.id);
+            pushInteger(vm, "total", e.total);
+            pushInteger(vm, "seedX", e.seedX);
+            pushInteger(vm, "seedY", e.seedY);
+            pushInteger(vm, "type", static_cast<SQInteger>(e.type));
+            pushArray<ProceduralExplorationGameCore::WorldPoint>(vm, "coords", e.coords);
+            //pushArray<ProceduralExplorationGameCore::WorldPoint>(vm, "edges", e.edges);
+
+            sq_rawset(vm, -3);
+        }
+        sq_rawset(vm, -3);
+    }
     inline void pushBuffer(HSQUIRRELVM vm, const char* key, void* buf, size_t size){
         sq_pushstring(vm, key, -1);
         //Annoyingly I have to create a new blob and copy the buffer over to that.
@@ -111,11 +133,10 @@ namespace ProceduralExplorationGamePlugin{
         pushInteger(vm, "playerStart", mapData->playerStart);
         pushInteger(vm, "gatewayPosition", mapData->gatewayPosition);
 
-        //pushEmptyArray(vm, "waterData");
         pushFloodData(vm, "waterData", mapData->waterData);
         pushFloodData(vm, "landData", mapData->landData);
         pushEmptyArray(vm, "placeData");
-        pushEmptyArray(vm, "regionData");
+        pushRegionData(vm, "regionData", mapData->regionData);
         pushEmptyArray(vm, "placedItems");
 
         pushBuffer(vm, "voxelBuffer", mapData->voxelBuffer, mapData->voxelBufferSize);
