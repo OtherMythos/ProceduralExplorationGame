@@ -42,6 +42,10 @@ namespace ProceduralExplorationGameCore{
         return mCurrentStage;
     }
 
+    const std::string& MapGen::getNameForStage(int stage){
+        return MAP_GEN_STEPS[stage].first;
+    }
+
     void MapGen::beginMapGen(const ExplorationMapInputData* input){
         assert(!mMapData);
         mMapData = new ExplorationMapData();

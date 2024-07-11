@@ -26,6 +26,7 @@ namespace ProceduralExplorationGamePlugin{
         static SQInteger getMapGenStage(HSQUIRRELVM vm);
         static SQInteger checkClaimMapGen(HSQUIRRELVM vm);
         static SQInteger getTotalMapGenStages(HSQUIRRELVM vm);
+        static SQInteger getNameForMapGenStage(HSQUIRRELVM vm);
 
         static ProceduralExplorationGameCore::MapGen* currentMapGen;
     };

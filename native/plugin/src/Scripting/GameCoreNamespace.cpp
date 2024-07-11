@@ -271,6 +271,16 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger GameCoreNamespace::getNameForMapGenStage(HSQUIRRELVM vm){
+        SQInteger idx;
+        sq_getinteger(vm, -1, &idx);
+        const std::string& stageName = ProceduralExplorationGameCore::MapGen::getNameForStage(idx);
+        sq_pushstring(vm, stageName.c_str(), -1);
+
+        return 1;
+    }
+
+
     void GameCoreNamespace::setupNamespace(HSQUIRRELVM vm){
         AV::ScriptUtils::addFunction(vm, getGameCoreVersion, "getGameCoreVersion");
 
@@ -279,6 +289,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, setRegionFound, "setRegionFound", 3, ".ib");
         AV::ScriptUtils::addFunction(vm, setNewMapData, "setNewMapData", 2, ".u");
         AV::ScriptUtils::addFunction(vm, createTerrainFromMapData, "createTerrainFromMapData", 3, ".su");
+        AV::ScriptUtils::addFunction(vm, getNameForMapGenStage, "getNameForMapGenStage", 2, ".i");
 
         AV::ScriptUtils::addFunction(vm, beginMapGen, "beginMapGen");
         AV::ScriptUtils::addFunction(vm, getMapGenStage, "getMapGenStage");

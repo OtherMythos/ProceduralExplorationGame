@@ -6,6 +6,7 @@
 
     //mThread_ = null;
     mStarted_ = false;
+    mCurrentStage_ = 0;
 
     constructor(){
 
@@ -17,6 +18,7 @@
 
         if(!mStarted_){
             _event.transmit(Event.WORLD_PREPARATION_STATE_CHANGE, {"began": true, "ended": false});
+            mCurrentStage_ = 0;
             _gameCore.beginMapGen();
             mStarted_ = true;
         }
@@ -31,15 +33,20 @@
                 "name": "done"
             });
         }else{
-            mCurrentPercent_ = _gameCore.getMapGenStage().tofloat() / _gameCore.getTotalMapGenStages().tofloat();
-            //Fill this in.
-            local stageName = "TODO";
-            print("PROCEDURAL WORLD GENERATION: " + (mCurrentPercent_ * 100).tointeger() + "% stage: " + stageName);
+            local mapGenStage = _gameCore.getMapGenStage();
+            if(mCurrentStage_ != mapGenStage){
+                while(mCurrentStage_ != mapGenStage){
+                    mCurrentStage_++;
+                    mCurrentPercent_ = mCurrentStage_.tofloat() / _gameCore.getTotalMapGenStages().tofloat();
+                    local stageName = _gameCore.getNameForMapGenStage(mCurrentStage_);
+                    print("PROCEDURAL WORLD GENERATION: " + (mCurrentPercent_ * 100).tointeger() + "% stage: " + stageName);
 
-            _event.transmit(Event.WORLD_PREPARATION_GENERATION_PROGRESS, {
-                "percentage": mCurrentPercent_,
-                "name": stageName
-            });
+                    _event.transmit(Event.WORLD_PREPARATION_GENERATION_PROGRESS, {
+                        "percentage": mCurrentPercent_,
+                        "name": stageName
+                    });
+                }
+            }
         }
 
         if(mCurrentPercent_ >= 1.0){

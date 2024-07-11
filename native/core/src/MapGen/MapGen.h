@@ -17,6 +17,7 @@ namespace ProceduralExplorationGameCore{
         bool isFinished() const;
         void beginMapGen(const ExplorationMapInputData* input);
         static int getNumTotalStages();
+        static const std::string& getNameForStage(int stage);
 
         ExplorationMapData* claimMapData();
 
