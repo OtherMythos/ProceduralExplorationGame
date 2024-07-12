@@ -51,6 +51,15 @@ namespace ProceduralExplorationGameCore{
         MAX
     };
 
+    enum class PlacedItemId{
+        NONE,
+
+        TREE,
+        CHERRY_BLOSSOM_FOREST,
+
+        MAX
+    };
+
     //The mask is used to include the edge and river flags.
     static const AV::uint32 MAP_VOXEL_MASK = 0x1F;
 
@@ -72,6 +81,13 @@ namespace ProceduralExplorationGameCore{
         bool nextToWorldEdge = false;
         std::vector<WorldPoint> edges;
         std::vector<WorldPoint> coords;
+    };
+
+    struct PlacedItemData{
+        AV::uint16 originX;
+        AV::uint16 originY;
+        RegionId region;
+        PlacedItemId type;
     };
 
     struct ExplorationMapInputData{
@@ -112,6 +128,7 @@ namespace ProceduralExplorationGameCore{
         void* riverBuffer;
 
         std::vector<RegionData> regionData;
+        std::vector<PlacedItemData> placedItems;
         std::vector<FloodFillEntry*> waterData;
         std::vector<FloodFillEntry*> landData;
 
@@ -152,19 +169,19 @@ namespace ProceduralExplorationGameCore{
         return e->coords[idx];
     }
 
-    template<typename T, typename D>
+    template<typename T=AV::uint32*, typename D=ExplorationMapData*>
     static inline T FULL_PTR_FOR_COORD(D mapData, WorldPoint p){
         AV::uint32 xx;
         AV::uint32 yy;
         READ_WORLD_POINT(p, xx, yy);
-        return (reinterpret_cast<AV::uint32*>(mapData->voxelBuffer) + xx + yy * mapData->height);
+        return (reinterpret_cast<T>(mapData->voxelBuffer) + xx + yy * mapData->height);
     }
-    template<typename T, typename D>
+    template<typename T=AV::uint32*, typename D=ExplorationMapData>
     static inline T FULL_PTR_FOR_COORD_SECONDARY(D mapData, WorldPoint p){
         AV::uint32 xx;
         AV::uint32 yy;
         READ_WORLD_POINT(p, xx, yy);
-        return (reinterpret_cast<AV::uint32*>(mapData->secondaryVoxelBuffer) + xx + yy * mapData->height);
+        return (reinterpret_cast<T>(mapData->secondaryVoxelBuffer) + xx + yy * mapData->height);
     }
 
     template<typename T, typename D, int N>

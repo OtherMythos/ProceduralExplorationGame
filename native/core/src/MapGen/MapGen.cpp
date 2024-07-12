@@ -15,6 +15,7 @@
 #include "MapGen/Steps/DeterminePlayerStartMapGenStep.h"
 #include "MapGen/Steps/DetermineRegionsMapGenStep.h"
 #include "MapGen/Steps/DetermineRegionTypesMapGenStep.h"
+#include "MapGen/Steps/PopulateFinalBiomesMapGenStep.h"
 
 #include "System/Util/Timer/Timer.h"
 
@@ -30,6 +31,7 @@ namespace ProceduralExplorationGameCore{
         {"Determine Player Start", new DeterminePlayerStartMapGenStep()},
         {"Determine Regions", new DetermineRegionsMapGenStep()},
         {"Determine region types", new DetermineRegionTypesMapGenStep()},
+        {"Populate Final Biomes", new PopulateFinalBiomesMapGenStep()},
     };
 
     MapGen::MapGen(){

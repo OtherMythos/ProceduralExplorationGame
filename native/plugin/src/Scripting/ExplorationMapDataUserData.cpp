@@ -110,6 +110,24 @@ namespace ProceduralExplorationGamePlugin{
         }
         sq_rawset(vm, -3);
     }
+    inline void pushPlacedItemData(HSQUIRRELVM vm, const char* key, std::vector<ProceduralExplorationGameCore::PlacedItemData>& itemData){
+        sq_pushstring(vm, key, -1);
+        sq_newarray(vm, itemData.size());
+        for(size_t i = 0; i < itemData.size(); i++){
+            sq_pushinteger(vm, i);
+
+            const ProceduralExplorationGameCore::PlacedItemData& e = itemData[i];
+            sq_newtable(vm);
+
+            pushInteger(vm, "type", static_cast<SQInteger>(e.type));
+            pushInteger(vm, "originX", e.originX);
+            pushInteger(vm, "originY", e.originY);
+            pushInteger(vm, "region", static_cast<SQInteger>(e.region));
+
+            sq_rawset(vm, -3);
+        }
+        sq_rawset(vm, -3);
+    }
     inline void pushBuffer(HSQUIRRELVM vm, const char* key, void* buf, size_t size){
         sq_pushstring(vm, key, -1);
         //Annoyingly I have to create a new blob and copy the buffer over to that.
@@ -137,7 +155,7 @@ namespace ProceduralExplorationGamePlugin{
         pushFloodData(vm, "landData", mapData->landData);
         pushEmptyArray(vm, "placeData");
         pushRegionData(vm, "regionData", mapData->regionData);
-        pushEmptyArray(vm, "placedItems");
+        pushPlacedItemData(vm, "placedItems", mapData->placedItems);
 
         pushBuffer(vm, "voxelBuffer", mapData->voxelBuffer, mapData->voxelBufferSize);
         pushBuffer(vm, "secondaryVoxBuffer", mapData->secondaryVoxelBuffer, mapData->secondaryVoxelBufferSize);
