@@ -14,6 +14,7 @@
 #include "MapGen/Steps/WeightAndSortLandmassesMapGenStep.h"
 #include "MapGen/Steps/DeterminePlayerStartMapGenStep.h"
 #include "MapGen/Steps/DetermineRegionsMapGenStep.h"
+#include "MapGen/Steps/DetermineRegionTypesMapGenStep.h"
 
 #include "System/Util/Timer/Timer.h"
 
@@ -28,6 +29,7 @@ namespace ProceduralExplorationGameCore{
         {"Weight And Sort Landmasses", new WeightAndSortLandmassesMapGenStep()},
         {"Determine Player Start", new DeterminePlayerStartMapGenStep()},
         {"Determine Regions", new DetermineRegionsMapGenStep()},
+        {"Determine region types", new DetermineRegionTypesMapGenStep()},
     };
 
     MapGen::MapGen(){
