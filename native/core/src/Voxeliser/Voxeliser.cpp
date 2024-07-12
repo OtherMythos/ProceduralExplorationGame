@@ -98,11 +98,13 @@ namespace ProceduralExplorationGameCore{
                 if(vox == -1.0f) continue;
                 //If the voxel altitude isn't 0 then there must be active voxels.
                 assert(bufEntry.mNumActiveVox > 0);
+                //TODO optimistion try and make this loop only consider the secondary voxel, for the sake of cache efficiency.
                 AV::uint32 altitude = *reinterpret_cast<AV::uint32*>(&vox) & 0xFFFF;
                 AV::uint8 v = (*reinterpret_cast<AV::uint32*>(&vox) >> 16) & 0xFF;
 
                 AV::uint32 yInverse = y;
 
+                //TODO shift this logic off somewhere else in memory.
                 float texCoordX = (static_cast<float>(v % COLS_WIDTH) / COLS_WIDTH) + TILE_WIDTH;
                 float texCoordY = ((static_cast<float>(v) / COLS_WIDTH) / COLS_HEIGHT) + TILE_HEIGHT;
 

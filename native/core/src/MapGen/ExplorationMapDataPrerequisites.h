@@ -159,10 +159,21 @@ namespace ProceduralExplorationGameCore{
         READ_WORLD_POINT(p, xx, yy);
         return (reinterpret_cast<AV::uint32*>(mapData->voxelBuffer) + xx + yy * mapData->height);
     }
+    template<typename T, typename D>
+    static inline T FULL_PTR_FOR_COORD_SECONDARY(D mapData, WorldPoint p){
+        AV::uint32 xx;
+        AV::uint32 yy;
+        READ_WORLD_POINT(p, xx, yy);
+        return (reinterpret_cast<AV::uint32*>(mapData->secondaryVoxelBuffer) + xx + yy * mapData->height);
+    }
 
     template<typename T, typename D, int N>
     static inline T UINT8_PTR_FOR_COORD(D mapData, WorldPoint p){
-        return reinterpret_cast<AV::uint8*>(FULL_PTR_FOR_COORD<AV::uint32*, D>(mapData, p)) + N;
+        return reinterpret_cast<T>(FULL_PTR_FOR_COORD<AV::uint32*, D>(mapData, p)) + N;
+    }
+    template<typename T, typename D, int N>
+    static inline T UINT8_PTR_FOR_COORD_SECONDARY(D mapData, WorldPoint p){
+        return reinterpret_cast<T>(FULL_PTR_FOR_COORD_SECONDARY<AV::uint32*, D>(mapData, p)) + N;
     }
 
     static inline AV::uint8* VOX_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
@@ -186,10 +197,10 @@ namespace ProceduralExplorationGameCore{
     }
 
     static inline AV::uint8* REGION_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
-        return UINT8_PTR_FOR_COORD<AV::uint8*, ExplorationMapData*, 1>(mapData, p);
+        return UINT8_PTR_FOR_COORD_SECONDARY<AV::uint8*, ExplorationMapData*, 1>(mapData, p);
     }
-    static inline const AV::uint8* REGION_PTR_FOR_COORD_CONST(ExplorationMapData* mapData, WorldPoint p){
-        return UINT8_PTR_FOR_COORD<const AV::uint8*, const ExplorationMapData*, 1>(mapData, p);
+    static inline const AV::uint8* REGION_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
+        return UINT8_PTR_FOR_COORD_SECONDARY<const AV::uint8*, const ExplorationMapData*, 1>(mapData, p);
     }
 
     static size_t mapGenRandomIntMinMax(size_t min, size_t max){
