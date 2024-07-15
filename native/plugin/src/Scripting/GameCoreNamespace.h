@@ -4,6 +4,7 @@
 
 namespace ProceduralExplorationGameCore{
     class MapGen;
+    struct ExplorationMapInputData;
 }
 
 namespace ProceduralExplorationGamePlugin{
@@ -19,6 +20,7 @@ namespace ProceduralExplorationGamePlugin{
         static SQInteger getGameCoreVersion(HSQUIRRELVM vm);
         static SQInteger fillBufferWithMapLean(HSQUIRRELVM vm);
         static SQInteger tableToExplorationMapData(HSQUIRRELVM vm);
+        static SQInteger tableToExplorationMapInputData(HSQUIRRELVM vm, ProceduralExplorationGameCore::ExplorationMapInputData* data);
         static SQInteger setRegionFound(HSQUIRRELVM vm);
         static SQInteger setNewMapData(HSQUIRRELVM vm);
         static SQInteger createTerrainFromMapData(HSQUIRRELVM vm);

@@ -238,7 +238,7 @@ namespace ProceduralExplorationGameCore{
         }
         std::string totalName = meshName;
         totalName += "-region";
-        totalName += (int)mId;
+        totalName += std::to_string((int)mId);
         Ogre::MeshPtr mesh = Ogre::MeshManager::getSingleton().createManual(totalName, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
         Ogre::SubMesh* subMesh = mesh->createSubMesh();
 

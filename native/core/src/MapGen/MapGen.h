@@ -26,6 +26,7 @@ namespace ProceduralExplorationGameCore{
         std::thread* parentThread;
 
         ExplorationMapData* mMapData;
+        const ExplorationMapInputData* mMapInputData;
 
         void beginMapGen_(const ExplorationMapInputData* input);
     };

@@ -53,6 +53,7 @@ namespace ProceduralExplorationGameCore{
     void MapGen::beginMapGen(const ExplorationMapInputData* input){
         assert(!mMapData);
         mMapData = new ExplorationMapData();
+        mMapInputData = input;
         std::thread* parentThread = new std::thread(&MapGen::beginMapGen_, this, input);
     }
 
@@ -79,6 +80,7 @@ namespace ProceduralExplorationGameCore{
 
     ExplorationMapData* MapGen::claimMapData(){
         if(!isFinished()) return 0;
+        delete mMapInputData;
         ExplorationMapData* out = mMapData;
         mMapData = 0;
         return out;

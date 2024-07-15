@@ -19,7 +19,19 @@
         if(!mStarted_){
             _event.transmit(Event.WORLD_PREPARATION_STATE_CHANGE, {"began": true, "ended": false});
             mCurrentStage_ = 0;
-            _gameCore.beginMapGen();
+
+            local smallWorld = ::Base.isProfileActive(GameProfile.FORCE_SMALL_WORLD);
+            local data = {
+                "seed": _random.randInt(1000),
+                "moistureSeed": _random.randInt(1000),
+                "variation": _random.randInt(1000),
+                "width": smallWorld ? 200 : 600,
+                "height": smallWorld ? 200 : 600,
+                "numRivers": 24,
+                "seaLevel": 100,
+                "numRegions": 14
+            };
+            _gameCore.beginMapGen(data);
             mStarted_ = true;
         }
 

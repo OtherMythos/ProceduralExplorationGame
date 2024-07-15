@@ -174,6 +174,48 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger GameCoreNamespace::tableToExplorationMapInputData(HSQUIRRELVM vm, ProceduralExplorationGameCore::ExplorationMapInputData* data){
+        sq_pushnull(vm);
+        while(SQ_SUCCEEDED(sq_next(vm,-2))){
+            //here -1 is the value and -2 is the key
+            const SQChar *k;
+            sq_getstring(vm, -2, &k);
+
+            SQObjectType t = sq_gettype(vm, -1);
+            if(t == OT_INTEGER){
+                SQInteger val;
+                sq_getinteger(vm, -1, &val);
+                if(strcmp(k, "width") == 0){
+                    data->width = static_cast<AV::uint32>(val);
+                }
+                else if(strcmp(k, "height") == 0){
+                    data->height = static_cast<AV::uint32>(val);
+                }
+                else if(strcmp(k, "seed") == 0){
+                    data->seed = static_cast<AV::uint32>(val);
+                }
+                else if(strcmp(k, "moistureSeed") == 0){
+                    data->moistureSeed = static_cast<AV::uint32>(val);
+                }
+                else if(strcmp(k, "variationSeed") == 0){
+                    data->variationSeed = static_cast<AV::uint32>(val);
+                }
+                else if(strcmp(k, "seaLevel") == 0){
+                    data->seaLevel = static_cast<AV::uint32>(val);
+                }
+                else if(strcmp(k, "numRivers") == 0){
+                    data->numRivers = static_cast<AV::uint32>(val);
+                }
+                else if(strcmp(k, "numRegions") == 0){
+                    data->numRegions = static_cast<AV::uint32>(val);
+                }
+            }
+            sq_pop(vm,2); //pop the key and value
+        }
+        sq_pop(vm,1); //pops the null iterator
+
+        return 1;
+    }
 
     SQInteger GameCoreNamespace::setRegionFound(HSQUIRRELVM vm){
         SQInteger regionId;
@@ -225,15 +267,8 @@ namespace ProceduralExplorationGamePlugin{
         GameCoreNamespace::currentMapGen = new ProceduralExplorationGameCore::MapGen();
 
         ProceduralExplorationGameCore::ExplorationMapInputData* inputData = new ProceduralExplorationGameCore::ExplorationMapInputData();
-        inputData->seed = 100;
-        inputData->variationSeed = 200;
-        inputData->moistureSeed = 300;
-        inputData->width = 600;
-        inputData->height = 600;
-        inputData->seaLevel = 100;
-        inputData->numRivers = 24;
-        inputData->numRegions = 16;
-        //inputData->placeFrequency = {0, 1, 1, 4, 4, 30};
+        tableToExplorationMapInputData(vm, inputData);
+
         currentMapGen->beginMapGen(inputData);
 
         return 0;
@@ -291,7 +326,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, createTerrainFromMapData, "createTerrainFromMapData", 3, ".su");
         AV::ScriptUtils::addFunction(vm, getNameForMapGenStage, "getNameForMapGenStage", 2, ".i");
 
-        AV::ScriptUtils::addFunction(vm, beginMapGen, "beginMapGen");
+        AV::ScriptUtils::addFunction(vm, beginMapGen, "beginMapGen", 2, ".t");
         AV::ScriptUtils::addFunction(vm, getMapGenStage, "getMapGenStage");
         AV::ScriptUtils::addFunction(vm, checkClaimMapGen, "checkClaimMapGen");
         AV::ScriptUtils::addFunction(vm, getTotalMapGenStages, "getTotalMapGenStages");
