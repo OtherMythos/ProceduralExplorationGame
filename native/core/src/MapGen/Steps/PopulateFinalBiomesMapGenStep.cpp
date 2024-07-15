@@ -51,13 +51,14 @@ namespace ProceduralExplorationGameCore{
                 AV::uint8 moisture = fullSecondaryVox & 0xFF;
                 RegionId regionId = (fullSecondaryVox >> 8) & 0xFF;
 
-                //const Biome& b = Biome::getBiomeForId(mapData->regionData[regionId].type);
-                const Biome& b = Biome::getBiomeForId(RegionType::GRASSLAND);
+                const Biome& b = Biome::getBiomeForId(mapData->regionData[regionId].type);
 
                 Biome::PlaceObjectFunction placeFunc = b.getPlacementFunction();
+                assert(placeFunc != 0);
                 (*placeFunc)(mapData->placedItems, mapData, x, y, altitude, regionId, moisture);
 
                 Biome::DetermineVoxFunction voxFunc = b.getVoxFunction();
+                assert(voxFunc != 0);
                 MapVoxelTypes finalVox = (*b.getVoxFunction())(altitude, moisture, mapData);
                 *(reinterpret_cast<AV::uint8*>(fullVoxPtrWrite)+1) = static_cast<AV::uint8>(finalVox);
             }

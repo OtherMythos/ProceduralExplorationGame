@@ -228,8 +228,8 @@ namespace ProceduralExplorationGamePlugin{
         inputData->seed = 100;
         inputData->variationSeed = 200;
         inputData->moistureSeed = 300;
-        inputData->width = 1200;
-        inputData->height = 1200;
+        inputData->width = 600;
+        inputData->height = 600;
         inputData->seaLevel = 100;
         inputData->numRivers = 24;
         inputData->numRegions = 16;

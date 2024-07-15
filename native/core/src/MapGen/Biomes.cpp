@@ -31,7 +31,10 @@ namespace ProceduralExplorationGameCore{
         }
         return false;
     }
-    MapVoxelTypes grassVoxFunction(AV::uint8 altitude, AV::uint8 moisture, const ExplorationMapData* mapData){
+
+    #define PLACE_ITEM(XX) placedItems.push_back({x, y, region, XX});
+    //
+    MapVoxelTypes GRASS_LAND_VoxFunction(AV::uint8 altitude, AV::uint8 moisture, const ExplorationMapData* mapData){
         if(altitude >= mapData->seaLevel + 10){
             if(moisture >= mapData->seaLevel + 50){
                 return MapVoxelTypes::TREES;
@@ -42,23 +45,68 @@ namespace ProceduralExplorationGameCore{
             return MapVoxelTypes::SAND;
         }
     }
-    void grassPlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 moisture){
+    void GRASS_LAND_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 moisture){
         if(altitude >= mapData->seaLevel + 10){
             if(processRValue(mapData, x, y, moisture >= 150 ? 1 : 6)){
-                placedItems.push_back({
-                    x, y,
-                    region,
-                    PlacedItemId::TREE
-                });
+                PLACE_ITEM(PlacedItemId::TREE);
             }
         }
     }
+    //
+    //
+    MapVoxelTypes GRASS_FOREST_VoxFunction(AV::uint8 altitude, AV::uint8 moisture, const ExplorationMapData* mapData){
+        return MapVoxelTypes::TREES;
+    }
+    void GRASS_FOREST_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 moisture){
+        //if(altitude >= mapData->seaLevel + 10){
+            if(processRValue(mapData, x, y, 1)){
+                PLACE_ITEM(PlacedItemId::TREE);
+            }
+        //}
+    }
+    //
+    //
+    MapVoxelTypes CHERRY_BLOSSOM_FOREST_VoxFunction(AV::uint8 altitude, AV::uint8 moisture, const ExplorationMapData* mapData){
+        if(altitude < mapData->seaLevel + 10) return MapVoxelTypes::SAND;
+        return MapVoxelTypes::TREES_CHERRY_BLOSSOM;
+    }
+    void CHERRY_BLOSSOM_FOREST_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 moisture){
+        if(altitude < mapData->seaLevel + 10) return;
+        if(processRValue(mapData, x, y, 1)){
+            PLACE_ITEM(PlacedItemId::CHERRY_BLOSSOM_FOREST);
+        }
+    }
+    //
+    //
+    MapVoxelTypes EXP_FIELD_VoxFunction(AV::uint8 altitude, AV::uint8 moisture, const ExplorationMapData* mapData){
+        if(altitude < mapData->seaLevel + 10) return MapVoxelTypes::SAND_EXP_FIELD;
+        return MapVoxelTypes::DIRT_EXP_FIELD;
+    }
+    //
+    //
+    MapVoxelTypes SHALLOW_OCEAN_VoxFunction(AV::uint8 altitude, AV::uint8 moisture, const ExplorationMapData* mapData){
+        return MapVoxelTypes::SAND;
+    }
+    //
+    //
+    MapVoxelTypes DEEP_OCEAN_VoxFunction(AV::uint8 altitude, AV::uint8 moisture, const ExplorationMapData* mapData){
+        return MapVoxelTypes::SAND;
+    }
+    //
 
+    void NONE_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 moisture){
+    }
+    #undef PLACE_ITEM
 
 
     static const std::array BIOMES{
         Biome(0, 0),
-        Biome(&grassVoxFunction, &grassPlaceObjectsFunction)
+        Biome(&GRASS_LAND_VoxFunction, &GRASS_LAND_PlaceObjectsFunction),
+        Biome(&GRASS_FOREST_VoxFunction, &GRASS_FOREST_PlaceObjectsFunction),
+        Biome(&CHERRY_BLOSSOM_FOREST_VoxFunction, &CHERRY_BLOSSOM_FOREST_PlaceObjectsFunction),
+        Biome(&EXP_FIELD_VoxFunction, &NONE_PlaceObjectsFunction),
+        Biome(&SHALLOW_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction),
+        Biome(&DEEP_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction),
     };
 
     Biome::Biome(DetermineVoxFunction voxFunction, PlaceObjectFunction placementFunction)
@@ -78,7 +126,7 @@ namespace ProceduralExplorationGameCore{
             case RegionType::CHERRY_BLOSSOM_FOREST: targetBiome = BiomeId::CHERRY_BLOSSOM_FOREST; break;
             case RegionType::EXP_FIELDS: targetBiome = BiomeId::EXP_FIELD; break;
             default:{
-                targetBiome = BiomeId::NONE;
+                targetBiome = BiomeId::GRASS_LAND;
             }
         }
 
