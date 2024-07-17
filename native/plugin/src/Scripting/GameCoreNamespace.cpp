@@ -210,11 +210,30 @@ namespace ProceduralExplorationGamePlugin{
                     data->numRegions = static_cast<AV::uint32>(val);
                 }
             }
+            else if(t == OT_ARRAY){
+                if(strcmp(k, "placeFrequency") == 0){
+                    //Read the values from the array.
+                    SQInteger placesSize = sq_getsize(vm, -1);
+                    if(placesSize != (size_t)ProceduralExplorationGameCore::PlaceType::MAX){
+                        sq_throwerror(vm, "Invalid place frequency entries.");
+                    }
+                    for(SQInteger i = 0; i < placesSize; i++){
+                        sq_pushinteger(vm, i);
+                        sq_rawget(vm, -2);
+
+                        SQInteger frequency = 0;
+                        sq_getinteger(vm, -1, &frequency);
+                        data->placeFrequency[i] = frequency;
+
+                        sq_pop(vm, 1);
+                    }
+                }
+            }
             sq_pop(vm,2); //pop the key and value
         }
         sq_pop(vm,1); //pops the null iterator
 
-        return 1;
+        return 0;
     }
 
     SQInteger GameCoreNamespace::setRegionFound(HSQUIRRELVM vm){
@@ -267,7 +286,10 @@ namespace ProceduralExplorationGamePlugin{
         GameCoreNamespace::currentMapGen = new ProceduralExplorationGameCore::MapGen();
 
         ProceduralExplorationGameCore::ExplorationMapInputData* inputData = new ProceduralExplorationGameCore::ExplorationMapInputData();
-        tableToExplorationMapInputData(vm, inputData);
+        SQInteger result = tableToExplorationMapInputData(vm, inputData);
+        if(result != 0){
+            return result;
+        }
 
         currentMapGen->beginMapGen(inputData);
 

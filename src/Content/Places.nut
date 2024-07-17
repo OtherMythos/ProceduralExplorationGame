@@ -1,50 +1,3 @@
-enum PlaceId{
-    NONE,
-    GATEWAY,
-
-    HAUNTED_WELL,
-    DARK_CAVE,
-    GOBLIN_VILLAGE,
-    WIND_SWEPT_BEACH,
-    ROTHERFORD,
-
-    CITY_1,
-    CITY_2,
-    CITY_3,
-
-    TOWN_1,
-    TOWN_2,
-    TOWN_3,
-
-    VILLAGE_1,
-    VILLAGE_2,
-    VILLAGE_3,
-
-    LOCATION_1,
-    //LOCATION_2,
-    //LOCATION_3,
-
-    MAX
-};
-
-enum PlaceType{
-    NONE,
-    GATEWAY,
-    CITY,
-    TOWN,
-    VILLAGE,
-    LOCATION,
-
-    MAX
-};
-
-//Squirrel doesn't let you shift bits in place :( so this will do fine.
-enum PlaceNecessaryFeatures{
-    RIVER = 0x1,
-    OCEAN = 0x2,
-    LAKE = 0x4,
-};
-
 ::Place <- class{
     mPlaceId_ = PlaceId.NONE;
     mPlace_ = null;
@@ -94,6 +47,7 @@ enum PlaceNecessaryFeatures{
 ::Places <- array(PlaceId.MAX, null);
 
 //-------------------------------
+/*
 ::Places[PlaceId.NONE] = PlaceDef("None", "None", PlaceType.NONE, 0.0, 0);
 
 ::Places[PlaceId.GATEWAY] = PlaceDef("Gateway", "Gateway", PlaceType.GATEWAY, 1.0, 0);
@@ -120,6 +74,29 @@ enum PlaceNecessaryFeatures{
 //::Places[PlaceId.LOCATION_1] = PlaceDef("Location1", "Location1", PlaceType.LOCATION, 0.1, 10);
 //::Places[PlaceId.LOCATION_2] = PlaceDef("Location2", "Location2", PlaceType.LOCATION, 0.1, 10);
 //::Places[PlaceId.LOCATION_3] = PlaceDef("Location3", "Location3", PlaceType.LOCATION, 0.1, 10);
+
+#define PlaceId. PlaceId::
+#define PlaceType. PlaceType::
+#define DEFINE_PLACE(XX, YY) manager->definePlace(XX, YY);
+
+DEFINE_PLACE(PlaceId.GATEWAY, PlaceDef("Gateway", "Gateway", PlaceType.GATEWAY, 1.0, 0));
+*/
+function DEFINE_PLACE(placeId, def){
+    ::Places[placeId] = def;
+}
+::PlaceIdConst <- function(id, second){
+    //print("called this");
+    return id;
+}
+::PlaceTypeConst <- ::PlaceIdConst;
+getroottable().setdelegate({
+    "_get": function(idx){
+        //print("ignoring " + idx);
+        return null;
+    }
+});
+_doFileWithContext("script://PlaceDefs.h.nut", this);
+getroottable().setdelegate(null);
 //-------------------------------
 
 ::PlacesByType <- {};

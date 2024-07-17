@@ -29,7 +29,8 @@
                 "height": smallWorld ? 200 : 600,
                 "numRivers": 24,
                 "seaLevel": 100,
-                "numRegions": 14
+                "numRegions": 14,
+                "placeFrequency": [0, 1, 1, 4, 4, 30]
             };
             _gameCore.beginMapGen(data);
             mStarted_ = true;

@@ -7,6 +7,8 @@
 #include "Scripting/GameCoreNamespace.h"
 #include "Scripting/ExplorationMapDataUserData.h"
 
+#include "GameplayConstants.h"
+
 namespace ProceduralExplorationGamePlugin{
 
     extern "C" void dllStartPlugin(void){
@@ -23,6 +25,8 @@ namespace ProceduralExplorationGamePlugin{
     }
 
     void ProceduralExplorationGameCorePlugin::initialise(){
+        ProceduralExplorationGameCore::GameplayConstants::initialise();
+
         AV::ScriptVM::setupNamespace("_gameCore", GameCoreNamespace::setupNamespace);
 
         AV::ScriptVM::setupDelegateTable(ExplorationMapDataUserData::setupDelegateTable);

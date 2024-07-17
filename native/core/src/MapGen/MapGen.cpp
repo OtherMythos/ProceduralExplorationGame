@@ -13,9 +13,11 @@
 #include "MapGen/Steps/RemoveRedundantIslandsMapGenStep.h"
 #include "MapGen/Steps/WeightAndSortLandmassesMapGenStep.h"
 #include "MapGen/Steps/DeterminePlayerStartMapGenStep.h"
+#include "MapGen/Steps/DetermineGatewayPositionMapGenStep.h"
 #include "MapGen/Steps/DetermineRegionsMapGenStep.h"
 #include "MapGen/Steps/DetermineRegionTypesMapGenStep.h"
 #include "MapGen/Steps/PopulateFinalBiomesMapGenStep.h"
+#include "MapGen/Steps/DeterminePlacesMapGenStep.h"
 
 #include "System/Util/Timer/Timer.h"
 
@@ -29,9 +31,11 @@ namespace ProceduralExplorationGameCore{
         {"Remove Redundant Islands", new RemoveRedundantIslandsMapGenStep()},
         {"Weight And Sort Landmasses", new WeightAndSortLandmassesMapGenStep()},
         {"Determine Player Start", new DeterminePlayerStartMapGenStep()},
+        {"Determine Gateway Position", new DetermineGatewayPositionMapGenStep()},
         {"Determine Regions", new DetermineRegionsMapGenStep()},
-        {"Determine region types", new DetermineRegionTypesMapGenStep()},
+        {"Determine Region Types", new DetermineRegionTypesMapGenStep()},
         {"Populate Final Biomes", new PopulateFinalBiomesMapGenStep()},
+        {"Determine Places", new DeterminePlacesMapGenStep()},
     };
 
     MapGen::MapGen(){

@@ -9,7 +9,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    enum MapViewerColours{
+    enum class MapViewerColours{
         VOXEL_GROUP_GROUND,
         VOXEL_GROUP_GRASS,
         VOXEL_GROUP_ICE,
@@ -28,12 +28,12 @@ namespace ProceduralExplorationGameCore{
 
         MAX
     };
-    Ogre::ABGR valueColours[MapViewerColours::MAX];
+    Ogre::ABGR valueColours[(size_t)MapViewerColours::MAX];
 
     ExplorationMapViewer::ExplorationMapViewer(){
         const float OPACITY = 0.4;
 
-        Ogre::ColourValue cols[MapViewerColours::MAX] = {
+        Ogre::ColourValue cols[(size_t)MapViewerColours::MAX] = {
             Ogre::ColourValue(0.84, 0.87, 0.29, 1),
             Ogre::ColourValue(0.33, 0.92, 0.27, 1),
             Ogre::ColourValue(0.84, 0.88, 0.84, 1),
@@ -47,7 +47,7 @@ namespace ProceduralExplorationGameCore{
             Ogre::ColourValue(0.85, 0.63, 0.03, 1),
             Ogre::ColourValue(0.1, 0.1, 0.1, 1),
         };
-        for(int i = 0; i < MapViewerColours::MAX; i++){
+        for(int i = 0; i < (size_t)MapViewerColours::MAX; i++){
             valueColours[i] = cols[i].getAsABGR();
         }
     }
@@ -70,21 +70,21 @@ namespace ProceduralExplorationGameCore{
                 voxSecondaryPtr++;
 
                 if(altitude < mapData->seaLevel){
-                    (*texPtr++) = valueColours[MapViewerColours::OCEAN];
+                    (*texPtr++) = valueColours[(size_t)MapViewerColours::OCEAN];
                     continue;
                 }
 
                 //TODO have some way to specify the found regions so this logic can be performed.
                 if(!GameplayState::getFoundRegion(regionId)){
-                    (*texPtr++) = valueColours[MapViewerColours::UNDISCOVRED_REGION];
+                    (*texPtr++) = valueColours[(size_t)MapViewerColours::UNDISCOVRED_REGION];
                     continue;
                 }
 
                 Ogre::uint8 voxelMeta = ((vox >> 8) & 0xFF);
                 if(voxelMeta & static_cast<Ogre::uint8>(MapVoxelTypes::RIVER)){
-                    (*texPtr++) = valueColours[MapViewerColours::FRESH_WATER];
+                    (*texPtr++) = valueColours[(size_t)MapViewerColours::FRESH_WATER];
                 }else{
-                    (*texPtr++) = valueColours[voxelMeta & MAP_VOXEL_MASK];
+                    (*texPtr++) = valueColours[(size_t)voxelMeta & MAP_VOXEL_MASK];
                 }
 
             }

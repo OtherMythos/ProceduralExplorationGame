@@ -60,6 +60,8 @@ namespace ProceduralExplorationGameCore{
         MAX
     };
 
+    #include "../../../../src/Content/PlaceConsts.h.nut"
+
     //The mask is used to include the edge and river flags.
     static const AV::uint32 MAP_VOXEL_MASK = 0x1F;
 
@@ -90,6 +92,40 @@ namespace ProceduralExplorationGameCore{
         PlacedItemId type;
     };
 
+    struct PlaceData{
+        AV::uint16 originX;
+        AV::uint16 originY;
+        RegionId region;
+        PlaceId type;
+    };
+
+    class PlaceDef{
+    public:
+        std::string name;
+        std::string desc;
+        PlaceType t;
+        float rarity;
+        AV::uint32 minLandmass;
+        AV::uint8 necessaryFeatures;
+
+        PlaceDef(){
+            this->name = "";
+            this->desc = "";
+            this->t = PlaceType::NONE;
+            this->rarity = 0.0;
+            this->minLandmass = 0;
+            this->necessaryFeatures = 0;
+        }
+        PlaceDef(const std::string& name, const std::string& desc, PlaceType t, float rarity, AV::uint32 minLandmass = 10, AV::uint8 necessaryFeatures = 0x0){
+            this->name = name;
+            this->desc = desc;
+            this->t = t;
+            this->rarity = rarity;
+            this->minLandmass = minLandmass;
+            this->necessaryFeatures = necessaryFeatures;
+        }
+    };
+
     struct ExplorationMapInputData{
         AV::uint32 width;
         AV::uint32 height;
@@ -102,8 +138,7 @@ namespace ProceduralExplorationGameCore{
         AV::uint32 numRegions;
         AV::uint8 seaLevel;
 
-        //TODO properly define how many place types are available.
-        AV::uint32 placeFrequency[10];
+        AV::uint16 placeFrequency[(size_t)PlaceType::MAX];
     };
 
     struct ExplorationMapData{
@@ -129,8 +164,10 @@ namespace ProceduralExplorationGameCore{
 
         std::vector<RegionData> regionData;
         std::vector<PlacedItemData> placedItems;
+        //TODO switch these to not be pointers.
         std::vector<FloodFillEntry*> waterData;
         std::vector<FloodFillEntry*> landData;
+        std::vector<PlaceData> placeData;
 
         struct BufferData{
             size_t size;

@@ -110,6 +110,24 @@ namespace ProceduralExplorationGamePlugin{
         }
         sq_rawset(vm, -3);
     }
+    inline void pushPlaceData(HSQUIRRELVM vm, const char* key, std::vector<ProceduralExplorationGameCore::PlaceData>& placeData){
+        sq_pushstring(vm, key, -1);
+        sq_newarray(vm, placeData.size());
+        for(size_t i = 0; i < placeData.size(); i++){
+            sq_pushinteger(vm, i);
+
+            const ProceduralExplorationGameCore::PlaceData& e = placeData[i];
+            sq_newtable(vm);
+
+            pushInteger(vm, "placeId", static_cast<SQInteger>(e.type));
+            pushInteger(vm, "region", e.region);
+            pushInteger(vm, "originX", e.originX);
+            pushInteger(vm, "originY", e.originY);
+
+            sq_rawset(vm, -3);
+        }
+        sq_rawset(vm, -3);
+    }
     inline void pushPlacedItemData(HSQUIRRELVM vm, const char* key, std::vector<ProceduralExplorationGameCore::PlacedItemData>& itemData){
         sq_pushstring(vm, key, -1);
         sq_newarray(vm, itemData.size());
@@ -153,7 +171,7 @@ namespace ProceduralExplorationGamePlugin{
 
         pushFloodData(vm, "waterData", mapData->waterData);
         pushFloodData(vm, "landData", mapData->landData);
-        pushEmptyArray(vm, "placeData");
+        pushPlaceData(vm, "placeData", mapData->placeData);
         pushRegionData(vm, "regionData", mapData->regionData);
         pushPlacedItemData(vm, "placedItems", mapData->placedItems);
 

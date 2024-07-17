@@ -116,6 +116,7 @@
         _doFile("res://src/Content/Projectiles.nut");
         _doFile("res://src/Content/Equippables.nut");
         _doFile("res://src/Content/Items.nut");
+        _doFile("res://src/Content/PlaceConsts.h.nut");
         _doFile("res://src/Content/Places.nut");
         _doFile("res://src/Content/FoundObject.nut");
         _doFile("res://src/Content/CombatData.nut");
