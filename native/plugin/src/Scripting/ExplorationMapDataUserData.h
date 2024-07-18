@@ -22,6 +22,7 @@ namespace ProceduralExplorationGamePlugin{
         static SQObject ExplorationMapDataDelegateTableObject;
 
         static SQInteger explorationMapDataToTable(HSQUIRRELVM vm);
+        static SQInteger getAltitudeForPos(HSQUIRRELVM vm);
         static SQInteger getLandmassForPos(HSQUIRRELVM vm);
         static SQInteger getIsWaterForPos(HSQUIRRELVM vm);
         static SQInteger getRegionForPos(HSQUIRRELVM vm);

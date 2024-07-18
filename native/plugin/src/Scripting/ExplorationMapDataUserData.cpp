@@ -184,6 +184,30 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger ExplorationMapDataUserData::getAltitudeForPos(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        Ogre::Vector3 outVec;
+        SCRIPT_CHECK_RESULT(AV::Vector3UserData::readVector3FromUserData(vm, -1, &outVec));
+        outVec.z = -outVec.z;
+
+        if(outVec.x < 0 || outVec.z < 0 || outVec.x >= mapData->width || outVec.z >= mapData->height){
+            sq_pushinteger(vm, 0);
+            return 1;
+        }
+
+        ProceduralExplorationGameCore::WorldCoord x, y;
+        x = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.x);
+        y = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.z);
+
+        const AV::uint8* voxPtr = ProceduralExplorationGameCore::VOX_PTR_FOR_COORD_CONST(mapData, ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y));
+
+        sq_pushinteger(vm, static_cast<SQInteger>(*voxPtr));
+
+        return 1;
+    }
+
     SQInteger ExplorationMapDataUserData::getLandmassForPos(HSQUIRRELVM vm){
         ProceduralExplorationGameCore::ExplorationMapData* mapData;
         SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
@@ -272,6 +296,7 @@ namespace ProceduralExplorationGamePlugin{
         sq_newtable(vm);
 
         AV::ScriptUtils::addFunction(vm, explorationMapDataToTable, "explorationMapDataToTable");
+        AV::ScriptUtils::addFunction(vm, getAltitudeForPos, "getAltitudeForPos");
         AV::ScriptUtils::addFunction(vm, getLandmassForPos, "getLandmassForPos");
         AV::ScriptUtils::addFunction(vm, getIsWaterForPos, "getIsWaterForPos");
         AV::ScriptUtils::addFunction(vm, getRegionForPos, "getRegionForPos");

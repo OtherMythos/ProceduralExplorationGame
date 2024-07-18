@@ -220,6 +220,7 @@
     function getZForPos(pos){
         //Move somewhere else.
 
+        /*
         local x = pos.x.tointeger();
         local y = -pos.z.tointeger();
 
@@ -230,6 +231,14 @@
         local buf = mMapData_.voxelBuffer;
         buf.seek((x + y * width) * 4);
         local voxFloat = (buf.readn('i') & 0xFF).tofloat();
+        local altitude = (((voxFloat - mMapData_.seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger() + 1;
+        local clampedAltitude = altitude < 0 ? 0 : altitude;
+
+        return 0.5 + clampedAltitude * PROCEDURAL_WORLD_UNIT_MULTIPLIER;
+        */
+
+        local voxFloat = ::currentNativeMapData.getAltitudeForPos(pos).tofloat();
+
         local altitude = (((voxFloat - mMapData_.seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger() + 1;
         local clampedAltitude = altitude < 0 ? 0 : altitude;
 
