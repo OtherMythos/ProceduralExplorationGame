@@ -9,6 +9,7 @@ namespace ProceduralExplorationGameCore{
     typedef AV::uint8 RegionId;
     typedef AV::uint8 LandId;
     typedef AV::uint8 WaterId;
+    typedef AV::uint16 WorldCoord;
     typedef AV::uint32 WorldPoint;
 
     static const RegionId INVALID_REGION_ID = 0xFF;

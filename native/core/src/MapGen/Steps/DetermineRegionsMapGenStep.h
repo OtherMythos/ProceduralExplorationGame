@@ -25,7 +25,7 @@ namespace ProceduralExplorationGameCore{
         DetermineRegionsMapGenJob();
         ~DetermineRegionsMapGenJob();
 
-        void processJob(ExplorationMapData* mapData, const std::vector<WorldPoint>& points, std::vector<RegionData>& regionData, AV::uint32 xa, AV::uint32 ya, AV::uint32 xb, AV::uint32 yb);
+        void processJob(ExplorationMapData* mapData, const std::vector<WorldPoint>& points, std::vector<RegionData>& regionData, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb);
 
     };
 

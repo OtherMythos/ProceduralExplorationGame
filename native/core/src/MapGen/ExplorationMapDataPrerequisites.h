@@ -68,8 +68,8 @@ namespace ProceduralExplorationGameCore{
     struct RegionData{
         RegionId id;
         AV::uint32 total;
-        AV::uint16 seedX;
-        AV::uint16 seedY;
+        WorldCoord seedX;
+        WorldCoord seedY;
         RegionType type;
         std::vector<WorldPoint> coords;
     };
@@ -77,8 +77,8 @@ namespace ProceduralExplorationGameCore{
     struct FloodFillEntry{
         AV::uint32 id;
         AV::uint32 total;
-        AV::uint32 seedX;
-        AV::uint32 seedY;
+        WorldCoord seedX;
+        WorldCoord seedY;
         //AV::uint32 startingVal; //TODO figure out
         bool nextToWorldEdge = false;
         std::vector<WorldPoint> edges;
@@ -86,15 +86,15 @@ namespace ProceduralExplorationGameCore{
     };
 
     struct PlacedItemData{
-        AV::uint16 originX;
-        AV::uint16 originY;
+        WorldCoord originX;
+        WorldCoord originY;
         RegionId region;
         PlacedItemId type;
     };
 
     struct PlaceData{
-        AV::uint16 originX;
-        AV::uint16 originY;
+        WorldCoord originX;
+        WorldCoord originY;
         RegionId region;
         PlaceId type;
     };
@@ -190,11 +190,11 @@ namespace ProceduralExplorationGameCore{
         std::vector<LandId> landWeighted;
     };
 
-    static inline WorldPoint WRAP_WORLD_POINT(AV::uint32 x, AV::uint32 y){
-        return ((x & 0xFFFF) << 16) | (y & 0xFFFF);
+    static inline WorldPoint WRAP_WORLD_POINT(WorldCoord x, WorldCoord y){
+        return (static_cast<WorldPoint>(x) << 16) | y;
     }
 
-    static inline void READ_WORLD_POINT(WorldPoint point, AV::uint32& xx, AV::uint32& yy){
+    static inline void READ_WORLD_POINT(WorldPoint point, WorldCoord& xx, WorldCoord& yy){
         xx = (point >> 16) & 0xFFFF;
         yy = point & 0xFFFF;
     }
@@ -208,15 +208,15 @@ namespace ProceduralExplorationGameCore{
 
     template<typename T=AV::uint32*, typename D=ExplorationMapData*>
     static inline T FULL_PTR_FOR_COORD(D mapData, WorldPoint p){
-        AV::uint32 xx;
-        AV::uint32 yy;
+        WorldCoord xx;
+        WorldCoord yy;
         READ_WORLD_POINT(p, xx, yy);
         return (reinterpret_cast<T>(mapData->voxelBuffer) + xx + yy * mapData->height);
     }
     template<typename T=AV::uint32*, typename D=ExplorationMapData>
     static inline T FULL_PTR_FOR_COORD_SECONDARY(D mapData, WorldPoint p){
-        AV::uint32 xx;
-        AV::uint32 yy;
+        WorldCoord xx;
+        WorldCoord yy;
         READ_WORLD_POINT(p, xx, yy);
         return (reinterpret_cast<T>(mapData->secondaryVoxelBuffer) + xx + yy * mapData->height);
     }

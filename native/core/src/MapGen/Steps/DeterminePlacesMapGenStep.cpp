@@ -29,7 +29,7 @@ namespace ProceduralExplorationGameCore{
         static const float RADIUS = 10;
         for(int i = 0; i < 100; i++){
             WorldPoint intended = findRandomPointInLandmass(mapData->landData[landmass]);
-            AV::uint32 intendedX, intendedY;
+            WorldCoord intendedX, intendedY;
             READ_WORLD_POINT(intended, intendedX, intendedY);
             //Try another point if it collides with the pre-existing points.
             //if(collisionWorld.checkCollisionPoint(intendedX, intendedY, RADIUS)) continue;
@@ -57,8 +57,7 @@ namespace ProceduralExplorationGameCore{
         const AV::uint8* regionPtr = REGION_PTR_FOR_COORD_CONST(mapData, point);
         RegionId region = *(regionPtr);
 
-        AV::uint32 xx;
-        AV::uint32 yy;
+        WorldCoord xx, yy;
         READ_WORLD_POINT(point, xx, yy);
         outData->originX = static_cast<AV::uint16>(xx);
         outData->originY = static_cast<AV::uint16>(yy);

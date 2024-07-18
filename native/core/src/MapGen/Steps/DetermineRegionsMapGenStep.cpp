@@ -25,8 +25,7 @@ namespace ProceduralExplorationGameCore{
             size_t randIndex = mapGenRandomIndex<WorldPoint>(coordData);
             WorldPoint randPoint = coordData[randIndex];
 
-            AV::uint32 xx;
-            AV::uint32 yy;
+            WorldCoord xx, yy;
             READ_WORLD_POINT(randPoint, xx, yy);
             //Don't place a region seed on an already existing region.
             //if(floodVals[xx+yy*mapData->width] != 0xFF) continue;
@@ -52,8 +51,7 @@ namespace ProceduralExplorationGameCore{
             //TODO anything involving x and y should be shifted to be a specific world coordinate size.
             //So typedef uint16 or 32 to be WorldAxisCoord and everything uses that.
             //READ_WORLD_POINT should return those values, and wrapped WorldPoint should be updated to be 2*x and y.
-            AV::uint32 xx;
-            AV::uint32 yy;
+            WorldCoord xx, yy;
             READ_WORLD_POINT(p, xx, yy);
             points.push_back(p);
             mapData->regionData.push_back({
@@ -83,7 +81,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void DetermineRegionsMapGenJob::processJob(ExplorationMapData* mapData, const std::vector<WorldPoint>& points, std::vector<RegionData>& regionData, AV::uint32 xa, AV::uint32 ya, AV::uint32 xb, AV::uint32 yb){
+    void DetermineRegionsMapGenJob::processJob(ExplorationMapData* mapData, const std::vector<WorldPoint>& points, std::vector<RegionData>& regionData, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb){
         AV::uint8* regionPtr = REGION_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(xa, ya));
         for(int y = ya; y < yb; y++){
             for(int x = xa; x < xb; x++){
@@ -93,7 +91,7 @@ namespace ProceduralExplorationGameCore{
                 for(int i = 0; i < points.size(); i++){
                     WorldPoint p = points[i];
 
-                    AV::uint32 xTarget, yTarget;
+                    WorldCoord xTarget, yTarget;
                     READ_WORLD_POINT(p, xTarget, yTarget);
 
                     float length = sqrt(pow(static_cast<int>(xTarget) - x, 2) + pow(static_cast<int>(yTarget) - y, 2));

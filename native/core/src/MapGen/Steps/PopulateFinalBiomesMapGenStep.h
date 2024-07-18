@@ -25,7 +25,7 @@ namespace ProceduralExplorationGameCore{
         PopulateFinalBiomesMapGenJob();
         ~PopulateFinalBiomesMapGenJob();
 
-        void processJob(ExplorationMapData* mapData, AV::uint32 xa, AV::uint32 ya, AV::uint32 xb, AV::uint32 yb);
+        void processJob(ExplorationMapData* mapData, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb);
 
     };
 

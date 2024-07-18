@@ -19,12 +19,12 @@ namespace ProceduralExplorationGameCore{
             LandId landId = findRandomLandmassForSize(mapData->landData, workspace->landWeighted, 40);
             retPoint = findRandomPointInLandmass(mapData->landData[landId]);
 
-            AV::uint32 xx;
-            AV::uint32 yy;
+            WorldCoord xx;
+            WorldCoord yy;
             READ_WORLD_POINT(retPoint, xx, yy);
 
-            AV::uint32 px;
-            AV::uint32 py;
+            WorldCoord px;
+            WorldCoord py;
             READ_WORLD_POINT(mapData->playerStart, px, py);
 
             float distance = sqrt(pow((float)px - (float)xx, 2) + pow((float)py - (float)yy, 2));

@@ -39,7 +39,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void GenerateNoiseMapGenJob::processJob(ExplorationMapData* mapData, AV::uint32 xa, AV::uint32 ya, AV::uint32 xb, AV::uint32 yb){
+    void GenerateNoiseMapGenJob::processJob(ExplorationMapData* mapData, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb){
 
         {
             PerlinNoise noiseGen(mapData->seed);

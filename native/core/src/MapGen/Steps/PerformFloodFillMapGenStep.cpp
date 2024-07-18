@@ -101,9 +101,9 @@ namespace ProceduralExplorationGameCore{
                         floodData->nextToWorldEdge = false;
 
                         while(!points.empty()){
-                            AV::uint32 xx, yy;
                             WorldPoint p = points.top();
                             points.pop();
+                            WorldCoord xx, yy;
                             READ_WORLD_POINT(p, xx, yy);
                             floodFill_<bool(ExplorationMapData*, AV::uint8),AV::uint8(ExplorationMapData*, AV::uint32, AV::uint32)>
                                 (points, xx, yy, mapData->width, mapData->height, comparisonFunction, readFunction, &vals, mapData, currentIdx, floodData);

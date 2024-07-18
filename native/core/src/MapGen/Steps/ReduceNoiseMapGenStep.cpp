@@ -42,7 +42,7 @@ namespace ProceduralExplorationGameCore{
 
         return val;
     }
-    void ReduceNoiseMapGenJob::processJob(ExplorationMapData* mapData, AV::uint32 xa, AV::uint32 ya, AV::uint32 xb, AV::uint32 yb){
+    void ReduceNoiseMapGenJob::processJob(ExplorationMapData* mapData, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb){
 
         {
             float* voxPtr = static_cast<float*>(mapData->voxelBuffer);
