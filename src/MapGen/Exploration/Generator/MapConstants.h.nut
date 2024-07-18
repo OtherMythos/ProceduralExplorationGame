@@ -1,6 +1,22 @@
+#pragma once
+#define enum enum class
+#define const static const AV::uint32
+
+/*
 ::VoxelValues <- [
    2, 112, 0, 147, 6, 198, 199
 ];
+*/
+
+#if 0
+::VoxelValues <- [
+#endif
+#define VOXEL_VALUES \
+   2, 112, 0, 147, 6, 198, 199
+#if 0
+];
+#endif
+
 
 enum MapVoxelTypes{
     SAND,
@@ -53,3 +69,6 @@ enum PlacedItemId{
 
     MAX
 };
+
+#undef enum
+#undef const

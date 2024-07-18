@@ -7,7 +7,7 @@ function start(){
     _doFile("res://src/Versions.nut");
     _doFile("res://src/Constants.nut");
     _doFile("res://src/Helpers.nut");
-    _doFile("res://src/MapGen/Exploration/Generator/MapConstants.nut");
+    _doFile("res://src/MapGen/Exploration/Generator/MapConstants.h.nut");
 
     _doFile("res://src/System/CompositorManager.nut");
     ::CompositorManager.setup();

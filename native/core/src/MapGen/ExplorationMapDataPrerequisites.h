@@ -7,63 +7,14 @@
 
 namespace ProceduralExplorationGameCore{
 
-    enum class MapVoxelTypes{
-        SAND,
-        DIRT,
-        SNOW,
-        TREES,
-        TREES_CHERRY_BLOSSOM,
-
-        DIRT_EXP_FIELD,
-        SAND_EXP_FIELD,
-
-        EDGE = 0x40,
-        RIVER = 0x20,
-    };
-
-    static const AV::uint8 MapVoxelColour[] = {
-        2, 112, 0, 147, 6, 198, 199,
-    };
-
-    enum class BiomeId{
-        NONE,
-
-        GRASS_LAND,
-        GRASS_FOREST,
-        CHERRY_BLOSSOM_FOREST,
-        EXP_FIELD,
-
-        SHALLOW_OCEAN,
-        DEEP_OCEAN,
-
-        MAX
-    };
-
-    enum class RegionType{
-        NONE,
-
-        GRASSLAND,
-        CHERRY_BLOSSOM_FOREST,
-        EXP_FIELDS,
-        GATEWAY_DOMAIN,
-        PLAYER_START,
-
-        MAX
-    };
-
-    enum class PlacedItemId{
-        NONE,
-
-        TREE,
-        CHERRY_BLOSSOM_FOREST,
-
-        MAX
-    };
+    #include "../../../../src/MapGen/Exploration/Generator/MapConstants.h.nut"
 
     #include "../../../../src/Content/PlaceConsts.h.nut"
 
-    //The mask is used to include the edge and river flags.
-    static const AV::uint32 MAP_VOXEL_MASK = 0x1F;
+    static const AV::uint8 MapVoxelColour[] = {
+        VOXEL_VALUES
+    };
+    #undef VOXEL_VALUES
 
     struct RegionData{
         RegionId id;

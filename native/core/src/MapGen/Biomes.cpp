@@ -73,7 +73,7 @@ namespace ProceduralExplorationGameCore{
     void CHERRY_BLOSSOM_FOREST_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 moisture){
         if(altitude < mapData->seaLevel + 10) return;
         if(processRValue(mapData, x, y, 1)){
-            PLACE_ITEM(PlacedItemId::CHERRY_BLOSSOM_FOREST);
+            PLACE_ITEM(PlacedItemId::CHERRY_BLOSSOM_TREE);
         }
     }
     //
