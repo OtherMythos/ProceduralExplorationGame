@@ -4,6 +4,7 @@
 #include <cassert>
 
 #include "MapGen/ExplorationMapDataPrerequisites.h"
+#include "GameCoreLogger.h"
 
 #include "MapGen/Steps/MapGenStep.h"
 #include "MapGen/Steps/SetupBuffersMapGenStep.h"
@@ -68,8 +69,7 @@ namespace ProceduralExplorationGameCore{
             t.start();
             MAP_GEN_STEPS[i].second->processStep(input, mMapData, &workspace);
             t.stop();
-            //TODO have a plugin print function.
-            std::cout << "Time taken for stage '" << MAP_GEN_STEPS[i].first.c_str() << "' was " << t.getTimeTotal() << std::endl;
+            GAME_CORE_INFO("Time taken for stage '{}' was {}", MAP_GEN_STEPS[i].first.c_str(), t.getTimeTotal());
             mCurrentStage++;
         }
     }

@@ -17,14 +17,10 @@ namespace ProceduralExplorationGameCore{
     }
 
     void GenerateNoiseMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
-        //TODO look into separating these into individual jobs.
-        //AV::PatternHelper::GenPerlinNoise(mapData->width, mapData->height, static_cast<float*>(mapData->voxelBuffer), 0.02, 4);
-
         int div = 4;
         int divHeight = input->height / div;
         for(int i = 0; i < 4; i++){
             GenerateNoiseMapGenJob job;
-            //TODO separate the jobs out and designate to worker threads.
             job.processJob(mapData, 0, i * divHeight, input->width, i * divHeight + divHeight);
         }
     }

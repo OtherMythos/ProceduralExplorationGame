@@ -8,6 +8,7 @@
 #include "Scripting/ExplorationMapDataUserData.h"
 
 #include "GameplayConstants.h"
+#include "GameCoreLogger.h"
 
 namespace ProceduralExplorationGamePlugin{
 
@@ -25,6 +26,7 @@ namespace ProceduralExplorationGamePlugin{
     }
 
     void ProceduralExplorationGameCorePlugin::initialise(){
+        ProceduralExplorationGameCore::GameCoreLogger::initialise();
         ProceduralExplorationGameCore::GameplayConstants::initialise();
 
         AV::ScriptVM::setupNamespace("_gameCore", GameCoreNamespace::setupNamespace);

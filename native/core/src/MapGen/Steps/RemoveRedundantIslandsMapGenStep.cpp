@@ -13,7 +13,6 @@ namespace ProceduralExplorationGameCore{
     }
 
     void RemoveRedundantIslandsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
-        //TODO separate the jobs out and designate to worker threads.
         RemoveRedundantIslandsMapGenJob job;
         job.processJob(mapData);
     }

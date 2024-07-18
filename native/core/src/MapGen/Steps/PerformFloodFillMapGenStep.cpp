@@ -46,7 +46,7 @@ namespace ProceduralExplorationGameCore{
         if(x < 0 || y < 0 || x >= width || y >= height) return 0;
         size_t idx = x+y*width;
         assert(idx < vals->size());
-        if((*vals)[idx] != 0xFF){
+        if((*vals)[idx] != INVALID_REGION_ID){
             return 0;
         }
 
@@ -81,8 +81,7 @@ namespace ProceduralExplorationGameCore{
     template<typename T, typename C, int S>
     void inline floodFill(T comparisonFunction, C readFunction, ExplorationMapData* mapData, std::vector<FloodFillEntry*>& outData, bool writeToBlob=true){
         std::vector<RegionId> vals;
-        //TODO add a constant for invalid region entry.
-        vals.resize(mapData->width * mapData->height, 0xFF);
+        vals.resize(mapData->width * mapData->height, INVALID_REGION_ID);
         AV::uint32 currentIdx = 0;
 
         for(int y = 0; y < mapData->height; y++){
@@ -90,7 +89,7 @@ namespace ProceduralExplorationGameCore{
                 AV::uint8 altitude = readFunction(mapData, x, y);
 
                 if(comparisonFunction(mapData, altitude)){
-                    if(vals[x+y*mapData->width] == 0xFF){
+                    if(vals[x+y*mapData->width] == INVALID_REGION_ID){
                         std::stack<WorldPoint> points;
                         points.push(WRAP_WORLD_POINT(x, y));
                         //TODO prevent pointers.
@@ -143,11 +142,11 @@ namespace ProceduralExplorationGameCore{
                 const AV::uint8* waterGroup = WATER_GROUP_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y));
                 const AV::uint8* landGroup = LAND_GROUP_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y));
 
-                if(*waterGroup == 0xFF){
-                    assert(*landGroup != 0xFF);
+                if(*waterGroup == INVALID_WATER_ID){
+                    assert(*landGroup != INVALID_LAND_ID);
                 }
-                else if(*landGroup == 0xFF){
-                    assert(*waterGroup != 0xFF);
+                if(*landGroup == INVALID_LAND_ID){
+                    assert(*waterGroup != INVALID_WATER_ID);
                 }
             }
         }

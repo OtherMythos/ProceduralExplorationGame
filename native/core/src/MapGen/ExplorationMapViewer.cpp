@@ -74,14 +74,13 @@ namespace ProceduralExplorationGameCore{
                     continue;
                 }
 
-                //TODO have some way to specify the found regions so this logic can be performed.
                 if(!GameplayState::getFoundRegion(regionId)){
                     (*texPtr++) = valueColours[(size_t)MapViewerColours::UNDISCOVRED_REGION];
                     continue;
                 }
 
-                Ogre::uint8 voxelMeta = ((vox >> 8) & 0xFF);
-                if(voxelMeta & static_cast<Ogre::uint8>(MapVoxelTypes::RIVER)){
+                AV::uint8 voxelMeta = ((vox >> 8) & 0xFF);
+                if(voxelMeta & static_cast<AV::uint8>(MapVoxelTypes::RIVER)){
                     (*texPtr++) = valueColours[(size_t)MapViewerColours::FRESH_WATER];
                 }else{
                     (*texPtr++) = valueColours[(size_t)voxelMeta & MAP_VOXEL_MASK];

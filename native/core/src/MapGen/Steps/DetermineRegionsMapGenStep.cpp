@@ -14,7 +14,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    WorldPoint _determineRegionPoint(const std::vector<FloodFillEntry*>& landData, const std::vector<LandId>& landWeighted, const ExplorationMapData* mapData, const std::vector<AV::uint32>& floodVals){
+    WorldPoint _determineRegionPoint(const std::vector<FloodFillEntry*>& landData, const std::vector<LandId>& landWeighted, const ExplorationMapData* mapData){
         //Attempt a few times, otherwise fail.
         for(int i = 0; i < 10; i++){
             //Determine a single point and retry if it's too close to the others.
@@ -25,11 +25,6 @@ namespace ProceduralExplorationGameCore{
             size_t randIndex = mapGenRandomIndex<WorldPoint>(coordData);
             WorldPoint randPoint = coordData[randIndex];
 
-            WorldCoord xx, yy;
-            READ_WORLD_POINT(randPoint, xx, yy);
-            //Don't place a region seed on an already existing region.
-            //if(floodVals[xx+yy*mapData->width] != 0xFF) continue;
-
             return randPoint;
         }
 
@@ -37,20 +32,13 @@ namespace ProceduralExplorationGameCore{
     }
 
     void DetermineRegionsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
-        //std::vector<RegionData> regionData;
-        //TODO do I actually need this?
-        std::vector<AV::uint32> vals;
-        vals.resize(mapData->width * mapData->height, 0xFFFFFF);
 
         std::vector<WorldPoint> points;
         points.reserve(input->numRegions);
         for(RegionId i = 0; i < input->numRegions; i++){
-            WorldPoint p = _determineRegionPoint(mapData->landData, workspace->landWeighted, mapData, vals);
+            WorldPoint p = _determineRegionPoint(mapData->landData, workspace->landWeighted, mapData);
             if(p == INVALID_WORLD_POINT) continue;
 
-            //TODO anything involving x and y should be shifted to be a specific world coordinate size.
-            //So typedef uint16 or 32 to be WorldAxisCoord and everything uses that.
-            //READ_WORLD_POINT should return those values, and wrapped WorldPoint should be updated to be 2*x and y.
             WorldCoord xx, yy;
             READ_WORLD_POINT(p, xx, yy);
             points.push_back(p);
