@@ -5,6 +5,8 @@
 #include <sqstdblob.h>
 #include <vector>
 
+#include "Scripting/ScriptNamespace/Classes/Vector3UserData.h"
+
 #include "MapGen/ExplorationMapDataPrerequisites.h"
 
 namespace ProceduralExplorationGamePlugin{
@@ -182,10 +184,97 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger ExplorationMapDataUserData::getLandmassForPos(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        Ogre::Vector3 outVec;
+        SCRIPT_CHECK_RESULT(AV::Vector3UserData::readVector3FromUserData(vm, -1, &outVec));
+        outVec.z = -outVec.z;
+
+        ProceduralExplorationGameCore::LandId outLandmass = ProceduralExplorationGameCore::INVALID_LAND_ID;
+
+        if(outVec.x < 0 || outVec.z < 0 || outVec.x >= mapData->width || outVec.z >= mapData->height){
+            sq_pushinteger(vm, static_cast<SQInteger>(outLandmass));
+            return 1;
+        }
+
+        ProceduralExplorationGameCore::WorldCoord x, y;
+        x = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.x);
+        y = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.z);
+
+        const AV::uint8* landPtr = ProceduralExplorationGameCore::LAND_GROUP_PTR_FOR_COORD_CONST(mapData, ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y));
+        outLandmass = *landPtr;
+
+        sq_pushinteger(vm, static_cast<SQInteger>(outLandmass));
+
+        return 1;
+    }
+
+    SQInteger ExplorationMapDataUserData::getIsWaterForPos(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        Ogre::Vector3 outVec;
+        SCRIPT_CHECK_RESULT(AV::Vector3UserData::readVector3FromUserData(vm, -1, &outVec));
+        outVec.z = -outVec.z;
+
+        ProceduralExplorationGameCore::WaterId outWater = ProceduralExplorationGameCore::INVALID_WATER_ID;
+
+        if(outVec.x < 0 || outVec.z < 0 || outVec.x >= mapData->width || outVec.z >= mapData->height){
+            sq_pushbool(vm, false);
+            return 1;
+        }
+
+        ProceduralExplorationGameCore::WorldCoord x, y;
+        x = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.x);
+        y = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.z);
+
+        const AV::uint8* waterPtr = ProceduralExplorationGameCore::WATER_GROUP_PTR_FOR_COORD_CONST(mapData, ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y));
+        if(*waterPtr == ProceduralExplorationGameCore::INVALID_WATER_ID){
+            sq_pushbool(vm, false);
+            return 1;
+        }
+
+        sq_pushbool(vm, true);
+
+        return 1;
+    }
+
+    SQInteger ExplorationMapDataUserData::getRegionForPos(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        Ogre::Vector3 outVec;
+        SCRIPT_CHECK_RESULT(AV::Vector3UserData::readVector3FromUserData(vm, -1, &outVec));
+        outVec.z = -outVec.z;
+
+        ProceduralExplorationGameCore::RegionId outRegion = ProceduralExplorationGameCore::INVALID_REGION_ID;
+
+        if(outVec.x < 0 || outVec.z < 0 || outVec.x >= mapData->width || outVec.z >= mapData->height){
+            sq_pushinteger(vm, static_cast<SQInteger>(outRegion));
+            return 1;
+        }
+
+        ProceduralExplorationGameCore::WorldCoord x, y;
+        x = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.x);
+        y = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.z);
+
+        const AV::uint8* regionPtr = ProceduralExplorationGameCore::REGION_PTR_FOR_COORD_CONST(mapData, ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y));
+        outRegion = *regionPtr;
+
+        sq_pushinteger(vm, static_cast<SQInteger>(outRegion));
+
+        return 1;
+    }
+
     void ExplorationMapDataUserData::setupDelegateTable(HSQUIRRELVM vm){
         sq_newtable(vm);
 
         AV::ScriptUtils::addFunction(vm, explorationMapDataToTable, "explorationMapDataToTable");
+        AV::ScriptUtils::addFunction(vm, getLandmassForPos, "getLandmassForPos");
+        AV::ScriptUtils::addFunction(vm, getIsWaterForPos, "getIsWaterForPos");
+        AV::ScriptUtils::addFunction(vm, getRegionForPos, "getRegionForPos");
 
         sq_resetobject(&ExplorationMapDataDelegateTableObject);
         sq_getstackobj(vm, -1, &ExplorationMapDataDelegateTableObject);
