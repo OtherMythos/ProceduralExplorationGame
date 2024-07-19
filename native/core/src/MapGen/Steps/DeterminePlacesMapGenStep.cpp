@@ -4,6 +4,8 @@
 
 #include "GameplayConstants.h"
 
+#include <cassert>
+
 namespace ProceduralExplorationGameCore{
 
     DeterminePlacesMapGenStep::DeterminePlacesMapGenStep(){
@@ -70,14 +72,14 @@ namespace ProceduralExplorationGameCore{
     void DeterminePlacesMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         const GameplayConstants::PlacesByTypeVec& placesByType = GameplayConstants::getPlacesByType();
         const GameplayConstants::PlacesVec& places = GameplayConstants::getPlaces();
-        for(size_t c = 0; c < (int)PlaceType::MAX; c++){
+        for(size_t c = ((size_t)PlaceType::NONE)+1; c < (size_t)PlaceType::MAX; c++){
             AV::uint16 currentFrequency = input->placeFrequency[c];
             for(AV::uint16 i = 0; i < currentFrequency; i++){
-                //To get around the NONE.
                 const std::vector<size_t> placesForType = placesByType[c];
                 if(placesForType.size() == 0) break;
-                size_t targetPlace = mapGenRandomIndex(placesForType);
-                const PlaceDef& place = places[targetPlace];
+                size_t targetIndex = mapGenRandomIndex(placesForType);
+                size_t targetPlace = placesForType[targetIndex];
+                assert(targetPlace != 0);
                 PlaceData d;
                 bool success = determinePlaces_place(mapData, workspace, (PlaceId)targetPlace, &d);
                 if(success){
