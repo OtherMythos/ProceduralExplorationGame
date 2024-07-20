@@ -54,7 +54,7 @@
 
         //Have to do this later so it doesn't try and re-generate without the map data.
         if(worldType == WorldTypes.PROCEDURAL_EXPLORATION_WORLD){
-            mMapViewer_.setDrawOption(DrawOptions.VISIBLE_REGIONS, true);
+            mMapViewer_.setDrawOption(MapViewerDrawOptions.VISIBLE_REGIONS, true);
         }
     }
 

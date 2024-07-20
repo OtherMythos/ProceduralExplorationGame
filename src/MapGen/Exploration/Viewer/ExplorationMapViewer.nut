@@ -45,6 +45,7 @@ enum MapViewerColours{
     mOpacity_ = 0.4;
 
     mDrawOptions_ = null;
+    mDrawOptionsHash_ = 0x0;
     mDrawLocationOptions_ = null;
 
     mCompositorDatablock_ = null
@@ -58,10 +59,10 @@ enum MapViewerColours{
     mFoundRegions_ = null;
 
     constructor(currentFoundRegions=null){
-        mDrawOptions_ = array(DrawOptions.MAX, false);
-        mDrawOptions_[DrawOptions.WATER] = false;
-        mDrawOptions_[DrawOptions.GROUND_TYPE] = false;
-        mDrawOptions_[DrawOptions.VISIBLE_PLACES_MASK] = false;
+        mDrawOptions_ = array(MapViewerDrawOptions.MAX, false);
+        mDrawOptions_[MapViewerDrawOptions.WATER] = false;
+        mDrawOptions_[MapViewerDrawOptions.GROUND_TYPE] = false;
+        mDrawOptions_[MapViewerDrawOptions.VISIBLE_PLACES_MASK] = false;
         mDrawLocationOptions_ = array(PlaceType.MAX, true);
         mDrawLocationOptions_[PlaceType.CITY] = true;
         mDrawLocationOptions_[PlaceType.TOWN] = true;
@@ -89,8 +90,8 @@ enum MapViewerColours{
         }
     }
 
-    function displayMapData(outData, showPlaceMarkers=true, leanMap=false){
-        base.displayMapData(outData, showPlaceMarkers, leanMap);
+    function displayMapData(outData, nativeMapData=null, showPlaceMarkers=true, leanMap=false){
+        base.displayMapData(outData, nativeMapData, showPlaceMarkers, leanMap);
 
         if(showPlaceMarkers){
             setupPlaceMarkers(outData);
@@ -110,8 +111,17 @@ enum MapViewerColours{
         }
     }
 
+    function generateDrawOptionHash(options){
+        local hash = 0x0;
+        foreach(c,i in options){
+            if(!i) continue;
+            hash = hash | (1 << c);
+        }
+        return hash;
+    }
     function setDrawOption(option, value){
         mDrawOptions_[option] = value;
+        mDrawOptionsHash_ = generateDrawOptionHash(mDrawOptions_);
         uploadToTexture();
     }
 
@@ -177,13 +187,13 @@ enum MapViewerColours{
             textureBox.seek((i.originX + i.originY * mMapData_.width) * 4);
             textureBox.writen(mColours_[MapViewerColours.COLOUR_BLACK], 'i');
         }
-        if(mDrawOptions_[DrawOptions.REGION_SEEDS]){
+        if(mDrawOptions_[MapViewerDrawOptions.REGION_SEEDS]){
             foreach(i in mMapData_.regionData){
                 textureBox.seek((i.seedX + i.seedY * mMapData_.width) * 4);
                 textureBox.writen(mColours_[MapViewerColours.COLOUR_MAGENTA], 'i');
             }
         }
-        if(mDrawOptions_[DrawOptions.RIVER_DATA]){
+        if(mDrawOptions_[MapViewerDrawOptions.RIVER_DATA]){
             //local i = 0;
             mMapData_.riverBuffer.seek(0);
             local first = true;
@@ -202,7 +212,7 @@ enum MapViewerColours{
                 }
             }
         }
-        if(mDrawOptions_[DrawOptions.PLAYER_START_POSITION]){
+        if(mDrawOptions_[MapViewerDrawOptions.PLAYER_START_POSITION]){
             local startX = (mMapData_.playerStart >> 16) & 0xFFFF;
             local startY = mMapData_.playerStart & 0xFFFF;
             for(local y = -3; y < 3; y++){
@@ -286,7 +296,9 @@ enum MapViewerColours{
             //local nativeMapData = _gameCore.tableToExplorationMapData(mMapData_);
             //_gameCore.fillBufferWithMapLean(textureBox, nativeMapData);
         }else{
-            fillBufferWithMapComplex_(textureBox);
+            //fillBufferWithMapComplex_(textureBox);
+
+            _gameCore.fillBufferWithMapComplex(textureBox, mNativeMapData_, mDrawOptionsHash_);
         }
     }
     function _getColourForVox(xVox, yVox){
@@ -297,7 +309,7 @@ enum MapViewerColours{
 
         local drawVal = 0x0;
 
-        if(mDrawOptions_[DrawOptions.GROUND_TYPE]){
+        if(mDrawOptions_[MapViewerDrawOptions.GROUND_TYPE]){
             if((voxVal >> 8) & MapVoxelTypes.RIVER){
                 drawVal = mColours_[MapViewerColours.FRESH_WATER];
             }else{
@@ -309,7 +321,7 @@ enum MapViewerColours{
             local val = altitude.tofloat() / 0xFF;
             drawVal = ColourValue(val, val, val, 1).getAsABGR();
         }
-        if(mDrawOptions_[DrawOptions.WATER]){
+        if(mDrawOptions_[MapViewerDrawOptions.WATER]){
             if(altitude < mMapData_.seaLevel){
                 if(waterGroup == 0){
                     drawVal = mColours_[MapViewerColours.OCEAN];
@@ -318,7 +330,7 @@ enum MapViewerColours{
                 }
             }
         }
-        if(mDrawOptions_[DrawOptions.WATER_GROUPS]){
+        if(mDrawOptions_[MapViewerDrawOptions.WATER_GROUPS]){
             if(waterGroup == 0xFF){
                 drawVal = mColours_[MapViewerColours.COLOUR_BLACK];
             }else{
@@ -326,27 +338,27 @@ enum MapViewerColours{
                 drawVal = ColourValue(valGroup, valGroup, valGroup, mOpacity_).getAsABGR();
             }
         }
-        if(mDrawOptions_[DrawOptions.MOISTURE_MAP]){
+        if(mDrawOptions_[MapViewerDrawOptions.MOISTURE_MAP]){
             mMapData_.secondaryVoxBuffer.seek((xVox + yVox * mMapData_.width) * 4);
             local moistureVal = mMapData_.secondaryVoxBuffer.readn('i');
 
             local val = moistureVal.tofloat() / 0xFF;
             drawVal = ColourValue(val, val, val, 1).getAsABGR();
         }
-        if(mDrawOptions_[DrawOptions.REGIONS]){
+        if(mDrawOptions_[MapViewerDrawOptions.REGIONS]){
             mMapData_.secondaryVoxBuffer.seek((xVox + yVox * mMapData_.width) * 4);
             local regionVal = (mMapData_.secondaryVoxBuffer.readn('i') >> 8) & 0xFF;
 
             local val = regionVal.tofloat() / mMapData_.regionData.len();
             drawVal = ColourValue(val, val, val, 1).getAsABGR();
         }
-        if(mDrawOptions_[DrawOptions.BLUE_NOISE]){
+        if(mDrawOptions_[MapViewerDrawOptions.BLUE_NOISE]){
             mMapData_.blueNoiseBuffer.seek((xVox + yVox * mMapData_.width) * 4);
             local val = mMapData_.blueNoiseBuffer.readn('f');
 
             drawVal = ColourValue(val, val, val, 1).getAsABGR();
         }
-        if(mDrawOptions_[DrawOptions.LAND_GROUPS]){
+        if(mDrawOptions_[MapViewerDrawOptions.LAND_GROUPS]){
             local landGroup = (voxVal >> 24) & 0xFF;
             if(landGroup == 0xFF){
                 drawVal = mColours_[MapViewerColours.COLOUR_BLACK];
@@ -355,13 +367,13 @@ enum MapViewerColours{
                 drawVal = ColourValue(valGroup, valGroup, valGroup, mOpacity_).getAsABGR();
             }
         }
-        if(mDrawOptions_[DrawOptions.EDGE_VALS]){
+        if(mDrawOptions_[MapViewerDrawOptions.EDGE_VALS]){
             local edgeVox = (voxVal >> 8) & 0x80;
             if(edgeVox){
                 drawVal = mColours_[MapViewerColours.COLOUR_BLACK];
             }
         }
-        if(mDrawOptions_[DrawOptions.PLACE_LOCATIONS]){
+        if(mDrawOptions_[MapViewerDrawOptions.PLACE_LOCATIONS]){
             foreach(i in mMapData_.placeData){
                 if(xVox == i.originX && yVox == i.originY){
                     drawVal = mColours_[MapViewerColours.COLOUR_BLACK];
@@ -369,7 +381,7 @@ enum MapViewerColours{
                 }
             }
         }
-        if(mDrawOptions_[DrawOptions.VISIBLE_PLACES_MASK]){
+        if(mDrawOptions_[MapViewerDrawOptions.VISIBLE_PLACES_MASK]){
             local idx = (xVox + yVox * p.width) * 2;
             local byteIdx = int(idx / 32);
             local bitIdx = idx % 32;
@@ -381,7 +393,7 @@ enum MapViewerColours{
 
             drawVal = col;
         }
-        if(mDrawOptions_[DrawOptions.VISIBLE_REGIONS]){
+        if(mDrawOptions_[MapViewerDrawOptions.VISIBLE_REGIONS]){
             local voxVal = mMapData_.secondaryVoxBuffer.readn('i');
             if(altitude >= mMapData_.seaLevel){
                 local region = (voxVal >> 8) & 0xFF;

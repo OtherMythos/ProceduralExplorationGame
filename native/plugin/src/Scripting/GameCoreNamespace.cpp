@@ -38,6 +38,22 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger GameCoreNamespace::fillBufferWithMapComplex(HSQUIRRELVM vm){
+        Ogre::TextureBox* outTexture;
+        AV::TextureBoxUserData::readTextureBoxFromUserData(vm, 2, &outTexture);
+
+        ProceduralExplorationGameCore::ExplorationMapData* data;
+        SCRIPT_CHECK_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 3, &data));
+
+        SQInteger drawOptionsHash;
+        sq_getinteger(vm, 4, &drawOptionsHash);
+
+        ProceduralExplorationGameCore::ExplorationMapViewer viewer;
+        viewer.fillStagingTextureComplex(outTexture, data, static_cast<AV::uint32>(drawOptionsHash));
+
+        return 1;
+    }
+
     SQInteger _processRegionTable(HSQUIRRELVM vm, ProceduralExplorationGameCore::RegionData& region){
         sq_pushnull(vm);
         while(SQ_SUCCEEDED(sq_next(vm,-2))){
@@ -342,6 +358,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, getGameCoreVersion, "getGameCoreVersion");
 
         AV::ScriptUtils::addFunction(vm, fillBufferWithMapLean, "fillBufferWithMapLean", 3, ".uu");
+        AV::ScriptUtils::addFunction(vm, fillBufferWithMapComplex, "fillBufferWithMapComplex", 4, ".uui");
         AV::ScriptUtils::addFunction(vm, tableToExplorationMapData, "tableToExplorationMapData", 2, ".t");
         AV::ScriptUtils::addFunction(vm, setRegionFound, "setRegionFound", 3, ".ib");
         AV::ScriptUtils::addFunction(vm, setNewMapData, "setNewMapData", 2, ".u");

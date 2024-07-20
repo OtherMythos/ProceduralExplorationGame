@@ -151,6 +151,7 @@
         _doFile("res://src/MapGen/Exploration/Generator/MapGen.nut");
         _doFile("res://src/MapGen/MapViewer.nut");
         _doFile("res://src/MapGen/VisitedLocationMapViewer.nut");
+        _doFile("res://src/MapGen/Exploration/Viewer/ExplorationMapViewerConstants.h.nut");
         _doFile("res://src/MapGen/Exploration/Viewer/ExplorationMapViewer.nut");
         _doFile("res://src/MapGen/Dungeon/Viewer/DungeonMapViewer.nut");
         _doFile("res://src/MapGen/Dungeon/Generator/DungeonGen.nut");
