@@ -3,11 +3,13 @@ function start(){
 
     _doFile("res://../../src/Helpers.nut");
     _doFile("res://../../src/Util/VoxToMesh.nut");
+    _doFile("res://../../src/Content/PlaceConsts.h.nut");
     _doFile("res://../../src/Content/Places.nut");
-    _doFile("res://../../src/MapGen/Exploration/Generator/MapConstants.nut");
+    _doFile("res://../../src/MapGen/Exploration/Generator/MapConstants.h.nut");
     _doFile("res://../../src/MapGen/Exploration/Generator/Biomes.nut");
     _doFile("res://../../src/MapGen/Exploration/Generator/MapGen.nut");
     _doFile("res://../../src/MapGen/MapViewer.nut");
+    _doFile("res://../../src/MapGen/Exploration/Viewer/ExplorationMapViewerConstants.h.nut");
     _doFile("res://../../src/MapGen/Exploration/Viewer/ExplorationMapViewer.nut");
 
     ::GuiWidgets <- {};

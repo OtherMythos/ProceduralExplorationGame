@@ -60,13 +60,14 @@ enum MapViewerColours{
 
     constructor(currentFoundRegions=null){
         mDrawOptions_ = array(MapViewerDrawOptions.MAX, false);
-        mDrawOptions_[MapViewerDrawOptions.WATER] = false;
-        mDrawOptions_[MapViewerDrawOptions.GROUND_TYPE] = false;
-        mDrawOptions_[MapViewerDrawOptions.VISIBLE_PLACES_MASK] = false;
+        mDrawOptions_[MapViewerDrawOptions.WATER] = true;
+        mDrawOptions_[MapViewerDrawOptions.GROUND_TYPE] = true;
+        mDrawOptions_[MapViewerDrawOptions.VISIBLE_PLACES_MASK] = true;
         mDrawLocationOptions_ = array(PlaceType.MAX, true);
         mDrawLocationOptions_[PlaceType.CITY] = true;
         mDrawLocationOptions_[PlaceType.TOWN] = true;
         mDrawLocationOptions_[PlaceType.NONE] = false;
+        mDrawOptionsHash_ = generateDrawOptionHash(mDrawOptions_);
 
         mPlaceMarkers_ = [];
         mFoundPlaces_ = [];

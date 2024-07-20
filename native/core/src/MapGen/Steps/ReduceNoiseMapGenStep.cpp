@@ -38,7 +38,8 @@ namespace ProceduralExplorationGameCore{
         float centreOffset = (sqrt(pow(ORIGIN - x, 2) + pow(ORIGIN - y, 2)) + 0.1);
         float curvedOffset = 1 - pow(2, -10 * centreOffset*1.8);
 
-        float val = (1.0f-centreOffset) * input;
+        float val = (1.0f-centreOffset*1.2) * input;
+        val *= 1.4;
 
         return val;
     }

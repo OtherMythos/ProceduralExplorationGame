@@ -43,7 +43,8 @@
         }else{
             assert(false);
         }
-        mMapViewer_.displayMapData(data, false, true);
+        //TODO Remove global variable.
+        mMapViewer_.displayMapData(data, ::currentNativeMapData, false, true);
         mMapViewer_.setLabelWindow(mMapViewerWindow_);
         local mapDatablock = mMapViewer_.getDatablock();
         if(mapDatablock != null){

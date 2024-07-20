@@ -23,6 +23,7 @@
     mModelFPSCamera_ = null
 
     mCurrentMapData_ = null
+    mCurrentNativeMapData_ = null
     mTimerLabel_ = null
 
     mSeed_ = 0
@@ -103,13 +104,14 @@
         if(mGenerationInProgress_){
             local stage = _gameCore.getMapGenStage();
             local result = _gameCore.checkClaimMapGen();
+            mCurrentNativeMapData_ = result;
             if(result != null){
                 setGenerationInProgress(false);
 
                 mCurrentMapData_ = result.explorationMapDataToTable();
                 print(mCurrentMapData_);
                 print(mCurrentMapData_.width);
-                mMapViewer_.displayMapData(mCurrentMapData_);
+                mMapViewer_.displayMapData(mCurrentMapData_, mCurrentNativeMapData_);
                 updateTimeData(mCurrentMapData_);
             }else{
                 assert(mGenerationPopup_ != null);
@@ -176,7 +178,7 @@
             local moistureText = mMoistureSeedEditbox_.getText();
             print("Input moisture text: " + moistureText.tostring());
             local moistureIntText = moistureText.tointeger();
-            ::WorldGenTool.setSeed(moistureIntText);
+            ::WorldGenTool.setMoistureSeed(moistureIntText);
 
             local variationText = mVariationSeedEditbox_.getText();
             print("Variation text: " + variationText.tostring());
@@ -393,7 +395,20 @@
         return outData;
     }
     function generate(){
-        _gameCore.beginMapGen();
+        local data = {
+            "seed": mSeed_,
+            "variation": mVariation_,
+            "moistureSeed": mMoistureSeed_,
+            "width": 400,
+            "height": 400,
+            "numRivers": 24,
+            "numRegions": 16,
+            "seaLevel": 100,
+            "altitudeBiomes": [10, 100],
+            "placeFrequency": [0, 1, 1, 4, 4, 30]
+        };
+
+        _gameCore.beginMapGen(data);
         setGenerationInProgress(true);
         /*
         local thread = ::newthread(generate_);
