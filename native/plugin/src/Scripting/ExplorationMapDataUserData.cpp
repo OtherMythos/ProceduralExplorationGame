@@ -177,9 +177,9 @@ namespace ProceduralExplorationGamePlugin{
         pushRegionData(vm, "regionData", mapData->regionData);
         pushPlacedItemData(vm, "placedItems", mapData->placedItems);
 
-        pushBuffer(vm, "voxelBuffer", mapData->voxelBuffer, mapData->voxelBufferSize);
-        pushBuffer(vm, "secondaryVoxBuffer", mapData->secondaryVoxelBuffer, mapData->secondaryVoxelBufferSize);
-        pushBuffer(vm, "blueNoiseBuffer", mapData->blueNoiseBuffer, mapData->blueNoiseBufferSize);
+        //pushBuffer(vm, "voxelBuffer", mapData->voxelBuffer, mapData->voxelBufferSize);
+        //pushBuffer(vm, "secondaryVoxBuffer", mapData->secondaryVoxelBuffer, mapData->secondaryVoxelBufferSize);
+        //pushBuffer(vm, "blueNoiseBuffer", mapData->blueNoiseBuffer, mapData->blueNoiseBufferSize);
 
         return 1;
     }
