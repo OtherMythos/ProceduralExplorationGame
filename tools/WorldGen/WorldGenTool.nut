@@ -3,7 +3,7 @@ function start(){
 
     _doFile("res://../../src/Helpers.nut");
     _doFile("res://../../src/Util/VoxToMesh.nut");
-    _doFile("res://../../src/Content/PlaceConsts.h.nut");
+    _doFile("res://../../src/Content/PlaceConstants.h.nut");
     _doFile("res://../../src/Content/Places.nut");
     _doFile("res://../../src/MapGen/Exploration/Generator/MapConstants.h.nut");
     _doFile("res://../../src/MapGen/Exploration/Generator/Biomes.nut");

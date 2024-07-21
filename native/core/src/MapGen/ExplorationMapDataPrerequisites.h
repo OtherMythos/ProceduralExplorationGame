@@ -9,7 +9,7 @@ namespace ProceduralExplorationGameCore{
 
     #include "../../../../src/MapGen/Exploration/Generator/MapConstants.h.nut"
 
-    #include "../../../../src/Content/PlaceConsts.h.nut"
+    #include "../../../../src/Content/PlaceConstants.h.nut"
 
     static const AV::uint8 MapVoxelColour[] = {
         VOXEL_VALUES
