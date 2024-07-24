@@ -22,23 +22,23 @@ namespace ProceduralExplorationGameCore{
                         135,176,183,191,253,115,184,21,233,58,129,233,142,39,128,211,118,137,139,255,
                         114,20,218,113,154,27,127,246,250,1,8,198,250,209,92,222,173,21,88,102,219};
 
-    int noise2(int seed, int x, int y)
+    int PerlinNoise::noise2(int seed, int x, int y)
     {
         int tmp = hash[(y + seed) % 256];
         return hash[(tmp + x) % 256];
     }
 
-    float lin_inter(float x, float y, float s)
+    float PerlinNoise::lin_inter(float x, float y, float s)
     {
         return x + s * (y-x);
     }
 
-    float smooth_inter(float x, float y, float s)
+    float PerlinNoise::smooth_inter(float x, float y, float s)
     {
         return lin_inter(x, y, s * s * (3-2*s));
     }
 
-    float noise2d(int seed, float x, float y)
+    float PerlinNoise::noise2d(int seed, float x, float y)
     {
         int x_int = x;
         int y_int = y;
