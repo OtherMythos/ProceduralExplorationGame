@@ -13,6 +13,8 @@
 #include "MapGen/ExplorationMapDataPrerequisites.h"
 #include "MapGen/MapGen.h"
 
+#include "../../../../src/Versions.h.nut"
+
 #include <sqstdblob.h>
 
 namespace ProceduralExplorationGamePlugin{
@@ -20,8 +22,23 @@ namespace ProceduralExplorationGamePlugin{
     ProceduralExplorationGameCore::MapGen* GameCoreNamespace::currentMapGen = 0;
 
     SQInteger GameCoreNamespace::getGameCoreVersion(HSQUIRRELVM vm){
+        sq_newtableex(vm, 4);
 
+        sq_pushstring(vm, _SC("major"), 5);
+        sq_pushinteger(vm, GAME_VERSION_MAJOR);
+        sq_newslot(vm,-3,SQFalse);
 
+        sq_pushstring(vm, _SC("minor"), 5);
+        sq_pushinteger(vm, GAME_VERSION_MINOR);
+        sq_newslot(vm,-3,SQFalse);
+
+        sq_pushstring(vm, _SC("patch"), 5);
+        sq_pushinteger(vm, GAME_VERSION_PATCH);
+        sq_newslot(vm,-3,SQFalse);
+
+        sq_pushstring(vm, _SC("suffix"), 6);
+        sq_pushstring(vm, GAME_VERSION_SUFFIX, -1);
+        sq_newslot(vm,-3,SQFalse);
         return 1;
     }
 

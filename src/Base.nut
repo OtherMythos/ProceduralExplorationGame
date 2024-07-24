@@ -385,6 +385,19 @@
     function checkForGameCorePlugin(){
         if(!getroottable().rawin("_gameCore")){
             //The gamecore namespace was not found, so assume the plugin was not loaded correctly.
+            print("gamecore namespace not found.");
+            assert(false);
+        }
+
+        //With the plugin loaded, check the version. There is potential for version mismatch in dynamic loaded plugins.
+        local nativeVersion = _gameCore.getGameCoreVersion();
+        if(
+            GAME_VERSION_MAJOR != nativeVersion.major ||
+            GAME_VERSION_MINOR != nativeVersion.minor ||
+            GAME_VERSION_PATCH != nativeVersion.patch
+        )
+        {
+            print("Version mismatch in native plugin.");
             assert(false);
         }
     }

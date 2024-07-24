@@ -35,12 +35,12 @@
 }
 ::getVersionInfo <- function(){
     local hash = determineGitHash();
-    local suffix = VERSION_SUFFIX;
+    local suffix = GAME_VERSION_SUFFIX;
     if(hash != null){
         suffix += ("-" + hash);
     }
 
-    local versionTotal = format("%i.%i.%i-%s", VERSION_MAX, VERSION_MIN, VERSION_PATCH, suffix);
+    local versionTotal = format("%i.%i.%i-%s", GAME_VERSION_MAJOR, GAME_VERSION_MINOR, GAME_VERSION_PATCH, suffix);
     local engine = _settings.getEngineVersion();
     local engineVersionTotal = format("Engine: %i.%i.%i-%s", engine.major, engine.minor, engine.patch, engine.suffix);
 

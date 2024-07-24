@@ -3,10 +3,6 @@ cmake_minimum_required(VERSION 3.1)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(NATIVE_VERSION_MAX 0)
-set(NATIVE_VERSION_MIN 4)
-set(NATIVE_VERSION_PATCH 0)
-
 set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "")
 set(ENGINE_SOURCE_PATH "" CACHE FILEPATH "Path to the engine source code")
 
