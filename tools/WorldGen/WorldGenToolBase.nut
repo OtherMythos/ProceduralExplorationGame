@@ -77,11 +77,13 @@
             mMainWindow_.setCentre(_window.getSize() / 2);
 
             mProgressBar_.notifyLayout();
+            _gui.reprocessMousePosition();
         }
 
         function shutdown(){
             _gui.destroy(mBackgroundWindow_);
             _gui.destroy(mMainWindow_);
+            _gui.reprocessMousePosition();
         }
 
         function setPercentage(percentage){
