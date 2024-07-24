@@ -10,6 +10,10 @@ if(ENGINE_SOURCE_PATH STREQUAL "")
     message( FATAL_ERROR "Please populate the ENGINE_SOURCE_PATH variable")
 endif()
 
+if(NOT PLATFORM STREQUAL "OS64")
+    set(STATIC_ONLY TRUE)
+endif()
+
 include_directories(${ENGINE_SOURCE_PATH}/src)
 list(APPEND CMAKE_MODULE_PATH ${ENGINE_SOURCE_PATH}/CMake)
 add_subdirectory(${ENGINE_SOURCE_PATH}/CMake avEngineSource)

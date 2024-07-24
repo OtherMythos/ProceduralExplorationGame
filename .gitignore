@@ -11,3 +11,4 @@ avSetupSecondary.cfg
 developerTools.nut
 testingWorldScript.nut
 native/build
+native/buildIos
