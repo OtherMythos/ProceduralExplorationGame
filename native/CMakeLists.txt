@@ -11,9 +11,8 @@ if(ENGINE_SOURCE_PATH STREQUAL "")
 endif()
 
 include_directories(${ENGINE_SOURCE_PATH}/src)
-#find_package(${ENGINE_SOURCE_PATH} CONFIG REQUIRED)
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/avEngine/CMake)
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/avEngine/CMake)
+list(APPEND CMAKE_MODULE_PATH ${ENGINE_SOURCE_PATH}/CMake)
+add_subdirectory(${ENGINE_SOURCE_PATH}/CMake avEngineSource)
 
 include_directories(
     ${Colibri_INCLUDE_DIR}
