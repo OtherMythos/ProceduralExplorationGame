@@ -63,6 +63,8 @@ namespace ProceduralExplorationGameCore{
     }
 
     void MapGen::beginMapGen_(const ExplorationMapInputData* input){
+        AV::Timer tt;
+        tt.start();
         ExplorationMapGenWorkspace workspace;
         for(int i = 0; i < MAP_GEN_STEPS.size(); i++){
             AV::Timer t;
@@ -72,6 +74,8 @@ namespace ProceduralExplorationGameCore{
             GAME_CORE_INFO("Time taken for stage '{}' was {}", MAP_GEN_STEPS[i].first.c_str(), t.getTimeTotal());
             mCurrentStage++;
         }
+        tt.stop();
+        GAME_CORE_INFO("Total time for map gen was {}", tt.getTimeTotal());
     }
 
     int MapGen::getNumTotalStages(){
