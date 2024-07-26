@@ -23,7 +23,7 @@ namespace ProceduralExplorationGameCore{
 
     private:
         std::atomic<int> mCurrentStage;
-        std::thread* parentThread;
+        std::thread* mParentThread;
 
         ExplorationMapData* mMapData;
         const ExplorationMapInputData* mMapInputData;

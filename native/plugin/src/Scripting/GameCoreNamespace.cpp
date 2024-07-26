@@ -118,6 +118,8 @@ namespace ProceduralExplorationGamePlugin{
             sq_pop(vm,2); //pop the key and value
         }
         sq_pop(vm,1); //pops the null iterator
+
+        return 0;
     }
     SQInteger _processRegionData(HSQUIRRELVM vm, ProceduralExplorationGameCore::ExplorationMapData* data){
         SQInteger arraySize = sq_getsize(vm, -1);
@@ -134,6 +136,8 @@ namespace ProceduralExplorationGamePlugin{
 
             sq_pop(vm, 1);
         }
+
+        return 0;
     }
     SQInteger GameCoreNamespace::tableToExplorationMapData(HSQUIRRELVM vm){
         ProceduralExplorationGameCore::ExplorationMapData* data = new ProceduralExplorationGameCore::ExplorationMapData();
@@ -278,6 +282,8 @@ namespace ProceduralExplorationGamePlugin{
         ProceduralExplorationGameCore::RegionId region = static_cast<ProceduralExplorationGameCore::RegionId>(regionId);
 
         ProceduralExplorationGameCore::GameplayState::setRegionFound(region, found);
+
+        return 0;
     }
 
 
@@ -286,6 +292,8 @@ namespace ProceduralExplorationGamePlugin{
         SCRIPT_CHECK_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, -1, &mapData));
 
         ProceduralExplorationGameCore::GameplayState::setNewMapData(mapData);
+
+        return 0;
     }
 
     SQInteger GameCoreNamespace::createTerrainFromMapData(HSQUIRRELVM vm){

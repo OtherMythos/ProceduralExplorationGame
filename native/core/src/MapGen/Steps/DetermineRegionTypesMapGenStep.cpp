@@ -3,6 +3,7 @@
 #include "MapGen/ExplorationMapDataPrerequisites.h"
 
 #include <cassert>
+#include <array>
 
 namespace ProceduralExplorationGameCore{
 

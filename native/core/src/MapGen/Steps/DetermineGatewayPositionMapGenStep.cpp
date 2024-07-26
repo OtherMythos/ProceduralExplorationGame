@@ -2,6 +2,8 @@
 
 #include "MapGen/ExplorationMapDataPrerequisites.h"
 
+#include <cmath>
+
 namespace ProceduralExplorationGameCore{
 
     DetermineGatewayPositionMapGenStep::DetermineGatewayPositionMapGenStep(){

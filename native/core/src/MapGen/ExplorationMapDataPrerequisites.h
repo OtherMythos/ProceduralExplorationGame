@@ -4,6 +4,7 @@
 #include "GamePrerequisites.h"
 
 #include <vector>
+#include <string>
 
 namespace ProceduralExplorationGameCore{
 

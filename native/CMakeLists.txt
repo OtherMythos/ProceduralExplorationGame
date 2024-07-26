@@ -2,6 +2,7 @@ project(native)
 cmake_minimum_required(VERSION 3.1)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "")
 set(ENGINE_SOURCE_PATH "" CACHE FILEPATH "Path to the engine source code")

@@ -27,6 +27,8 @@ namespace ProceduralExplorationGamePlugin{
 
     void ProceduralExplorationGameCorePlugin::initialise(){
         ProceduralExplorationGameCore::GameCoreLogger::initialise();
+        GAME_CORE_INFO("Beginning initialisation for game core plugin");
+
         ProceduralExplorationGameCore::GameplayConstants::initialise();
 
         AV::ScriptVM::setupNamespace("_gameCore", GameCoreNamespace::setupNamespace);
