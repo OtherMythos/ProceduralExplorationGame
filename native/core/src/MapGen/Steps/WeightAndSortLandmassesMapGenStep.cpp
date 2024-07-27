@@ -15,7 +15,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    bool sortFunction(FloodFillEntry* i, FloodFillEntry* j) { return (i->total >= j->total); }
+    bool sortFunction(FloodFillEntry* i, FloodFillEntry* j) { return (i->total > j->total); }
 
     void WeightAndSortLandmassesMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         std::sort(mapData->landData.begin(), mapData->landData.end(), sortFunction);

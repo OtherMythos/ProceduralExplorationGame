@@ -53,7 +53,7 @@ namespace ProceduralExplorationGameCore{
         auto it = mapData->landData.begin();
         while(it != mapData->landData.end()){
             if(*it == 0){
-                mapData->landData.erase(it);
+                it = mapData->landData.erase(it);
             }else it++;
         }
     }

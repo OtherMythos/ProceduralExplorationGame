@@ -12,7 +12,13 @@
 
 namespace ProceduralExplorationGamePlugin{
 
-    extern "C" void dllStartPlugin(void){
+#ifdef WIN32
+    #define DLLEXPORT __declspec(dllexport)
+#else
+    #define DLLEXPORT
+#endif
+
+    extern "C" DLLEXPORT void dllStartPlugin(void){
         ProceduralExplorationGameCorePlugin* p = new ProceduralExplorationGameCorePlugin();
         AV::PluginManager::registerPlugin(p);
     }
