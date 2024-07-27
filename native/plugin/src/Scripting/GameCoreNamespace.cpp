@@ -280,6 +280,9 @@ namespace ProceduralExplorationGamePlugin{
         sq_getbool(vm, 3, &found);
 
         ProceduralExplorationGameCore::RegionId region = static_cast<ProceduralExplorationGameCore::RegionId>(regionId);
+        if(region == ProceduralExplorationGameCore::INVALID_REGION_ID){
+            return sq_throwerror(vm, "Invalid region id requested.");
+        }
 
         ProceduralExplorationGameCore::GameplayState::setRegionFound(region, found);
 

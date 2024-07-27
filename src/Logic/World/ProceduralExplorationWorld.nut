@@ -416,6 +416,7 @@
         }
     }
     function processFoundNewRegion(regionId){
+        if(regionId == INVALID_REGION_ID) return;
         _gameCore.setRegionFound(regionId, true);
         local regionData = mMapData_.regionData[regionId];
         if(mRegionEntries_.rawin(regionId)){
