@@ -33,14 +33,62 @@ jobs:
         run: |
           cd native/build
           cmake --build .
+          cp "plugin/libProceduralExplorationGamePlugin.so" "plugin/libProceduralExplorationGamePlugin_Debug-linux-x86_64.so"
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: native-linux-x86_64_Debug.so
-          path: "native/build/plugin/libProceduralExplorationGamePlugin.so"
+          name: libProceduralExplorationGamePlugin_Debug-linux-x86_64.so
+          path: "native/build/plugin/libProceduralExplorationGamePlugin_Debug-linux-x86_64.so"
 
+  buildNativeWindows:
+    runs-on: windows-2019
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          name: avBuiltWindows-Debug.zip
+          repo: OtherMythos/avBuild
+          workflow: windows.yml
+      - name: Download avCore artifact
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          name: avCore.lib
+          repo: OtherMythos/avEngine
+          workflow: buildWindows.yml
+      - name: Expand artifact
+        run: |
+          Expand-Archive avBuilt-windows-Debug.zip .
+      - name: Clone dependencies
+        run: |
+          git clone --branch plugin https://github.com/OtherMythos/avEngine.git D:/avEngine
+          cd D:\avEngine
+          mkdir build
+          cd build
+          mkdir Debug
+          cd Debug
+          cp ${{ github.workspace }}/avCore.lib .
+      - name: Setup CMake
+        run: |
+          cd native
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Debug -DENGINE_SOURCE_PATH='D:\avEngine' -DAV_LIBS_DIR=${{ github.workspace }}/avBuilt/Debug ..
+      - name: Build
+        run: |
+          cd native/build
+          cmake --build .
+          cp "plugin/Debug/ProceduralExplorationGamePlugin.dll" "plugin/Debug/ProceduralExplorationGamePlugin_Debug-windows-x86_64.dll"
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ProceduralExplorationGamePlugin_Debug-windows-x86_64.dll
+          path: "native/build/plugin/Debug/ProceduralExplorationGamePlugin_Debug-windows-x86_64.dll"
 
   build:
+    needs: ['buildNativeLinux', 'buildNativeWindows']
     runs-on: ubuntu-20.04
 
     outputs:
@@ -52,14 +100,28 @@ jobs:
       - name: Set outputs
         id: vars
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: Setup plugins
+        run: |
+          mkdir plugins
+      - name: Download Windows native plugin
+        uses: actions/download-artifact@v4
+        with:
+          name: ProceduralExplorationGamePlugin_Debug-windows-x86_64.dll
+          path: plugins/
+      - name: Download Linux native plugin
+        uses: actions/download-artifact@v4
+        with:
+          name: libProceduralExplorationGamePlugin_Debug-linux-x86_64.so
+          path: plugins/
       - name: Build
         run: |
           mkdir /tmp/distribution
           cp -r avSetup.cfg /tmp/distribution
           cp -r OgreResources.cfg /tmp/distribution
           cp -r src /tmp/distribution
-          echo >> /tmp/distribution/src/versions.h.nut
-          echo "const GIT_HASH = \"${{ steps.vars.outputs.sha_short }}\"" >> /tmp/distribution/src/versions.h.nut
+          cp -r plugins /tmp/distribution
+          echo >> /tmp/distribution/src/Versions.h.nut
+          echo "const GIT_HASH = \"${{ steps.vars.outputs.sha_short }}\"" >> /tmp/distribution/src/Versions.h.nut
           ./resBuild.sh --clean
           cp -r build /tmp/distribution
       - name: Upload Artifacts
