@@ -23,6 +23,7 @@
 
         mRepeatCount = 0;
         mRepeatCountTotal = 0;
+        mRepeatCurrentStep = false;
         mSteps = null;
         mStepsFinished = false;
 
@@ -88,6 +89,12 @@
                     if(mStepsFinished){
                         result = jumpRepeat();
                     }
+                }else{
+                    if(mRepeatCurrentStep){
+                        result = false;
+                        prepareBegin();
+                        mRepeatCurrentStep = false;
+                    }
                 }
             }
 
@@ -118,6 +125,9 @@
             if(frames == currentWaitFrameTotal) return;
             currentWaitFrameTotal = frames;
             currentWaitFrame = currentWaitFrameTotal;
+        }
+        function repeatStep(){
+            mRepeatCurrentStep = true;
         }
         function resetWaitFrame(){
             currentWaitFrame = ::_testHelper.mDefaultWaitFrames;
@@ -245,6 +255,11 @@
         currentCalledEntry.waitFrames(frames);
     }
 
+    function repeatStep(){
+        if(currentCalledEntry == null) throw "Only call 'repeatStep' within a step function.";
+        currentCalledEntry.repeatStep();
+    }
+
     function start() { if(integration) { testFuncs.start(); setupContext.start() } }
     function update() { if(integration) { testFuncs.update(); setupContext.update() } }
     function end() { if(integration) { testFuncs.end(); setupContext.end() } }
@@ -352,6 +367,10 @@
 
     function setDefaultWaitFrames(frames){
         mDefaultWaitFrames = frames;
+    }
+
+    function repeatStep(){
+        ::_testSystem.repeatStep();
     }
 
 };

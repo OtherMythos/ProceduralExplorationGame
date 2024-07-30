@@ -1,7 +1,7 @@
 _tIntegration("VisitAllRegions", "Iterate all regions and teleport the player to each", {
     "start": function(){
         ::_testHelper.clearAllSaves();
-        ::_testHelper.setDefaultWaitFrames(20);
+        //::_testHelper.setDefaultWaitFrames(20);
 
         ::regionStage <- 0;
     },
@@ -21,14 +21,17 @@ _tIntegration("VisitAllRegions", "Iterate all regions and teleport the player to
         function(){
             ::_testHelper.mousePressWidgetForText("Explore");
         },
+        function(){
+            local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+            if(!currentWorld.isActive()){
+                ::_testHelper.repeatStep();
+            }
+        },
         //TODO separate all the above stuff off at some point.
         {
-            //TODO make it possible to request a single repeat at a time.
             "repeat": 500,
             "steps": [
                 function(){
-                    _testHelper.waitFrames(1);
-
                     local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
                     local mapData = currentWorld.getMapData();
 
