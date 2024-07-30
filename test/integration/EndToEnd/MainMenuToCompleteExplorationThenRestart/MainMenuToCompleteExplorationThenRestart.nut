@@ -5,25 +5,8 @@ _tIntegration("MainMenuToCompleteExplorationThenRestart", "Move from the main me
     },
 
     "steps": [
-        function(){
-            ::_testHelper.queryWindowExists("MainMenuScreen");
-        },
-        function(){
-            ::_testHelper.mousePressWidgetForText("Play");
-            ::_testHelper.queryWindowExists("SaveSelectionScreen");
-        },
-        function(){
-            ::_testHelper.mousePressWidgetForText("new save");
-
-            local screen = ::ScreenManager.getScreenForLayer(1);
-            screen.mEditBox_.setText("test");
-            ::_testHelper.mousePressWidgetForText("confirm");
-        },
-        function(){
-            ::_testHelper.mousePressWidgetForText("Explore");
-        },
-        function(){
-            ::_testHelper.queryWindowExists("ExplorationScreen");
+        {
+            "steps": ::_testHelper.STEPS_MAIN_MENU_TO_EXPLORATION_GAMEPLAY
         },
         function(){
             ::_testHelper.waitFrames(300);
@@ -31,7 +14,11 @@ _tIntegration("MainMenuToCompleteExplorationThenRestart", "Move from the main me
             ::_testHelper.queryWindowExists("ExplorationEndScreen");
         },
         function(){
-            ::_testHelper.mousePressWidgetForText("Return to menu");
+            if(::_testHelper.getWidgetForText("Return to menu") != null){
+                ::_testHelper.mousePressWidgetForText("Return to menu");
+            }else{
+                _testHelper.repeatStep();
+            }
         },
         function(){
             ::_testHelper.queryWindowExists("GameplayMainMenu");
@@ -39,6 +26,7 @@ _tIntegration("MainMenuToCompleteExplorationThenRestart", "Move from the main me
         function(){
             ::_testHelper.mousePressWidgetForText("Explore");
         },
+        ::_testHelper.STEPS_WAIT_FOR_MAP_GEN_COMPLETE,
         function(){
             ::_testHelper.queryWindowExists("ExplorationScreen");
         }

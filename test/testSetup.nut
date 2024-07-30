@@ -81,6 +81,13 @@
                 }else{
                     //Otherwise just process the wait frame like normal.
                     result = processWaitFrame_()
+                    if(result){
+                        if(mRepeatCurrentStep){
+                            result = false;
+                            prepareBegin();
+                            mRepeatCurrentStep = false;
+                        }
+                    }
                 }
             }
             if(currentWaitFrameTotal < 0){

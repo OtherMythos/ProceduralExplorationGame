@@ -7,29 +7,10 @@ _tIntegration("VisitAllRegions", "Iterate all regions and teleport the player to
     },
 
     "steps": [
-        function(){
-            ::_testHelper.mousePressWidgetForText("Play");
-            ::_testHelper.queryWindowExists("SaveSelectionScreen");
-        },
-        function(){
-            ::_testHelper.mousePressWidgetForText("new save");
-
-            local screen = ::ScreenManager.getScreenForLayer(1);
-            screen.mEditBox_.setText("test");
-            ::_testHelper.mousePressWidgetForText("confirm");
-        },
-        function(){
-            ::_testHelper.mousePressWidgetForText("Explore");
-        },
-        function(){
-            local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
-            if(!currentWorld.isActive()){
-                ::_testHelper.repeatStep();
-            }
-        },
-        //TODO separate all the above stuff off at some point.
         {
-            "repeat": 500,
+            "steps": ::_testHelper.STEPS_MAIN_MENU_TO_EXPLORATION_GAMEPLAY
+        },
+        {
             "steps": [
                 function(){
                     local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
@@ -47,6 +28,8 @@ _tIntegration("VisitAllRegions", "Iterate all regions and teleport the player to
 
                     if(currentY > STEP){
                         _test.endTest();
+                    }else{
+                        ::_testHelper.repeatStep();
                     }
                 }
             ]
