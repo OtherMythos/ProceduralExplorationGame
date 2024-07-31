@@ -226,7 +226,7 @@ namespace ProceduralExplorationGameCore{
             return;
         }
         //TODO might be able to switch this to an std::vector to manage the correct sizing.
-        mVerts = malloc( (size_t)(mNumActiveVox * (((NUM_VERTS * 4) * 5) * 4) * 2.5) );
+        mVerts = OGRE_MALLOC_SIMD( (size_t)(mNumActiveVox * (((NUM_VERTS * 4) * 5) * 4) * 2.5) , Ogre::MEMCATEGORY_GEOMETRY);
         mVertsWritePtr = static_cast<AV::uint32*>(mVerts);
     }
 
@@ -246,7 +246,7 @@ namespace ProceduralExplorationGameCore{
         AV::uint32 vertBlocks = mNumVerts / 4;
         //TODO properly set the indice stride to either be 16 or 32 bit.
         static const size_t indiceStride = 4;
-        void* indices = malloc(static_cast<size_t>(vertBlocks * 6 * indiceStride));
+        void* indices = OGRE_MALLOC_SIMD(static_cast<size_t>(vertBlocks * 6 * indiceStride), Ogre::MEMCATEGORY_GEOMETRY);
         AV::uint32* indicesPtr = static_cast<AV::uint32*>(indices);
         //size_t indiceStride = (vertBlocks * 6 * 4) + 4 >= 0xFFFF ? 4 : 2;
         for(AV::uint32 i = 0; i < vertBlocks; i++){
