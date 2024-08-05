@@ -2,7 +2,7 @@ name: Build and Test
 
 on:
   push:
-    branches: ['master', 'plugin']
+    branches: 'master'
 
 jobs:
   buildNativeLinux:
@@ -27,7 +27,7 @@ jobs:
         run: |
           mkdir -p native/build
           cd native/build
-          git clone --branch plugin https://github.com/OtherMythos/avEngine.git /tmp/avEngine
+          git clone https://github.com/OtherMythos/avEngine.git /tmp/avEngine
           cmake -DCMAKE_BUILD_TYPE=Debug -DENGINE_SOURCE_PATH=/tmp/avEngine -DAV_LIBS_DIR=${{ github.workspace }}/Debug ..
       - name: Build
         run: |
@@ -42,6 +42,9 @@ jobs:
 
   buildNativeWindows:
     runs-on: windows-2019
+    strategy:
+      matrix:
+        buildType: [Debug, Release]
 
     steps:
       - name: Checkout
@@ -49,43 +52,43 @@ jobs:
       - name: Download artifact
         uses: dawidd6/action-download-artifact@v3
         with:
-          name: avBuiltWindows-Debug.zip
+          name: avBuiltWindows-${{ matrix.buildType }}.zip
           repo: OtherMythos/avBuild
           workflow: windows.yml
       - name: Download avCore artifact
         uses: dawidd6/action-download-artifact@v3
         with:
-          name: avCore.lib
+          name: avCore-${{ matrix.buildType }}.lib
           repo: OtherMythos/avEngine
           workflow: buildWindows.yml
       - name: Expand artifact
         run: |
-          Expand-Archive avBuilt-windows-Debug.zip .
+          Expand-Archive avBuilt-windows-${{ matrix.buildType }}.zip .
       - name: Clone dependencies
         run: |
-          git clone --branch plugin https://github.com/OtherMythos/avEngine.git D:/avEngine
+          git clone https://github.com/OtherMythos/avEngine.git D:/avEngine
           cd D:\avEngine
           mkdir build
           cd build
-          mkdir Debug
-          cd Debug
-          cp ${{ github.workspace }}/avCore.lib .
+          mkdir ${{ matrix.buildType }}
+          cd ${{ matrix.buildType }}
+          cp ${{ github.workspace }}/avCore.lib avCore.lib
       - name: Setup CMake
         run: |
           cd native
           mkdir build
           cd build
-          cmake -DCMAKE_BUILD_TYPE=Debug -DENGINE_SOURCE_PATH='D:\avEngine' -DAV_LIBS_DIR=${{ github.workspace }}/avBuilt/Debug ..
+          cmake -DCMAKE_BUILD_TYPE=${{ matrix.buildType }} -DENGINE_SOURCE_PATH='D:\avEngine' -DAV_LIBS_DIR=${{ github.workspace }}/avBuilt/${{ matrix.buildType }} ..
       - name: Build
         run: |
           cd native/build
-          cmake --build .
-          cp "plugin/Debug/ProceduralExplorationGamePlugin.dll" "plugin/Debug/ProceduralExplorationGamePlugin_Debug-windows-x86_64.dll"
+          cmake --build . --config ${{ matrix.buildType }}
+          cp "plugin/${{ matrix.buildType }}/ProceduralExplorationGamePlugin.dll" "plugin/${{ matrix.buildType }}/ProceduralExplorationGamePlugin_${{ matrix.buildType }}-windows-x86_64.dll"
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ProceduralExplorationGamePlugin_Debug-windows-x86_64.dll
-          path: "native/build/plugin/Debug/ProceduralExplorationGamePlugin_Debug-windows-x86_64.dll"
+          name: ProceduralExplorationGamePlugin_${{ matrix.buildType }}-windows-x86_64.dll
+          path: "native/build/plugin/${{ matrix.buildType }}/ProceduralExplorationGamePlugin_${{ matrix.buildType }}-windows-x86_64.dll"
 
   build:
     needs: ['buildNativeLinux', 'buildNativeWindows']
@@ -103,10 +106,15 @@ jobs:
       - name: Setup plugins
         run: |
           mkdir plugins
-      - name: Download Windows native plugin
+      - name: Download Windows Debug native plugin
         uses: actions/download-artifact@v4
         with:
           name: ProceduralExplorationGamePlugin_Debug-windows-x86_64.dll
+          path: plugins/
+      - name: Download Windows Release native plugin
+        uses: actions/download-artifact@v4
+        with:
+          name: ProceduralExplorationGamePlugin_Release-windows-x86_64.dll
           path: plugins/
       - name: Download Linux native plugin
         uses: actions/download-artifact@v4
@@ -133,22 +141,31 @@ jobs:
   buildWindows:
     runs-on: windows-2019
     needs: build
+    strategy:
+      matrix:
+        buildType: [Debug, Release]
 
     steps:
       - name: Clone Build
         uses: dawidd6/action-download-artifact@v3
         with:
-          name: avEngineWindows.zip
+          name: avEngineWindows-${{ matrix.buildType }}.zip
           repo: OtherMythos/avEngine
           workflow: buildWindows.yml
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
           name: distribution-${{ needs.build.outputs.sha_short }}
+      - name: Remove unecessary files
+        run: |
+          cp plugins\ProceduralExplorationGamePlugin_${{ matrix.buildType }}-windows-x86_64.dll ${{ github.workspace }}\
+          rm plugins\ -r -Force
+          mkdir plugins\
+          cp ${{ github.workspace }}\ProceduralExplorationGamePlugin_${{ matrix.buildType }}-windows-x86_64.dll plugins\
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: buildWindows-${{ needs.build.outputs.sha_short }}
+          name: buildWindows-${{ matrix.buildType }}-${{ needs.build.outputs.sha_short }}
           path: ${{ github.workspace }}
 
   buildLinux:
