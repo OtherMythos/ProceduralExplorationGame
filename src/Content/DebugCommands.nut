@@ -81,3 +81,25 @@ variationSeed: %i";
 
     return output;
 });
+::DebugConsole.registerCommand("discover", "Discover a region. Discovers all if no id is provided", 1, "i", function(command){
+    local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+    if(currentWorld.getWorldType() != WorldTypes.PROCEDURAL_EXPLORATION_WORLD){
+        throw "Only call this command while in an exploration world";
+    }
+
+    local regionId = -1;
+    if(command.len() >= 1){
+        regionId = command[0].tointeger();
+    }
+
+    if(regionId == -1){
+        currentWorld.findAllRegions();
+        return "Discovered all regions."
+    }
+
+    local result = currentWorld.discoverRegion(regionId);
+    if(!result){
+        throw format("Unknown region with id %i", regionId);
+    }
+    return format("Discovered region %i", regionId);
+});

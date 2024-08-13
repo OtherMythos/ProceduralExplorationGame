@@ -386,7 +386,6 @@
 
         foreach(c,i in foundRegions){
             if(!mCurrentFoundRegions_.rawin(c)){
-                mCurrentFoundRegions_.rawset(c, true);
                 print("Found new region " + c);
                 processFoundNewRegion(c);
             }
@@ -415,11 +414,19 @@
             }
         }
     }
+    function discoverRegion(regionId){
+        if(regionId > 0 && regionId < mMapData_.regionData.len()){
+            processFoundNewRegion(regionId);
+            return true;
+        }
+        return false;
+    }
     function processFoundNewRegion(regionId){
         if(regionId == INVALID_REGION_ID) return;
         _gameCore.setRegionFound(regionId, true);
         local regionData = mMapData_.regionData[regionId];
         if(mRegionEntries_.rawin(regionId)){
+            mCurrentFoundRegions_.rawset(regionId, true);
             //A mesh for this region is present so perform the animation.
             local regionEntry = mRegionEntries_[regionId];
             if(regionEntry != null){
@@ -431,6 +438,12 @@
         processRegionCollectables_(regionData);
         if(mGui_.mWorldMapDisplay_.mMapViewer_ != null){
             mGui_.mWorldMapDisplay_.mMapViewer_.notifyRegionFound(regionId);
+        }
+    }
+
+    function findAllRegions(){
+        foreach(c,i in mRegionEntries_){
+            processFoundNewRegion(c);
         }
     }
 
