@@ -433,4 +433,6 @@ function checkForAdditionalIncludes(){
     }
 }
 
-_doFile("script://projectTestHelpers.nut");
+if(!EXECUTION_SETUP_VM){
+    _doFile("script://projectTestHelpers.nut");
+}
