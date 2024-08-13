@@ -404,8 +404,7 @@
             GAME_VERSION_PATCH != nativeVersion.patch
         )
         {
-            print("Version mismatch in native plugin.");
-            assert(false);
+            throw "Version mismatch in native plugin.";
         }
     }
 
