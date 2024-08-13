@@ -73,7 +73,7 @@
         }
     }
 
-    function setup(){
+    function setup(windowSize){
         mCommands_ = [];
         mOutput_ = [];
 
@@ -89,6 +89,10 @@
         pushOutput("Type 'help' for more information.");
 
         mParentWindow_.setVisible(false);
+    }
+
+    function resize(){
+        mParentWindow_.setSize(_window.getSize());
     }
 
     function editboxCallback(widget, action){
@@ -154,7 +158,7 @@
         mCommands_.append(DebugCommandEntry(name, desc, numParams, typeMask, callback));
     }
 }
-::DebugConsole.setup();
+::DebugConsole.setup(_window.getSize());
 
 ::DebugConsole.registerCommand("help", "Print help message", 0, "", function(command){
     local output = "";

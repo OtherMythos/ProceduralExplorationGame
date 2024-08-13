@@ -62,6 +62,7 @@ function recieveWindowResize(id, data){
     _gui.setCanvasSize(_window.getSize(), _window.getActualSize());
     canvasSize = _window.getSize();
     ::ScreenManager.processResize();
+    ::DebugConsole.resize();
 }
 
 function setupInitialCanvasSize(){
