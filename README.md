@@ -70,6 +70,7 @@ Registered flags can be specified in the ```avSetupSecondary.cfg``` file to setu
 |----------|----------|----------|
 | ```forceScreen``` | Any string from ```::ScreenString``` | Force a screen at startup rather than the usual gameplay path. |
 | ```forceWorld``` | Any string from ```::WorldTypeStrings``` | Force gameplay to initiate with the specified world type. |
+| ```forceMap``` | Any valid map name | Force a map to be used with 'forceWorld' for visited places. Otherwise a default will be used. |
 
 example:
 ```json

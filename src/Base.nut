@@ -40,6 +40,11 @@
         }
         return null;
     }
+    function determineForcedMap(){
+        local forceMap = _settings.getUserSetting("forceMap");
+        if(forceMap == null || typeof forceMap != "string") return null;
+        return forceMap;
+    }
     function determineGameProfiles(){
         local profileVal = _settings.getUserSetting("profile");
         if(profileVal == null || typeof profileVal != "string") return null;

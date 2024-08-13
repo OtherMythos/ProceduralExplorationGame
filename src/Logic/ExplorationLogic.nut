@@ -72,7 +72,12 @@
         if(targetWorld == null){
             targetWorld = WorldTypes.PROCEDURAL_EXPLORATION_WORLD;
         }
-        setCurrentWorld_(createWorldInstance(targetWorld));
+        local data = {};
+        local targetMap = ::Base.determineForcedMap();
+        if(targetMap != null){
+            data.rawset("mapName", targetMap);
+        }
+        setCurrentWorld_(createWorldInstance(targetWorld, data));
 
         _event.subscribe(Event.PLAYER_DIED, processPlayerDeath, this);
         _event.subscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);
@@ -99,8 +104,7 @@
         }
     }
 
-    function createWorldInstance(worldType){
-        //TODO create the instance, give it an id.
+    function createWorldInstance(worldType, data){
         local id = mIdPool_.getId();
         local created = null;
         switch(worldType){
@@ -110,9 +114,14 @@
             case WorldTypes.PROCEDURAL_DUNGEON_WORLD:
                 created = ProceduralDungeonWorld(id, ProceduralDungeonWorldPreparer());
                 break;
-            case WorldTypes.VISITED_LOCATION_WORLD:
-                created = VisitedLocationWorld(id, VisitedLocationWorldPreparer("chestLocationFirst"));
+            case WorldTypes.VISITED_LOCATION_WORLD:{
+                local defaultMap = "testVillage";
+                if(data.rawin("mapName")){
+                    defaultMap = data.mapName;
+                }
+                created = VisitedLocationWorld(id, VisitedLocationWorldPreparer(defaultMap));
                 break;
+            }
             case WorldTypes.TESTING_WORLD:
                 created = TestingWorld(id, WorldPreparer());
                 break;
