@@ -1,3 +1,20 @@
+function setup(){
+    //Simple version of parsing the profile settings.
+    //All we care about here is the ForceWindowed flag, so just check for that.
+    local profiles = _settings.getUserSetting("profile");
+
+    local windowed = false;
+    local v = split(profiles, ",");
+    foreach(i in v){
+        if(i == "ForceWindowed"){
+            windowed = true;
+            break;
+        }
+    }
+
+    _window.setDefaultFullscreen(windowed ? _WINDOW_WINDOWED : _WINDOW_FULLSCREEN_BORDERLESS);
+}
+
 function start(){
     _gui.setScrollSpeed(5.0);
     local deadzone = 0.2;
