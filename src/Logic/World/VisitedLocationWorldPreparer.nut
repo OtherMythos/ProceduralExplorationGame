@@ -7,6 +7,8 @@
     mTargetMap_ = null;
     mChunkManager_ = null;
 
+    mStarted_ = false;
+
     constructor(targetMap){
         mTargetMap_ = targetMap;
     }
@@ -15,6 +17,35 @@
         mChunkManager_ = chunkManager;
     }
 
+    #Override
+    function processPreparation(){
+
+        if(!mStarted_){
+            _event.transmit(Event.WORLD_PREPARATION_STATE_CHANGE, {"began": true, "ended": false});
+            _gameCore.beginParseVisitedLocation("testVillage");
+            mStarted_ = true;
+        }
+
+        local mapClaim = _gameCore.checkClaimParsedVisitedLocation();
+        if(mapClaim != null){
+            mCurrentPercent_ = 1.0;
+            _event.transmit(Event.WORLD_PREPARATION_GENERATION_PROGRESS, {
+                "percentage": mCurrentPercent_,
+                "name": "done"
+            });
+
+            mOutData_ = threadGenerateScene(mTargetMap_, mChunkManager_);
+            mOutData_.native <- mapClaim;
+        }else{
+        }
+
+        if(mCurrentPercent_ >= 1.0){
+            _event.transmit(Event.WORLD_PREPARATION_STATE_CHANGE, {"began": false, "ended": true});
+        }
+        return mCurrentPercent_ >= 1.0;
+    }
+
+    /*
     #Override
     function processPreparation(){
         assert(mChunkManager_ != null);
@@ -51,10 +82,12 @@
 
         return mCurrentPercent_ >= 1.0;
     }
+*/
 
     function threadGenerateScene(targetMap, chunkManager){
         local fileHandler = ::TerrainChunkFileHandler();
         local mapData = fileHandler.readMapData(targetMap);
+
 
         local path = "res://build/assets/maps/" + targetMap + "/scene.avscene";
         local parsedFile = null;

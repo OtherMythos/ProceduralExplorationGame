@@ -298,6 +298,7 @@
 
     function suspendThread_(data){
         if(mUseThreading_){
+            return;
             ::suspend(data);
         }
     }

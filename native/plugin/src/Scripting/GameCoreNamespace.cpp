@@ -14,6 +14,8 @@
 #include "MapGen/ExplorationMapDataPrerequisites.h"
 #include "MapGen/MapGen.h"
 
+#include "VisitedPlaces/VisitedPlacesParser.h"
+
 #include "../../../../src/Versions.h.nut"
 
 #include <sqstdblob.h>
@@ -21,6 +23,7 @@
 namespace ProceduralExplorationGamePlugin{
 
     ProceduralExplorationGameCore::MapGen* GameCoreNamespace::currentMapGen = 0;
+    ProceduralExplorationGameCore::VisitedPlacesParser* GameCoreNamespace::currentVisitedPlacesParser = 0;
 
     SQInteger GameCoreNamespace::getGameCoreVersion(HSQUIRRELVM vm){
         sq_newtableex(vm, 4);
@@ -343,11 +346,33 @@ namespace ProceduralExplorationGamePlugin{
     }
 
     SQInteger GameCoreNamespace::beginParseVisitedLocation(HSQUIRRELVM vm){
+        if(GameCoreNamespace::currentVisitedPlacesParser != 0){
+            return sq_throwerror(vm, "Visited places parse is already active.");
+        }
+
         const SQChar *visitedLocationName;
         sq_getstring(vm, -1, &visitedLocationName);
 
-        ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
-        VisitedPlaceMapDataUserData::visitedPlaceMapDataToUserData(vm, mapData);
+        GameCoreNamespace::currentVisitedPlacesParser = new ProceduralExplorationGameCore::VisitedPlacesParser();
+
+        currentVisitedPlacesParser->beginMapGen(visitedLocationName);
+
+        return 0;
+    }
+
+    SQInteger GameCoreNamespace::checkClaimParsedVisitedLocation(HSQUIRRELVM vm){
+        if(!GameCoreNamespace::currentVisitedPlacesParser){
+            return sq_throwerror(vm, "Visited place parser is not active.");
+        }
+
+        if(currentVisitedPlacesParser->isFinished()){
+            ProceduralExplorationGameCore::VisitedPlaceMapData* mapData = GameCoreNamespace::currentVisitedPlacesParser->claimMapData();
+            VisitedPlaceMapDataUserData::visitedPlaceMapDataToUserData(vm, mapData);
+            delete GameCoreNamespace::currentVisitedPlacesParser;
+            GameCoreNamespace::currentVisitedPlacesParser = 0;
+        }else{
+            sq_pushnull(vm);
+        }
 
         return 1;
     }
@@ -411,6 +436,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, getTotalMapGenStages, "getTotalMapGenStages");
 
         AV::ScriptUtils::addFunction(vm, beginParseVisitedLocation, "beginParseVisitedLocation");
+        AV::ScriptUtils::addFunction(vm, checkClaimParsedVisitedLocation, "checkClaimParsedVisitedLocation");
     }
 
 };

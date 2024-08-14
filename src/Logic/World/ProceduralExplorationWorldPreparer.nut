@@ -39,6 +39,7 @@
         local mapClaim = _gameCore.checkClaimMapGen();
         if(mapClaim != null){
             mOutNativeData_ = mapClaim;
+            //TODO work towards being able to get rid of this.
             mOutData_ = mapClaim.explorationMapDataToTable();
             mCurrentPercent_ = 1.0;
             _event.transmit(Event.WORLD_PREPARATION_GENERATION_PROGRESS, {
