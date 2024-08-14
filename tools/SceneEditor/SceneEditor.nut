@@ -27,12 +27,19 @@ enum TerrainEditState{
 
         mParentNode = _scene.getRootSceneNode().createChildSceneNode();
 
-        local sceneTree = mEditorBase.loadSceneTree(mParentNode, "/Users/edward/Documents/turnBasedGame/assets/maps/testVillage/scene.avscene");
+        local targetMap = getTargetEditMap();
+        if(targetMap == null){
+            return;
+        }
+
+        local sceneTree = attemptLoadSceneTree(targetMap);
         mEditorBase.setActiveSceneTree(sceneTree);
-        sceneTree.debugPrint();
+        if(sceneTree != null){
+            sceneTree.debugPrint();
+        }
 
         local fileHandler = ::TerrainChunkFileHandler("res://../../assets/maps/");
-        local outMapData = fileHandler.readMapData("testVillage");
+        local outMapData = fileHandler.readMapData(targetMap);
 
         mTerrainChunkManager = ::TerrainChunkManager(0, false);
         mTerrainChunkManager.setup(outMapData, 4, true);
@@ -53,6 +60,14 @@ enum TerrainEditState{
         terrainToolsWindow.setSize(500, 500);
         terrainToolsWindow.setPosition(0, 500);
         mEditorBase.setupGUIWindowForClass(SceneEditorGUIPanelId.USER_CUSTOM_1, terrainToolsWindow, ::SceneEditorGUITerrainToolProperties);
+    }
+
+    function attemptLoadSceneTree(targetMap){
+        local targetPath = format("res://../../assets/maps/%s/scene.avscene", targetMap);
+        if(!_system.exists(targetPath)){
+            return null;
+        }
+        return mEditorBase.loadSceneTree(mParentNode, targetPath);
     }
 
     function update(){
@@ -86,6 +101,15 @@ enum TerrainEditState{
                 }
             }
         }
+    }
+
+    function getTargetEditMap(){
+        local editMap = _settings.getUserSetting("editMap");
+        print(editMap);
+        if(editMap != null && typeof editMap == "string"){
+            return editMap;
+        }
+        return null;
     }
 
     function sceneSafeUpdate(){
