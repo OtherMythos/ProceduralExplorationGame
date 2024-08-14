@@ -6,6 +6,7 @@
 #include "Scripting/ScriptVM.h"
 #include "Scripting/GameCoreNamespace.h"
 #include "Scripting/ExplorationMapDataUserData.h"
+#include "Scripting/VisitedPlaceMapDataUserData.h"
 
 #include "GameplayConstants.h"
 #include "GameCoreLogger.h"
@@ -40,6 +41,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptVM::setupNamespace("_gameCore", GameCoreNamespace::setupNamespace);
 
         AV::ScriptVM::setupDelegateTable(ExplorationMapDataUserData::setupDelegateTable);
+        AV::ScriptVM::setupDelegateTable(VisitedPlaceMapDataUserData::setupDelegateTable);
     }
 
 }

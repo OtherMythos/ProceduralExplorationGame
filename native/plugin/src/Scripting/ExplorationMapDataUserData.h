@@ -14,9 +14,9 @@ namespace ProceduralExplorationGamePlugin{
 
         static void setupDelegateTable(HSQUIRRELVM vm);
 
-        static void ExplorationMapDataToUserData(HSQUIRRELVM vm, ProceduralExplorationGameCore::ExplorationMapData* program);
+        static void ExplorationMapDataToUserData(HSQUIRRELVM vm, ProceduralExplorationGameCore::ExplorationMapData* mapData);
 
-        static AV::UserDataGetResult readExplorationMapDataFromUserData(HSQUIRRELVM vm, SQInteger stackInx, ProceduralExplorationGameCore::ExplorationMapData** outProg);
+        static AV::UserDataGetResult readExplorationMapDataFromUserData(HSQUIRRELVM vm, SQInteger stackInx, ProceduralExplorationGameCore::ExplorationMapData** outMapData);
 
     private:
         static SQObject ExplorationMapDataDelegateTableObject;

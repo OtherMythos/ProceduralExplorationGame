@@ -2,6 +2,7 @@
 
 #include "Scripting/ScriptNamespace/ScriptUtils.h"
 #include "ExplorationMapDataUserData.h"
+#include "VisitedPlaceMapDataUserData.h"
 #include "GameplayState.h"
 #include "GamePrerequisites.h"
 #include "Voxeliser/Voxeliser.h"
@@ -307,6 +308,7 @@ namespace ProceduralExplorationGamePlugin{
         //TOOD constant for max number of regions.
         Ogre::MeshPtr outPtrs[0xFF];
         AV::uint32 numRegions = 0;
+        //TODO script is not parsing the string and applying here.
         vox.createTerrainFromMapData("terrain", mapData, &outPtrs[0], &numRegions);
 
         sq_newarray(vm, numRegions);
@@ -338,6 +340,16 @@ namespace ProceduralExplorationGamePlugin{
         currentMapGen->beginMapGen(inputData);
 
         return 0;
+    }
+
+    SQInteger GameCoreNamespace::beginParseVisitedLocation(HSQUIRRELVM vm){
+        const SQChar *visitedLocationName;
+        sq_getstring(vm, -1, &visitedLocationName);
+
+        ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
+        VisitedPlaceMapDataUserData::visitedPlaceMapDataToUserData(vm, mapData);
+
+        return 1;
     }
 
     SQInteger GameCoreNamespace::getMapGenStage(HSQUIRRELVM vm){
@@ -397,6 +409,8 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, getMapGenStage, "getMapGenStage");
         AV::ScriptUtils::addFunction(vm, checkClaimMapGen, "checkClaimMapGen");
         AV::ScriptUtils::addFunction(vm, getTotalMapGenStages, "getTotalMapGenStages");
+
+        AV::ScriptUtils::addFunction(vm, beginParseVisitedLocation, "beginParseVisitedLocation");
     }
 
 };

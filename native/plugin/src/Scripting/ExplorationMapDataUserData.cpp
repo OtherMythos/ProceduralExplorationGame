@@ -296,10 +296,10 @@ namespace ProceduralExplorationGamePlugin{
         sq_newtable(vm);
 
         AV::ScriptUtils::addFunction(vm, explorationMapDataToTable, "explorationMapDataToTable");
-        AV::ScriptUtils::addFunction(vm, getAltitudeForPos, "getAltitudeForPos");
-        AV::ScriptUtils::addFunction(vm, getLandmassForPos, "getLandmassForPos");
-        AV::ScriptUtils::addFunction(vm, getIsWaterForPos, "getIsWaterForPos");
-        AV::ScriptUtils::addFunction(vm, getRegionForPos, "getRegionForPos");
+        AV::ScriptUtils::addFunction(vm, getAltitudeForPos, "getAltitudeForPos", 2, ".u");
+        AV::ScriptUtils::addFunction(vm, getLandmassForPos, "getLandmassForPos", 2, ".u");
+        AV::ScriptUtils::addFunction(vm, getIsWaterForPos, "getIsWaterForPos", 2, ".u");
+        AV::ScriptUtils::addFunction(vm, getRegionForPos, "getRegionForPos", 2, ".u");
 
         sq_resetobject(&ExplorationMapDataDelegateTableObject);
         sq_getstackobj(vm, -1, &ExplorationMapDataDelegateTableObject);
