@@ -2,6 +2,8 @@
 
 #include "VisitedPlacesPrerequisites.h"
 
+#include "TerrainChunkFileHandler.h"
+
 #include <cassert>
 
 namespace ProceduralExplorationGameCore{
@@ -21,10 +23,13 @@ namespace ProceduralExplorationGameCore{
     void VisitedPlacesParser::beginMapGen(const std::string& mapName){
         assert(!mMapData);
         mMapData = new VisitedPlaceMapData();
+        mMapData->mapName = mapName;
         mParentThread = new std::thread(&VisitedPlacesParser::beginMapGen_, this, mapName);
     }
 
     void VisitedPlacesParser::beginMapGen_(const std::string& mapName){
+        TerrainChunkFileHandler handler("res://build/assets/maps/");
+        handler.readMapData(mMapData, mapName);
         mCurrentStage++;
     }
 
