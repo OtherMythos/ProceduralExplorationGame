@@ -14,7 +14,7 @@ namespace ProceduralExplorationGameCore{
 
         std::string mapName;
         std::vector<AV::uint8> altitudeValues;
-        std::vector<AV::uint8> voxelValues;
+        std::vector<VoxelId> voxelValues;
     };
 
 }

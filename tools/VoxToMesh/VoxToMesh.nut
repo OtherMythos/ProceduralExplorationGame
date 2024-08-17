@@ -23,7 +23,19 @@ function start(){
     voxData[0 + (5*width) + (0*width*height)] = 254;
     voxData[4 + (5*width) + (0*width*height)] = 254;
 
-    local meshObj = voxMesh.createMeshForVoxelData("testVox", voxData, width, height, depth);
+    //If we have access to native voxelisation try that.
+    local meshObj = null;
+    local t = Timer();
+    t.start();
+    local useNative = false;
+    if(getroottable().rawin("_gameCore") && useNative){
+        meshObj = _gameCore.voxeliseMeshForVoxelData("nativeTestVox", voxData, width, height, depth);
+    }else{
+        meshObj = voxMesh.createMeshForVoxelData("testVox", voxData, width, height, depth);
+    }
+    t.stop();
+
+    printf("Time taken: %f", t.getSeconds());
 
     local item = _scene.createItem(meshObj);
     local newNode = _scene.getRootSceneNode().createChildSceneNode();

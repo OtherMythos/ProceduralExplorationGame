@@ -12,7 +12,7 @@ namespace ProceduralExplorationGameCore{
     static const float TILE_WIDTH = (1.0 / COLS_WIDTH) / 2.0;
     static const float TILE_HEIGHT = (1.0 / COLS_HEIGHT) / 2.0;
 
-    static const float MASKS[] = {
+    static const int MASKS[] = {
         0, -1, 0,
         0, 1, 0,
         0, 0, -1,
@@ -103,11 +103,17 @@ namespace ProceduralExplorationGameCore{
 
         void createTerrainFromMapData(const std::string& meshName, ExplorationMapData* mapData, Ogre::MeshPtr* outMeshes, AV::uint32* outNumRegions);
 
+        void createMeshForVoxelData(const std::string& meshName, VoxelId* data, AV::uint32 width, AV::uint32 height, AV::uint32 depth, Ogre::MeshPtr* outMesh);
+
     private:
         void prepareVertBuffer();
 
         inline AV::uint32 getVerticeBorderTerrain(AV::uint32 altitude, const std::vector<float>& altitudes, AV::uint32 f, AV::uint32 x, AV::uint32 y, AV::uint32 width) const;
         inline void writeFaceToMesh(AV::uint32 targetX, AV::uint32 targetY, AV::uint32 x, AV::uint32 y, AV::uint32 f, AV::uint32 altitude, const std::vector<float>& altitudes, AV::uint32 width, AV::uint32 height, float texCoordX, float texCoordY, RegionBufferEntry& bufEntry) const;
+
+        AV::uint8 getNeighbourMask(VoxelId* data, int x, int y, int z, AV::uint32 width, AV::uint32 height, AV::uint32 depth);
+
+        VoxelId readVoxelFromData_(VoxelId* data, int x, int y, int z, AV::uint32 width, AV::uint32 height);
     };
 
 };

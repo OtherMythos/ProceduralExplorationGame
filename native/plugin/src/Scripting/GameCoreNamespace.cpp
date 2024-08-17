@@ -418,6 +418,51 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger GameCoreNamespace::voxeliseMeshForVoxelData(HSQUIRRELVM vm){
+        const SQChar *meshName;
+        sq_getstring(vm, 2, &meshName);
+
+        SQInteger arraySize = sq_getsize(vm, 3);
+        ProceduralExplorationGameCore::VoxelId* values = static_cast<ProceduralExplorationGameCore::VoxelId*>(malloc(sizeof(ProceduralExplorationGameCore::VoxelId) * arraySize));
+
+        ProceduralExplorationGameCore::VoxelId* voxPtr = values;
+        for(SQInteger i = 0; i < arraySize; i++){
+            sq_pushinteger(vm, i);
+            sq_get(vm, 3);
+
+            ProceduralExplorationGameCore::VoxelId targetVox = ProceduralExplorationGameCore::EMPTY_VOXEL;
+
+            SQObjectType foundType = sq_gettype(vm, -1);
+            if(foundType == OT_NULL){
+                //Stub
+            }
+            else if(foundType == OT_INTEGER){
+                SQInteger voxVal;
+                sq_getinteger(vm, -1, &voxVal);
+                targetVox = static_cast<ProceduralExplorationGameCore::VoxelId>(voxVal);
+            }else{
+                return sq_throwerror(vm, "Voxel values must contain either null or an integer.");
+            }
+
+            *voxPtr = targetVox;
+            voxPtr++;
+
+            sq_pop(vm, 1);
+        }
+
+        SQInteger width, height, depth;
+        sq_getinteger(vm, 4, &width);
+        sq_getinteger(vm, 5, &height);
+        sq_getinteger(vm, 6, &depth);
+
+        ProceduralExplorationGameCore::Voxeliser vox;
+        Ogre::MeshPtr outMesh;
+        vox.createMeshForVoxelData(meshName, values, width, height, depth, &outMesh);
+
+        AV::MeshUserData::MeshToUserData(vm, outMesh);
+
+        return 1;
+    }
 
     void GameCoreNamespace::setupNamespace(HSQUIRRELVM vm){
         AV::ScriptUtils::addFunction(vm, getGameCoreVersion, "getGameCoreVersion");
@@ -437,6 +482,8 @@ namespace ProceduralExplorationGamePlugin{
 
         AV::ScriptUtils::addFunction(vm, beginParseVisitedLocation, "beginParseVisitedLocation");
         AV::ScriptUtils::addFunction(vm, checkClaimParsedVisitedLocation, "checkClaimParsedVisitedLocation");
+
+        AV::ScriptUtils::addFunction(vm, voxeliseMeshForVoxelData, "voxeliseMeshForVoxelData", 6, ".saiii");
     }
 
 };

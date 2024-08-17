@@ -26,6 +26,144 @@ namespace ProceduralExplorationGameCore{
 
     }
 
+    inline bool blockIsFaceVisible(AV::uint8 mask, int f){
+        return 0 == ((1 << f) & mask);
+    }
+    VoxelId Voxeliser::readVoxelFromData_(VoxelId* data, int x, int y, int z, AV::uint32 width, AV::uint32 height){
+        return *(data + (x + (y * width) + (z*width*height)));
+    }
+    void Voxeliser::createMeshForVoxelData(const std::string& meshName, VoxelId* data, AV::uint32 width, AV::uint32 height, AV::uint32 depth, Ogre::MeshPtr* outMesh){
+        std::vector<AV::uint32> verts;
+
+        AV::uint32 numVerts = 0;
+
+        VoxelId* voxPtr = data;
+        for(int z = 0; z < depth; z++)
+        for(int y = 0; y < height; y++)
+        for(int x = 0; x < width; x++){
+            VoxelId v = *voxPtr;
+            voxPtr++;
+            if(v == EMPTY_VOXEL) continue;
+            float texCoordX = (static_cast<float>(v % COLS_WIDTH) / COLS_WIDTH) + TILE_WIDTH;
+            float texCoordY = ((static_cast<float>(v) / COLS_WIDTH) / COLS_HEIGHT) + TILE_HEIGHT;
+            AV::uint8 neighbourMask = getNeighbourMask(data, x, y, z, width, height, depth);
+            for(int f = 0; f < 6; f++){
+                if(!blockIsFaceVisible(neighbourMask, f)) continue;
+                //if((1 << f) & mFaceExclusionMask_) continue;
+                //AV::uint8 ambientMask = getVerticeBorder(voxData, f, x, y, z, width, height, depth);
+                AV::uint8 ambientMask = 0x0;
+                for(int i = 0; i < 4; i++){
+                    //Pack everything into a single integer.
+                    AV::uint32 fv = FACES_VERTICES[f * 4 + i]*3;
+                    int xx = (VERTICES_POSITIONS[fv] + x);
+                    int yy = (VERTICES_POSITIONS[fv + 1] + y);
+                    int zz = (VERTICES_POSITIONS[fv + 2] + z);
+                    assert(xx <= 0x2FF && xx >= -0x2FF);
+                    assert(yy <= 0x2FF && yy >= -0x2FF);
+                    assert(zz <= 0x2FF && zz >= -0x2FF);
+
+                    //AV::uint8 ambient = (ambientMask >> 8 * i) & 0xFF;
+                    AV::uint8 ambient = 0x0;
+                    assert(ambient >= 0 && ambient <= 3);
+
+                    AV::uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
+                    verts.push_back(val);
+
+                    //TODO Magic number for now to avoid it breaking the regular materials.
+                    val = f << 29 | 0x15FBF7DB;
+                    //val = f;
+                    verts.push_back(val);
+                    //verts.push_back(f);
+                    verts.push_back(0);
+                    //TODO just to pad it out, long term I shouldn't need this.
+                    verts.push_back(0);
+
+                    verts.push_back(*(reinterpret_cast<AV::uint32*>(&texCoordX)));
+                    verts.push_back(*(reinterpret_cast<AV::uint32*>(&texCoordY)));
+                }
+                numVerts += 4;
+            }
+        }
+
+        //Generate the mesh
+
+        if(verts.empty()){
+            outMesh->reset();
+            return;
+        }
+        Ogre::MeshPtr mesh = Ogre::MeshManager::getSingleton().createManual(meshName, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+        Ogre::SubMesh* subMesh = mesh->createSubMesh();
+
+        AV::uint32 numFaces = numVerts / 4;
+        //TODO OPTIMISATION properly set the indice stride to either be 16 or 32 bit.
+        static const size_t indiceStride = 4;
+        void* indices = OGRE_MALLOC_SIMD(static_cast<size_t>(numFaces * 6 * indiceStride), Ogre::MEMCATEGORY_GEOMETRY);
+        AV::uint32* indicesPtr = static_cast<AV::uint32*>(indices);
+        //size_t indiceStride = (numFaces * 6 * 4) + 4 >= 0xFFFF ? 4 : 2;
+        for(AV::uint32 i = 0; i < numFaces; i++){
+            AV::uint32 currIndex = i * 4;
+            *(indicesPtr++) = currIndex + 0;
+            *(indicesPtr++) = currIndex + 1;
+            *(indicesPtr++) = currIndex + 2;
+            *(indicesPtr++) = currIndex + 2;
+            *(indicesPtr++) = currIndex + 3;
+            *(indicesPtr++) = currIndex + 0;
+        }
+
+        void* vertsMem = OGRE_MALLOC_SIMD(static_cast<size_t>(verts.size() * sizeof(AV::uint32)), Ogre::MEMCATEGORY_GEOMETRY);
+        AV::uint32* vertsPtr = static_cast<AV::uint32*>(vertsMem);
+        memcpy(vertsPtr, &(verts[0]), verts.size() * sizeof(AV::uint32));
+
+        Ogre::VertexBufferPacked *vertexBuffer = 0;
+        Ogre::RenderSystem *renderSystem = Ogre::Root::getSingletonPtr()->getRenderSystem();
+        Ogre::VaoManager *vaoManager = renderSystem->getVaoManager();
+        try{
+            vertexBuffer = vaoManager->createVertexBuffer(elemVec, numVerts, Ogre::BT_DEFAULT, vertsMem, true);
+        }catch(Ogre::Exception &e){
+            vertexBuffer = 0;
+        }
+
+        Ogre::IndexBufferPacked* indexBuffer = vaoManager->createIndexBuffer(Ogre::IndexType::IT_32BIT, numFaces * 6, Ogre::BT_IMMUTABLE, indices, false);
+
+        Ogre::VertexBufferPackedVec vertexBuffers;
+        vertexBuffers.push_back(vertexBuffer);
+        Ogre::VertexArrayObject* arrayObj = vaoManager->createVertexArrayObject(vertexBuffers, indexBuffer, Ogre::OT_TRIANGLE_LIST);
+
+        subMesh->mVao[Ogre::VpNormal].push_back(arrayObj);
+        subMesh->mVao[Ogre::VpShadow].push_back(arrayObj);
+
+        const Ogre::Vector3 halfBounds(width/2, height/2, depth/2);
+        const Ogre::Aabb bounds(halfBounds, halfBounds);
+        mesh->_setBounds(bounds);
+        mesh->_setBoundingSphereRadius(bounds.getRadius());
+
+        subMesh->setMaterialName("baseVoxelMaterial");
+
+        *outMesh = mesh;
+
+    }
+    AV::uint8 Voxeliser::getNeighbourMask(VoxelId* data, int x, int y, int z, AV::uint32 width, AV::uint32 height, AV::uint32 depth){
+        int ret = 0;
+        for(int v = 0; v < 6; v++){
+            int xx = MASKS[v * 3];
+            int yy = MASKS[v * 3 + 1];
+            int zz = MASKS[v * 3 + 2];
+
+            int xPos = x + xx;
+            if(xPos < 0 || xPos >= width) continue;
+            int yPos = y + yy;
+            if(yPos < 0 || yPos >= height) continue;
+            int zPos = z + zz;
+            if(zPos < 0 || zPos >= depth) continue;
+
+            VoxelId vox = readVoxelFromData_(data, xPos, yPos, zPos, width, height);
+            if(vox != EMPTY_VOXEL){
+                ret = ret | (1 << v);
+            }
+        }
+        return ret;
+    }
+
     void Voxeliser::createTerrainFromMapData(const std::string& meshName, ExplorationMapData* mapData, Ogre::MeshPtr* outMeshes, AV::uint32* outNumRegions){
         AV::uint32 width = mapData->width;
         AV::uint32 height = mapData->height;
