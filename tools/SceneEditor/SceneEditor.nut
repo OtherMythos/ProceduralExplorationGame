@@ -60,8 +60,8 @@ enum TerrainEditState{
         local fileHandler = ::TerrainChunkFileHandler("res://../../assets/maps/");
         local outMapData = fileHandler.readMapData(targetMap);
 
-        mTerrainChunkManager = ::TerrainChunkManager(0, false);
-        mTerrainChunkManager.setup(outMapData, 4, true);
+        mTerrainChunkManager = ::SceneEditorTerrainChunkManager(0);
+        mTerrainChunkManager.setup(outMapData, 4);
         mTerrainChunkManager.generateInitialItems();
         local targetParent = _scene.getRootSceneNode().createChildSceneNode();
         mTerrainChunkManager.setupParentNode(targetParent);

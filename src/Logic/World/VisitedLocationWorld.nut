@@ -10,7 +10,7 @@
     constructor(worldId, preparer){
         base.constructor(worldId, preparer);
 
-        mTerrainChunkManager_ = TerrainChunkManager(worldId, true);
+        mTerrainChunkManager_ = TerrainChunkManager(worldId);
         preparer.provideChunkManager(mTerrainChunkManager_)
     }
 

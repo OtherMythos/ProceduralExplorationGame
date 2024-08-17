@@ -10,6 +10,7 @@ function start(){
     _doFile("res://../../src/Logic/World/TerrainChunkFileHandler.nut");
     _doFile("res://../../src/Util/VoxToMesh.nut");
 
+    _doFile("res://SceneEditorTerrainChunkManager.nut");
     _doFile("res://SceneEditor.nut");
     _doFile("res://SceneEditorGUITerrainToolProperties.nut");
 
