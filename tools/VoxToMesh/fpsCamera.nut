@@ -1,3 +1,5 @@
+::Vec3_UNIT_X <- Vec3(1, 0, 0);
+
 ::fpsCamera <- {
 
     mSpeedModifier = false
