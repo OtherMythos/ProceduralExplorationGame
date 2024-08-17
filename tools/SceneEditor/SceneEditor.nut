@@ -16,8 +16,27 @@ enum TerrainEditState{
     mEditingTerrain = false
     mEditingTerrainMode = TerrainEditState.NONE
 
+    function createLights(){
+        //TODO remove the copy and pasting from base.
+        //Create lighting upfront so all objects can share it.
+        local light = _scene.createLight();
+        local lightNode = _scene.getRootSceneNode().createChildSceneNode();
+        lightNode.attachObject(light);
+
+        light.setType(_LIGHT_DIRECTIONAL);
+        light.setDirection(0, -1, -1);
+        //light.setPowerScale(PI * 2);
+        light.setPowerScale(PI);
+        //light.setPowerScale(PI * 0.8);
+
+        local val = 2.0;
+        _scene.setAmbientLight(ColourValue(val, val, val, 1.0), ColourValue(val, val, val, 1.0), ::Vec3_UNIT_Y);
+    }
+
     function setup(){
         fpsCamera.start(Vec3(0, 20, 0), Vec3(319.55, -14.55, 0));
+
+        createLights();
 
         mAcceptHandle = _input.getButtonActionHandle("Accept");
         _input.mapKeyboardInput(_K_SPACE, mAcceptHandle);

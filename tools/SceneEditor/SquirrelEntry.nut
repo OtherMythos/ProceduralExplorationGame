@@ -1,5 +1,7 @@
 
 function start(){
+    _gui.setDefaultFontSize26d6((_gui.getOriginalDefaultFontSize26d6()).tointeger());
+
     _doFile("res://../VoxToMesh/fpsCamera.nut");
     _doFile("res://../../src/Constants.nut");
     _doFile("res://../../src/Helpers.nut");
