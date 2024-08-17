@@ -32,6 +32,40 @@ namespace ProceduralExplorationGameCore{
     VoxelId Voxeliser::readVoxelFromData_(VoxelId* data, int x, int y, int z, AV::uint32 width, AV::uint32 height){
         return *(data + (x + (y * width) + (z*width*height)));
     }
+    AV::uint32 Voxeliser::getVerticeBorder(VoxelId* data, AV::uint8 f, int x, int y, int z, AV::uint32 width, AV::uint32 height, AV::uint32 depth){
+        AV::uint32 faceVal = f * 9 * 4;
+        AV::uint32 ret = 0;
+        for(AV::uint8 v = 0; v < 4; v++){
+            AV::uint32 faceBase = faceVal + v * 9;
+            AV::uint8 foundValsTemp[3] = {0, 0, 0};
+            for(AV::uint8 i = 0; i < 3; i++){
+                int xx = VERTICE_BORDERS[faceBase + i * 3];
+                int yy = VERTICE_BORDERS[faceBase + i * 3 + 1];
+                int zz = VERTICE_BORDERS[faceBase + i * 3 + 2];
+
+                int xPos = x + xx;
+                if(xPos < 0 || xPos >= width) continue;
+                int yPos = y + yy;
+                if(yPos < 0 || yPos >= height) continue;
+                int zPos = z + zz;
+                if(zPos < 0 || zPos >= depth) continue;
+
+                VoxelId vox = readVoxelFromData_(data, xPos, yPos, zPos, width, height);
+                foundValsTemp[i] = vox != EMPTY_VOXEL ? 1 : 0;
+            }
+            //https://0fps.net/2013/07/03/ambient-occlusion-for-minecraft-like-worlds/
+            AV::uint32 val = 0;
+            if(foundValsTemp[0] && foundValsTemp[1]){
+                val = 0;
+            }else{
+                val = 3 - (foundValsTemp[0] + foundValsTemp[1] + foundValsTemp[2]);
+            }
+            assert(val >= 0 && val <= 3);
+            //Batch the results for all 4 vertices into the single return value.
+            ret = ret | val << (v * 8);
+        }
+        return ret;
+    }
     void Voxeliser::createMeshForVoxelData(const std::string& meshName, VoxelId* data, AV::uint32 width, AV::uint32 height, AV::uint32 depth, Ogre::MeshPtr* outMesh){
         std::vector<AV::uint32> verts;
 
@@ -50,8 +84,7 @@ namespace ProceduralExplorationGameCore{
             for(int f = 0; f < 6; f++){
                 if(!blockIsFaceVisible(neighbourMask, f)) continue;
                 //if((1 << f) & mFaceExclusionMask_) continue;
-                //AV::uint8 ambientMask = getVerticeBorder(voxData, f, x, y, z, width, height, depth);
-                AV::uint8 ambientMask = 0x0;
+                AV::uint32 ambientMask = getVerticeBorder(data, f, x, y, z, width, height, depth);
                 for(int i = 0; i < 4; i++){
                     //Pack everything into a single integer.
                     AV::uint32 fv = FACES_VERTICES[f * 4 + i]*3;
@@ -62,8 +95,7 @@ namespace ProceduralExplorationGameCore{
                     assert(yy <= 0x2FF && yy >= -0x2FF);
                     assert(zz <= 0x2FF && zz >= -0x2FF);
 
-                    //AV::uint8 ambient = (ambientMask >> 8 * i) & 0xFF;
-                    AV::uint8 ambient = 0x0;
+                    AV::uint8 ambient = (ambientMask >> 8 * i) & 0xFF;
                     assert(ambient >= 0 && ambient <= 3);
 
                     AV::uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
