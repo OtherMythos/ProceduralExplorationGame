@@ -116,11 +116,7 @@
         local x = pos.x.tointeger();
         local y = -pos.z.tointeger();
 
-        if(x < 0 || y < 0 || x >= mMapData_.width || y >= mMapData_.height) return 0;
-
-        local height = mMapData_.mapData.voxHeight.data[x + y * mMapData_.width];
-
-        return height * PROCEDURAL_WORLD_UNIT_MULTIPLIER;
+        return mMapData_.native.getAltitude(x, y) * PROCEDURAL_WORLD_UNIT_MULTIPLIER;
     }
 
     #Override

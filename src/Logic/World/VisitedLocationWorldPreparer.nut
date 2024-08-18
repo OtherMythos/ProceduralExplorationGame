@@ -22,7 +22,7 @@
 
         if(!mStarted_){
             _event.transmit(Event.WORLD_PREPARATION_STATE_CHANGE, {"began": true, "ended": false});
-            _gameCore.beginParseVisitedLocation("testVillage");
+            _gameCore.beginParseVisitedLocation(mTargetMap_);
             mStarted_ = true;
         }
 
@@ -44,51 +44,12 @@
         return mCurrentPercent_ >= 1.0;
     }
 
-    /*
-    #Override
-    function processPreparation(){
-        assert(mChunkManager_ != null);
-
-        local susparam = null;
-
-        if(mThread_ == null)
-        {
-            _event.transmit(Event.WORLD_PREPARATION_STATE_CHANGE, {"began": true, "ended": false});
-            mThread_ = ::newthread(threadGenerateScene);
-            susparam = mThread_.call(mTargetMap_, mChunkManager_);
-        }
-
-        susparam = mThread_.wakeup();
-
-        if(mThread_.getstatus()=="idle"){
-            mOutData_ = susparam;
-            mCurrentPercent_ = 1.0;
-            mThread_ = null;
-            _event.transmit(Event.WORLD_PREPARATION_GENERATION_PROGRESS, {
-                "percentage": mCurrentPercent_,
-                "name": "done"
-            });
-        }else{
-            mCurrentPercent_ = susparam.percentage;
-            print("TERRAIN CHUNK GENERATION" + (mCurrentPercent_ * 100).tointeger() + "% stage: " + susparam.name);
-
-            _event.transmit(Event.WORLD_PREPARATION_GENERATION_PROGRESS, susparam);
-        }
-
-        if(mCurrentPercent_ >= 1.0){
-            _event.transmit(Event.WORLD_PREPARATION_STATE_CHANGE, {"began": false, "ended": true});
-        }
-
-        return mCurrentPercent_ >= 1.0;
-    }
-*/
-
     function threadGenerateScene(targetMap, chunkManager, nativeData){
-        local fileHandler = ::TerrainChunkFileHandler();
-        local mapData = fileHandler.readMapData(targetMap);
-        //TODO temporary
-        mapData.native = nativeData;
-
+        local mapData = {
+            "width": nativeData.getWidth(),
+            "height": nativeData.getHeight(),
+            "native": nativeData
+        };
 
         local path = "res://build/assets/maps/" + targetMap + "/scene.avscene";
         local parsedFile = null;
@@ -103,7 +64,7 @@
             _animation.loadAnimationFile(animationPath);
         }
 
-        chunkManager.setup(mapData, 4);
+        chunkManager.setup(nativeData, 4);
         chunkManager.generateInitialItems();
 
         local scriptPath = "res://build/assets/maps/" + targetMap + "/script.nut";

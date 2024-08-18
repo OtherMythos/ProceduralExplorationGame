@@ -25,6 +25,11 @@ namespace ProceduralExplorationGamePlugin{
         static SQInteger getIsWaterForPos(HSQUIRRELVM vm);
         static SQInteger voxeliseTerrainMeshForData(HSQUIRRELVM vm);
 
+        static SQInteger getWidth(HSQUIRRELVM vm);
+        static SQInteger getHeight(HSQUIRRELVM vm);
+
+        static SQInteger getAltitude(HSQUIRRELVM vm);
+
         static SQInteger visitedPlaceMapDataObjectReleaseHook(SQUserPointer p, SQInteger size);
     };
 }

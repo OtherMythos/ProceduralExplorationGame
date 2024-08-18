@@ -29,10 +29,10 @@
         mNodesForChunk_ = {};
         mItemsForChunk_ = {};
 
-        mChunkWidth_ = mMapData_.width / mChunkDivisions_;
-        mChunkHeight_ = mMapData_.height / mChunkDivisions_;
+        mChunkWidth_ = mMapData_.getWidth() / mChunkDivisions_;
+        mChunkHeight_ = mMapData_.getHeight() / mChunkDivisions_;
 
-        constructDataForChunks();
+        //constructDataForChunks();
     }
 
     function setupParentNode(parentNode){
@@ -99,22 +99,22 @@
 
     function voxeliseChunk_(chunkX, chunkY){
         local targetIdx = chunkX << 4 | chunkY;
-        assert(mChunkColourData_.rawin(targetIdx));
-        local targetChunkArray = mChunkColourData_.rawget(targetIdx);
+        //assert(mChunkColourData_.rawin(targetIdx));
+        //local targetChunkArray = mChunkColourData_.rawget(targetIdx);
 
-        local widthWithPadding = (mMapData_.width / mChunkDivisions_) + PADDING * 2;
-        local heightWithPadding = (mMapData_.height / mChunkDivisions_) + PADDING * 2;
+        //local widthWithPadding = (mMapData_.width / mChunkDivisions_) + PADDING * 2;
+        //local heightWithPadding = (mMapData_.height / mChunkDivisions_) + PADDING * 2;
 
-        print(mMapData_);
-        local width = (mMapData_.width / mChunkDivisions_);
-        local height = (mMapData_.height / mChunkDivisions_);
+        //print(mMapData_);
+        local width = (mMapData_.getWidth() / mChunkDivisions_);
+        local height = (mMapData_.getHeight() / mChunkDivisions_);
         local x = chunkX * width;
         local y = chunkY * height;
 
         //local vox = VoxToMesh(Timer(), 1 << 2);
         //local meshObj = vox.createMeshForVoxelData(format("terrainChunkManager-%i-%i", mWorldId_, targetIdx), targetChunkArray, widthWithPadding, heightWithPadding, mMapData_.voxHeight.greatest);
         //local meshObj = _gameCore.voxeliseMeshForVoxelData(format("terrainChunkManager-%i-%i", mWorldId_, targetIdx), targetChunkArray, widthWithPadding, heightWithPadding, mMapData_.voxHeight.greatest);
-        local meshObj = mMapData_.native.voxeliseTerrainMeshForData(format("terrainChunkManager-%i-%i", mWorldId_, targetIdx), x, y, width, height);
+        local meshObj = mMapData_.voxeliseTerrainMeshForData(format("terrainChunkManager-%i-%i", mWorldId_, targetIdx), x, y, width, height);
         //local meshObj = _gameCore.voxeliseToTerrainMeshes(format("terrainChunkManager-%i-%i", mWorldId_, targetIdx), targetChunkArray, widthWithPadding, heightWithPadding, mMapData_.voxHeight.greatest);
         mVoxTerrainMesh_ = meshObj;
 
@@ -173,8 +173,8 @@
 
         local parentNode = mParentNode_.createChildSceneNode();
 
-        local width = (mMapData_.width / mChunkDivisions_);
-        local height = (mMapData_.height / mChunkDivisions_);
+        local width = (mMapData_.getWidth() / mChunkDivisions_);
+        local height = (mMapData_.getHeight() / mChunkDivisions_);
         parentNode.setPosition((chunkX * -CHUNK_DEBUG_PADDING) + chunkX * width, 0, (chunkY * -CHUNK_DEBUG_PADDING) + -chunkY * height);
 
         assert(mItemsForChunk_.rawin(targetIdx));
@@ -200,8 +200,8 @@
         assert(mMapHeightDataCopy_ != null && mMapVoxTypeDataCopy_ != null);
 
         local saveMapData = ::TerrainChunkFileHandler.ParsedTerrainData();
-        saveMapData.width = mMapData_.width;
-        saveMapData.height = mMapData_.height;
+        saveMapData.width = mMapData_.getWidth();
+        saveMapData.height = mMapData_.getHeight();
         saveMapData.voxHeight = {"data": mMapHeightDataCopy_, "width": mMapData_.voxHeight.width, "height": mMapData_.voxHeight.height};
         saveMapData.voxType = {"data": mMapVoxTypeDataCopy_, "width": mMapData_.voxType.width, "height": mMapData_.voxType.height};
 

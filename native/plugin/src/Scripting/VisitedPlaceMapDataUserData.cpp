@@ -124,13 +124,43 @@ namespace ProceduralExplorationGamePlugin{
 
         AV::MeshUserData::MeshToUserData(vm, outPtr);
 
-/*
-        if(!result){
-            return sq_throwerror(vm, "Failed to voxelise meshes.");
-        }
-        */
+        return 1;
+    }
 
-        //AV::MeshUserData::MeshToUserData(vm, outPtrs[i]);
+    SQInteger VisitedPlaceMapDataUserData::getWidth(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
+        SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
+
+        sq_pushinteger(vm, mapData->width);
+
+        return 1;
+    }
+
+    SQInteger VisitedPlaceMapDataUserData::getHeight(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
+        SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
+
+        sq_pushinteger(vm, mapData->height);
+
+        return 1;
+    }
+
+    SQInteger VisitedPlaceMapDataUserData::getAltitude(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
+        SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger x, y;
+        sq_getinteger(vm, 2, &x);
+        sq_getinteger(vm, 3, &y);
+
+        if(x < 0 || y < 0 || x >= mapData->width || y >= mapData->height){
+            sq_pushinteger(vm, 0);
+            return 1;
+        }
+
+        AV::uint8 altitude = mapData->altitudeValues[x + y * mapData->width];
+
+        sq_pushinteger(vm, altitude);
 
         return 1;
     }
@@ -141,6 +171,10 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, getAltitudeForPos, "getAltitudeForPos", 2, ".u");
         AV::ScriptUtils::addFunction(vm, getIsWaterForPos, "getIsWaterForPos", 2, ".u");
         AV::ScriptUtils::addFunction(vm, voxeliseTerrainMeshForData, "voxeliseTerrainMeshForData", 6, ".siiii");
+
+        AV::ScriptUtils::addFunction(vm, getWidth, "getWidth");
+        AV::ScriptUtils::addFunction(vm, getHeight, "getHeight");
+        AV::ScriptUtils::addFunction(vm, getAltitude, "getAltitude", 3, ".ii");
 
         sq_resetobject(&VisitedPlaceMapDataDelegateTableObject);
         sq_getstackobj(vm, -1, &VisitedPlaceMapDataDelegateTableObject);
