@@ -196,9 +196,9 @@ namespace ProceduralExplorationGameCore{
         return ret;
     }
 
-    void Voxeliser::writeFaceToMeshVisitedPlace(int targetX, int targetY, AV::uint32 xVal, AV::uint32 yVal, AV::uint32 x, AV::uint32 y, AV::uint32 f, AV::uint8 altitude, const std::vector<AV::uint8>& altitudes, AV::uint32 width, AV::uint32 height, float texCoordX, float texCoordY, RegionBufferEntry& bufEntry) const{
-        if(targetX < 0 || targetY < 0) return;
-        AV::uint8 testAltitude = altitudes[targetX + targetY * 200];
+    void Voxeliser::writeFaceToMeshVisitedPlace(int targetX, int targetY, AV::uint32 xVal, AV::uint32 yVal, AV::uint32 x, AV::uint32 y, AV::uint32 f, AV::uint8 altitude, const std::vector<AV::uint8>& altitudes, AV::uint32 width, AV::uint32 height, float texCoordX, float texCoordY, AV::uint32 totalWidth, AV::uint32 totalHeight, RegionBufferEntry& bufEntry) const{
+        if(targetX < 0 || targetY < 0 || targetX >= totalWidth || targetY >= totalHeight) return;
+        AV::uint8 testAltitude = altitudes[targetX + targetY * totalWidth];
         if(testAltitude <= 0) return;
 
         if(testAltitude < altitude){
@@ -281,10 +281,10 @@ namespace ProceduralExplorationGameCore{
                     outBuffer.mNumTris += 2;
                     outBuffer.mNumVerts += 4;
                 }
-                writeFaceToMeshVisitedPlace(x, (int)y-1, xVal, yVal, x, yInverse, 0, altitude, mapData->altitudeValues, widthVal, heightVal, texCoordX, texCoordY, outBuffer);
-                writeFaceToMeshVisitedPlace(x, (int)y+1, xVal, yVal, x, yInverse, 1, altitude, mapData->altitudeValues, widthVal, heightVal, texCoordX, texCoordY, outBuffer);
-                writeFaceToMeshVisitedPlace((int)x+1, y, xVal, yVal, x, yInverse, 4, altitude, mapData->altitudeValues, widthVal, heightVal, texCoordX, texCoordY, outBuffer);
-                writeFaceToMeshVisitedPlace((int)x-1, y, xVal, yVal, x, yInverse, 5, altitude, mapData->altitudeValues, widthVal, heightVal, texCoordX, texCoordY, outBuffer);
+                writeFaceToMeshVisitedPlace(x, (int)y-1, xVal, yVal, x, yInverse, 0, altitude, mapData->altitudeValues, widthVal, heightVal, texCoordX, texCoordY, mapData->width, mapData->height, outBuffer);
+                writeFaceToMeshVisitedPlace(x, (int)y+1, xVal, yVal, x, yInverse, 1, altitude, mapData->altitudeValues, widthVal, heightVal, texCoordX, texCoordY, mapData->width, mapData->height, outBuffer);
+                writeFaceToMeshVisitedPlace((int)x+1, y, xVal, yVal, x, yInverse, 4, altitude, mapData->altitudeValues, widthVal, heightVal, texCoordX, texCoordY, mapData->width, mapData->height, outBuffer);
+                writeFaceToMeshVisitedPlace((int)x-1, y, xVal, yVal, x, yInverse, 5, altitude, mapData->altitudeValues, widthVal, heightVal, texCoordX, texCoordY, mapData->width, mapData->height, outBuffer);
             }
         }
 

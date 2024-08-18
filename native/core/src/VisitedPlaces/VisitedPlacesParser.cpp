@@ -8,7 +8,9 @@
 
 namespace ProceduralExplorationGameCore{
 
-    VisitedPlacesParser::VisitedPlacesParser(){
+    VisitedPlacesParser::VisitedPlacesParser()
+        : mMapData(0)
+    {
 
     }
 
