@@ -2,13 +2,15 @@ function setup(){
     //Simple version of parsing the profile settings.
     //All we care about here is the ForceWindowed flag, so just check for that.
     local profiles = _settings.getUserSetting("profile");
-
     local windowed = false;
-    local v = split(profiles, ",");
-    foreach(i in v){
-        if(i == "ForceWindowed"){
-            windowed = true;
-            break;
+
+    if(profiles != null){
+        local v = split(profiles, ",");
+        foreach(i in v){
+            if(i == "ForceWindowed"){
+                windowed = true;
+                break;
+            }
         }
     }
 
