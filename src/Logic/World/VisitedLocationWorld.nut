@@ -5,6 +5,8 @@
     mVoxTerrainMesh_ = null;
     mTerrainChunkManager_ = null;
 
+    mCurrentWorldAnim_ = null;
+
     mCloudManager_ = null;
 
     constructor(worldId, preparer){
@@ -30,12 +32,20 @@
         resetSession(mWorldPreparer_.getOutputData());
     }
 
+    #Override
     function resetSession(mapData){
         base.resetSession();
 
         mMapData_ = mapData;
 
         createScene();
+    }
+
+    #Override
+    function shutdown(){
+        mCurrentWorldAnim_ = null;
+
+        base.shutdown();
     }
 
     #Override
@@ -131,7 +141,7 @@
             animData = _scene.insertParsedSceneFileGetAnimInfo(mMapData_.parsedSceneFile, targetNode);
         }
         if(animData != null){
-            ::currentAnim <- _animation.createAnimation("sceneAnim", animData);
+            mCurrentWorldAnim_ = _animation.createAnimation("sceneAnim", animData);
         }
 
         mCloudManager_ = CloudManager(mParentNode_, mMapData_.width, mMapData_.height);

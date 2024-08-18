@@ -7,7 +7,10 @@
 
         button.attachListenerForEvent(function(widget, action){
             //::Base.mExplorationLogic.gatewayEndExploration();
-            local worldInstance = ::Base.mExplorationLogic.createWorldInstance(WorldTypes.VISITED_LOCATION_WORLD);
+            local data = {
+                "mapName": "testVillage"
+            };
+            local worldInstance = ::Base.mExplorationLogic.createWorldInstance(WorldTypes.VISITED_LOCATION_WORLD, data);
             ::Base.mExplorationLogic.pushWorld(worldInstance);
         }, _GUI_ACTION_PRESSED, this);
 
