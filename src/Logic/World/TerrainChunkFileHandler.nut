@@ -12,6 +12,7 @@
 
         width = null;
         height = null;
+        native = null;
     };
 
     constructor(mapsDir="res://build/assets/maps/"){

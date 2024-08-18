@@ -34,8 +34,7 @@
                 "name": "done"
             });
 
-            mOutData_ = threadGenerateScene(mTargetMap_, mChunkManager_);
-            mOutData_.native <- mapClaim;
+            mOutData_ = threadGenerateScene(mTargetMap_, mChunkManager_, mapClaim);
         }else{
         }
 
@@ -84,9 +83,11 @@
     }
 */
 
-    function threadGenerateScene(targetMap, chunkManager){
+    function threadGenerateScene(targetMap, chunkManager, nativeData){
         local fileHandler = ::TerrainChunkFileHandler();
         local mapData = fileHandler.readMapData(targetMap);
+        //TODO temporary
+        mapData.native = nativeData;
 
 
         local path = "res://build/assets/maps/" + targetMap + "/scene.avscene";
@@ -119,7 +120,8 @@
             "parsedSceneFile": parsedFile,
             "width": mapData.width,
             "height": mapData.height,
-            "scriptObject": scriptObject
+            "scriptObject": scriptObject,
+            "native": nativeData
         };
         return outData;
     }

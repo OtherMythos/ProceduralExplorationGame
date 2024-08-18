@@ -2,6 +2,7 @@
 
 #include <string>
 #include "GamePrerequisites.h"
+#include "VisitedPlaces/VisitedPlacesPrerequisites.h"
 #include "OgrePrerequisites.h"
 
 namespace ProceduralExplorationGameCore{
@@ -105,14 +106,19 @@ namespace ProceduralExplorationGameCore{
 
         void createMeshForVoxelData(const std::string& meshName, VoxelId* data, AV::uint32 width, AV::uint32 height, AV::uint32 depth, Ogre::MeshPtr* outMesh);
 
+        void createTerrainFromVisitedPlaceMapData(const std::string& meshName, VisitedPlaceMapData* mapData, Ogre::MeshPtr* outMeshes, AV::uint32 x, AV::uint32 y, AV::uint32 width, AV::uint32 height);
+
     private:
         void prepareVertBuffer();
 
         inline AV::uint32 getVerticeBorderTerrain(AV::uint32 altitude, const std::vector<float>& altitudes, AV::uint32 f, AV::uint32 x, AV::uint32 y, AV::uint32 width) const;
         inline void writeFaceToMesh(AV::uint32 targetX, AV::uint32 targetY, AV::uint32 x, AV::uint32 y, AV::uint32 f, AV::uint32 altitude, const std::vector<float>& altitudes, AV::uint32 width, AV::uint32 height, float texCoordX, float texCoordY, RegionBufferEntry& bufEntry) const;
+        inline void writeFaceToMeshVisitedPlace(int targetX, int targetY, AV::uint32 xVal, AV::uint32 yVal, AV::uint32 x, AV::uint32 y, AV::uint32 f, AV::uint8 altitude, const std::vector<AV::uint8>& altitudes, AV::uint32 width, AV::uint32 height, float texCoordX, float texCoordY, RegionBufferEntry& bufEntry) const;
 
         AV::uint8 getNeighbourMask(VoxelId* data, int x, int y, int z, AV::uint32 width, AV::uint32 height, AV::uint32 depth);
         AV::uint32 getVerticeBorder(VoxelId* data, AV::uint8 f, int x, int y, int z, AV::uint32 width, AV::uint32 height, AV::uint32 depth);
+
+        AV::uint32 getVerticeBorderTerrainVisitedPlaces(AV::uint32 altitude, const std::vector<AV::uint8>& altitudes, AV::uint32 f, int x, int y, AV::uint32 width, AV::uint32 height) const;
 
         VoxelId readVoxelFromData_(VoxelId* data, int x, int y, int z, AV::uint32 width, AV::uint32 height);
     };

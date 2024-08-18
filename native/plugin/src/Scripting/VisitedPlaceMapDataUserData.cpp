@@ -6,8 +6,12 @@
 #include <vector>
 
 #include "Scripting/ScriptNamespace/Classes/Vector3UserData.h"
+#include "Scripting/ScriptNamespace/Classes/Ogre/Graphics/MeshUserData.h"
 
 #include "VisitedPlaces/VisitedPlacesPrerequisites.h"
+#include "VisitedPlaces/VisitedPlaceMapDataHelper.h"
+
+#include "Ogre.h"
 
 namespace ProceduralExplorationGamePlugin{
 
@@ -101,11 +105,42 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger VisitedPlaceMapDataUserData::voxeliseTerrainMeshForData(HSQUIRRELVM vm){
+        const SQChar *meshName;
+        sq_getstring(vm, 2, &meshName);
+
+        SQInteger x, y, width, height;
+        sq_getinteger(vm, 3, &x);
+        sq_getinteger(vm, 4, &y);
+        sq_getinteger(vm, 5, &width);
+        sq_getinteger(vm, 6, &height);
+
+        ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
+        SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
+
+        Ogre::MeshPtr outPtr;
+        ProceduralExplorationGameCore::VisitedPlaceMapDataHelper helper(mapData);
+        helper.voxeliseToTerrainMeshes(meshName, &outPtr, x, y, width, height);
+
+        AV::MeshUserData::MeshToUserData(vm, outPtr);
+
+/*
+        if(!result){
+            return sq_throwerror(vm, "Failed to voxelise meshes.");
+        }
+        */
+
+        //AV::MeshUserData::MeshToUserData(vm, outPtrs[i]);
+
+        return 1;
+    }
+
     void VisitedPlaceMapDataUserData::setupDelegateTable(HSQUIRRELVM vm){
         sq_newtable(vm);
 
         AV::ScriptUtils::addFunction(vm, getAltitudeForPos, "getAltitudeForPos", 2, ".u");
         AV::ScriptUtils::addFunction(vm, getIsWaterForPos, "getIsWaterForPos", 2, ".u");
+        AV::ScriptUtils::addFunction(vm, voxeliseTerrainMeshForData, "voxeliseTerrainMeshForData", 6, ".siiii");
 
         sq_resetobject(&VisitedPlaceMapDataDelegateTableObject);
         sq_getstackobj(vm, -1, &VisitedPlaceMapDataDelegateTableObject);

@@ -24,8 +24,6 @@ namespace ProceduralExplorationGameCore{
     }
 
     bool TerrainChunkFileHandler::parseFileToData_(VisitedPlaceMapData* outData, const std::string& filePath, bool altitudeDestination) const{
-        outData->altitudeValues.clear();
-
         size_t activeWidth = 0;
         size_t height = 0;
 
@@ -87,6 +85,9 @@ namespace ProceduralExplorationGameCore{
     bool TerrainChunkFileHandler::readMapData(VisitedPlaceMapData* outData, const std::string& mapName) const{
         std::string outPath;
         AV::formatResToPath(mMapsDir, outPath);
+
+        outData->altitudeValues.clear();
+        outData->voxelValues.clear();
 
         if(!readMapDataFile_(outData, outPath, "terrain.txt", true, mapName)) return false;
         if(!readMapDataFile_(outData, outPath, "terrainBlend.txt", false, mapName)) return false;

@@ -196,6 +196,101 @@ namespace ProceduralExplorationGameCore{
         return ret;
     }
 
+    void Voxeliser::writeFaceToMeshVisitedPlace(int targetX, int targetY, AV::uint32 xVal, AV::uint32 yVal, AV::uint32 x, AV::uint32 y, AV::uint32 f, AV::uint8 altitude, const std::vector<AV::uint8>& altitudes, AV::uint32 width, AV::uint32 height, float texCoordX, float texCoordY, RegionBufferEntry& bufEntry) const{
+        if(targetX < 0 || targetY < 0) return;
+        AV::uint8 testAltitude = altitudes[targetX + targetY * 200];
+        if(testAltitude <= 0) return;
+
+        if(testAltitude < altitude){
+            //The altidue is lower so need to draw some triangles.
+            AV::uint32 altitudeDelta = altitude - testAltitude;
+            for(AV::uint32 zAlt = 0; zAlt < altitudeDelta; zAlt++){
+                //Loop down and draw the triangles.
+
+                AV::uint32 faceAltitude = (altitude-zAlt);
+                //AV::uint32 ambientMask = getVerticeBorderTerrain(faceAltitude, altitudes, f, x, y, width);
+                AV::uint32 ambientMask = 0x0;
+                for(AV::uint32 i = 0; i < 4; i++){
+                    AV::uint32 fv = FACES_VERTICES[f * 4 + i]*3;
+                    AV::uint32 xx = VERTICES_POSITIONS[fv] + x - xVal;
+                    AV::uint32 yy = VERTICES_POSITIONS[fv + 1] + y - yVal;
+                    AV::uint32 zz = VERTICES_POSITIONS[fv + 2] + faceAltitude;
+
+                    AV::uint8 ambient = (ambientMask >> 8 * i) & 0xFF;
+                    assert(ambient >= 0 && ambient <= 3);
+
+                    AV::uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
+                    //TODO Magic number for now to avoid it breaking the regular materials.
+                    (*bufEntry.mVertsWritePtr++) = val;
+                    val = f << 29 | 0x15FBF7DB;
+                    (*bufEntry.mVertsWritePtr++) = val;
+                    (*bufEntry.mVertsWritePtr++) = 0x0;
+                    (*bufEntry.mVertsWritePtr++) = 0x0;
+                    *reinterpret_cast<float*>(bufEntry.mVertsWritePtr++) = texCoordX;
+                    *reinterpret_cast<float*>(bufEntry.mVertsWritePtr++) = texCoordY;
+                }
+                bufEntry.mNumTris += 2;
+                bufEntry.mNumVerts+=4;
+            }
+        }
+    }
+    void Voxeliser::createTerrainFromVisitedPlaceMapData(const std::string& meshName, VisitedPlaceMapData* mapData, Ogre::MeshPtr* outMesh, AV::uint32 xVal, AV::uint32 yVal, AV::uint32 widthVal, AV::uint32 heightVal){
+        //Probably no need to go through and collect the altitude values, they're already close enough.
+        //All the same destination.
+
+        RegionBufferEntry outBuffer;
+
+        outBuffer.mNumActiveVox = widthVal * heightVal;
+        outBuffer.prepareVertBuffer();
+
+        int maxAltitude = 1;
+        for(AV::uint32 y = yVal; y < yVal + heightVal; y++){
+            for(AV::uint32 x = xVal; x < xVal + widthVal; x++){
+                AV::uint8 altitude = mapData->altitudeValues[x + y * mapData->width];
+                AV::uint8 v = mapData->voxelValues[x + y * mapData->width];
+                if(altitude == 0) continue;
+
+                if(altitude > maxAltitude) maxAltitude = altitude;
+
+                AV::uint32 yInverse = y;
+
+                float texCoordX = (static_cast<float>(v % COLS_WIDTH) / COLS_WIDTH) + TILE_WIDTH;
+                float texCoordY = ((static_cast<float>(v) / COLS_WIDTH) / COLS_HEIGHT) + TILE_HEIGHT;
+
+                {
+                    AV::uint32 f = 3;
+                    AV::uint32 ambientMask = getVerticeBorderTerrainVisitedPlaces(altitude, mapData->altitudeValues, f, x, y, mapData->width, mapData->height);
+                    for(AV::uint32 i = 0; i < 4; i++){
+                        AV::uint32 fv = FACES_VERTICES[f * 4 + i]*3;
+                        AV::uint32 xx = (VERTICES_POSITIONS[fv] + x) - xVal;
+                        AV::uint32 yy = (VERTICES_POSITIONS[fv + 1] + yInverse) - yVal;
+                        AV::uint32 zz = (VERTICES_POSITIONS[fv + 2] + altitude);
+
+                        AV::uint8 ambient = (ambientMask >> 8 * i) & 0xFF;
+                        assert(ambient >= 0 && ambient <= 3);
+
+                        AV::uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
+                        (*outBuffer.mVertsWritePtr++) = val;
+                        val = f << 29 | 0x15FBF7DB;
+                        (*outBuffer.mVertsWritePtr++) = val;
+                        (*outBuffer.mVertsWritePtr++) = 0x0;
+                        (*outBuffer.mVertsWritePtr++) = 0x0;
+                        *reinterpret_cast<float*>(outBuffer.mVertsWritePtr++) = texCoordX;
+                        *reinterpret_cast<float*>(outBuffer.mVertsWritePtr++) = texCoordY;
+                    }
+                    outBuffer.mNumTris += 2;
+                    outBuffer.mNumVerts += 4;
+                }
+                writeFaceToMeshVisitedPlace(x, (int)y-1, xVal, yVal, x, yInverse, 0, altitude, mapData->altitudeValues, widthVal, heightVal, texCoordX, texCoordY, outBuffer);
+                writeFaceToMeshVisitedPlace(x, (int)y+1, xVal, yVal, x, yInverse, 1, altitude, mapData->altitudeValues, widthVal, heightVal, texCoordX, texCoordY, outBuffer);
+                writeFaceToMeshVisitedPlace((int)x+1, y, xVal, yVal, x, yInverse, 4, altitude, mapData->altitudeValues, widthVal, heightVal, texCoordX, texCoordY, outBuffer);
+                writeFaceToMeshVisitedPlace((int)x-1, y, xVal, yVal, x, yInverse, 5, altitude, mapData->altitudeValues, widthVal, heightVal, texCoordX, texCoordY, outBuffer);
+            }
+        }
+
+        *outMesh = outBuffer.generateMesh(meshName, widthVal, heightVal, maxAltitude);
+    }
+
     void Voxeliser::createTerrainFromMapData(const std::string& meshName, ExplorationMapData* mapData, Ogre::MeshPtr* outMeshes, AV::uint32* outNumRegions){
         AV::uint32 width = mapData->width;
         AV::uint32 height = mapData->height;
@@ -304,10 +399,10 @@ namespace ProceduralExplorationGameCore{
                     bufEntry.mNumVerts += 4;
                 }
                 //Calculate the remaining altitude faces
-                writeFaceToMesh(x, y-1, x, yInverse, 0, altitude, altitudes, width, height, texCoordX, texCoordY, bufEntry);
-                writeFaceToMesh(x, y+1, x, yInverse, 1, altitude, altitudes, width, height, texCoordX, texCoordY, bufEntry);
-                writeFaceToMesh(x+1, y, x, yInverse, 4, altitude, altitudes, width, height, texCoordX, texCoordY, bufEntry);
-                writeFaceToMesh(x-1, y, x, yInverse, 5, altitude, altitudes, width, height, texCoordX, texCoordY, bufEntry);
+                writeFaceToMesh(x, (int)y-1, x, yInverse, 0, altitude, altitudes, width, height, texCoordX, texCoordY, bufEntry);
+                writeFaceToMesh(x, (int)y+1, x, yInverse, 1, altitude, altitudes, width, height, texCoordX, texCoordY, bufEntry);
+                writeFaceToMesh((int)x+1, y, x, yInverse, 4, altitude, altitudes, width, height, texCoordX, texCoordY, bufEntry);
+                writeFaceToMesh((int)x-1, y, x, yInverse, 5, altitude, altitudes, width, height, texCoordX, texCoordY, bufEntry);
             }
         }
 
@@ -377,6 +472,36 @@ namespace ProceduralExplorationGameCore{
                 //TODO separate -1.0f into a constant.
                 if(targetAltitude == -1.0f) continue;
                 AV::uint32 checkAltitude = ( *reinterpret_cast<AV::uint32*>(&targetAltitude) & 0xFFFF);
+                foundValsTemp[i] = checkAltitude >= (altitude + zz) ? 1 : 0;
+            }
+            AV::uint32 val = 0;
+            if(foundValsTemp[0] && foundValsTemp[1]){
+                val = 0;
+            }else{
+                val = 3 - (foundValsTemp[0] + foundValsTemp[1] + foundValsTemp[2]);
+            }
+            assert(val >= 0 && val <= 3);
+            ret = ret | val << (v * 8);
+        }
+        return ret;
+    }
+
+    //TODO remove the copy and pasting.
+    AV::uint32 Voxeliser::getVerticeBorderTerrainVisitedPlaces(AV::uint32 altitude, const std::vector<AV::uint8>& altitudes, AV::uint32 f, int x, int y, AV::uint32 width, AV::uint32 height) const{
+        AV::uint32 faceVal = f * 9 * 4;
+        AV::uint32 ret = 0;
+        for(AV::uint32 v = 0; v < 4; v++){
+            AV::uint32 faceBase = faceVal + v * 9;
+            AV::uint8 foundValsTemp[3] = {0x0, 0x0, 0x0};
+            for(AV::uint8 i = 0; i < 3; i++){
+                int xx = VERTICE_BORDERS[faceBase + i * 3];
+                int yy = VERTICE_BORDERS[faceBase + i * 3 + 1];
+                int zz = VERTICE_BORDERS[faceBase + i * 3 + 2];
+
+                size_t testIdx = (x + xx) + (y + yy) * width;
+                if(testIdx < 0 || testIdx >= width * height) continue;
+                AV::uint8 checkAltitude = altitudes[testIdx];
+                if(checkAltitude == 0) continue;
                 foundValsTemp[i] = checkAltitude >= (altitude + zz) ? 1 : 0;
             }
             AV::uint32 val = 0;

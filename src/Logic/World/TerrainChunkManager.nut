@@ -105,9 +105,17 @@
         local widthWithPadding = (mMapData_.width / mChunkDivisions_) + PADDING * 2;
         local heightWithPadding = (mMapData_.height / mChunkDivisions_) + PADDING * 2;
 
+        print(mMapData_);
+        local width = (mMapData_.width / mChunkDivisions_);
+        local height = (mMapData_.height / mChunkDivisions_);
+        local x = chunkX * width;
+        local y = chunkY * height;
+
         //local vox = VoxToMesh(Timer(), 1 << 2);
         //local meshObj = vox.createMeshForVoxelData(format("terrainChunkManager-%i-%i", mWorldId_, targetIdx), targetChunkArray, widthWithPadding, heightWithPadding, mMapData_.voxHeight.greatest);
-        local meshObj = _gameCore.voxeliseMeshForVoxelData(format("terrainChunkManager-%i-%i", mWorldId_, targetIdx), targetChunkArray, widthWithPadding, heightWithPadding, mMapData_.voxHeight.greatest);
+        //local meshObj = _gameCore.voxeliseMeshForVoxelData(format("terrainChunkManager-%i-%i", mWorldId_, targetIdx), targetChunkArray, widthWithPadding, heightWithPadding, mMapData_.voxHeight.greatest);
+        local meshObj = mMapData_.native.voxeliseTerrainMeshForData(format("terrainChunkManager-%i-%i", mWorldId_, targetIdx), x, y, width, height);
+        //local meshObj = _gameCore.voxeliseToTerrainMeshes(format("terrainChunkManager-%i-%i", mWorldId_, targetIdx), targetChunkArray, widthWithPadding, heightWithPadding, mMapData_.voxHeight.greatest);
         mVoxTerrainMesh_ = meshObj;
 
         local item = _scene.createItem(meshObj);
@@ -156,7 +164,7 @@
      * Recreate just the chunk node, assuming the item has already been generated.
      */
     function recreateChunkNode(chunkX, chunkY){
-        local CHUNK_DEBUG_PADDING = 2;
+        local CHUNK_DEBUG_PADDING = 0;
         local targetIdx = chunkX << 4 | chunkY;
 
         if(mNodesForChunk_.rawin(targetIdx)){
