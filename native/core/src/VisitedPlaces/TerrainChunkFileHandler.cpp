@@ -23,7 +23,8 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    bool TerrainChunkFileHandler::parseFileToData_(VisitedPlaceMapData* outData, const std::string& filePath, bool altitudeDestination) const{
+    template <typename T>
+    bool TerrainChunkFileHandler::parseFileToData_(VisitedPlaceMapData* outData, const std::string& filePath, std::vector<T>& destination) const{
         size_t activeWidth = 0;
         size_t height = 0;
 
@@ -34,8 +35,6 @@ namespace ProceduralExplorationGameCore{
         if(!myfile.is_open()){
             return false;
         }
-
-        std::vector<AV::uint8>& destination = altitudeDestination ? outData->altitudeValues : outData->voxelValues;
 
         while(getline(myfile, line)){
             size_t width = 0;
@@ -69,11 +68,12 @@ namespace ProceduralExplorationGameCore{
         return true;
     }
 
-    bool TerrainChunkFileHandler::readMapDataFile_(VisitedPlaceMapData* outData, const std::string& resolvedMapsDir, const char* fileName, bool altitudeDestination, const std::string& mapName) const{
+    template <typename T>
+    bool TerrainChunkFileHandler::readMapDataFile_(VisitedPlaceMapData* outData, const std::string& resolvedMapsDir, const char* fileName, std::vector<T>& destination, const std::string& mapName) const{
         std::filesystem::path p(resolvedMapsDir);
         p = p / mapName / fileName;
         if(std::filesystem::exists(p)){
-            bool result = parseFileToData_(outData, p.string(), altitudeDestination);
+            bool result = parseFileToData_<T>(outData, p.string(), destination);
             if(!result){
                 GAME_CORE_ERROR("Unable to parse file '{}' for map '{}'", fileName, mapName);
                 return false;
@@ -89,8 +89,8 @@ namespace ProceduralExplorationGameCore{
         outData->altitudeValues.clear();
         outData->voxelValues.clear();
 
-        if(!readMapDataFile_(outData, outPath, "terrain.txt", true, mapName)) return false;
-        if(!readMapDataFile_(outData, outPath, "terrainBlend.txt", false, mapName)) return false;
+        if(!readMapDataFile_<AV::uint8>(outData, outPath, "terrain.txt", outData->altitudeValues, mapName)) return false;
+        if(!readMapDataFile_<VoxelId>(outData, outPath, "terrainBlend.txt", outData->voxelValues, mapName)) return false;
 
         if(outData->altitudeValues.size() != outData->voxelValues.size()) return false;
 

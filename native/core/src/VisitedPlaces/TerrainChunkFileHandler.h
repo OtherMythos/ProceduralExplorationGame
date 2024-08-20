@@ -14,8 +14,10 @@ namespace ProceduralExplorationGameCore{
         bool readMapData(VisitedPlaceMapData* outData, const std::string& mapName) const;
 
     private:
-        bool parseFileToData_(VisitedPlaceMapData* outData, const std::string& filePath, bool altitudeDestination) const;
-        bool readMapDataFile_(VisitedPlaceMapData* outData, const std::string& resolvedMapsDir, const char* fileName, bool altitudeDestination, const std::string& mapName) const;
+        template <typename T>
+        bool parseFileToData_(VisitedPlaceMapData* outData, const std::string& filePath, std::vector<T>& destination) const;
+        template <typename T>
+        bool readMapDataFile_(VisitedPlaceMapData* outData, const std::string& resolvedMapsDir, const char* fileName, std::vector<T>& destination, const std::string& mapName) const;
 
     private:
         std::string mMapsDir;

@@ -6,9 +6,8 @@ namespace ProceduralExplorationGameCore{
 
     struct ExplorationMapData;
 
-    typedef AV::uint8 VoxelId;
-    //TODO random voxel for now, eventually I should designate the fact that some voxels aren't valid or special.
-    static const VoxelId EMPTY_VOXEL = 0x10;
+    typedef AV::uint16 VoxelId;
+    static const VoxelId EMPTY_VOXEL = 0x8000;
 
     typedef AV::uint8 RegionId;
     typedef AV::uint8 LandId;
