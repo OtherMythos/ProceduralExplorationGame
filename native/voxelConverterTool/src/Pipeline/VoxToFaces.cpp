@@ -79,7 +79,7 @@ namespace VoxelConverterTool{
         return ret;
     }
 
-    void VoxToFaces::voxToFaces(const ParsedVoxFile& parsedVox, std::vector<WrappedFace>& outFaces){
+    void VoxToFaces::voxToFaces(const ParsedVoxFile& parsedVox, OutputFaces& faces){
 
         int width = parsedVox.maxX - parsedVox.minX;
         int height = parsedVox.maxY - parsedVox.minY;
@@ -94,8 +94,9 @@ namespace VoxelConverterTool{
                 uint32 ambientMask = getVerticeBorder(parsedVox, f, x, y, z);
                 //Submit this face
 
-                WrappedFace face = _wrapFace(x, y, z, v, ambientMask, f);
-                outFaces.push_back(face);
+                const WrappedFaceContainer c = {x, y, z, v, ambientMask, f};
+                WrappedFace face = _wrapFace(c);
+                faces.outFaces.push_back(face);
             }
         }
     }

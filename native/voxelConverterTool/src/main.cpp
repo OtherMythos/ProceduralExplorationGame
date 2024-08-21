@@ -2,6 +2,7 @@
 
 #include "File/VoxelFileParser.h"
 #include "Pipeline/VoxToFaces.h"
+#include "Pipeline/FacesToVerticesFile.h"
 
 #include "Prerequisites.h"
 
@@ -60,9 +61,12 @@ int main(int argc, char *argv[]){
     p.parseFile(inputVals[INPUT_INPUT_FILE], out);
 
     //
-    std::vector<VoxelConverterTool::WrappedFace> outFaces;
+    VoxelConverterTool::OutputFaces outFaces;
     VoxelConverterTool::VoxToFaces f;
     f.voxToFaces(out, outFaces);
+
+    VoxelConverterTool::FacesToVerticesFile outFile;
+    outFile.writeToFile(inputVals[INPUT_OUTPUT_FILE], outFaces);
 
     return 0;
 }

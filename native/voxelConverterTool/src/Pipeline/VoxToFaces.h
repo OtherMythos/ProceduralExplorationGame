@@ -9,12 +9,20 @@ namespace VoxelConverterTool{
 
     struct ParsedVoxFile;
 
+    struct OutputFaces{
+        std::vector<WrappedFace> outFaces;
+
+        size_t calcMeshSize() const{
+            return outFaces.size() * 4;
+        }
+    };
+
     class VoxToFaces{
     public:
         VoxToFaces();
         ~VoxToFaces();
 
-        void voxToFaces(const ParsedVoxFile& parsedVox, std::vector<WrappedFace>& outFaces);
+        void voxToFaces(const ParsedVoxFile& parsedVox, OutputFaces& faces);
 
     private:
         VoxelId readVoxelFromData_(const ParsedVoxFile& parsedVox, int x, int y, int z);
