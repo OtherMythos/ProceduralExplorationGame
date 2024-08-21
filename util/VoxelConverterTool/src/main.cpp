@@ -4,6 +4,8 @@
 #include "Pipeline/VoxToFaces.h"
 #include "Pipeline/FacesToVerticesFile.h"
 
+#include <cstring>
+
 #include "Prerequisites.h"
 
 enum Flags{

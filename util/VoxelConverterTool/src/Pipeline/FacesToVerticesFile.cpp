@@ -2,6 +2,8 @@
 
 #include "Pipeline/VoxToFaces.h"
 
+#include <cstring>
+
 namespace VoxelConverterTool{
 
     const uint16 HEADER_STREAM_ID = 0x1000;
