@@ -130,7 +130,7 @@ namespace VoxelConverterTool{
         //int mNumBufferPasses = pMesh->hasIndependentShadowMappingBuffers() + 1;
 
         // Header
-        writeChunkHeader(M_SUBMESH_M_GEOMETRY_VERTEX_BUFFER, outFaces.calcMeshSize());
+        writeChunkHeader(M_SUBMESH_M_GEOMETRY_VERTEX_BUFFER, outFaces.calcMeshSizeBytes());
         for(WrappedFace f : outFaces.outFaces){
             WrappedFaceContainer fd;
             _unwrapFace(f, fd);

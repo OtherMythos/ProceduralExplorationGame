@@ -12,8 +12,8 @@ namespace VoxelConverterTool{
     struct OutputFaces{
         std::vector<WrappedFace> outFaces;
 
-        size_t calcMeshSize() const{
-            return outFaces.size() * 4;
+        size_t calcMeshSizeBytes() const{
+            return outFaces.size() * 4 * 6 * sizeof(uint32);
         }
     };
 
