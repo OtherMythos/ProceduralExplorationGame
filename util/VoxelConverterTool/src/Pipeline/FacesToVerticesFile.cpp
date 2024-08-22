@@ -9,6 +9,11 @@ namespace VoxelConverterTool{
     const uint16 HEADER_STREAM_ID = 0x1000;
     const uint16 OTHER_ENDIAN_HEADER_STREAM_ID = 0x0010;
 
+    static const uint32 COLS_WIDTH = 16;
+    static const uint32 COLS_HEIGHT = 16;
+    static const float TILE_WIDTH = (1.0 / COLS_WIDTH) / 2.0;
+    static const float TILE_HEIGHT = (1.0 / COLS_HEIGHT) / 2.0;
+
     FacesToVerticesFile::FacesToVerticesFile()
         : mFlipEndian(false)
     {
@@ -132,10 +137,15 @@ namespace VoxelConverterTool{
         //int mNumBufferPasses = pMesh->hasIndependentShadowMappingBuffers() + 1;
 
         // Header
-        writeChunkHeader(M_SUBMESH_M_GEOMETRY_VERTEX_BUFFER, outFaces.calcMeshSizeBytes());
+        size_t meshSizeBytes = outFaces.calcMeshSizeBytes();
+        writeChunkHeader(M_SUBMESH_M_GEOMETRY_VERTEX_BUFFER, meshSizeBytes);
         for(WrappedFace f : outFaces.outFaces){
             WrappedFaceContainer fd;
             _unwrapFace(f, fd);
+
+            float texCoordX = (static_cast<float>(fd.vox % COLS_WIDTH) / COLS_WIDTH) + TILE_WIDTH;
+            float texCoordY = ((static_cast<float>(fd.vox) / COLS_WIDTH) / COLS_HEIGHT) + TILE_HEIGHT;
+
             //Write the four vertices to the file.
             for(int i = 0; i < 4; i++){
                 uint32 fv = FACES_VERTICES[fd.faceMask * 4 + i]*3;
@@ -146,7 +156,7 @@ namespace VoxelConverterTool{
                 //assert(yy <= 0x2FF && yy >= -0x2FF);
                 //assert(zz <= 0x2FF && zz >= -0x2FF);
 
-                uint8 ambient = (fd.ambientMask >> 8 * i) & 0xFF;
+                uint8 ambient = (fd.ambientMask >> 4 * i) & 0x3;
                 uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
                 writeInts(&val);
                 val = fd.faceMask << 29 | 0x15FBF7DB;
@@ -154,29 +164,13 @@ namespace VoxelConverterTool{
                 val = 0;
                 writeInts(&val);
                 writeInts(&val);
-                float texCoordX = 0.0f;
-                float texCoordY = 0.0f;
                 writeInts(reinterpret_cast<uint32*>(&texCoordX));
                 writeInts(reinterpret_cast<uint32*>(&texCoordY));
-
-                /*
-
-                //TODO Magic number for now to avoid it breaking the regular materials.
-                //val = f << 29 | 0x15FBF7DB;
-                //val = f;
-                //verts.push_back(val);
-                //verts.push_back(f);
-                verts.push_back(0);
-                //TODO just to pad it out, long term I shouldn't need this.
-                verts.push_back(0);
-
-                verts.push_back(*(reinterpret_cast<AV::uint32*>(&texCoordX)));
-                verts.push_back(*(reinterpret_cast<AV::uint32*>(&texCoordY)));
-                 */
             }
         }
 
-        writeChunkHeader(M_SUBMESH_INDEX_BUFFFER, outFaces.outFaces.size() * 6);
+        size_t indiceBufferSize = outFaces.outFaces.size() * 6 * sizeof(uint32);
+        writeChunkHeader(M_SUBMESH_INDEX_BUFFFER, indiceBufferSize);
         for(uint32 i = 0; i < outFaces.outFaces.size(); i++){
             uint32 currentIdx = i * 4;
             uint32 determinedIdx[6] = {

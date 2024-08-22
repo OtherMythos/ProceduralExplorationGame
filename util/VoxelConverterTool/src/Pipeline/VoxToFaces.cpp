@@ -49,7 +49,7 @@ namespace VoxelConverterTool{
                 val = 3 - (foundValsTemp[0] + foundValsTemp[1] + foundValsTemp[2]);
             }
             //Batch the results for all 4 vertices into the single return value.
-            ret = ret | val << (v * 8);
+            ret = ret | val << (v * 4);
         }
         return ret;
     }
@@ -58,8 +58,8 @@ namespace VoxelConverterTool{
         return 0 == ((1 << f) & mask);
     }
     uint8 VoxToFaces::getNeighbourMask(const ParsedVoxFile& parsedVox, int x, int y, int z){
-        int ret = 0;
-        for(int v = 0; v < 6; v++){
+        uint8 ret = 0;
+        for(uint8 v = 0; v < 6; v++){
             int xx = MASKS[v * 3];
             int yy = MASKS[v * 3 + 1];
             int zz = MASKS[v * 3 + 2];
