@@ -87,6 +87,10 @@ namespace VoxelConverterTool{
             ParsedVoxel v = {0, 0, 0, 0};
             _parseLineToData(line, v);
 
+            int vY = v.y;
+            v.y = v.z;
+            v.z = -vY;
+
             //Determine the bounds.
             int xx = v.x + 128;
             int yy = v.y + 128;

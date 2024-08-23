@@ -159,7 +159,7 @@ namespace VoxelConverterTool{
                 uint8 ambient = (fd.ambientMask >> 4 * i) & 0x3;
                 uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
                 writeInts(&val);
-                val = fd.faceMask << 29 | 0x15FBF7DB;
+                val = fd.faceMask << 29 | 0x15FBB7DB;
                 writeInts(&val);
                 val = 0;
                 writeInts(&val);

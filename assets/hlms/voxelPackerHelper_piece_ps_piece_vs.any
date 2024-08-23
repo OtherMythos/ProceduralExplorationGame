@@ -1,5 +1,10 @@
 @piece( custom_ps_preLights )
-	finalColour = finalColour * inPs.diffuse.xyz;
+	pixelData.diffuse.xyz *= inPs.diffuse;
+@end
+
+@piece( custom_ps_posExecution )
+	//For debug purposes
+	//outPs_colour0.xyz = float3(inPs.diffuse.xyz);
 @end
 
 @piece( custom_VStoPS )
@@ -32,10 +37,14 @@
 	#undef inVs_vertex
 	#define inVs_vertex inValues
 
-	if(magicNumber == 0x15FBF7DB){
-		int pos_x = int(original & 0x3FF);
-		int pos_y = int((original >> 10) & 0x3FF);
-		int pos_z = int((original >> 20) & 0x3FF);
+	if(magicNumber == 0x15FBF7DB || magicNumber == 0x15FBB7DB){
+		int offset = 0;
+		if(magicNumber == 0x15FBB7DB){
+			offset = 128;
+		}
+		int pos_x = int(original & 0x3FF) - offset;
+		int pos_y = int((original >> 10) & 0x3FF) - offset;
+		int pos_z = int((original >> 20) & 0x3FF) - offset;
 		inValues.x = float(pos_x)-0.5;
 		inValues.y = float(pos_y)-0.5;
 		inValues.z = float(pos_z)-0.5;
@@ -47,7 +56,7 @@
 
 		//If the renderable does not require pixel shading because it is a shadow caster for instance, these settings won't always be available.
 		@property( !hlms_shadowcaster || !hlms_shadow_uses_depth_texture || alpha_test || exponential_shadow_maps )
-			float ambientVal = float(ambient/3);
+			float ambientVal = float(ambient)/3;
 			outVs.diffuse = float3(ambientVal, ambientVal, ambientVal);
 		@end
 	}else{
