@@ -28,6 +28,12 @@ namespace ProceduralExplorationGamePlugin{
         static SQInteger getWidth(HSQUIRRELVM vm);
         static SQInteger getHeight(HSQUIRRELVM vm);
 
+        static SQInteger getAltitudeForCoord(HSQUIRRELVM vm);
+        static SQInteger getVoxelForCoord(HSQUIRRELVM vm);
+        static SQInteger setAltitudeForCoord(HSQUIRRELVM vm);
+        static SQInteger setVoxelForCoord(HSQUIRRELVM vm);
+
+
         static SQInteger getAltitude(HSQUIRRELVM vm);
 
         static SQInteger visitedPlaceMapDataObjectReleaseHook(SQUserPointer p, SQInteger size);

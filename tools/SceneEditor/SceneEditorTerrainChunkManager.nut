@@ -8,106 +8,67 @@
     function setup(mapData, chunkDivisions){
         base.setup(mapData, chunkDivisions);
 
-        local duplicateArray = function(arr){
+        local duplicateArray = function(data, width, height, copyType){
             //local newArr = array(arr.len());
-            local newArr = array(arr);
-            for(local i = 0; i < arr; i++){
-                newArr[i] = 1;
+            local newArr = array(width * height);
+
+            for(local y = 0; y < height; y++){
+                for(local x = 0; x < width; x++){
+                    if(copyType){
+                        newArr[x + y * width] = data.getAltitudeForCoord(x, y);
+                    }else{
+                        newArr[x + y * width] = data.getVoxelForCoord(x, y);
+                    }
+                }
             }
             return newArr;
         }
-        //mMapHeightDataCopy_ = duplicateArray(mMapData_.voxHeight.data);
-        //mMapVoxTypeDataCopy_ = duplicateArray(mMapData_.voxType.data);
-        mMapHeightDataCopy_ = duplicateArray(mWidth_ * mHeight_);
-        mMapVoxTypeDataCopy_ = duplicateArray(mWidth_ * mHeight_);
+        //mMapHeightDataCopy_ = duplicateArray(mapData, mWidth_, mHeight_, true);
+        //mMapVoxTypeDataCopy_ = duplicateArray(mapData, mWidth_, mHeight_, false);
 
-        assert(mMapHeightDataCopy_.len() == mWidth_ * mHeight_);
-        assert(mMapVoxTypeDataCopy_.len() == mWidth_ * mHeight_);
+        //assert(mMapHeightDataCopy_.len() == mWidth_ * mHeight_);
+        //assert(mMapVoxTypeDataCopy_.len() == mWidth_ * mHeight_);
     }
 
     function drawVoxTypeValues(x, y, width, height, values){
-        assert(mMapVoxTypeDataCopy_ != null);
+        //assert(mMapVoxTypeDataCopy_ != null);
 
         //Must be 0 so there's a centre voxel.
         assert(width % 2 == 1 && height % 2 == 1);
 
-        local depth = mMapData_.voxHeight.greatest;
-
-        assert(mMapVoxTypeDataCopy_.len() == mWidth_ * mHeight_);
+        //assert(mMapVoxTypeDataCopy_.len() == mWidth_ * mHeight_);
 
         if(width == 1 && height == 1){
-            local altered = false;
-            mMapVoxTypeDataCopy_[x + y * mWidth_] = values[0];
+            //mMapVoxTypeDataCopy_[x + y * mWidth_] = values[0];
 
             local chunkX = (x / mChunkWidth_).tointeger();
             local chunkY = (y / mChunkHeight_).tointeger();
             local targetIdx = chunkX << 4 | chunkY;
             local targetX = x - (chunkX * mChunkWidth_);
             local targetY = y - (chunkY * mChunkHeight_);
-            local targetChunkArray = mChunkColourData_[targetIdx];
-            local startColour = mMapData_.voxType.data[x + y * mMapData_.voxType.width];
 
-            local startIdx = targetX + (targetY * (mChunkWidth_ + PADDING_BOTH));
-            local otherIdx = (mChunkWidth_ + PADDING_BOTH) * (mChunkHeight_ + PADDING_BOTH)
-            local valToWrite = values[0];
-            for(local i = 0; i < depth; i++){
-                local idx = startIdx + (i * otherIdx);
-                local prev = targetChunkArray[idx];
-                if(prev == null) continue;
-
-                targetChunkArray[idx] = valToWrite;
-                altered = (prev != valToWrite);
-            }
-            printf("Chunk format %i %i", chunkX, chunkY);
-
-            //mNodesForChunk_[targetIdx].destroyNodeAndChildren();
-            if(altered){
-                recreateChunkItem(chunkX, chunkY);
-            }
+            mMapData_.setVoxelForCoord(x, y, values[0]);
+            recreateChunkItem(chunkX, chunkY);
         }
-
-        assert(mMapVoxTypeDataCopy_.len() == mWidth_ * mHeight_);
     }
 
     function drawHeightValues(x, y, width, height, values){
-        assert(mMapHeightDataCopy_ != null);
+        //assert(mMapHeightDataCopy_ != null);
 
         //Must be 0 so there's a centre voxel.
         assert(width % 2 == 1 && height % 2 == 1);
 
-        local depth = mMapData_.voxHeight.greatest;
-
         if(width == 1 && height == 1){
-            local altered = false;
-            local heightToWrite = values[0];
-            mMapHeightDataCopy_[x + y * mWidth_] = heightToWrite;
-            //print(mMapHeightDataCopy_[x + y * mWidth_]);
+            //mMapHeightDataCopy_[x + y * mWidth_] = heightToWrite;
 
             local chunkX = (x / mChunkWidth_).tointeger();
             local chunkY = (y / mChunkHeight_).tointeger();
             local targetIdx = chunkX << 4 | chunkY;
             local targetX = x - (chunkX * mChunkWidth_);
             local targetY = y - (chunkY * mChunkHeight_);
-            local targetChunkArray = mChunkColourData_[targetIdx];
-            //TODO might want to read this from the copy.
-            local startColour = mMapData_.voxType.data[x + y * mMapData_.voxType.width];
 
-            local startIdx = targetX + (targetY * (mChunkWidth_ + PADDING_BOTH));
-            local otherIdx = (mChunkWidth_ + PADDING_BOTH) * (mChunkHeight_ + PADDING_BOTH)
-            for(local i = 0; i < depth; i++){
-                local valToWrite = (i >= heightToWrite) ? null : startColour;
-                local idx = startIdx + (i * otherIdx);
-                local prev = targetChunkArray[idx];
-
-                targetChunkArray[idx] = valToWrite;
-                altered = (prev != valToWrite);
-            }
-            printf("Chunk format %i %i", chunkX, chunkY);
-
-            //mNodesForChunk_[targetIdx].destroyNodeAndChildren();
-            if(altered){
-                recreateChunkItem(chunkX, chunkY);
-            }
+            mMapData_.setAltitudeForCoord(x, y, 1);
+            recreateChunkItem(chunkX, chunkY);
         }
     }
 

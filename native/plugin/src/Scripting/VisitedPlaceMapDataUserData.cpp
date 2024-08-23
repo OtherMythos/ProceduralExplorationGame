@@ -145,24 +145,74 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
-    SQInteger VisitedPlaceMapDataUserData::getAltitude(HSQUIRRELVM vm){
-        ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
-        SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
+    template<typename T>
+    SQInteger _getDataForVec(HSQUIRRELVM vm, std::vector<T>& vec, AV::uint32 width, AV::uint32 height, T** out){
 
         SQInteger x, y;
         sq_getinteger(vm, 2, &x);
         sq_getinteger(vm, 3, &y);
 
-        if(x < 0 || y < 0 || x >= mapData->width || y >= mapData->height){
-            sq_pushinteger(vm, 0);
+        if(x < 0 || y < 0 || x >= width || y >= height){
+            sq_throwerror(vm, "Invalid coordinates to query.");
             return 1;
         }
 
-        AV::uint8 altitude = mapData->altitudeValues[x + y * mapData->width];
+        *out = &(vec[x + y * width]);
 
-        sq_pushinteger(vm, altitude);
+        return 0;
+    }
+    SQInteger VisitedPlaceMapDataUserData::getAltitudeForCoord(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
+        SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
+
+        AV::uint8* outVal;
+        _getDataForVec<AV::uint8>(vm, mapData->altitudeValues, mapData->width, mapData->height, &outVal);
+
+        sq_pushinteger(vm, *outVal);
 
         return 1;
+    }
+
+    SQInteger VisitedPlaceMapDataUserData::getVoxelForCoord(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
+        SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
+
+        ProceduralExplorationGameCore::VoxelId* voxVal;
+        _getDataForVec<ProceduralExplorationGameCore::VoxelId>(vm, mapData->voxelValues, mapData->width, mapData->height, &voxVal);
+
+        sq_pushinteger(vm, *voxVal);
+
+        return 1;
+    }
+
+    SQInteger VisitedPlaceMapDataUserData::setAltitudeForCoord(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
+        SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger altitude;
+        sq_getinteger(vm, 4, &altitude);
+
+        AV::uint8* outVal;
+        _getDataForVec<AV::uint8>(vm, mapData->altitudeValues, mapData->width, mapData->height, &outVal);
+
+        *outVal = altitude;
+
+        return 0;
+    }
+
+    SQInteger VisitedPlaceMapDataUserData::setVoxelForCoord(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
+        SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger voxel;
+        sq_getinteger(vm, 4, &voxel);
+
+        ProceduralExplorationGameCore::VoxelId* outVal;
+        _getDataForVec<ProceduralExplorationGameCore::VoxelId>(vm, mapData->voxelValues, mapData->width, mapData->height, &outVal);
+
+        *outVal = voxel;
+
+        return 0;
     }
 
     void VisitedPlaceMapDataUserData::setupDelegateTable(HSQUIRRELVM vm){
@@ -174,7 +224,10 @@ namespace ProceduralExplorationGamePlugin{
 
         AV::ScriptUtils::addFunction(vm, getWidth, "getWidth");
         AV::ScriptUtils::addFunction(vm, getHeight, "getHeight");
-        AV::ScriptUtils::addFunction(vm, getAltitude, "getAltitude", 3, ".ii");
+        AV::ScriptUtils::addFunction(vm, getAltitudeForCoord, "getAltitudeForCoord", 3, ".ii");
+        AV::ScriptUtils::addFunction(vm, getVoxelForCoord, "getVoxelForCoord", 3, ".ii");
+        AV::ScriptUtils::addFunction(vm, setAltitudeForCoord, "setAltitudeForCoord", 4, ".iii");
+        AV::ScriptUtils::addFunction(vm, setVoxelForCoord, "setVoxelForCoord", 4, ".iii");
 
         sq_resetobject(&VisitedPlaceMapDataDelegateTableObject);
         sq_getstackobj(vm, -1, &VisitedPlaceMapDataDelegateTableObject);
