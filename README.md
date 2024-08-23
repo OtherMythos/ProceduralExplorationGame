@@ -16,7 +16,7 @@ The game is intended to distill the feeling of exploring a large world into a sh
 
 Current features include:
  * Voxel graphics for character models, scenes, items, etc.
- * Point and click combat system.
+ * Fluid combat system built round player movement.
  * Procedural world, complete with regions which appear in sections.
  * Designed around mobile, i.e quick bursts of play sessions.
 
@@ -26,7 +26,12 @@ Future intended features include:
  * Character customisation.
  * Improved variety in regions, enemies, characters, gameplay sessions.
 
-## Building project
+## Building the Project
+
+This project relies on both assets built for gameplay and a native plugin which contains implementations for many processor intensive jobs in the codebase.
+Both of these targets need to be built before an avEngine executable can run this project.
+
+### Asset Build
 Assets for this project need to be built before they can be used.
 This project uses the avEngine asset pipeline, which is based on docker.
 Docker must be installed to be able to build this project.
@@ -38,8 +43,25 @@ This script will pull the necessary container image, so will take longer to exec
 
 This script will produce an output directory named 'build', where the built assets are stored.
 
+### Native Plugin
+The native plugin is written in C++ and built using the provided CMake build system.
+The game will throw an error if the native plugin cannot be loaded on startup.
+This must be compiled on the target system, unlike the assets which can be built with Docker.
+
+Building the native plugin works similar to any CMake build system:
+
+```bash
+cd native
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Debug -DENGINE_SOURCE_PATH=/avEngineSource -DAV_LIBS_DIR=/BuiltAvLibs/Debug ..
+cmake --build .
+```
+
+Engine source path and a built copy of the engine ```avBuilt``` directory is necessary to build the project. The windows build also relies on the ```avCore.lib``` file built as part of engine build.
+
 ## Running
-Once built this project can be run like any other avEngine project
+Once both the native plugin and game assets have been built, this project can be run like any other avEngine project
 ```bash
 ./av avSetup.cfg
 ```
@@ -61,7 +83,7 @@ Desired profiles should be enabled by defining a user setting:
 }
 ```
 
-It is recommended that these profiles are defined in the ```avSetupSecondary.cfg``` file, which can be included in the gitignore, so local settings do not get committed.
+It is recommended that these profiles are defined in the ```avSetupSecondary.cfg``` file, which is included in the gitignore, so local settings do not get committed.
 
 ### Developer Flags
 Registered flags can be specified in the ```avSetupSecondary.cfg``` file to setup certain types of logic. The following table describes the available flags and their use.
