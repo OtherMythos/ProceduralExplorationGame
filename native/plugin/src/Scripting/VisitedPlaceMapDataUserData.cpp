@@ -65,10 +65,9 @@ namespace ProceduralExplorationGamePlugin{
         x = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.x);
         y = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.z);
 
-        //const AV::uint8* voxPtr = ProceduralExplorationGameCore::VOX_PTR_FOR_COORD_CONST(mapData, ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y));
+        AV::uint8 altitude = mapData->altitudeValues[x + y * mapData->width];
 
-        //sq_pushinteger(vm, static_cast<SQInteger>(*voxPtr));
-        sq_pushinteger(vm, static_cast<SQInteger>(0));
+        sq_pushinteger(vm, static_cast<SQInteger>(altitude));
 
         return 1;
     }

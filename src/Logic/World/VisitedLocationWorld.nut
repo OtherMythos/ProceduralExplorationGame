@@ -123,10 +123,7 @@
     function getZForPos(pos){
         if(mMapData_ == null) return 0;
 
-        local x = pos.x.tointeger();
-        local y = -pos.z.tointeger();
-
-        return mMapData_.native.getAltitude(x, y) * PROCEDURAL_WORLD_UNIT_MULTIPLIER;
+        return mMapData_.native.getAltitudeForPos(pos) * PROCEDURAL_WORLD_UNIT_MULTIPLIER;
     }
 
     #Override

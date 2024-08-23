@@ -58,8 +58,6 @@ enum TerrainEditState{
         }
 
         _gameCore.setMapsDirectory("res://../../build/assets/maps/");
-        local fileHandler = ::TerrainChunkFileHandler("res://../../assets/maps/");
-        local outMapData = fileHandler.readMapData(targetMap);
 
         _gameCore.beginParseVisitedLocation(targetMap);
         local mapClaim = null;

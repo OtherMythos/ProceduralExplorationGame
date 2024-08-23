@@ -200,6 +200,7 @@
     }
 
     function performSave(mapName){
+        /*
         local fileHandler = TerrainChunkFileHandler("res://../../assets/maps/");
 
         assert(mMapHeightDataCopy_ != null && mMapVoxTypeDataCopy_ != null);
@@ -211,6 +212,7 @@
         saveMapData.voxType = {"data": mMapVoxTypeDataCopy_, "width": mMapData_.voxType.width, "height": mMapData_.voxType.height};
 
         fileHandler.writeMapData(mapName, saveMapData);
+        */
     }
 
 };

@@ -213,7 +213,6 @@
         _doFile("res://src/Logic/EntityTargetManager.nut");
         _doFile("res://src/Logic/ActiveEnemyEntry.nut");
         _doFile("res://src/Logic/World/TerrainChunkManager.nut");
-        _doFile("res://src/Logic/World/TerrainChunkFileHandler.nut");
         _doFile("res://src/Logic/World/World.nut");
         _doFile("res://src/Logic/World/VisitedLocationWorld.nut");
         _doFile("res://src/Logic/World/ProceduralExplorationWorld.nut");
