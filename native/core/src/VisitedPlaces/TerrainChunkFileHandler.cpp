@@ -72,12 +72,14 @@ namespace ProceduralExplorationGameCore{
     bool TerrainChunkFileHandler::readMapDataFile_(VisitedPlaceMapData* outData, const std::string& resolvedMapsDir, const char* fileName, std::vector<T>& destination, const std::string& mapName) const{
         std::filesystem::path p(resolvedMapsDir);
         p = p / mapName / fileName;
-        if(std::filesystem::exists(p)){
-            bool result = parseFileToData_<T>(outData, p.string(), destination);
-            if(!result){
-                GAME_CORE_ERROR("Unable to parse file '{}' for map '{}'", fileName, mapName);
-                return false;
-            }
+        if(!std::filesystem::exists(p)){
+            GAME_CORE_ERROR("File at path '{}' does not exist.", p.string());
+        }
+
+        bool result = parseFileToData_<T>(outData, p.string(), destination);
+        if(!result){
+            GAME_CORE_ERROR("Unable to parse file '{}' for map '{}'", fileName, mapName);
+            return false;
         }
         return true;
     }

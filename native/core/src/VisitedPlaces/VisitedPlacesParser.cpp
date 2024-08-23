@@ -8,6 +8,8 @@
 
 namespace ProceduralExplorationGameCore{
 
+    std::string VisitedPlacesParser::mMapsDirectory = "res://build/assets/maps/";
+
     VisitedPlacesParser::VisitedPlacesParser()
         : mMapData(0)
     {
@@ -30,7 +32,7 @@ namespace ProceduralExplorationGameCore{
     }
 
     void VisitedPlacesParser::beginMapGen_(const std::string& mapName){
-        TerrainChunkFileHandler handler("res://build/assets/maps/");
+        TerrainChunkFileHandler handler(mMapsDirectory);
         handler.readMapData(mMapData, mapName);
         mCurrentStage++;
     }

@@ -11,6 +11,8 @@
     mNodesForChunk_ = null;
     mItemsForChunk_ = null;
 
+    mWidth_ = null;
+    mHeight_ = null;
     mChunkWidth_ = null;
     mChunkHeight_ = null;
 
@@ -29,8 +31,11 @@
         mNodesForChunk_ = {};
         mItemsForChunk_ = {};
 
-        mChunkWidth_ = mMapData_.getWidth() / mChunkDivisions_;
-        mChunkHeight_ = mMapData_.getHeight() / mChunkDivisions_;
+        mWidth_ = mMapData_.getWidth();
+        mHeight_ = mMapData_.getHeight();
+
+        mChunkWidth_ = mWidth_ / mChunkDivisions_;
+        mChunkHeight_ = mHeight_ / mChunkDivisions_;
 
         //constructDataForChunks();
     }
@@ -66,10 +71,10 @@
                 for(local yy = startY - PADDING; yy < startY + mChunkHeight_ + PADDING; yy++){
                     for(local xx = startX - PADDING; xx < startX + mChunkWidth_ + PADDING; xx++){
                         count++;
-                        if(xx < 0 || yy < 0 || xx >= width || yy >= height) continue;
-                        local altitude = heightData[xx + yy * width];
+                        if(xx < 0 || yy < 0 || xx >= mWidth_ || yy >= height) continue;
+                        local altitude = heightData[xx + yy * mWidth_];
                         for(local i = 0; i < altitude; i++){
-                            newArray[count + (i*(mChunkWidth_+PADDING_BOTH)*(mChunkHeight_+PADDING_BOTH))] = colourData[xx + yy * width];
+                            newArray[count + (i*(mChunkWidth_+PADDING_BOTH)*(mChunkHeight_+PADDING_BOTH))] = colourData[xx + yy * mWidth_];
                         }
                     }
                 }
@@ -106,8 +111,8 @@
         //local heightWithPadding = (mMapData_.height / mChunkDivisions_) + PADDING * 2;
 
         //print(mMapData_);
-        local width = (mMapData_.getWidth() / mChunkDivisions_);
-        local height = (mMapData_.getHeight() / mChunkDivisions_);
+        local width = (mWidth_ / mChunkDivisions_);
+        local height = (mHeight_ / mChunkDivisions_);
         local x = chunkX * width;
         local y = chunkY * height;
 
@@ -173,8 +178,8 @@
 
         local parentNode = mParentNode_.createChildSceneNode();
 
-        local width = (mMapData_.getWidth() / mChunkDivisions_);
-        local height = (mMapData_.getHeight() / mChunkDivisions_);
+        local width = (mWidth_ / mChunkDivisions_);
+        local height = (mHeight_ / mChunkDivisions_);
         parentNode.setPosition((chunkX * -CHUNK_DEBUG_PADDING) + chunkX * width, 0, (chunkY * -CHUNK_DEBUG_PADDING) + -chunkY * height);
 
         assert(mItemsForChunk_.rawin(targetIdx));
@@ -200,8 +205,8 @@
         assert(mMapHeightDataCopy_ != null && mMapVoxTypeDataCopy_ != null);
 
         local saveMapData = ::TerrainChunkFileHandler.ParsedTerrainData();
-        saveMapData.width = mMapData_.getWidth();
-        saveMapData.height = mMapData_.getHeight();
+        saveMapData.width = mWidth_;
+        saveMapData.height = mHeight_;
         saveMapData.voxHeight = {"data": mMapHeightDataCopy_, "width": mMapData_.voxHeight.width, "height": mMapData_.voxHeight.height};
         saveMapData.voxType = {"data": mMapVoxTypeDataCopy_, "width": mMapData_.voxType.width, "height": mMapData_.voxType.height};
 

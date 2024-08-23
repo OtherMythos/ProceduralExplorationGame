@@ -9,17 +9,20 @@
         base.setup(mapData, chunkDivisions);
 
         local duplicateArray = function(arr){
-            local newArr = array(arr.len());
-            for(local i = 0; i < newArr.len(); i++){
-                newArr[i] = arr[i];
+            //local newArr = array(arr.len());
+            local newArr = array(arr);
+            for(local i = 0; i < arr; i++){
+                newArr[i] = 1;
             }
             return newArr;
         }
-        mMapHeightDataCopy_ = duplicateArray(mMapData_.voxHeight.data);
-        mMapVoxTypeDataCopy_ = duplicateArray(mMapData_.voxType.data);
+        //mMapHeightDataCopy_ = duplicateArray(mMapData_.voxHeight.data);
+        //mMapVoxTypeDataCopy_ = duplicateArray(mMapData_.voxType.data);
+        mMapHeightDataCopy_ = duplicateArray(mWidth_ * mHeight_);
+        mMapVoxTypeDataCopy_ = duplicateArray(mWidth_ * mHeight_);
 
-        assert(mMapHeightDataCopy_.len() == mMapData_.width * mMapData_.height);
-        assert(mMapVoxTypeDataCopy_.len() == mMapData_.width * mMapData_.height);
+        assert(mMapHeightDataCopy_.len() == mWidth_ * mHeight_);
+        assert(mMapVoxTypeDataCopy_.len() == mWidth_ * mHeight_);
     }
 
     function drawVoxTypeValues(x, y, width, height, values){
@@ -30,11 +33,11 @@
 
         local depth = mMapData_.voxHeight.greatest;
 
-        assert(mMapVoxTypeDataCopy_.len() == mMapData_.width * mMapData_.height);
+        assert(mMapVoxTypeDataCopy_.len() == mWidth_ * mHeight_);
 
         if(width == 1 && height == 1){
             local altered = false;
-            mMapVoxTypeDataCopy_[x + y * mMapData_.width] = values[0];
+            mMapVoxTypeDataCopy_[x + y * mWidth_] = values[0];
 
             local chunkX = (x / mChunkWidth_).tointeger();
             local chunkY = (y / mChunkHeight_).tointeger();
@@ -63,7 +66,7 @@
             }
         }
 
-        assert(mMapVoxTypeDataCopy_.len() == mMapData_.width * mMapData_.height);
+        assert(mMapVoxTypeDataCopy_.len() == mWidth_ * mHeight_);
     }
 
     function drawHeightValues(x, y, width, height, values){
@@ -77,8 +80,8 @@
         if(width == 1 && height == 1){
             local altered = false;
             local heightToWrite = values[0];
-            mMapHeightDataCopy_[x + y * mMapData_.width] = heightToWrite;
-            //print(mMapHeightDataCopy_[x + y * mMapData_.width]);
+            mMapHeightDataCopy_[x + y * mWidth_] = heightToWrite;
+            //print(mMapHeightDataCopy_[x + y * mWidth_]);
 
             local chunkX = (x / mChunkWidth_).tointeger();
             local chunkY = (y / mChunkHeight_).tointeger();

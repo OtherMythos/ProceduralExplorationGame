@@ -192,6 +192,7 @@
         local placeNode = parentNode.createChildSceneNode();
         local meshTarget = itemData.type == PlacedItemId.CHERRY_BLOSSOM_TREE ? "treeCherryBlossom.mesh" : "tree.mesh";
         placeNode.setPosition(targetPos);
+        //TODO make some of these scene static
         local item = _scene.createItem(meshTarget);
         item.setRenderQueueGroup(30);
         placeNode.attachObject(item);

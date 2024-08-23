@@ -33,6 +33,8 @@ namespace ProceduralExplorationGamePlugin{
         static SQInteger getTotalMapGenStages(HSQUIRRELVM vm);
         static SQInteger getNameForMapGenStage(HSQUIRRELVM vm);
 
+        static SQInteger setMapsDirectory(HSQUIRRELVM vm);
+
         static SQInteger beginParseVisitedLocation(HSQUIRRELVM vm);
         static SQInteger checkClaimParsedVisitedLocation(HSQUIRRELVM vm);
 

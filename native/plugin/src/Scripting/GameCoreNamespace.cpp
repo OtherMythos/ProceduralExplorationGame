@@ -377,6 +377,15 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger GameCoreNamespace::setMapsDirectory(HSQUIRRELVM vm){
+        const SQChar *mapName;
+        sq_getstring(vm, 2, &mapName);
+
+        ProceduralExplorationGameCore::VisitedPlacesParser::mMapsDirectory = mapName;
+
+        return 0;
+    }
+
     SQInteger GameCoreNamespace::getMapGenStage(HSQUIRRELVM vm){
         if(!GameCoreNamespace::currentMapGen){
             return sq_throwerror(vm, "Map gen is not active.");
@@ -482,6 +491,7 @@ namespace ProceduralExplorationGamePlugin{
 
         AV::ScriptUtils::addFunction(vm, beginParseVisitedLocation, "beginParseVisitedLocation");
         AV::ScriptUtils::addFunction(vm, checkClaimParsedVisitedLocation, "checkClaimParsedVisitedLocation");
+        AV::ScriptUtils::addFunction(vm, setMapsDirectory, "setMapsDirectory", 2, ".s");
 
         AV::ScriptUtils::addFunction(vm, voxeliseMeshForVoxelData, "voxeliseMeshForVoxelData", 6, ".saiii");
     }

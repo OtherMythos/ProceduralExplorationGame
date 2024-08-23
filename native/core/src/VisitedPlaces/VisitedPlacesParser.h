@@ -18,6 +18,8 @@ namespace ProceduralExplorationGameCore{
         bool isFinished() const;
         VisitedPlaceMapData* claimMapData();
 
+        static std::string mMapsDirectory;
+
     private:
         std::atomic<int> mCurrentStage;
         std::thread* mParentThread;
