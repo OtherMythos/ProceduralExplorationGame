@@ -34,6 +34,20 @@ enum TerrainEditState{
     }
 
     function setup(){
+        local saveFunction = function(){
+            print("test")
+        }
+        ::guiFrameworkBase <- ::EditorGUIFramework.Base();
+        ::guiFrameworkBase.setToolbar(::EditorGUIFramework.Toolbar([
+            ["File", [
+                ["Save", saveFunction]
+            ]],
+            [ "Edit", [
+                ["Undo", saveFunction],
+                ["Redo", saveFunction],
+            ]]
+        ]));
+
         fpsCamera.start(Vec3(0, 20, 0), Vec3(319.55, -14.55, 0));
 
         createLights();
@@ -71,19 +85,20 @@ enum TerrainEditState{
         local targetParent = _scene.getRootSceneNode().createChildSceneNode();
         mTerrainChunkManager.setupParentNode(targetParent);
 
-        local sceneTreeWindow = _gui.createWindow();
-        sceneTreeWindow.setSize(500, 500);
-        mEditorBase.setupGUIWindow(SceneEditorGUIPanelId.SCENE_TREE, sceneTreeWindow);
+        local winSceneTree = guiFrameworkBase.createWindow("Scene Tree");
+        mEditorBase.setupGUIWindow(SceneEditorGUIPanelId.SCENE_TREE, winSceneTree.getWin());
+        winSceneTree.setPosition(100, 100);
+        winSceneTree.setPosition(500, 500);
 
-        local objectPropertiesWindow = _gui.createWindow();
-        objectPropertiesWindow.setSize(500, 500);
-        objectPropertiesWindow.setPosition(500, 0);
-        mEditorBase.setupGUIWindow(SceneEditorGUIPanelId.OBJECT_PROPERTIES, objectPropertiesWindow);
+        local winObjectProperties = guiFrameworkBase.createWindow("Object Properties");
+        winObjectProperties.setSize(500, 500);
+        winObjectProperties.setPosition(200, 200);
+        mEditorBase.setupGUIWindow(SceneEditorGUIPanelId.OBJECT_PROPERTIES, winObjectProperties.getWin());
 
-        local terrainToolsWindow = _gui.createWindow();
-        terrainToolsWindow.setSize(500, 500);
-        terrainToolsWindow.setPosition(0, 500);
-        mEditorBase.setupGUIWindowForClass(SceneEditorGUIPanelId.USER_CUSTOM_1, terrainToolsWindow, ::SceneEditorGUITerrainToolProperties);
+        local winTerrainTools = guiFrameworkBase.createWindow("Terrain Tools");
+        winTerrainTools.setSize(500, 500);
+        winTerrainTools.setPosition(0, 500);
+        mEditorBase.setupGUIWindowForClass(SceneEditorGUIPanelId.USER_CUSTOM_1, winTerrainTools.getWin(), ::SceneEditorGUITerrainToolProperties);
     }
 
     function attemptLoadSceneTree(targetMap){
@@ -101,7 +116,12 @@ enum TerrainEditState{
 
         mEditorBase.update();
 
-        if(mEditingTerrain){
+        ::guiFrameworkBase.update();
+        ::guiFrameworkBase.setMousePosition(_input.getMouseX(), _input.getMouseY());
+        ::guiFrameworkBase.setMouseButton(0, _input.getMouseButton(_MB_LEFT));
+        ::guiFrameworkBase.setMouseButton(1, _input.getMouseButton(_MB_RIGHT));
+
+        if(!::guiFrameworkBase.mouseInteracting() && mEditingTerrain){
             local mousePos = Vec2(_input.getMouseX(), _input.getMouseY())
             if(mEditorBase.checkMousePositionValid(mousePos)){
                 local mTestPlane_ = Plane(::Vec3_UNIT_Y, Vec3(0, 0, 0));

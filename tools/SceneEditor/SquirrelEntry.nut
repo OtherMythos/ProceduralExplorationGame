@@ -1,5 +1,6 @@
 
 function start(){
+    _doFile("res://editorGUIFramework/src/EditorGUIFramework.nut");
     _gui.setDefaultFontSize26d6((_gui.getOriginalDefaultFontSize26d6()).tointeger());
 
     _doFile("res://../VoxToMesh/fpsCamera.nut");
