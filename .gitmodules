@@ -1,3 +1,6 @@
 [submodule "tools/SceneEditor/sceneEditorFramework"]
 	path = tools/SceneEditor/sceneEditorFramework
 	url = https://github.com/OtherMythos/SceneEditorFramework
+[submodule "tools/SceneEditor/editorGUIFramework"]
+	path = tools/SceneEditor/editorGUIFramework
+	url = https://github.com/OtherMythos/EditorGUIFramework
