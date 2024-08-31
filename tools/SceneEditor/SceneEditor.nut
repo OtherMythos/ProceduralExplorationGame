@@ -34,8 +34,16 @@ enum TerrainEditState{
     }
 
     function setup(){
+        //Custom implementation of helper functions.
+        ::SceneEditorFramework.HelperFunctions = {
+            function sceneEditorInteractable(){
+                //Stub to be implemented by the user.
+                return !::guiFrameworkBase.mouseInteracting();
+            }
+        };
+
         local saveFunction = function(){
-            mEditorBase.mBus_.transmitEvent(SceneEditorBusEvents.REQUEST_SAVE, null);
+            mEditorBase.mBus_.transmitEvent(SceneEditorFramework_BusEvents.REQUEST_SAVE, null);
         }
         ::guiFrameworkBase <- ::EditorGUIFramework.Base();
         ::guiFrameworkBase.setToolbar(::EditorGUIFramework.Toolbar([
@@ -86,19 +94,19 @@ enum TerrainEditState{
         mTerrainChunkManager.setupParentNode(targetParent);
 
         local winSceneTree = guiFrameworkBase.createWindow("Scene Tree");
-        mEditorBase.setupGUIWindow(SceneEditorGUIPanelId.SCENE_TREE, winSceneTree.getWin());
+        mEditorBase.setupGUIWindow(SceneEditorFramework_GUIPanelId.SCENE_TREE, winSceneTree.getWin());
         winSceneTree.setPosition(100, 100);
         winSceneTree.setPosition(500, 500);
 
         local winObjectProperties = guiFrameworkBase.createWindow("Object Properties");
         winObjectProperties.setSize(500, 500);
         winObjectProperties.setPosition(200, 200);
-        mEditorBase.setupGUIWindow(SceneEditorGUIPanelId.OBJECT_PROPERTIES, winObjectProperties.getWin());
+        mEditorBase.setupGUIWindow(SceneEditorFramework_GUIPanelId.OBJECT_PROPERTIES, winObjectProperties.getWin());
 
         local winTerrainTools = guiFrameworkBase.createWindow("Terrain Tools");
         winTerrainTools.setSize(500, 500);
         winTerrainTools.setPosition(0, 500);
-        mEditorBase.setupGUIWindowForClass(SceneEditorGUIPanelId.USER_CUSTOM_1, winTerrainTools.getWin(), ::SceneEditorGUITerrainToolProperties);
+        mEditorBase.setupGUIWindowForClass(SceneEditorFramework_GUIPanelId.USER_CUSTOM_1, winTerrainTools.getWin(), ::SceneEditorGUITerrainToolProperties);
     }
 
     function attemptLoadSceneTree(targetMap){
@@ -123,7 +131,7 @@ enum TerrainEditState{
 
         if(!::guiFrameworkBase.mouseInteracting() && mEditingTerrain){
             local mousePos = Vec2(_input.getMouseX(), _input.getMouseY())
-            if(mEditorBase.checkMousePositionValid(mousePos)){
+            if(::SceneEditorFramework.HelperFunctions.sceneEditorInteractable()){
                 local mTestPlane_ = Plane(::Vec3_UNIT_Y, Vec3(0, 0, 0));
                 mousePos /= _window.getSize();
                 local ray = _camera.getCameraToViewportRay(mousePos.x, mousePos.y);
@@ -175,7 +183,7 @@ enum TerrainEditState{
     }
 
     function notifyBusEvent(event, data){
-        if(event == SceneEditorBusEvents.REQUEST_SAVE){
+        if(event == SceneEditorFramework_BusEvents.REQUEST_SAVE){
             mTerrainChunkManager.performSave("testVillage");
         }
     }
