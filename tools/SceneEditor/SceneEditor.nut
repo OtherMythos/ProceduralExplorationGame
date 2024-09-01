@@ -4,6 +4,16 @@ enum TerrainEditState{
     COLOUR
 };
 
+::SceneEditorWindowListener <- class extends ::EditorGUIFramework.WindowManagerListener{
+    function resized(id, newSize){
+        ::Base.mEditorBase.resizeGUIWindow(id, newSize);
+    }
+
+    function closed(id){
+        ::Base.mEditorBase.closeGUIWindow(id);
+    }
+};
+
 ::Base <- {
 
     mEditorBase = null
@@ -61,6 +71,8 @@ enum TerrainEditState{
                 ["Redo", redoFunction.bindenv(this)],
             ]]
         ]));
+        local windowListener = ::SceneEditorWindowListener();
+        ::guiFrameworkBase.attachWindowManagerListener(windowListener);
 
         fpsCamera.start(Vec3(0, 20, 0), Vec3(319.55, -14.55, 0));
 
@@ -99,17 +111,17 @@ enum TerrainEditState{
         local targetParent = _scene.getRootSceneNode().createChildSceneNode();
         mTerrainChunkManager.setupParentNode(targetParent);
 
-        local winSceneTree = guiFrameworkBase.createWindow("Scene Tree");
+        local winSceneTree = guiFrameworkBase.createWindow(SceneEditorFramework_GUIPanelId.SCENE_TREE, "Scene Tree");
         mEditorBase.setupGUIWindow(SceneEditorFramework_GUIPanelId.SCENE_TREE, winSceneTree.getWin());
         winSceneTree.setPosition(100, 100);
         winSceneTree.setPosition(500, 500);
 
-        local winObjectProperties = guiFrameworkBase.createWindow("Object Properties");
+        local winObjectProperties = guiFrameworkBase.createWindow(SceneEditorFramework_GUIPanelId.OBJECT_PROPERTIES, "Object Properties");
         winObjectProperties.setSize(500, 500);
         winObjectProperties.setPosition(200, 200);
         mEditorBase.setupGUIWindow(SceneEditorFramework_GUIPanelId.OBJECT_PROPERTIES, winObjectProperties.getWin());
 
-        local winTerrainTools = guiFrameworkBase.createWindow("Terrain Tools");
+        local winTerrainTools = guiFrameworkBase.createWindow(SceneEditorFramework_GUIPanelId.USER_CUSTOM_1, "Terrain Tools");
         winTerrainTools.setSize(500, 500);
         winTerrainTools.setPosition(0, 500);
         mEditorBase.setupGUIWindowForClass(SceneEditorFramework_GUIPanelId.USER_CUSTOM_1, winTerrainTools.getWin(), ::SceneEditorGUITerrainToolProperties);
