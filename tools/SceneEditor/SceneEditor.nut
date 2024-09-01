@@ -45,14 +45,20 @@ enum TerrainEditState{
         local saveFunction = function(){
             mEditorBase.mBus_.transmitEvent(SceneEditorFramework_BusEvents.REQUEST_SAVE, null);
         }
+        local undoFunction = function(){
+            mEditorBase.mActionStack_.undo();
+        }
+        local redoFunction = function(){
+            mEditorBase.mActionStack_.redo();
+        }
         ::guiFrameworkBase <- ::EditorGUIFramework.Base();
         ::guiFrameworkBase.setToolbar(::EditorGUIFramework.Toolbar([
             ["File", [
                 ["Save", saveFunction.bindenv(this)]
             ]],
             [ "Edit", [
-                ["Undo", saveFunction],
-                ["Redo", saveFunction],
+                ["Undo", undoFunction.bindenv(this)],
+                ["Redo", redoFunction.bindenv(this)],
             ]]
         ]));
 
