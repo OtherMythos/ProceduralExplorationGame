@@ -144,7 +144,7 @@ namespace VoxelConverterTool{
             _unwrapFace(f, fd);
 
             float texCoordX = (static_cast<float>(fd.vox % COLS_WIDTH) / COLS_WIDTH) + TILE_WIDTH;
-            float texCoordY = ((static_cast<float>(fd.vox) / COLS_WIDTH) / COLS_HEIGHT) + TILE_HEIGHT;
+            float texCoordY = (static_cast<float>((static_cast<uint32>(static_cast<float>(fd.vox) / COLS_WIDTH))) / COLS_HEIGHT) + TILE_HEIGHT;
 
             //Write the four vertices to the file.
             for(int i = 0; i < 4; i++){
@@ -164,8 +164,8 @@ namespace VoxelConverterTool{
                 val = 0;
                 writeInts(&val);
                 writeInts(&val);
-                writeInts(reinterpret_cast<uint32*>(&texCoordX));
-                writeInts(reinterpret_cast<uint32*>(&texCoordY));
+                writeFloats(&texCoordX, 1);
+                writeFloats(&texCoordY, 1);
             }
         }
 

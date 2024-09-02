@@ -79,7 +79,7 @@ namespace ProceduralExplorationGameCore{
             voxPtr++;
             if(v == EMPTY_VOXEL) continue;
             float texCoordX = (static_cast<float>(v % COLS_WIDTH) / COLS_WIDTH) + TILE_WIDTH;
-            float texCoordY = ((static_cast<float>(v) / COLS_WIDTH) / COLS_HEIGHT) + TILE_HEIGHT;
+            float texCoordY = (static_cast<float>((static_cast<AV::uint32>(static_cast<float>(v) / COLS_WIDTH))) / COLS_HEIGHT) + TILE_HEIGHT;
             AV::uint8 neighbourMask = getNeighbourMask(data, x, y, z, width, height, depth);
             for(int f = 0; f < 6; f++){
                 if(!blockIsFaceVisible(neighbourMask, f)) continue;
@@ -255,7 +255,7 @@ namespace ProceduralExplorationGameCore{
                 AV::uint32 yInverse = y;
 
                 float texCoordX = (static_cast<float>(v % COLS_WIDTH) / COLS_WIDTH) + TILE_WIDTH;
-                float texCoordY = ((static_cast<float>(v) / COLS_WIDTH) / COLS_HEIGHT) + TILE_HEIGHT;
+                float texCoordY = (static_cast<float>((static_cast<AV::uint32>(static_cast<float>(v) / COLS_WIDTH))) / COLS_HEIGHT) + TILE_HEIGHT;
 
                 {
                     AV::uint32 f = 3;
@@ -371,7 +371,7 @@ namespace ProceduralExplorationGameCore{
 
                 //TODO shift this logic off somewhere else in memory.
                 float texCoordX = (static_cast<float>(v % COLS_WIDTH) / COLS_WIDTH) + TILE_WIDTH;
-                float texCoordY = ((static_cast<float>(v) / COLS_WIDTH) / COLS_HEIGHT) + TILE_HEIGHT;
+                float texCoordY = (static_cast<float>((static_cast<AV::uint32>(static_cast<float>(v) / COLS_WIDTH))) / COLS_HEIGHT) + TILE_HEIGHT;
 
                 //write the upwards face
                 {
