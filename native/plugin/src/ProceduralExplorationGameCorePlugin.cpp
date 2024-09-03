@@ -11,6 +11,17 @@
 #include "GameplayConstants.h"
 #include "GameCoreLogger.h"
 
+#include "Ogre/OgreVoxMeshItem.h"
+#include "Ogre/OgreVoxMeshManager.h"
+
+#include "Gui/GuiManager.h"
+
+#include "System/Base.h"
+#include "System/BaseSingleton.h"
+
+#include "Ogre.h"
+#include "Ogre/OgreVoxMeshItem.h"
+
 namespace ProceduralExplorationGamePlugin{
 
 #ifdef WIN32
@@ -42,6 +53,13 @@ namespace ProceduralExplorationGamePlugin{
 
         AV::ScriptVM::setupDelegateTable(ExplorationMapDataUserData::setupDelegateTable);
         AV::ScriptVM::setupDelegateTable(VisitedPlaceMapDataUserData::setupDelegateTable);
+
+        Ogre::VoxMeshManager* meshManager = OGRE_NEW Ogre::VoxMeshManager();
+        meshManager->_initialise();
+        meshManager->_setVaoManager(Ogre::Root::getSingleton().getRenderSystem()->getVaoManager());
+        Ogre::VoxMeshItemFactory* factory = OGRE_NEW Ogre::VoxMeshItemFactory();
+        Ogre::Root::getSingletonPtr()->addMovableObjectFactory(factory);
+
     }
 
 }

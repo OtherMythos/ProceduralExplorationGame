@@ -24,6 +24,16 @@ class AssetModuleGox(AssetModule):
         actualMeshPath = self.prepareOutputDirectoryForFile(meshPath, True)
         self.convertObjToOgre(outputTarget, actualMeshPath)
 
+        #Goxel changes
+
+        retPath = filePath.with_suffix(".txt")
+        goxelTxtTarget = self.prepareOutputDirectoryForFile(retPath, True)
+        self.goxelExportToTxt(filePath, goxelTxtTarget)
+
+        retPath = filePath.with_suffix(".voxMesh")
+        voxMeshTarget = self.prepareOutputDirectoryForFile(retPath, True)
+        self.exportToVoxMesh(goxelTxtTarget, voxMeshTarget)
+
     def goxelExportToObj(self, inPath, outPath):
         devnull = open(os.devnull, 'w')
         process = subprocess.Popen(["xvfb-run", "goxel", str(inPath), "-e", str(outPath)], stdout=devnull, stderr=devnull)
@@ -33,5 +43,18 @@ class AssetModuleGox(AssetModule):
     def convertObjToOgre(self, outputTarget, actualMeshPath):
         devnull = open(os.devnull, 'w')
         process = subprocess.Popen(["python3", "/builder/voxelConverter.py", str(outputTarget), str(actualMeshPath)], stdout=subprocess.PIPE, stderr=devnull)
+        process.wait()
+        devnull.close()
+
+
+    def goxelExportToTxt(self, inPath, outPath):
+        devnull = open(os.devnull, 'w')
+        process = subprocess.Popen(["xvfb-run", "goxel", str(inPath), "-e", str(outPath)], stdout=devnull, stderr=devnull)
+        process.wait()
+        devnull.close()
+
+    def exportToVoxMesh(self, filePath, outPath):
+        devnull = open(os.devnull, 'w')
+        process = subprocess.Popen(["VoxelConverterTool", str(filePath), str(outPath)], stdout=subprocess.PIPE, stderr=devnull)
         process.wait()
         devnull.close()

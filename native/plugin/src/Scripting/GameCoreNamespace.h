@@ -37,6 +37,7 @@ namespace ProceduralExplorationGamePlugin{
 
         static SQInteger beginParseVisitedLocation(HSQUIRRELVM vm);
         static SQInteger checkClaimParsedVisitedLocation(HSQUIRRELVM vm);
+        static SQInteger createVoxMeshItem(HSQUIRRELVM vm);
 
         static SQInteger voxeliseMeshForVoxelData(HSQUIRRELVM vm);
 

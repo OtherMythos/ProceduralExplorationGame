@@ -15,6 +15,14 @@
 #include "MapGen/MapGen.h"
 
 #include "VisitedPlaces/VisitedPlacesParser.h"
+#include "Scripting/ScriptNamespace/Classes/Ogre/Scene/MovableObjectUserData.h"
+#include "Scripting/ScriptNamespace/SceneNamespace.h"
+
+#include "System/Base.h"
+#include "System/BaseSingleton.h"
+
+#include "Ogre/OgreVoxMeshItem.h"
+#include "Ogre/OgreVoxMeshManager.h"
 
 #include "../../../../src/Versions.h.nut"
 
@@ -427,6 +435,40 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger GameCoreNamespace::createVoxMeshItem(HSQUIRRELVM vm){
+        SQInteger size = sq_gettop(vm);
+        Ogre::SceneMemoryMgrTypes targetType = Ogre::SCENE_DYNAMIC;
+        if(size == 3){
+            SQInteger sceneNodeType = 0;
+            sq_getinteger(vm, 3, &sceneNodeType);
+            targetType = static_cast<Ogre::SceneMemoryMgrTypes>(sceneNodeType);
+        }
+
+        Ogre::Item* item = 0;
+        if(sq_gettype(vm, 2) == OT_STRING){
+            const SQChar *meshPath;
+            sq_getstring(vm, 2, &meshPath);
+            Ogre::NameValuePairList params;
+            params["mesh"] = meshPath;
+            params["resourceGroup"] = Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME;
+            Ogre::MovableObject *obj;
+            Ogre::SceneManager* sceneManager = AV::BaseSingleton::getSceneManager();
+
+            WRAP_OGRE_ERROR(
+                obj = sceneManager->createMovableObject(Ogre::VoxMeshItemFactory::FACTORY_TYPE_NAME, &(sceneManager->_getEntityMemoryManager(targetType)), &params);
+            )
+            Ogre::VoxMeshItem* outVoxMesh = dynamic_cast<Ogre::VoxMeshItem*>(obj);
+            item = dynamic_cast<Ogre::Item*>(outVoxMesh);
+        }else{
+            assert(false);
+        }
+        item->setListener(AV::SceneNamespace::getMovableObjectListener(AV::MovableObjectType::Item));
+
+        AV::MovableObjectUserData::movableObjectToUserData(vm, (Ogre::MovableObject*)item, AV::MovableObjectType::Item);
+
+        return 1;
+    }
+
     SQInteger GameCoreNamespace::voxeliseMeshForVoxelData(HSQUIRRELVM vm){
         const SQChar *meshName;
         sq_getstring(vm, 2, &meshName);
@@ -488,6 +530,8 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, getMapGenStage, "getMapGenStage");
         AV::ScriptUtils::addFunction(vm, checkClaimMapGen, "checkClaimMapGen");
         AV::ScriptUtils::addFunction(vm, getTotalMapGenStages, "getTotalMapGenStages");
+
+        AV::ScriptUtils::addFunction(vm, createVoxMeshItem, "createVoxMeshItem", -2, ".si");
 
         AV::ScriptUtils::addFunction(vm, beginParseVisitedLocation, "beginParseVisitedLocation");
         AV::ScriptUtils::addFunction(vm, checkClaimParsedVisitedLocation, "checkClaimParsedVisitedLocation");
