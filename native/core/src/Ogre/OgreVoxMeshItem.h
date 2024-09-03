@@ -13,6 +13,8 @@ namespace Ogre{
         VoxMeshItem( IdType id, ObjectMemoryManager *objectMemoryManager, SceneManager *manager, const MeshPtr& mesh );
 
         const String& getMovableType(void) const;
+
+        void loadingComplete(Resource* resource);
     };
 
     class VoxMeshItemFactory : public MovableObjectFactory

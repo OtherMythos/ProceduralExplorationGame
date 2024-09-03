@@ -22,6 +22,10 @@ namespace Ogre{
         return VoxMeshItemFactory::FACTORY_TYPE_NAME;
     }
 
+    void VoxMeshItem::loadingComplete(Resource* resource){
+        Ogre::Item::loadingComplete(resource);
+    }
+
 
     String VoxMeshItemFactory::FACTORY_TYPE_NAME = "VoxMeshItem";
 

@@ -11,6 +11,8 @@ if(ENGINE_SOURCE_PATH STREQUAL "")
     message( FATAL_ERROR "Please populate the ENGINE_SOURCE_PATH variable")
 endif()
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG=1 -D_DEBUG=1")
+
 if(NOT PLATFORM STREQUAL "OS64")
     set(STATIC_ONLY TRUE)
 endif()
