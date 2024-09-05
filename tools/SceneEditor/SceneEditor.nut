@@ -50,6 +50,15 @@ enum TerrainEditState{
                 //Stub to be implemented by the user.
                 return !::guiFrameworkBase.mouseInteracting();
             }
+            function sceneTreeConstructObjectForUserEntry(userId, parentNode, entryData){
+                local item = _gameCore.createVoxMeshItem(entryData.value);
+
+                item.setRenderQueueGroup(30);
+                parentNode.attachObject(item);
+            }
+            function getNameForUserEntry(userId){
+                return "mesh";
+            }
         };
 
         local saveFunction = function(){
