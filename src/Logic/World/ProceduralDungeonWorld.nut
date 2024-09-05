@@ -96,25 +96,25 @@
                 local newNode = mParentNode_.createChildSceneNode();
                 newNode.setPosition(x * 5, 0, y * 5);
 
-                local itemName = "DungeonFloor.mesh";
+                local itemName = "DungeonFloor.voxMesh";
                 local orientation = Quat();
                 if(mask == 0){
                 }else{
                     if(mask == 0x2) orientation = Quat(0, sqrt(0.5), 0, sqrt(0.5));
                     else if(mask == 0x4) orientation = Quat(0, -sqrt(0.5), 0, sqrt(0.5));
                     else if(mask == 0x8) orientation = Quat(0, 1, 0, 0);
-                    itemName = "DungeonWall.mesh";
+                    itemName = "DungeonWall.voxMesh";
 
                     if((mask & (mask - 1)) != 0){
                         //Two bits are true meaning this is a corner.
-                        itemName = "DungeonWallCorner.mesh";
+                        itemName = "DungeonWallCorner.voxMesh";
                         if(mask == 0x3) orientation = Quat(0, sqrt(0.5), 0, sqrt(0.5));
                         if(mask == 0xA) orientation = Quat(0, 1, 0, 0);
                         if(mask == 0xC) orientation = Quat(0, -sqrt(0.5), 0, sqrt(0.5));
                     }
                 }
 
-                local item = _scene.createItem(itemName);
+                local item = _gameCore.createVoxMeshItem(itemName);
                 item.setRenderQueueGroup(30);
                 newNode.attachObject(item);
                 newNode.setOrientation(orientation);

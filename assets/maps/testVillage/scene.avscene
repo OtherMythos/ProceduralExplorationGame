@@ -1,47 +1,47 @@
 <scene>
     <empty>
-        <mesh mesh="watermill.mesh">
+        <user0 value="watermill.voxMesh">
             <position x="73.5966" y="2.33125" z="-70.0163"/>
             <scale x="0.6" y="0.6" z="0.6"/>
             <orientation x="0" y="1" z="0" w="0"/>
-            <mesh animIdx="0" mesh="waterwheel.mesh">
+            <user0 animIdx="0" value="waterwheel.voxMesh">
                 <position x="-30" y="9" z="-21"/>
-            </mesh>
-        </mesh>
-        <mesh mesh="house1.mesh">
+            </user0>
+        </user0>
+        <user0 value="house1.voxMesh">
             <position x="114" y="2" z="-113"/>
             <scale x="0.6" y="0.6" z="0.6"/>
             <orientation x="0" y="1" z="0" w="0"/>
-        </mesh>
-        <mesh mesh="dungeonEntrance.mesh">
+        </user0>
+        <user0 value="dungeonEntrance.voxMesh">
             <position x="120" y="0" z="-20"/>
             <orientation x="0" y="1" z="0" w="0"/>
-        </mesh>
-        <mesh mesh="bridge.mesh">
+        </user0>
+        <user0 value="bridge.voxMesh">
             <position x="94" y="0.5" z="-136"/>
             <scale x="0.6" y="0.6" z="0.6"/>
             <orientation x="0" y="0.707107" z="0" w="0.707107"/>
-        </mesh>
-        <mesh mesh="tree.mesh">
+        </user0>
+        <user0 value="tree.voxMesh">
             <position x="135" y="3" z="-28"/>
-        </mesh>
-        <mesh mesh="tree.mesh">
+        </user0>
+        <user0 value="tree.voxMesh">
             <position x="145" y="3" z="-26"/>
-        </mesh>
-        <mesh mesh="tree.mesh">
+        </user0>
+        <user0 value="tree.voxMesh">
             <position x="128" y="3" z="-21"/>
-        </mesh>
-        <mesh mesh="tree.mesh">
+        </user0>
+        <user0 value="tree.voxMesh">
             <position x="115" y="3" z="-30"/>
-        </mesh>
-        <mesh mesh="tree.mesh">
+        </user0>
+        <user0 value="tree.voxMesh">
             <position x="112" y="3" z="-20"/>
-        </mesh>
-        <mesh mesh="tree.mesh">
+        </user0>
+        <user0 value="tree.voxMesh">
             <position x="112" y="3" z="-16"/>
-        </mesh>
-        <mesh mesh="tree.mesh">
+        </user0>
+        <user0 value="tree.voxMesh">
             <position x="108" y="3" z="-13"/>
-        </mesh>
+        </user0>
     </empty>
 </scene>

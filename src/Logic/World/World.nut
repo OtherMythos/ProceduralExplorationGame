@@ -20,7 +20,7 @@
         mSceneNode_ = parent.createChildSceneNode();
         local animNode = mSceneNode_.createChildSceneNode();
 
-        local targetItem = _scene.createItem("enemyTargetMarker.mesh");
+        local targetItem = _gameCore.createVoxMeshItem("enemyTargetMarker.voxMesh");
         targetItem.setRenderQueueGroup(30);
         animNode.attachObject(targetItem);
         animNode.setScale(0.5, 0.5, 0.5);
@@ -1019,7 +1019,7 @@ enum WorldMousePressContexts{
     //TODO remove flag logic at some point.
     function queueLocationFlag(pos){
         local flagNode = mParentNode_.createChildSceneNode();
-        local flagItem = _scene.createItem("locationFlag.mesh");
+        local flagItem = _gameCore.createVoxMeshItem("locationFlag.mesh");
         flagItem.setRenderQueueGroup(30);
         flagNode.attachObject(flagItem);
         pos.y = getZForPos(pos);

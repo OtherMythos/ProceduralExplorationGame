@@ -10,6 +10,11 @@
 #include "Scripting/ScriptNamespace/Classes/Ogre/Graphics/TextureBoxUserData.h"
 #include "Scripting/ScriptNamespace/Classes/Ogre/Graphics/MeshUserData.h"
 
+#include "VisitedPlaces/VoxMeshSceneDataInserter.h"
+#include "Scripting/ScriptNamespace/Classes/Scene/ParsedAvSceneUserData.h"
+#include "Scripting/ScriptNamespace/Classes/Ogre/Scene/SceneNodeUserData.h"
+#include "Scripting/ScriptNamespace/Classes/Animation/AnimationInfoUserData.h"
+
 #include "MapGen/ExplorationMapViewer.h"
 #include "MapGen/ExplorationMapDataPrerequisites.h"
 #include "MapGen/MapGen.h"
@@ -515,6 +520,26 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger GameCoreNamespace::insertParsedSceneFileVoxMeshGetAnimInfo(HSQUIRRELVM vm){
+        AV::ParsedSceneFile* file = 0;
+        AV::ParsedAvSceneUserData::readSceneObjectFromUserData(vm, 2, &file);
+
+        Ogre::SceneNode* node = 0;
+        SQInteger top = sq_gettop(vm);
+        Ogre::SceneManager* sceneManager = AV::BaseSingleton::getSceneManager();
+        if(top == 3){
+            SCRIPT_CHECK_RESULT(AV::SceneNodeUserData::readSceneNodeFromUserData(vm, 3, &node));
+        }else{
+            node = sceneManager->getRootSceneNode();
+        }
+
+        ProceduralExplorationGameCore::VoxMeshSceneDataInserter inserter(sceneManager);
+        AV::AnimationInfoBlockPtr animData = inserter.insertSceneDataGetAnimInfo(file, node);
+        AV::AnimationInfoUserData::blockPtrToUserData(vm, animData);
+
+        return 1;
+    }
+
     void GameCoreNamespace::setupNamespace(HSQUIRRELVM vm){
         AV::ScriptUtils::addFunction(vm, getGameCoreVersion, "getGameCoreVersion");
 
@@ -538,6 +563,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, setMapsDirectory, "setMapsDirectory", 2, ".s");
 
         AV::ScriptUtils::addFunction(vm, voxeliseMeshForVoxelData, "voxeliseMeshForVoxelData", 6, ".saiii");
+        AV::ScriptUtils::addFunction(vm, insertParsedSceneFileVoxMeshGetAnimInfo, "insertParsedSceneFileGetAnimInfo", -2, ".uu");
     }
 
 };

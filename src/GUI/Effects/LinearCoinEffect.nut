@@ -114,7 +114,7 @@ local LinearCoinEffectStateMachine = class extends ::Util.StateMachine{
         for(local i = 0; i < numCoins; i++){
             local newNode = parentNode.createChildSceneNode();
             local animNode = newNode.createChildSceneNode();
-            local coinItem = _scene.createItem("coin.mesh");
+            local coinItem = _gameCore.createVoxMeshItem("coin.voxMesh");
             coinItem.setRenderQueueGroup(65);
             animNode.attachObject(coinItem);
             animNode.setScale(scale, scale, scale);

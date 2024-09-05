@@ -12,3 +12,4 @@ developerTools.nut
 testingWorldScript.nut
 native/build
 native/buildIos
+util/VoxelConverterTool/build

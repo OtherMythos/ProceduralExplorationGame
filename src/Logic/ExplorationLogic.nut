@@ -261,7 +261,7 @@
             local childNode = placeEntry.getSceneNode().createChildSceneNode();
             childNode.setPosition(0.5, 0, 0);
             childNode.setScale(1.5, 1.5, 1.5);
-            local item = _scene.createItem("locationFlag.mesh");
+            local item = _gameCore.createVoxMeshItem("locationFlag.voxMesh");
             item.setRenderQueueGroup(30);
             childNode.attachObject(item);
 

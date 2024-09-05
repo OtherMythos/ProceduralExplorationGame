@@ -190,10 +190,10 @@
         //local entry = ActiveEnemyEntry(mConstructorWorld_, itemData.type, targetPos, en);
 
         local placeNode = parentNode.createChildSceneNode();
-        local meshTarget = itemData.type == PlacedItemId.CHERRY_BLOSSOM_TREE ? "treeCherryBlossom.mesh" : "tree.mesh";
+        local meshTarget = itemData.type == PlacedItemId.CHERRY_BLOSSOM_TREE ? "treeCherryBlossom.voxMesh" : "tree.voxMesh";
         placeNode.setPosition(targetPos);
         //TODO make some of these scene static
-        local item = _scene.createItem(meshTarget);
+        local item = _gameCore.createVoxMeshItem(meshTarget);
         item.setRenderQueueGroup(30);
         placeNode.attachObject(item);
         placeNode.setScale(0.6, 0.6, 0.6);
@@ -221,12 +221,12 @@
 
         local placeNode = mBaseSceneNode_.createChildSceneNode();
         local placeType = ::Places[placeData.placeId].getType();
-        local meshTarget = "overworldVillage.mesh";
-        if(placeType == PlaceType.TOWN && placeType == PlaceType.CITY) meshTarget = "overworldTown.mesh";
-        else if(placeType == PlaceType.GATEWAY) meshTarget = "overworldGateway.mesh";
+        local meshTarget = "overworldVillage.voxMesh";
+        if(placeType == PlaceType.TOWN && placeType == PlaceType.CITY) meshTarget = "overworldTown.voxMesh";
+        else if(placeType == PlaceType.GATEWAY) meshTarget = "overworldGateway.voxMesh";
 
         placeNode.setPosition(targetPos);
-        local item = _scene.createItem(meshTarget);
+        local item = _gameCore.createVoxMeshItem(meshTarget);
         item.setRenderQueueGroup(30);
         placeNode.attachObject(item);
         placeNode.setScale(0.3, 0.3, 0.3);
@@ -400,7 +400,7 @@
 
         local parentNode = mBaseSceneNode_.createChildSceneNode();
         parentNode.setPosition(targetPos);
-        local item = _scene.createItem("coin.mesh");
+        local item = _gameCore.createVoxMeshItem("coin.voxMesh");
         item.setRenderQueueGroup(30);
         local animNode = parentNode.createChildSceneNode();
         animNode.setScale(0.1, 0.1, 0.1);
@@ -461,7 +461,7 @@
 
         local OBJECT_SCALE = 0.1;
         //Construct this first so we know the radius to offset by.
-        local item = _scene.createItem(wrappedItem.getMesh());
+        local item = _gameCore.createVoxMeshItem(wrappedItem.getMesh());
         targetPos.y += item.getLocalRadius() * OBJECT_SCALE;
 
         local en = manager.createEntity(targetPos);
@@ -500,7 +500,7 @@
         local parentNode = mBaseSceneNode_.createChildSceneNode();
         parentNode.setScale(0.15, 0.15, 0.15);
         parentNode.setPosition(targetPos);
-        local item = _scene.createItem("treasureChestBase.mesh");
+        local item = _gameCore.createVoxMeshItem("treasureChestBase.voxMesh");
         //item.setRenderQueueGroup(30);
         local baseNode = parentNode.createChildSceneNode();
         baseNode.attachObject(item);
@@ -519,7 +519,7 @@
         manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
 
         local lidNode = parentNode.createChildSceneNode();
-        item = _scene.createItem("treasureChestLid.mesh");
+        item = _gameCore.createVoxMeshItem("treasureChestLid.voxMesh");
         lidNode.attachObject(item);
         lidNode.setPosition(0, 6, 0);
 

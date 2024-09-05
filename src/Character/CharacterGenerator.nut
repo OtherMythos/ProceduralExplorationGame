@@ -31,7 +31,7 @@
         foreach(c,i in model){
             local modelNode = parentNode.createChildSceneNode();
             if(i.mMesh){
-                local item = _scene.createItem(i.mMesh);
+                local item = _gameCore.createVoxMeshItem(i.mMesh);
                 item.setRenderQueueGroup(renderQueue);
                 item.setQueryFlags(queryFlag);
                 modelNode.attachObject(item);

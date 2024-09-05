@@ -91,7 +91,7 @@ function setupGui(){
 
         ::registerTimeTaken(t.getSeconds());
 
-        local item = _scene.createItem(meshObj);
+        local item = _gameCore.createVoxMeshItem(meshObj);
         local newNode = _scene.getRootSceneNode().createChildSceneNode();
         newNode.attachObject(item);
 

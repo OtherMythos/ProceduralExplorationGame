@@ -41,6 +41,8 @@ namespace ProceduralExplorationGamePlugin{
 
         static SQInteger voxeliseMeshForVoxelData(HSQUIRRELVM vm);
 
+        static SQInteger insertParsedSceneFileVoxMeshGetAnimInfo(HSQUIRRELVM vm);
+
         static ProceduralExplorationGameCore::MapGen* currentMapGen;
         static ProceduralExplorationGameCore::VisitedPlacesParser* currentVisitedPlacesParser;
     };

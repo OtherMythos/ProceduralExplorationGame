@@ -122,7 +122,7 @@
         local meshName = item.getMesh();
         if(meshName == null) throw format("Item '%s' does not define a mesh.", item.getName());
 
-        local model = _scene.createItem(meshName);
+        local model = _gameCore.createVoxMeshItem(meshName);
 
         local equipTransforms = item.getEquipTransforms(leftHand, !append);
 

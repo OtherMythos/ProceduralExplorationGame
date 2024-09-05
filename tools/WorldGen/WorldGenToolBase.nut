@@ -367,7 +367,7 @@
         local vox = VoxToMesh(Timer(), 1 << 2);
         local meshObj = vox.createMeshForVoxelData("testVox", voxData, width, height, depth);
 
-        local item = _scene.createItem(meshObj);
+        local item = _gameCore.createVoxMeshItem(meshObj);
         local newNode = _scene.getRootSceneNode().createChildSceneNode();
         newNode.attachObject(item);
         newNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));

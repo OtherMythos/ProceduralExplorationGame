@@ -28,7 +28,7 @@
                 mNode_ = mParentNode_.createChildSceneNode();
             }
 
-            local item = _scene.createItem(mesh);
+            local item = _gameCore.createVoxMeshItem(mesh);
             item.setRenderQueueGroup(66);
             mNode_.attachObject(item);
             mMeshItem_ = item;
