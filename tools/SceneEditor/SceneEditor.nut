@@ -22,11 +22,14 @@ enum TerrainEditState{
     mAcceptHandle = null
 
     mTerrainChunkManager = null
+    mVisitedPlacesMapData = null
 
     mEditingTerrain = false
     mEditingTerrainMode = TerrainEditState.NONE
     mEditTerrainColourValue = 0
     mEditTerrainHeightValue = 0
+
+    mCurrentHitPosition = Vec3()
 
     function createLights(){
         //TODO remove the copy and pasting from base.
@@ -123,6 +126,7 @@ enum TerrainEditState{
         while(mapClaim == null){
             mapClaim = _gameCore.checkClaimParsedVisitedLocation();
         }
+        mVisitedPlacesMapData = mapClaim;
 
         mTerrainChunkManager = ::SceneEditorTerrainChunkManager(0);
         mTerrainChunkManager.setup(mapClaim, 4);
@@ -144,6 +148,9 @@ enum TerrainEditState{
         winTerrainTools.setSize(500, 500);
         winTerrainTools.setPosition(0, 500);
         mEditorBase.setupGUIWindowForClass(SceneEditorFramework_GUIPanelId.USER_CUSTOM_1, winTerrainTools.getWin(), ::SceneEditorGUITerrainToolProperties);
+
+        //::posMesh <- _mesh.create("cube");
+        //posMesh.setPosition(mCurrentHitPosition);
     }
 
     function attemptLoadSceneTree(targetMap){
@@ -159,6 +166,10 @@ enum TerrainEditState{
         //_input.(i, _INPUT_PRESSED)
         fpsCamera.setSpeedModifier(_input.getButtonAction(mAcceptHandle));
 
+        //if(mCurrentHitPosition != null){
+            //posMesh.setPosition(mCurrentHitPosition);
+        //}
+
         mEditorBase.update();
 
         ::guiFrameworkBase.update();
@@ -167,17 +178,18 @@ enum TerrainEditState{
         ::guiFrameworkBase.setMouseButton(1, _input.getMouseButton(_MB_RIGHT));
 
         if(!::guiFrameworkBase.mouseInteracting() && mEditingTerrain){
-            local mousePos = Vec2(_input.getMouseX(), _input.getMouseY())
+            //local mousePos = Vec2(_input.getMouseX(), _input.getMouseY())
             if(::SceneEditorFramework.HelperFunctions.sceneEditorInteractable()){
-                local mTestPlane_ = Plane(::Vec3_UNIT_Y, Vec3(0, 0, 0));
-                mousePos /= _window.getSize();
-                local ray = _camera.getCameraToViewportRay(mousePos.x, mousePos.y);
-                local point = ray.intersects(mTestPlane_);
-                if(point != false){
-                    local worldPoint = ray.getPoint(point);
+                //local mTestPlane_ = Plane(::Vec3_UNIT_Y, Vec3(0, 0, 0));
+                //mousePos /= _window.getSize();
+                //local ray = _camera.getCameraToViewportRay(mousePos.x, mousePos.y);
+                //local point = ray.intersects(mTestPlane_);
+                local point = mCurrentHitPosition;
+                if(point != null){
+                    //local worldPoint = ray.getPoint(point);
 
-                    local chunkX = worldPoint.x.tointeger();
-                    local chunkY = -worldPoint.z.tointeger();
+                    local chunkX = point.x.tointeger();
+                    local chunkY = -point.z.tointeger();
 
                     if(_input.getMouseButton(_MB_LEFT)){
                         if(getTerrainEditState() == TerrainEditState.HEIGHT){
@@ -203,6 +215,13 @@ enum TerrainEditState{
 
     function sceneSafeUpdate(){
         mEditorBase.sceneSafeUpdate();
+
+        local mousePos = Vec2(_input.getMouseX(), _input.getMouseY());
+        local mouseTarget = mousePos / _window.getSize();
+        local ray = _camera.getCameraToViewportRay(mouseTarget.x, mouseTarget.y);
+
+        local outPos = mVisitedPlacesMapData.castRayForTerrain(ray);
+        mCurrentHitPosition = outPos;
     }
 
     function setEditTerrain(edit){

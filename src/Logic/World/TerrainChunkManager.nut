@@ -180,7 +180,8 @@
 
         local width = (mWidth_ / mChunkDivisions_);
         local height = (mHeight_ / mChunkDivisions_);
-        parentNode.setPosition((chunkX * -CHUNK_DEBUG_PADDING) + chunkX * width, 0, (chunkY * -CHUNK_DEBUG_PADDING) + -chunkY * height);
+        local offset = 0.25;
+        parentNode.setPosition((chunkX * -CHUNK_DEBUG_PADDING) + chunkX * width + offset, 0, (chunkY * -CHUNK_DEBUG_PADDING) + -chunkY * height - offset-offset);
 
         assert(mItemsForChunk_.rawin(targetIdx));
         parentNode.attachObject(mItemsForChunk_.rawget(targetIdx));

@@ -7,6 +7,7 @@
 
 #include "Scripting/ScriptNamespace/Classes/Vector3UserData.h"
 #include "Scripting/ScriptNamespace/Classes/Ogre/Graphics/MeshUserData.h"
+#include "Scripting/ScriptNamespace/Classes/Ogre/Scene/RayUserData.h"
 
 #include "VisitedPlaces/VisitedPlacesPrerequisites.h"
 #include "VisitedPlaces/VisitedPlaceMapDataHelper.h"
@@ -214,6 +215,48 @@ namespace ProceduralExplorationGamePlugin{
         return 0;
     }
 
+    SQInteger VisitedPlaceMapDataUserData::castRayForTerrain(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
+        SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
+
+        Ogre::Ray outRay;
+        SCRIPT_CHECK_RESULT(AV::RayUserData::readRayFromUserData(vm, 2, &outRay));
+
+        bool collision = false;
+        Ogre::Vector3 result(Ogre::Vector3::ZERO);
+        for(int i = 0; i < 1000; i++){
+            //TODO this is a dumb search.
+            //A better method would be, do a low resolution search until a hit is found, then binary search the space in between to find a more accurate position.
+            Ogre::Vector3 point = outRay.getPoint(static_cast<float>(i) / 10);
+            Ogre::Vector3 outPoint(point);
+
+            point.z = -point.z;
+
+            if(point.x < 0 || point.z < 0 || point.x >= mapData->width || point.z >= mapData->height){
+                continue;
+            }
+
+            ProceduralExplorationGameCore::WorldCoord x, y;
+            x = static_cast<ProceduralExplorationGameCore::WorldCoord>(point.x);
+            y = static_cast<ProceduralExplorationGameCore::WorldCoord>(point.z);
+
+            AV::uint8 altitude = mapData->altitudeValues[x + y * mapData->width];
+            if(point.y < static_cast<float>(altitude)*0.4 && point.y >= 0.0f){
+                collision = true;
+                result = outPoint;
+                break;
+            }
+        }
+
+        if(collision){
+            AV::Vector3UserData::vector3ToUserData(vm, result);
+        }else{
+            sq_pushnull(vm);
+        }
+
+        return 1;
+    }
+
     void VisitedPlaceMapDataUserData::setupDelegateTable(HSQUIRRELVM vm){
         sq_newtable(vm);
 
@@ -227,6 +270,8 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, getVoxelForCoord, "getVoxelForCoord", 3, ".ii");
         AV::ScriptUtils::addFunction(vm, setAltitudeForCoord, "setAltitudeForCoord", 4, ".iii");
         AV::ScriptUtils::addFunction(vm, setVoxelForCoord, "setVoxelForCoord", 4, ".iii");
+
+        AV::ScriptUtils::addFunction(vm, castRayForTerrain, "castRayForTerrain", 2, ".u");
 
         sq_resetobject(&VisitedPlaceMapDataDelegateTableObject);
         sq_getstackobj(vm, -1, &VisitedPlaceMapDataDelegateTableObject);
