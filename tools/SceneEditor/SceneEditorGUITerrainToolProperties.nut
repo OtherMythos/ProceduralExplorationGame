@@ -4,6 +4,9 @@
     mEditTerrainHeight_ = null;
     mEditTerrainColour_ = null;
 
+    mEditTerrainColourValue_ = null;
+    mEditTerrainHeightValue_ = null;
+
     constructor(parent, baseObj, bus){
         base.constructor(parent, baseObj, bus);
 
@@ -34,6 +37,24 @@
             refreshButtons();
         }, _GUI_ACTION_RELEASED, this);
         layout.addCell(mEditTerrainColour_);
+
+        mEditTerrainColourValue_ = ::EditorGUIFramework.Widget.NumericInput(mParent_);
+        mEditTerrainColourValue_.attachListener(::EditorGUIFramework.Listener(function(widget, action){
+            if(action == EditorGUIFramework_WidgetCallbackEvent.VALUE_CHANGED){
+                local val = widget.getValue();
+                ::Base.setEditTerrainColourValue(val);
+            }
+        }));
+        mEditTerrainColourValue_.addToLayout(layout);
+
+        mEditTerrainHeightValue_ = ::EditorGUIFramework.Widget.NumericInput(mParent_);
+        mEditTerrainHeightValue_.attachListener(::EditorGUIFramework.Listener(function(widget, action){
+            if(action == EditorGUIFramework_WidgetCallbackEvent.VALUE_CHANGED){
+                local val = widget.getValue();
+                ::Base.setEditTerrainHeightValue(val);
+            }
+        }));
+        mEditTerrainHeightValue_.addToLayout(layout);
 
         layout.layout();
     }

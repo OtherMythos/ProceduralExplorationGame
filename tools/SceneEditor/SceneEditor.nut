@@ -25,6 +25,8 @@ enum TerrainEditState{
 
     mEditingTerrain = false
     mEditingTerrainMode = TerrainEditState.NONE
+    mEditTerrainColourValue = 0
+    mEditTerrainHeightValue = 0
 
     function createLights(){
         //TODO remove the copy and pasting from base.
@@ -70,6 +72,12 @@ enum TerrainEditState{
         local redoFunction = function(){
             mEditorBase.mActionStack_.redo();
         }
+        local positionFunction = function(){
+            mEditorBase.getActiveSceneTree().setObjectTransformCoordinateType(SceneEditorFramework_BasicCoordinateType.POSITION);
+        }
+        local scaleFunction = function(){
+            mEditorBase.getActiveSceneTree().setObjectTransformCoordinateType(SceneEditorFramework_BasicCoordinateType.SCALE);
+        }
         ::guiFrameworkBase <- ::EditorGUIFramework.Base();
         ::guiFrameworkBase.setToolbar(::EditorGUIFramework.Toolbar([
             ["File", [
@@ -78,6 +86,8 @@ enum TerrainEditState{
             [ "Edit", [
                 ["Undo", undoFunction.bindenv(this)],
                 ["Redo", redoFunction.bindenv(this)],
+                ["Position transform", positionFunction.bindenv(this)],
+                ["Scale transform", scaleFunction.bindenv(this)],
             ]]
         ]));
         local windowListener = ::SceneEditorWindowListener();
@@ -171,10 +181,10 @@ enum TerrainEditState{
 
                     if(_input.getMouseButton(_MB_LEFT)){
                         if(getTerrainEditState() == TerrainEditState.HEIGHT){
-                            mTerrainChunkManager.drawHeightValues(chunkX, chunkY, 1, 1, [1]);
+                            mTerrainChunkManager.drawHeightValues(chunkX, chunkY, 1, 1, [mEditTerrainHeightValue]);
                         }
                         else if(getTerrainEditState() == TerrainEditState.COLOUR){
-                            mTerrainChunkManager.drawVoxTypeValues(chunkX, chunkY, 1, 1, [1]);
+                            mTerrainChunkManager.drawVoxTypeValues(chunkX, chunkY, 1, 1, [mEditTerrainColourValue]);
                         }
                     }
                 }
@@ -203,6 +213,14 @@ enum TerrainEditState{
     }
     function setEditTerrainColour(edit){
         mEditingTerrainMode = edit ? TerrainEditState.COLOUR : null;
+    }
+
+    function setEditTerrainColourValue(value){
+        mEditTerrainColourValue = value;
+    }
+
+    function setEditTerrainHeightValue(height){
+        mEditTerrainHeightValue = height;
     }
 
     function getTerrainEditState(){

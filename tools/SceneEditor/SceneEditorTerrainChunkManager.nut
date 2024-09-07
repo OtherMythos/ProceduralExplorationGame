@@ -29,7 +29,7 @@
             local targetX = x - (chunkX * mChunkWidth_);
             local targetY = y - (chunkY * mChunkHeight_);
 
-            mMapData_.setAltitudeForCoord(x, y, 1);
+            mMapData_.setAltitudeForCoord(x, y, values[0]);
             recreateChunkItem(chunkX, chunkY);
         }
     }
