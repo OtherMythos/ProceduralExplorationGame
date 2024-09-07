@@ -29,6 +29,9 @@ enum TerrainEditState{
     mEditTerrainColourValue = 0
     mEditTerrainHeightValue = 0
 
+    mGuiInputStealerWindow_ = null
+    mGuiInputStealer_ = null
+
     mCurrentHitPosition = Vec3()
 
     function createLights(){
@@ -96,7 +99,7 @@ enum TerrainEditState{
         local windowListener = ::SceneEditorWindowListener();
         ::guiFrameworkBase.attachWindowManagerListener(windowListener);
 
-        fpsCamera.start(Vec3(0, 20, 0), Vec3(319.55, -14.55, 0));
+        ::SceneEditorFPSCamera.start(Vec3(0, 20, 0), Vec3(319.55, -14.55, 0));
 
         createLights();
 
@@ -151,6 +154,12 @@ enum TerrainEditState{
 
         guiFrameworkBase.loadWindowStates("user://windowState.json");
 
+        mGuiInputStealerWindow_ = _gui.createWindow("guiInputStealer");
+        mGuiInputStealerWindow_.setSize(10, 20);
+        mGuiInputStealer_ = mGuiInputStealerWindow_.createButton();
+        mGuiInputStealer_.setSize(50, 50);
+        mGuiInputStealerWindow_.setVisible(false);
+
         //::posMesh <- _mesh.create("cube");
         //posMesh.setPosition(mCurrentHitPosition);
     }
@@ -164,9 +173,9 @@ enum TerrainEditState{
     }
 
     function update(){
-        fpsCamera.update();
+        ::SceneEditorFPSCamera.update();
         //_input.(i, _INPUT_PRESSED)
-        fpsCamera.setSpeedModifier(_input.getButtonAction(mAcceptHandle));
+        ::SceneEditorFPSCamera.setSpeedModifier(_input.getButtonAction(mAcceptHandle));
 
         //if(mCurrentHitPosition != null){
             //posMesh.setPosition(mCurrentHitPosition);
@@ -228,6 +237,10 @@ enum TerrainEditState{
 
         local outPos = mVisitedPlacesMapData.castRayForTerrain(ray);
         mCurrentHitPosition = outPos;
+    }
+
+    function notifyFPSBegan(){
+        mGuiInputStealer_.setFocus();
     }
 
     function setEditTerrain(edit){

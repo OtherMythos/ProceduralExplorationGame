@@ -4,11 +4,10 @@ function start(){
     _doFile("res://sceneEditorFramework/SceneEditorFramework.nut");
     _gui.setDefaultFontSize26d6((_gui.getOriginalDefaultFontSize26d6()).tointeger());
 
-    _doFile("res://../VoxToMesh/fpsCamera.nut");
+    _doFile("res://SceneEditorFPSCamera.nut");
     _doFile("res://../../src/Constants.nut");
     _doFile("res://../../src/Helpers.nut");
     _doFile("res://../../src/Logic/World/TerrainChunkManager.nut");
-    _doFile("res://../../src/Util/VoxToMesh.nut");
 
     _doFile("res://SceneEditorTerrainChunkManager.nut");
     _doFile("res://SceneEditor.nut");
