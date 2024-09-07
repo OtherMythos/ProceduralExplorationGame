@@ -149,6 +149,8 @@ enum TerrainEditState{
         winTerrainTools.setPosition(0, 500);
         mEditorBase.setupGUIWindowForClass(SceneEditorFramework_GUIPanelId.USER_CUSTOM_1, winTerrainTools.getWin(), ::SceneEditorGUITerrainToolProperties);
 
+        guiFrameworkBase.loadWindowStates("user://windowState.json");
+
         //::posMesh <- _mesh.create("cube");
         //posMesh.setPosition(mCurrentHitPosition);
     }
@@ -202,6 +204,10 @@ enum TerrainEditState{
                 }
             }
         }
+    }
+
+    function shutdown(){
+        guiFrameworkBase.serialiseWindowStates("user://windowState.json");
     }
 
     function getTargetEditMap(){

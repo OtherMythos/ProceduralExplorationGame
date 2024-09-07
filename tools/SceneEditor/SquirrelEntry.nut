@@ -26,5 +26,5 @@ function sceneSafeUpdate(){
 }
 
 function end(){
-
+    ::Base.shutdown();
 }
