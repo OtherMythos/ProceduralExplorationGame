@@ -110,7 +110,7 @@ enum WorldMousePressContexts{
 
         function setupCloud(){
             local newNode = mParentNode_.createChildSceneNode();
-            local item = _scene.createItem("cloud.mesh");
+            local item = _gameCore.createVoxMeshItem("cloud.voxMesh");
             item.setRenderQueueGroup(70);
             newNode.attachObject(item);
             local outPos = _random.randVec3() * mSize_;
