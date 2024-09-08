@@ -80,6 +80,11 @@ namespace VoxelConverterTool{
     }
 
     void VoxToFaces::voxToFaces(const ParsedVoxFile& parsedVox, OutputFaces& faces){
+        //Recalculate the max and min incase some faces have been removed.
+        int currentMinX, currentMinY, currentMinZ;
+        int currentMaxX, currentMaxY, currentMaxZ;
+        currentMinX = currentMinY = currentMinZ = 128;
+        currentMaxX = currentMaxY = currentMaxZ = 128;
 
         int width = parsedVox.maxX - parsedVox.minX;
         int height = parsedVox.maxY - parsedVox.minY;
@@ -98,7 +103,21 @@ namespace VoxelConverterTool{
                 WrappedFace face = _wrapFace(c);
                 faces.outFaces.push_back(face);
             }
+            if(x < currentMinX) currentMinX = x;
+            if(y < currentMinY) currentMinY = y;
+            if(z < currentMinZ) currentMinZ = z;
+
+            if(x > currentMaxX) currentMaxX = x;
+            if(y > currentMaxY) currentMaxY = y;
+            if(z > currentMaxZ) currentMaxZ = z;
         }
+
+        faces.minX = currentMinX;
+        faces.minY = currentMinY;
+        faces.minZ = currentMinZ;
+        faces.maxX = currentMaxX;
+        faces.maxY = currentMaxY;
+        faces.maxZ = currentMaxZ;
     }
 
 }

@@ -338,6 +338,7 @@ namespace VoxelConverterTool{
         void writeInts(const uint32* const pInt, size_t count);
 
         void writeMesh(const OutputFaces& outFaces);
+        void writeBounds(const OutputFaces& outFaces);
 
         bool mFlipEndian = false;
         std::ofstream* mStream;

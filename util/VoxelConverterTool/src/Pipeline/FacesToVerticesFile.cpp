@@ -3,6 +3,8 @@
 #include "Pipeline/VoxToFaces.h"
 
 #include <cstring>
+#include <cassert>
+#include <math.h>
 
 namespace VoxelConverterTool{
 
@@ -168,6 +170,45 @@ namespace VoxelConverterTool{
                 writeFloats(&texCoordY, 1);
             }
         }
+        {
+            writeBounds(outFaces);
+        }
+    }
+
+    void FacesToVerticesFile::writeBounds(const OutputFaces& outFaces){
+
+        int minX = outFaces.minX - 128;
+        int minY = outFaces.minY - 128;
+        int minZ = outFaces.minZ - 128;
+        int maxX = outFaces.maxX - 128;
+        int maxY = outFaces.maxY - 128;
+        int maxZ = outFaces.maxZ - 128;
+        assert( (minX <= maxX && minY <= maxY && minZ <= maxZ) &&
+                "The minimum corner of the box must be less than or equal to maximum corner" );
+        float centreX = (maxX + minX) * 0.5;
+        float centreY = (maxY + minY) * 0.5;
+        float centreZ = (maxZ + minZ) * 0.5;
+
+        float halfX = (maxX - minX) * 0.5;
+        float halfY = (maxY - minY) * 0.5;
+        float halfZ = (maxZ - minZ) * 0.5;
+
+        //Values taken from OgreMesh2SerializerImpl
+        const long MSTREAM_OVERHEAD_SIZE = sizeof(uint16) + sizeof(uint32);
+        unsigned long size = MSTREAM_OVERHEAD_SIZE;
+        size += sizeof(float) * 7;
+        writeChunkHeader(M_MESH_BOUNDS, size);
+        writeFloats(&centreX, 1);
+        writeFloats(&centreY, 1);
+        writeFloats(&centreZ, 1);
+
+        writeFloats(&halfX, 1);
+        writeFloats(&halfY, 1);
+        writeFloats(&halfZ, 1);
+
+        float dotProduct = (halfX * halfX) + (halfY * halfY) + (halfZ * halfZ);
+        float radius = sqrtf(dotProduct);
+        writeFloats(&radius, 1);
     }
 
 }

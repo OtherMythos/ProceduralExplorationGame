@@ -50,6 +50,8 @@ namespace Ogre{
         uint8* indiceData = 0;
         size_t numVerts = 0;
         size_t numIndices = 0;
+        Ogre::Aabb foundAABB;
+        float foundRadius;
         {
             pushInnerChunk(stream);
             uint16 streamID = readChunk(stream);
@@ -59,6 +61,17 @@ namespace Ogre{
                     "VoxMeshSerializer::importMesh" );
             }
             vertexData = readVertexBuffer(stream, pMesh, &numVerts);
+            popInnerChunk(stream);
+        }
+        {
+            pushInnerChunk(stream);
+            uint16 streamID = readChunk(stream);
+            if(streamID != M_MESH_BOUNDS){
+                OGRE_EXCEPT( Exception::ERR_INVALIDPARAMS,
+                    "Expected bounds definition for mesh " + pMesh->getName(),
+                    "VoxMeshSerializer::importMesh" );
+            }
+            readBoundsInfo(stream, foundAABB, foundRadius);
             popInnerChunk(stream);
         }
 
@@ -113,11 +126,8 @@ namespace Ogre{
         subMesh->mVao[Ogre::VpNormal].push_back(arrayObj);
         subMesh->mVao[Ogre::VpShadow].push_back(arrayObj);
 
-        //const Ogre::Vector3 halfBounds(width/2, height/2, depth/2);
-        const Ogre::Vector3 halfBounds(10, 10, 10);
-        const Ogre::Aabb bounds(halfBounds, halfBounds);
-        pMesh->_setBounds(bounds);
-        pMesh->_setBoundingSphereRadius(bounds.getRadius());
+        pMesh->_setBounds(foundAABB);
+        pMesh->_setBoundingSphereRadius(foundRadius);
 
         subMesh->setMaterialName("baseVoxelMaterial");
 
@@ -137,6 +147,22 @@ namespace Ogre{
 
         return vertexData;
 
+    }
+
+    void VoxMeshSerializer::readBoundsInfo(DataStreamPtr& stream, Ogre::Aabb& outAABB, float& outRadius){
+        Vector3 centre, halfSize;
+        // float centreX, centreY, centreZ
+        readFloats(stream, &centre.x, 1);
+        readFloats(stream, &centre.y, 1);
+        readFloats(stream, &centre.z, 1);
+        // float halfSizeX, halfSizeY, halfSizeZ
+        readFloats(stream, &halfSize.x, 1);
+        readFloats(stream, &halfSize.y, 1);
+        readFloats(stream, &halfSize.z, 1);
+        outAABB.mCenter = centre;
+        outAABB.mHalfSize = halfSize;
+
+        readFloats(stream, &outRadius, 1);
     }
 
 }
