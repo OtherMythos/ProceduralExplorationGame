@@ -11,7 +11,8 @@ namespace ProceduralExplorationGameCore{
     std::string VisitedPlacesParser::mMapsDirectory = "res://build/assets/maps/";
 
     VisitedPlacesParser::VisitedPlacesParser()
-        : mMapData(0)
+        : mMapData(0),
+        mCurrentStage(0)
     {
 
     }
