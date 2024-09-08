@@ -38,16 +38,7 @@
         }, _GUI_ACTION_RELEASED, this);
         layout.addCell(mEditTerrainColour_);
 
-        mEditTerrainColourValue_ = ::EditorGUIFramework.Widget.NumericInput(mParent_);
-        mEditTerrainColourValue_.attachListener(::EditorGUIFramework.Listener(function(widget, action){
-            if(action == EditorGUIFramework_WidgetCallbackEvent.VALUE_CHANGED){
-                local val = widget.getValue();
-                ::Base.setEditTerrainColourValue(val);
-            }
-        }));
-        mEditTerrainColourValue_.addToLayout(layout);
-
-        mEditTerrainHeightValue_ = ::EditorGUIFramework.Widget.NumericInput(mParent_);
+        mEditTerrainHeightValue_ = ::EditorGUIFramework.Widget.NumericInput(mParent_, false, "Height");
         mEditTerrainHeightValue_.attachListener(::EditorGUIFramework.Listener(function(widget, action){
             if(action == EditorGUIFramework_WidgetCallbackEvent.VALUE_CHANGED){
                 local val = widget.getValue();
@@ -55,6 +46,15 @@
             }
         }));
         mEditTerrainHeightValue_.addToLayout(layout);
+
+        mEditTerrainColourValue_ = ::EditorGUIFramework.Widget.NumericInput(mParent_, false, "Colour");
+        mEditTerrainColourValue_.attachListener(::EditorGUIFramework.Listener(function(widget, action){
+            if(action == EditorGUIFramework_WidgetCallbackEvent.VALUE_CHANGED){
+                local val = widget.getValue();
+                ::Base.setEditTerrainColourValue(val);
+            }
+        }));
+        mEditTerrainColourValue_.addToLayout(layout);
 
         layout.layout();
     }
