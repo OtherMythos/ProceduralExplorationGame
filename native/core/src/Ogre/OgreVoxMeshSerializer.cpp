@@ -75,6 +75,7 @@ namespace Ogre{
             vertexData = readVertexBuffer(stream, pMesh, &numVerts);
             popInnerChunk(stream);
         }
+        /*
         {
             pushInnerChunk(stream);
             uint16 streamID = readChunk(stream);
@@ -87,6 +88,7 @@ namespace Ogre{
             //readVertexBuffer(stream, pMesh);
             popInnerChunk(stream);
         }
+        */
 
         Ogre::VertexBufferPacked *vertexBuffer = 0;
         Ogre::RenderSystem *renderSystem = Ogre::Root::getSingletonPtr()->getRenderSystem();
