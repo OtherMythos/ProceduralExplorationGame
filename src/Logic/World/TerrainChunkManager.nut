@@ -200,20 +200,27 @@
 
     }
 
+    function writeValueToFile_(mapName, altitude){
+        local filePath = "res://../../assets/maps/" + mapName + "/" + (altitude ? "terrain.txt" : "terrainBlend.txt");
+        if(_system.exists(filePath)){
+            _system.remove(filePath);
+            _system.createBlankFile(filePath);
+        }
+
+        local outFile = File();
+        outFile.open(filePath);
+        for(local y = 0; y < mMapData_.getHeight(); y++){
+            for(local x = 0; x < mMapData_.getWidth(); x++){
+                local val = altitude ? mMapData_.getAltitudeForCoord(x, y) : mMapData_.getVoxelForCoord(x, y);
+                outFile.write(val.tostring() + ",");
+            }
+            outFile.write("\n");
+        }
+    }
+
     function performSave(mapName){
-        /*
-        local fileHandler = TerrainChunkFileHandler("res://../../assets/maps/");
-
-        assert(mMapHeightDataCopy_ != null && mMapVoxTypeDataCopy_ != null);
-
-        local saveMapData = ::TerrainChunkFileHandler.ParsedTerrainData();
-        saveMapData.width = mWidth_;
-        saveMapData.height = mHeight_;
-        saveMapData.voxHeight = {"data": mMapHeightDataCopy_, "width": mMapData_.voxHeight.width, "height": mMapData_.voxHeight.height};
-        saveMapData.voxType = {"data": mMapVoxTypeDataCopy_, "width": mMapData_.voxType.width, "height": mMapData_.voxType.height};
-
-        fileHandler.writeMapData(mapName, saveMapData);
-        */
+        writeValueToFile_(mapName, true);
+        writeValueToFile_(mapName, false);
     }
 
 };

@@ -18,6 +18,7 @@ enum TerrainEditState{
 
     mEditorBase = null
     mParentNode = null
+    mTargetMap = null
 
     mAcceptHandle = null
 
@@ -115,6 +116,7 @@ enum TerrainEditState{
         if(targetMap == null){
             return;
         }
+        mTargetMap = targetMap
 
         local sceneTree = attemptLoadSceneTree(targetMap);
         mEditorBase.setActiveSceneTree(sceneTree);
@@ -122,7 +124,7 @@ enum TerrainEditState{
             sceneTree.debugPrint();
         }
 
-        _gameCore.setMapsDirectory("res://../../build/assets/maps/");
+        _gameCore.setMapsDirectory("res://../../assets/maps/");
 
         _gameCore.beginParseVisitedLocation(targetMap);
         local mapClaim = null;
@@ -267,7 +269,7 @@ enum TerrainEditState{
 
     function notifyBusEvent(event, data){
         if(event == SceneEditorFramework_BusEvents.REQUEST_SAVE){
-            mTerrainChunkManager.performSave("testVillage");
+            mTerrainChunkManager.performSave(mTargetMap);
         }
     }
 
