@@ -1,0 +1,13 @@
+{
+    "unlit" :
+    {
+        "SceneEditorTool/voxelPalette" :
+        {
+            "diffuse_map0" :
+            {
+                "sampler": "gui/uiSpriteScale",
+                "texture": "voxelPalette.png"
+            }
+        }
+    }
+}

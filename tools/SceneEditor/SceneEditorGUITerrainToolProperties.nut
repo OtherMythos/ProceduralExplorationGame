@@ -56,6 +56,13 @@
         }));
         mEditTerrainColourValue_.addToLayout(layout);
 
+        local createPopup = mParent_.createButton();
+        createPopup.setText("Select voxel");
+        createPopup.attachListenerForEvent(function(widget, action){
+            ::SceneEditorVoxelSelectionPopup.showPopup();
+        }, _GUI_ACTION_PRESSED, this);
+        layout.addCell(createPopup);
+
         layout.layout();
     }
 
