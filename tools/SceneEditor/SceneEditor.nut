@@ -277,6 +277,14 @@ enum TerrainEditState{
         return mEditingTerrainMode;
     }
 
+    function getTerrainEditHeight(){
+        return mEditTerrainHeightValue;
+    }
+
+    function getTerrainEditColour(){
+        return mEditTerrainColourValue;
+    }
+
     function notifyBusEvent(event, data){
         if(event == SceneEditorFramework_BusEvents.REQUEST_SAVE){
             mTerrainChunkManager.performSave(mTargetMap);

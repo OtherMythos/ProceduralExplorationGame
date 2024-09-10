@@ -64,12 +64,16 @@
         layout.addCell(createPopup);
 
         layout.layout();
+
+        refreshButtons();
     }
 
     function refreshButtons(){
         local state = ::Base.getTerrainEditState();
         mEditTerrainHeight_.setValue(state == TerrainEditState.HEIGHT);
         mEditTerrainColour_.setValue(state == TerrainEditState.COLOUR);
+        mEditTerrainHeightValue_.setValue(::Base.getTerrainEditHeight());
+        mEditTerrainColourValue_.setValue(::Base.getTerrainEditColour());
     }
 
 };
