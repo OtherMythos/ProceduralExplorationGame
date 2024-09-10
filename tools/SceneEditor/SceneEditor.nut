@@ -33,6 +33,8 @@ enum TerrainEditState{
     mGuiInputStealerWindow_ = null
     mGuiInputStealer_ = null
 
+    mTerrainEditActive_ = false
+
     mCurrentHitPosition = Vec3()
 
     function createLights(){
@@ -205,6 +207,10 @@ enum TerrainEditState{
                     local chunkY = -point.z.tointeger();
 
                     if(_input.getMouseButton(_MB_LEFT)){
+                        if(!mTerrainEditActive_){
+                            mTerrainEditActive_ = true;
+                            mTerrainChunkManager.notifyActionStart(getTerrainEditState() == TerrainEditState.HEIGHT);
+                        }
                         if(getTerrainEditState() == TerrainEditState.HEIGHT){
                             mTerrainChunkManager.drawHeightValues(chunkX, chunkY, 1, 1, [mEditTerrainHeightValue]);
                         }
@@ -214,6 +220,10 @@ enum TerrainEditState{
                     }
                 }
             }
+        }
+        if(mTerrainEditActive_ && !_input.getMouseButton(_MB_LEFT)){
+            mTerrainEditActive_ = false;
+            mTerrainChunkManager.notifyActionEnd();
         }
     }
 

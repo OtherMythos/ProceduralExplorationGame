@@ -13,6 +13,7 @@ function start(){
     _doFile("res://SceneEditorVoxelSelectionPopup.nut");
     _doFile("res://SceneEditor.nut");
     _doFile("res://SceneEditorGUITerrainToolProperties.nut");
+    _doFile("res://actions/TerrainValueChangeAction.nut");
 
     ::Base.setup();
 }
