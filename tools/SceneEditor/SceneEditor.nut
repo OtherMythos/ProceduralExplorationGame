@@ -20,6 +20,9 @@ enum TerrainEditState{
     mParentNode = null
     mTargetMap = null
 
+    mKeyCommands = null
+    mPrevKeyCommands = null
+
     mAcceptHandle = null
 
     mTerrainChunkManager = null
@@ -55,6 +58,9 @@ enum TerrainEditState{
     }
 
     function setup(){
+        mKeyCommands = array(KeyCommand.MAX);
+        mPrevKeyCommands = array(KeyCommand.MAX);
+
         //Custom implementation of helper functions.
         ::SceneEditorFramework.HelperFunctions = {
             function sceneEditorInteractable(){
@@ -176,7 +182,44 @@ enum TerrainEditState{
         return mEditorBase.loadSceneTree(mParentNode, targetPath);
     }
 
+    function checkKeyCommands(){
+        if(_input.getRawKeycodeInput(KeyScancode.LCTRL)){
+            if(_input.getRawKeycodeInput(KeyScancode.Z)){
+                if(_input.getRawKeycodeInput(KeyScancode.LSHIFT)){
+                    if(setKeyCommand(KeyCommand.REDO)){
+                        mEditorBase.mActionStack_.redo();
+                    }
+                }else{
+                    if(setKeyCommand(KeyCommand.UNDO)){
+                        mEditorBase.mActionStack_.undo();
+                    }
+                }
+            }
+        }
+
+        resetKeyCommands_();
+    }
+
+    function resetKeyCommands_(){
+        for(local i = 0; i < mKeyCommands.len(); i++){
+            mPrevKeyCommands[i] = mKeyCommands[i];
+            mKeyCommands[i] = false;
+        }
+    }
+
+    function setKeyCommand(command){
+        if(!mKeyCommands[command]){
+            mKeyCommands[command] = true;
+            if(!mPrevKeyCommands[command]){
+                //The state has just flipped to true so fire the event.
+                return true;
+            }
+        }
+        return false;
+    }
+
     function update(){
+        checkKeyCommands();
         ::SceneEditorFPSCamera.update();
         //_input.(i, _INPUT_PRESSED)
         ::SceneEditorFPSCamera.setSpeedModifier(_input.getButtonAction(mAcceptHandle));

@@ -1,3 +1,17 @@
+enum KeyScancode{
+    LCTRL = 224,
+    LCOMMAND = 231,
+    LSHIFT = 225,
+
+    Z = 29
+};
+
+enum KeyCommand{
+    UNDO,
+    REDO,
+
+    MAX
+}
 
 function start(){
     _doFile("res://editorGUIFramework/src/EditorGUIFramework.nut");
