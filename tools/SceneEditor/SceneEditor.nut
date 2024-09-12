@@ -71,6 +71,7 @@ enum TerrainEditState{
                 local item = _gameCore.createVoxMeshItem(entryData.value);
 
                 item.setRenderQueueGroup(30);
+                item.setQueryFlags(1 << 20);
                 parentNode.attachObject(item);
             }
             function getNameForUserEntry(userId){
