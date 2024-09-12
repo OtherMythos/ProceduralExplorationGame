@@ -77,6 +77,9 @@ enum TerrainEditState{
             function getNameForUserEntry(userId){
                 return "mesh";
             }
+            function raycastForMovementGizmo(){
+                return ::Base.castRayForTerrain();
+            }
         };
 
         local saveFunction = function(){
@@ -94,6 +97,9 @@ enum TerrainEditState{
         local scaleFunction = function(){
             mEditorBase.getActiveSceneTree().setObjectTransformCoordinateType(SceneEditorFramework_BasicCoordinateType.SCALE);
         }
+        local sceneQueryFunction = function(){
+            mEditorBase.getActiveSceneTree().setObjectTransformCoordinateType(SceneEditorFramework_BasicCoordinateType.RAYCAST);
+        }
         ::guiFrameworkBase <- ::EditorGUIFramework.Base();
         ::guiFrameworkBase.setToolbar(::EditorGUIFramework.Toolbar([
             ["File", [
@@ -104,6 +110,7 @@ enum TerrainEditState{
                 ["Redo", redoFunction.bindenv(this)],
                 ["Position transform", positionFunction.bindenv(this)],
                 ["Scale transform", scaleFunction.bindenv(this)],
+                ["Terrain query transform", sceneQueryFunction.bindenv(this)],
             ]]
         ]));
         local windowListener = ::SceneEditorWindowListener();
@@ -287,12 +294,16 @@ enum TerrainEditState{
     function sceneSafeUpdate(){
         mEditorBase.sceneSafeUpdate();
 
+        mCurrentHitPosition = castRayForTerrain();
+    }
+
+    function castRayForTerrain(){
         local mousePos = Vec2(_input.getMouseX(), _input.getMouseY());
         local mouseTarget = mousePos / _window.getSize();
         local ray = _camera.getCameraToViewportRay(mouseTarget.x, mouseTarget.y);
 
         local outPos = mVisitedPlacesMapData.castRayForTerrain(ray);
-        mCurrentHitPosition = outPos;
+        return outPos;
     }
 
     function notifyFPSBegan(){
