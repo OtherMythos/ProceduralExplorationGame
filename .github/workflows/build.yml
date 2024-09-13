@@ -7,6 +7,9 @@ on:
 jobs:
   buildNativeLinux:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        buildType: [Debug, Release]
 
     steps:
       - name: Checkout
@@ -17,7 +20,7 @@ jobs:
       - name: Download artifact
         uses: dawidd6/action-download-artifact@v3
         with:
-          name: avBuiltLinux.tar.gz
+          name: avBuiltLinux-${{ matrix.buildType }}.tar.gz
           repo: OtherMythos/avBuild
           workflow: linux.yml
       - name: Expand artifact
@@ -28,17 +31,17 @@ jobs:
           mkdir -p native/build
           cd native/build
           git clone https://github.com/OtherMythos/avEngine.git /tmp/avEngine
-          cmake -DCMAKE_BUILD_TYPE=Debug -DENGINE_SOURCE_PATH=/tmp/avEngine -DAV_LIBS_DIR=${{ github.workspace }}/Debug ..
+          cmake -DCMAKE_BUILD_TYPE=${{ matrix.buildType }} -DENGINE_SOURCE_PATH=/tmp/avEngine -DAV_LIBS_DIR=${{ github.workspace }}/${{ matrix.buildType }} ..
       - name: Build
         run: |
           cd native/build
           cmake --build .
-          cp "plugin/libProceduralExplorationGamePlugin.so" "plugin/libProceduralExplorationGamePlugin_Debug-linux-x86_64.so"
+          cp "plugin/libProceduralExplorationGamePlugin.so" "plugin/libProceduralExplorationGamePlugin_${{ matrix.buildType }}-linux-x86_64.so"
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: libProceduralExplorationGamePlugin_Debug-linux-x86_64.so
-          path: "native/build/plugin/libProceduralExplorationGamePlugin_Debug-linux-x86_64.so"
+          name: libProceduralExplorationGamePlugin_${{ matrix.buildType }}-linux-x86_64.so
+          path: "native/build/plugin/libProceduralExplorationGamePlugin_${{ matrix.buildType }}-linux-x86_64.so"
 
   buildNativeWindows:
     runs-on: windows-2019
@@ -116,10 +119,15 @@ jobs:
         with:
           name: ProceduralExplorationGamePlugin_Release-windows-x86_64.dll
           path: plugins/
-      - name: Download Linux native plugin
+      - name: Download Linux Debug native plugin
         uses: actions/download-artifact@v4
         with:
           name: libProceduralExplorationGamePlugin_Debug-linux-x86_64.so
+          path: plugins/
+      - name: Download Linux Release native plugin
+        uses: actions/download-artifact@v4
+        with:
+          name: libProceduralExplorationGamePlugin_Release-linux-x86_64.so
           path: plugins/
       - name: Build
         run: |
@@ -171,12 +179,15 @@ jobs:
   buildLinux:
     runs-on: ubuntu-latest
     needs: build
+    strategy:
+      matrix:
+        buildType: [Debug, Release]
 
     steps:
       - name: Clone Build
         uses: dawidd6/action-download-artifact@v3
         with:
-          name: av-x86_64.AppImage
+          name: av-x86_64-${{ matrix.buildType }}.AppImage
           repo: OtherMythos/avEngine
           workflow: buildLinux.yml
       - name: Extract appimage
@@ -189,6 +200,14 @@ jobs:
         with:
           name: distribution-${{ needs.build.outputs.sha_short }}
           path: squashfs-root/usr/bin
+      - name: Reduce distribution
+        run: |
+          rm squashfs-root/usr/bin/plugins/*.dll
+          if [ "${{ matrix.buildType }}" == "Debug" ]; then
+            rm squashfs-root/usr/bin/plugins/*Release*
+          else
+            rm squashfs-root/usr/bin/plugins/*Debug*
+          fi
       - name: Setup appimage
         run: |
           #cd /tmp
@@ -204,12 +223,12 @@ jobs:
           #cd /tmp
           appimagetool squashfs-root
           rm -rf squashfs-root
-          mv av-x86_64.AppImage buildLinux-${{ needs.build.outputs.sha_short }}.AppImage
+          mv av-x86_64.AppImage buildLinux-${{ matrix.buildType }}-${{ needs.build.outputs.sha_short }}.AppImage
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: buildLinux-${{ needs.build.outputs.sha_short }}.AppImage
-          path: ${{ github.workspace }}/buildLinux-${{ needs.build.outputs.sha_short }}.AppImage
+          name: buildLinux-${{ matrix.buildType }}-${{ needs.build.outputs.sha_short }}.AppImage
+          path: ${{ github.workspace }}/buildLinux-${{ matrix.buildType }}-${{ needs.build.outputs.sha_short }}.AppImage
 
   runUnitTests:
     runs-on: ubuntu-latest
@@ -217,6 +236,9 @@ jobs:
     permissions:
       checks: write
       pull-requests: write
+    strategy:
+      matrix:
+        buildType: [Debug, Release]
 
     steps:
       - name: Setup OpenGL
@@ -226,7 +248,7 @@ jobs:
       - name: Clone Build
         uses: dawidd6/action-download-artifact@v3
         with:
-          name: av-x86_64.AppImage
+          name: av-x86_64-${{ matrix.buildType }}.AppImage
           repo: OtherMythos/avEngine
           workflow: buildLinux.yml
       - name: Checkout Game Code
