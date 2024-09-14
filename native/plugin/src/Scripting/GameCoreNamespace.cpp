@@ -53,6 +53,14 @@ namespace ProceduralExplorationGamePlugin{
         sq_pushinteger(vm, GAME_VERSION_PATCH);
         sq_newslot(vm,-3,SQFalse);
 
+        sq_pushstring(vm, _SC("build"), 5);
+        #ifdef _DEBUG
+            sq_pushstring(vm, _SC("Debug"), 5);
+        #else
+            sq_pushstring(vm, _SC("Release"), 7);
+        #endif
+        sq_newslot(vm,-3,SQFalse);
+
         sq_pushstring(vm, _SC("suffix"), 6);
         sq_pushstring(vm, GAME_VERSION_SUFFIX, -1);
         sq_newslot(vm,-3,SQFalse);
