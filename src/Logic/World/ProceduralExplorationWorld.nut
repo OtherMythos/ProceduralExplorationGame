@@ -441,6 +441,14 @@
         }
     }
 
+    function visitPlace(mapName){
+        local data = {
+            "mapName": mapName
+        };
+        local worldInstance = ::Base.mExplorationLogic.createWorldInstance(WorldTypes.VISITED_LOCATION_WORLD, data);
+        ::Base.mExplorationLogic.pushWorld(worldInstance);
+    }
+
     function findAllRegions(){
         foreach(c,i in mRegionEntries_){
             processFoundNewRegion(c);

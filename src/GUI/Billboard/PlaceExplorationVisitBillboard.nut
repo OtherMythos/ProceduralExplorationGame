@@ -6,12 +6,7 @@
         button.setText("Visit");
 
         button.attachListenerForEvent(function(widget, action){
-            //::Base.mExplorationLogic.gatewayEndExploration();
-            local data = {
-                "mapName": "testVillage"
-            };
-            local worldInstance = ::Base.mExplorationLogic.createWorldInstance(WorldTypes.VISITED_LOCATION_WORLD, data);
-            ::Base.mExplorationLogic.pushWorld(worldInstance);
+            ::Base.mExplorationLogic.mCurrentWorld_.visitPlace("testVillage");
         }, _GUI_ACTION_PRESSED, this);
 
         button.setZOrder(BillboardZOrder.BUTTON);
