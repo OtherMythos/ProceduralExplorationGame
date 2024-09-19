@@ -292,6 +292,7 @@
 
             local item = _scene.createItem(i);
             item.setRenderQueueGroup(30);
+            item.setCastsShadows(false);
             local landNode = regionNode.createChildSceneNode();
             landNode.attachObject(item);
             landNode.setScale(1, 1, PROCEDURAL_WORLD_UNIT_MULTIPLIER);
