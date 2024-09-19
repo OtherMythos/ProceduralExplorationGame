@@ -6,7 +6,7 @@ on:
 
 jobs:
   buildNativeLinux:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         buildType: [Debug, Release]
@@ -177,7 +177,7 @@ jobs:
           path: ${{ github.workspace }}
 
   buildLinux:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: build
     strategy:
       matrix:
@@ -231,7 +231,7 @@ jobs:
           path: ${{ github.workspace }}/buildLinux-${{ matrix.buildType }}-${{ needs.build.outputs.sha_short }}.AppImage
 
   runUnitTests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: build
     permissions:
       checks: write
