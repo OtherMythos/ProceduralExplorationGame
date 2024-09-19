@@ -29,7 +29,7 @@
 		uint originalSecond = floatBitsToUint(inValues.y);
 	@end
 
-	uint magicNumber = originalSecond & 0x1FFFFFFF;
+	uint magicNumber = originalSecond & uint(0x1FFFFFFF);
 	float3 normVal = float3(0, 0, 0);
 	#undef inVs_normal
 	#define inVs_normal normVal
@@ -37,20 +37,20 @@
 	#undef inVs_vertex
 	#define inVs_vertex inValues
 
-	if(magicNumber == 0x15FBF7DB || magicNumber == 0x15FBB7DB){
+	if(magicNumber == uint(0x15FBF7DB) || magicNumber == uint(0x15FBB7DB)){
 		int offset = 0;
-		if(magicNumber == 0x15FBB7DB){
+		if(magicNumber == uint(0x15FBB7DB)){
 			offset = 128;
 		}
-		int pos_x = int(original & 0x3FF) - offset;
-		int pos_y = int((original >> 10) & 0x3FF) - offset;
-		int pos_z = int((original >> 20) & 0x3FF) - offset;
+		int pos_x = int(original & uint(0x3FF)) - offset;
+		int pos_y = int((original >> 10) & uint(0x3FF)) - offset;
+		int pos_z = int((original >> 20) & uint(0x3FF)) - offset;
 		inValues.x = float(pos_x)-0.5;
 		inValues.y = float(pos_y)-0.5;
 		inValues.z = float(pos_z)-0.5;
 
-		uint norm = uint((originalSecond >> 29) & 0x3);
-		uint ambient = uint((original >> 30) & 0x3);
+		uint norm = uint((originalSecond >> 29) & uint(0x3));
+		uint ambient = uint((original >> 30) & uint(0x3));
 
 		normVal = FACES_NORMALS[norm];
 
