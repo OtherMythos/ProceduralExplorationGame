@@ -231,7 +231,7 @@ jobs:
           path: ${{ github.workspace }}/buildLinux-${{ matrix.buildType }}-${{ needs.build.outputs.sha_short }}.AppImage
 
   runUnitTests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     needs: build
     permissions:
       checks: write
