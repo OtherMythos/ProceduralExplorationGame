@@ -191,9 +191,9 @@ enum TerrainEditState{
     }
 
     function checkKeyCommands(){
-        if(_input.getRawKeycodeInput(KeyScancode.LCTRL)){
-            if(_input.getRawKeycodeInput(KeyScancode.Z)){
-                if(_input.getRawKeycodeInput(KeyScancode.LSHIFT)){
+        if(_input.getRawKeyScancodeInput(KeyScancode.LCTRL)){
+            if(_input.getRawKeyScancodeInput(KeyScancode.Z)){
+                if(_input.getRawKeyScancodeInput(KeyScancode.LSHIFT)){
                     if(setKeyCommand(KeyCommand.REDO)){
                         mEditorBase.mActionStack_.redo();
                     }
