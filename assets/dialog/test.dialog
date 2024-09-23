@@ -7,6 +7,17 @@
 
     <b id = "1">
         <ts>This is text in the next block</ts>
+        <option>
+            <ts id="2">first option</ts>
+            <ts id="3">second option</ts>
+        </option>
+    </b>
+
+    <b id = "2">
+        <ts>You picked the first dialog option!</ts>
+    </b>
+    <b id = "3">
+        <ts>You picked the second dialog option!</ts>
     </b>
 
 </Dialog_Script>

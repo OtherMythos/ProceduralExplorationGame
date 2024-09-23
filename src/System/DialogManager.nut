@@ -21,7 +21,7 @@
     }
 
     function __DOption(options){
-
+        _event.transmit(Event.DIALOG_OPTION, options);
     }
 
     function notifyDialogStart(){
