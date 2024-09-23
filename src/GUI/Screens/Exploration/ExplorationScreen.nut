@@ -12,6 +12,7 @@ enum ExplorationBusEvents{
     mExplorationEnemiesContainer_ = null;
     mExplorationMovesContainer_ = null;
     mExplorationStatsContainer_ = null;
+    mExplorationPlayerActionsContainer_ = null;
     mMoneyCounter_ = null;
     mExplorationBus_ = null;
     mPlaceHelperLabel_ = null;
@@ -108,6 +109,8 @@ enum ExplorationBusEvents{
             mExplorationMovesContainer_.setSize(400, 100);
         }
         mWorldMapDisplay_.addToLayout(layoutLine);
+
+        mExplorationPlayerActionsContainer_ = ExplorationPlayerActionsContainer(mWindow_);
 
         local layoutSize = _window.getSize();
         layoutLine.setHardMaxSize(layoutSize);
@@ -307,9 +310,10 @@ enum ExplorationBusEvents{
     }
 };
 
-_doFile("res://src/GUI/Screens/Exploration/ExplorationWorldMapDisplay.nut");
-_doFile("res://src/GUI/Screens/Exploration/ExplorationMovesContainer.nut");
-_doFile("res://src/GUI/Screens/Exploration/ExplorationEndScreen.nut");
-_doFile("res://src/GUI/Screens/Exploration/ExplorationPlayerDeathScreen.nut");
-_doFile("res://src/GUI/Screens/Exploration/ExplorationStatsContainer.nut");
-_doFile("res://src/GUI/Screens/Exploration/ExplorationTooltipManager.nut");
+_doFile("script://ExplorationWorldMapDisplay.nut");
+_doFile("script://ExplorationMovesContainer.nut");
+_doFile("script://ExplorationEndScreen.nut");
+_doFile("script://ExplorationPlayerDeathScreen.nut");
+_doFile("script://ExplorationStatsContainer.nut");
+_doFile("script://ExplorationTooltipManager.nut");
+_doFile("script://ExplorationPlayerActionsContainer.nut");

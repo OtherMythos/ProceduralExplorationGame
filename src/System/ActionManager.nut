@@ -46,7 +46,7 @@ These actions might be things like 'talk', 'buy things from', etc.
         function _tostring(){
             if(mData.len() <= 0) return " ";
 
-            return ActionSlotTypeString[mTypes[0]];
+            return ::ActionSlotTypeString[mTypes[0]];
         }
     }
 

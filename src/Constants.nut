@@ -267,7 +267,7 @@ enum ActionSlotType{
     TALK_TO,
 };
 
-ActionSlotTypeString <- [
+::ActionSlotTypeString <- [
     "None",
     "Talk",
 ];
