@@ -924,6 +924,11 @@ enum WorldMousePressContexts{
         if(target == null) return;
         createEnemy(enemyType, target);
     }
+    function createNPC(pos){
+        local enemyEntry = mEntityFactory_.constructNPCCharacter(pos);
+        mActiveEnemies_.rawset(enemyEntry.mEntity_, enemyEntry);
+        return enemyEntry;
+    }
 
     function moveEnemyToPlayer(enemyId){
         local enemyEntry = mActiveEnemies_[enemyId];

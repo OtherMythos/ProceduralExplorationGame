@@ -14,24 +14,27 @@
         return mConstructorWorld_.getZForPos(pos);
     }
 
-    function constructNPCCharacter(){
-        local en = _entity.create(SlotPosition());
-        if(!en.valid()) throw "Error creating entity";
-        local playerEntry = ActiveEnemyEntry(mConstructorWorld_, EnemyId.NONE, Vec3(0, 0, 0), en);
+    function constructNPCCharacter(pos){
+        local manager = mConstructorWorld_.getEntityManager();
+        local zPos = getZForPos(pos);
+        local targetPos = Vec3(pos.x, zPos, pos.z);
+        local en = manager.createEntity(targetPos);
+
+        local playerEntry = ActiveEnemyEntry(mConstructorWorld_, EnemyId.NONE, targetPos, en);
 
         local playerNode = mBaseSceneNode_.createChildSceneNode();
         local playerModel = mCharacterGenerator_.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, 30);
         playerNode.setScale(0.5, 0.5, 0.5);
-        _component.sceneNode.add(en, playerNode);
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](playerNode));
         playerEntry.setModel(playerModel);
 
-        local equipped = ::Combat.EquippedItems();
-        local targetItem = ::Item(ItemId.SIMPLE_TWO_HANDED_SWORD);
-        equipped.setEquipped(targetItem, EquippedSlotTypes.LEFT_HAND);
-        //local combatData = ::Combat.CombatStats(EnemyId.NONE, 0, equipped);
-        playerEntry.setTargetCollisionWorld(_COLLISION_ENEMY);
+        local triggerWorld = mConstructorWorld_.getTriggerWorld();
+        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.NPC_INTERACT, en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
 
-        playerEntry.setId(-1);
+        manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](::BasicEnemyScript(en)));
+
+        playerEntry.setPosition(targetPos);
 
         return playerEntry;
     }

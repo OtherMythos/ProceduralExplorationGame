@@ -62,6 +62,7 @@ function update(eid){
 }
 
 function destroyed(eid){
+    //TODO This is responsible for calling destruction for models, which breaks from the ECS design pattern.
     ::Base.mExplorationLogic.notifyEnemyDestroyed(eid);
 }
 

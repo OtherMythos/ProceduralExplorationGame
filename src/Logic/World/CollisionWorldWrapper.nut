@@ -6,6 +6,7 @@ enum CollisionWorldTriggerResponses{
     BASIC_ENEMY_RECEIVE_PLAYER_SPOTTED,
     BASIC_ENEMY_PLAYER_TARGET_RADIUS,
     DIE,
+    NPC_INTERACT,
 
     MAX = 100
 };
@@ -122,6 +123,11 @@ enum CollisionWorldTriggerResponses{
             if(collisionStatus != 0x1) return;
             local manager = world.getEntityManager();
             manager.destroyEntity(entityId);
+        });
+        mTriggerResponses_[CollisionWorldTriggerResponses.NPC_INTERACT] <- TriggerResponse(function(world, entityId, second, collisionStatus){
+            if(collisionStatus != 0x1) return;
+            //TODO temporary
+            ::Base.mDialogManager.beginExecuting("res://assets/dialog/test.dialog");
         });
     }
 
