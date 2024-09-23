@@ -253,6 +253,14 @@
         _state.setPauseState(0x0);
     }
 
+    function beginDialog(path, targetBlock=0){
+        ::Base.mDialogManager.beginExecuting(path, targetBlock);
+        pauseExploration();
+    }
+    function notifyDialogEnded(){
+        unPauseExploration();
+    }
+
     function notifyPlaceEnterState(id, entered){
         local placeEntry = mCurrentWorld_.mActivePlaces_[id];
         local firstTime = !placeEntry.mEncountered_;

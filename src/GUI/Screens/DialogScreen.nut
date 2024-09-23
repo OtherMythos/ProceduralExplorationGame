@@ -18,11 +18,17 @@
     }
 
     function nextButtonPressed(widget, action){
+        requestNextDialog();
+    }
+
+    function requestNextDialog(){
         ::Base.mDialogManager.notifyProgress();
     }
 
     function setup(data){
         base.setup(data);
+
+        ::InputManager.setActionSet(InputActionSets.DIALOG);
 
         _event.subscribe(Event.DIALOG_SPOKEN, receiveDialogSpokenEvent, this);
         _event.subscribe(Event.DIALOG_META, receiveDialogMetaEvent, this);
@@ -31,8 +37,16 @@
     function shutdown(){
         base.shutdown();
 
+        ::InputManager.setActionSet(InputActionSets.EXPLORATION);
+
         _event.unsubscribe(Event.DIALOG_SPOKEN, receiveDialogSpokenEvent, this);
         _event.unsubscribe(Event.DIALOG_META, receiveDialogMetaEvent, this);
+    }
+
+    function update(){
+        if(_input.getButtonAction(::InputManager.dialogNext, _INPUT_PRESSED)){
+            requestNextDialog();
+        }
     }
 
     function recreate(){

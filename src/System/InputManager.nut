@@ -33,6 +33,11 @@
                     "MoveRight": "#MoveRight",
                 }
             },
+            "Dialog" : {
+                "Buttons" : {
+                    "Next": "#Next"
+                }
+            },
             "DebugConsole" : {
                 "Buttons" : {
                     "closeConsole": "#closeConsole"
@@ -42,10 +47,12 @@
 
         ::InputManager.actionSetGameplay <- _input.getActionSetHandle("Exploration");
         ::InputManager.actionSetMenu <- _input.getActionSetHandle("Menu");
+        ::InputManager.actionSetDialog <- _input.getActionSetHandle("Dialog");
         ::InputManager.actionSetDebugConsole <- _input.getActionSetHandle("DebugConsole");
 
         mActionSets_.append(::InputManager.actionSetGameplay);
         mActionSets_.append(::InputManager.actionSetMenu);
+        mActionSets_.append(::InputManager.actionSetDialog);
         mActionSets_.append(::InputManager.actionSetDebugConsole);
 
         //Exploration
@@ -62,6 +69,8 @@
         ::InputManager.toggleWieldActive <- _input.getButtonActionHandle("toggleWieldActive");
         ::InputManager.pauseGame <- _input.getButtonActionHandle("PauseGame");
         ::InputManager.showDebugConsole <- _input.getButtonActionHandle("ShowDebugConsole");
+
+        ::InputManager.dialogNext <- _input.getButtonActionHandle("Next");
 
         ::InputManager.menuInteract <- _input.getButtonActionHandle("MenuInteract");
         ::InputManager.menuBack <- _input.getButtonActionHandle("MenuBack");
@@ -81,6 +90,7 @@
         //_input.mapControllerInput(_BT_LEFT, this.performMove3);
         //_input.mapControllerInput(_BT_RIGHT, this.performMove4);
         _input.mapControllerInput(_B_GUIDE, this.pauseGame);
+        _input.mapControllerInput(_B_A, this.dialogNext);
 
         _input.mapControllerInput(_B_B, this.menuBack);
 
@@ -98,6 +108,8 @@
         _input.mapKeyboardInput(_K_R, this.toggleWieldActive);
         _input.mapKeyboardInput(_K_ESCAPE, this.pauseGame);
         _input.mapKeyboardInput(_K_TAB, this.showDebugConsole);
+
+        _input.mapKeyboardInput(_K_Z, this.dialogNext);
 
         _input.mapKeyboardInput(_K_ESCAPE, this.menuBack);
 

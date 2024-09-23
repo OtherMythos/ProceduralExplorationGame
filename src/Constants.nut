@@ -40,6 +40,7 @@ enum DebugOverlayId{
 enum InputActionSets{
     EXPLORATION,
     MENU,
+    DIALOG,
     DEBUG_CONSOLE,
 
     MAX

@@ -88,7 +88,8 @@ These actions might be things like 'talk', 'buy things from', etc.
         local data = target.mData[0];
         switch(target.mTypes[0]){
             case ActionSlotType.TALK_TO:{
-                ::Base.mDialogManager.beginExecuting("res://assets/dialog/test.dialog");
+                //::Base.mDialogManager.beginExecuting("res://assets/dialog/test.dialog");
+                ::Base.mExplorationLogic.beginDialog("res://assets/dialog/test.dialog");
                 break;
             }
             default:{
