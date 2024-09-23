@@ -287,6 +287,7 @@ enum WorldMousePressContexts{
             "dash": _input.getButtonActionHandle("Dash"),
             "canceltarget": _input.getButtonActionHandle("CancelTarget"),
             "showInventory": _input.getButtonActionHandle("ShowInventory"),
+            "interact": _input.getButtonActionHandle("Interact"),
             "toggleWieldActive": _input.getButtonActionHandle("toggleWieldActive"),
             "pauseGame": _input.getButtonActionHandle("PauseGame"),
             "showDebugConsole": _input.getButtonActionHandle("ShowDebugConsole"),
@@ -992,6 +993,9 @@ enum WorldMousePressContexts{
         }
         if(_input.getButtonAction(mInputs_.showInventory, _INPUT_PRESSED)){
             showInventory();
+        }
+        if(_input.getButtonAction(mInputs_.interact, _INPUT_PRESSED)){
+            ::Base.mActionManager.executeSlot(0);
         }
         if(_input.getButtonAction(mInputs_.toggleWieldActive, _INPUT_PRESSED)){
             ::Base.mPlayerStats.toggleWieldActive();

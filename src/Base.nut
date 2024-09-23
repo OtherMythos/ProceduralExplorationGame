@@ -9,6 +9,7 @@
     mInputManager = null
     mSaveManager = null
     mGameProfiles_ = null
+    mActionManager = null
 
     mTargetInterface_ = TargetInterface.DESKTOP
     mFullscreenMode_ = FullscreenMode.WINDOWED
@@ -153,6 +154,9 @@
         _doFile("res://src/System/Save/Parsers/SaveFileParser.nut");
         _doFile("res://src/System/Save/SaveManager.nut");
         mSaveManager = ::SaveManager();
+
+        _doFile("res://src/System/ActionManager.nut");
+        mActionManager = ::ActionManager();
 
         _doFile("res://src/MapGen/Exploration/Generator/Biomes.nut");
         _doFile("res://src/MapGen/Exploration/Generator/MapGen.nut");

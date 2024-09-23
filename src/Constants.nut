@@ -18,6 +18,8 @@ const INVALID_LAND_ID = 0xFF;
 const INVALID_WATER_ID = 0xFF;
 const INVALID_WORLD_POINT = 0xFFFFFFFF;
 
+const ACTION_MANAGER_NUM_SLOTS = 2;
+
 enum FullscreenMode{
     WINDOWED,
     BORDERLESS_FULLSCREEN
@@ -146,6 +148,9 @@ enum Event{
     PLACE_DISCOVERED = 1018,
     PLAYER_EQUIP_CHANGED = 1019,
     PLAYER_WIELD_ACTIVE_CHANGED = 1020,
+
+    ACTIONS_CHANGED = 1021,
+
 }
 
 enum FoundObjectType{
@@ -256,6 +261,16 @@ enum WorldDistractionType{
     HEALTH_ORB,
     EXP_ORB
 };
+
+enum ActionSlotType{
+    NONE,
+    TALK_TO,
+};
+
+ActionSlotTypeString <- [
+    "None",
+    "Talk",
+];
 
 //Characters --------
 enum CharacterModelType{

@@ -127,7 +127,7 @@ enum CollisionWorldTriggerResponses{
         mTriggerResponses_[CollisionWorldTriggerResponses.NPC_INTERACT] <- TriggerResponse(function(world, entityId, second, collisionStatus){
             if(collisionStatus != 0x1) return;
             //TODO temporary
-            ::Base.mDialogManager.beginExecuting("res://assets/dialog/test.dialog");
+            ::Base.mActionManager.registerAction(ActionSlotType.TALK_TO, 0, 20, entityId);
         });
     }
 
