@@ -21,6 +21,7 @@
 
 ::SaveManager <- class{
 
+    #Static
     mParsers_ = [];
     mParserLookups_ = {};
 

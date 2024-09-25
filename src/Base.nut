@@ -6,6 +6,7 @@
 
     mPlayerStats = null
     mDialogManager = null
+    mQuestManager = null
     mInputManager = null
     mSaveManager = null
     mGameProfiles_ = null
@@ -144,6 +145,9 @@
 
         _doFile("res://src/System/DialogManager.nut");
         mDialogManager = DialogManager();
+
+        _doFile("res://src/System/Quest/QuestManager.nut");
+        mQuestManager = QuestManager();
 
         _doFile("res://src/System/Inventory.nut");
 
