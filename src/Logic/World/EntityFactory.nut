@@ -28,10 +28,6 @@
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](playerNode));
         playerEntry.setModel(playerModel);
 
-        local triggerWorld = mConstructorWorld_.getTriggerWorld();
-        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.NPC_INTERACT, en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
-        manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
-
         manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](::BasicEnemyScript(en)));
 
         playerEntry.setPosition(targetPos);

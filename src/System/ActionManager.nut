@@ -89,7 +89,7 @@ These actions might be things like 'talk', 'buy things from', etc.
         switch(target.mTypes[0]){
             case ActionSlotType.TALK_TO:{
                 //::Base.mDialogManager.beginExecuting("res://assets/dialog/test.dialog");
-                ::Base.mExplorationLogic.beginDialog("res://assets/dialog/test.dialog");
+                ::Base.mExplorationLogic.beginDialog(data.path, data.block);
                 break;
             }
             default:{

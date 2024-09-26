@@ -16,6 +16,7 @@ enum EntityComponents{
     SPOILS,
     PROXIMITY,
     DATABLOCK,
+    DIALOG,
 
     MAX
 

@@ -157,3 +157,15 @@
     }
 
 };
+
+::EntityManager.Components[EntityComponents.DIALOG] = class extends ::EntityManager.Component{
+
+    mDialogPath = null;
+    mInitialBlock = null;
+
+    constructor(dialogPath, initialBlock){
+        mDialogPath = dialogPath;
+        mInitialBlock = initialBlock;
+    }
+
+};

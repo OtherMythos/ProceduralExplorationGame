@@ -147,6 +147,7 @@
         mDialogManager = DialogManager();
 
         _doFile("res://src/System/Quest/QuestManager.nut");
+        _doFile("res://src/System/Quest/Quest.nut");
         mQuestManager = QuestManager();
 
         _doFile("res://src/System/Inventory.nut");

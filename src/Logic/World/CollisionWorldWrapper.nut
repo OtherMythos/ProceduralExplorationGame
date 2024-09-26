@@ -125,9 +125,16 @@ enum CollisionWorldTriggerResponses{
             manager.destroyEntity(entityId);
         });
         mTriggerResponses_[CollisionWorldTriggerResponses.NPC_INTERACT] <- TriggerResponse(function(world, entityId, second, collisionStatus){
-            //TODO temporary
             if(collisionStatus == 0x1){
-                ::Base.mActionManager.registerAction(ActionSlotType.TALK_TO, 0, 20, entityId);
+                local manager = world.getEntityManager();
+                assert(manager.hasComponent(entityId, EntityComponents.DIALOG));
+                local comp = manager.getComponent(entityId, EntityComponents.DIALOG);
+                local data = {
+                    "path": comp.mDialogPath,
+                    "block": comp.mInitialBlock
+                };
+
+                ::Base.mActionManager.registerAction(ActionSlotType.TALK_TO, 0, data, entityId);
             }else if(collisionStatus == 0x2){
                 ::Base.mActionManager.unsetAction(0, entityId);
             }
