@@ -56,13 +56,16 @@
         return outTable;
     }
 
-    function registerValue(id, entry, size, shift){
+    function registerValue(id, name, entry, size, shift){
         local targetEntry = mEntries_[entry];
         mValues_[id] = {
             "size": size,
             "shift": shift,
-            "entry": entry
+            "entry": entry,
+            "name": name
         };
+
+        mirrorToRegistry_(name, 0, size == 1);
     }
 
     function readValue(id){
@@ -74,13 +77,29 @@
         return foundVal;
     }
 
+    function mirrorToRegistry_(name, value, boolean=false){
+        local writeValue = value;
+        if(boolean && typeof writeValue == "integer"){
+            writeValue = (writeValue > 0);
+        }
+        local registryName = format("Q.%s.%s", mName_, name);
+        _registry.set(registryName, writeValue);
+    }
+
     function setValue(id, value){
         local v = mValues_[id];
         local e = mEntries_[v.entry];
         local data = e.data;
 
+        local writeValue = value;
+        if(typeof value == "bool"){
+            writeValue = value ? 1 : 0;
+        }
+
         local clampMask = ((1 << v.size)-1) << v.shift;
-        e.data = data | ((value << v.shift) & clampMask);
+        e.data = data | ((writeValue << v.shift) & clampMask);
+
+        mirrorToRegistry_(v.name, writeValue, v.size == 1);
     }
 
     function setBoolean(id, value){

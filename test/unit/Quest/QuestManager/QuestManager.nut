@@ -30,10 +30,10 @@ enum QuestValue_TestQuestMultiEntry{
         local metaEntry = registerEntry("meta");
 
         //Register the values for the specific entries in the quest file.
-        registerValue(QuestValue_TestQuest.FIRST, metaEntry, 1, 0);
-        registerValue(QuestValue_TestQuest.SECOND, metaEntry, 1, 1);
-        registerValue(QuestValue_TestQuest.THIRD, metaEntry, 4, 2);
-        registerValue(QuestValue_TestQuest.FOURTH, metaEntry, 2, 6);
+        registerValue(QuestValue_TestQuest.FIRST, "first", metaEntry, 1, 0);
+        registerValue(QuestValue_TestQuest.SECOND, "second", metaEntry, 1, 1);
+        registerValue(QuestValue_TestQuest.THIRD, "third", metaEntry, 4, 2);
+        registerValue(QuestValue_TestQuest.FOURTH, "fourth", metaEntry, 2, 6);
     }
 
 }
@@ -48,15 +48,15 @@ enum QuestValue_TestQuestMultiEntry{
         local metaSecondEntry = registerEntry("metaSecond");
 
         //Register the values for the specific entries in the quest file.
-        registerValue(QuestValue_TestQuestMultiEntry.METAFIRST_FIRST, metaFirstEntry, 1, 0);
-        registerValue(QuestValue_TestQuestMultiEntry.METAFIRST_SECOND, metaFirstEntry, 1, 1);
-        registerValue(QuestValue_TestQuestMultiEntry.METAFIRST_THIRD, metaFirstEntry, 4, 2);
-        registerValue(QuestValue_TestQuestMultiEntry.METAFIRST_FOURTH, metaFirstEntry, 2, 6);
+        registerValue(QuestValue_TestQuestMultiEntry.METAFIRST_FIRST, "metafirst_first", metaFirstEntry, 1, 0);
+        registerValue(QuestValue_TestQuestMultiEntry.METAFIRST_SECOND, "metafirst_second", metaFirstEntry, 1, 1);
+        registerValue(QuestValue_TestQuestMultiEntry.METAFIRST_THIRD, "metafirst_third", metaFirstEntry, 4, 2);
+        registerValue(QuestValue_TestQuestMultiEntry.METAFIRST_FOURTH, "metafirst_fourth", metaFirstEntry, 2, 6);
 
-        registerValue(QuestValue_TestQuestMultiEntry.METASECOND_FIRST, metaSecondEntry, 1, 0);
-        registerValue(QuestValue_TestQuestMultiEntry.METASECOND_SECOND, metaSecondEntry, 1, 1);
-        registerValue(QuestValue_TestQuestMultiEntry.METASECOND_THIRD, metaSecondEntry, 4, 2);
-        registerValue(QuestValue_TestQuestMultiEntry.METASECOND_FOURTH, metaSecondEntry, 2, 6);
+        registerValue(QuestValue_TestQuestMultiEntry.METASECOND_FIRST, "metasecond_first", metaSecondEntry, 1, 0);
+        registerValue(QuestValue_TestQuestMultiEntry.METASECOND_SECOND, "metasecond_second", metaSecondEntry, 1, 1);
+        registerValue(QuestValue_TestQuestMultiEntry.METASECOND_THIRD, "metasecond_third", metaSecondEntry, 4, 2);
+        registerValue(QuestValue_TestQuestMultiEntry.METASECOND_FOURTH, "metasecond_fourth", metaSecondEntry, 2, 6);
     }
 
 }

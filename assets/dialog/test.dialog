@@ -1,23 +1,88 @@
 <Dialog_Script>
-    <b id = "0">
-        <ts>First text entry</ts>
-        <ts>Second text entry</ts>
-        <jmp id="1" />
-    </b>
 
-    <b id = "1">
-        <ts>This is text in the next block</ts>
+    <script path = "res://src/Content/DialogHelpers.nut" id = "0"/>
+
+<!-- Old man Entry -->
+<b id = "0">
+    <switch>
+        <case test="$Q.Inheritance.moneyClaimed$" id="10"/>
+    </switch>
+    <jmp id="1" />
+</b>
+<!-- Old man Entry -->
+
+<!-- Peter Entry -->
+<b id = "100">
+    <ts>Hello! I'm Peter. Hope you're having a good day!</ts>
+    <switch>
+        <case test="$Q.Inheritance.moneyClaimed$" id="111"/>
+    </switch>
+    <jmp id="110" />
+</b>
+<!-- Peter Entry -->
+
+<!-- Old man -->
+
+    <!-- Money not claimed -->
+        <b id = "1">
+            <ts>Hey! I remember you!</ts>
+            <ts>You're my favourite grandchild in the whole world. How could I forget!</ts>
+            <ts>Speaking of which I have your inheritance here! I was meaning to give it to you.</ts>
+            <ts>I'm just so forgetful these days!</ts>
+            <option>
+                <ts id="2">Don't know you</ts>
+                <ts id="3">Oh yeh, gimmie</ts>
+            </option>
+        </b>
+
+        <b id = "2">
+            <ts>Don't be silly! I'd never forget my own grandchild.</ts>
+            <ts>Take this money or I'll be forced to give it to someone like your uncle Albert.</ts>
+            <jmp id="4" />
+        </b>
+
+        <b id = "3">
+            <ts>Don't spend it all in one place like your uncle Albert did. What a moron.</ts>
+            <jmp id="4" />
+        </b>
+
+        <b id = "4">
+            <ts>The old man moves surprisingly quickly and shovels the money into your pocket.</ts>
+            <ts>Here you go Peter, make sure you spend it well.</ts>
+            <script id = "0" func = "givePlayerMoney" v1="100"/>
+            <script id = "0" func = "setQuestValue" v1="Inheritance" v2="0" v3="true"/>
+        </b>
+    <!-- Money not claimed -->
+
+    <!-- Money claimed but not returned -->
+        <b id = "10">
+            <ts>Hello Peter! I hope you're enjoying your inheritance money.</ts>
+            <ts>You are my favourite grandchild after all! I would hate for the wrong person to get it!</ts>
+        </b>
+    <!-- Money claimed but not returned -->
+
+<!-- Old man -->
+
+<!-- Peter -->
+    <b id = "110">
         <option>
-            <ts id="2">first option</ts>
-            <ts id="3">second option</ts>
+            <ts id="112">This is a nice town</ts>
+        </option>
+    </b>
+    <b id = "111">
+        <option>
+            <ts id="112">This is a nice town</ts>
+            <ts id="113">Your forgetful relative gave me some money</ts>
         </option>
     </b>
 
-    <b id = "2">
-        <ts>You picked the first dialog option!</ts>
+    <b id = "112">
+        <ts>Yes it is! My grandparents helped built it. Now only grandad is left, he's quite sick at the moment.</ts>
     </b>
-    <b id = "3">
-        <ts>You picked the second dialog option!</ts>
+    <b id = "113">
+        <ts>Really! You mean grandad probably, he's always been quite forgetful.</ts>
+        <ts>Thank you very much for returning it to me!</ts>
     </b>
+<!-- Peter Entry -->
 
 </Dialog_Script>
