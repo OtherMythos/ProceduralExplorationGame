@@ -15,6 +15,7 @@
 <b id = "100">
     <ts>Hello! I'm Peter. Hope you're having a good day!</ts>
     <switch>
+        <case test="$Q.Inheritance.moneyReturned$" id="110"/>
         <case test="$Q.Inheritance.moneyClaimed$" id="111"/>
     </switch>
     <jmp id="110" />
@@ -81,7 +82,27 @@
     </b>
     <b id = "113">
         <ts>Really! You mean grandad probably, he's always been quite forgetful.</ts>
+        <!-- Check if the player has enough money -->
+        <script id = "0" func = "checkPlayerMoney" v1="100" block="114"/>
+        <!-- Player is too poor -->
+        <jmp id="116"/>
+    </b>
+
+    <b id="114">
         <ts>Thank you very much for returning it to me!</ts>
+        <ts>Speaking of which, I also inherited this ancient sword. It's no use to me, maybe you can have it?</ts>
+        <script id = "0" func = "checkPlayerFreeInventorySlot" block="115"/>
+        <ts>Oops, you don't seem to have enough room in your inventory.</ts>
+    </b>
+
+    <b id="115">
+        <script id = "0" func = "changePlayerMoney" v1="-100"/>
+        <script id = "0" func = "givePlayerItem" v1="Simple Sword"/>
+        <script id = "0" func = "setQuestValue" v1="Inheritance" v2="1" v3="true"/>
+    </b>
+
+    <b id="116">
+        <ts>You don't actually have the money on you though. Where's my inheritance gone!</ts>
     </b>
 <!-- Peter Entry -->
 

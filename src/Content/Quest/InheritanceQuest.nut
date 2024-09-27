@@ -2,6 +2,7 @@
 
 enum QuestValue_InheritanceQuest{
     MONEY_CLAIMED,
+    MONEY_RETURNED,
 
     MAX
 };
@@ -15,6 +16,7 @@ enum QuestValue_InheritanceQuest{
         local metaEntry = registerEntry("meta");
 
         registerValue(QuestValue_InheritanceQuest.MONEY_CLAIMED, "moneyClaimed", metaEntry, 1, 0);
+        registerValue(QuestValue_InheritanceQuest.MONEY_RETURNED, "moneyReturned", metaEntry, 1, 1);
     }
 
 }

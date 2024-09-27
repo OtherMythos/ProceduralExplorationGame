@@ -53,8 +53,12 @@
     }
 
     function addMoney(money){
-        print(format("Adding %i to %i money, new is %i", money, mMoney_, mMoney_+money));
-        mMoney_ += money;
+        changeMoney(money);
+    }
+    function changeMoney(change){
+        print(format("Changing money by %i from %i, new is %i", change, mMoney_, mMoney_+change));
+        mMoney_ += change;
+        if(mMoney_ < 0) mMoney_ = 0;
         _event.transmit(Event.MONEY_CHANGED, mMoney_);
     }
 
@@ -64,6 +68,10 @@
             if(i == null) num++;
         }
         return num;
+    }
+
+    function hasFreeSlot(){
+        return getNumSlotsFree() > 0;
     }
 
     function getInventorySize(){

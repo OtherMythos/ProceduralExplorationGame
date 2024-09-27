@@ -103,3 +103,10 @@ variationSeed: %i";
     }
     return format("Discovered region %i", regionId);
 });
+
+::DebugConsole.registerCommand("money", "Change the value of the player's money by x amount", 1, "i", function(command){
+    local moneyAmount = command[0].tointeger();
+    ::Base.mPlayerStats.mInventory_.changeMoney(moneyAmount);
+
+    return format("Giving player '%i' money", moneyAmount);
+});
