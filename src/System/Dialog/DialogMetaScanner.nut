@@ -1,27 +1,17 @@
 ::DialogManager.DialogMetaScanner <- class{
 
-    /**
-    Parse rich text values from a dialog string.
-    */
-    function getRichText(dialog){
-        local doneArray = [];
+    #Static
+    mRichTextTypes_ = {}
 
-        local currentStart = 0;
-        local outContainer = array(2);
-
-        while(true){
-            local result = getRichTextEntry(dialog, currentStart, outContainer);
-            if(result < 0) break;
-
-            //doneArray.push( [outContainer[0], outContainer[1]] );
-            local targetColour = "0 0 0 1";
-            if(outContainer[1] == "10") targetColour = "1 0 0 1";
-            doneArray.push( {"offset": currentStart, "len": result - currentStart, "col": targetColour} );
-
-            currentStart = result;
+    RichTextType = class{
+        mColour_ = null;
+        constructor(colour=null){
+            mColour_ = colour;
         }
 
-        return doneArray;
+        function getColour(){
+            return mColour_ == null ? "1 1 1 1" : mColour_;
+        }
     }
 
     /**
@@ -32,7 +22,7 @@
     Second is the rich text array.
     @returns True if a rich text value was found and false if not.
     */
-    function getRichTextDevel(dialog, out){
+    function getRichText(dialog, out){
         out[0] = null;
         out[1] = null;
 
@@ -67,9 +57,10 @@
             local strippedEnd = strippedText.len();
 
             local targetColour = "1 1 1 1";
-            if(outContainer[1] == "10") targetColour = "1 0 1 1";
-            if(outContainer[1] == "20") targetColour = "1 0 0 1";
+            targetColour = getColourForRichText_(outContainer[1]);
             richTextEntries.push( {"offset": strippedStart, "len": strippedEnd - strippedStart, "col": targetColour} );
+
+            //TODO allow for animations to be described by rich text entries.
 
             //So it's not inclusive.
             currentStart = result+1;
@@ -79,6 +70,14 @@
         out[1] = richTextEntries;
 
         return foundEntry;
+    }
+
+    function getColourForRichText_(id){
+        if(!mRichTextTypes_.rawin(id)){
+            //TODO constant here.
+            return "1 1 1 1";
+        }
+        return mRichTextTypes_[id].getColour();
     }
 
     /**
@@ -140,3 +139,19 @@
     }
 
 };
+
+function registerRichTextType(name, obj){
+    local richTextTypes = ::DialogManager.DialogMetaScanner.mRichTextTypes_;
+    if(richTextTypes.rawin(name)){
+        throw format("Rich Text type with name '%s' already exists.", name);
+    }
+
+    richTextTypes.rawset(name, obj);
+}
+
+local RichTextType = ::DialogManager.DialogMetaScanner.RichTextType;
+registerRichTextType("RED", RichTextType("1 0 0 1"));
+registerRichTextType("GREEN", RichTextType("1 0 1 0"));
+registerRichTextType("BLUE", RichTextType("1 1 0 0"));
+
+registerRichTextType("IMPORTANT", RichTextType("1 1 0 0"));

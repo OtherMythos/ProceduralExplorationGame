@@ -13,7 +13,7 @@
 
 <!-- Peter Entry -->
 <b id = "100">
-    <ts>Hello! I'm Peter. Hope you're having a good day!</ts>
+    <ts>Hello! I'm [IMPORTANT]Peter[IMPORTANT]. Hope you're having a good day!</ts>
     <switch>
         <case test="$Q.Inheritance.moneyReturned$" id="110"/>
         <case test="$Q.Inheritance.moneyClaimed$" id="111"/>
@@ -49,7 +49,7 @@
 
         <b id = "4">
             <ts>The old man moves surprisingly quickly and shovels the money into your pocket.</ts>
-            <ts>Here you go Peter, make sure you spend it well.</ts>
+            <ts>Here you go [IMPORTANT]Peter[IMPORTANT], make sure you spend it well.</ts>
             <script id = "0" func = "givePlayerMoney" v1="100"/>
             <script id = "0" func = "setQuestValue" v1="Inheritance" v2="0" v3="true"/>
         </b>
@@ -57,7 +57,7 @@
 
     <!-- Money claimed but not returned -->
         <b id = "10">
-            <ts>Hello Peter! I hope you're enjoying your inheritance money.</ts>
+            <ts>Hello [IMPORTANT]Peter[IMPORTANT]! I hope you're enjoying your inheritance money.</ts>
             <ts>You are my favourite grandchild after all! I would hate for the wrong person to get it!</ts>
         </b>
     <!-- Money claimed but not returned -->

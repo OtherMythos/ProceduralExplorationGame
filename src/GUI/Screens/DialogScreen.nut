@@ -131,7 +131,7 @@
         if(richText != null){
             mTextContainer_.setRichText(richText);
         }else{
-            mTextContainer_.setTextColour(0, 0, 0, 0);
+            mTextContainer_.setTextColour(1, 1, 1, 1);
         }
 
         mTextContainer_.sizeToFit(winSize.x * 0.9);

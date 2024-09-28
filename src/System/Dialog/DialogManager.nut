@@ -20,7 +20,7 @@
 
     function __DString(dialog, actorId){
         local outContainer = array(2);
-        local containsRichText = mDialogMetaScanner_.getRichTextDevel(dialog, outContainer);
+        local containsRichText = mDialogMetaScanner_.getRichText(dialog, outContainer);
         if(containsRichText){
             _event.transmit(Event.DIALOG_SPOKEN, outContainer);
         }else{
