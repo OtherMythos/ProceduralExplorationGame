@@ -1,0 +1,10 @@
+<Dialog_Script>
+
+    <script path = "res://src/Content/DialogHelpers.nut" id = "0"/>
+
+    <b id = "0">
+        <ts>Dialog with [20]some rich text[20]</ts>
+        <ts>[20]This[20] [10]is[10] [20]some[20] [10]more[10] [20]rich[20] [10]text[10]</ts>
+    </b>
+
+</Dialog_Script>

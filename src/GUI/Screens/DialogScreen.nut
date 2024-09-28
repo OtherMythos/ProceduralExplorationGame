@@ -114,8 +114,26 @@
     }
 
     function setNewDialogText(textData){
-        mTextContainer_.setText(textData, false);
+        local targetText = null;
+        local richText = null;
+        if(typeof textData == "string"){
+            targetText = textData;
+        }else{
+            //Rich text
+            targetText = textData[0];
+            richText = textData[1];
+        }
+
+        assert(targetText != null);
+        mTextContainer_.setText(targetText, false);
         local winSize = mWindow_.getSize();
+
+        if(richText != null){
+            mTextContainer_.setRichText(richText);
+        }else{
+            mTextContainer_.setTextColour(0, 0, 0, 0);
+        }
+
         mTextContainer_.sizeToFit(winSize.x * 0.9);
     }
 

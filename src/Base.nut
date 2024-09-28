@@ -144,6 +144,7 @@
         _doFile("res://src/System/DatablockManager.nut");
 
         _doFile("res://src/System/DialogManager.nut");
+        _doFile("res://src/System/DialogMetaScanner.nut");
         mDialogManager = DialogManager();
 
         _doFile("res://src/System/Quest/QuestManager.nut");

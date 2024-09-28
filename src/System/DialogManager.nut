@@ -1,8 +1,10 @@
 ::DialogManager <- class{
     mCurrentScript_ = null;
 
-    constructor(){
+    mDialogMetaScanner_ = null;
 
+    constructor(){
+        mDialogMetaScanner_ = DialogMetaScanner();
     }
 
     function beginExecuting(path, targetBlock = 0){
@@ -17,7 +19,13 @@
     }
 
     function __DString(dialog, actorId){
-        _event.transmit(Event.DIALOG_SPOKEN, dialog);
+        local outContainer = array(2);
+        local containsRichText = mDialogMetaScanner_.getRichTextDevel(dialog, outContainer);
+        if(containsRichText){
+            _event.transmit(Event.DIALOG_SPOKEN, outContainer);
+        }else{
+            _event.transmit(Event.DIALOG_SPOKEN, dialog);
+        }
     }
 
     function __DOption(options){
