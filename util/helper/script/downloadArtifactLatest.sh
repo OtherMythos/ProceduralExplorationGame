@@ -9,6 +9,7 @@ if [ -z "${TARGET_DIR}" ]; then
     exit 1
 fi
 
+rm ${TARGET_DIR}/*
 mkdir ${TARGET_DIR}
 
 declare -a arr=(${FILE_BASE})
