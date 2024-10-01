@@ -11,7 +11,15 @@
         mPopupWin_.setZOrder(150);
 
         local label = mPopupWin_.createLabel();
-        label.setText("A popup");
+
+        local text = "Popup";
+        if(data != null && data.rawin("text")){
+            text = data.text;
+        }
+        label.setText(text);
+        if(data != null && data.rawin("richText")){
+            label.setRichText(data.richText);
+        }
 
         setSize(Vec2(_window.getWidth() * 0.9, 200));
     }
@@ -33,7 +41,7 @@
 
         //Fade in position.
         local pos = getIntendedPosition();
-        pos += Vec2(0, currentPercentage * 10);
+        pos += getAnimOffset(currentPercentage);
         mPopupWin_.setPosition(pos);
 
         mFadeInTimer_--;
@@ -43,6 +51,10 @@
     function setSize(size){
         mPopupSize_ = size;
         mPopupWin_.setSize(mPopupSize_);
+    }
+
+    function getAnimOffset(percentage){
+        return Vec2(0, percentage * 10);
     }
 
     function getIntendedPosition(){

@@ -213,6 +213,7 @@ enum Screen{
 enum Popup{
     POPUP,
     BOTTOM_OF_SCREEN,
+    TOP_RIGHT_OF_SCREEN,
     REGION_DISCOVERED,
     SINGLE_TEXT,
 

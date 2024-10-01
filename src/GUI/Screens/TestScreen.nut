@@ -13,6 +13,7 @@
 
         local buttonOptions = [
             "Trigger popup",
+            "Trigger popup top right",
             "Trigger Region Discovered popup",
             "Trigger spread coin effect",
             "Trigger linear coin effect",
@@ -22,7 +23,15 @@
         ];
         local buttonFunctions = [
             function(widget, action){
-                ::PopupManager.displayPopup(Popup.BOTTOM_OF_SCREEN);
+                local dialogMetaScanner = ::DialogManager.DialogMetaScanner();
+
+                local popupText = "This is a [RED]Popup[RED] with some [BLUE]Rich Text[BLUE]!";
+                local outContainer = array(2);
+                dialogMetaScanner.getRichText(popupText, outContainer);
+                ::PopupManager.displayPopup(::PopupManager.PopupData(Popup.BOTTOM_OF_SCREEN, {"text": outContainer[0], "richText": outContainer[1]}));
+            },
+            function(widget, action){
+                ::PopupManager.displayPopup(Popup.TOP_RIGHT_OF_SCREEN);
             },
             function(widget, action){
                 ::PopupManager.displayPopup(Popup.REGION_DISCOVERED);
