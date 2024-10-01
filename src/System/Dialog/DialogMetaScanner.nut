@@ -40,6 +40,12 @@
                 if(!foundEntry){
                     strippedText = null;
                     richTextEntries = null;
+                }else{
+                    local targetColour = "1 1 1 1";
+                    local endVal = strippedText.len();
+
+                    strippedText += dialog.slice(currentStart, dialog.len());
+                    richTextEntries.push( {"offset": endVal, "len": strippedText.len() - endVal, "col": targetColour} );
                 }
                 break;
             }
@@ -153,5 +159,6 @@ local RichTextType = ::DialogManager.DialogMetaScanner.RichTextType;
 registerRichTextType("RED", RichTextType("1 0 0 1"));
 registerRichTextType("GREEN", RichTextType("1 0 1 0"));
 registerRichTextType("BLUE", RichTextType("1 1 0 0"));
+registerRichTextType("MONEY", RichTextType("1 0.2 0.72 0.87"));
 
 registerRichTextType("IMPORTANT", RichTextType("1 1 0 0"));
