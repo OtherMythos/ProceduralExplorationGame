@@ -27,13 +27,14 @@
     mLayout_ = null;
     //mItemHovered_ = false;
 
+    mInventoryWidth_ = null;
+    mInventoryHeight_ = null;
+
     constructor(inventoryType, bus, hoverInfo, buttonCover){
         mInventoryType_ = inventoryType;
         mBus_ = bus;
         mHoverInfo_ = hoverInfo;
         mButtonCover_ = buttonCover;
-
-        mWidgets_ = [];
         mBackgrounds_ = [];
     }
 
@@ -81,6 +82,7 @@
             inventoryHeight = EquippedSlotTypes.MAX-2;
             mItemIcons_ = array(inventoryHeight);
         }
+        mWidgets_ = array(inventoryWidth*inventoryHeight);
 
         local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
 
@@ -115,7 +117,8 @@
                 //item.setUserId(x | (y << 10));
                 item.setUserId(x + (y * inventoryWidth));
                 item.attachListener(inventoryItemListener, this);
-                mWidgets_.append(item);
+                mWidgets_[x + y * inventoryWidth] = item;
+                if(x == 1 && y == 1 && mInventoryType_ == InventoryGridType.INVENTORY_GRID) item.setFocus();
             }
         }
 
@@ -124,6 +127,72 @@
                 setSkinForBackgroundEquippables(mBackgrounds_[i], i, false);
             }
         }
+
+        mInventoryWidth_ = inventoryWidth;
+        mInventoryHeight_ = inventoryHeight;
+    }
+
+    function connectNeighbours(neighbourGrid, backButton){
+        local borders = [
+            _GUI_BORDER_TOP,
+            _GUI_BORDER_BOTTOM,
+            _GUI_BORDER_LEFT,
+            _GUI_BORDER_RIGHT,
+        ];
+        for(local y = 0; y < mInventoryHeight_; y++){
+            for(local x = 0; x < mInventoryWidth_; x++){
+                local targetWidget = mWidgets_[x + y * mInventoryWidth_];
+                foreach(i in borders){
+                    local widget = null;
+                    {
+                        local xx = 0;
+                        local yy = 0;
+                        if(i == _GUI_BORDER_LEFT) xx = -1;
+                        else if(i == _GUI_BORDER_RIGHT) xx = 1;
+                        else if(i == _GUI_BORDER_TOP) yy = -1;
+                        else if(i == _GUI_BORDER_BOTTOM) yy = 1;
+                        local xa = x + xx;
+                        local ya = y + yy;
+                        if(xa < 0 || ya < 0){
+                            if(mInventoryType_ == InventoryGridType.INVENTORY_GRID){
+                                widget = backButton;
+                            }else{
+                                widget = ya < 0 ? backButton : neighbourGrid.getNeighbourWidgetForIdx(y);
+                            }
+                        }else if(xa >= mInventoryWidth_){
+                            if(mInventoryType_ == InventoryGridType.INVENTORY_GRID){
+                                widget = neighbourGrid.getNeighbourWidgetForIdx(y);
+                            }else{
+                                widget = null;
+                            }
+                        }else if(ya >= mInventoryHeight_){
+                            widget = null;
+                        }else{
+                            widget = mWidgets_[xa + ya * mInventoryWidth_];
+                        }
+                    }
+                    targetWidget.setNextWidget(widget, i);
+                    //targetWidget.setNextWidget(backButton, i);
+                }
+            }
+        }
+    }
+
+    function getNeighbourWidgetForIdx(idx){
+        local xa = 0;
+        local ya = 0;
+        if(mInventoryType_ == InventoryGridType.INVENTORY_GRID){
+            xa = mInventoryWidth_ - 1;
+            ya = idx;
+        }else{
+            xa = 0;
+            ya = idx;
+        }
+
+        local idx = xa + ya * mInventoryWidth_;
+        if(idx < 0 || idx >= mWidgets_.len()) return null;
+
+        return mWidgets_[idx];
     }
 
     function inventoryItemListener(widget, action){

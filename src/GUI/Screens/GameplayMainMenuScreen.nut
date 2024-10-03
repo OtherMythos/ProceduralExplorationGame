@@ -37,15 +37,16 @@
             */
         ]
 
-        foreach(i,c in buttonOptions){
+        foreach(c,i in buttonOptions){
             local button = mWindow_.createButton();
             button.setDefaultFontSize(button.getDefaultFontSize() * 1.5);
-            button.setText(c);
+            button.setText(i);
             button.setSize(::drawable.x * 0.9, button.getSize().y * 1.5);
-            button.attachListenerForEvent(buttonFunctions[i], _GUI_ACTION_PRESSED, this);
+            button.attachListenerForEvent(buttonFunctions[c], _GUI_ACTION_PRESSED, this);
             button.setExpandHorizontal(true);
             button.setMinSize(0, 100);
             layoutLine.addCell(button);
+            if(c==0) button.setFocus();
         }
 
         layoutLine.setMarginForAllCells(0, 20);

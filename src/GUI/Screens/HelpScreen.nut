@@ -69,6 +69,8 @@ Bugs, issues and suggestions are best reported on discord, however email or GitH
         layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
         layoutLine.setSize(::drawable.x * (1.0 - MULTIPLIER_PADDING), ::drawable.y);
         layoutLine.layout();
+
+        backButton.setFocus();
     }
 
 

@@ -43,6 +43,7 @@
             button.setExpandHorizontal(true);
             button.setMinSize(0, 100);
             layoutLine.addCell(button);
+            if(c==0) button.setFocus();
         }
 
         layoutLine.setMarginForAllCells(0, 20);

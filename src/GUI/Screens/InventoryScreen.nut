@@ -161,8 +161,8 @@ enum InventoryBusEvents{
         mWindow_.setVisualsEnabled(false);
         mWindow_.setSkinPack("WindowSkinNoBorder");
 
+        local inventoryButton = mWindow_.createButton();
         {
-            local inventoryButton = mWindow_.createButton();
             inventoryButton.setText("Back");
             inventoryButton.setPosition(5, 25);
             inventoryButton.attachListenerForEvent(function(widget, action){
@@ -205,16 +205,22 @@ enum InventoryBusEvents{
         local gridSize = calculateGridSize();
 
         local layoutHorizontal = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
-        mInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID, mInventoryBus_, mHoverInfo_, buttonCover);
+        mInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID, mInventoryBus_, mHoverInfo_, buttonCover, inventoryButton);
         local inventoryHeight = mInventory_.getInventorySize() / mInventoryWidth;
         mInventoryGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, mInventoryWidth, inventoryHeight);
         //mInventoryGrid_.addToLayout(layoutLine);
         mInventoryGrid_.addToLayout(layoutHorizontal);
 
-        mInventoryEquippedGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_EQUIPPABLES, mInventoryBus_, mHoverInfo_, buttonCover);
+        mInventoryEquippedGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_EQUIPPABLES, mInventoryBus_, mHoverInfo_, buttonCover, inventoryButton);
         mInventoryEquippedGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, null, null);
         //mInventoryEquippedGrid_.addToLayout(layoutLine);
         mInventoryEquippedGrid_.addToLayout(layoutHorizontal);
+
+        mInventoryGrid_.connectNeighbours(mInventoryEquippedGrid_, inventoryButton);
+        mInventoryEquippedGrid_.connectNeighbours(mInventoryGrid_, inventoryButton);
+
+        inventoryButton.setNextWidget(mInventoryGrid_.mWidgets_[0], _GUI_BORDER_RIGHT);
+        inventoryButton.setNextWidget(mInventoryGrid_.mWidgets_[0], _GUI_BORDER_BOTTOM);
 
         if(!mobile){
             mPlayerInspector_ = ::GuiWidgets.InventoryPlayerInspector();

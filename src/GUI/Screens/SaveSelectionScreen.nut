@@ -43,6 +43,10 @@
             button.attachListenerForEvent(saveSelectionCallback_, _GUI_ACTION_PRESSED);
         }
 
+        function setFocus(){
+            mButton_.setFocus();
+        }
+
         function addToLayout(layout){
             layout.addCell(mButton_);
         }
@@ -89,6 +93,7 @@
             layoutWidgets.append(widget);
         }
 
+        local mNewSaveButton_ = null;
         {
             local newSaveButton = mWindow_.createButton();
             newSaveButton.setDefaultFontSize(newSaveButton.getDefaultFontSize() * 1.5);
@@ -97,6 +102,7 @@
             newSaveButton.setExpandHorizontal(true);
             newSaveButton.setMinSize(0, 100);
             layoutLine.addCell(newSaveButton);
+            mNewSaveButton_ = newSaveButton;
         }
 
         layoutLine.setMarginForAllCells(0, 20);
@@ -107,6 +113,12 @@
 
         foreach(i in layoutWidgets){
             i.notifyLayout();
+        }
+
+        if(layoutWidgets.len() > 0){
+            layoutWidgets[0].setFocus();
+        }else{
+            newSave.setFocus();
         }
     }
 
