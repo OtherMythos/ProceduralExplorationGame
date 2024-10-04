@@ -19,11 +19,14 @@
         title.setExpandHorizontal(true);
         layoutLine.addCell(title);
 
-        local buttonOptions = ["Resume", "Return to Main Menu"];
+        local buttonOptions = ["Resume", "Settings", "Return to Main Menu"];
         local buttonFunctions = [
             function(widget, action){
                 ::Base.mExplorationLogic.setGamePaused(true);
                 closeScreen();
+            },
+            function(widget, action){
+                ::ScreenManager.queueTransition(Screen.SETTINGS_SCREEN, null, 3);
             },
             function(widget, action){
                 ::Base.mExplorationLogic.setGamePaused(false);

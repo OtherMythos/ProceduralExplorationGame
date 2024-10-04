@@ -11,6 +11,7 @@
     mSaveManager = null
     mGameProfiles_ = null
     mActionManager = null
+    mSystemSettings = null
 
     mTargetInterface_ = TargetInterface.DESKTOP
     mFullscreenMode_ = FullscreenMode.WINDOWED
@@ -181,6 +182,8 @@
         _doFile("res://src/GUI/Widgets/TargetEnemyWidget.nut");
         _doFile("res://src/GUI/Widgets/ProgressBar.nut");
 
+        _doFile("res://src/System/SystemSettings.nut");
+
         _doFile("res://src/GUI/Billboard/BillboardManager.nut");
 
         _doFile("res://src/GUI/PopupManager.nut");
@@ -220,6 +223,7 @@
         _doFile("res://src/GUI/Screens/NewSaveValuesScreen.nut");
         _doFile("res://src/GUI/Screens/InventoryItemHelperScreen.nut");
         _doFile("res://src/GUI/Screens/PauseScreen.nut");
+        _doFile("res://src/GUI/Screens/SettingsScreen.nut");
 
         _doFile("res://src/Logic/EntityTargetManager.nut");
         _doFile("res://src/Logic/ActiveEnemyEntry.nut");

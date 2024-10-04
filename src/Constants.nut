@@ -152,6 +152,7 @@ enum Event{
     PLAYER_WIELD_ACTIVE_CHANGED = 1020,
 
     ACTIONS_CHANGED = 1021,
+    SYSTEM_SETTINGS_CHANGED = 1022,
 
 }
 
@@ -186,6 +187,7 @@ enum Screen{
     NEW_SAVE_VALUES_SCREEN,
     INVENTORY_ITEM_HELPER_SCREEN,
     PAUSE_SCREEN,
+    SETTINGS_SCREEN,
 
     MAX
 };
@@ -207,7 +209,8 @@ enum Screen{
     "worldGenerationStatusScreen",
     "newSaveValuesScreen",
     "inventoryItemHelperScreen",
-    "pauseScreen"
+    "pauseScreen",
+    "settingsScreen"
 ];
 
 enum Popup{
@@ -270,6 +273,12 @@ enum ActionSlotType{
     TALK_TO,
     VISIT,
     END_EXPLORATION,
+};
+
+enum SystemSetting{
+    INVERT_CAMERA_CONTROLLER,
+
+    MAX
 };
 
 ::ActionSlotTypeString <- [

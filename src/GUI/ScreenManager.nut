@@ -104,7 +104,12 @@
 
         mActiveScreens_[layerId] = screenObject;
 
-        if(!screenObject) return;
+        if(!screenObject){
+            _gui.simulateMouseButton(_MB_LEFT, false);
+            _gui.reprocessMousePosition();
+            _gui.simulateGuiPrimary(false);
+            return;
+        }
 
         print("Setting up screen for layer " + layerId);
         screenObject.mLayerIdx = layerId;

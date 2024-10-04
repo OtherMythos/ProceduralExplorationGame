@@ -1227,7 +1227,7 @@ enum WorldMousePressContexts{
         }
     }
     function checkCameraChange(){
-        local modifier = 1;
+        local modifier = ::SystemSettings.getSetting(SystemSetting.INVERT_CAMERA_CONTROLLER) ? -1 : 1;
         local x = _input.getAxisActionX(mInputs_.camera, _INPUT_ANY);
         local y = _input.getAxisActionY(mInputs_.camera, _INPUT_ANY);
         ::DebugOverlayManager.appendText(DebugOverlayId.INPUT, format("camera x: %f y: %f", x, y));
