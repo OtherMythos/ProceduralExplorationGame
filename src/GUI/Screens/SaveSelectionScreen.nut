@@ -118,7 +118,7 @@
         if(layoutWidgets.len() > 0){
             layoutWidgets[0].setFocus();
         }else{
-            newSave.setFocus();
+            mNewSaveButton_.setFocus();
         }
     }
 
