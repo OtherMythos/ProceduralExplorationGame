@@ -195,6 +195,11 @@
         return mWidgets_[idx];
     }
 
+    function highlightForIdx(idx){
+        if(idx < 0 || idx >= mWidgets_.len()) return;
+        mWidgets_[idx].setFocus();
+    }
+
     function inventoryItemListener(widget, action){
         //if(actionMenu_.menuActive_) return;
 

@@ -2,6 +2,8 @@ enum InventoryBusEvents{
     ITEM_HOVER_BEGAN,
     ITEM_HOVER_ENDED,
     ITEM_SELECTED,
+    ITEM_HELPER_SCREEN_BEGAN,
+    ITEM_HELPER_SCREEN_ENDED,
 
     ITEM_INFO_REQUEST_EQUIP,
     ITEM_INFO_REQUEST_EQUIP_LEFT_HAND,
@@ -22,6 +24,8 @@ enum InventoryBusEvents{
     mMoneyCounter_ = null;
     mPlayerStats_ = null;
     mPlayerInspector_ = null;
+
+    mPreviousHighlight_ = null;
 
     mInventoryWidth = 5;
 
@@ -205,13 +209,13 @@ enum InventoryBusEvents{
         local gridSize = calculateGridSize();
 
         local layoutHorizontal = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
-        mInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID, mInventoryBus_, mHoverInfo_, buttonCover, inventoryButton);
+        mInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID, mInventoryBus_, mHoverInfo_, buttonCover);
         local inventoryHeight = mInventory_.getInventorySize() / mInventoryWidth;
         mInventoryGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, mInventoryWidth, inventoryHeight);
         //mInventoryGrid_.addToLayout(layoutLine);
         mInventoryGrid_.addToLayout(layoutHorizontal);
 
-        mInventoryEquippedGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_EQUIPPABLES, mInventoryBus_, mHoverInfo_, buttonCover, inventoryButton);
+        mInventoryEquippedGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_EQUIPPABLES, mInventoryBus_, mHoverInfo_, buttonCover);
         mInventoryEquippedGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, null, null);
         //mInventoryEquippedGrid_.addToLayout(layoutLine);
         mInventoryEquippedGrid_.addToLayout(layoutHorizontal);
@@ -246,6 +250,22 @@ enum InventoryBusEvents{
         }
 
         ::InputManager.setActionSet(InputActionSets.MENU);
+    }
+
+    function highlightPrevious(){
+        processItemHover(mPreviousHighlight_);
+
+        _gui.simulateGuiPrimary(false);
+
+        if(mPreviousHighlight_ != null){
+            if(mPreviousHighlight_.gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
+                mInventoryEquippedGrid_.highlightForIdx(mPreviousHighlight_.id);
+            }else{
+                mInventoryGrid_.highlightForIdx(mPreviousHighlight_.id);
+            }
+        }
+
+        mPreviousHighlight_ = null;
     }
 
     function createButtonCover(win){
@@ -327,6 +347,9 @@ enum InventoryBusEvents{
             //TODO check if the inventory has space.
             mInventory_.addToInventory(item);
         }
+        else if(event == InventoryBusEvents.ITEM_HELPER_SCREEN_ENDED){
+            highlightPrevious();
+        }
     }
 
     function scrapItem(inventoryData){
@@ -383,6 +406,10 @@ enum InventoryBusEvents{
     }
 
     function processItemHover(inventoryData){
+        if(inventoryData != null){
+            mPreviousHighlight_ = inventoryData;
+        }
+
         if(inventoryData == null){
             setHoverMenuToItem(null);
             return;

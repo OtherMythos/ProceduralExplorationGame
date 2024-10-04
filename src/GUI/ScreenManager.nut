@@ -108,6 +108,7 @@
 
         print("Setting up screen for layer " + layerId);
         screenObject.mLayerIdx = layerId;
+        _gui.simulateGuiPrimary(false);
         screenObject.setup(screenData.data);
         screenObject.setZOrder(mScreensZOrder + layerId + 1);
         if(!screenObject.mCustomPosition_) screenObject.setPositionCentre(_window.getWidth()/2, _window.getHeight()/2);

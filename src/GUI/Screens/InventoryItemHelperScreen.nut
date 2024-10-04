@@ -29,16 +29,24 @@
         layoutLine.addCell(title);
 
         local buttonData = getButtonOptionsForItem(data.item);
-        foreach(i,c in buttonData[0]){
+        foreach(c,i in buttonData[0]){
             local button = mWindow_.createButton();
             button.setDefaultFontSize(button.getDefaultFontSize() * 1.1);
-            button.setText(c);
-            button.attachListenerForEvent(buttonData[1][i], _GUI_ACTION_PRESSED, this);
+            button.setText(i);
+            button.attachListenerForEvent(buttonData[1][c], _GUI_ACTION_PRESSED, this);
             button.setExpandHorizontal(true);
             layoutLine.addCell(button);
+            if(c == 0) button.setFocus();
         }
 
         layoutLine.layout();
+
+        mData_.bus.notifyEvent(InventoryBusEvents.ITEM_HELPER_SCREEN_BEGAN, null);
+    }
+
+    function shutdown(){
+        base.shutdown();
+        mData_.bus.notifyEvent(InventoryBusEvents.ITEM_HELPER_SCREEN_ENDED, null);
     }
 
     function getButtonOptionsForItem(item){
