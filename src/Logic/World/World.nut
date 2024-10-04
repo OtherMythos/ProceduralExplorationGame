@@ -291,6 +291,8 @@ enum WorldMousePressContexts{
             "toggleWieldActive": _input.getButtonActionHandle("toggleWieldActive"),
             "pauseGame": _input.getButtonActionHandle("PauseGame"),
             "showDebugConsole": _input.getButtonActionHandle("ShowDebugConsole"),
+            "zoomIn": _input.getButtonActionHandle("ZoomIn"),
+            "zoomOut": _input.getButtonActionHandle("ZoomOut"),
         };
     }
 

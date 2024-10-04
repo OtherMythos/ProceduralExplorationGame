@@ -210,8 +210,16 @@
         local mouseScroll = _input.getMouseWheelValue();
         if(mouseScroll != 0){
             mCurrentZoomLevel_ += mouseScroll;
-            if(mCurrentZoomLevel_ < MIN_ZOOM) mCurrentZoomLevel_ = MIN_ZOOM;
         }
+
+        if(_input.getButtonAction(::InputManager.zoomIn)){
+            mCurrentZoomLevel_ -= 0.5;
+        }
+        if(_input.getButtonAction(::InputManager.zoomOut)){
+            mCurrentZoomLevel_ += 0.5;
+        }
+
+        if(mCurrentZoomLevel_ < MIN_ZOOM) mCurrentZoomLevel_ = MIN_ZOOM;
 
         updateCameraPosition();
     }

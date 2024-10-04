@@ -17,6 +17,8 @@
                     "toggleWieldActive": "#toggleWieldActive",
                     "PauseGame": "#PauseGame",
                     "ShowDebugConsole": "#ShowDebugConsole",
+                    "ZoomIn": "#ZoomIn",
+                    "ZoomOut": "#ZoomOut",
                 },
                 "StickPadGyro" : {
                     "Move":"#Move",
@@ -69,6 +71,8 @@
         ::InputManager.toggleWieldActive <- _input.getButtonActionHandle("toggleWieldActive");
         ::InputManager.pauseGame <- _input.getButtonActionHandle("PauseGame");
         ::InputManager.showDebugConsole <- _input.getButtonActionHandle("ShowDebugConsole");
+        ::InputManager.zoomIn <- _input.getButtonActionHandle("ZoomIn");
+        ::InputManager.zoomOut <- _input.getButtonActionHandle("ZoomOut");
 
         ::InputManager.dialogNext <- _input.getButtonActionHandle("Next");
 
@@ -83,6 +87,8 @@
         _input.mapControllerInput(_B_B, this.toggleWieldActive);
         _input.mapControllerInput(_B_X, this.showInventory);
         _input.mapControllerInput(_B_Y, this.interact);
+        _input.mapControllerInput(_B_DPADUP, this.zoomIn);
+        _input.mapControllerInput(_B_DPADDOWN, this.zoomOut);
         //_input.mapControllerInput(_B_Y, this.performMove4);
         _input.mapControllerInput(_B_LEFTSHOULDER, this.performMove1);
         _input.mapControllerInput(_B_RIGHTSHOULDER, this.performMove2);
