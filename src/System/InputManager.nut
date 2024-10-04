@@ -19,6 +19,7 @@
                     "ShowDebugConsole": "#ShowDebugConsole",
                     "ZoomIn": "#ZoomIn",
                     "ZoomOut": "#ZoomOut",
+                    "ToggleWorldView": "#ToggleWorldView",
                 },
                 "StickPadGyro" : {
                     "Move":"#Move",
@@ -73,6 +74,7 @@
         ::InputManager.showDebugConsole <- _input.getButtonActionHandle("ShowDebugConsole");
         ::InputManager.zoomIn <- _input.getButtonActionHandle("ZoomIn");
         ::InputManager.zoomOut <- _input.getButtonActionHandle("ZoomOut");
+        ::InputManager.toggleWorldView <- _input.getButtonActionHandle("ToggleWorldView");
 
         ::InputManager.dialogNext <- _input.getButtonActionHandle("Next");
 
@@ -97,6 +99,7 @@
         //_input.mapControllerInput(_BT_RIGHT, this.performMove4);
         _input.mapControllerInput(_B_START, this.pauseGame);
         _input.mapControllerInput(_B_A, this.dialogNext);
+        _input.mapControllerInput(_B_LEFTSTICK, this.toggleWorldView);
 
         _input.mapControllerInput(_B_B, this.menuBack);
 

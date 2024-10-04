@@ -4,6 +4,7 @@
     static WORLD_DEPTH = 20;
     ABOVE_GROUND = null;
     mVoxMesh_ = null;
+    mWorldViewActive_ = false;
 
     mActivePlaces_ = null;
     mCurrentFoundRegions_ = null;
@@ -173,6 +174,8 @@
         foreach(c,i in mRegionEntries_){
             i.update();
         }
+
+        checkWorldZoomState();
     }
 
     #Override
@@ -190,10 +193,12 @@
         assert(camera != null);
         local parentNode = camera.getParentNode();
 
-        local xPos = cos(mRotation_.x)*mCurrentZoomLevel_;
-        local yPos = sin(mRotation_.x)*mCurrentZoomLevel_;
+        local zoom = mWorldViewActive_ ? 300 : mCurrentZoomLevel_
+
+        local xPos = cos(mRotation_.x)*zoom;
+        local yPos = sin(mRotation_.x)*zoom;
         local rot = Vec3(xPos, 0, yPos);
-        yPos = sin(mRotation_.y)*mCurrentZoomLevel_;
+        yPos = sin(mRotation_.y)*zoom;
         rot += Vec3(0, yPos, 0);
 
         parentNode.setPosition(Vec3(mPosition_.x, zPos, mPosition_.z) + rot );
@@ -222,6 +227,16 @@
         if(mCurrentZoomLevel_ < MIN_ZOOM) mCurrentZoomLevel_ = MIN_ZOOM;
 
         updateCameraPosition();
+    }
+
+    function checkWorldZoomState(){
+        if(_input.getButtonAction(mInputs_.toggleWorldView, _INPUT_PRESSED)){
+            setWorldZoomState(!mWorldViewActive_);
+        }
+    }
+
+    function setWorldZoomState(worldZoom){
+        mWorldViewActive_ = worldZoom;
     }
 
     #Override
