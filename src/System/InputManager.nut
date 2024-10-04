@@ -89,7 +89,7 @@
         //TODO NOTE I want to map the triggers just as regular buttons, but the engine does not allow that currently.
         //_input.mapControllerInput(_BT_LEFT, this.performMove3);
         //_input.mapControllerInput(_BT_RIGHT, this.performMove4);
-        _input.mapControllerInput(_B_GUIDE, this.pauseGame);
+        _input.mapControllerInput(_B_START, this.pauseGame);
         _input.mapControllerInput(_B_A, this.dialogNext);
 
         _input.mapControllerInput(_B_B, this.menuBack);
