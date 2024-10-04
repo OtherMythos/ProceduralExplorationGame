@@ -118,7 +118,7 @@
                 item.setUserId(x + (y * inventoryWidth));
                 item.attachListener(inventoryItemListener, this);
                 mWidgets_[x + y * inventoryWidth] = item;
-                if(x == 1 && y == 1 && mInventoryType_ == InventoryGridType.INVENTORY_GRID) item.setFocus();
+                //if(x == 1 && y == 1 && mInventoryType_ == InventoryGridType.INVENTORY_GRID) item.setFocus();
             }
         }
 

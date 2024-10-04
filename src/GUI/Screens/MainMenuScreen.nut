@@ -16,13 +16,16 @@
 
         title.sizeToFit(::drawable.x * 0.9);
 
-        local buttonOptions = ["Play", "Help", "Quit to Desktop"];
+        local buttonOptions = ["Play", "Help", "Settings", "Quit to Desktop"];
         local buttonFunctions = [
             function(widget, action){
                 ::ScreenManager.transitionToScreen(Screen.SAVE_SELECTION_SCREEN);
             },
             function(widget, action){
                 ::ScreenManager.transitionToScreen(Screen.HELP_SCREEN);
+            },
+            function(widget, action){
+                ::ScreenManager.transitionToScreen(Screen.SETTINGS_SCREEN);
             },
             function(widget, action){
                 _shutdownEngine();

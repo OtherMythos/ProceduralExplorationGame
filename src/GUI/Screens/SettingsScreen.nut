@@ -38,16 +38,17 @@
         invertCamera.setText("Invert Camera");
         invertCamera.attachListenerForEvent(function(widget, action){
             ::SystemSettings.setSettingsValue(SystemSetting.INVERT_CAMERA_CONTROLLER, widget.getValue());
-        }, _GUI_ACTION_PRESSED);
+        }, _GUI_ACTION_RELEASED);
         layoutLine.addCell(invertCamera);
         mSettingsWidgets_[SystemSetting.INVERT_CAMERA_CONTROLLER] = invertCamera;
 
+        backButton.setFocus();
+
         layoutLine.setMarginForAllCells(0, 20);
-        layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
+        //layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
         layoutLine.setSize(winWidth, winHeight);
         layoutLine.layout();
 
-        backButton.setFocus();
 
         setupValuesFromSystemSettings();
     }

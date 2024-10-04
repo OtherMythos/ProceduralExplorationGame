@@ -249,6 +249,8 @@ enum InventoryBusEvents{
             mPlayerInspector_.notifyLayout();
         }
 
+        inventoryButton.setFocus();
+
         ::InputManager.setActionSet(InputActionSets.MENU);
     }
 

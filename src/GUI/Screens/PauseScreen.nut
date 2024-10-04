@@ -67,7 +67,7 @@
     }
 
     function update(){
-        if(_input.getButtonAction(::InputManager.menuBack, _INPUT_PRESSED)){
+        if(_input.getButtonAction(::InputManager.menuBack, _INPUT_PRESSED) && ::ScreenManager.isForefrontScreen(mLayerIdx)){
             closeScreen();
         }
     }

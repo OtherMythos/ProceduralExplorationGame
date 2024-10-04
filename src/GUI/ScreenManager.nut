@@ -244,4 +244,18 @@
         local gridRatio = width.tofloat() / mDefaultCoords_.x;
         return ::drawable.x * gridRatio;
     }
+
+    function isForefrontScreen(id){
+        if(id < 0 || id >= MAX_SCREENS) return false;
+
+        local found = false;
+        for(local i = id+1; i < MAX_SCREENS; i++){
+            if(mActiveScreens_[i] != null){
+                found = true;
+                break;
+            }
+        }
+
+        return !found;
+    }
 };
