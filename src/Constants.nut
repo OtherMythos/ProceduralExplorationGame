@@ -268,11 +268,15 @@ enum WorldDistractionType{
 enum ActionSlotType{
     NONE,
     TALK_TO,
+    VISIT,
+    END_EXPLORATION,
 };
 
 ::ActionSlotTypeString <- [
     "None",
     "Talk",
+    "Visit",
+    "End Exploration",
 ];
 
 //Characters --------

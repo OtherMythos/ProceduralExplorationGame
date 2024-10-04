@@ -92,6 +92,17 @@ These actions might be things like 'talk', 'buy things from', etc.
                 ::Base.mExplorationLogic.beginDialog(data.path, data.block);
                 break;
             }
+            case ActionSlotType.VISIT:{
+                local world = ::Base.mExplorationLogic.mCurrentWorld_;
+                if(world.getWorldType() == WorldTypes.PROCEDURAL_EXPLORATION_WORLD){
+                    world.visitPlace("testVillage");
+                }
+                break;
+            }
+            case ActionSlotType.END_EXPLORATION:{
+                ::Base.mExplorationLogic.gatewayEndExploration();
+                break;
+            }
             default:{
                 throw "Attempted to execute an invalid action slot.";
             }

@@ -932,6 +932,7 @@ enum WorldMousePressContexts{
     }
 
     function moveEnemyToPlayer(enemyId){
+        if(enemyId >= mActiveEnemies_.len()) return;
         local enemyEntry = mActiveEnemies_[enemyId];
         if(enemyEntry == null) return;
         if(enemyEntry.isMidAttack()) return;

@@ -291,7 +291,13 @@
         }
 
         local entity = placeEntry.getEntity();
-        checkPlaceBillboardVisible(entity, entered);
+        //checkPlaceBillboardVisible(entity, entered);
+
+        if(entered){
+            ::Base.mActionManager.registerAction(placeEntry.mEnemy_ != PlaceId.GATEWAY ? ActionSlotType.VISIT : ActionSlotType.END_EXPLORATION, 0, null, id);
+        }else{
+            ::Base.mActionManager.unsetAction(0, id);
+        }
 
         placeEntry.mEncountered_ = true;
     }
