@@ -4,13 +4,15 @@ function regularSwordBaseAttack(p, entry, pos){
     if(p % 5 == 0){
         local attackValue = entry.mCombatData_.mEquippedItems.mEquippedStats.getStatType(StatType.ATTACK);
 
-        ::Base.mExplorationLogic.mCurrentWorld_.performLocalMove(entry, ::Combat.CombatMove(1));
+        ::Base.mExplorationLogic.mCurrentWorld_.performLocalMove(entry, ::Combat.CombatMove(attackValue));
     }
 }
 
 function regularTwoHandedBaseAttack(p, entry, pos){
     if(p == 52){
-        ::Base.mExplorationLogic.mCurrentWorld_.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, ::Vec3_ZERO, ::Combat.CombatMove(10), entry.getTargetCollisionWorld());
+        local attackValue = entry.mCombatData_.mEquippedItems.mEquippedStats.getStatType(StatType.ATTACK);
+
+        ::Base.mExplorationLogic.mCurrentWorld_.mProjectileManager_.spawnProjectile(ProjectileId.AREA, pos, ::Vec3_ZERO, ::Combat.CombatMove(attackValue), entry.getTargetCollisionWorld());
     }
 }
 

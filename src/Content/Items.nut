@@ -211,11 +211,11 @@ function setupItemIds_(){
             }
             case ItemId.BONE_MACE:
             case ItemId.SIMPLE_SWORD: {
-                stat.mAttack = 5;
+                stat.mAttack = 2;
                 return stat;
             }
             case ItemId.SIMPLE_TWO_HANDED_SWORD: {
-                stat.mAttack = 15;
+                stat.mAttack = 10;
                 return stat;
             }
             case ItemId.SIMPLE_SHIELD: {

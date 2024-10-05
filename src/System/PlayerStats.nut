@@ -19,7 +19,7 @@
         mLeanPlacesVisited_ = [];
         mInventory_ = ::Inventory();
 
-        mPlayerCombatStats = ::Combat.CombatStats(EnemyId.NONE, 100);
+        mPlayerCombatStats = ::Combat.CombatStats(EnemyId.NONE, 200);
         mPlayerCombatStats.calculateEquippedStats();
     }
 

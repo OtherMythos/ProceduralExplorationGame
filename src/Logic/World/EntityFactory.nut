@@ -127,7 +127,7 @@
 
         entry.setPosition(targetPos);
 
-        local totalHealth = 20;
+        local totalHealth = 60;
         manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](totalHealth));
 
         local worldMask = (0x1 << mConstructorWorld_.getWorldId());

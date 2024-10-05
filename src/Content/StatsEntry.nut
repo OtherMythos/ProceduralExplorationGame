@@ -3,9 +3,9 @@
  * These are generally stats relating to the combat system, but are also used by items, descriptions for levels, etc.
  */
 ::StatsEntry <- class{
-    mRestorativeHealth = 0;
-    mAttack = 0;
-    mDefense = 0;
+    mRestorativeHealth = 1;
+    mAttack = 1;
+    mDefense = 1;
 
     function _tostring(){
         local t = format("{restorativeHealth: %i, attack: %i, defense: %i}", mRestorativeHealth, mAttack, mDefense);
@@ -13,16 +13,16 @@
     }
 
     function clear(){
-        mRestorativeHealth = 0;
-        mAttack = 0;
-        mDefense = 0;
+        mRestorativeHealth = 1;
+        mAttack = 1;
+        mDefense = 1;
     }
 
     function hasStatType(stat){
         switch(stat){
-            case StatType.RESTORATIVE_HEALTH: return mRestorativeHealth != 0;
-            case StatType.ATTACK: return mAttack != 0;
-            case StatType.DEFENSE: return mDefense != 0;
+            case StatType.RESTORATIVE_HEALTH: return mRestorativeHealth > 1;
+            case StatType.ATTACK: return mAttack > 1;
+            case StatType.DEFENSE: return mDefense > 1;
             default:
                 assert(false);
         }
