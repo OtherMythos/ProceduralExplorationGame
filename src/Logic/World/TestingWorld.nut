@@ -108,6 +108,9 @@
     }
 
     function callLogicScript(){
+        //Check if we're running a test, in that case don't run this file.
+        if(getroottable().rawin("_testSystem")) return;
+
         local scriptPath = "res://testingWorldScript.nut";
         if(_system.exists(scriptPath)){
             _doFile(scriptPath);
