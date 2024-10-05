@@ -278,7 +278,7 @@ function setupItemIds_(){
             return ::Equippables[leftHand];
         }
 
-        return null;
+        return ::Equippables[EquippableId.BARE_HANDS];
     }
 
     function nameToItemId(itemName){

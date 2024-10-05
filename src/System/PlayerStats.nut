@@ -20,6 +20,7 @@
         mInventory_ = ::Inventory();
 
         mPlayerCombatStats = ::Combat.CombatStats(EnemyId.NONE, 100);
+        mPlayerCombatStats.calculateEquippedStats();
     }
 
     function shutdown(){

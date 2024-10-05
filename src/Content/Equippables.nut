@@ -18,6 +18,8 @@ function regularTwoHandedBaseAttack(p, entry, pos){
 enum EquippableId{
     NONE,
 
+    BARE_HANDS,
+
     REGULAR_SWORD,
     REGULAR_SHIELD,
     REGULAR_TWO_HANDED_SWORD,
@@ -79,6 +81,8 @@ enum EquippableCharacteristics{
 
 //-------------------------------
 ::Equippables[EquippableId.NONE] = EquippableDef(EquippedSlotTypes.NONE, EquippableCharacteristics.NONE, null, 0, CharacterModelAnimId.NONE);
+
+::Equippables[EquippableId.BARE_HANDS] = EquippableDef(EquippedSlotTypes.NONE, EquippableCharacteristics.NONE, regularSwordBaseAttack, 20, CharacterModelAnimId.REGULAR_SWORD_SWING);
 
 ::Equippables[EquippableId.REGULAR_SWORD] = EquippableDef(EquippedSlotTypes.HAND, EquippableCharacteristics.NONE, regularSwordBaseAttack, 20, CharacterModelAnimId.REGULAR_SWORD_SWING);
 ::Equippables[EquippableId.REGULAR_SHIELD] = EquippableDef(EquippedSlotTypes.HAND, EquippableCharacteristics.NONE, regularSwordBaseAttack, 20, CharacterModelAnimId.REGULAR_SWORD_SWING);
