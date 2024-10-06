@@ -19,6 +19,7 @@ enum TerrainEditState{
     mEditorBase = null
     mParentNode = null
     mTargetMap = null
+    mSceneTree = null
 
     mKeyCommands = null
     mPrevKeyCommands = null
@@ -68,14 +69,31 @@ enum TerrainEditState{
                 return !::guiFrameworkBase.mouseInteracting();
             }
             function sceneTreeConstructObjectForUserEntry(userId, parentNode, entryData){
-                local item = _gameCore.createVoxMeshItem(entryData.value);
+                switch(userId){
+                    case 0:{
+                        local item = _gameCore.createVoxMeshItem(entryData.value);
 
-                item.setRenderQueueGroup(30);
-                item.setQueryFlags(1 << 20);
-                parentNode.attachObject(item);
+                        item.setRenderQueueGroup(30);
+                        item.setQueryFlags(1 << 20);
+                        parentNode.attachObject(item);
+                        break;
+                    }
+                    case 1:{
+                        break;
+                    }
+                }
             }
             function getNameForUserEntry(userId){
-                return "mesh";
+                switch(userId){
+                    case 0:{
+                        return "mesh";
+                        break;
+                    }
+                    case 1:{
+                        return "userData";
+                        break;
+                    }
+                }
             }
             function raycastForMovementGizmo(){
                 return ::Base.castRayForTerrain();
@@ -134,10 +152,10 @@ enum TerrainEditState{
         }
         mTargetMap = targetMap
 
-        local sceneTree = attemptLoadSceneTree(targetMap);
-        mEditorBase.setActiveSceneTree(sceneTree);
-        if(sceneTree != null){
-            sceneTree.debugPrint();
+        mSceneTree = attemptLoadSceneTree(targetMap);
+        mEditorBase.setActiveSceneTree(mSceneTree);
+        if(mSceneTree != null){
+            mSceneTree.debugPrint();
         }
 
         _gameCore.setMapsDirectory("res://../../assets/maps/");
@@ -343,6 +361,9 @@ enum TerrainEditState{
     function notifyBusEvent(event, data){
         if(event == SceneEditorFramework_BusEvents.REQUEST_SAVE){
             mTerrainChunkManager.performSave(mTargetMap);
+
+            local writer = SceneEditorDataPointWriter();
+            writer.performSave(mTargetMap, mSceneTree);
         }
     }
 
