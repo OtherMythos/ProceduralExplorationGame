@@ -5,6 +5,8 @@
     mVoxTerrainMesh_ = null;
     mTerrainChunkManager_ = null;
 
+    mPlayerStartPos_ = null;
+
     mCurrentWorldAnim_ = null;
 
     mCloudManager_ = null;
@@ -155,9 +157,39 @@
         oceanNode.setScale(500, 500, 500)
         oceanNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
 
-        //local character = mEntityFactory_.constructNPCCharacter();
-        //mActiveEnemies_.rawset(character.mEntity_.getId(), character);
-        //character.moveQueryZ(Vec3(100, 0, -50));
+        //Parse data points
+        local native = mMapData_.native;
+        local data = array(2);
+        for(local i = 0; i < native.getNumDataPoints(); i++){
+            native.getDataPointAt(i, data);
+            local val = data[1];
+            local major = (val >> 16) & 0xFFFF;
+            local minor = val & 0xFFFF;
+            processDataPoint(data[0], major, minor);
+        }
+
+        local pos = Vec3(mPlayerStartPos_.x, 0, mPlayerStartPos_.z);
+        pos.y = getZForPos(pos);
+        mPlayerEntry_.setPosition(pos);
+        notifyPlayerMoved();
+    }
+
+    function processDataPoint(pos, major, minor){
+        switch(major){
+            case 0:{
+                processMetaDataPoint(pos, minor);
+                break;
+            }
+        }
+    }
+
+    function processMetaDataPoint(pos, id){
+        switch(id){
+            case 0:{
+                mPlayerStartPos_ = pos;
+                break;
+            }
+        }
     }
 
     function getMapData(){

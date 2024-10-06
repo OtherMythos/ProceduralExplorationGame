@@ -3,6 +3,7 @@
 #include "VisitedPlacesPrerequisites.h"
 
 #include "TerrainChunkFileHandler.h"
+#include "DataPointFileHandler.h"
 
 #include <cassert>
 
@@ -35,6 +36,10 @@ namespace ProceduralExplorationGameCore{
     void VisitedPlacesParser::beginMapGen_(const std::string& mapName){
         TerrainChunkFileHandler handler(mMapsDirectory);
         handler.readMapData(mMapData, mapName);
+
+        DataPointFileHandler dataPointHandler(mMapsDirectory);
+        dataPointHandler.readMapData(mMapData, mapName);
+
         mCurrentStage++;
     }
 

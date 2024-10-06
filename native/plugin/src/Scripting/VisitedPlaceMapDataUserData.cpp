@@ -8,6 +8,7 @@
 #include "Scripting/ScriptNamespace/Classes/Vector3UserData.h"
 #include "Scripting/ScriptNamespace/Classes/Ogre/Graphics/MeshUserData.h"
 #include "Scripting/ScriptNamespace/Classes/Ogre/Scene/RayUserData.h"
+#include "Scripting/ScriptNamespace/Classes/Vector3UserData.h"
 
 #include "VisitedPlaces/VisitedPlacesPrerequisites.h"
 #include "VisitedPlaces/VisitedPlaceMapDataHelper.h"
@@ -145,6 +146,38 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger VisitedPlaceMapDataUserData::getNumDataPoints(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
+        SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
+
+        sq_pushinteger(vm, mapData->dataPointValues.size());
+
+        return 1;
+    }
+
+    SQInteger VisitedPlaceMapDataUserData::getDataPointAt(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
+        SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger idx = 0;
+        sq_getinteger(vm, 2, &idx);
+
+        if(sq_getsize(vm, -2) > 2) return sq_throwerror(vm, "The provided array was too small.");
+
+        if(idx < 0 || idx >= mapData->dataPointValues.size()){
+            return sq_throwerror(vm, "Invalid idx");
+        }
+        const ProceduralExplorationGameCore::DataPointData& e = mapData->dataPointValues[idx];
+        sq_pushinteger(vm, 0);
+        AV::Vector3UserData::vector3ToUserData(vm, Ogre::Vector3(e.x, e.y, e.z));
+        sq_rawset(vm, 3);
+        sq_pushinteger(vm, 1);
+        sq_pushinteger(vm, e.wrapped);
+        sq_rawset(vm, 3);
+
+        return 0;
+    }
+
     template<typename T>
     SQInteger _getDataForVec(HSQUIRRELVM vm, std::vector<T>& vec, AV::uint32 width, AV::uint32 height, T** out){
 
@@ -266,6 +299,8 @@ namespace ProceduralExplorationGamePlugin{
 
         AV::ScriptUtils::addFunction(vm, getWidth, "getWidth");
         AV::ScriptUtils::addFunction(vm, getHeight, "getHeight");
+        AV::ScriptUtils::addFunction(vm, getNumDataPoints, "getNumDataPoints");
+        AV::ScriptUtils::addFunction(vm, getDataPointAt, "getDataPointAt", 3, ".ia");
         AV::ScriptUtils::addFunction(vm, getAltitudeForCoord, "getAltitudeForCoord", 3, ".ii");
         AV::ScriptUtils::addFunction(vm, getVoxelForCoord, "getVoxelForCoord", 3, ".ii");
         AV::ScriptUtils::addFunction(vm, setAltitudeForCoord, "setAltitudeForCoord", 4, ".iii");
