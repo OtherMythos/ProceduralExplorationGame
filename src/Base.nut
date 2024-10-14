@@ -86,6 +86,10 @@
         return ::ScreenManager.ScreenData(screenId, data);
     }
 
+    function setupSecondary(){
+
+    }
+
     function setup(){
         checkForGameCorePlugin();
         _system.ensureUserDirectory();
@@ -280,14 +284,21 @@
                 setupForProfilePost_(i);
             }
         }
+    }
+
+    function switchToFirstScreen(){
         local forcedScreen = determineForcedScreen();
         if(forcedScreen == null && ::ScreenManager.getScreenForLayer() == null){
             //If nothing was setup then switch to the main menu.
-            ::ScreenManager.transitionToScreen(Screen.MAIN_MENU_SCREEN);
+            ::ScreenManager.transitionToScreen(getStartingScreen());
         }
         if(forcedScreen != null){
             ::ScreenManager.transitionToScreen(getScreenDataForForcedScreen(forcedScreen));
         }
+    }
+
+    function getStartingScreen(){
+        return Screen.MAIN_MENU_SCREEN;
     }
 
     function getGameProfiles(){

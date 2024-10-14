@@ -39,7 +39,10 @@ function start(){
     _event.subscribe(_EVENT_SYSTEM_WINDOW_RESIZE, recieveWindowResize, this);
 
     _doFile("res://src/Base.nut");
+    checkForProjectExtra();
     ::Base.setup();
+    ::Base.setupSecondary();
+    ::Base.switchToFirstScreen();
 }
 
 function update(){
@@ -48,6 +51,13 @@ function update(){
 
 function end(){
     ::Base.shutdown();
+}
+
+function checkForProjectExtra(){
+    local filePath = "res://extra/GameCore/Base.nut";
+    if(_system.exists(filePath)){
+        _doFile(filePath);
+    }
 }
 
 function sceneSafeUpdate(){
