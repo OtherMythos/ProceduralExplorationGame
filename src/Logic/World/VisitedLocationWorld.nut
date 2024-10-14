@@ -14,6 +14,8 @@
     constructor(worldId, preparer){
         base.constructor(worldId, preparer);
 
+        mPlayerStartPos_ = Vec3();
+
         mTerrainChunkManager_ = TerrainChunkManager(worldId);
         preparer.provideChunkManager(mTerrainChunkManager_)
     }
