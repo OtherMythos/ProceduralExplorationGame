@@ -286,5 +286,5 @@ jobs:
       - name: Upload Logs Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: testLogs
+          name: testLogs-${{ matrix.buildType }}
           path: /tmp/testLogs
