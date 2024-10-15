@@ -7,13 +7,19 @@ message("Processing ProceduralExplorationGame cmake files")
 set(StaticPluginIncludes ${CMAKE_CURRENT_LIST_DIR})
 set(StaticPluginIncludes ${StaticPluginIncludes} PARENT_SCOPE)
 
+set(BuildDir build)
+if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS")
+    set(BuildDir buildIos)
+    set(IosBuildEnding "-iphoneos")
+endif()
+
 FIND_LIBRARY(NATIVE_CORE_LIBRARY NAMES ProceduralExplorationGameNativeCore
-    PATHS ${CMAKE_CURRENT_LIST_DIR}/native/build/core/${CMAKE_BUILD_TYPE}
+    PATHS ${CMAKE_CURRENT_LIST_DIR}/native/${BuildDir}/core/${CMAKE_BUILD_TYPE}${IosBuildEnding}
     PATH_SUFFIXES a lib
     )
 
 FIND_LIBRARY(PROCEDURAL_EXPLORATION_GAME_PLUGIN NAMES ProceduralExplorationGamePlugin_static
-    PATHS ${CMAKE_CURRENT_LIST_DIR}/native/build/plugin/${CMAKE_BUILD_TYPE}
+    PATHS ${CMAKE_CURRENT_LIST_DIR}/native/${BuildDir}/plugin/${CMAKE_BUILD_TYPE}${IosBuildEnding}
     PATH_SUFFIXES a lib
     )
 
