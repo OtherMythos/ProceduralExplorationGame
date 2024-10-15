@@ -268,7 +268,8 @@ jobs:
         run: |
           cp -r checkout/test .
           chmod +x ./av-x86_64.AppImage
-          xvfb-run python avTools/testRunner/testRunner.py -e ./av-x86_64.AppImage -p test/avTests.cfg -o /home/runner/work/results.xml
+          mkdir /tmp/testLogs
+          xvfb-run python avTools/testRunner/testRunner.py -l /tmp/testLogs -e ./av-x86_64.AppImage -p test/avTests.cfg -o /home/runner/work/results.xml
       - name: Check results
         if: always()
         run: |
@@ -282,3 +283,8 @@ jobs:
         with:
           files: |
             results.xml
+      - name: Upload Logs Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: testLogs
+          path: /tmp/testLogs
