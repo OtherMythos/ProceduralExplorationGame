@@ -89,8 +89,10 @@ enum ExplorationBusEvents{
         //World map display
         mWorldMapDisplay_ = WorldMapDisplay(mWindow_);
 
+        local mobileInterface = (::Base.getTargetInterface() == TargetInterface.MOBILE);
+
         mExplorationStatsContainer_ = ExplorationStatsContainer(mWindow_, mExplorationBus_);
-        if(::Base.getTargetInterface() == TargetInterface.MOBILE){
+        if(mobileInterface){
             mExplorationStatsContainer_.addToLayout(layoutLine);
         }else{
             mExplorationStatsContainer_.setPosition(Vec2(0, 110));
@@ -102,7 +104,7 @@ enum ExplorationBusEvents{
 
         //mExplorationEnemiesContainer_ = ExplorationEnemiesContainer(mWindow_, mExplorationBus_);
         mExplorationMovesContainer_ = ExplorationMovesContainer(mWindow_, mExplorationBus_);
-        if(::Base.getTargetInterface() == TargetInterface.MOBILE){
+        if(mobileInterface){
             mExplorationMovesContainer_.addToLayout(layoutLine);
         }else{
             mExplorationMovesContainer_.setPosition(Vec2(0, 0));
@@ -110,7 +112,7 @@ enum ExplorationBusEvents{
         }
         mWorldMapDisplay_.addToLayout(layoutLine);
 
-        mExplorationPlayerActionsContainer_ = ExplorationPlayerActionsContainer(mWindow_);
+        mExplorationPlayerActionsContainer_ = ExplorationPlayerActionsContainer(mWindow_, this, mobileInterface);
 
         local layoutSize = _window.getSize();
         layoutLine.setHardMaxSize(layoutSize);
@@ -183,6 +185,9 @@ enum ExplorationBusEvents{
     }
     function getEXPCounter(){
         return mExplorationStatsContainer_.getEXPCounter();
+    }
+    function getGameplayWindowPosition(){
+        return mWorldMapDisplay_.getPosition();
     }
 
     function createInputBlockerOverlay(){

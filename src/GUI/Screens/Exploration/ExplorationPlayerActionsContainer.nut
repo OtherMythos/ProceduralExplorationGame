@@ -1,12 +1,19 @@
 ::ScreenManager.Screens[Screen.EXPLORATION_SCREEN].ExplorationPlayerActionsContainer <- class{
+    mParent_ = null;
     mWindow_ = null;
     mLayoutLine_ = null;
     mLabels_ = null;
 
-    constructor(parentWin){
+    mTouchInterface_ = null;
+
+    constructor(parentWin, parent, touchInterface=false){
+        mParent_ = parent;
+        mTouchInterface_ = touchInterface;
+
         //The window is only responsible for laying things out.
         mWindow_ = _gui.createWindow("ExplorationPlayerActions", parentWin);
         mWindow_.setClickable(false);
+        mWindow_.setSkin("internal/WindowNoBorder");
         mWindow_.setVisualsEnabled(false);
 
         mLabels_ = array(ACTION_MANAGER_NUM_SLOTS);
@@ -14,13 +21,24 @@
         mLayoutLine_ = _gui.createLayoutLine();
 
         for(local i = 0; i < ACTION_MANAGER_NUM_SLOTS; i++){
-            local label = mWindow_.createLabel();
-            label.setDefaultFontSize(label.getDefaultFontSize() * 1.5);
+            local label = null;
+            if(mTouchInterface_){
+                label = mWindow_.createButton();
+                label.setUserId(i);
+                label.attachListenerForEvent(actionButtonPressed, _GUI_ACTION_PRESSED);
+            }else{
+                label = mWindow_.createLabel();
+                label.setDefaultFontSize(label.getDefaultFontSize() * 1.5);
+            }
             mLayoutLine_.addCell(label);
             mLabels_[i] = label;
         }
 
         _event.subscribe(Event.ACTIONS_CHANGED, actionsChanged, this);
+    }
+
+    function actionButtonPressed(widget, action){
+        ::Base.mActionManager.executeSlot(widget.getUserId());
     }
 
     function shutdown(){
@@ -64,6 +82,10 @@
     function reprocessPosition(){
         //mWindow_.setSize(100, 100);
         mWindow_.setSize(mWindow_.calculateChildrenSize());
-        mWindow_.setPosition(0, _window.getHeight() - mWindow_.getSize().y);
+        if(mTouchInterface_){
+            mWindow_.setPosition(0, mParent_.getGameplayWindowPosition().y);
+        }else{
+            mWindow_.setPosition(0, _window.getHeight() - mWindow_.getSize().y);
+        }
     }
 };
