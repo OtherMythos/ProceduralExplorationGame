@@ -3,11 +3,23 @@
     function setup(data){
         base.setup(data);
 
-        setSize(Vec2(_window.getWidth() * 0.3, 100));
+        local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
+
+        if(mobile){
+            setSize(Vec2(_window.getWidth() * 0.9, 100));
+        }else{
+            setSize(Vec2(_window.getWidth() * 0.3, 100));
+        }
     }
 
     function getIntendedPosition(){
-        return Vec2(_window.getWidth() * 0.7 - 10, 10);
+        local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
+
+        if(mobile){
+            return Vec2(_window.getWidth() * 0.05 - 10, 10);
+        }else{
+            return Vec2(_window.getWidth() * 0.7 - 10, 10);
+        }
     }
 
     function getAnimOffset(percentage){

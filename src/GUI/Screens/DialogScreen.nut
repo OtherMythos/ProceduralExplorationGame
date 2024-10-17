@@ -85,9 +85,16 @@
         local winSize = ::drawable.copy();
         mWindow_.setSize(winSize);
 
+        local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
+
         mContainerWindow_ = mWindow_.createWindow("DialogTextScreen");
-        mContainerWindow_.setSize(winSize.x * 0.6, winSize.y * 0.3);
-        mContainerWindow_.setPosition(winSize.x * 0.20, winSize.y * 0.65);
+        if(mobile){
+            mContainerWindow_.setSize(winSize.x * 0.9, winSize.y * 0.3);
+            mContainerWindow_.setPosition(winSize.x * 0.05, winSize.y * 0.65);
+        }else{
+            mContainerWindow_.setSize(winSize.x * 0.6, winSize.y * 0.3);
+            mContainerWindow_.setPosition(winSize.x * 0.20, winSize.y * 0.65);
+        }
 
         mTextContainer_ = mContainerWindow_.createLabel();
         mTextContainer_.setText(" ");
@@ -126,7 +133,6 @@
 
         assert(targetText != null);
         mTextContainer_.setText(targetText, false);
-        local winSize = mWindow_.getSize();
 
         if(richText != null){
             mTextContainer_.setRichText(richText);
@@ -134,7 +140,7 @@
             mTextContainer_.setTextColour(1, 1, 1, 1);
         }
 
-        mTextContainer_.sizeToFit(winSize.x * 0.9);
+        mTextContainer_.sizeToFit(mContainerWindow_.getSize().x * 0.95);
     }
 
     function setNewDialogOptions(options){
