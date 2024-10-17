@@ -26,6 +26,7 @@
                 label = mWindow_.createButton();
                 label.setUserId(i);
                 label.attachListenerForEvent(actionButtonPressed, _GUI_ACTION_PRESSED);
+                label.setDefaultFontSize(label.getDefaultFontSize() * 1.2);
             }else{
                 label = mWindow_.createLabel();
                 label.setDefaultFontSize(label.getDefaultFontSize() * 1.5);
@@ -65,7 +66,7 @@
     function actionsChanged(id, data){
         foreach(c,i in data){
             if(i.populated()){
-                mLabels_[c].setText("z - " + i.tostring());
+                mLabels_[c].setText(getActionString(c) + i.tostring());
                 mLabels_[c].setVisible(true);
             }else{
                 mLabels_[c].setText(" ");
@@ -73,6 +74,13 @@
             }
         }
         reprocessPosition();
+    }
+
+    function getActionString(id){
+        if(mTouchInterface_){
+            return "";
+        }
+        return "z - ";
     }
 
     function setVisible(visible){
