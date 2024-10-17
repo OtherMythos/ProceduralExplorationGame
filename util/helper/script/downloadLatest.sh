@@ -23,7 +23,7 @@ if [ ! -d "$TARGET_DIR" ]; then
 fi
 
 echo "Attempting to download latest game to "
-TARGET_URL=$(curl -s https://api.github.com/repos/OtherMythos/ProceduralExplorationGame/releases | grep "$FILE_BASE" | grep -m 1 browser_download_url | grep -Eo 'https://[^ >]+.zip'|head -1)
+TARGET_URL=$(curl -s "https://api.github.com/repos/OtherMythos/${REPO_NAME}/releases" | grep "$FILE_BASE" | grep -m 1 browser_download_url | grep -Eo 'https://[^ >]+.zip'|head -1)
 wget "$TARGET_URL"
 #FILE_NAME=${echo "$TARGET_URL" | grep -E "$FILE_BASE[^ >]+.zip"}
 #echo $FILE_NAME
