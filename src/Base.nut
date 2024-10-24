@@ -115,8 +115,10 @@
         _gui.loadSkins("res://build/assets/skins/itemSkins.json");
 
         _doFile("res://src/System/InputManager.nut");
+        _doFile("res://src/System/LottieAnimationManager.nut");
         _doFile("res://src/Util/VoxToMesh.nut");
         _doFile("res://src/Util/IdPool.nut");
+        _doFile("res://src/Util/VersionPool.nut");
         _doFile("res://src/Logic/Util/PercentageEncounterHelper.nut");
         _doFile("res://src/Logic/Util/SpoilsData.nut");
         _doFile("res://src/Logic/Entity/EntityManager.nut");
