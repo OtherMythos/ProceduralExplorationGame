@@ -92,6 +92,10 @@
         return mActiveScreens_[layerIdx];
     }
 
+    function isScreenPresentForLayer(layerIdx){
+        return mActiveScreens_[layerIdx] != null;
+    }
+
     /**
      * Immediate transition to a new screen.
      */

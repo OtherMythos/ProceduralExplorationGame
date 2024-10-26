@@ -463,7 +463,7 @@ enum InventoryBusEvents{
         }
 
         if(_input.getButtonAction(::InputManager.menuBack, _INPUT_PRESSED)){
-            closeInventory();
+            if(!::ScreenManager.isScreenPresentForLayer(mLayerIdx+1)) closeInventory();
         }
     }
 
