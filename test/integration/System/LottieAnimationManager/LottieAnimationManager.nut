@@ -29,6 +29,9 @@ _tIntegration("LottieAnimationManager", "Check that the lottie animation manager
             ::createAnimation(animSecond);
             local animThird = ::lottieMan.createAnimation(LottieAnimationType.SINGLE_BUFFER, "res://test/integration/System/LottieAnimationManager/like.json", 200, 200, true);
             ::createAnimation(animThird);
+
+            local animSpriteSheet = ::lottieMan.createAnimation(LottieAnimationType.SPRITE_SHEET, "res://test/integration/System/LottieAnimationManager/bell.json", 200, 200, true);
+            ::createAnimation(animSpriteSheet);
         },
         function(){
             ::lottieMan.update();

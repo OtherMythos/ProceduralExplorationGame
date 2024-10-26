@@ -8,6 +8,8 @@ enum LottieAnimationType{
     SPRITE_SHEET
 };
 
+const LOTTIE_MANAGER_SPRITES_WIDTH = 10;
+
 //A class to manage Lottie animations and lifecycles.
 ::LottieAnimationManager <- class{
 
@@ -23,7 +25,10 @@ enum LottieAnimationType{
         mFrame_ = 0;
         mTotalFrame_ = 0;
         mRepeat_ = false;
-        constructor(id, width, height, animType, anim, surface, texture, stagingTexture, repeat){
+        mTotalWidth_ = 1;
+        mTotalHeight_ = 1;
+        mDatablock_ = null;
+        constructor(id, width, height, animType, anim, surface, texture, stagingTexture, repeat, totalWidth=1, totalHeight=1){
             mId_ = id;
             mWidth_ = width;
             mHeight_ = height;
@@ -34,6 +39,14 @@ enum LottieAnimationType{
             mStagingTexture_ = stagingTexture;
             mRepeat_ = repeat;
             mTotalFrame_ = mAnim_.totalFrame();
+            mTotalWidth_ = totalWidth;
+            mTotalHeight_ = totalHeight;
+
+            createDatablock_();
+            if(mAnimType_ == LottieAnimationType.SPRITE_SHEET){
+                generateSpriteSheet_();
+                setFrameForSpriteSheet_(0);
+            }
         }
 
         function update(){
@@ -45,6 +58,37 @@ enum LottieAnimationType{
                 }
             }
 
+            if(mAnimType_ == LottieAnimationType.SINGLE_BUFFER){
+                singleBufferTransfer_();
+            }else{
+                //TODO update the datablock positions.
+                setFrameForSpriteSheet_(mFrame_);
+            }
+
+            mFrame_++;
+        }
+
+        function setFrameForSpriteSheet_(frame){
+            //mDatablock.
+        }
+
+        function generateSpriteSheet_(){
+            mStagingTexture_.startMapRegion();
+
+            local textureBox = mStagingTexture_.mapRegion(mTotalWidth_, mTotalHeight_, 1, 1, _PFG_RGBA8_UNORM);
+
+            for(local i = 0; i < mTotalFrame_; i++){
+                local x = (i.tofloat() % LOTTIE_MANAGER_SPRITES_WIDTH).tointeger() * mWidth_;
+                local y = (i.tofloat() / LOTTIE_MANAGER_SPRITES_WIDTH).tointeger() * mHeight_;
+                mAnim_.renderSync(mSurface_, i);
+                mSurface_.uploadToTextureBox(textureBox, x, y);
+            }
+
+            mStagingTexture_.stopMapRegion();
+            mStagingTexture_.upload(textureBox, mTexture_, 0);
+        }
+
+        function singleBufferTransfer_(){
             mStagingTexture_.startMapRegion();
 
             local textureBox = mStagingTexture_.mapRegion(mWidth_, mHeight_, 1, 1, _PFG_RGBA8_UNORM);
@@ -55,18 +99,20 @@ enum LottieAnimationType{
 
             mStagingTexture_.stopMapRegion();
             mStagingTexture_.upload(textureBox, mTexture_, 0);
-
-            mFrame_++;
         }
 
-        function createDatablock(){
+        function createDatablock_(){
             local blendBlock = _hlms.getBlendblock({
                 "dst_blend_factor": _HLMS_SBF_ONE_MINUS_SOURCE_ALPHA
             });
             local datablock = _hlms.unlit.createDatablock("lottieManagerDatablock" + mId_, blendBlock);
             datablock.setTexture(0, mTexture_);
 
-            return datablock;
+            mDatablock_ = datablock;
+        }
+
+        function getDatablock(){
+            return mDatablock_;
         }
 
         function destroy(){
@@ -84,14 +130,23 @@ enum LottieAnimationType{
     function createAnimation(animationType, animPath, width, height, repeat=true){
         local lottieAnim = _lottie.createAnimation(animPath);
 
+        local surfaceWidth = width;
+        local surfaceHeight = height;
+        if(animationType == LottieAnimationType.SPRITE_SHEET){
+            local total = lottieAnim.totalFrame();
+            surfaceWidth = (total >= LOTTIE_MANAGER_SPRITES_WIDTH ? LOTTIE_MANAGER_SPRITES_WIDTH : total) * width;
+            surfaceHeight = (total / LOTTIE_MANAGER_SPRITES_WIDTH).tointeger() + 1;
+            surfaceHeight *= height;
+        }
+
         local surface = _lottie.createSurface(width, height);
         local texture = _graphics.createTexture("lottieManagerTexture-" + mTotalAnims_);
-        texture.setResolution(width, height);
+        texture.setResolution(surfaceWidth, surfaceHeight);
         texture.setPixelFormat(_PFG_RGBA8_UNORM);
         texture.scheduleTransitionTo(_GPU_RESIDENCY_RESIDENT);
-        local stagingTexture = _graphics.getStagingTexture(width, height, 1, 1, _PFG_RGBA8_UNORM);
+        local stagingTexture = _graphics.getStagingTexture(surfaceWidth, surfaceHeight, 1, 1, _PFG_RGBA8_UNORM);
 
-        local a = LottieAnimation(mTotalAnims_, width, height, animationType, lottieAnim, surface, texture, stagingTexture, repeat);
+        local a = LottieAnimation(mTotalAnims_, width, height, animationType, lottieAnim, surface, texture, stagingTexture, repeat, surfaceWidth, surfaceHeight);
 
         local id = mVersionPool_.store(a);
         mTotalAnims_++;
@@ -109,7 +164,7 @@ enum LottieAnimationType{
 
     function getDatablockForAnim(id){
         local anim = mVersionPool_.get(id);
-        return anim.createDatablock();
+        return anim.getDatablock();
     }
 
     function destroyForId(id){
