@@ -14,6 +14,14 @@ const LOTTIE_MANAGER_SPRITES_WIDTH = 10;
 ::LottieAnimationManager <- class{
 
     LottieAnimation = class{
+        //Store the matrix as a static obj
+        mAnimMatrix_ = [
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1,
+        ];
+
         mId_ = 0;
         mWidth_ = 0;
         mHeight_ = 0;
@@ -27,6 +35,8 @@ const LOTTIE_MANAGER_SPRITES_WIDTH = 10;
         mRepeat_ = false;
         mTotalWidth_ = 1;
         mTotalHeight_ = 1;
+        mCalcWidth_ = 0.0;
+        mCalcHeight_ = 0.0;
         mDatablock_ = null;
         constructor(id, width, height, animType, anim, surface, texture, stagingTexture, repeat, totalWidth=1, totalHeight=1){
             mId_ = id;
@@ -45,7 +55,10 @@ const LOTTIE_MANAGER_SPRITES_WIDTH = 10;
             createDatablock_();
             if(mAnimType_ == LottieAnimationType.SPRITE_SHEET){
                 generateSpriteSheet_();
+                mCalcWidth_ = mWidth_.tofloat() / mTotalWidth_.tofloat();
+                mCalcHeight_ = mHeight_.tofloat() / mTotalHeight_.tofloat();
                 setFrameForSpriteSheet_(0);
+                mDatablock_.setEnableAnimationMatrix(0, true);
             }
         }
 
@@ -69,7 +82,13 @@ const LOTTIE_MANAGER_SPRITES_WIDTH = 10;
         }
 
         function setFrameForSpriteSheet_(frame){
-            //mDatablock.
+            mAnimMatrix_[0] = mCalcWidth_;
+            mAnimMatrix_[5] = mCalcHeight_;
+            local x = (frame.tofloat() % LOTTIE_MANAGER_SPRITES_WIDTH).tointeger();
+            local y = (frame.tofloat() / LOTTIE_MANAGER_SPRITES_WIDTH).tointeger();
+            mAnimMatrix_[3] = x * mCalcWidth_;
+            mAnimMatrix_[7] = y * mCalcHeight_;
+            mDatablock_.setAnimationMatrix(0, mAnimMatrix_);
         }
 
         function generateSpriteSheet_(){
