@@ -32,6 +32,8 @@
                     "MenuBack": "#MenuBack",
                     "CloseMenu": "#CloseMenu",
 
+                    "ClosePause": "#ClosePause",
+
                     "MoveLeft": "#MoveLeft",
                     "MoveRight": "#MoveRight",
                 }
@@ -80,6 +82,7 @@
 
         ::InputManager.menuInteract <- _input.getButtonActionHandle("MenuInteract");
         ::InputManager.menuBack <- _input.getButtonActionHandle("MenuBack");
+        ::InputManager.closePause <- _input.getButtonActionHandle("ClosePause");
 
         ::InputManager.debugConsoleCloseConsole <- _input.getButtonActionHandle("closeConsole");
 
@@ -102,6 +105,7 @@
         _input.mapControllerInput(_B_LEFTSTICK, this.toggleWorldView);
 
         _input.mapControllerInput(_B_B, this.menuBack);
+        _input.mapControllerInput(_B_START, this.closePause);
 
         //_input.mapKeyboardInputAxis(_K_RIGHT, _K_DOWN, _K_LEFT, _K_UP, this.explorationMove);
         _input.mapKeyboardInputAxis(_K_D, _K_S, _K_A, _K_W, this.explorationCamera);

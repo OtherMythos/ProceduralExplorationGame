@@ -36,14 +36,15 @@
             }
         ]
 
-        foreach(i,c in buttonOptions){
+        foreach(c,i in buttonOptions){
             local button = mWindow_.createButton();
             button.setDefaultFontSize(button.getDefaultFontSize() * 1.5);
-            button.setText(c);
-            button.attachListenerForEvent(buttonFunctions[i], _GUI_ACTION_PRESSED, this);
+            button.setText(i);
+            button.attachListenerForEvent(buttonFunctions[c], _GUI_ACTION_PRESSED, this);
             button.setExpandHorizontal(true);
             button.setMinSize(0, 100);
             layoutLine.addCell(button);
+            if(c == 0) button.setFocus();
         }
 
         layoutLine.setMarginForAllCells(0, ::ScreenManager.calculateRatio(20));
@@ -67,8 +68,10 @@
     }
 
     function update(){
-        if(_input.getButtonAction(::InputManager.menuBack, _INPUT_PRESSED) && ::ScreenManager.isForefrontScreen(mLayerIdx)){
-            closeScreen();
+        if(_input.getButtonAction(::InputManager.menuBack, _INPUT_PRESSED) || _input.getButtonAction(::InputManager.closePause, _INPUT_PRESSED)){
+            if(::ScreenManager.isForefrontScreen(mLayerIdx)){
+                closeScreen();
+            }
         }
     }
 

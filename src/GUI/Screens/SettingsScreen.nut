@@ -68,4 +68,12 @@
             mSettingsWidgets_[i].setValue(setting);
         }
     }
+
+    function update(){
+        if(_input.getButtonAction(::InputManager.menuBack, _INPUT_PRESSED)){
+            if(::ScreenManager.isForefrontScreen(mLayerIdx)){
+                ::ScreenManager.queueTransition(null, null, mLayerIdx);
+            }
+        }
+    }
 }
