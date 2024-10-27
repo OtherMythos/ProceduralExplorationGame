@@ -461,7 +461,11 @@
 
         processRegionCollectables_(regionData);
         if(mGui_.mWorldMapDisplay_.mMapViewer_ != null){
-            mGui_.mWorldMapDisplay_.mMapViewer_.notifyRegionFound(regionId);
+            local viewer = mGui_.mWorldMapDisplay_.mMapViewer_;
+            //TODO hack when moving around worlds, really this check should never be needed.
+            if(viewer.rawin("notifyRegionFound")){
+                viewer.notifyRegionFound(regionId);
+            }
         }
     }
 

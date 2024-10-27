@@ -1,4 +1,4 @@
-::World.EntityFactory <- class{
+::EntityFactory <- class{
     mBaseSceneNode_ = null
     mCharacterGenerator_ = null
     mConstructorWorld_ = null;

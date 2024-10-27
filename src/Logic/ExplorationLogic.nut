@@ -149,6 +149,11 @@
         mQueuedWorlds_.pop();
         setCurrentWorld_(current);
     }
+    function replaceWorld(worldInstance){
+        mCurrentWorld_.setCurrentWorld(false);
+        mCurrentWorld_.shutdown();
+        setCurrentWorld_(worldInstance);
+    }
     function setCurrentWorld(worldInstance){
         setCurrentWorld_(worldInstance);
     }

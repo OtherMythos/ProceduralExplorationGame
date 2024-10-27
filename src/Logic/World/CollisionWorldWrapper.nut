@@ -59,7 +59,7 @@ enum CollisionWorldTriggerResponses{
     mCollisionWorld_ = null;
     mParentWorld_ = null;
 
-    mTriggerResponses_ = null;
+    mTriggerResponses_ = {};
     mTriggerData_ = null;
     mPoints_ = null;
     mPointsQueuedDestruction_ = null;
@@ -70,75 +70,11 @@ enum CollisionWorldTriggerResponses{
         mId_ = id;
         mCollisionWorld_ = CollisionWorld(_COLLISION_WORLD_BRUTE_FORCE, mId_);
 
-        mTriggerResponses_ = {};
+        //mTriggerResponses_ = {};
         mTriggerData_ = {};
         mPoints_ = {};
         mPointsQueuedDestruction_ = {};
 
-        //TODO see if I can populate these somewhere else.
-        mTriggerResponses_[CollisionWorldTriggerResponses.EXP_ORB] <- TriggerResponse(function(world, entityId, receiver, collisionStatus){
-            world.processEXPOrb(entityId);
-        });
-        mTriggerResponses_[CollisionWorldTriggerResponses.OVERWORLD_VISITED_PLACE] <- TriggerResponse(function(world, id, receiver, collisionStatus){
-            //TODO remove magic numbers.
-            if(collisionStatus == 0x1){
-                ::Base.mExplorationLogic.notifyPlaceEnterState(id, true);
-            }
-            else if(collisionStatus == 0x2){
-                ::Base.mExplorationLogic.notifyPlaceEnterState(id, false);
-            }
-        });
-        mTriggerResponses_[CollisionWorldTriggerResponses.PROJECTILE_DAMAGE] <- TriggerResponse(function(world, projectileId, entityId, collisionStatus){
-            if(collisionStatus != 0x1) return;
-
-            local active = world.mProjectileManager_.mActiveProjectiles_;
-            //TODO can this be removed with the new collision system?
-            //if(!active.rawin(projectileId)) return;
-            local projData = active[projectileId];
-            local damage = projData.mCombatMove_.getDamage();
-
-            _applyDamageOther(world.getEntityManager(), entityId, damage);
-        });
-        mTriggerResponses_[CollisionWorldTriggerResponses.BASIC_ENEMY_RECEIVE_PLAYER_SPOTTED] <- TriggerResponse(function(world, entityId, second, collisionStatus){
-            if(collisionStatus == 0x0) return;
-            local manager = world.getEntityManager();
-            if(!manager.entityValid(entityId)) return;
-            assert(manager.hasComponent(entityId, EntityComponents.SCRIPT));
-            local comp = manager.getComponent(entityId, EntityComponents.SCRIPT);
-            if(collisionStatus == 0x1) comp.mScript.receivePlayerSpotted(true);
-            else if(collisionStatus == 0x2) comp.mScript.receivePlayerSpotted(false);
-        });
-        mTriggerResponses_[CollisionWorldTriggerResponses.BASIC_ENEMY_PLAYER_TARGET_RADIUS] <- TriggerResponse(function(world, entityId, second, collisionStatus){
-            if(collisionStatus == 0x0) return;
-            world.processEntityCombatTarget(second, collisionStatus == 0x1);
-            /*
-            local manager = world.getEntityManager();
-            assert(manager.hasComponent(entityId, EntityComponents.SCRIPT));
-            local comp = manager.getComponent(entityId, EntityComponents.SCRIPT);
-            if(collisionStatus == 0x1) comp.mScript.receivePlayerSpotted(true);
-            else if(collisionStatus == 0x2) comp.mScript.receivePlayerSpotted(false);
-            */
-        });
-        mTriggerResponses_[CollisionWorldTriggerResponses.DIE] <- TriggerResponse(function(world, entityId, second, collisionStatus){
-            if(collisionStatus != 0x1) return;
-            local manager = world.getEntityManager();
-            manager.destroyEntity(entityId);
-        });
-        mTriggerResponses_[CollisionWorldTriggerResponses.NPC_INTERACT] <- TriggerResponse(function(world, entityId, second, collisionStatus){
-            if(collisionStatus == 0x1){
-                local manager = world.getEntityManager();
-                assert(manager.hasComponent(entityId, EntityComponents.DIALOG));
-                local comp = manager.getComponent(entityId, EntityComponents.DIALOG);
-                local data = {
-                    "path": comp.mDialogPath,
-                    "block": comp.mInitialBlock
-                };
-
-                ::Base.mActionManager.registerAction(ActionSlotType.TALK_TO, 0, data, entityId);
-            }else if(collisionStatus == 0x2){
-                ::Base.mActionManager.unsetAction(0, entityId);
-            }
-        });
     }
 
     function processCollision(){
@@ -199,3 +135,69 @@ enum CollisionWorldTriggerResponses{
     }
 
 }
+
+        //TODO see if I can populate these somewhere else.
+        local TriggerResponse = ::World.CollisionWorldWrapper.TriggerResponse;
+        ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.EXP_ORB] <- TriggerResponse(function(world, entityId, receiver, collisionStatus){
+            world.processEXPOrb(entityId);
+        });
+        ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.OVERWORLD_VISITED_PLACE] <- TriggerResponse(function(world, id, receiver, collisionStatus){
+            //TODO remove magic numbers.
+            if(collisionStatus == 0x1){
+                ::Base.mExplorationLogic.notifyPlaceEnterState(id, true);
+            }
+            else if(collisionStatus == 0x2){
+                ::Base.mExplorationLogic.notifyPlaceEnterState(id, false);
+            }
+        });
+        ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.PROJECTILE_DAMAGE] <- TriggerResponse(function(world, projectileId, entityId, collisionStatus){
+            if(collisionStatus != 0x1) return;
+
+            local active = world.mProjectileManager_.mActiveProjectiles_;
+            //TODO can this be removed with the new collision system?
+            //if(!active.rawin(projectileId)) return;
+            local projData = active[projectileId];
+            local damage = projData.mCombatMove_.getDamage();
+
+            _applyDamageOther(world.getEntityManager(), entityId, damage);
+        });
+        ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.BASIC_ENEMY_RECEIVE_PLAYER_SPOTTED] <- TriggerResponse(function(world, entityId, second, collisionStatus){
+            if(collisionStatus == 0x0) return;
+            local manager = world.getEntityManager();
+            if(!manager.entityValid(entityId)) return;
+            assert(manager.hasComponent(entityId, EntityComponents.SCRIPT));
+            local comp = manager.getComponent(entityId, EntityComponents.SCRIPT);
+            if(collisionStatus == 0x1) comp.mScript.receivePlayerSpotted(true);
+            else if(collisionStatus == 0x2) comp.mScript.receivePlayerSpotted(false);
+        });
+        ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.BASIC_ENEMY_PLAYER_TARGET_RADIUS] <- TriggerResponse(function(world, entityId, second, collisionStatus){
+            if(collisionStatus == 0x0) return;
+            world.processEntityCombatTarget(second, collisionStatus == 0x1);
+            /*
+            local manager = world.getEntityManager();
+            assert(manager.hasComponent(entityId, EntityComponents.SCRIPT));
+            local comp = manager.getComponent(entityId, EntityComponents.SCRIPT);
+            if(collisionStatus == 0x1) comp.mScript.receivePlayerSpotted(true);
+            else if(collisionStatus == 0x2) comp.mScript.receivePlayerSpotted(false);
+            */
+        });
+        ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.DIE] <- TriggerResponse(function(world, entityId, second, collisionStatus){
+            if(collisionStatus != 0x1) return;
+            local manager = world.getEntityManager();
+            manager.destroyEntity(entityId);
+        });
+        ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.NPC_INTERACT] <- TriggerResponse(function(world, entityId, second, collisionStatus){
+            if(collisionStatus == 0x1){
+                local manager = world.getEntityManager();
+                assert(manager.hasComponent(entityId, EntityComponents.DIALOG));
+                local comp = manager.getComponent(entityId, EntityComponents.DIALOG);
+                local data = {
+                    "path": comp.mDialogPath,
+                    "block": comp.mInitialBlock
+                };
+
+                ::Base.mActionManager.registerAction(ActionSlotType.TALK_TO, 0, data, entityId);
+            }else if(collisionStatus == 0x2){
+                ::Base.mActionManager.unsetAction(0, entityId);
+            }
+        });
