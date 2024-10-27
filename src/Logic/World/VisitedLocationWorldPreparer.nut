@@ -51,7 +51,9 @@
             "native": nativeData
         };
 
-        local path = "res://build/assets/maps/" + targetMap + "/scene.avscene";
+        local mapsDir = ::BaseHelperFunctions.getMapsDir();
+
+        local path = mapsDir + targetMap + "/scene.avscene";
         local parsedFile = null;
         if(_system.exists(path)){
             printf("Loading scene file with path '%s'", path);
@@ -59,7 +61,7 @@
         }
 
         //TODO properly give this a name.
-        local animationPath = "res://build/assets/maps/" + targetMap + "/sceneAnimation.xml";
+        local animationPath = mapsDir + targetMap + "/sceneAnimation.xml";
         if(_system.exists(animationPath)){
             _animation.loadAnimationFile(animationPath);
         }
@@ -67,7 +69,7 @@
         chunkManager.setup(nativeData, 4);
         chunkManager.generateInitialItems();
 
-        local scriptPath = "res://build/assets/maps/" + targetMap + "/script.nut";
+        local scriptPath = mapsDir + targetMap + "/script.nut";
         local scriptObject = null;
         if(_system.exists(scriptPath)){
             assert(!getroottable().rawin("VisitedWorldScriptObject"));

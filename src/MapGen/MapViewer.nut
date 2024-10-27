@@ -149,7 +149,13 @@
         }
 
         local newTex = _graphics.createTexture("mapViewer/renderTexture" + ::MapViewerCount);
-        newTex.setResolution(mapData.width, mapData.height);
+        local width = mapData.width;
+        local height = mapData.height;
+        if(width == 0 || height == 0){
+            width = 500;
+            height = 500;
+        }
+        newTex.setResolution(width, height);
         newTex.setPixelFormat(_PFG_RGBA8_UNORM);
         newTex.scheduleTransitionTo(_GPU_RESIDENCY_RESIDENT);
         mCompositorTexture_ = newTex;
@@ -159,6 +165,7 @@
     }
 
     function uploadToTexture(){
+        if(mMapData_.width == 0 || mMapData_.height == 0) return;
         //TODO change this.
         local stagingTexture = _graphics.getStagingTexture(mMapData_.width, mMapData_.height, 1, 1, _PFG_RGBA8_UNORM);
         stagingTexture.startMapRegion();

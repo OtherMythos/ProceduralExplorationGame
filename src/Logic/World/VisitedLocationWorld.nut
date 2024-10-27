@@ -2,7 +2,6 @@
 
     mMapData_ = null;
     mTargetMap_ = null;
-    mVoxTerrainMesh_ = null;
     mTerrainChunkManager_ = null;
 
     mPlayerStartPos_ = null;
@@ -180,6 +179,10 @@
         switch(major){
             case 0:{
                 processMetaDataPoint(pos, minor);
+                break;
+            }
+            case 1:{
+                mMapData_.scriptObject.setupForNPCDataPoint(this, pos, minor);
                 break;
             }
         }

@@ -70,7 +70,7 @@
 
         local targetWorld = ::Base.determineForcedWorld();
         if(targetWorld == null){
-            targetWorld = WorldTypes.PROCEDURAL_EXPLORATION_WORLD;
+            targetWorld = ::BaseHelperFunctions.getDefaultWorld();
         }
         local data = {};
         local targetMap = ::Base.determineForcedMap();
@@ -115,7 +115,7 @@
                 created = ProceduralDungeonWorld(id, ProceduralDungeonWorldPreparer());
                 break;
             case WorldTypes.VISITED_LOCATION_WORLD:{
-                local defaultMap = "testVillage";
+                local defaultMap = ::BaseHelperFunctions.getDefaultMapName();
                 if(data.rawin("mapName")){
                     defaultMap = data.mapName;
                 }

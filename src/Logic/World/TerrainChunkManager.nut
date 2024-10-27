@@ -4,7 +4,6 @@
     mMapData_ = null;
     mParentNode_ = null;
     mChunkDivisions_ = 1;
-    mVoxTerrainMesh_ = null;
     mUseThreading_ = false;
 
     mChunkColourData_ = null;
@@ -121,7 +120,7 @@
         //local meshObj = _gameCore.voxeliseMeshForVoxelData(format("terrainChunkManager-%i-%i", mWorldId_, targetIdx), targetChunkArray, widthWithPadding, heightWithPadding, mMapData_.voxHeight.greatest);
         local meshObj = mMapData_.voxeliseTerrainMeshForData(format("terrainChunkManager-%i-%i", mWorldId_, targetIdx), x, y, width, height);
         //local meshObj = _gameCore.voxeliseToTerrainMeshes(format("terrainChunkManager-%i-%i", mWorldId_, targetIdx), targetChunkArray, widthWithPadding, heightWithPadding, mMapData_.voxHeight.greatest);
-        mVoxTerrainMesh_ = meshObj;
+        if(meshObj == null) return null;
 
         local item = _scene.createItem(meshObj);
         item.setRenderQueueGroup(30);
@@ -184,7 +183,10 @@
         parentNode.setPosition((chunkX * -CHUNK_DEBUG_PADDING) + chunkX * width + offset, 0, (chunkY * -CHUNK_DEBUG_PADDING) + -chunkY * height - offset-offset);
 
         assert(mItemsForChunk_.rawin(targetIdx));
-        parentNode.attachObject(mItemsForChunk_.rawget(targetIdx));
+        local item = mItemsForChunk_.rawget(targetIdx);
+        if(item != null){
+            parentNode.attachObject(item);
+        }
         parentNode.setScale(1, 1, VISITED_WORLD_UNIT_MULTIPLIER);
         parentNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
 

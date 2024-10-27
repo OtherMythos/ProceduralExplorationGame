@@ -1,6 +1,18 @@
 //TODO temporary
 ::currentNativeMapData <- null;
 
+::BaseHelperFunctions <- {
+    function getDefaultWorld(){
+        return WorldTypes.PROCEDURAL_EXPLORATION_WORLD;
+    }
+    function getDefaultMapName(){
+        return "testVillage";
+    }
+    function getMapsDir(){
+        return "res://build/assets/maps/";
+    }
+};
+
 ::Base <- {
     mExplorationLogic = null
 
@@ -12,6 +24,7 @@
     mGameProfiles_ = null
     mActionManager = null
     mSystemSettings = null
+    mLottieManager = null
 
     mTargetInterface_ = TargetInterface.DESKTOP
     mFullscreenMode_ = FullscreenMode.WINDOWED
@@ -115,10 +128,13 @@
         _gui.loadSkins("res://build/assets/skins/itemSkins.json");
 
         _doFile("res://src/System/InputManager.nut");
-        _doFile("res://src/System/LottieAnimationManager.nut");
         _doFile("res://src/Util/VoxToMesh.nut");
         _doFile("res://src/Util/IdPool.nut");
         _doFile("res://src/Util/VersionPool.nut");
+
+        _doFile("res://src/System/LottieAnimationManager.nut");
+        mLottieManager = ::LottieAnimationManager();
+
         _doFile("res://src/Logic/Util/PercentageEncounterHelper.nut");
         _doFile("res://src/Logic/Util/SpoilsData.nut");
         _doFile("res://src/Logic/Entity/EntityManager.nut");
@@ -258,6 +274,7 @@
 
         setupBaseMaterials();
         setupBaseMeshes();
+        _gameCore.setMapsDirectory(::BaseHelperFunctions.getMapsDir());
 
         ::InputManager.setup();
 
@@ -292,7 +309,7 @@
         local forcedScreen = determineForcedScreen();
         if(forcedScreen == null && ::ScreenManager.getScreenForLayer() == null){
             //If nothing was setup then switch to the main menu.
-            ::ScreenManager.transitionToScreen(getStartingScreen());
+            ::ScreenManager.transitionToScreen(getScreenDataForForcedScreen(getStartingScreen()));
         }
         if(forcedScreen != null){
             ::ScreenManager.transitionToScreen(getScreenDataForForcedScreen(forcedScreen));
@@ -357,6 +374,7 @@
         ::PopupManager.update();
         ::EffectManager.update();
         ::DebugConsole.update();
+        mLottieManager.update();
     }
 
     function createLights(){
