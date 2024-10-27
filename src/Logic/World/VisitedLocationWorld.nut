@@ -3,6 +3,7 @@
     mMapData_ = null;
     mTargetMap_ = null;
     mTerrainChunkManager_ = null;
+    mSwimAllowed_ = true;
 
     mPlayerStartPos_ = null;
 
@@ -41,6 +42,7 @@
 
         mMapData_ = mapData;
 
+        readMapMeta();
         createScene();
     }
 
@@ -72,7 +74,7 @@
 
         base.update();
 
-        mCloudManager_.update();
+        if(mCloudManager_ != null) mCloudManager_.update();
 
         if(mMapData_.scriptObject != null){
             mMapData_.scriptObject.update(this);
@@ -131,7 +133,14 @@
 
     #Override
     function getIsWaterForPosition(pos){
+        if(!mSwimAllowed_) return false;
         return getZForPos(pos) == 0;
+    }
+
+    function readMapMeta(){
+        if(mMapData_.meta.rawin("swimAllowed")){
+            mSwimAllowed_ = mMapData_.meta.swimAllowed;
+        }
     }
 
     function createScene(){
@@ -144,19 +153,31 @@
             mCurrentWorldAnim_ = _animation.createAnimation("sceneAnim", animData);
         }
 
-        mCloudManager_ = CloudManager(mParentNode_, mMapData_.width, mMapData_.height);
+        local drawClouds = true;
+        if(mMapData_.meta.rawin("clouds")){
+            drawClouds = mMapData_.meta.clouds;
+        }
+        if(drawClouds){
+            mCloudManager_ = CloudManager(mParentNode_, mMapData_.width, mMapData_.height);
+        }
 
         //mTerrainChunkManager_.setup(targetNode, mMapData_.mapData, 4);
         mTerrainChunkManager_.setupParentNode(targetNode);
 
-        local oceanNode = mParentNode_.createChildSceneNode();
-        local oceanItem = _scene.createItem("plane");
-        oceanItem.setCastsShadows(false);
-        oceanItem.setRenderQueueGroup(30);
-        oceanItem.setDatablock("oceanUnlit");
-        oceanNode.attachObject(oceanItem);
-        oceanNode.setScale(500, 500, 500)
-        oceanNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
+        local drawOcean = true;
+        if(mMapData_.meta.rawin("ocean")){
+            drawOcean = mMapData_.meta.ocean;
+        }
+        if(drawOcean){
+            local oceanNode = mParentNode_.createChildSceneNode();
+            local oceanItem = _scene.createItem("plane");
+            oceanItem.setCastsShadows(false);
+            oceanItem.setRenderQueueGroup(30);
+            oceanItem.setDatablock("oceanUnlit");
+            oceanNode.attachObject(oceanItem);
+            oceanNode.setScale(500, 500, 500)
+            oceanNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
+        }
 
         //Parse data points
         local native = mMapData_.native;

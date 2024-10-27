@@ -66,6 +66,16 @@
             _animation.loadAnimationFile(animationPath);
         }
 
+        local mapMeta = null;
+        local metaPath = mapsDir + targetMap + "/meta.json";
+        print(metaPath);
+        if(_system.exists(metaPath)){
+            mapMeta = _system.readJSONAsTable(metaPath);
+        }
+        if(mapMeta == null){
+            mapMeta = {};
+        }
+
         chunkManager.setup(nativeData, 4);
         chunkManager.generateInitialItems();
 
@@ -84,7 +94,8 @@
             "width": mapData.width,
             "height": mapData.height,
             "scriptObject": scriptObject,
-            "native": nativeData
+            "native": nativeData,
+            "meta": mapMeta
         };
         return outData;
     }
