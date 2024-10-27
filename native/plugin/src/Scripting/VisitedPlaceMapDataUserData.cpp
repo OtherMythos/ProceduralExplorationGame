@@ -123,6 +123,11 @@ namespace ProceduralExplorationGamePlugin{
         ProceduralExplorationGameCore::VisitedPlaceMapDataHelper helper(mapData);
         helper.voxeliseToTerrainMeshes(meshName, &outPtr, x, y, width, height);
 
+        if(!outPtr){
+            sq_pushnull(vm);
+            return 1;
+        }
+
         AV::MeshUserData::MeshToUserData(vm, outPtr);
 
         return 1;
