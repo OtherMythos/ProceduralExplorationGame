@@ -228,6 +228,7 @@ enum WorldMousePressContexts{
     static MIN_ZOOM = 10;
 
     mQueuedFlags_ = null;
+    mBlockAllInputs_ = null;
 
     mActiveGizmos_ = null;
 
@@ -668,6 +669,7 @@ enum WorldMousePressContexts{
         mCurrentTargetEnemy_ = mCurrentHighlightEnemy_;
     }
     function checkForPlayerMoveBegin(){
+        if(mBlockAllInputs_) return;
         if(!mGui_) return;
         if(!_input.getMouseButton(_MB_LEFT) || mMouseContext_.getCurrentState() != null) return;
 
@@ -985,6 +987,7 @@ enum WorldMousePressContexts{
     }
 
     function checkPlayerInputs(){
+        if(mBlockAllInputs_) return;
         foreach(c,i in mInputs_.playerMoves){
             local buttonState = _input.getButtonAction(i, _INPUT_PRESSED);
             if(buttonState){
@@ -1230,6 +1233,7 @@ enum WorldMousePressContexts{
         }
     }
     function checkCameraChange(){
+        if(mBlockAllInputs_) return;
         local modifier = ::SystemSettings.getSetting(SystemSetting.INVERT_CAMERA_CONTROLLER) ? -1 : 1;
         local x = _input.getAxisActionX(mInputs_.camera, _INPUT_ANY);
         local y = _input.getAxisActionY(mInputs_.camera, _INPUT_ANY);

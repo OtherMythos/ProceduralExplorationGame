@@ -59,6 +59,10 @@
         }
     }
 
+    function setVisible(visible){
+        mMapViewerWindow_.setVisible(visible);
+    }
+
     function notifyPlaceDiscovered(id, data){
         mMapViewer_.notifyNewPlaceFound(data.id, data.pos);
     }

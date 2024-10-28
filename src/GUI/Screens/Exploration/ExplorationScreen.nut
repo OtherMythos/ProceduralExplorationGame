@@ -3,6 +3,14 @@ enum ExplorationBusEvents{
     TRIGGER_ENCOUNTER
 };
 
+enum ExplorationScreenWidgetType{
+    STATS_CONTAINER,
+    MOVES_CONTAINER,
+    MINIMAP,
+
+    MAX
+}
+
 ::ScreenManager.Screens[Screen.EXPLORATION_SCREEN] = class extends ::Screen{
 
     mWorldMapDisplay_ = null;
@@ -29,6 +37,8 @@ enum ExplorationBusEvents{
     mTooltipManager_ = null;
 
     mWorldStatsScreen_ = null;
+
+    mExplorationScreenWidgetType_ = null;
 
     WorldStatsScreen = class{
         mParent_ = null;
@@ -74,6 +84,8 @@ enum ExplorationBusEvents{
     };
 
     function setup(data){
+        mExplorationScreenWidgetType_ = array(ExplorationScreenWidgetType.MAX);
+
         mLogicInterface_ = data.logic;
         mExplorationBus_ = ScreenBus();
 
@@ -98,6 +110,7 @@ enum ExplorationBusEvents{
             mExplorationStatsContainer_.setPosition(Vec2(0, 110));
             mExplorationStatsContainer_.setSize(400, 140);
         }
+        mExplorationScreenWidgetType_[ExplorationScreenWidgetType.STATS_CONTAINER] = mExplorationStatsContainer_;
 
         //mExplorationItemsContainer_ = ExplorationItemsContainer(mWindow_, mExplorationBus_);
         //mExplorationItemsContainer_.addToLayout(layoutLine);
@@ -110,7 +123,9 @@ enum ExplorationBusEvents{
             mExplorationMovesContainer_.setPosition(Vec2(0, 0));
             mExplorationMovesContainer_.setSize(400, 100);
         }
+        mExplorationScreenWidgetType_[ExplorationScreenWidgetType.MOVES_CONTAINER] = mExplorationMovesContainer_;
         mWorldMapDisplay_.addToLayout(layoutLine);
+        mExplorationScreenWidgetType_[ExplorationScreenWidgetType.MINIMAP] = mWorldMapDisplay_;
 
         mExplorationPlayerActionsContainer_ = ExplorationPlayerActionsContainer(mWindow_, this, mobileInterface);
 
@@ -160,6 +175,10 @@ enum ExplorationBusEvents{
         //TOOD NOTE Workaround! This isn't how the paradigm should fit together
         //Screen shouldn't dictate what the logic does other than let it know of events happening.
         ::Base.mExplorationLogic.resetExploration_();
+    }
+
+    function setScreenWidgetVisible(widgetType, visible){
+        mExplorationScreenWidgetType_[widgetType].setVisible(visible);
     }
 
     function receivePreparationStateChange(id, data){
