@@ -185,6 +185,22 @@ local ObjAnim = class{
 
     mStateMachine_ = null;
 
+    buttonOptions = ["Explore again", "Return to menu"];
+    buttonFunctions = [
+        function(widget, action){
+            ::SaveManager.writeSaveAtPath("user://" + ::Base.mPlayerStats.getSaveSlot(), ::Base.mPlayerStats.getSaveData());
+
+            ::Base.mExplorationLogic.resetExploration();
+            ::ScreenManager.queueTransition(null, null, mLayerIdx);
+        },
+        function(widget, action){
+            ::SaveManager.writeSaveAtPath("user://" + ::Base.mPlayerStats.getSaveSlot(), ::Base.mPlayerStats.getSaveData());
+
+            ::ScreenManager.queueTransition(null, null, mLayerIdx);
+            ::ScreenManager.queueTransition(Screen.GAMEPLAY_MAIN_MENU_SCREEN);
+        }
+    ];
+
     function setup(data){
 
         mScreenComponents_ = {};
@@ -237,21 +253,6 @@ local ObjAnim = class{
         levelBar.addToLayout(layoutLine);
         mScreenComponents_[ExplorationScreenComponents.EXP_PROGRESS] <- levelBar;
 
-        local buttonOptions = ["Explore again", "Return to menu"];
-        local buttonFunctions = [
-            function(widget, action){
-                ::SaveManager.writeSaveAtPath("user://" + ::Base.mPlayerStats.getSaveSlot(), ::Base.mPlayerStats.getSaveData());
-
-                ::Base.mExplorationLogic.resetExploration();
-                ::ScreenManager.queueTransition(null, null, mLayerIdx);
-            },
-            function(widget, action){
-                ::SaveManager.writeSaveAtPath("user://" + ::Base.mPlayerStats.getSaveSlot(), ::Base.mPlayerStats.getSaveData());
-
-                ::ScreenManager.queueTransition(null, null, mLayerIdx);
-                ::ScreenManager.queueTransition(Screen.GAMEPLAY_MAIN_MENU_SCREEN);
-            }
-        ];
         local endButtons = [];
         foreach(i,c in buttonOptions){
             local button = mWindow_.createButton();
