@@ -186,6 +186,7 @@
 
         _doFile("res://src/System/ActionManager.nut");
         mActionManager = ::ActionManager();
+        mActionManager.setup();
 
         _doFile("res://src/MapGen/Exploration/Generator/Biomes.nut");
         _doFile("res://src/MapGen/Exploration/Generator/MapGen.nut");
@@ -367,6 +368,7 @@
     function shutdown(){
         ::PopupManager.shutdown();
         mPlayerStats.shutdown();
+        mActionManager.shutdown();
     }
 
     function update(){

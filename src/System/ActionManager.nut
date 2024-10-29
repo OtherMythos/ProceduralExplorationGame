@@ -6,6 +6,7 @@ These actions might be things like 'talk', 'buy things from', etc.
 ::ActionManager <- class{
 
     mActionSlots_ = null
+    mActiveActions_ = null
 
     /**
     Abstract a single action slot.
@@ -51,10 +52,37 @@ These actions might be things like 'talk', 'buy things from', etc.
     }
 
     constructor(){
-        mActionSlots_ = array(ACTION_MANAGER_NUM_SLOTS);
+        mActionSlots_ = {};
+    }
+
+    function setup(){
+        _event.subscribe(Event.WORLD_DESTROYED, processWorldDestroyed, this);
+        _event.subscribe(Event.ACTIVE_WORLD_CHANGE, processActiveWorldChange, this);
+    }
+
+    function shutdown(){
+        _event.unsubscribe(Event.WORLD_DESTROYED, processWorldDestroyed, this);
+        _event.unsubscribe(Event.ACTIVE_WORLD_CHANGE, processActiveWorldChange, this);
+    }
+
+    function processWorldDestroyed(id, data){
+        destroySlotsForWorld(data.getWorldId());
+    }
+    function processActiveWorldChange(id, data){
+        createSlotsForWorld(data.getWorldId());
+    }
+
+    function createSlotsForWorld(worldId){
+        local actionSlots = array(ACTION_MANAGER_NUM_SLOTS);
         for(local i = 0; i < ACTION_MANAGER_NUM_SLOTS; i++){
-            mActionSlots_[i] = ActionSlot();
+            actionSlots[i] = ActionSlot();
         }
+        mActionSlots_.rawset(worldId, actionSlots);
+        mActiveActions_ = actionSlots;
+        notifyActionChange();
+    }
+    function destroySlotsForWorld(worldId){
+        mActionSlots_.rawdelete(worldId);
     }
 
     /**
@@ -63,7 +91,7 @@ These actions might be things like 'talk', 'buy things from', etc.
     function registerAction(type, slot, data, uniqueId){
         assert(slot >= 0 && slot < ACTION_MANAGER_NUM_SLOTS);
 
-        mActionSlots_[slot].register(type, data, uniqueId);
+        mActiveActions_[slot].register(type, data, uniqueId);
         notifyActionChange();
     }
 
@@ -73,7 +101,7 @@ These actions might be things like 'talk', 'buy things from', etc.
     function unsetAction(slot, id){
         assert(slot >= 0 && slot < ACTION_MANAGER_NUM_SLOTS);
 
-        mActionSlots_[slot].unset(id);
+        mActiveActions_[slot].unset(id);
         notifyActionChange();
     }
 
@@ -82,7 +110,7 @@ These actions might be things like 'talk', 'buy things from', etc.
     */
     function executeSlot(slot){
         assert(slot >= 0 && slot < ACTION_MANAGER_NUM_SLOTS);
-        local target = mActionSlots_[slot];
+        local target = mActiveActions_[slot];
         if(!target.populated()) return;
 
         local data = target.mData[0];
@@ -113,6 +141,6 @@ These actions might be things like 'talk', 'buy things from', etc.
     Notify any interested parties that the actions changed
     */
     function notifyActionChange(){
-        _event.transmit(Event.ACTIONS_CHANGED, this.mActionSlots_);
+        _event.transmit(Event.ACTIONS_CHANGED, this.mActiveActions_);
     }
 };

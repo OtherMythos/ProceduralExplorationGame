@@ -143,19 +143,23 @@
     function popWorld(){
         //There must be at least one world.
         if(mQueuedWorlds_.len() <= 0) return;
-        mCurrentWorld_.setCurrentWorld(false);
-        mCurrentWorld_.shutdown();
+        destroyWorld_(mCurrentWorld_);
         local current = mQueuedWorlds_.top();
         mQueuedWorlds_.pop();
         setCurrentWorld_(current);
     }
     function replaceWorld(worldInstance){
-        mCurrentWorld_.setCurrentWorld(false);
-        mCurrentWorld_.shutdown();
+        destroyWorld_(mCurrentWorld_);
         setCurrentWorld_(worldInstance);
     }
     function setCurrentWorld(worldInstance){
         setCurrentWorld_(worldInstance);
+    }
+    function destroyWorld_(worldInstance){
+        worldInstance.setCurrentWorld(false);
+        worldInstance.shutdown();
+        mIdPool_.recycleId(worldInstance.getWorldId());
+        _event.transmit(Event.WORLD_DESTROYED, worldInstance);
     }
     function setCurrentWorld_(worldInstance){
         if(mCurrentWorld_ != null) mCurrentWorld_.processWorldActiveChange_(false);
