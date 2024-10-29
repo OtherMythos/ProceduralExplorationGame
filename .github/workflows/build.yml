@@ -285,6 +285,7 @@ jobs:
             results.xml
       - name: Upload Logs Artifact
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: testLogs-${{ matrix.buildType }}
           path: /tmp/testLogs
