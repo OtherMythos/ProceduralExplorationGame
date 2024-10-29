@@ -277,6 +277,7 @@ enum ExplorationScreenWidgetType{
         //mLogicInterface_.notifyLeaveExplorationScreen();
         mExplorationStatsContainer_.shutdown();
         mWorldMapDisplay_.shutdown();
+        mExplorationPlayerActionsContainer_.shutdown();
         base.shutdown();
     }
 
