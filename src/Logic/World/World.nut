@@ -935,6 +935,16 @@ enum WorldMousePressContexts{
         mActiveEnemies_.rawset(enemyEntry.mEntity_, enemyEntry);
         return enemyEntry;
     }
+    function createNPCWithDialog(pos, dialogPath, startBlock){
+        local entity = createNPC(pos);
+
+        local en = entity.getEID();
+        local collisionPoint = mTriggerCollisionWorld_.addCollisionSender(CollisionWorldTriggerResponses.NPC_INTERACT, en, pos.x, pos.z, 2, _COLLISION_PLAYER);
+        mEntityManager_.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, mTriggerCollisionWorld_));
+        mEntityManager_.assignComponent(en, EntityComponents.DIALOG, ::EntityManager.Components[EntityComponents.DIALOG](dialogPath, startBlock));
+
+        return entity;
+    }
 
     function moveEnemyToPlayer(enemyId){
         if(!mActiveEnemies_.rawin(enemyId)) return;

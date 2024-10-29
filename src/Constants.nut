@@ -123,6 +123,18 @@ enum GameProfile{
     "PlayerGhost"
 ];
 
+enum CollisionWorldTriggerResponses{
+    EXP_ORB,
+    OVERWORLD_VISITED_PLACE,
+    PROJECTILE_DAMAGE,
+    BASIC_ENEMY_RECEIVE_PLAYER_SPOTTED,
+    BASIC_ENEMY_PLAYER_TARGET_RADIUS,
+    DIE,
+    NPC_INTERACT,
+
+    MAX = 100
+};
+
 enum Event{
     INVENTORY_CONTENTS_CHANGED = 1001,
     MONEY_CHANGED = 1002,

@@ -1,16 +1,4 @@
 
-enum CollisionWorldTriggerResponses{
-    EXP_ORB,
-    OVERWORLD_VISITED_PLACE,
-    PROJECTILE_DAMAGE,
-    BASIC_ENEMY_RECEIVE_PLAYER_SPOTTED,
-    BASIC_ENEMY_PLAYER_TARGET_RADIUS,
-    DIE,
-    NPC_INTERACT,
-
-    MAX = 100
-};
-
 
 ::_applyHealthChangeOther <- function(manager, entity, damage){
     if(!manager.entityValid(entity)) return;

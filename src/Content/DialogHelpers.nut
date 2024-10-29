@@ -8,6 +8,16 @@ function setQuestValue(questId, valueId, value){
     quest.setValue(valueId, value);
 }
 
+function incrementQuestValue(questId, valueId){
+
+    local quest = ::Base.mQuestManager.getQuestForName(questId);
+    if(quest == null){
+        throw format("No quest was found for id '%s'", questId);
+    }
+    local val = quest.readValue(valueId);
+    quest.setValue(valueId, val+1);
+}
+
 function givePlayerMoney(amount){
     printf("Dialog giving player %i money", amount);
 
