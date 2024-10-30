@@ -90,6 +90,12 @@ namespace ProceduralExplorationGameCore{
         if(drawOptions & (1 << (size_t)MapViewerDrawOptions::BLUE_NOISE)){
             drawVal = Ogre::ColourValue(blueNoise, blueNoise, blueNoise, OPACITY).getAsABGR();
         }
+        if(drawOptions & (1 << (size_t)MapViewerDrawOptions::EDGE_VALS)){
+            AV::uint32 edgeVox = (vox >> 8) & 0x80;
+            if(edgeVox){
+                drawVal = valueColours[(size_t)MapViewerColours::COLOUR_BLACK];
+            }
+        }
         if(drawOptions & (1 << (size_t)MapViewerDrawOptions::LAND_GROUPS)){
             LandId landGroup = (vox >> 24) & 0xFF;
             if(landGroup == INVALID_LAND_ID){

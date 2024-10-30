@@ -5,6 +5,7 @@
 #include <stack>
 #include <cassert>
 #include <iostream>
+#include <set>
 
 namespace ProceduralExplorationGameCore{
 
@@ -41,8 +42,9 @@ namespace ProceduralExplorationGameCore{
     inline bool comparisonFuncWater(ExplorationMapData* mapData, AV::uint8 val){
         return val < mapData->seaLevel;
     }
+    typedef std::pair<WorldPoint, WorldPoint> FloodFillPoint;
     template<typename T, typename C>
-    AV::uint8 floodFill_(std::stack<WorldPoint>& points, int x, int y, AV::uint32 width, AV::uint32 height, T comparisonFunction, C readFunction, std::vector<RegionId>* vals, ExplorationMapData* mapData, AV::uint32 currentIdx, FloodFillEntry* floodData){
+    bool floodFill_(std::stack<FloodFillPoint>& points, int x, int y, AV::uint32 width, AV::uint32 height, T comparisonFunction, C readFunction, std::vector<RegionId>* vals, ExplorationMapData* mapData, AV::uint32 currentIdx, FloodFillEntry* floodData){
         if(x < 0 || y < 0 || x >= width || y >= height) return 0;
         size_t idx = x+y*width;
         assert(idx < vals->size());
@@ -52,7 +54,7 @@ namespace ProceduralExplorationGameCore{
 
         AV::uint8 readVal = readFunction(mapData, x, y);
         if(!comparisonFunction(mapData, readVal)){
-            return 1;
+            return true;
         }
 
         if(x == 0 || y == 0 || x == mapData->width-1 || y == mapData->height-1){
@@ -64,19 +66,12 @@ namespace ProceduralExplorationGameCore{
         WorldPoint wrappedPos = WRAP_WORLD_POINT(x, y);
         floodData->coords.push_back(wrappedPos);
         AV::uint8 isEdge = 0;
-        points.push(WRAP_WORLD_POINT(x-1, y));
-        points.push(WRAP_WORLD_POINT(x+1, y));
-        points.push(WRAP_WORLD_POINT(x, y-1));
-        points.push(WRAP_WORLD_POINT(x, y+1));
+        points.push({WRAP_WORLD_POINT(x-1, y), wrappedPos});
+        points.push({WRAP_WORLD_POINT(x+1, y), wrappedPos});
+        points.push({WRAP_WORLD_POINT(x, y-1), wrappedPos});
+        points.push({WRAP_WORLD_POINT(x, y+1), wrappedPos});
 
-        //TODO Properly add the edge logic.
-        /*
-        if(isEdge){
-            floodData->edges.push_back(wrappedPos);
-        }
-         */
-
-        return 0;
+        return false;
     }
     template<typename T, typename C, int S>
     void inline floodFill(T comparisonFunction, C readFunction, ExplorationMapData* mapData, std::vector<FloodFillEntry*>& outData, bool writeToBlob=true){
@@ -90,22 +85,34 @@ namespace ProceduralExplorationGameCore{
 
                 if(comparisonFunction(mapData, altitude)){
                     if(vals[x+y*mapData->width] == INVALID_REGION_ID){
-                        std::stack<WorldPoint> points;
-                        points.push(WRAP_WORLD_POINT(x, y));
+                        std::stack<FloodFillPoint> points;
+                        points.push({WRAP_WORLD_POINT(x, y), WRAP_WORLD_POINT(x, y)});
                         //TODO prevent pointers.
                         FloodFillEntry* floodData = new FloodFillEntry();
+                        std::set<WorldPoint> edgeCoords;
                         floodData->id = currentIdx;
                         floodData->seedX = x;
                         floodData->seedY = y;
                         floodData->nextToWorldEdge = false;
 
                         while(!points.empty()){
-                            WorldPoint p = points.top();
+                            FloodFillPoint pointData = points.top();
+                            WorldPoint p = pointData.first;
                             points.pop();
                             WorldCoord xx, yy;
                             READ_WORLD_POINT(p, xx, yy);
-                            floodFill_<bool(ExplorationMapData*, AV::uint8),AV::uint8(ExplorationMapData*, AV::uint32, AV::uint32)>
+                            bool nextToEdge = floodFill_<bool(ExplorationMapData*, AV::uint8),AV::uint8(ExplorationMapData*, AV::uint32, AV::uint32)>
                                 (points, xx, yy, mapData->width, mapData->height, comparisonFunction, readFunction, &vals, mapData, currentIdx, floodData);
+                            if(nextToEdge){
+                                edgeCoords.insert(pointData.second);
+                            }
+                        }
+
+                        //Write the values to the set initially to ensure each value only appears once.
+                        //Then copy them over to the list.
+                        for(WorldPoint point : edgeCoords){
+                            floodData->edges.reserve(edgeCoords.size());
+                            floodData->edges.push_back(point);
                         }
 
                         //Designate this as a newly found region.

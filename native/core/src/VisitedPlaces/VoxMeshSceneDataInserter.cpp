@@ -15,7 +15,8 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    bool VoxMeshSceneDataInserter::insertUserObject(const AV::SceneObjectEntry& e, const AV::SceneObjectData& d, const std::vector<Ogre::String>& strings, Ogre::SceneNode* parent){
+    bool VoxMeshSceneDataInserter::insertUserObject(AV::uint8 idx, const AV::SceneObjectEntry& e, const AV::SceneObjectData& d, const std::vector<Ogre::String>& strings, Ogre::SceneNode* parent){
+        if(idx != 0) return true;
         const Ogre::String& meshName = strings[d.idx];
 
         Ogre::NameValuePairList params;
