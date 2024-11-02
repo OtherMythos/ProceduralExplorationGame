@@ -47,8 +47,8 @@
         //_component.sceneNode.add(en, playerNode);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](playerNode));
         playerEntry.setModel(playerModel);
-        playerModel.equipDataToCharacterModel(playerStats.mPlayerCombatStats.mEquippedItems);
         playerEntry.setCombatData(playerStats.mPlayerCombatStats);
+        playerEntry.setWieldActive(playerStats.getWieldActive());
         playerEntry.setTargetCollisionWorld(_COLLISION_ENEMY);
 
         playerEntry.setId(-1);
