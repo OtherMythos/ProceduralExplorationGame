@@ -7,6 +7,7 @@ enum ExplorationScreenWidgetType{
     STATS_CONTAINER,
     MOVES_CONTAINER,
     MINIMAP,
+    WIELD_BUTTON,
 
     MAX
 }
@@ -153,6 +154,7 @@ enum ExplorationScreenWidgetType{
                 ::Base.mPlayerStats.toggleWieldActive();
             }, _GUI_ACTION_PRESSED, this);
             mScreenInputCheckList_.append(mWieldActiveButton);
+            mExplorationScreenWidgetType_[ExplorationScreenWidgetType.WIELD_BUTTON] = mWieldActiveButton;
         }
 
         mExplorationBus_.registerCallback(busCallback, this);
@@ -178,7 +180,10 @@ enum ExplorationScreenWidgetType{
     }
 
     function setScreenWidgetVisible(widgetType, visible){
-        mExplorationScreenWidgetType_[widgetType].setVisible(visible);
+        local widget = mExplorationScreenWidgetType_[widgetType];
+        if(widget != null){
+            widget.setVisible(visible);
+        }
     }
 
     function receivePreparationStateChange(id, data){
