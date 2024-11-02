@@ -103,6 +103,7 @@
         _input.mapControllerInput(_B_START, this.pauseGame);
         _input.mapControllerInput(_B_A, this.dialogNext);
         _input.mapControllerInput(_B_LEFTSTICK, this.toggleWorldView);
+        _input.mapControllerInput(_B_RIGHTSTICK, this.toggleWorldView);
 
         _input.mapControllerInput(_B_B, this.menuBack);
         _input.mapControllerInput(_B_START, this.closePause);
