@@ -51,6 +51,11 @@ namespace ProceduralExplorationGameCore{
         PlaceId type;
     };
 
+    struct RiverData{
+        WorldPoint origin;
+        std::vector<WorldPoint> points;
+    };
+
     class PlaceDef{
     public:
         std::string name;
@@ -120,6 +125,7 @@ namespace ProceduralExplorationGameCore{
         std::vector<FloodFillEntry*> waterData;
         std::vector<FloodFillEntry*> landData;
         std::vector<PlaceData> placeData;
+        std::vector<RiverData> riverData;
 
         struct BufferData{
             size_t size;

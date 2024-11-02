@@ -60,7 +60,7 @@ namespace ProceduralExplorationGameCore{
                 Biome::DetermineVoxFunction voxFunc = b.getVoxFunction();
                 assert(voxFunc != 0);
                 MapVoxelTypes finalVox = (*b.getVoxFunction())(altitude, moisture, mapData);
-                *(reinterpret_cast<AV::uint8*>(fullVoxPtrWrite)+1) = static_cast<AV::uint8>(finalVox);
+                *(reinterpret_cast<AV::uint8*>(fullVoxPtrWrite)+1) |= (static_cast<AV::uint8>(finalVox) & static_cast<AV::uint8>(MAP_VOXEL_MASK));
             }
         }
     }
