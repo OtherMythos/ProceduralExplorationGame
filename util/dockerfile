@@ -1,5 +1,4 @@
-#FROM ghcr.io/othermythos/asset-builder-image:latest
-FROM asset-builder-image
+FROM ghcr.io/othermythos/asset-builder-image:latest
 
 RUN apt-get update && apt-get install -y \
     scons \
