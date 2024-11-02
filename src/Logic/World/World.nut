@@ -727,6 +727,7 @@ enum WorldMousePressContexts{
         return targetForward;
     }
     function checkPlayerMove(){
+        if(mBlockAllInputs_) return;
         local moved = false;
         local xVal = _input.getAxisActionX(mInputs_.move, _INPUT_ANY);
         local yVal = _input.getAxisActionY(mInputs_.move, _INPUT_ANY);
