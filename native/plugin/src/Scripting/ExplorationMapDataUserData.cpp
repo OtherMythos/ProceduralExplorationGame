@@ -254,7 +254,15 @@ namespace ProceduralExplorationGamePlugin{
         x = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.x);
         y = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.z);
 
-        const AV::uint8* waterPtr = ProceduralExplorationGameCore::WATER_GROUP_PTR_FOR_COORD_CONST(mapData, ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y));
+        ProceduralExplorationGameCore::WorldPoint p = ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y);
+
+        AV::uint32* worldPtr = FULL_PTR_FOR_COORD(mapData, p);
+        if(*worldPtr & (static_cast<AV::uint32>(ProceduralExplorationGameCore::MapVoxelTypes::RIVER) << 8)){
+            sq_pushbool(vm, true);
+            return 1;
+        }
+
+        const AV::uint8* waterPtr = ProceduralExplorationGameCore::WATER_GROUP_PTR_FOR_COORD_CONST(mapData, p);
         if(*waterPtr == ProceduralExplorationGameCore::INVALID_WATER_ID){
             sq_pushbool(vm, false);
             return 1;
