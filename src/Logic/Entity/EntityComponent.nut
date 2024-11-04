@@ -69,9 +69,11 @@
 ::EntityManager.Components[EntityComponents.LIFETIME] = class extends ::EntityManager.Component{
 
     mLifetime = 100;
+    mLifetimeTotal = 100;
 
     constructor(lifetime){
         mLifetime = lifetime;
+        mLifetimeTotal = lifetime;
     }
 
 };

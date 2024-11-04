@@ -30,7 +30,11 @@ BasicEnemyMachine = class extends ::CombatStateMachine{
             ctx.targetingId = world.mTargetManager_.targetEntity(world.mPlayerEntry_, activeEnemy);
         },
         "update": function(ctx, e, data) {
-            ::Base.mExplorationLogic.mCurrentWorld_.moveEnemyToPlayer(e);
+            local world = ::Base.mExplorationLogic.mCurrentWorld_;
+            world.moveEnemyToPlayer(e);
+
+            local lifetimeComp = world.getEntityManager().getComponent(e, EntityComponents.LIFETIME);
+            lifetimeComp.mLifetime = lifetimeComp.mLifetimeTotal;
         },
         "notify": function(ctx, id, e, data){
             if(id == BasicEnemyEvents.PLAYER_NOT_SPOTTED){
