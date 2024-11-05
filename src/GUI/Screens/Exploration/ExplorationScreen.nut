@@ -181,6 +181,9 @@ enum ExplorationScreenWidgetType{
 
     function setScreenWidgetVisible(widgetType, visible){
         local widget = mExplorationScreenWidgetType_[widgetType];
+        if(::Base.isProfileActive(GameProfile.SCREENSHOT_MODE)){
+            visible = false;
+        }
         if(widget != null){
             widget.setVisible(visible);
         }
