@@ -89,9 +89,12 @@ namespace ProceduralExplorationGameCore{
                         closestIdx = i;
                     }
                 }
-                assert(closestIdx != -1);
-                //TODO For threading this needs to be pushed to separate lists and merged later.
-                regionData[closestIdx].coords.push_back(WRAP_WORLD_POINT(x, y));
+                if(closestIdx != -1){
+                    //TODO For threading this needs to be pushed to separate lists and merged later.
+                    regionData[closestIdx].coords.push_back(WRAP_WORLD_POINT(x, y));
+                }else{
+                    closestIdx = 0;
+                }
 
                 (*regionPtr) = (closestIdx & 0xFF);
                 regionPtr+=4;

@@ -220,9 +220,11 @@ namespace ProceduralExplorationGameCore{
     }
     template<typename T>
     static size_t mapGenRandomIndex(const std::vector<T>& list){
+        if(list.empty()) return 0;
         return mapGenRandomIntMinMax(0, list.size()-1);
     }
     static LandId findRandomLandmassForSize(const std::vector<FloodFillEntry*>& landData, const std::vector<LandId>& landWeighted, AV::uint32 size){
+        if(landData.empty()) return INVALID_LAND_ID;
         //To avoid infinite loops.
         for(int i = 0; i < 100; i++){
             size_t randIndex = mapGenRandomIndex<LandId>(landWeighted);

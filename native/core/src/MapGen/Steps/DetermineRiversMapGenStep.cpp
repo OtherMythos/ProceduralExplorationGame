@@ -21,6 +21,7 @@ namespace ProceduralExplorationGameCore{
     WorldPoint _findPointOnCoast(const std::vector<FloodFillEntry*>& landData, LandId landId){
         const std::vector<WorldPoint>& edges = landData[landId]->edges;
         size_t randIndex = mapGenRandomIndex<WorldPoint>(edges);
+        if(randIndex <= edges.size()) return INVALID_WORLD_POINT;
         return edges[randIndex];
     }
 
@@ -29,7 +30,9 @@ namespace ProceduralExplorationGameCore{
         //local origins = array(data.numRivers);
         for(int i = 0; i < input->numRivers; i++){
             LandId landId = findRandomLandmassForSize(landData, landWeighted, 20);
+            if(landId == INVALID_LAND_ID) continue;
             WorldPoint landPoint = _findPointOnCoast(landData, landId);
+            if(landPoint == INVALID_WORLD_POINT) continue;
             out.push_back(landPoint);
         }
     }

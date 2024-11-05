@@ -28,6 +28,7 @@ namespace ProceduralExplorationGameCore{
         static const std::array regionsToAdd{RegionType::CHERRY_BLOSSOM_FOREST, RegionType::EXP_FIELDS};
         for(RegionType r : regionsToAdd){
             size_t targetIdx = mapGenRandomIndex(freeRegions);
+            if(targetIdx <= freeRegions.size()) continue;
             mapData->regionData[freeRegions[targetIdx]].type = r;
             freeRegions.erase(freeRegions.begin() + targetIdx);
         }

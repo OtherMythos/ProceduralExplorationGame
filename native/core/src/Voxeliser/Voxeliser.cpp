@@ -302,6 +302,7 @@ namespace ProceduralExplorationGameCore{
         static const AV::uint32 ABOVE_GROUND = 0xFF - seaLevel;
 
         size_t numRegions = mapData->regionData.size();
+        if(numRegions == 0) numRegions = 1;
         std::vector<RegionBufferEntry> regionEntries;
         regionEntries.resize(numRegions);
         for(size_t i = 0; i < numRegions; i++){

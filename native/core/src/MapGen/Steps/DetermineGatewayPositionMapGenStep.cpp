@@ -19,6 +19,9 @@ namespace ProceduralExplorationGameCore{
 
         for(int i = 0; i < 5; i++){
             LandId landId = findRandomLandmassForSize(mapData->landData, workspace->landWeighted, 40);
+            if(landId == INVALID_LAND_ID){
+                continue;
+            }
             retPoint = findRandomPointInLandmass(mapData->landData[landId]);
 
             WorldCoord xx;
@@ -35,6 +38,9 @@ namespace ProceduralExplorationGameCore{
             }
         }
 
+        if(retPoint == INVALID_WORLD_POINT){
+            retPoint = WRAP_WORLD_POINT(mapData->width/2, mapData->height/2);
+        }
         mapData->gatewayPosition = retPoint;
     }
 
