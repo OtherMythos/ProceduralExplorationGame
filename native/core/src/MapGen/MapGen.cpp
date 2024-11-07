@@ -9,6 +9,7 @@
 #include "MapGen/Steps/MapGenStep.h"
 #include "MapGen/Steps/SetupBuffersMapGenStep.h"
 #include "MapGen/Steps/GenerateNoiseMapGenStep.h"
+#include "MapGen/Steps/GenerateAdditionLayerMapGenStep.h"
 #include "MapGen/Steps/ReduceNoiseMapGenStep.h"
 #include "MapGen/Steps/PerformFloodFillMapGenStep.h"
 #include "MapGen/Steps/RemoveRedundantIslandsMapGenStep.h"
@@ -30,6 +31,7 @@ namespace ProceduralExplorationGameCore{
     static const std::vector<std::pair<std::string, MapGenStep*>> MAP_GEN_STEPS = {
         {"Setup Buffers", new SetupBuffersMapGenStep()},
         {"Generate Noise", new GenerateNoiseMapGenStep()},
+        {"Generate Addition Layer", new GenerateAdditionLayerMapGenStep()},
         {"Reduce Noise", new ReduceNoiseMapGenStep()},
         {"Perform Flood Fill", new PerformFloodFillMapGenStep()},
         {"Remove Redundant Islands", new RemoveRedundantIslandsMapGenStep()},
