@@ -2,6 +2,8 @@
 
 #include "MapGenStep.h"
 
+#include <vector>
+
 #include "GamePrerequisites.h"
 #include "System/EnginePrerequisites.h"
 
@@ -23,7 +25,7 @@ namespace ProceduralExplorationGameCore{
         ReduceNoiseMapGenJob();
         ~ReduceNoiseMapGenJob();
 
-        void processJob(ExplorationMapData* mapData, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb);
+        void processJob(ExplorationMapData* mapData, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb, const std::vector<float>& additionVals);
 
     };
 
