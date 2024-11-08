@@ -322,7 +322,7 @@ namespace ProceduralExplorationGameCore{
                 RegionBufferEntry& bufEntry = regionEntries[regionId];
 
                 float voxFloat = (float)(vox & 0xFF);
-                if(voxFloat <= seaLevel){
+                if(voxFloat < seaLevel){
                     altitudes[x+y*width] = -1.0f;
                     continue;
                 }
@@ -420,7 +420,8 @@ namespace ProceduralExplorationGameCore{
         //Assuming there's no voxels around the outskirt this check can be avoided.
         //if(!(targetX < 0 || targetY < 0 || targetX >= width || targetY >= height)){
             float vox = altitudes[targetX + targetY * width];
-            if(vox != -1.0f){
+            //if(vox != -1.0f){
+            {
                 AV::uint32 testAltitude = *reinterpret_cast<AV::uint32*>(&vox) & 0xFFFF;
                 if(testAltitude < altitude){
                     //The altidue is lower so need to draw some triangles.
