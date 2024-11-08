@@ -36,13 +36,6 @@ namespace ProceduralExplorationGameCore{
                 for(WorldPoint p : e->coords){
                     AV::uint8* vox = VOX_PTR_FOR_COORD(mapData, p);
                     *vox = static_cast<AV::uint8>(mapData->seaLevel) - 1;
-                    //Mark as water
-                    AV::uint8* landGroup = LAND_GROUP_PTR_FOR_COORD(mapData, p);
-                    *landGroup = 0xFF;
-                    AV::uint8* waterGroup = WATER_GROUP_PTR_FOR_COORD(mapData, p);
-                    //TODO in future properly check this to prevent lake islands or anything like that being tagged as water.
-                    //TODO remove the edges for the water groups now the land is removed.
-                    *waterGroup = 0;
                 }
                 delete workspace->landData[i];
                 workspace->landData[i] = 0;

@@ -41,11 +41,11 @@ namespace ProceduralExplorationGameCore{
     }
     void PerformPreFloodFillMapGenJob::processJob(ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         std::vector<FloodFillEntry*> waterResult;
-        floodFill<bool(ExplorationMapData*, AV::uint8),AV::uint8(ExplorationMapData*, AV::uint32, AV::uint32), 2>(comparisonFuncWater, readFuncAltitude, mapData, waterResult);
+        floodFill<bool(ExplorationMapData*, AV::uint8),AV::uint8(ExplorationMapData*, AV::uint32, AV::uint32), 2>(comparisonFuncWater, readFuncAltitude, mapData, waterResult, false);
         workspace->waterData = std::move(waterResult);
 
         std::vector<FloodFillEntry*> landResult;
-        floodFill<bool(ExplorationMapData*, AV::uint8),AV::uint8(ExplorationMapData*, AV::uint32, AV::uint32), 3>(comparisonFuncLand, readFuncAltitude, mapData, landResult);
+        floodFill<bool(ExplorationMapData*, AV::uint8),AV::uint8(ExplorationMapData*, AV::uint32, AV::uint32), 3>(comparisonFuncLand, readFuncAltitude, mapData, landResult, false);
         workspace->landData = std::move(landResult);
 
         //Sanity checks, should get compiled out in release builds.

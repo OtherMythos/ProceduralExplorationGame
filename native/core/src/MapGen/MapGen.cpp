@@ -15,6 +15,7 @@
 #include "MapGen/Steps/PerformFinalFloodFillMapGenStep.h"
 #include "MapGen/Steps/PerformPreFloodFillMapGenStep.h"
 #include "MapGen/Steps/RemoveRedundantIslandsMapGenStep.h"
+#include "MapGen/Steps/RemoveRedundantWaterMapGenStep.h"
 #include "MapGen/Steps/WeightAndSortLandmassesMapGenStep.h"
 #include "MapGen/Steps/DetermineEdgesMapGenStep.h"
 #include "MapGen/Steps/DetermineRiversMapGenStep.h"
@@ -38,6 +39,7 @@ namespace ProceduralExplorationGameCore{
         {"Reduce Noise", new ReduceNoiseMapGenStep()},
         {"Perform Pre Flood Fill", new PerformPreFloodFillMapGenStep()},
         {"Remove Redundant Islands", new RemoveRedundantIslandsMapGenStep()},
+        {"Remove Redundant Water", new RemoveRedundantWaterMapGenStep()},
         {"Perform Final Flood Fill", new PerformFinalFloodFillMapGenStep()},
         {"Weight And Sort Landmasses", new WeightAndSortLandmassesMapGenStep()},
         {"Determine Edges", new DetermineEdgesMapGenStep()},
