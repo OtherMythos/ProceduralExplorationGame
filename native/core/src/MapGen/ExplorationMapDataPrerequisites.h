@@ -149,6 +149,7 @@ namespace ProceduralExplorationGameCore{
         std::vector<float> additionLayer;
         std::vector<FloodFillEntry*> waterData;
         std::vector<FloodFillEntry*> landData;
+        std::vector<WorldPoint> blobSeeds;
     };
 
     static inline WorldPoint WRAP_WORLD_POINT(WorldCoord x, WorldCoord y){
@@ -238,5 +239,9 @@ namespace ProceduralExplorationGameCore{
         }
         return INVALID_LAND_ID;
     }
+
+    static const float BLOB_SIZE = 200;
+    static const float HALF_BLOB_SIZE = BLOB_SIZE/2;
+    static const float LINE_BOX_SIZE = 50;
 
 }

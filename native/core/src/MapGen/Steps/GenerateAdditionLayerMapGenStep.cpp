@@ -8,43 +8,9 @@
 
 namespace ProceduralExplorationGameCore{
 
-    //static const float BLOB_SIZE = 0.18;
-    static const float BLOB_SIZE = 200;
-    static const float HALF_BLOB_SIZE = BLOB_SIZE/2;
-    static const float LINE_BOX_SIZE = 50;
-
-    static float pointX[] = {0.2, 0.3, 0.8};
-    static float pointY[] = {0.2, 0.8, 0.8};
 
     inline float distance(float x1, float y1, float x2, float y2){
         return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
-    }
-
-    void determinePositionForBlob_(const ExplorationMapData* mapData, int idx){
-        float xx, yy;
-        xx = yy = 0.0f;
-        for(int i = 0; i < 50; i++){
-            xx = float(mapGenRandomIntMinMax(HALF_BLOB_SIZE, mapData->width - HALF_BLOB_SIZE)) / mapData->width;
-            yy = float(mapGenRandomIntMinMax(HALF_BLOB_SIZE, mapData->height - HALF_BLOB_SIZE)) / mapData->height;
-            if(idx == 0){
-                break;
-            }
-
-            bool collision = false;
-            for(int c = 0; c <= idx - 1; c++){
-                //Check the current random pos with the other points.
-                float d = distance(xx, yy, pointX[c], pointY[c]);
-                if(d < (float(BLOB_SIZE) / mapData->width)){
-                    collision = true;
-                }
-            }
-            if(!collision){
-                break;
-            }
-        }
-
-        pointX[idx] = xx;
-        pointY[idx] = yy;
     }
 
     void calculateBresenhamLine(int startX, int startY, int endX, int endY, std::set<WorldPoint>& outPoints){
@@ -92,10 +58,10 @@ namespace ProceduralExplorationGameCore{
         return (denominator != 0) ? (numerator / denominator) : 0.0;
     }
 
-    void calculateBlobs_(std::vector<float>& additionalVals, ExplorationMapData* mapData){
+    void calculateBlobs_(std::vector<float>& additionalVals, ExplorationMapData* mapData, const std::vector<WorldPoint>& blobPositions){
         for(int i = 0; i < 3; i++){
-            int px = pointX[i] * mapData->width;
-            int py = pointY[i] * mapData->height;
+            WorldCoord px, py;
+            READ_WORLD_POINT(blobPositions[i], px, py);
 
             for(int y = 0; y < BLOB_SIZE; y++){
                 for(int x = 0; x < BLOB_SIZE; x++){
@@ -116,11 +82,14 @@ namespace ProceduralExplorationGameCore{
         }
     }
 
-    void calculateLines_(int idx, std::vector<float>& additionVals, ExplorationMapData* mapData){
-        int startX = static_cast<int>(pointX[idx+0] * mapData->width);
-        int startY = static_cast<int>(pointY[idx+0] * mapData->height);
-        int endX = static_cast<int>(pointX[idx+1] * mapData->width);
-        int endY = static_cast<int>(pointY[idx+1] * mapData->height);
+    void calculateLines_(int idx, std::vector<float>& additionVals, ExplorationMapData* mapData, const std::vector<WorldPoint>& blobPositions){
+        WorldCoord x1, y1, x2, y2;
+        READ_WORLD_POINT(blobPositions[idx], x1, y1);
+        READ_WORLD_POINT(blobPositions[idx+1], x2, y2);
+        int startX = x1;
+        int startY = y1;
+        int endX = x2;
+        int endY = y2;
 
         std::set<WorldPoint> linePoints;
         calculateBresenhamLine(startX, startY, endX, endY, linePoints);
@@ -140,7 +109,7 @@ namespace ProceduralExplorationGameCore{
         for(WorldPoint p : drawPoints){
             WorldCoord xx, yy;
             READ_WORLD_POINT(p, xx, yy);
-            float distance = ((LINE_BOX_SIZE)/mapData->width) - pointToLineDistance(float(xx)/mapData->width, float(yy)/mapData->height, pointX[idx+0], pointY[idx+0], pointX[idx+1], pointY[idx+1]);
+            float distance = ((LINE_BOX_SIZE)/mapData->width) - pointToLineDistance(xx, yy, x1, y1, x2, y2);
             //distance = tan(distance) * 2;
             size_t valIdx = xx + yy * mapData->width;
             if(distance > additionVals[valIdx]){
@@ -158,22 +127,13 @@ namespace ProceduralExplorationGameCore{
     }
 
     void GenerateAdditionLayerMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
-
-        for(int i = 0; i < 3; i++){
-            determinePositionForBlob_(mapData, i);
-        }
-
-
         std::vector<float> additionVals;
         additionVals.resize(mapData->width * mapData->height);
 
-
-        for(int i = 0; i < 3-1; i++){
-            calculateLines_(i, additionVals, mapData);
+        for(int i = 0; i < workspace->blobSeeds.size()-1; i++){
+            calculateLines_(i, additionVals, mapData, workspace->blobSeeds);
         }
-        //for(int i = 0; i < 3; i++){
-            calculateBlobs_(additionVals, mapData);
-        //}
+        calculateBlobs_(additionVals, mapData, workspace->blobSeeds);
 
         workspace->additionLayer = std::move(additionVals);
     }

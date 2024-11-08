@@ -7,6 +7,7 @@
 #include "GameCoreLogger.h"
 
 #include "MapGen/Steps/MapGenStep.h"
+#include "MapGen/Steps/GenerateMetaMapGenStep.h"
 #include "MapGen/Steps/SetupBuffersMapGenStep.h"
 #include "MapGen/Steps/GenerateNoiseMapGenStep.h"
 #include "MapGen/Steps/GenerateAdditionLayerMapGenStep.h"
@@ -32,6 +33,7 @@
 namespace ProceduralExplorationGameCore{
 
     static const std::vector<std::pair<std::string, MapGenStep*>> MAP_GEN_STEPS = {
+        {"Generate Meta", new GenerateMetaMapGenStep()},
         {"Setup Buffers", new SetupBuffersMapGenStep()},
         {"Generate Noise", new GenerateNoiseMapGenStep()},
         {"Generate Addition Layer", new GenerateAdditionLayerMapGenStep()},

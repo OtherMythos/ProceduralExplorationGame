@@ -13,15 +13,7 @@ namespace ProceduralExplorationGameCore{
     }
 
     void SetupBuffersMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
-        mapData->width = input->width;
-        mapData->height = input->height;
-        mapData->seaLevel = input->seaLevel;
-
-        mapData->moistureSeed = input->moistureSeed;
-        mapData->seed = input->seed;
-        mapData->variationSeed = input->variationSeed;
-
-        const size_t NUM_VOX = input->width * input->height;
+        const size_t NUM_VOX = mapData->width * mapData->height;
         const size_t VOX_BUF_SIZE = (NUM_VOX * sizeof(float));
         const size_t SECONDARY_VOX_BUF_SIZE = (NUM_VOX * sizeof(float));
         const size_t BLUE_NOISE_BUF_SIZE = (NUM_VOX * sizeof(float));
