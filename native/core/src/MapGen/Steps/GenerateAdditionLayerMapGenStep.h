@@ -18,13 +18,4 @@ namespace ProceduralExplorationGameCore{
         void processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace) override;
     };
 
-    class GenerateAdditionLayerMapGenJob{
-    public:
-        GenerateAdditionLayerMapGenJob();
-        ~GenerateAdditionLayerMapGenJob();
-
-        void processJob(ExplorationMapData* mapData, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb);
-
-    };
-
 }

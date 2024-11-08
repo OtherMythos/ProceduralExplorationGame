@@ -10,6 +10,7 @@
 #include "MapGen/Steps/SetupBuffersMapGenStep.h"
 #include "MapGen/Steps/GenerateNoiseMapGenStep.h"
 #include "MapGen/Steps/GenerateAdditionLayerMapGenStep.h"
+#include "MapGen/Steps/MergeAltitudeMapGenStep.h"
 #include "MapGen/Steps/ReduceNoiseMapGenStep.h"
 #include "MapGen/Steps/PerformFloodFillMapGenStep.h"
 #include "MapGen/Steps/RemoveRedundantIslandsMapGenStep.h"
@@ -32,6 +33,7 @@ namespace ProceduralExplorationGameCore{
         {"Setup Buffers", new SetupBuffersMapGenStep()},
         {"Generate Noise", new GenerateNoiseMapGenStep()},
         {"Generate Addition Layer", new GenerateAdditionLayerMapGenStep()},
+        {"Merge Altitude", new MergeAltitudeMapGenStep()},
         {"Reduce Noise", new ReduceNoiseMapGenStep()},
         {"Perform Flood Fill", new PerformFloodFillMapGenStep()},
         {"Remove Redundant Islands", new RemoveRedundantIslandsMapGenStep()},

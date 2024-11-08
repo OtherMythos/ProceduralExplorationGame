@@ -177,34 +177,4 @@ namespace ProceduralExplorationGameCore{
 
         workspace->additionLayer = std::move(additionVals);
     }
-
-
-
-    GenerateAdditionLayerMapGenJob::GenerateAdditionLayerMapGenJob(){
-
-    }
-
-    GenerateAdditionLayerMapGenJob::~GenerateAdditionLayerMapGenJob(){
-
-    }
-
-    void GenerateAdditionLayerMapGenJob::processJob(ExplorationMapData* mapData, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb){
-
-        for(int i = 0; i < 3; i++){
-            determinePositionForBlob_(mapData, i);
-        }
-
-
-        std::vector<float> additionVals;
-        additionVals.resize(mapData->width * mapData->height);
-
-
-        for(int i = 0; i < 3-1; i++){
-            calculateLines_(i, additionVals, mapData);
-        }
-        //for(int i = 0; i < 3; i++){
-            calculateBlobs_(additionVals, mapData);
-        //}
-
-    }
 }
