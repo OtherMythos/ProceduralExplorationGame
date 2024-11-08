@@ -73,7 +73,7 @@ namespace ProceduralExplorationGameCore{
 
             if(pointX == endX && pointY == endY) break;
 
-            assert(pointX >= 0 && pointY >= 0 && pointX < 600 && pointY < 600);
+            //assert(pointX >= 0 && pointY >= 0 && pointX < 600 && pointY < 600);
 
             outPoints.insert(WRAP_WORLD_POINT(pointX, pointY));
         }

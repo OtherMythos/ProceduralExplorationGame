@@ -28,7 +28,7 @@ namespace ProceduralExplorationGameCore{
         return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
     }
 
-    inline float getHeightForPoint(float input, float x, float y, int xx, int yy, const std::vector<float>& additionVals){
+    inline float getHeightForPoint(float input, float x, float y, int xx, int yy, int width, const std::vector<float>& additionVals){
 
 
         float val = 0;
@@ -42,7 +42,7 @@ namespace ProceduralExplorationGameCore{
         val *= 1.3;
 #endif
 
-        val += additionVals[xx + yy * 600] * 1.2;
+        val += additionVals[xx + yy * width] * 1.2;
 
         //Determine the line between the two points and calculate the distance from that
 
@@ -68,7 +68,7 @@ namespace ProceduralExplorationGameCore{
                 float xVal = (float)x / (float)mapData->width;
                 float* target = (voxPtr + (x+y*mapData->width));
 
-                float heightForPoint = getHeightForPoint(*target, xVal, yVal, x, y, additionVals);
+                float heightForPoint = getHeightForPoint(*target, xVal, yVal, x, y, mapData->width, additionVals);
                 *target = heightForPoint;
             }
         }
