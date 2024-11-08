@@ -2,7 +2,8 @@ name: Build Asset Container
 
 on:
   push:
-    branches: 'master'
+    paths:
+      - 'util/**'
 
 jobs:
   build:
