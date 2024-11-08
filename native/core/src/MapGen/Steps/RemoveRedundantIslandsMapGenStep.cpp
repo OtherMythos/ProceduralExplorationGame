@@ -14,7 +14,7 @@ namespace ProceduralExplorationGameCore{
 
     void RemoveRedundantIslandsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         RemoveRedundantIslandsMapGenJob job;
-        job.processJob(mapData);
+        job.processJob(mapData, workspace);
     }
 
 
@@ -27,9 +27,9 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void RemoveRedundantIslandsMapGenJob::processJob(ExplorationMapData* mapData){
-        for(size_t i = 0; i < mapData->landData.size(); i++){
-            FloodFillEntry* e = mapData->landData[i];
+    void RemoveRedundantIslandsMapGenJob::processJob(ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+        for(size_t i = 0; i < workspace->landData.size(); i++){
+            FloodFillEntry* e = workspace->landData[i];
             //TODO separate this into the input data.
             if(e->total <= 30){
                 //Iterate and set to be -1 sea level for all the coords.
@@ -44,16 +44,16 @@ namespace ProceduralExplorationGameCore{
                     //TODO remove the edges for the water groups now the land is removed.
                     *waterGroup = 0;
                 }
-                delete mapData->landData[i];
-                mapData->landData[i] = 0;
+                delete workspace->landData[i];
+                workspace->landData[i] = 0;
             }
         }
 
         //Remove all the nulls from the list.
-        auto it = mapData->landData.begin();
-        while(it != mapData->landData.end()){
+        auto it = workspace->landData.begin();
+        while(it != workspace->landData.end()){
             if(*it == 0){
-                it = mapData->landData.erase(it);
+                it = workspace->landData.erase(it);
             }else it++;
         }
     }

@@ -9,20 +9,20 @@ namespace ProceduralExplorationGameCore{
     struct ExplorationMapInputData;
     struct ExplorationMapData;
 
-    class PerformFloodFillMapGenStep : public MapGenStep{
+    class PerformPreFloodFillMapGenStep : public MapGenStep{
     public:
-        PerformFloodFillMapGenStep();
-        ~PerformFloodFillMapGenStep();
+        PerformPreFloodFillMapGenStep();
+        ~PerformPreFloodFillMapGenStep();
 
         void processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace) override;
     };
 
-    class PerformFloodFillMapGenJob{
+    class PerformPreFloodFillMapGenJob{
     public:
-        PerformFloodFillMapGenJob();
-        ~PerformFloodFillMapGenJob();
+        PerformPreFloodFillMapGenJob();
+        ~PerformPreFloodFillMapGenJob();
 
-        void processJob(ExplorationMapData* mapData);
+        void processJob(ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace);
 
     };
 

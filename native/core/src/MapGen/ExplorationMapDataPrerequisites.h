@@ -147,6 +147,8 @@ namespace ProceduralExplorationGameCore{
     struct ExplorationMapGenWorkspace{
         std::vector<LandId> landWeighted;
         std::vector<float> additionLayer;
+        std::vector<FloodFillEntry*> waterData;
+        std::vector<FloodFillEntry*> landData;
     };
 
     static inline WorldPoint WRAP_WORLD_POINT(WorldCoord x, WorldCoord y){

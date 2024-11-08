@@ -9,20 +9,20 @@ namespace ProceduralExplorationGameCore{
     struct ExplorationMapInputData;
     struct ExplorationMapData;
 
-    class RemoveRedundantIslandsMapGenStep : public MapGenStep{
+    class PerformFinalFloodFillMapGenStep : public MapGenStep{
     public:
-        RemoveRedundantIslandsMapGenStep();
-        ~RemoveRedundantIslandsMapGenStep();
+        PerformFinalFloodFillMapGenStep();
+        ~PerformFinalFloodFillMapGenStep();
 
         void processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace) override;
     };
 
-    class RemoveRedundantIslandsMapGenJob{
+    class PerformFinalFloodFillMapGenJob{
     public:
-        RemoveRedundantIslandsMapGenJob();
-        ~RemoveRedundantIslandsMapGenJob();
+        PerformFinalFloodFillMapGenJob();
+        ~PerformFinalFloodFillMapGenJob();
 
-        void processJob(ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace);
+        void processJob(ExplorationMapData* mapData);
 
     };
 

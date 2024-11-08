@@ -12,7 +12,8 @@
 #include "MapGen/Steps/GenerateAdditionLayerMapGenStep.h"
 #include "MapGen/Steps/MergeAltitudeMapGenStep.h"
 #include "MapGen/Steps/ReduceNoiseMapGenStep.h"
-#include "MapGen/Steps/PerformFloodFillMapGenStep.h"
+#include "MapGen/Steps/PerformFinalFloodFillMapGenStep.h"
+#include "MapGen/Steps/PerformPreFloodFillMapGenStep.h"
 #include "MapGen/Steps/RemoveRedundantIslandsMapGenStep.h"
 #include "MapGen/Steps/WeightAndSortLandmassesMapGenStep.h"
 #include "MapGen/Steps/DetermineEdgesMapGenStep.h"
@@ -35,8 +36,9 @@ namespace ProceduralExplorationGameCore{
         {"Generate Addition Layer", new GenerateAdditionLayerMapGenStep()},
         {"Merge Altitude", new MergeAltitudeMapGenStep()},
         {"Reduce Noise", new ReduceNoiseMapGenStep()},
-        {"Perform Flood Fill", new PerformFloodFillMapGenStep()},
+        {"Perform Pre Flood Fill", new PerformPreFloodFillMapGenStep()},
         {"Remove Redundant Islands", new RemoveRedundantIslandsMapGenStep()},
+        {"Perform Final Flood Fill", new PerformFinalFloodFillMapGenStep()},
         {"Weight And Sort Landmasses", new WeightAndSortLandmassesMapGenStep()},
         {"Determine Edges", new DetermineEdgesMapGenStep()},
         {"Determine Rivers", new DetermineRiversMapGenStep()},
