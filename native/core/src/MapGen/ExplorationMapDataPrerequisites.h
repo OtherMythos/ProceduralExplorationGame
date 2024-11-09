@@ -255,7 +255,7 @@ namespace ProceduralExplorationGameCore{
         return idx;
     }
 
-    static const float BLOB_SIZE = 300;
+    static const float BLOB_SIZE = 200;
     static const float HALF_BLOB_SIZE = BLOB_SIZE/2;
     static const float LINE_BOX_SIZE = 50;
 

@@ -49,6 +49,35 @@ namespace ProceduralExplorationGameCore{
         return INVALID_WORLD_POINT;
     }
 
+    void _determinePoints(const ExplorationMapData* mapData, std::vector<RegionSeedData>& points, std::vector<RegionData>& regionData, AV::CollisionWorldObject* collisionWorld){
+        int padWidth = 30;
+        int padHeight = 30;
+        for(int y = 0; y < mapData->height; y += padWidth){
+            for(int x = 0; x < mapData->width; x += padHeight){
+                const AV::uint8* land = LAND_GROUP_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y));
+                if(*land == INVALID_LAND_ID) continue;
+
+                WorldCoord xx = x + mapGenRandomIntMinMax(padWidth / 2, padWidth);
+                WorldCoord yy = y + mapGenRandomIntMinMax(padHeight / 2, padHeight);
+
+                bool collided = collisionWorld->checkCollisionPoint(xx, yy, 2);
+                if(collided){
+                    continue;
+                }
+
+                points.push_back({WRAP_WORLD_POINT(xx, yy), 20});
+                regionData.push_back({
+                    static_cast<RegionId>(regionData.size()),
+                    0,
+                    static_cast<WorldCoord>(xx),
+                    static_cast<WorldCoord>(yy),
+                    RegionType::NONE,
+                    0
+                });
+            }
+        }
+    }
+
     void DetermineEarlyRegionsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
 
         int totalRegions = input->numRegions;
@@ -66,7 +95,7 @@ namespace ProceduralExplorationGameCore{
                 READ_WORLD_POINT(blobSeed, xp, yp);
                 //points[i].p = blobSeed;
                 points.push_back({blobSeed, 100});
-                bruteForceCollision->addCollisionPoint(xp, yp, 100);
+                bruteForceCollision->addCollisionPoint(xp, yp, 80);
 
                 mapData->regionData.push_back({
                     i,
@@ -78,6 +107,9 @@ namespace ProceduralExplorationGameCore{
                 });
         }
 
+        _determinePoints(mapData, points, mapData->regionData, bruteForceCollision);
+
+        /*
         LandId biggestLand = findBiggestFloodEntry(workspace->landData);
         if(biggestLand != INVALID_LAND_ID){
             for(RegionId i = 2; i < totalRegions + 3; i++){
@@ -111,6 +143,7 @@ namespace ProceduralExplorationGameCore{
                 0
             });
         }
+         */
 
         delete bruteForceCollision;
 
