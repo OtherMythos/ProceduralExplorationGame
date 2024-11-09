@@ -124,6 +124,14 @@ namespace ProceduralExplorationGameCore{
                 blueNoisePtr++;
             }
         }
+
+        texPtr = static_cast<AV::uint32*>(tex->data);
+        if(drawOptions & (1 << (size_t)MapViewerDrawOptions::REGION_SEEDS)){
+            for(const RegionData& d : mapData->regionData){
+                *(texPtr + ((int)d.seedX + (int)d.seedY * mapData->width)) =
+                    d.meta == 0 ? valueColours[(size_t)MapViewerColours::COLOUR_BLACK] : valueColours[(size_t)MapViewerColours::COLOUR_ORANGE];
+            }
+        }
     }
 
     void ExplorationMapViewer::fillStagingTexture(Ogre::TextureBox* tex, ExplorationMapData* mapData){

@@ -19,11 +19,11 @@ namespace ProceduralExplorationGameCore{
     }
 
     WorldPoint determinePositionForBlob_(const ExplorationMapData* mapData, const std::vector<WorldPoint>& seeds, int idx){
-        float xx, yy;
-        xx = yy = 0.0f;
+        WorldCoord xx, yy;
+        xx = yy = 0;
         for(int i = 0; i < 50; i++){
-            xx = float(mapGenRandomIntMinMax(HALF_BLOB_SIZE, mapData->width - HALF_BLOB_SIZE)) / mapData->width;
-            yy = float(mapGenRandomIntMinMax(HALF_BLOB_SIZE, mapData->height - HALF_BLOB_SIZE)) / mapData->height;
+            xx = mapGenRandomIntMinMax(HALF_BLOB_SIZE, mapData->width - HALF_BLOB_SIZE);
+            yy = mapGenRandomIntMinMax(HALF_BLOB_SIZE, mapData->height - HALF_BLOB_SIZE);
             if(idx == 0){
                 break;
             }
@@ -35,7 +35,7 @@ namespace ProceduralExplorationGameCore{
                 WorldCoord xp, yp;
                 READ_WORLD_POINT(testPoint, xp, yp);
                 float d = distance(xx, yy, xp, yp);
-                if(d < (float(BLOB_SIZE) / mapData->width)){
+                if(d < BLOB_SIZE){
                     collision = true;
                 }
             }
@@ -44,7 +44,7 @@ namespace ProceduralExplorationGameCore{
             }
         }
 
-        return WRAP_WORLD_POINT(xx * mapData->width, yy * mapData->height);
+        return WRAP_WORLD_POINT(xx, yy);
     }
 
     void GenerateMetaMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){

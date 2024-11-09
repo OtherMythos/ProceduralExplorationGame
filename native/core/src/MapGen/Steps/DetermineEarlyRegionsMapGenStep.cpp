@@ -1,0 +1,167 @@
+#include "DetermineEarlyRegionsMapGenStep.h"
+
+#include "MapGen/ExplorationMapDataPrerequisites.h"
+
+#include "System/Util/Collision/CollisionWorldBruteForce.h"
+
+#include <cassert>
+#include <cmath>
+
+namespace ProceduralExplorationGameCore{
+
+    DetermineEarlyRegionsMapGenStep::DetermineEarlyRegionsMapGenStep(){
+
+    }
+
+    DetermineEarlyRegionsMapGenStep::~DetermineEarlyRegionsMapGenStep(){
+
+    }
+
+    inline float distance(float x1, float y1, float x2, float y2){
+        return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
+    }
+
+    WorldPoint _determineRegionPoint(const std::vector<FloodFillEntry*>& landData, const std::vector<LandId>& landWeighted, LandId biggestLand, const ExplorationMapData* mapData, AV::CollisionWorldObject* collisionWorld, int size){
+        //Attempt a few times, otherwise fail.
+        for(int i = 0; i < 30; i++){
+            //Determine a single point and retry if it's too close to the others.
+            //LandId retLandmass = findRandomLandmassForSize(landData, landWeighted, 20);
+            //LandId retLandmass = landData.empty() ? INVALID_LAND_ID : 0;
+            //if(retLandmass == INVALID_LAND_ID) continue;
+
+            const std::vector<WorldPoint>& coordData = landData[biggestLand]->coords;
+            size_t randIndex = mapGenRandomIndex<WorldPoint>(coordData);
+            WorldPoint randPoint = coordData[randIndex];
+            //Determine if that point collides with anything
+
+            WorldCoord xx, yy;
+            READ_WORLD_POINT(randPoint, xx, yy);
+            bool collides = collisionWorld->checkCollisionPoint(xx, yy, size);
+            if(collides){
+                continue;
+            }
+
+            collisionWorld->addCollisionPoint(xx, yy, size);
+
+            return randPoint;
+        }
+
+        return INVALID_WORLD_POINT;
+    }
+
+    void DetermineEarlyRegionsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+
+        int totalRegions = input->numRegions;
+        //For the special regions.
+        totalRegions += 20;
+
+        AV::CollisionWorldBruteForce* bruteForceCollision = new AV::CollisionWorldBruteForce(0);
+
+        std::vector<RegionSeedData> points;
+        //points.resize(totalRegions + 3, {0, 10});
+        for(RegionId i = 0; i < 3; i++){
+                //points[i].size = 100;
+                WorldPoint blobSeed = workspace->blobSeeds[i];
+                WorldCoord xp, yp;
+                READ_WORLD_POINT(blobSeed, xp, yp);
+                //points[i].p = blobSeed;
+                points.push_back({blobSeed, 100});
+                bruteForceCollision->addCollisionPoint(xp, yp, 100);
+
+                mapData->regionData.push_back({
+                    i,
+                    0,
+                    xp,
+                    yp,
+                    RegionType::NONE,
+                    1
+                });
+        }
+
+        LandId biggestLand = findBiggestFloodEntry(workspace->landData);
+        if(biggestLand != INVALID_LAND_ID){
+            for(RegionId i = 2; i < totalRegions + 3; i++){
+                AV::uint8 pointSize = 10;
+                WorldPoint p = _determineRegionPoint(workspace->landData, workspace->landWeighted, biggestLand, mapData, bruteForceCollision, pointSize);
+                if(p == INVALID_WORLD_POINT) continue;
+
+                WorldCoord xx, yy;
+                READ_WORLD_POINT(p, xx, yy);
+                //points[i].p = p;
+                points.push_back({p, pointSize});
+                mapData->regionData.push_back({
+                    i,
+                    0,
+                    xx,
+                    yy,
+                    RegionType::NONE,
+                    0
+                });
+            }
+        }
+        else{
+            //Incase there were no landmasses, push a single point.
+            //points.push_back({0, pointSize});
+            mapData->regionData.push_back({
+                0,
+                0,
+                0,
+                0,
+                RegionType::NONE,
+                0
+            });
+        }
+
+        delete bruteForceCollision;
+
+        //TODO separate this into jobs for threads.
+
+        int div = 4;
+        int divHeight = input->height / div;
+        for(int i = 0; i < 4; i++){
+            DetermineEarlyRegionsMapGenJob job;
+            job.processJob(mapData, points, mapData->regionData, 0, i * divHeight, input->width, i * divHeight + divHeight);
+        }
+    }
+
+    DetermineEarlyRegionsMapGenJob::DetermineEarlyRegionsMapGenJob(){
+
+    }
+
+    DetermineEarlyRegionsMapGenJob::~DetermineEarlyRegionsMapGenJob(){
+
+    }
+
+    void DetermineEarlyRegionsMapGenJob::processJob(ExplorationMapData* mapData, const std::vector<RegionSeedData>& points, std::vector<RegionData>& regionData, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb){
+        AV::uint8* regionPtr = REGION_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(xa, ya));
+        for(int y = ya; y < yb; y++){
+            for(int x = xa; x < xb; x++){
+                float closest = 10000.0;
+                int closestIdx = -1;
+
+                for(int i = 0; i < points.size(); i++){
+                    WorldPoint p = points[i].p;
+
+                    WorldCoord xTarget, yTarget;
+                    READ_WORLD_POINT(p, xTarget, yTarget);
+
+                    float length = distance(xTarget, yTarget, x, y);
+                    if(length < closest){
+                        closest = length;
+                        closestIdx = i;
+                    }
+                }
+                if(closestIdx != -1){
+                    //TODO For threading this needs to be pushed to separate lists and merged later.
+                    regionData[closestIdx].coords.push_back(WRAP_WORLD_POINT(x, y));
+                }else{
+                    closestIdx = 0;
+                }
+
+                (*regionPtr) = (closestIdx & 0xFF);
+                regionPtr+=4;
+            }
+        }
+    }
+
+}

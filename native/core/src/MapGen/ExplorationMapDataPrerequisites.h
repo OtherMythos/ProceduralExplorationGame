@@ -23,6 +23,7 @@ namespace ProceduralExplorationGameCore{
         WorldCoord seedX;
         WorldCoord seedY;
         RegionType type;
+        AV::uint8 meta;
         std::vector<WorldPoint> coords;
     };
 
@@ -240,7 +241,21 @@ namespace ProceduralExplorationGameCore{
         return INVALID_LAND_ID;
     }
 
-    static const float BLOB_SIZE = 200;
+    static LandId findBiggestFloodEntry(const std::vector<FloodFillEntry*>& landData){
+        AV::uint32 biggest = 0;
+        LandId idx = INVALID_LAND_ID;
+        LandId count = 0;
+        for(const FloodFillEntry* e : landData){
+            if(e->total > biggest){
+                biggest = e->total;
+                idx = count;
+            }
+            count++;
+        }
+        return idx;
+    }
+
+    static const float BLOB_SIZE = 300;
     static const float HALF_BLOB_SIZE = BLOB_SIZE/2;
     static const float LINE_BOX_SIZE = 50;
 

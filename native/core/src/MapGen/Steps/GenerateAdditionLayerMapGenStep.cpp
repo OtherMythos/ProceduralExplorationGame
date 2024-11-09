@@ -106,14 +106,18 @@ namespace ProceduralExplorationGameCore{
             }
         }
 
+        const float maxDistance = sqrt(pow(LINE_BOX_SIZE, 2) * 2) * 1.05;
         for(WorldPoint p : drawPoints){
             WorldCoord xx, yy;
             READ_WORLD_POINT(p, xx, yy);
-            float distance = ((LINE_BOX_SIZE)/mapData->width) - pointToLineDistance(xx, yy, x1, y1, x2, y2);
+            double lineDistance = pointToLineDistance(xx, yy, x1, y1, x2, y2);
+            float distance = maxDistance - lineDistance;
+            assert(distance >= 0.0f);
             //distance = tan(distance) * 2;
             size_t valIdx = xx + yy * mapData->width;
-            if(distance > additionVals[valIdx]){
-                additionVals[valIdx] = distance;
+            float writeDistance = distance / mapData->width;
+            if(writeDistance > additionVals[valIdx]){
+                additionVals[valIdx] = writeDistance;
             }
         }
     }

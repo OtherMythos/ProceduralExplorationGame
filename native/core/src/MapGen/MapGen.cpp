@@ -18,6 +18,7 @@
 #include "MapGen/Steps/RemoveRedundantIslandsMapGenStep.h"
 #include "MapGen/Steps/RemoveRedundantWaterMapGenStep.h"
 #include "MapGen/Steps/WeightAndSortLandmassesMapGenStep.h"
+#include "MapGen/Steps/DetermineEarlyRegionsMapGenStep.h"
 #include "MapGen/Steps/DetermineEdgesMapGenStep.h"
 #include "MapGen/Steps/DetermineRiversMapGenStep.h"
 #include "MapGen/Steps/CarveRiversMapGenStep.h"
@@ -42,6 +43,7 @@ namespace ProceduralExplorationGameCore{
         {"Perform Pre Flood Fill", new PerformPreFloodFillMapGenStep()},
         {"Remove Redundant Islands", new RemoveRedundantIslandsMapGenStep()},
         {"Remove Redundant Water", new RemoveRedundantWaterMapGenStep()},
+        {"Determine Early Regions", new DetermineEarlyRegionsMapGenStep()},
         {"Perform Final Flood Fill", new PerformFinalFloodFillMapGenStep()},
         {"Weight And Sort Landmasses", new WeightAndSortLandmassesMapGenStep()},
         {"Determine Edges", new DetermineEdgesMapGenStep()},
@@ -49,7 +51,7 @@ namespace ProceduralExplorationGameCore{
         {"Carve Rivers", new CarveRiversMapGenStep()},
         {"Determine Player Start", new DeterminePlayerStartMapGenStep()},
         {"Determine Gateway Position", new DetermineGatewayPositionMapGenStep()},
-        {"Determine Regions", new DetermineRegionsMapGenStep()},
+        //{"Determine Regions", new DetermineRegionsMapGenStep()},
         {"Determine Region Types", new DetermineRegionTypesMapGenStep()},
         {"Populate Final Biomes", new PopulateFinalBiomesMapGenStep()},
         {"Determine Places", new DeterminePlacesMapGenStep()},
