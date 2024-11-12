@@ -155,6 +155,31 @@ namespace ProceduralExplorationGameCore{
             DetermineEarlyRegionsMapGenJob job;
             job.processJob(mapData, points, mapData->regionData, 0, i * divHeight, input->width, i * divHeight + divHeight);
         }
+
+        //Go through the produced list and remove any regions with no coordinates
+        auto it = mapData->regionData.begin();
+        while(it != mapData->regionData.end()){
+            if(it->total == 0){
+                assert(it->coords.size() == 0);
+                mapData->regionData.erase(it);
+            }else{
+                it++;
+            }
+        }
+        for(RegionData r : mapData->regionData){
+            assert(r.coords.size() != 0);
+        }
+
+        //Write those values to the buffer
+        for(RegionId r = 0; r < mapData->regionData.size(); r++){
+            RegionData& d = mapData->regionData[r];
+            d.id = r;
+        //for(const RegionData& r : mapData->regionData){
+            for(WorldPoint p : d.coords){
+                RegionId* regionPtr = REGION_PTR_FOR_COORD(mapData, p);
+                *regionPtr = r;
+            }
+        }
     }
 
     DetermineEarlyRegionsMapGenJob::DetermineEarlyRegionsMapGenJob(){
@@ -169,6 +194,20 @@ namespace ProceduralExplorationGameCore{
         AV::uint8* regionPtr = REGION_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(xa, ya));
         for(int y = ya; y < yb; y++){
             for(int x = xa; x < xb; x++){
+                //Skip water for region assignment.
+                /*
+                WorldPoint currentPoint = WRAP_WORLD_POINT(x, y);
+                WaterId water = *WATER_GROUP_PTR_FOR_COORD_CONST(mapData, currentPoint);
+                if(water != INVALID_WATER_ID){
+                    //regionPtr+=4;
+                    continue;
+                }
+                 */
+
+                WorldPoint currentPoint = WRAP_WORLD_POINT(x, y);
+                AV::uint8 altitude = *(VOX_PTR_FOR_COORD_CONST(mapData, currentPoint));
+                if(altitude < mapData->seaLevel) continue;
+
                 float closest = 10000.0;
                 int closestIdx = -1;
 
@@ -186,13 +225,14 @@ namespace ProceduralExplorationGameCore{
                 }
                 if(closestIdx != -1){
                     //TODO For threading this needs to be pushed to separate lists and merged later.
-                    regionData[closestIdx].coords.push_back(WRAP_WORLD_POINT(x, y));
+                    regionData[closestIdx].coords.push_back(currentPoint);
+                    regionData[closestIdx].total++;
                 }else{
                     closestIdx = 0;
                 }
 
-                (*regionPtr) = (closestIdx & 0xFF);
-                regionPtr+=4;
+                //(*regionPtr) = (closestIdx & 0xFF);
+                //regionPtr+=4;
             }
         }
     }

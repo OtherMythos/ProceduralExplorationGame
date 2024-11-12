@@ -17,6 +17,7 @@
 #include "MapGen/Steps/PerformPreFloodFillMapGenStep.h"
 #include "MapGen/Steps/RemoveRedundantIslandsMapGenStep.h"
 #include "MapGen/Steps/RemoveRedundantWaterMapGenStep.h"
+#include "MapGen/Steps/IsolateRegionsMapGenStep.h"
 #include "MapGen/Steps/WeightAndSortLandmassesMapGenStep.h"
 #include "MapGen/Steps/DetermineEarlyRegionsMapGenStep.h"
 #include "MapGen/Steps/DetermineEdgesMapGenStep.h"
@@ -44,6 +45,7 @@ namespace ProceduralExplorationGameCore{
         {"Remove Redundant Islands", new RemoveRedundantIslandsMapGenStep()},
         {"Remove Redundant Water", new RemoveRedundantWaterMapGenStep()},
         {"Determine Early Regions", new DetermineEarlyRegionsMapGenStep()},
+        {"Isolate Regions", new IsolateRegionsMapGenStep()},
         {"Perform Final Flood Fill", new PerformFinalFloodFillMapGenStep()},
         {"Weight And Sort Landmasses", new WeightAndSortLandmassesMapGenStep()},
         {"Determine Edges", new DetermineEdgesMapGenStep()},
