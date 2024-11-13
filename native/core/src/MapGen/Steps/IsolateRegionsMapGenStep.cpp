@@ -6,6 +6,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <algorithm>
 
 namespace ProceduralExplorationGameCore{
 
