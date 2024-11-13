@@ -25,6 +25,7 @@ namespace ProceduralExplorationGameCore{
         RegionType type;
         AV::uint8 meta;
         std::vector<WorldPoint> coords;
+        std::vector<WorldPoint> edges;
     };
 
     struct FloodFillEntry{

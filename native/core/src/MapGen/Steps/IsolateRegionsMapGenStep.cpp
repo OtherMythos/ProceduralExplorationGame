@@ -50,6 +50,8 @@ namespace ProceduralExplorationGameCore{
 
         assert(regionResult.size() == 1);
 
+        region.edges = std::move(regionResult[0]->edges);
+
         //Determine if the region is concave.
         if(regionResult[0]->coords.size() == region.coords.size()){
             return;
