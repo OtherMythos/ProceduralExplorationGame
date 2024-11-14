@@ -57,8 +57,12 @@ namespace ProceduralExplorationGameCore{
                 const AV::uint8* land = LAND_GROUP_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y));
                 if(*land == INVALID_LAND_ID) continue;
 
-                WorldCoord xx = x + mapGenRandomIntMinMax(padWidth / 2, padWidth);
-                WorldCoord yy = y + mapGenRandomIntMinMax(padHeight / 2, padHeight);
+                if(mapGenRandomIntMinMax(0, 2) == 0){
+                    continue;
+                }
+
+                WorldCoord xx = x + mapGenRandomIntMinMax(padWidth * 0.75, padWidth);
+                WorldCoord yy = y + mapGenRandomIntMinMax(padHeight * 0.75, padHeight);
 
                 bool collided = collisionWorld->checkCollisionPoint(xx, yy, 2);
                 if(collided){
