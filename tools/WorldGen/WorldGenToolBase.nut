@@ -398,10 +398,18 @@
         return outData;
     }
     function generate(){
+        local targetSeed = _settings.getUserSetting("seed");
+        local targetVariationSeed = _settings.getUserSetting("variationSeed");
+        local targetMoistureSeed = _settings.getUserSetting("moistureSeed");
+
+        targetSeed = targetSeed == null ? mSeed_ : targetSeed;
+        targetVariationSeed = targetVariationSeed == null ? mVariation_ : targetVariationSeed;
+        targetMoistureSeed = targetMoistureSeed == null ? mMoistureSeed_ : targetMoistureSeed;
+
         local data = {
-            "seed": mSeed_,
-            "variationSeed": mVariation_,
-            "moistureSeed": mMoistureSeed_,
+            "seed": targetSeed,
+            "variationSeed": targetVariationSeed,
+            "moistureSeed": targetMoistureSeed,
             "width": 600,
             "height": 600,
             "numRivers": 24,
@@ -413,19 +421,6 @@
 
         _gameCore.beginMapGen(data);
         setGenerationInProgress(true);
-        /*
-        local thread = ::newthread(generate_);
-        thread.call(mSeed_, mVariation_, mMoistureSeed_);
-
-        local finishedData = null;
-        while(thread.getstatus() != "idle"){
-            finishedData = thread.wakeup();
-        }
-
-        mCurrentMapData_ = finishedData;
-        mMapViewer_.displayMapData(mCurrentMapData_);
-        updateTimeData(mCurrentMapData_);
-        */
     }
 
     function checkForGameCorePlugin(){
