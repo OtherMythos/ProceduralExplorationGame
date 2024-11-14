@@ -3,6 +3,8 @@
 #include "System/EnginePrerequisites.h"
 #include "GamePrerequisites.h"
 
+#include "RandomWrapper.h"
+
 #include <vector>
 #include <string>
 #include <set>
@@ -164,13 +166,6 @@ namespace ProceduralExplorationGameCore{
         yy = point & 0xFFFF;
     }
 
-    static inline WorldPoint findRandomPointInLandmass(const FloodFillEntry* e){
-        //NOTE Build this in with proper isolated random functions in future to prevent differentiators on the seeds.
-        size_t idx = 0 + (rand() % static_cast<int>(e->coords.size() - 0 + 1));
-
-        return e->coords[idx];
-    }
-
     template<typename T=AV::uint32*, typename D=ExplorationMapData*>
     static inline T FULL_PTR_FOR_COORD(D mapData, WorldPoint p){
         WorldCoord xx;
@@ -223,12 +218,16 @@ namespace ProceduralExplorationGameCore{
     }
 
     static size_t mapGenRandomIntMinMax(size_t min, size_t max){
-        return min + (rand() % static_cast<size_t>(max - min + 1));
+        return min + (RandomWrapper::singleton.rand() % static_cast<size_t>(max - min + 1));
     }
     template<typename T>
     static size_t mapGenRandomIndex(const std::vector<T>& list){
         if(list.empty()) return 0;
         return mapGenRandomIntMinMax(0, list.size()-1);
+    }
+
+    static inline WorldPoint findRandomPointInLandmass(const FloodFillEntry* e){
+        return mapGenRandomIndex(e->coords);
     }
     static LandId findRandomLandmassForSize(const std::vector<FloodFillEntry*>& landData, const std::vector<LandId>& landWeighted, AV::uint32 size){
         if(landData.empty()) return INVALID_LAND_ID;

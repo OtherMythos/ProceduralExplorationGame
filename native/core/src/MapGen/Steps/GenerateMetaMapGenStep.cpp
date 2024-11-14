@@ -56,6 +56,8 @@ namespace ProceduralExplorationGameCore{
         mapData->seed = input->seed;
         mapData->variationSeed = input->variationSeed;
 
+        RandomWrapper::singleton.seed(mapData->variationSeed);
+
         for(int i = 0; i < 3; i++){
             WorldPoint p = determinePositionForBlob_(mapData, workspace->blobSeeds, i);
             workspace->blobSeeds.push_back(p);

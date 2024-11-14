@@ -32,7 +32,8 @@ namespace ProceduralExplorationGameCore{
         //for(RegionData& d : mapData->regionData){
         for(int i = 0; i < mapData->regionData.size(); i++){
             RegionData& d = mapData->regionData[i];
-            if(d.total >= 400 || d.total == 0) continue;
+            //if(d.total >= 400 || d.total == 0) continue;
+            if(d.total == 0) continue;
 
             //Go through the edges and check the neighbours for a region
             std::set<RegionId> foundRegions;

@@ -97,7 +97,6 @@
         setupGui();
 
         setRandomSeed();
-        setVariation(0);
         generate();
     }
 
@@ -292,6 +291,8 @@
         setSeed(seed);
         seed = _random.randInt(0, 100000);
         setMoistureSeed(seed);
+        seed = _random.randInt(0, 100000);
+        setVariation(seed);
     }
 
     function setSeed(seedValue){
@@ -383,7 +384,7 @@
         local gen = ::MapGen();
         local data = {
             "seed": seed,
-            "variation": variation,
+            "variationSeed": variation,
             "moistureSeed": moisture,
             "width": 400,
             "height": 400,
@@ -399,7 +400,7 @@
     function generate(){
         local data = {
             "seed": mSeed_,
-            "variation": mVariation_,
+            "variationSeed": mVariation_,
             "moistureSeed": mMoistureSeed_,
             "width": 400,
             "height": 400,
