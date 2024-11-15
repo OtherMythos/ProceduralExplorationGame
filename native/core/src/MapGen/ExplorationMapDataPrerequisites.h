@@ -227,7 +227,7 @@ namespace ProceduralExplorationGameCore{
     }
 
     static inline WorldPoint findRandomPointInLandmass(const FloodFillEntry* e){
-        return mapGenRandomIndex(e->coords);
+        return e->coords[mapGenRandomIndex(e->coords)];
     }
     static LandId findRandomLandmassForSize(const std::vector<FloodFillEntry*>& landData, const std::vector<LandId>& landWeighted, AV::uint32 size){
         if(landData.empty()) return INVALID_LAND_ID;
