@@ -21,7 +21,7 @@ namespace ProceduralExplorationGameCore{
     WorldPoint _findPointOnCoast(const std::vector<FloodFillEntry*>& landData, LandId landId){
         const std::vector<WorldPoint>& edges = landData[landId]->edges;
         size_t randIndex = mapGenRandomIndex<WorldPoint>(edges);
-        if(randIndex <= edges.size()) return INVALID_WORLD_POINT;
+        if(randIndex > edges.size()) return INVALID_WORLD_POINT;
         return edges[randIndex];
     }
 

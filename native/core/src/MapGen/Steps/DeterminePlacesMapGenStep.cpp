@@ -44,7 +44,7 @@ namespace ProceduralExplorationGameCore{
     bool determinePlaces_place(ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace, PlaceId id, PlaceData* outData){
         LandId landmassId = determinePlaces_determineLandmassForPlace(mapData, workspace, id);
         if(landmassId == INVALID_LAND_ID) return false;
-        if(landmassId <= mapData->landData.size()) return false;
+        if(landmassId > mapData->landData.size()) return false;
         const FloodFillEntry* landmass = mapData->landData[landmassId];
 
         WorldPoint point = INVALID_WORLD_POINT;
