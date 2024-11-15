@@ -28,6 +28,7 @@ namespace ProceduralExplorationGameCore{
                 //TODO do I need this?
                 if(r == 0x0) continue;
                 RegionData& sd = mapData->regionData[r];
+                if(d.id == sd.id) continue;
                 mergeRegionData(mapData, d, sd);
 
                 //Just take the first value for now.

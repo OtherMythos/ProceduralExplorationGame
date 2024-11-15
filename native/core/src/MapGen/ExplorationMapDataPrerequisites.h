@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <cassert>
 
 namespace ProceduralExplorationGameCore{
 
@@ -269,6 +270,7 @@ namespace ProceduralExplorationGameCore{
     }
 
     static void mergeRegionData(ExplorationMapData* mapData, RegionData& d, RegionData& sd){
+        assert(d.id != sd.id);
         sd.coords.insert(sd.coords.end(), d.coords.begin(), d.coords.end());
         //As much as it might include the seam, it's still more efficient than re-scanning.
         sd.edges.insert(sd.edges.end(), d.edges.begin(), d.edges.end());
