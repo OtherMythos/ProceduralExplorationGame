@@ -235,6 +235,33 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger ExplorationMapDataUserData::getWaterGroupForPos(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        Ogre::Vector3 outVec;
+        SCRIPT_CHECK_RESULT(AV::Vector3UserData::readVector3FromUserData(vm, -1, &outVec));
+        outVec.z = -outVec.z;
+
+        ProceduralExplorationGameCore::WaterId outWater = ProceduralExplorationGameCore::INVALID_WATER_ID;
+
+        if(outVec.x < 0 || outVec.z < 0 || outVec.x >= mapData->width || outVec.z >= mapData->height){
+            sq_pushinteger(vm, static_cast<SQInteger>(outWater));
+            return 1;
+        }
+
+        ProceduralExplorationGameCore::WorldCoord x, y;
+        x = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.x);
+        y = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.z);
+
+        const ProceduralExplorationGameCore::WaterId* waterPtr = ProceduralExplorationGameCore::WATER_GROUP_PTR_FOR_COORD_CONST(mapData, ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y));
+        outWater = *waterPtr;
+
+        sq_pushinteger(vm, static_cast<SQInteger>(outWater));
+
+        return 1;
+    }
+
     SQInteger ExplorationMapDataUserData::getIsWaterForPos(HSQUIRRELVM vm){
         ProceduralExplorationGameCore::ExplorationMapData* mapData;
         SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
@@ -306,6 +333,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, explorationMapDataToTable, "explorationMapDataToTable");
         AV::ScriptUtils::addFunction(vm, getAltitudeForPos, "getAltitudeForPos", 2, ".u");
         AV::ScriptUtils::addFunction(vm, getLandmassForPos, "getLandmassForPos", 2, ".u");
+        AV::ScriptUtils::addFunction(vm, getWaterGroupForPos, "getWaterGroupForPos", 2, ".u");
         AV::ScriptUtils::addFunction(vm, getIsWaterForPos, "getIsWaterForPos", 2, ".u");
         AV::ScriptUtils::addFunction(vm, getRegionForPos, "getRegionForPos", 2, ".u");
 

@@ -1,6 +1,16 @@
+enum VoxPickerType{
+    ALTITUDE,
+    WATER_GROUP,
+    LAND_GROUP,
+    REGION_ID,
+
+    MAX
+};
+
 ::WorldGenTool <- {
 
     mControlsWindow_ = null
+    mRenderWindow_ = null
     mCompositorDatablock_ = null
     mCompositorWorkspace_ = null
     mCompositorCamera_ = null
@@ -11,6 +21,7 @@
     mMoistureSeedEditbox_ = null
     mVariationSeedEditbox_ = null
     mGenerationPopup_ = null
+    mVoxPickerActive_ = false
 
     mMapViewer_ = null
 
@@ -24,6 +35,7 @@
 
     mCurrentMapData_ = null
     mCurrentNativeMapData_ = null
+    mActiveVoxPickerWindow_ = null
     mTimerLabel_ = null
 
     mSeed_ = 0
@@ -91,6 +103,54 @@
         }
     }
 
+    VoxPickerWindow = class{
+        mMainWindow_ = null;
+        mWidgets_ = null;
+        mWidgetVals_ = ["Altitude", "Water", "Land", "Region"];
+        constructor(){
+            mWidgets_ = [];
+
+            local layoutLine = _gui.createLayoutLine();
+
+            mMainWindow_ = _gui.createWindow("VoxPickerWindow");
+
+            for(local i = 0; i < VoxPickerType.MAX; i++){
+                local label = mMainWindow_.createLabel();
+                label.setText(" ");
+                layoutLine.addCell(label);
+                mWidgets_.append(label);
+            }
+            layoutLine.layout();
+
+            mMainWindow_.setZOrder(120);
+            mMainWindow_.setSize(mMainWindow_.calculateChildrenSize());
+            mMainWindow_.setVisible(false);
+
+        }
+        function shutdown(){
+            _gui.destroy(mMainWindow_);
+        }
+        function setPosition(pos){
+            mMainWindow_.setPosition(pos);
+        }
+        function setData(data){
+            mMainWindow_.setVisible(true);
+            if(data == null){
+                foreach(c in mWidgets_){
+                    c.setVisible(false);
+                }
+                mWidgets_[0].setVisible(true);
+                mWidgets_[0].setText("No voxel selected");
+            }else{
+                foreach(c,i in mWidgets_){
+                    i.setText(mWidgetVals_[c] + ": " + data[c].tofloat());
+                }
+            }
+
+            mMainWindow_.setSize(mMainWindow_.calculateChildrenSize());
+        }
+    }
+
     function setup(){
         checkForGameCorePlugin();
 
@@ -110,14 +170,27 @@
                 setGenerationInProgress(false);
 
                 mCurrentMapData_ = result.explorationMapDataToTable();
-                print(mCurrentMapData_);
-                print(mCurrentMapData_.width);
                 mMapViewer_.displayMapData(mCurrentMapData_, mCurrentNativeMapData_);
                 updateTimeData(mCurrentMapData_);
             }else{
                 assert(mGenerationPopup_ != null);
                 local percentage = _gameCore.getMapGenStage().tofloat() / _gameCore.getTotalMapGenStages().tofloat();
                 mGenerationPopup_.setPercentage(percentage);
+            }
+        }else{
+            if(mActiveVoxPickerWindow_ != null && mCurrentNativeMapData_ != null){
+                local renderPos = mRenderWindow_.getPosition();
+                local renderTotal = (Vec2(_input.getMouseX(), _input.getMouseY()) - renderPos) / mRenderWindow_.getSize();
+                local x = (renderTotal.x * mCurrentMapData_.width).tointeger();
+                local y = (renderTotal.y * mCurrentMapData_.height).tointeger();
+                local pos = Vec3(x, 0, -y);
+                local data = [
+                    mCurrentNativeMapData_.getAltitudeForPos(pos),
+                    mCurrentNativeMapData_.getWaterGroupForPos(pos),
+                    mCurrentNativeMapData_.getLandmassForPos(pos),
+                    mCurrentNativeMapData_.getRegionForPos(pos),
+                ];
+                mActiveVoxPickerWindow_.setData(data);
             }
         }
     }
@@ -197,6 +270,13 @@
             ::WorldGenTool.generate();
         }, _GUI_ACTION_PRESSED);
         layout.addCell(newGenButton);
+
+        local voxPickerCheckbox = mControlsWindow_.createCheckbox();
+        voxPickerCheckbox.setText("Enable Vox Picker");
+        voxPickerCheckbox.attachListenerForEvent(function(widget, event){
+            setVoxPickerEnabled(widget.getValue());
+        }, _GUI_ACTION_RELEASED, this);
+        layout.addCell(voxPickerCheckbox);
 
         local checkboxes = [
             "Draw water",
@@ -284,6 +364,7 @@
         renderPanel.setDatablock(mMapViewer_.getDatablock());
         renderPanel.setClipBorders(0, 0, 0, 0);
         mMapViewer_.setLabelWindow(renderWindow);
+        mRenderWindow_ = renderWindow;
     }
 
     function setRandomSeed(){
@@ -310,6 +391,18 @@
     function setVariation(variation){
         mVariationSeedEditbox_.setText(variation.tostring());
         mVariation_ = variation;
+    }
+
+    function setVoxPickerEnabled(enabled){
+        mVoxPickerActive_ = enabled;
+
+        if(mActiveVoxPickerWindow_ != null){
+            mActiveVoxPickerWindow_.shutdown();
+            mActiveVoxPickerWindow_ = null;
+        }
+        if(!enabled) return;
+        mActiveVoxPickerWindow_ = VoxPickerWindow();
+        mActiveVoxPickerWindow_.setPosition(mRenderWindow_.getPosition());
     }
 
     function viewCurrentMapAsModel_setup(){
