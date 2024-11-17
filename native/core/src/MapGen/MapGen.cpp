@@ -50,6 +50,8 @@ namespace ProceduralExplorationGameCore{
         {"Isolate Regions", new IsolateRegionsMapGenStep()},
         {"Merge Small Regions", new MergeSmallRegionsMapGenStep()},
         {"Merge Isolated Regions", new MergeIsolatedRegionsMapGenStep()},
+        {"Determine Region Types", new DetermineRegionTypesMapGenStep()},
+        {"Populate Final Biomes", new PopulateFinalBiomesMapGenStep()},
         {"Perform Final Flood Fill", new PerformFinalFloodFillMapGenStep()},
         {"Weight And Sort Landmasses", new WeightAndSortLandmassesMapGenStep()},
         {"Determine Edges", new DetermineEdgesMapGenStep()},
@@ -58,8 +60,6 @@ namespace ProceduralExplorationGameCore{
         {"Determine Player Start", new DeterminePlayerStartMapGenStep()},
         {"Determine Gateway Position", new DetermineGatewayPositionMapGenStep()},
         //{"Determine Regions", new DetermineRegionsMapGenStep()},
-        {"Determine Region Types", new DetermineRegionTypesMapGenStep()},
-        {"Populate Final Biomes", new PopulateFinalBiomesMapGenStep()},
         {"Determine Places", new DeterminePlacesMapGenStep()},
     };
 

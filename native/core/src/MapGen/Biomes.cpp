@@ -101,20 +101,25 @@ namespace ProceduralExplorationGameCore{
     }
     #undef PLACE_ITEM
 
+    AV::uint8 NONE_DetermineAltitudeFunction(AV::uint8 altitude, AV::uint8 moisture, AV::uint16 x, AV::uint16 y, const ExplorationMapData* mapData){
+        return altitude;
+    }
+
 
     static const std::array BIOMES{
-        Biome(0, 0),
-        Biome(&GRASS_LAND_VoxFunction, &GRASS_LAND_PlaceObjectsFunction),
-        Biome(&GRASS_FOREST_VoxFunction, &GRASS_FOREST_PlaceObjectsFunction),
-        Biome(&CHERRY_BLOSSOM_FOREST_VoxFunction, &CHERRY_BLOSSOM_FOREST_PlaceObjectsFunction),
-        Biome(&EXP_FIELD_VoxFunction, &NONE_PlaceObjectsFunction),
-        Biome(&SHALLOW_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction),
-        Biome(&DEEP_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction),
+        Biome(0, 0, 0),
+        Biome(&GRASS_LAND_VoxFunction, &GRASS_LAND_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction),
+        Biome(&GRASS_FOREST_VoxFunction, &GRASS_FOREST_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction),
+        Biome(&CHERRY_BLOSSOM_FOREST_VoxFunction, &CHERRY_BLOSSOM_FOREST_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction),
+        Biome(&EXP_FIELD_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction),
+        Biome(&SHALLOW_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction),
+        Biome(&DEEP_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction),
     };
 
-    Biome::Biome(DetermineVoxFunction voxFunction, PlaceObjectFunction placementFunction)
+    Biome::Biome(DetermineVoxFunction voxFunction, PlaceObjectFunction placementFunction, DetermineAltitudeFunction altitudeFunction)
         : mVoxFunction(voxFunction),
-        mPlacementFunction(placementFunction) {
+        mPlacementFunction(placementFunction),
+        mAltitudeFunction(altitudeFunction) {
 
     }
 
