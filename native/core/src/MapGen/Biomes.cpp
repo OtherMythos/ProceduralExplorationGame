@@ -96,6 +96,17 @@ namespace ProceduralExplorationGameCore{
         return MapVoxelTypes::SAND;
     }
     //
+    MapVoxelTypes DESERT_VoxFunction(AV::uint8 altitude, AV::uint8 moisture, const ExplorationMapData* mapData){
+        return MapVoxelTypes::SAND;
+    }
+    void DESERT_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture){
+        if(flags & static_cast<AV::uint8>(MapVoxelTypes::RIVER)) return;
+        //if(altitude >= mapData->seaLevel + 10){
+            if(processRValue(mapData, x, y, 12)){
+                PLACE_ITEM(PlacedItemId::CACTUS);
+            }
+        //}
+    }
 
     void NONE_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture){
     }
@@ -105,6 +116,18 @@ namespace ProceduralExplorationGameCore{
         return altitude;
     }
 
+    AV::uint8 DESERT_DetermineAltitudeFunction(AV::uint8 altitude, AV::uint8 moisture, AV::uint16 x, AV::uint16 y, const ExplorationMapData* mapData){
+        float thing = abs(sin(float(x) * 0.1)) * 60 - 20;
+        float other = float(altitude) + thing;
+        if(other < mapData->seaLevel){
+            other = mapData->seaLevel;
+        }
+        else if(other >= 0xFF){
+            other = 0xFF - 1;
+        }
+        AV::uint8 out = static_cast<AV::uint8>(other);
+        return out;
+    }
 
     static const std::array BIOMES{
         Biome(0, 0, 0),
@@ -112,6 +135,7 @@ namespace ProceduralExplorationGameCore{
         Biome(&GRASS_FOREST_VoxFunction, &GRASS_FOREST_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction),
         Biome(&CHERRY_BLOSSOM_FOREST_VoxFunction, &CHERRY_BLOSSOM_FOREST_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction),
         Biome(&EXP_FIELD_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction),
+        Biome(&DESERT_VoxFunction, &DESERT_PlaceObjectsFunction, &DESERT_DetermineAltitudeFunction),
         Biome(&SHALLOW_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction),
         Biome(&DEEP_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction),
     };
@@ -133,6 +157,7 @@ namespace ProceduralExplorationGameCore{
             case RegionType::GRASSLAND: targetBiome = BiomeId::GRASS_LAND; break;
             case RegionType::CHERRY_BLOSSOM_FOREST: targetBiome = BiomeId::CHERRY_BLOSSOM_FOREST; break;
             case RegionType::EXP_FIELDS: targetBiome = BiomeId::EXP_FIELD; break;
+            case RegionType::DESERT: targetBiome = BiomeId::DESERT; break;
             default:{
                 targetBiome = BiomeId::GRASS_LAND;
             }

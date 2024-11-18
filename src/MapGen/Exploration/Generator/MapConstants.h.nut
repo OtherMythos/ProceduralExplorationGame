@@ -41,6 +41,7 @@ enum BiomeId{
     GRASS_FOREST,
     CHERRY_BLOSSOM_FOREST,
     EXP_FIELD,
+    DESERT,
 
     SHALLOW_OCEAN,
     DEEP_OCEAN,
@@ -54,6 +55,7 @@ enum RegionType{
     GRASSLAND,
     CHERRY_BLOSSOM_FOREST,
     EXP_FIELDS,
+    DESERT,
     GATEWAY_DOMAIN,
     PLAYER_START
 };
@@ -66,6 +68,7 @@ enum PlacedItemId{
 
     TREE,
     CHERRY_BLOSSOM_TREE,
+    CACTUS,
 
     MAX
 };

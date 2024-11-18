@@ -182,6 +182,28 @@
         return enemy;
     }
 
+    function getMeshForPlacedItemType_(item){
+        switch(item){
+            case PlacedItemId.CHERRY_BLOSSOM_TREE:{
+                return "treeCherryBlossom.voxMesh";
+            }
+            case PlacedItemId.CACTUS:{
+                return "cactus1.voxMesh";
+            }
+            default:{
+                return "tree.voxMesh";
+            }
+        }
+    }
+    function getScaleForPlacedItemType_(item){
+        switch(item){
+            case PlacedItemId.CACTUS:{
+                return 0.3;
+            }
+            default:
+                return 0.6;
+        }
+    }
     function constructPlacedItem(parentNode, itemData, idx){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = Vec3(itemData.originX, 0, -itemData.originY);
@@ -191,13 +213,15 @@
         //local entry = ActiveEnemyEntry(mConstructorWorld_, itemData.type, targetPos, en);
 
         local placeNode = parentNode.createChildSceneNode();
-        local meshTarget = itemData.type == PlacedItemId.CHERRY_BLOSSOM_TREE ? "treeCherryBlossom.voxMesh" : "tree.voxMesh";
+        //local meshTarget = itemData.type == PlacedItemId.CHERRY_BLOSSOM_TREE ? "treeCherryBlossom.voxMesh" : "tree.voxMesh";
+        local meshTarget = getMeshForPlacedItemType_(itemData.type);
         placeNode.setPosition(targetPos);
         //TODO make some of these scene static
         local item = _gameCore.createVoxMeshItem(meshTarget);
         item.setRenderQueueGroup(30);
         placeNode.attachObject(item);
-        placeNode.setScale(0.6, 0.6, 0.6);
+        local scale = getScaleForPlacedItemType_(itemData.type);
+        placeNode.setScale(scale, scale, scale);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](placeNode, true));
 
         local damageWorld = mConstructorWorld_.getDamageWorld();
