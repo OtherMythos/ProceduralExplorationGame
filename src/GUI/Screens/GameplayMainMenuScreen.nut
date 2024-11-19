@@ -17,7 +17,8 @@
 
         local buttonOptions = [
             "Explore",
-            "Inventory"
+            "Inventory",
+            "Quit to Desktop"
             //"Visit"
         ];
         local buttonFunctions = [
@@ -29,6 +30,9 @@
                 print("Inventory");
                 ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, {"stats": ::Base.mPlayerStats, "disableBackground": true}));
             },
+            function(widget, action){
+                _shutdownEngine();
+            }
             /*
             function(widget, action){
                 print("Visit");
