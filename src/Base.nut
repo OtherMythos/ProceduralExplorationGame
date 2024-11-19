@@ -266,10 +266,6 @@
         _doFile("res://src/Logic/World/Actions/WorldAction.nut");
         _doFile("res://src/Logic/World/Actions/EXPTrailAction.nut");
 
-        if(_system.exists("res://developerTools.nut")){
-            _doFile("res://developerTools.nut");
-        }
-
         _doFile("res://src/GUI/RenderIconManager.nut");
         ::RenderIconManager.setup();
 

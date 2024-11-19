@@ -38,6 +38,10 @@ function start(){
 
     _event.subscribe(_EVENT_SYSTEM_WINDOW_RESIZE, recieveWindowResize, this);
 
+    if(_system.exists("res://developerTools.nut")){
+        _doFile("res://developerTools.nut");
+    }
+
     _doFile("res://src/Base.nut");
     checkForProjectExtra();
     ::Base.setup();
@@ -53,7 +57,7 @@ function end(){
     ::Base.shutdown();
 }
 
-function checkForProjectExtra(){
+::checkForProjectExtra <- function(){
     local filePath = "res://extra/GameCore/Base.nut";
     if(_system.exists(filePath)){
         _doFile(filePath);
