@@ -67,6 +67,16 @@ namespace ProceduralExplorationGameCore{
             if(smallest->total == 0 || biggest->total == 0) continue;
             assert(biggest->total >= smallest->total);
 
+            if(
+               smallest->meta & static_cast<AV::uint8>(RegionMeta::MAIN_REGION) &&
+               !(biggest->meta & static_cast<AV::uint8>(RegionMeta::MAIN_REGION))
+            ){
+                //Flip the regions to ensure a main region is not absorbed.
+                RegionData* flip = smallest;
+                smallest = biggest;
+                biggest = flip;
+            }
+
             mergeRegionData(mapData, *smallest, *biggest);
 
             //Reset the search now something has changed;

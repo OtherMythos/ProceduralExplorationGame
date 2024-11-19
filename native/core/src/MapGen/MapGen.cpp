@@ -27,6 +27,7 @@
 #include "MapGen/Steps/DetermineGatewayPositionMapGenStep.h"
 #include "MapGen/Steps/DetermineRegionsMapGenStep.h"
 #include "MapGen/Steps/DetermineRegionTypesMapGenStep.h"
+#include "MapGen/Steps/MergeExpandableRegionsMapGenStep.h"
 #include "MapGen/Steps/PopulateFinalBiomesMapGenStep.h"
 #include "MapGen/Steps/DeterminePlacesMapGenStep.h"
 #include "MapGen/Steps/MergeSmallRegionsMapGenStep.h"
@@ -51,6 +52,7 @@ namespace ProceduralExplorationGameCore{
         {"Merge Small Regions", new MergeSmallRegionsMapGenStep()},
         {"Merge Isolated Regions", new MergeIsolatedRegionsMapGenStep()},
         {"Determine Region Types", new DetermineRegionTypesMapGenStep()},
+        {"Merge Expandable Regions", new MergeExpandableRegionsMapGenStep()},
         {"Populate Final Biomes", new PopulateFinalBiomesMapGenStep()},
         {"Perform Final Flood Fill", new PerformFinalFloodFillMapGenStep()},
         {"Weight And Sort Landmasses", new WeightAndSortLandmassesMapGenStep()},

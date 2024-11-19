@@ -20,6 +20,11 @@ namespace ProceduralExplorationGameCore{
         for(RegionData& d : mapData->regionData){
             if(d.total >= 200) continue;
 
+            //Don't attempt to merge small main regions, so the session can guarantee having the correct number.
+            if(d.meta & static_cast<AV::uint8>(RegionMeta::MAIN_REGION)){
+                continue;
+            }
+
             //Go through the edges and check the neighbours for a region
             std::set<RegionId> foundRegions;
             findNeighboursForRegion(mapData, d, foundRegions);

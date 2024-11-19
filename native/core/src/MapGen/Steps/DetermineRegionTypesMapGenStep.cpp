@@ -34,6 +34,12 @@ namespace ProceduralExplorationGameCore{
         for(RegionType r : regionsToAdd){
             size_t targetIdx = mapGenRandomIndex(freeRegions);
             if(targetIdx >= freeRegions.size()) continue;
+            RegionData& rd = mapData->regionData[freeRegions[targetIdx]];
+            rd.type = r;
+            if(r == RegionType::DESERT){
+                rd.meta |= static_cast<AV::uint8>(RegionMeta::EXPANDABLE);
+            }
+
             mapData->regionData[freeRegions[targetIdx]].type = r;
             freeRegions.erase(freeRegions.begin() + targetIdx);
         }

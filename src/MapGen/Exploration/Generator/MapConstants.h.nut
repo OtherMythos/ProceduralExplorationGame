@@ -60,6 +60,11 @@ enum RegionType{
     PLAYER_START
 };
 
+enum RegionMeta{
+    MAIN_REGION = 0x1,
+    EXPANDABLE = 0x2
+};
+
 /**
  * Generally aestetic things like trees, rocks, etc.
  */
