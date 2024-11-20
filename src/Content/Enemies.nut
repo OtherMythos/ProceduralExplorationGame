@@ -1,13 +1,5 @@
 enum EnemyId{
-    NONE,
-
-    GOBLIN,
-    SQUID,
-    CRAB,
-    SKELETON,
-    FOREST_GUARDIAN,
-
-    MAX
+    NONE
 };
 
 //Bitmask to keep track of which types of terrain an enemy can walk on.
@@ -18,7 +10,7 @@ enum EnemyTraversableTerrain{
     ALL = 0xFF
 };
 
-local EnemyDef = class{
+::Enemy <- class{
     mName = null;
     mCharacterModelType = null;
     mTraversableTerrain = EnemyTraversableTerrain.ALL;
@@ -34,13 +26,3 @@ local EnemyDef = class{
     function getTraversableTerrain() { return mTraversableTerrain; }
     function getAllowSwimState() { return mAllowSwimState; }
 };
-
-::Enemies <- array(EnemyId.MAX, null);
-
-::Enemies[EnemyId.NONE] = EnemyDef("None", null);
-
-::Enemies[EnemyId.GOBLIN] = EnemyDef("Goblin", CharacterModelType.GOBLIN);
-::Enemies[EnemyId.SQUID] = EnemyDef("Squid", CharacterModelType.SQUID, EnemyTraversableTerrain.WATER, false);
-::Enemies[EnemyId.CRAB] = EnemyDef("Crab", CharacterModelType.CRAB);
-::Enemies[EnemyId.SKELETON] = EnemyDef("Skeleton", CharacterModelType.SKELETON, EnemyTraversableTerrain.LAND, false);
-::Enemies[EnemyId.FOREST_GUARDIAN] = EnemyDef("Forest Guardian", CharacterModelType.FOREST_GUARDIAN, EnemyTraversableTerrain.LAND, false);

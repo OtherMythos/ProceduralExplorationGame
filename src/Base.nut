@@ -103,30 +103,7 @@
 
     }
 
-    function setup(){
-        checkForGameCorePlugin();
-        _system.ensureUserDirectory();
-
-        printVersionInfos();
-        checkUserParams();
-        registerProfiles_();
-        setupDeveloperWorkaroundsPre_();
-
-        /*
-        if(!(::Base.isProfileActive(GameProfile.FORCE_WINDOWED))){
-            setupFullscreen();
-        }
-        */
-
-        //TODO move this somewhere else.
-        _animation.loadAnimationFile("res://build/assets/animation/baseAnimation.xml");
-        _animation.loadAnimationFile("res://build/assets/characterAnimations/equippableAnimation.xml");
-
-        createLights();
-
-        _gui.loadSkins("res://build/assets/skins/ui.json");
-        _gui.loadSkins("res://build/assets/skins/itemSkins.json");
-
+    function loadFiles(){
         _doFile("res://src/System/InputManager.nut");
         _doFile("res://src/Util/VoxToMesh.nut");
         _doFile("res://src/Util/IdPool.nut");
@@ -154,6 +131,8 @@
         _doFile("res://src/Content/CombatData.nut");
         _doFile("res://src/Content/Moves.nut");
         _doFile("res://src/Content/StatsEntry.nut");
+
+        loadContentFiles();
 
         _doFile("res://src/DebugOverlayManager.nut");
         _doFile("res://src/DebugConsole.nut");
@@ -268,6 +247,38 @@
 
         _doFile("res://src/GUI/RenderIconManager.nut");
         ::RenderIconManager.setup();
+    }
+
+    function loadContentFiles(){
+        _doFile("res://src/Content/ItemDefs.nut");
+        _doFile("res://src/Content/EnemyDefs.nut");
+    }
+
+    function setup(){
+        checkForGameCorePlugin();
+        _system.ensureUserDirectory();
+
+        printVersionInfos();
+        checkUserParams();
+        registerProfiles_();
+        setupDeveloperWorkaroundsPre_();
+
+        /*
+        if(!(::Base.isProfileActive(GameProfile.FORCE_WINDOWED))){
+            setupFullscreen();
+        }
+        */
+
+        //TODO move this somewhere else.
+        _animation.loadAnimationFile("res://build/assets/animation/baseAnimation.xml");
+        _animation.loadAnimationFile("res://build/assets/characterAnimations/equippableAnimation.xml");
+
+        createLights();
+
+        _gui.loadSkins("res://build/assets/skins/ui.json");
+        _gui.loadSkins("res://build/assets/skins/itemSkins.json");
+
+        loadFiles();
 
         setupBaseMaterials();
         setupBaseMeshes();

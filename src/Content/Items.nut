@@ -1,14 +1,5 @@
 enum ItemId{
-    NONE,
-    HEALTH_POTION,
-    LARGE_HEALTH_POTION,
-
-    SIMPLE_SWORD,
-    SIMPLE_SHIELD,
-    SIMPLE_TWO_HANDED_SWORD,
-    BONE_MACE,
-
-    MAX,
+    NONE
 };
 
 enum ItemType{
@@ -113,19 +104,6 @@ enum ItemEquipTransformType{
 
     function getIcon(){ return mIcon == null ? "icon_none" : mIcon; }
 }
-::Items <- array(ItemId.MAX, null);
-
-//-------------------------------
-::Items[ItemId.NONE] = ItemDef("None", "None", null, null ItemType.NONE, 1, EquippableId.NONE);
-
-::Items[ItemId.HEALTH_POTION] = ItemDef("Health Potion", "A potion of health. Bubbles gently inside a cast glass flask.", "smallPotion.voxMesh", "item_healthPotion", ItemType.CONSUMABLE, 5, EquippableId.NONE);
-::Items[ItemId.LARGE_HEALTH_POTION] = ItemDef("Large Health Potion", "A large potion of health.", "largePotion.voxMesh", "item_largeHealthPotion", ItemType.CONSUMABLE, 10, EquippableId.NONE);
-
-::Items[ItemId.SIMPLE_SWORD] = ItemDef("Simple Sword", "A cheap, weak sword. Relatively blunt for something claiming to be a sword.", "simpleSword.voxMesh", "item_simpleSword", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SWORD, ItemEquipTransformType.BASIC_SWORD);
-::Items[ItemId.SIMPLE_SHIELD] = ItemDef("Simple Shield", "An un-interesting shield. Provides minimal protection.", "simpleShield.voxMesh", "item_simpleShield", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SHIELD, ItemEquipTransformType.BASIC_SHIELD);
-::Items[ItemId.SIMPLE_TWO_HANDED_SWORD] = ItemDef("Simple Two Handed sword", "A two handed sword as blunt as it is big.", "simpleTwoHandedSword.voxMesh", "item_simpleTwoHandedSword", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_TWO_HANDED_SWORD, ItemEquipTransformType.BASIC_TWO_HANDED_SWORD);
-::Items[ItemId.BONE_MACE] = ItemDef("Bone Mace", "Large clobbering clump of ex-person erecter.", "boneMace.voxMesh", "item_boneMace", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SWORD, ItemEquipTransformType.BASIC_SWORD);
-//-------------------------------
 
 ::ItemEquipTransform <- class{
     mPosition = null;
@@ -183,11 +161,6 @@ local commonScale = Vec3(1.4, 1.4, 1.0);
 ::ItemTransforms_WieldInactive_LEFT[ItemEquipTransformType.BASIC_SHIELD] = ::ItemTransforms_WieldInactive_RIGHT[ItemEquipTransformType.BASIC_SHIELD].copy(null, Quat(PI, ::Vec3_UNIT_Y) * Quat(PI/6, ::Vec3_UNIT_Z));
 ::ItemTransforms_WieldInactive_LEFT[ItemEquipTransformType.BASIC_TWO_HANDED_SWORD] = ::ItemTransforms_WieldInactive_RIGHT[ItemEquipTransformType.BASIC_TWO_HANDED_SWORD].copy(null, Quat(PI, ::Vec3_UNIT_Y) * Quat(PI/6, ::Vec3_UNIT_Z));
 
-function setupItemIds_(){
-    foreach(c,i in ::Items){
-        i.mId = c;
-    }
-}
 
 ::ItemHelper <- {
     coloursForStats = []
@@ -196,6 +169,13 @@ function setupItemIds_(){
         coloursForStats.append(colValue.getAsABGR());
     }
 
+    function setupItemIds_(){
+        foreach(c,i in ::Items){
+            i.mId = c;
+        }
+    }
+
+    /*
     function itemToStats(item){
         local stat = ::StatsEntry();
 
@@ -228,7 +208,7 @@ function setupItemIds_(){
 
         return stat;
     }
-
+*/
     function actuateItem(item){
         local itemType = item.getType();
         if(itemType == ItemType.EQUIPPABLE){
@@ -295,5 +275,3 @@ function setupItemIds_(){
 ItemHelper.registerColourForStat(ColourValue(1, 0, 0, 1));
 ItemHelper.registerColourForStat(ColourValue(0, 1, 0, 1));
 ItemHelper.registerColourForStat(ColourValue(0, 0, 1, 1));
-
-setupItemIds_();
