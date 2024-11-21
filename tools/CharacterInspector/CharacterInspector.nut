@@ -16,6 +16,7 @@ function start(){
     _doFile("res://../../src/Helpers.nut");
     _doFile("res://../../src/Content/Equippables.nut");
     _doFile("res://../../src/Content/Items.nut");
+    _doFile("res://../../src/Content/ItemDefs.nut");
 
     _doFile("res://../../src/Util/VoxToMesh.nut");
     _doFile("res://../../src/Character/CharacterModel.nut");
