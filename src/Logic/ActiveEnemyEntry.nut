@@ -253,6 +253,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         }
     }
     function setWieldActive(active){
+        if(mCombatData_.mWieldActive == active) return;
         mCombatData_.setWieldActive(active);
         if(mModel_ != null){
             mModel_.equipDataToCharacterModel(mCombatData_.mEquippedItems, active);

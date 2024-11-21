@@ -58,7 +58,7 @@
             local collisionPoint = triggerWorld.addCollisionReceiver(null, 0, 0, 1.5, _COLLISION_PLAYER);
 
             local combatTargetWorld = mConstructorWorld_.getCombatTargetWorld();
-            local combatTargetPoint = combatTargetWorld.addCollisionSender(CollisionWorldTriggerResponses.BASIC_ENEMY_PLAYER_TARGET_RADIUS, en, targetPos.x, targetPos.z, 10, _COLLISION_ENEMY);
+            local combatTargetPoint = combatTargetWorld.addCollisionSender(CollisionWorldTriggerResponses.BASIC_ENEMY_PLAYER_TARGET_RADIUS, en, targetPos.x, targetPos.z, 6, _COLLISION_ENEMY);
 
             local damageWorld = mConstructorWorld_.getDamageWorld();
             local damagePoint = damageWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
@@ -109,7 +109,7 @@
         entry.setModel(characterModel);
 
         local triggerWorld = mConstructorWorld_.getTriggerWorld();
-        local playerSpottedOutline = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.BASIC_ENEMY_RECEIVE_PLAYER_SPOTTED, en, targetPos.x, targetPos.z, 16, _COLLISION_PLAYER);
+        local playerSpottedOutline = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.BASIC_ENEMY_RECEIVE_PLAYER_SPOTTED, en, targetPos.x, targetPos.z, 32, _COLLISION_PLAYER);
 
         local damageWorld = mConstructorWorld_.getDamageWorld();
         local damagePoint = damageWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_ENEMY);
@@ -174,7 +174,12 @@
             local combatData = ::Combat.CombatStats(enemyType, 0, combatEquipped);
             combatEquipped.calculateEquippedStats();
             enemy.setCombatData(combatData);
+        }else{
+            local combatData = ::Combat.CombatStats();
+            enemy.setCombatData(combatData);
         }
+
+        enemy.setWieldActive(false);
 
         local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SPOILS_DATA, spoilsData, null, null);
         mConstructorWorld_.getEntityManager().assignComponent(enemy.getEntity(), EntityComponents.SPOILS, spoilsComponent);

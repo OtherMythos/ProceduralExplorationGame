@@ -160,7 +160,7 @@
         if(enemyType == EnemyId.SQUID){
             return MapGenHelpers.findRandomPositionInWater(mMapData_, 0);
         }else{
-            return MapGenHelpers.findRandomPointOnLand(mMapData_, mPlayerEntry_.getPosition(), 50);
+            return MapGenHelpers.findRandomPointOnLand(mMapData_, mPlayerEntry_.getPosition(), 100);
         }
     }
 
@@ -438,6 +438,16 @@
             }
         }
     }
+    function processRegionDiscovered_(regionEntry){
+        local e = regionEntry.coords[_random.randIndex(regionEntry.coords)];
+
+        local startX = (e >> 16) & 0xFFFF;
+        local startY = e & 0xFFFF;
+        local pos = Vec3(startX, 0, -startY);
+
+        createEnemy(EnemyId.GOBLIN, pos);
+        //print(regionEntry.coords);
+    }
     function discoverRegion(regionId){
         if(regionId > 0 && regionId < mMapData_.regionData.len()){
             processFoundNewRegion(regionId);
@@ -461,6 +471,7 @@
         }
 
         processRegionCollectables_(regionData);
+        processRegionDiscovered_(regionData);
         if(mGui_.mWorldMapDisplay_.mMapViewer_ != null){
             local viewer = mGui_.mWorldMapDisplay_.mMapViewer_;
             //TODO hack when moving around worlds, really this check should never be needed.

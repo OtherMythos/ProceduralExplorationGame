@@ -3,7 +3,7 @@
     mTargets_ = null;
     mAggressors_ = null;
 
-    TARGET_DISTANCE = 5;
+    TARGET_DISTANCE = 7;
 
     constructor(){
         //A map containing an array. Entities which target another have their eID as key and an array containing all their targets.

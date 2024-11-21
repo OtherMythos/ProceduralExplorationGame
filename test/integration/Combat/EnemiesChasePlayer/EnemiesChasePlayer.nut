@@ -14,7 +14,7 @@ _tIntegration("EnemiesChasePlayer", "Check that if in close proximity to the pla
         function(){
             local enemyPos = ::targetEnemy.getPosition();
             //Check the enemy gets close to the player.
-            if(enemyPos.x <= 5){
+            if(enemyPos.x <= ::EntityTargetManager.TARGET_DISTANCE){
                 _test.endTest();
             }else{
                 ::_testHelper.repeatStep();

@@ -75,7 +75,9 @@ local ModelType = class{
 ::ModelTypes[CharacterModelType.GOBLIN] = ModelType("build/assets/characterAnimations/baseAnimation.xml",
     [
         Entry(
-            "goblinBody.voxMesh", CharacterModelPartType.BODY, null, Vec3(0, 4, 0), Vec3(1.2, 1.2, 1.2)
+            "goblinBody.voxMesh", CharacterModelPartType.BODY,
+            [Entry(null, CharacterModelPartType.NONE, null, Vec3(0, 0, -2), Vec3(0.4, 0.4, 0.4), null, CharacterModelEquipNodeType.WEAPON_STORE)]
+            , Vec3(0, 4, 0), Vec3(1.2, 1.2, 1.2)
         ),
 
         Entry(
@@ -141,7 +143,9 @@ local ModelType = class{
             "skeletonHead.voxMesh", CharacterModelPartType.HEAD, null, Vec3(0, 10, 0), ::Vec3_UNIT_SCALE
         ),
         Entry(
-            "skeletonBody.voxMesh", CharacterModelPartType.BODY, null, Vec3(0, 3, 0), Vec3(0.9, 1, 0.9)
+            "skeletonBody.voxMesh", CharacterModelPartType.BODY,
+            [Entry(null, CharacterModelPartType.NONE, null, Vec3(0, 2, -4), Vec3(0.6, 0.6, 0.6), null, CharacterModelEquipNodeType.WEAPON_STORE)]
+            , Vec3(0, 3, 0), Vec3(0.9, 1, 0.9)
         ),
 
         Entry(

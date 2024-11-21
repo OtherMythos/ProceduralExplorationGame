@@ -907,7 +907,7 @@ enum WorldMousePressContexts{
     function checkForEnemyAppear(){
         if(::Base.isProfileActive(GameProfile.DISABLE_ENEMY_SPAWN)) return;
 
-        local foundSomething = _random.randInt(100) == 0;
+        local foundSomething = _random.randInt(1000) == 0;
         if(!foundSomething) return;
         if(mActiveEnemies_.len() >= 20){
             print("can't add any more enemies");

@@ -33,6 +33,15 @@ BasicEnemyMachine = class extends ::CombatStateMachine{
             local world = ::Base.mExplorationLogic.mCurrentWorld_;
             world.moveEnemyToPlayer(e);
 
+            local pos = world.getEntityManager().getPosition(e);
+            local distance = pos.distance(world.getPlayerPosition());
+            local activeEnemy = world.mActiveEnemies_[e];
+            //if(distance <= 5){
+                activeEnemy.setWieldActive(distance <= 10);
+            //}
+
+            //print("distance " + distance);
+
             local lifetimeComp = world.getEntityManager().getComponent(e, EntityComponents.LIFETIME);
             lifetimeComp.mLifetime = lifetimeComp.mLifetimeTotal;
         },
