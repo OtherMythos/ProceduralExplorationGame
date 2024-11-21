@@ -14,3 +14,4 @@ native/build
 native/buildIos
 util/VoxelConverterTool/build
 util/helper/token
+extra/
