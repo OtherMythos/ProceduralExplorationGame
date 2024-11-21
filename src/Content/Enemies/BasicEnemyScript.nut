@@ -14,8 +14,31 @@ BasicEnemyMachine = class extends ::CombatStateMachine{
     attackCooldown = 30;
     targetingId = -1;
 
+    direction = null;
+    movementCount = 50;
+
     idleState = {
-        "update": function(ctx, e, data) {},
+        "update": function(ctx, e, data) {
+            //Generate a new direction.
+            local change = _random.randInt(0, 10 + ctx.movementCount);
+            ctx.movementCount--;
+            if(ctx.movementCount < 0) ctx.movementCount = 0;
+            if(change == 0){
+                if(ctx.movementCount <= 30){
+                    local dir = _random.randVec2()-0.5
+                    ctx.direction = Vec3(dir.x, 0, dir.y);
+                    ctx.direction.normalise();
+                    ctx.movementCount = 50;
+                }
+            }else if(change == 1){
+                ctx.direction = null;
+            }
+            if(ctx.direction != null){
+                local world = ::Base.mExplorationLogic.mCurrentWorld_;
+                world.moveEnemyInDirection(e, ctx.direction);
+            }
+
+        },
         "notify": function(ctx, id, e, data){
             if(id == BasicEnemyEvents.PLAYER_SPOTTED){
                 ctx.switchState(ctx.chasingPlayerState);

@@ -311,6 +311,9 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         local dir = point - mPos_;
         dir.normalise();
 
+        moveToDirection(dir, amount);
+    }
+    function moveToDirection(dir, amount){
         local wieldActive = mCombatData_ == null ? false : mCombatData_.mWieldActive;
         dir *= (amount * getSlowFactor(mInWater_, wieldActive));
         moveQueryZ(dir, mInWater_);

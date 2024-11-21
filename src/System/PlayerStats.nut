@@ -112,7 +112,7 @@
     }
     function setWieldActive(active){
         print("Setting player wield to " + active);
-        mPlayerCombatStats.setWieldActive(active);
+        //mPlayerCombatStats.setWieldActive(active);
 
         _event.transmit(Event.PLAYER_WIELD_ACTIVE_CHANGED, active);
     }

@@ -953,7 +953,14 @@ enum WorldMousePressContexts{
         if(enemyEntry == null) return;
         if(enemyEntry.isMidAttack()) return;
 
-        enemyEntry.moveToPoint(mPlayerEntry_.mPos_, 0.05);
+        enemyEntry.moveToPoint(mPlayerEntry_.mPos_, 0.10);
+    }
+    function moveEnemyInDirection(enemyId, dir, speedModifier = 1.0){
+        if(!mActiveEnemies_.rawin(enemyId)) return;
+        local enemyEntry = mActiveEnemies_[enemyId];
+        if(enemyEntry == null) return;
+
+        enemyEntry.moveToDirection(dir, 0.10 * speedModifier);
     }
 
 
