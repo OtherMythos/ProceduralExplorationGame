@@ -2,7 +2,8 @@
 
 function regularSwordBaseAttack(p, entry, pos){
     if(p % 5 == 0){
-        local attackValue = entry.mCombatData_.mEquippedItems.mEquippedStats.getStatType(StatType.ATTACK);
+        local stats = entry.mCombatData_.mEquippedItems.mEquippedStats;
+        local attackValue = stats == null ? 1 : stats.getStatType(StatType.ATTACK);
 
         ::Base.mExplorationLogic.mCurrentWorld_.performLocalMove(entry, ::Combat.CombatMove(attackValue));
     }
@@ -69,7 +70,9 @@ enum EquippableCharacteristics{
     }
     function update(pos){
         if(mCurrentFrame_ > mEquippable.mTotalFrames_) return false;
-        mEquippable.mAttackFunction_(mCurrentFrame_, mEntityEntry_, pos);
+        if(mEquippable.mAttackFunction_ != null){
+            mEquippable.mAttackFunction_(mCurrentFrame_, mEntityEntry_, pos);
+        }
         mCurrentFrame_++;
 
         return true;

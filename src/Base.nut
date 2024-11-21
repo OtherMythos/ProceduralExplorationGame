@@ -121,9 +121,9 @@
         _doFile("res://src/Content/Enemies/BasicEnemyScript.nut");
         _doFile("res://src/Content/GenericCallbacks.nut");
 
-        _doFile("res://src/Content/Enemies.nut");
         _doFile("res://src/Content/Projectiles.nut");
         _doFile("res://src/Content/Equippables.nut");
+        _doFile("res://src/Content/Enemies.nut");
         _doFile("res://src/Content/Items.nut");
         _doFile("res://src/Content/PlaceConstants.h.nut");
         _doFile("res://src/Content/Places.nut");

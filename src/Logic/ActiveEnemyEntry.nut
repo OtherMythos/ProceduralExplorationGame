@@ -418,7 +418,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         if(mCombatData_ == null) return;
 
         local equippedItems = mCombatData_.mEquippedItems.mItems;
-        local equipDef = ::ItemHelper.determineEquippableDefForEquipped(equippedItems);
+        local equipDef = ::ItemHelper.determineEquippableDefForEquipped(equippedItems, mEnemy_);
         if(equipDef == null){
             return;
         }

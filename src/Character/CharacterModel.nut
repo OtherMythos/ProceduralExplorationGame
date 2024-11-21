@@ -75,6 +75,7 @@
         stopAnimation(anim);
     }
     function startAnimation(animId){
+        if(animId == CharacterModelAnimId.NONE) return;
         //local newAnim = _animation.createAnimation(animName, mNodes_);
         //local newAnim = _animation.createAnimation(animName, mNodes_);
         local newAnim = createAnimation(animId);
@@ -91,6 +92,7 @@
     }
 
     function createAnimation(animId){
+        assert(animId != CharacterModelAnimId.NONE);
         local target = ::CharacterModelAnims[animId];
         local targetIds = ::ModelTypes[mModelType_].mNodeIds;
         local targetNodes = [];

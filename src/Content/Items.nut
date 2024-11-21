@@ -236,7 +236,7 @@ local commonScale = Vec3(1.4, 1.4, 1.0);
         }
     }
 
-    function determineEquippableDefForEquipped(equippedItems){
+    function determineEquippableDefForEquipped(equippedItems, enemyId){
         local rightHand = equippedItems[EquippedSlotTypes.RIGHT_HAND];
         local leftHand = equippedItems[EquippedSlotTypes.LEFT_HAND];
 
@@ -258,7 +258,12 @@ local commonScale = Vec3(1.4, 1.4, 1.0);
             return ::Equippables[leftHand];
         }
 
-        return ::Equippables[EquippableId.BARE_HANDS];
+        //Now just find the default equippable.
+        if(enemyId == EnemyId.NONE){
+            //Assume it's the player
+            return ::Equippables[EquippableId.BARE_HANDS];
+        }
+        return ::Equippables[::Enemies[enemyId].getDefaultEquippableDef()];
     }
 
     function nameToItemId(itemName){

@@ -9,6 +9,8 @@
 };
 ::CharacterModelAnims <- array(CharacterModelAnimId.MAX, null);
 
+::CharacterModelAnims[CharacterModelAnimId.NONE] = ::CharacterModelAnimDef(null, []);
+
 ::CharacterModelAnims[CharacterModelAnimId.BASE_LEGS_WALK] = ::CharacterModelAnimDef("BaseFeetWalk", [CharacterModelPartType.LEFT_FOOT, CharacterModelPartType.RIGHT_FOOT]);
 ::CharacterModelAnims[CharacterModelAnimId.BASE_ARMS_WALK] = ::CharacterModelAnimDef("BaseUpperWalk", [CharacterModelPartType.RIGHT_HAND, CharacterModelPartType.LEFT_HAND]);
 ::CharacterModelAnims[CharacterModelAnimId.BASE_ARMS_SWIM] = ::CharacterModelAnimDef("BaseUpperSwim", [CharacterModelPartType.RIGHT_HAND, CharacterModelPartType.LEFT_HAND]);
