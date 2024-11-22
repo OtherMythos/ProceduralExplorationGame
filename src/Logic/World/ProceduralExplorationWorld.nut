@@ -164,6 +164,10 @@
         }
     }
 
+    function getPositionForAppearDistraction_(){
+        return MapGenHelpers.findRandomPointOnLand(mMapData_, mPlayerEntry_.getPosition(), 200, 100);
+    }
+
     function update(){
         if(!isActive()) return;
 

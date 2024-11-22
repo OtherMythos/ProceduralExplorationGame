@@ -892,7 +892,7 @@ enum WorldMousePressContexts{
 
         mAppearDistractionLogic_.update();
 
-        local target = getPositionForAppearEnemy_(EnemyId.GOBLIN);
+        local target = getPositionForAppearDistraction_();
         if(target == null) return;
         if(mAppearDistractionLogic_.checkAppearForObject(WorldDistractionType.PERCENTAGE_ENCOUNTER)){
             mEntityFactory_.constructPercentageEncounter(target, mGui_);
@@ -920,6 +920,10 @@ enum WorldMousePressContexts{
 
     function getPositionForAppearEnemy_(enemyType){
         return Vec3();
+    }
+
+    function getPositionForAppearDistraction_(enemyType){
+        return null;
     }
 
     //TODO misleading, I should make it more obvious that I have to call create enemy rather than the factory directly.

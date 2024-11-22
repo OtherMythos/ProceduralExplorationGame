@@ -58,10 +58,11 @@
         return landData.coords[randIndex];
     }
 
-    function findRandomPointOnLand(worldData, start, radius){
+    function findRandomPointOnLand(worldData, start, radius, minRadius=0){
         local offset = Vec3(0.5, 0, 0.5);
         for(local i = 0; i < 100; i++){
-            local targetPos = start + (_random.randVec3() - offset) * radius;
+            local targetDir = (_random.randVec3() - offset);
+            local targetPos = start + (targetDir * minRadius) + (targetDir * (radius - minRadius));
             targetPos.y = 0;
             local landmassId = ::MapGenHelpers.getLandmassForPos(worldData, targetPos);
             if(landmassId == 0xFF) continue;
