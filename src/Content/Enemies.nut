@@ -10,7 +10,6 @@ enum EnemyTraversableTerrain{
     ALL = 0xFF
 };
 
-//TODO write a test to ensure the player stops attacking after a variety of circumstances.
 ::Enemy <- class{
     mName = null;
     mCharacterModelType = null;

@@ -913,7 +913,9 @@ enum WorldMousePressContexts{
             print("can't add any more enemies");
             return;
         }
-        appearEnemy(_random.randInt(EnemyId.GOBLIN, EnemyId.MAX-1));
+        //appearEnemy(_random.randInt(EnemyId.GOBLIN, EnemyId.MAX-1));
+        local pos = MapGenHelpers.findRandomPointOnLand(mMapData_, mPlayerEntry_.getPosition(), 50);
+        appearEnemy(pos);
     }
 
     function getPositionForAppearEnemy_(enemyType){
@@ -926,11 +928,23 @@ enum WorldMousePressContexts{
         mActiveEnemies_.rawset(enemyEntry.mEntity_, enemyEntry);
         return enemyEntry;
     }
+    function appearEnemy(pos){
+        local regionId = ::MapGenHelpers.getRegionForData(mMapData_, pos);
+        local regionData = mMapData_.regionData[regionId];
+        local targetBiome = ::MapGenHelpers.getBiomeForRegionType(regionData.type);
+        local spawnable = targetBiome.mSpawnableEnemies;
+        if(spawnable.len() <= 0) return;
+        local idx = _random.randIndex(spawnable);
+        local targetEnemy = spawnable[idx];
+        createEnemy(targetEnemy, pos);
+    }
+    /*
     function appearEnemy(enemyType){
         local target = getPositionForAppearEnemy_(enemyType);
         if(target == null) return;
         createEnemy(enemyType, target);
     }
+    */
     function createNPC(pos){
         local enemyEntry = mEntityFactory_.constructNPCCharacter(pos);
         mActiveEnemies_.rawset(enemyEntry.mEntity_, enemyEntry);

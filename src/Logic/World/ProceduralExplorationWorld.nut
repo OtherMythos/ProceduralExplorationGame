@@ -445,7 +445,8 @@
         local startY = e & 0xFFFF;
         local pos = Vec3(startX, 0, -startY);
 
-        createEnemy(EnemyId.GOBLIN, pos);
+        //createEnemy(EnemyId.GOBLIN, pos);
+        appearEnemy(pos);
         //print(regionEntry.coords);
     }
     function discoverRegion(regionId){

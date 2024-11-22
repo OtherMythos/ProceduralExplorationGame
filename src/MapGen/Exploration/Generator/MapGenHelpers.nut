@@ -88,4 +88,16 @@
         return outPoint;
     }
 
+    function getBiomeForRegionType(regionType){
+        switch(regionType){
+            case RegionType.GRASSLAND: return ::Biomes[BiomeId.GRASS_LAND];
+            case RegionType.CHERRY_BLOSSOM_FOREST: return ::Biomes[BiomeId.CHERRY_BLOSSOM_FOREST];
+            case RegionType.EXP_FIELDS: return ::Biomes[BiomeId.EXP_FIELD];
+            case RegionType.DESERT: return ::Biomes[BiomeId.DESERT];
+            default:{
+                return ::Biomes[BiomeId.GRASS_LAND];
+            }
+        }
+    }
+
 };
