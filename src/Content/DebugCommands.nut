@@ -110,3 +110,10 @@ variationSeed: %i";
 
     return format("Giving player '%i' money", moneyAmount);
 });
+::DebugConsole.registerCommand("exterminate", "Destroy all enemies in the current world", 0, "", function(command){
+    local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+
+    currentWorld.destroyAllEnemies();
+
+    return "Exterminated all enemies";
+});

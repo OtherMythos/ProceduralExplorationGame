@@ -926,6 +926,20 @@ enum WorldMousePressContexts{
         return null;
     }
 
+    function destroyAllEnemies(){
+        //Store in a list because if destroyed inline the table will get broken.
+        local toDestroy = [];
+        foreach(c,i in mActiveEnemies_){
+            if(mEntityManager_.hasComponent(c, EntityComponents.HEALTH)){
+                toDestroy.append(c);
+            }
+        }
+        foreach(i in toDestroy){
+            //Use no health so the items still get dropped.
+            mEntityManager_.destroyEntity(i, EntityDestroyReason.NO_HEALTH);
+        }
+    }
+
     //TODO misleading, I should make it more obvious that I have to call create enemy rather than the factory directly.
     function createEnemy(enemyType, pos){
         local enemyEntry = mEntityFactory_.constructEnemy(enemyType, pos, mGui_);
