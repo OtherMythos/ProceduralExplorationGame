@@ -7,6 +7,7 @@ enum PlaceId{
     NONE,
     GATEWAY,
 
+    /*
     HAUNTED_WELL,
     DARK_CAVE,
     GOBLIN_VILLAGE,
@@ -28,6 +29,7 @@ enum PlaceId{
     LOCATION_1,
     //LOCATION_2,
     //LOCATION_3,
+*/
 
     MAX
 };

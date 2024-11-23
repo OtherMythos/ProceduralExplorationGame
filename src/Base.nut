@@ -252,6 +252,7 @@
     function loadContentFiles(){
         _doFile("res://src/Content/ItemDefs.nut");
         _doFile("res://src/Content/EnemyDefs.nut");
+        _doFile("res://src/Content/PlaceDefs.h.nut");
     }
 
     function setup(){

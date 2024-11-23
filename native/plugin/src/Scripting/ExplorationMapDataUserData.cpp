@@ -173,7 +173,7 @@ namespace ProceduralExplorationGamePlugin{
 
         pushFloodData(vm, "waterData", mapData->waterData);
         pushFloodData(vm, "landData", mapData->landData);
-        pushPlaceData(vm, "placeData", mapData->placeData);
+        //pushPlaceData(vm, "placeData", mapData->placeData);
         pushRegionData(vm, "regionData", mapData->regionData);
         pushPlacedItemData(vm, "placedItems", mapData->placedItems);
 

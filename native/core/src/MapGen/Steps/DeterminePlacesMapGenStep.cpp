@@ -1,3 +1,4 @@
+#if 0
 #include "DeterminePlacesMapGenStep.h"
 
 #include "MapGen/ExplorationMapDataPrerequisites.h"
@@ -91,3 +92,5 @@ namespace ProceduralExplorationGameCore{
     }
 
 }
+
+#endif

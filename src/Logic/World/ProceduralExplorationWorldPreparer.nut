@@ -8,6 +8,8 @@
     mStarted_ = false;
     mCurrentStage_ = 0;
 
+    mInputData_ = null;
+
     constructor(){
 
     }
@@ -21,7 +23,7 @@
             mCurrentStage_ = 0;
 
             local smallWorld = ::Base.isProfileActive(GameProfile.FORCE_SMALL_WORLD);
-            local data = {
+            mInputData_ = {
                 "seed": _random.randInt(1000),
                 "moistureSeed": _random.randInt(1000),
                 "variation": _random.randInt(1000),
@@ -32,7 +34,7 @@
                 "numRegions": 14,
                 "placeFrequency": [0, 1, 1, 4, 4, 30]
             };
-            _gameCore.beginMapGen(data);
+            _gameCore.beginMapGen(mInputData_);
             mStarted_ = true;
         }
 
@@ -41,6 +43,7 @@
             mOutNativeData_ = mapClaim;
             //TODO work towards being able to get rid of this.
             mOutData_ = mapClaim.explorationMapDataToTable();
+            mOutData_.rawset("placeData", ::ScriptedMapGen.determinePlaces(mOutData_, mOutNativeData_, mInputData_));
             mCurrentPercent_ = 1.0;
             _event.transmit(Event.WORLD_PREPARATION_GENERATION_PROGRESS, {
                 "percentage": mCurrentPercent_,

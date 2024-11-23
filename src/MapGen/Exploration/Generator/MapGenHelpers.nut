@@ -49,11 +49,18 @@
         */
     }
 
+    function getRegionForPoint(worldData, point){
+        //TODO OPTIMISATION would be better to shift all this to C++.
+        local xPos = (point >> 16) & 0xFFFF;
+        local yPos = point & 0xFFFF;
+        return worldData.getRegionForPos(Vec3(xPos, 0, -yPos));
+    }
+
     function getTraverseTerrainForPosition(worldData, pos){
         return getIsWaterForPosition(worldData, pos) ? EnemyTraversableTerrain.WATER : EnemyTraversableTerrain.LAND;
     }
 
-    function findRandomPointInLandmass(worldData, landData){
+    function findRandomPointInLandmass(landData){
         local randIndex = _random.randIndex(landData.coords);
         return landData.coords[randIndex];
     }

@@ -1,3 +1,4 @@
+/*
 #pragma once
 
 #define PlaceIdConst(XX, YY) PlaceId YY
@@ -32,3 +33,24 @@ DEFINE_PLACE(PlaceIdConst(PlaceId.LOCATION_1, ::LOCATION_1), PlaceDef("Dungeon",
 //#undef PlaceId.
 //#undef PlaceType.
 #undef DEFINE_PLACE
+
+*/
+
+::Places <- array(PlaceId.MAX, null);
+
+::Places[PlaceId.NONE] = PlaceDef("None", "None", PlaceType.NONE, 0.0, 0);
+
+::Places[PlaceId.GATEWAY] = PlaceDef("Gateway", "Gateway", PlaceType.GATEWAY, 1.0, 0);
+
+::PlacesByType <- {};
+
+function initialisePlacesLists(){
+    for(local i = 0; i < PlaceType.MAX; i++){
+        ::PlacesByType[i] <- [];
+    }
+    foreach(c,i in ::Places){
+        ::PlacesByType[i.getType()].append(c);
+    }
+}
+
+initialisePlacesLists();

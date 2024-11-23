@@ -1,7 +1,114 @@
+/**
+ * Map gen steps which are performed on the script side rather than forced into c++.
+ */
+::ScriptedMapGen <- {
+
+    /*
+    function findRandomLandmassForSize(landData, landWeighted, size){
+        //To avoid infinite loops.
+        for(local i = 0; i < 100; i++){
+            local randIndex = _random.randIndex(landWeighted);
+            local idx = landWeighted[randIndex];
+            if(landData[idx].total >= size){
+                return idx;
+            }
+        }
+        return 0;
+    }
+    function determinePlaces_determineLandmassForPlace(landData, landWeighted, place){
+        local placeType = place.getType();
+        if(placeType == PlaceType.CITY || placeType == PlaceType.GATEWAY){
+            //This being the largest landmass, place the city there.
+            return 0;
+        }
+        local retLandmass = findRandomLandmassForSize(landData, landWeighted, place.getMinLandmass());
+
+        return retLandmass;
+    }
+    function determinePlaces_determinePointForPlace(collisionWorld, noiseBlob, landmassData){
+        local RADIUS = 10;
+        for(local i = 0; i < 100; i++){
+            local intended = findRandomPointInLandmass(landmassData);
+            local intendedX = (intended >> 16) & 0xFFFF;
+            local intendedY = intended & 0xFFFF;
+            //Try another point if it collides with the pre-existing points.
+            if(collisionWorld.checkCollisionPoint(intendedX, intendedY, RADIUS)) continue;
+            if(!checkPointValidForFlags(noiseBlob, intended, MapVoxelTypes.RIVER)) continue;
+            collisionWorld.addCollisionPoint(intendedX, intendedY, RADIUS);
+            return intended;
+        }
+        return null;
+    }
+    function determinePlaces_place(collisionWorld, noiseBlob, secondaryBlob, landData, landWeighted, place, placeId, gatewayLocation){
+        local landmassId = determinePlaces_determineLandmassForPlace(landData, landWeighted, place);
+        local landmass = landData[landmassId];
+
+        local point = null;
+        if(placeId == PlaceId.GATEWAY){
+            point = gatewayLocation;
+        }else{
+            point = determinePlaces_determinePointForPlace(collisionWorld, noiseBlob, landmass);
+        }
+
+        if(point == null) return null;
+
+        //Determine the region.
+        local originX = (point >> 16) & 0xFFFF;
+        local originY = point & 0xFFFF;
+        secondaryBlob.seek((originX + originY * mData_.width) * 4);
+        local region = ((secondaryBlob.readn('i') >> 8) & 0xFF);
+
+        local placeData = {
+            "originX": (point >> 16) & 0xFFFF,
+            "originY": point & 0xFFFF,
+            "originWrapped": point,
+            "placeId": placeId,
+            "region": region
+        };
+        return placeData;
+    }
+    */
+    function determinePlaces(mapData, nativeMapData, inputMapData){
+        /*
+        local placeData = [];
+
+        local placesCollisionWorld = CollisionWorld(_COLLISION_WORLD_BRUTE_FORCE);
+        foreach(c,freq in data.placeFrequency){
+            for(local i = 0; i < freq; i++){
+                //To get around the NONE.
+                local totalPlaces = ::PlacesByType[c];
+                if(totalPlaces.len() == 0) break;
+                local targetPlace = totalPlaces[_random.randIndex(totalPlaces)];
+                local place = ::Places[targetPlace];
+                local addedPlace = determinePlaces_place(placesCollisionWorld, noiseBlob, secondaryBlob, landData, landWeighted, place, targetPlace, gatewayLocation);
+                if(addedPlace == null) continue;
+                placeData.append(addedPlace);
+            }
+        }
+
+        return placeData;
+        */
+
+        local point = ::MapGenHelpers.findRandomPointInLandmass(mapData.landData[0]);
+        local region = ::MapGenHelpers.getRegionForPoint(nativeMapData, point);
+
+
+        local placeData = {
+            "originX": (point >> 16) & 0xFFFF,
+            "originY": point & 0xFFFF,
+            "originWrapped": point,
+            "placeId": PlaceId.GATEWAY,
+            "region": region
+        };
+        return [placeData];
+    }
+}
 
 /**
  * Provides logic to construct a generated map for exploration.
+ * NOTE: Old will eventually be deleted
  */
+/*
 ::MapGen <- class{
 
     mData_ = null;
@@ -728,10 +835,6 @@
         return (f & flags) == 0;
     }
 
-    /**
-     * Generate a list with 100 entries, where each entry is a value in the land data list.
-     * Values are weighted based on their total size in the total landmasses.
-     */
     function generateLandWeightedAverage(landData){
         local totalLand = 0;
         foreach(i in landData){
@@ -889,9 +992,6 @@
         blob.seek(pos);
         blob.writen(original | (MapVoxelTypes.RIVER << 8), 'i');
     }
-    /**
-     * Reduce the current landmass altitude by the requested amount.
-     */
     function alterLandmass_(blob, x, y, width, dipVal){
         local pos = (x + y * width) * 4;
         blob.seek(pos);
@@ -1079,3 +1179,4 @@ registerGenerationStage("Place region collectables", function(workspace){
 registerGenerationStage("Determine places", function(workspace){
     workspace.placeData <- determinePlaces(workspace.noiseBlob, workspace.secondaryBiomeBlob, workspace.landData, workspace.landWeighted, workspace.gatewayPosition, workspace.data);
 });
+*/

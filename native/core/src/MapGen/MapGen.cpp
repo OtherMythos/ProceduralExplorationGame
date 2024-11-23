@@ -29,7 +29,7 @@
 #include "MapGen/Steps/DetermineRegionTypesMapGenStep.h"
 #include "MapGen/Steps/MergeExpandableRegionsMapGenStep.h"
 #include "MapGen/Steps/PopulateFinalBiomesMapGenStep.h"
-#include "MapGen/Steps/DeterminePlacesMapGenStep.h"
+//#include "MapGen/Steps/DeterminePlacesMapGenStep.h"
 #include "MapGen/Steps/MergeSmallRegionsMapGenStep.h"
 #include "MapGen/Steps/MergeIsolatedRegionsMapGenStep.h"
 
@@ -62,7 +62,7 @@ namespace ProceduralExplorationGameCore{
         {"Determine Player Start", new DeterminePlayerStartMapGenStep()},
         {"Determine Gateway Position", new DetermineGatewayPositionMapGenStep()},
         //{"Determine Regions", new DetermineRegionsMapGenStep()},
-        {"Determine Places", new DeterminePlacesMapGenStep()},
+        //{"Determine Places", new DeterminePlacesMapGenStep()},
     };
 
     MapGen::MapGen()

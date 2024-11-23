@@ -44,8 +44,7 @@
     }
 }
 
-::Places <- array(PlaceId.MAX, null);
-
+/*
 //-------------------------------
 function DEFINE_PLACE(placeId, def){
     ::Places[placeId] = def;
@@ -62,22 +61,4 @@ getroottable().setdelegate({
 _doFileWithContext("script://PlaceDefs.h.nut", this);
 getroottable().setdelegate(null);
 //-------------------------------
-
-::PlacesByType <- {};
-
-function initialisePlacesLists(){
-    for(local i = 0; i < PlaceType.MAX; i++){
-        ::PlacesByType[i] <- [];
-    }
-    foreach(c,i in ::Places){
-        ::PlacesByType[i.getType()].append(c);
-    }
-}
-
-initialisePlacesLists();
-
-/*
-Mortford
-Garriton - the capitol
-
 */
