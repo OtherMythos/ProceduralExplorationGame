@@ -334,10 +334,17 @@
         //TODO see about getting rid of this.
         mActivePlaces_ = [];
         foreach(c,i in mMapData_.placeData){
-            local placeEntry = mEntityFactory_.constructPlace(i, c, ::Base.mExplorationLogic.mGui_);
+            local regionEntry = mRegionEntries_[i.region];
+
+            local node = regionEntry.mDecoratioNode_;
+            local placementFunction = ::Places[i.placeId].getPlacementFunction();
+            local placeEntry = placementFunction(this, mEntityFactory_, node, i, c);
+            if(placeEntry == null) continue;
+
+            //local placeEntry = mEntityFactory_.constructPlace(i, c, ::Base.mExplorationLogic.mGui_);
             local beaconEntity = mEntityFactory_.constructPlaceIndicatorBeacon(Vec3(i.originX, 0, -i.originY));
             mActivePlaces_.append(placeEntry);
-            mRegionEntries_[i.region].pushPlace(placeEntry, beaconEntity);
+            regionEntry.pushPlace(placeEntry, beaconEntity);
         }
     }
 

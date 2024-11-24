@@ -1,3 +1,4 @@
+/*
 ::Place <- class{
     mPlaceId_ = PlaceId.NONE;
     mPlace_ = null;
@@ -14,6 +15,7 @@
     function getMinLandmass(){ return mPlace.getMinLandmass(); }
     function getNecessaryFeatures(){ return mPlace.getNecessaryFeatures(); }
 }
+*/
 
 ::PlaceDef <- class{
     mName = null;
@@ -22,14 +24,16 @@
     mRarity = null;
     mMinLandmass = 10;
     mNecessaryFeatures = 0;
+    mPlacementFunction = null;
 
-    constructor(name, desc, placeType, rarity, minLandmass = 10, necessaryFeatures = 0){
+    constructor(name, desc, placeType, rarity, placementFunction, minLandmass = 10, necessaryFeatures = 0){
         mName = name;
         mDesc = desc;
         mType = placeType;
         mRarity = rarity;
         mMinLandmass = minLandmass;
         mNecessaryFeatures = necessaryFeatures;
+        mPlacementFunction = placementFunction;
     }
 
     function getName(){ return mName; }
@@ -38,6 +42,7 @@
     function getRarity(){ return mRarity; }
     function getMinLandmass(){ return mMinLandmass; }
     function getNecessaryFeatures(){ return mNecessaryFeatures; }
+    function getPlacementFunction(){ return mPlacementFunction; }
 
     function _tostring(){
         return ::wrapToString(::PlaceDef, "Place", getName());

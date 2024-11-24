@@ -68,6 +68,46 @@
         return placeData;
     }
     */
+    function placeGateway(mapData, nativeMapData, retPlaces){
+        local point = mapData.gatewayPosition;
+        local region = ::MapGenHelpers.getRegionForPoint(nativeMapData, point);
+
+        local placeData = {
+            "originX": (point >> 16) & 0xFFFF,
+            "originY": point & 0xFFFF,
+            "originWrapped": point,
+            "placeId": PlaceId.GATEWAY,
+            "region": region
+        };
+
+        retPlaces.append(placeData);
+    }
+    function placeGoblinCampsites(mapData, nativeMapData, retPlaces){
+        local targetRegions = [];
+        foreach(i in mapData.regionData){
+            if(i.total >= 100 && i.total <= 1500){
+                print(_prettyPrint(i));
+                if(i.type == 0){
+                    targetRegions.append(i);
+                }
+            }
+        }
+        if(targetRegions.len() == 0) return;
+
+        local region = targetRegions[_random.randIndex(targetRegions)];
+
+        local point = ::MapGenHelpers.findRandomPointInRegion(region)
+
+        local placeData = {
+            "originX": (point >> 16) & 0xFFFF,
+            "originY": point & 0xFFFF,
+            "originWrapped": point,
+            "placeId": PlaceId.GOBLIN_CAMP,
+            "region": region.id
+        };
+
+        retPlaces.append(placeData);
+    }
     function determinePlaces(mapData, nativeMapData, inputMapData){
         /*
         local placeData = [];
@@ -89,18 +129,15 @@
         return placeData;
         */
 
-        local point = ::MapGenHelpers.findRandomPointInLandmass(mapData.landData[0]);
-        local region = ::MapGenHelpers.getRegionForPoint(nativeMapData, point);
+        local retPlaces = [];
 
+        placeGateway(mapData, nativeMapData, retPlaces);
+        placeGoblinCampsites(mapData, nativeMapData, retPlaces);
+        placeGoblinCampsites(mapData, nativeMapData, retPlaces);
+        placeGoblinCampsites(mapData, nativeMapData, retPlaces);
+        placeGoblinCampsites(mapData, nativeMapData, retPlaces);
 
-        local placeData = {
-            "originX": (point >> 16) & 0xFFFF,
-            "originY": point & 0xFFFF,
-            "originWrapped": point,
-            "placeId": PlaceId.GATEWAY,
-            "region": region
-        };
-        return [placeData];
+        return retPlaces;
     }
 }
 

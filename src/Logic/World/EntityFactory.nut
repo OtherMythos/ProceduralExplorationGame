@@ -209,6 +209,33 @@
                 return 0.6;
         }
     }
+    function constructSimpleItem(parentNode, meshPath, pos, scale){
+        local manager = mConstructorWorld_.getEntityManager();
+        local targetPos = pos.copy();
+        targetPos.y = getZForPos(targetPos);
+        local en = manager.createEntity(targetPos);
+
+        //local entry = ActiveEnemyEntry(mConstructorWorld_, itemData.type, targetPos, en);
+
+        local placeNode = parentNode.createChildSceneNode();
+        //local meshTarget = itemData.type == PlacedItemId.CHERRY_BLOSSOM_TREE ? "treeCherryBlossom.voxMesh" : "tree.voxMesh";
+        placeNode.setPosition(targetPos);
+        //TODO make some of these scene static
+        local item = _gameCore.createVoxMeshItem(meshPath);
+        item.setRenderQueueGroup(30);
+        placeNode.attachObject(item);
+        placeNode.setScale(scale, scale, scale);
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](placeNode, true));
+
+        local damageWorld = mConstructorWorld_.getDamageWorld();
+        local collisionPoint = damageWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_ENEMY);
+        local combatTargetWorld = mConstructorWorld_.getCombatTargetWorld();
+        local combatTargetPoint = combatTargetWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_ENEMY);
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO, ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](collisionPoint, combatTargetPoint, damageWorld, combatTargetWorld));
+
+        local totalHealth = 10;
+        manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](totalHealth));
+    }
     function constructPlacedItem(parentNode, itemData, idx){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = Vec3(itemData.originX, 0, -itemData.originY);
@@ -241,7 +268,7 @@
         //return entry;
     }
 
-    function constructPlace(placeData, idx, explorationScreen){
+    function constructPlace(placeData, idx, explorationScreen=null){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = Vec3(placeData.originX, 0, -placeData.originY);
         targetPos.y = getZForPos(targetPos);
@@ -266,6 +293,7 @@
         local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.OVERWORLD_VISITED_PLACE, idx, targetPos.x, targetPos.z, 4, _COLLISION_PLAYER);
         manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
 
+        /*
         local billboard = null;
         local worldMask = (0x1 << mConstructorWorld_.getWorldId());
         if(placeType == PlaceType.GATEWAY){
@@ -277,6 +305,7 @@
         local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(placeNode, billboard);
 
         manager.assignComponent(en, EntityComponents.BILLBOARD, ::EntityManager.Components[EntityComponents.BILLBOARD](billboardIdx));
+        */
 
         entry.setPosition(targetPos);
 

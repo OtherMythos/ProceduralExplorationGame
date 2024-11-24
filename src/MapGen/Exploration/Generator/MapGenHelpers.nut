@@ -65,6 +65,11 @@
         return landData.coords[randIndex];
     }
 
+    function findRandomPointInRegion(regionData){
+        local randIndex = _random.randIndex(regionData.coords);
+        return regionData.coords[randIndex];
+    }
+
     function findRandomPointOnLand(worldData, start, radius, minRadius=0){
         local offset = Vec3(0.5, 0, 0.5);
         for(local i = 0; i < 100; i++){
