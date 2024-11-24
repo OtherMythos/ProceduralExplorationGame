@@ -5,8 +5,9 @@ function start(){
     _doFile("res://../../src/Util/VoxToMesh.nut");
     _doFile("res://../../src/Content/PlaceConstants.h.nut");
     _doFile("res://../../src/Content/Places.nut");
+    _doFile("res://../../src/Content/PlaceDefs.h.nut");
     _doFile("res://../../src/MapGen/Exploration/Generator/MapConstants.h.nut");
-    _doFile("res://../../src/MapGen/Exploration/Generator/Biomes.nut");
+    _doFile("res://../../src/MapGen/Exploration/Generator/MapGenHelpers.nut");
     _doFile("res://../../src/MapGen/Exploration/Generator/MapGen.nut");
     _doFile("res://../../src/MapGen/MapViewer.nut");
     _doFile("res://../../src/MapGen/Exploration/Viewer/ExplorationMapViewerConstants.h.nut");

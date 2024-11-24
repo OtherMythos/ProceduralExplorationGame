@@ -22,6 +22,7 @@ enum VoxPickerType{
     mVariationSeedEditbox_ = null
     mGenerationPopup_ = null
     mVoxPickerActive_ = false
+    mInputData_ = null
 
     mMapViewer_ = null
 
@@ -170,6 +171,7 @@ enum VoxPickerType{
                 setGenerationInProgress(false);
 
                 mCurrentMapData_ = result.explorationMapDataToTable();
+                mCurrentMapData_.rawset("placeData", ::ScriptedMapGen.determinePlaces(mCurrentMapData_, result, mInputData_));
                 mMapViewer_.displayMapData(mCurrentMapData_, mCurrentNativeMapData_);
                 updateTimeData(mCurrentMapData_);
             }else{
@@ -499,7 +501,7 @@ enum VoxPickerType{
         targetVariationSeed = targetVariationSeed == null ? mVariation_ : targetVariationSeed;
         targetMoistureSeed = targetMoistureSeed == null ? mMoistureSeed_ : targetMoistureSeed;
 
-        local data = {
+        mInputData_ = {
             "seed": targetSeed,
             "variationSeed": targetVariationSeed,
             "moistureSeed": targetMoistureSeed,
@@ -512,7 +514,7 @@ enum VoxPickerType{
             "placeFrequency": [0, 1, 1, 4, 4, 30]
         };
 
-        _gameCore.beginMapGen(data);
+        _gameCore.beginMapGen(mInputData_);
         setGenerationInProgress(true);
     }
 
