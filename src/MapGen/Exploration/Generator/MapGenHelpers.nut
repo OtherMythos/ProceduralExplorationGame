@@ -70,6 +70,11 @@
         return regionData.coords[randIndex];
     }
 
+    function seedFindRandomPointInRegion(native, regionData){
+        local randomIdx = native.randomIntMinMax(0, regionData.coords.len()-1);
+        return regionData.coords[randomIdx];
+    }
+
     function findRandomPointOnLand(worldData, start, radius, minRadius=0){
         local offset = Vec3(0.5, 0, 0.5);
         for(local i = 0; i < 100; i++){

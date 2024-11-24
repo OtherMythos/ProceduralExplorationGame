@@ -327,6 +327,16 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger ExplorationMapDataUserData::randomIntMinMax(HSQUIRRELVM vm){
+        SQInteger min, max;
+        sq_getinteger(vm, 2, &min);
+        sq_getinteger(vm, 3, &max);
+        size_t result = ProceduralExplorationGameCore::mapGenRandomIntMinMax(min, max);
+
+        sq_pushinteger(vm, static_cast<SQInteger>(result));
+        return 1;
+    }
+
     void ExplorationMapDataUserData::setupDelegateTable(HSQUIRRELVM vm){
         sq_newtable(vm);
 
@@ -336,6 +346,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, getWaterGroupForPos, "getWaterGroupForPos", 2, ".u");
         AV::ScriptUtils::addFunction(vm, getIsWaterForPos, "getIsWaterForPos", 2, ".u");
         AV::ScriptUtils::addFunction(vm, getRegionForPos, "getRegionForPos", 2, ".u");
+        AV::ScriptUtils::addFunction(vm, randomIntMinMax, "randomIntMinMax", 3, ".ii");
 
         sq_resetobject(&ExplorationMapDataDelegateTableObject);
         sq_getstackobj(vm, -1, &ExplorationMapDataDelegateTableObject);

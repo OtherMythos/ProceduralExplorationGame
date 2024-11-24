@@ -27,6 +27,7 @@ namespace ProceduralExplorationGamePlugin{
         static SQInteger getIsWaterForPos(HSQUIRRELVM vm);
         static SQInteger getRegionForPos(HSQUIRRELVM vm);
         static SQInteger getWaterGroupForPos(HSQUIRRELVM vm);
+        static SQInteger randomIntMinMax(HSQUIRRELVM vm);
 
         static SQInteger ExplorationMapDataObjectReleaseHook(SQUserPointer p, SQInteger size);
     };

@@ -86,7 +86,6 @@
         local targetRegions = [];
         foreach(i in mapData.regionData){
             if(i.total >= 100 && i.total <= 1500){
-                print(_prettyPrint(i));
                 if(i.type == 0){
                     targetRegions.append(i);
                 }
@@ -94,9 +93,10 @@
         }
         if(targetRegions.len() == 0) return;
 
-        local region = targetRegions[_random.randIndex(targetRegions)];
+        local targetIdx = nativeMapData.randomIntMinMax(0, targetRegions.len()-1);
+        local region = targetRegions[targetIdx];
 
-        local point = ::MapGenHelpers.findRandomPointInRegion(region)
+        local point = ::MapGenHelpers.seedFindRandomPointInRegion(nativeMapData, region);
 
         local placeData = {
             "originX": (point >> 16) & 0xFFFF,
