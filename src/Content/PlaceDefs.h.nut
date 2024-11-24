@@ -47,9 +47,22 @@ function GoblinCampPlacement(world, entityFactory, node, placeData, idx){
 
     local voxPos = Vec3(placeData.originX, 0, -placeData.originY);
 
-    entityFactory.constructSimpleItem(parentNode, "goblinTotem.voxMesh", voxPos + Vec3(4, 0, 3), 0.15);
-    entityFactory.constructSimpleItem(parentNode, "goblinTent.voxMesh", voxPos, 0.3);
-    entityFactory.constructSimpleItem(parentNode, "campfireBase.voxMesh", voxPos + Vec3(1, 0, 6), 0.4);
+    //Ensure the instances are unique.
+    local spoils = function(){
+        return [
+            SpoilsEntry(SPOILS_ENTRIES.COINS, 3 + _random.randInt(3)),
+        ];
+    };
+
+    entityFactory.constructSimpleItem(parentNode, "goblinTotem.voxMesh", voxPos + Vec3(4, 0, 3), 0.15, spoils());
+    entityFactory.constructSimpleItem(parentNode, "campfireBase.voxMesh", voxPos + Vec3(1, 0, 6), 0.4, spoils());
+    local s = spoils();
+    if(_random.randInt(3) == 0){
+        s.append(
+            SpoilsEntry(SPOILS_ENTRIES.SPAWN_ENEMIES, 1)
+        );
+    }
+    entityFactory.constructSimpleItem(parentNode, "goblinTent.voxMesh", voxPos, 0.3, s);
 
     world.createEnemy(EnemyId.GOBLIN, voxPos + Vec3(3, 0, 4));
     world.createEnemy(EnemyId.GOBLIN, voxPos + Vec3(-3, 0, 3));

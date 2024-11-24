@@ -209,7 +209,7 @@
                 return 0.6;
         }
     }
-    function constructSimpleItem(parentNode, meshPath, pos, scale){
+    function constructSimpleItem(parentNode, meshPath, pos, scale, spoilData=null){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = pos.copy();
         targetPos.y = getZForPos(targetPos);
@@ -232,6 +232,11 @@
         local combatTargetWorld = mConstructorWorld_.getCombatTargetWorld();
         local combatTargetPoint = combatTargetWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_ENEMY);
         manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO, ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](collisionPoint, combatTargetPoint, damageWorld, combatTargetWorld));
+
+        if(spoilData != null){
+            local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SPOILS_DATA, spoilData, null, null);
+            manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
+        }
 
         local totalHealth = 10;
         manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](totalHealth));
