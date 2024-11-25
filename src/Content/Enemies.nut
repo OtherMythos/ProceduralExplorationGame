@@ -29,3 +29,14 @@ enum EnemyTraversableTerrain{
     function getAllowSwimState() { return mAllowSwimState; }
     function getDefaultEquippableDef() { return mDefaultEquippableDef; }
 };
+
+::nameToEnemyId <- function(enemyName){
+    local testName = enemyName.tolower();
+    foreach(c,i in ::Enemies){
+        if(i.getName().tolower() == testName){
+            return c;
+        }
+    }
+
+    return EnemyId.NONE;
+}

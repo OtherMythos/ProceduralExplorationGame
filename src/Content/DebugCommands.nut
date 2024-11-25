@@ -117,3 +117,23 @@ variationSeed: %i";
 
     return "Exterminated all enemies";
 });
+::DebugConsole.registerCommand("spawn", "Spawn an enemy by name", 1, "s", function(command){
+    local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+
+    local enemyName = "";
+    foreach(c,i in command){
+        enemyName += i;
+        if(c != command.len()-1){
+            enemyName += " ";
+        }
+    }
+
+    local enemyId = ::nameToEnemyId(enemyName);
+    if(enemyId == EnemyId.NONE){
+        return format("No enemy found for name '%s'", enemyName);
+    }
+
+    currentWorld.createEnemyFromPlayer(enemyId);
+
+    return format("Created enemy '%s'", enemyName);
+});
