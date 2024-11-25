@@ -55,7 +55,16 @@ function GoblinCampPlacement(world, entityFactory, node, placeData, idx){
     };
 
     entityFactory.constructSimpleItem(parentNode, "goblinTotem.voxMesh", voxPos + Vec3(4, 0, 3), 0.15, spoils());
-    entityFactory.constructSimpleItem(parentNode, "campfireBase.voxMesh", voxPos + Vec3(1, 0, 6), 0.4, spoils());
+    local campfireEntity = entityFactory.constructSimpleItem(parentNode, "campfireBase.voxMesh", voxPos + Vec3(1, 0, 6), 0.4, spoils());
+    //Attach the smoke particle effect to the fire.
+    {
+        local campfireNode = world.getEntityManager().getComponent(campfireEntity, EntityComponents.SCENE_NODE).mNode;
+        local particleSystem = _scene.createParticleSystem("goblinBonfireSmoke");
+        local animNode = campfireNode.createChildSceneNode();
+        animNode.attachObject(particleSystem);
+        particleSystem.fastForward(10);
+    }
+
     local s = spoils();
     if(_random.randInt(3) == 0){
         s.append(

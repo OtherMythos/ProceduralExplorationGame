@@ -240,6 +240,8 @@
 
         local totalHealth = 10;
         manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](totalHealth));
+
+        return en;
     }
     function constructPlacedItem(parentNode, itemData, idx){
         local manager = mConstructorWorld_.getEntityManager();
