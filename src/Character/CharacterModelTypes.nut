@@ -199,3 +199,16 @@ local ModelType = class{
     ],
     [CharacterModelAnimId.FOREST_GUARDIAN_ARMS_WALK, CharacterModelAnimId.FOREST_GUARDIAN_WALK, CharacterModelAnimId.BASE_ARMS_SWIM]
 );
+::ModelTypes[CharacterModelType.BEE] = ModelType("build/assets/characterAnimations/forestGuardianAnimation.xml",
+    [
+        Entry(
+            "bee.voxMesh", CharacterModelPartType.BODY,
+            [
+                //TODO when bitmask support is in place change weapon store to be left and right hand as well.
+                Entry(null, CharacterModelPartType.NONE, null, ::Vec3_ZERO, ::Vec3_UNIT_SCALE, null, CharacterModelEquipNodeType.WEAPON_STORE)
+            ]
+            , Vec3(0, 6, 0), Vec3(0.75, 0.75, 0.75)
+        )
+    ],
+    [CharacterModelAnimId.NONE, CharacterModelAnimId.NONE, CharacterModelAnimId.NONE]
+);

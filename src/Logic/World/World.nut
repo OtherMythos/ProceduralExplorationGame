@@ -956,6 +956,12 @@ enum WorldMousePressContexts{
         local targetEnemy = spawnable[idx];
         createEnemy(targetEnemy, pos);
     }
+    function createEnemyFromPlayer(enemyType){
+        local target = getPlayerPosition().copy();
+        target += _random.randVec3() * 20;
+        if(target == null) return;
+        createEnemy(enemyType, target);
+    }
     /*
     function appearEnemy(enemyType){
         local target = getPositionForAppearEnemy_(enemyType);

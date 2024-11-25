@@ -310,6 +310,7 @@ enum CharacterModelType{
     CRAB,
     SKELETON,
     FOREST_GUARDIAN,
+    BEE,
 
     MAX
 };
@@ -322,6 +323,7 @@ enum CharacterModelType{
         case CharacterModelType.CRAB: return "Crab";
         case CharacterModelType.SKELETON: return "Skeleton";
         case CharacterModelType.FOREST_GUARDIAN: return "Forest Guardian";
+        case CharacterModelType.BEE: return "Bee";
         default:{
             assert(false);
         }
@@ -349,6 +351,7 @@ enum CharacterModelPartType{
     MAX
 };
 
+//TODO change this to be a bitmask so the same node can perform multiple destinations.
 enum CharacterModelEquipNodeType{
     NONE,
 
