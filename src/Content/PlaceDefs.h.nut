@@ -73,22 +73,24 @@ function GoblinCampPlacement(world, entityFactory, node, placeData, idx){
     }
     entityFactory.constructSimpleItem(parentNode, "goblinTent.voxMesh", voxPos, 0.3, s);
 
-    world.createEnemy(EnemyId.GOBLIN, voxPos + Vec3(3, 0, 4));
-    world.createEnemy(EnemyId.GOBLIN, voxPos + Vec3(-3, 0, 3));
-    if(_random.randInt(0, 3) == 0){
-        world.createEnemy(EnemyId.GOBLIN, voxPos + Vec3(-3, 0, -4));
-    }
-
     return null;
+}
+
+function GoblinCampAppearFunction(world, placeId, pos){
+    world.createEnemy(EnemyId.GOBLIN, pos + Vec3(3, 0, 4));
+    world.createEnemy(EnemyId.GOBLIN, pos + Vec3(-3, 0, 3));
+    if(_random.randInt(0, 3) == 0){
+        world.createEnemy(EnemyId.GOBLIN, pos + Vec3(-3, 0, -4));
+    }
 }
 
 ::Places <- array(PlaceId.MAX, null);
 
-::Places[PlaceId.NONE] = PlaceDef("None", "None", PlaceType.NONE, 0.0, null, 0);
+::Places[PlaceId.NONE] = PlaceDef("None", "None", PlaceType.NONE, 0.0, null, null, 0);
 
-::Places[PlaceId.GATEWAY] = PlaceDef("Gateway", "Gateway", PlaceType.GATEWAY, 1.0, GenericPlacement, 0);
+::Places[PlaceId.GATEWAY] = PlaceDef("Gateway", "Gateway", PlaceType.GATEWAY, 1.0, GenericPlacement, null, 0);
 
-::Places[PlaceId.GOBLIN_CAMP] = PlaceDef("Goblin Camp", "Spooky goblin camp", PlaceType.LOCATION, 1.0, GoblinCampPlacement, 0);
+::Places[PlaceId.GOBLIN_CAMP] = PlaceDef("Goblin Camp", "Spooky goblin camp", PlaceType.LOCATION, 1.0, GoblinCampPlacement, GoblinCampAppearFunction, 100);
 
 ::PlacesByType <- {};
 

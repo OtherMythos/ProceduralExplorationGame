@@ -25,8 +25,9 @@
     mMinLandmass = 10;
     mNecessaryFeatures = 0;
     mPlacementFunction = null;
+    mRegionAppearFunction = null;
 
-    constructor(name, desc, placeType, rarity, placementFunction, minLandmass = 10, necessaryFeatures = 0){
+    constructor(name, desc, placeType, rarity, placementFunction, regionAppearFunction, minLandmass = 10, necessaryFeatures = 0){
         mName = name;
         mDesc = desc;
         mType = placeType;
@@ -34,6 +35,7 @@
         mMinLandmass = minLandmass;
         mNecessaryFeatures = necessaryFeatures;
         mPlacementFunction = placementFunction;
+        mRegionAppearFunction = regionAppearFunction;
     }
 
     function getName(){ return mName; }
@@ -43,6 +45,7 @@
     function getMinLandmass(){ return mMinLandmass; }
     function getNecessaryFeatures(){ return mNecessaryFeatures; }
     function getPlacementFunction(){ return mPlacementFunction; }
+    function getRegionAppearFunction(){ return mRegionAppearFunction; }
 
     function _tostring(){
         return ::wrapToString(::PlaceDef, "Place", getName());
