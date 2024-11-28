@@ -117,10 +117,6 @@
         _doFile("res://src/Logic/Entity/EntityManager.nut");
         _doFile("res://src/Logic/Entity/EntityComponent.nut");
 
-        //TODO shift this off somewhere else.
-        _doFile("res://src/Content/Enemies/BasicEnemyScript.nut");
-        _doFile("res://src/Content/GenericCallbacks.nut");
-
         _doFile("res://src/Content/Projectiles.nut");
         _doFile("res://src/Content/Equippables.nut");
         _doFile("res://src/Content/Enemies.nut");
@@ -133,6 +129,11 @@
         _doFile("res://src/Content/StatsEntry.nut");
 
         loadContentFiles();
+
+        //TODO shift this off somewhere else.
+        _doFile("res://src/Content/Enemies/BasicEnemyScript.nut");
+        _doFile("res://src/Content/Enemies/BeeHiveScript.nut");
+        _doFile("res://src/Content/GenericCallbacks.nut");
 
         _doFile("res://src/DebugOverlayManager.nut");
         _doFile("res://src/DebugConsole.nut");

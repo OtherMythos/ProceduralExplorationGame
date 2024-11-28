@@ -7,6 +7,7 @@ enum EnemyId{
     SKELETON,
     FOREST_GUARDIAN,
     BEE,
+    BEE_HIVE,
 
     MAX
 };
@@ -21,3 +22,4 @@ enum EnemyId{
 ::Enemies[EnemyId.SKELETON] = Enemy("Skeleton", CharacterModelType.SKELETON, EquippableId.BARE_HANDS, EnemyTraversableTerrain.LAND, false);
 ::Enemies[EnemyId.FOREST_GUARDIAN] = Enemy("Forest Guardian", CharacterModelType.FOREST_GUARDIAN, EquippableId.BARE_HANDS, EnemyTraversableTerrain.LAND, false);
 ::Enemies[EnemyId.BEE] = Enemy("Bee", CharacterModelType.BEE, EquippableId.NONE, EnemyTraversableTerrain.ALL, false);
+::Enemies[EnemyId.BEE_HIVE] = Enemy("Bee Hive", CharacterModelType.NONE, EquippableId.NONE, EnemyTraversableTerrain.ALL, false);

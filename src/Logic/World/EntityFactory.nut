@@ -35,6 +35,13 @@
         return playerEntry;
     }
 
+    function constructBillboard_(entity, manager, node, screen){
+        local worldMask = (0x1 << mConstructorWorld_.getWorldId());
+        local billboard = ::BillboardManager.HealthBarBillboard(screen.mWindow_, worldMask);
+        local billboardIdx = screen.mWorldMapDisplay_.mBillboardManager_.trackNode(node, billboard);
+        manager.assignComponent(entity, EntityComponents.BILLBOARD, ::EntityManager.Components[EntityComponents.BILLBOARD](billboardIdx));
+    }
+
     function constructPlayer(explorationScreen, playerStats){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = Vec3();
@@ -71,11 +78,14 @@
             );
         }
 
+        /*
         local worldMask = (0x1 << mConstructorWorld_.getWorldId());
         local healthBarBillboard = ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_, worldMask);
         healthBarBillboard.setPercentage(playerStats.getPlayerHealthPercentage());
         local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(playerNode, healthBarBillboard);
         manager.assignComponent(en, EntityComponents.BILLBOARD, ::EntityManager.Components[EntityComponents.BILLBOARD](billboardIdx));
+        */
+        constructBillboard_(en, manager, playerNode, explorationScreen);
         //_component.user[Component.MISC].add(en);
         //_component.user[Component.MISC].set(en, 0, billboardIdx);
 
@@ -84,6 +94,43 @@
         //_component.script.add(en, "res://src/Content/Enemies/PlayerScript.nut");
 
         return playerEntry;
+    }
+
+    function constructEnemyBaseBeehive_(pos, explorationScreen){
+        local manager = mConstructorWorld_.getEntityManager();
+        local zPos = getZForPos(pos);
+        local targetPos = Vec3(pos.x, zPos, pos.z);
+        local en = manager.createEntity(targetPos);
+        local entry = ActiveEnemyEntry(mConstructorWorld_, EnemyId.BEE_HIVE, targetPos, en);
+
+        local enemyNode = mBaseSceneNode_.createChildSceneNode();
+        local mesh = _gameCore.createVoxMeshItem("beeHive.voxmesh");
+        enemyNode.attachObject(mesh);
+        enemyNode.setScale(0.15, 0.15, 0.15);
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](enemyNode, true));
+
+        manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](100));
+
+        constructBillboard_(en, manager, enemyNode, explorationScreen);
+
+        local damageWorld = mConstructorWorld_.getDamageWorld();
+        local damagePoint = damageWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_ENEMY);
+
+        local combatTargetWorld = mConstructorWorld_.getCombatTargetWorld();
+        local combatTargetPoint = combatTargetWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_ENEMY);
+
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO,
+            ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](
+                damagePoint, combatTargetPoint,
+                damageWorld, combatTargetWorld
+            )
+        );
+
+        manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](::BeeHiveScript(en)));
+
+        entry.setPosition(targetPos);
+
+        return entry;
     }
 
     function constructEnemyBase_(enemyType, pos, explorationScreen){
@@ -132,22 +179,19 @@
 
         manager.assignComponent(en, EntityComponents.LIFETIME, ::EntityManager.Components[EntityComponents.LIFETIME](3000 + _random.randInt(100)));
 
+        /*
         local worldMask = (0x1 << mConstructorWorld_.getWorldId());
         local billboard = ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_, worldMask)
         local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(enemyNode, billboard);
         manager.assignComponent(en, EntityComponents.BILLBOARD, ::EntityManager.Components[EntityComponents.BILLBOARD](billboardIdx));
+        */
+        constructBillboard_(en, manager, enemyNode, explorationScreen);
 
         //_component.script.add(en, "res://src/Content/Enemies/BasicEnemyScript.nut");
         manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](::BasicEnemyScript(en)));
 
         //local machine = ::BasicEnemyMachine(en);
         //::w.e.rawset(en.getId(), machine);
-
-        return entry;
-    }
-    //Perform enemy type specific logic.
-    function constructEnemy(enemyType, pos, explorationScreen){
-        local enemy = constructEnemyBase_(enemyType, pos, explorationScreen);
 
         local spoilsData = [
             ::SpoilsEntry(SPOILS_ENTRIES.EXP_ORBS, 4 + _random.randInt(4)),
@@ -173,16 +217,32 @@
         if(combatEquipped != null){
             local combatData = ::Combat.CombatStats(enemyType, 0, combatEquipped);
             combatEquipped.calculateEquippedStats();
-            enemy.setCombatData(combatData);
+            entry.setCombatData(combatData);
         }else{
             local combatData = ::Combat.CombatStats();
-            enemy.setCombatData(combatData);
+            entry.setCombatData(combatData);
         }
 
-        enemy.setWieldActive(false);
+        entry.setWieldActive(false);
 
         local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SPOILS_DATA, spoilsData, null, null);
-        mConstructorWorld_.getEntityManager().assignComponent(enemy.getEntity(), EntityComponents.SPOILS, spoilsComponent);
+        mConstructorWorld_.getEntityManager().assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
+
+        return entry;
+    }
+    //Perform enemy type specific logic.
+    function constructEnemy(enemyType, pos, explorationScreen){
+        local enemy = null;
+        switch(enemyType){
+            case EnemyId.BEE_HIVE:{
+                enemy = constructEnemyBaseBeehive_(pos, explorationScreen);
+                break;
+            }
+            default:{
+                enemy = constructEnemyBase_(enemyType, pos, explorationScreen);
+                break;
+            }
+        }
 
         return enemy;
     }

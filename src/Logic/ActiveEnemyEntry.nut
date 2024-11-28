@@ -403,7 +403,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         if(mPerformingEquippable_){
             local result = mPerformingEquippable_.update(mPos_);
             if(!result){
-                mStateMachineModel_.notifyEquippablePerformance(null);
+                if(mStateMachineModel_ != null) mStateMachineModel_.notifyEquippablePerformance(null);
                 mPerformingEquippable_ = null;
             }
         }
@@ -424,7 +424,9 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         }
 
         local performance = ::EquippablePerformance(equipDef, this);
-        mStateMachineModel_.notifyEquippablePerformance(performance);
+        if(mStateMachineModel_ != null){
+            mStateMachineModel_.notifyEquippablePerformance(performance);
+        }
         mPerformingEquippable_ = performance;
     }
 
@@ -444,6 +446,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
     }
 
     function isDashing(){
+        if(mStateMachineModel_ == null) return;
         return mStateMachineModel_.mCurrentState_ == ActiveEnemyAnimationStage.DASHING;
     }
 

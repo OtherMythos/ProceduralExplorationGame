@@ -9,6 +9,14 @@
     }
     local newPercentage = newHealth.tofloat() / component.mMaxHealth.tofloat();
 
+    if(manager.hasComponent(entity, EntityComponents.SCRIPT)){
+        local scriptComponent = manager.getComponent(entity, EntityComponents.SCRIPT);
+        local script = scriptComponent.mScript;
+        if(script.rawin("healthChange")){
+            script.healthChange(newHealth, newPercentage, damage);
+        }
+    }
+
     component.mHealth = newHealth;
     print("new health " + newHealth);
 
