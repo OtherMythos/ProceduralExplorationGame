@@ -126,7 +126,15 @@
             )
         );
 
-        manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](::BeeHiveScript(en)));
+        local hiveScript = ::BeeHiveScript(en);
+        manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](hiveScript));
+
+        for(local i = 0; i < 3; i++){
+            local offset = _random.randVec3()-0.5;
+            offset.y = 0;
+            local beeEntity = mConstructorWorld_.createEnemy(EnemyId.BEE, pos + (offset * 15));
+            hiveScript.registerBee(beeEntity);
+        }
 
         entry.setPosition(targetPos);
 
@@ -188,7 +196,14 @@
         constructBillboard_(en, manager, enemyNode, explorationScreen);
 
         //_component.script.add(en, "res://src/Content/Enemies/BasicEnemyScript.nut");
-        manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](::BasicEnemyScript(en)));
+        local scriptObj = null;
+        if(enemyType == EnemyId.BEE){
+            scriptObj = ::BeeEnemyScript(en)
+        }else{
+            scriptObj = ::BasicEnemyScript(en)
+        }
+        assert(scriptObj != null);
+        manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](scriptObj));
 
         //local machine = ::BasicEnemyMachine(en);
         //::w.e.rawset(en.getId(), machine);

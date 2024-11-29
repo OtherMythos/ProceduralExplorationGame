@@ -374,6 +374,18 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         return mGizmo_;
     }
 
+    function valid(){
+        local manager = mCreatorWorld_.getEntityManager();
+        return manager.entityValid(mEntity_);
+    }
+
+    function refreshLifetime(){
+        local manager = mCreatorWorld_.getEntityManager();
+        if(manager.hasComponent(mEntity_, EntityComponents.LIFETIME)){
+            manager.getComponent(mEntity_, EntityComponents.LIFETIME).refresh();
+        }
+    }
+
     function update(){
         if(mMoving_ > 0){
             mMoving_--;

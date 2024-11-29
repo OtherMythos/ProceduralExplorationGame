@@ -133,6 +133,7 @@
         //TODO shift this off somewhere else.
         _doFile("res://src/Content/Enemies/BasicEnemyScript.nut");
         _doFile("res://src/Content/Enemies/BeeHiveScript.nut");
+        _doFile("res://src/Content/Enemies/BeeEnemyScript.nut");
         _doFile("res://src/Content/GenericCallbacks.nut");
 
         _doFile("res://src/DebugOverlayManager.nut");

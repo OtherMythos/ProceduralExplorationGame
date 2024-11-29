@@ -76,6 +76,10 @@
         mLifetimeTotal = lifetime;
     }
 
+    function refresh(){
+        mLifetime = mLifetimeTotal;
+    }
+
 };
 
 ::EntityManager.Components[EntityComponents.ANIMATION] = class extends ::EntityManager.Component{

@@ -4,13 +4,19 @@
     mBeesToSpawn_ = null;
     mEid_ = null;
 
+    mActiveBees_ = null;
+
     constructor(eid){
         mBeesToSpawn_ = mTotalBeesToSpawn_;
         mEid_ = eid;
+        mActiveBees_ = [];
     }
 
     function update(eid){
-
+        foreach(i in mActiveBees_){
+            if(!i.valid()) continue;
+            i.refreshLifetime();
+        }
     }
 
     function destroyed(eid){
@@ -22,7 +28,12 @@
     function spawnBee(){
         local world = ::Base.mExplorationLogic.mCurrentWorld_;
         local targetPos = world.getEntityManager().getPosition(mEid_);
-        world.createEnemy(EnemyId.BEE, targetPos);
+        local enemy = world.createEnemy(EnemyId.BEE, targetPos);
+        registerBee(enemy);
+    }
+
+    function registerBee(beeEntry){
+        mActiveBees_.append(beeEntry);
     }
 
     function healthChange(newHealth, percentage, difference){
@@ -35,6 +46,18 @@
 
                 return;
             }
+        }
+
+        foreach(i in mActiveBees_){
+            if(!i.valid()) continue;
+            local world = ::Base.mExplorationLogic.mCurrentWorld_;
+            local beeEntity = i.getEID();
+
+            local manager = world.getEntityManager();
+            if(!manager.entityValid(beeEntity)) return;
+            assert(manager.hasComponent(beeEntity, EntityComponents.SCRIPT));
+            local comp = manager.getComponent(beeEntity, EntityComponents.SCRIPT);
+            comp.mScript.receiveHiveAttacked();
         }
     }
 
