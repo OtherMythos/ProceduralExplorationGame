@@ -324,23 +324,34 @@
         targetPos.y = getZForPos(targetPos);
         local en = manager.createEntity(targetPos);
 
+        local itemType = itemData.type;
+
         //local entry = ActiveEnemyEntry(mConstructorWorld_, itemData.type, targetPos, en);
 
         local placeNode = parentNode.createChildSceneNode();
         //local meshTarget = itemData.type == PlacedItemId.CHERRY_BLOSSOM_TREE ? "treeCherryBlossom.voxMesh" : "tree.voxMesh";
-        local meshTarget = getMeshForPlacedItemType_(itemData.type);
+        local meshTarget = getMeshForPlacedItemType_(itemType);
         placeNode.setPosition(targetPos);
         //TODO make some of these scene static
         local item = _gameCore.createVoxMeshItem(meshTarget);
         item.setRenderQueueGroup(30);
         placeNode.attachObject(item);
-        local scale = getScaleForPlacedItemType_(itemData.type);
+        local scale = getScaleForPlacedItemType_(itemType);
         placeNode.setScale(scale, scale, scale);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](placeNode, true));
 
         local damageWorld = mConstructorWorld_.getDamageWorld();
         local collisionPoint = damageWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_ENEMY);
-        manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, damageWorld));
+        if(itemType == PlacedItemId.CACTUS){
+            local damageSender = damageWorld.addCollisionSender(CollisionWorldTriggerResponses.PASSIVE_DAMAGE, 5, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
+
+            manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO, ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](
+                collisionPoint, damageSender,
+                damageWorld, damageWorld
+            ));
+        }else{
+            manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, damageWorld));
+        }
 
         local totalHealth = 1;
         manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](totalHealth));

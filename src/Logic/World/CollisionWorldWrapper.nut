@@ -157,6 +157,11 @@
 
             _applyDamageOther(world.getEntityManager(), entityId, damage);
         });
+        ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.PASSIVE_DAMAGE] <- TriggerResponse(function(world, damage, entityId, collisionStatus){
+            if(collisionStatus != 0x1) return;
+
+            _applyDamageOther(world.getEntityManager(), entityId, damage);
+        });
         ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.BASIC_ENEMY_RECEIVE_PLAYER_SPOTTED] <- TriggerResponse(function(world, entityId, second, collisionStatus){
             if(collisionStatus == 0x0) return;
             local manager = world.getEntityManager();
