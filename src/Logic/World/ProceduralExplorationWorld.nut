@@ -474,6 +474,16 @@
             }
         }
     }
+    function regionDiscoveredSpawnEnemy(regionEntry, pos){
+        print(regionEntry.type);
+        if(regionEntry.type == RegionType.NONE){
+            if(_random.randInt(6) == 0){
+                createEnemy(EnemyId.BEE_HIVE, pos);
+                return;
+            }
+        }
+        appearEnemy(pos);
+    }
     function processRegionDiscovered_(regionEntry){
         local e = regionEntry.coords[_random.randIndex(regionEntry.coords)];
 
@@ -481,8 +491,8 @@
         local startY = e & 0xFFFF;
         local pos = Vec3(startX, 0, -startY);
 
+        regionDiscoveredSpawnEnemy(regionEntry, pos);
         //createEnemy(EnemyId.GOBLIN, pos);
-        appearEnemy(pos);
         //print(regionEntry.coords);
     }
     function discoverRegion(regionId){
