@@ -104,7 +104,7 @@
         local entry = ActiveEnemyEntry(mConstructorWorld_, EnemyId.BEE_HIVE, targetPos, en);
 
         local enemyNode = mBaseSceneNode_.createChildSceneNode();
-        local mesh = _gameCore.createVoxMeshItem("beeHive.voxmesh");
+        local mesh = _gameCore.createVoxMeshItem("beeHive.voxMesh");
         enemyNode.attachObject(mesh);
         enemyNode.setScale(0.15, 0.15, 0.15);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](enemyNode, true));
