@@ -8,6 +8,8 @@ enum ItemId{
     SIMPLE_TWO_HANDED_SWORD,
     BONE_MACE,
 
+    APPLE,
+
     MAX,
 };
 
@@ -23,6 +25,8 @@ enum ItemId{
 ::Items[ItemId.SIMPLE_SHIELD] = ItemDef("Simple Shield", "An un-interesting shield. Provides minimal protection.", "simpleShield.voxMesh", "item_simpleShield", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SHIELD, ItemEquipTransformType.BASIC_SHIELD);
 ::Items[ItemId.SIMPLE_TWO_HANDED_SWORD] = ItemDef("Simple Two Handed sword", "A two handed sword as blunt as it is big.", "simpleTwoHandedSword.voxMesh", "item_simpleTwoHandedSword", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_TWO_HANDED_SWORD, ItemEquipTransformType.BASIC_TWO_HANDED_SWORD);
 ::Items[ItemId.BONE_MACE] = ItemDef("Bone Mace", "Large clobbering clump of ex-person erecter.", "boneMace.voxMesh", "item_boneMace", ItemType.EQUIPPABLE, 5, EquippableId.REGULAR_SWORD, ItemEquipTransformType.BASIC_SWORD);
+
+::Items[ItemId.APPLE] = ItemDef("Apple", "Fibrous fruit", "apple.voxMesh", "item_apple", ItemType.CONSUMABLE, 5, EquippableId.NONE);
 //-------------------------------
 
 ::ItemHelper.setupItemIds_();
@@ -34,6 +38,10 @@ enum ItemId{
         case ItemId.NONE: return stat;
         case ItemId.HEALTH_POTION: {
             stat.mRestorativeHealth = 10;
+            return stat;
+        }
+        case ItemId.APPLE: {
+            stat.mRestorativeHealth = 5;
             return stat;
         }
         case ItemId.LARGE_HEALTH_POTION: {

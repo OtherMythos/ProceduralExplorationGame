@@ -93,7 +93,7 @@
             "copy_from" : "SpriteBase",
             "grid_uv" :
             {
-                "all" : [160, 128, 16, 16]
+                "all" : [208, 128, 16, 16]
             }
         },
         "item_banana" :

@@ -267,6 +267,9 @@
             case PlacedItemId.CHERRY_BLOSSOM_TREE:{
                 return "treeCherryBlossom.voxMesh";
             }
+            case PlacedItemId.TREE_APPLE:{
+                return "treeApple.voxMesh";
+            }
             case PlacedItemId.CACTUS:{
                 return "cactus1.voxMesh";
             }
@@ -348,6 +351,15 @@
             manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO, ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](
                 collisionPoint, damageSender,
                 damageWorld, damageWorld
+            ));
+        }
+        else if(itemType == PlacedItemId.TREE_APPLE){
+            local triggerWorld = mConstructorWorld_.getTriggerWorld();
+        local playerInteraction = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.PLACED_ITEM_COLLIDE_CHANGE, en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
+
+            manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO, ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](
+                collisionPoint, playerInteraction,
+                damageWorld, triggerWorld
             ));
         }else{
             manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, damageWorld));

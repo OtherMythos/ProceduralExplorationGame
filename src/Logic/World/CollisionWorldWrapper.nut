@@ -202,3 +202,23 @@
                 ::Base.mActionManager.unsetAction(0, entityId);
             }
         });
+        ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.PLACED_ITEM_COLLIDE_CHANGE] <- TriggerResponse(function(world, entityId, second, collisionStatus){
+            if(collisionStatus != 0x1) return;
+            local entityManager = world.getEntityManager();
+            local pos = entityManager.getPosition(entityId);
+            local targetPos = ::randDistanceFromPoint(pos, 10, 10);
+            world.spawnDroppedItem(targetPos, ::Item(ItemId.APPLE));
+
+            //Destroy the old entity and replace with a new one.
+
+            local sceneNode = entityManager.getComponent(entityId, EntityComponents.SCENE_NODE).mNode;
+            local targetNode = sceneNode.getParent();
+            entityManager.destroyEntity(entityId);
+
+            local data = {
+                "originX": pos.x,
+                "originY": -pos.z,
+                "type": PlacedItemId.TREE
+            };
+            world.mEntityFactory_.constructPlacedItem(targetNode, data, null);
+        });

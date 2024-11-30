@@ -85,3 +85,10 @@
     }
     print(decorator);
 }
+
+::randDistanceFromPoint <- function(pos, radius, minRadius=0.0){
+    local diff = _random.randVec3();
+    diff -= 0.5;
+    diff.y = 0;
+    return pos + (diff * (minRadius + radius));
+}

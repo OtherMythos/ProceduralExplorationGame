@@ -132,6 +132,7 @@ enum CollisionWorldTriggerResponses{
     BASIC_ENEMY_PLAYER_TARGET_RADIUS,
     DIE,
     NPC_INTERACT,
+    PLACED_ITEM_COLLIDE_CHANGE,
 
     MAX = 100
 };
