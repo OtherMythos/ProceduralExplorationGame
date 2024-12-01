@@ -21,5 +21,5 @@ enum EnemyId{
 ::Enemies[EnemyId.CRAB] = Enemy("Crab", CharacterModelType.CRAB);
 ::Enemies[EnemyId.SKELETON] = Enemy("Skeleton", CharacterModelType.SKELETON, EquippableId.BARE_HANDS, EnemyTraversableTerrain.LAND, false);
 ::Enemies[EnemyId.FOREST_GUARDIAN] = Enemy("Forest Guardian", CharacterModelType.FOREST_GUARDIAN, EquippableId.BARE_HANDS, EnemyTraversableTerrain.LAND, false);
-::Enemies[EnemyId.BEE] = Enemy("Bee", CharacterModelType.BEE, EquippableId.NONE, EnemyTraversableTerrain.ALL, false);
+::Enemies[EnemyId.BEE] = Enemy("Bee", CharacterModelType.BEE, EquippableId.NONE_ATTACK, EnemyTraversableTerrain.ALL, false);
 ::Enemies[EnemyId.BEE_HIVE] = Enemy("Bee Hive", CharacterModelType.NONE, EquippableId.NONE, EnemyTraversableTerrain.ALL, false);

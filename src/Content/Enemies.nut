@@ -16,7 +16,7 @@ enum EnemyTraversableTerrain{
     mDefaultEquippableDef = null;
     mTraversableTerrain = EnemyTraversableTerrain.ALL;
     mAllowSwimState = true;
-    constructor(name, characterModelType, defaultEquippableDef=EquippableId.NONE, traversableTerrain=EnemyTraversableTerrain.ALL, allowSwimState=true){
+    constructor(name, characterModelType, defaultEquippableDef=EquippableId.NONE_ATTACK, traversableTerrain=EnemyTraversableTerrain.ALL, allowSwimState=true){
         mName = name;
         mCharacterModelType = characterModelType;
         mTraversableTerrain = traversableTerrain;
