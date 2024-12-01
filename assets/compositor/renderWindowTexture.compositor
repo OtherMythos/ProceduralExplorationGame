@@ -66,6 +66,79 @@ compositor_node renderTexture65_70Node
     }
 }
 
+//TODO figure out the correct shadows
+/*
+compositor_node_shadow SR3_Shadows
+{
+	technique pssm
+
+	//**  shadows par
+	// texture atlas 3072 2048 PFG_D32_FLOAT  // medium 2k
+	// texture atlas 6144 4096 PFG_D32_FLOAT  // high 4k
+	texture atlas 12288 8192 PFG_D32_FLOAT  // ultra high 8k
+
+	num_splits		3
+	pssm_lambda		0.95
+	shadow_map 0 atlas uv 0.000000000000000 0.0 0.666666666666667 1.0 light 0 split 0
+	shadow_map 1 atlas uv 0.666666666666667 0.0 0.333333333333333 0.5 light 0 split 1
+	shadow_map 2 atlas uv 0.666666666666667 0.5 0.333333333333333 0.5 light 0 split 2
+
+	target atlas
+	{
+		pass clear
+		{
+			colour_value 1 1 1 1
+			identifier	77000
+		}
+	}
+
+	shadow_map_target_type directional
+	{
+		shadow_map 0 1 2
+		{
+			pass render_scene
+			{
+				profiling_id "Shadows ed prv"
+				identifier	77077
+
+				rq_last		219
+			}
+		}
+	}
+}
+
+compositor_node_shadow default_simpleShadowNode
+{
+    technique pssm
+
+    texture pssm0 2048 2048 PFG_D32_FLOAT
+    texture pssm1 1024 1024 PFG_D32_FLOAT
+    texture pssm2 1024 1024 PFG_D32_FLOAT
+
+    num_splits      3
+    pssm_lambda     0.95
+    //Render 1st closest light, splits 0 1 & 2
+    shadow_map 0 pssm0 light 0 split 0
+    shadow_map 1 pssm1 light 0 split 1
+    shadow_map 2 pssm2 light 0 split 2
+
+    shadow_map_target_type directional
+    {
+        //Render shadow maps 0, 1 and 2.
+        //Can only be used by directional lights.
+        shadow_map 0 1 2
+        {
+            pass clear
+            {
+                colour_value 1 1 1 1
+            }
+            pass render_scene
+            {
+            }
+        }
+    }
+}
+*/
 compositor_node_shadow default_simpleShadowNode
 {
     technique focused
