@@ -291,7 +291,6 @@ enum WorldMousePressContexts{
             "interact": _input.getButtonActionHandle("Interact"),
             "toggleWieldActive": _input.getButtonActionHandle("toggleWieldActive"),
             "pauseGame": _input.getButtonActionHandle("PauseGame"),
-            "showDebugConsole": _input.getButtonActionHandle("ShowDebugConsole"),
             "zoomIn": _input.getButtonActionHandle("ZoomIn"),
             "zoomOut": _input.getButtonActionHandle("ZoomOut"),
             "toggleWorldView": _input.getButtonActionHandle("ToggleWorldView"),
@@ -1082,9 +1081,6 @@ enum WorldMousePressContexts{
         }
         if(_input.getButtonAction(mInputs_.pauseGame, _INPUT_PRESSED)){
             ::Base.mExplorationLogic.setGamePaused(true);
-        }
-        if(_input.getButtonAction(::InputManager.showDebugConsole, _INPUT_PRESSED)){
-            ::DebugConsole.toggleActive();
         }
         if(_input.getButtonAction(mInputs_.dash, _INPUT_PRESSED)){
             performPlayerDash();

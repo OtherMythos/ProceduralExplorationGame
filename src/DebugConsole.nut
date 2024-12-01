@@ -8,6 +8,7 @@
 
     mActive_ = false
     COMMAND_POINTER = "> "
+    mTogglePressed_ = false
 
     DebugCommandEntry = class{
         mName = null;
@@ -68,8 +69,13 @@
     }
 
     function update(){
-        if(_input.getButtonAction(::InputManager.debugConsoleCloseConsole, _INPUT_PRESSED)){
-            toggleActive();
+        if(_input.getRawKeyScancodeInput(43)){
+            if(!mTogglePressed_){
+                toggleActive();
+                mTogglePressed_ = true;
+            }
+        }else{
+            mTogglePressed_ = false;
         }
     }
 
