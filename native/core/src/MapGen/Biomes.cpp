@@ -118,7 +118,10 @@ namespace ProceduralExplorationGameCore{
     }
 
     AV::uint8 DESERT_DetermineAltitudeFunction(AV::uint8 altitude, AV::uint8 moisture, AV::uint16 x, AV::uint16 y, const ExplorationMapData* mapData){
-        float thing = abs(sin(float(x) * 0.1)) * 60 - 20;
+        //float thing = abs(sin(float(x) * 0.1)) * 60 - 20;
+        float t = (sin(float(x) * 0.1));
+        if(t < 0) t = -t;
+        float thing = t * 60 - 20;
         float other = float(altitude) + thing;
         if(other < mapData->seaLevel){
             other = mapData->seaLevel;
