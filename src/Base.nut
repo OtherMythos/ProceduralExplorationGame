@@ -103,6 +103,10 @@
 
     }
 
+    function setupFirst(){
+
+    }
+
     function loadFiles(){
         _doFile("res://src/System/InputManager.nut");
         _doFile("res://src/Util/VoxToMesh.nut");
@@ -127,6 +131,8 @@
         _doFile("res://src/Content/CombatData.nut");
         _doFile("res://src/Content/Moves.nut");
         _doFile("res://src/Content/StatsEntry.nut");
+
+        _doFile("res://src/System/PlayerStats.nut");
 
         loadContentFiles();
 
@@ -157,7 +163,6 @@
 
         _doFile("res://src/System/Inventory.nut");
 
-        _doFile("res://src/System/PlayerStats.nut");
         mPlayerStats = ::PlayerStats();
 
         _doFile("res://src/System/Save/SaveConstants.nut");

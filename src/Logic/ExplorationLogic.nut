@@ -185,6 +185,7 @@
     function processPlayerDeath(id, data){
         print("Received player death");
         pauseExploration();
+        ::Base.mPlayerStats.processPlayerDeath();
         if(mGui_) mGui_.notifyPlayerDeath();
     }
 
@@ -323,6 +324,7 @@
         pauseExploration();
         mCurrentTimer_.stop();
         mExplorationStats_.explorationTimeTaken = mCurrentTimer_.getSeconds();
+        ::Base.mPlayerStats.processExplorationSuccess();
         if(mGui_) mGui_.notifyGatewayEnd(mExplorationStats_);
     }
 

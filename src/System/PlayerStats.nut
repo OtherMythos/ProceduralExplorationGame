@@ -148,6 +148,10 @@
         return mPlayerCombatStats.getHealthPercentage();
     }
 
+    function processExplorationSuccess(){
+
+    }
+
     function getEquippedItem(slot){
         return mPlayerCombatStats.mEquippedItems.getEquippedItem(slot);
     }

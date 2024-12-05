@@ -95,7 +95,8 @@
             "height": mapData.height,
             "scriptObject": scriptObject,
             "native": nativeData,
-            "meta": mapMeta
+            "meta": mapMeta,
+            "mapName": targetMap
         };
         return outData;
     }

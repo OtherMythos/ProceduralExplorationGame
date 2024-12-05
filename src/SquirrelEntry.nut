@@ -44,6 +44,7 @@ function start(){
 
     _doFile("res://src/Base.nut");
     checkForProjectExtra();
+    ::Base.setupFirst();
     ::Base.setup();
     ::Base.setupSecondary();
     ::Base.switchToFirstScreen();

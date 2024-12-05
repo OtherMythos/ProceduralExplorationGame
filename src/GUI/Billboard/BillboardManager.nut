@@ -30,7 +30,7 @@
     function update(){
         foreach(i in mTrackedNodes_){
             if(i == null) continue;
-            local pos = mCamera_.getWorldPosInWindow(i.mNode.getPosition());
+            local pos = mCamera_.getWorldPosInWindow(i.mNode.getPositionVec3());
             pos = Vec2((pos.x + 1) / 2, (-pos.y + 1) / 2);
             local posVisible = i.mBillboard.posVisible(pos);
             if(posVisible){
