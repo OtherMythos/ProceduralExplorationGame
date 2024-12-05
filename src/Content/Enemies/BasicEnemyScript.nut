@@ -13,11 +13,21 @@ BasicEnemyMachine = class extends ::CombatStateMachine{
     maxAttackCooldown = 30;
     attackCooldown = 30;
     targetingId = -1;
+    idleWalk = false;
 
     direction = null;
     movementCount = 50;
 
     idleState = {
+        "update": function(ctx, e, data) {
+        },
+        "notify": function(ctx, id, e, data){
+            if(id == BasicEnemyEvents.PLAYER_SPOTTED){
+                ctx.switchState(ctx.chasingPlayerState);
+            }
+        }
+    };
+    idleWalkState = {
         "update": function(ctx, e, data) {
             //Generate a new direction.
             local change = _random.randInt(0, 10 + ctx.movementCount);
@@ -70,7 +80,7 @@ BasicEnemyMachine = class extends ::CombatStateMachine{
         },
         "notify": function(ctx, id, e, data){
             if(id == BasicEnemyEvents.PLAYER_NOT_SPOTTED){
-                ctx.switchState(ctx.idleState);
+                ctx.switchState(ctx.idleWalk ? ctx.idleWalkState : ctx.idleState);
             }
         },
         "end": function(ctx, e) {
@@ -79,14 +89,15 @@ BasicEnemyMachine = class extends ::CombatStateMachine{
         },
     };
 
-    constructor(entity){
+    constructor(entity, idleWalk){
         this.entity = entity;
-        switchState(idleState);
+        this.idleWalk = idleWalk;
+        switchState(idleWalk ? idleWalkState : idleState);
     }
 };
 
-    constructor(eid){
-        mMachine = BasicEnemyMachine(eid);
+    constructor(eid, idleWalk=true){
+        mMachine = BasicEnemyMachine(eid, idleWalk);
     }
 
     function receivePlayerSpotted(started){

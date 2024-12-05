@@ -148,6 +148,10 @@
         return mPlayerCombatStats.getHealthPercentage();
     }
 
+    function processPlayerDeath(){
+
+    }
+
     function processExplorationSuccess(){
 
     }

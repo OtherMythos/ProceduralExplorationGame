@@ -14,7 +14,16 @@
         return mConstructorWorld_.getZForPos(pos);
     }
 
-    function constructNPCCharacter(pos){
+    function readBoolFromData_(data, val, defaultVal){
+        if(data == null){
+            return defaultVal;
+        }
+        if(data.rawin(val)){
+            return data.rawget(val);
+        }
+        return defaultVal;
+    }
+    function constructNPCCharacter(pos, data){
         local manager = mConstructorWorld_.getEntityManager();
         local zPos = getZForPos(pos);
         local targetPos = Vec3(pos.x, zPos, pos.z);
@@ -28,7 +37,7 @@
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](playerNode));
         playerEntry.setModel(playerModel);
 
-        manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](::BasicEnemyScript(en)));
+        manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](::BasicEnemyScript(en, readBoolFromData_(data, "idleWalk", false))));
 
         playerEntry.setPosition(targetPos);
 

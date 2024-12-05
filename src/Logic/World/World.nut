@@ -323,6 +323,7 @@ enum WorldMousePressContexts{
     }
     function setPlayerPosition(x, y){
         local target = Vec3(x, 0, y);
+        target.y = getZForPos(target);
         mPlayerEntry_.setPosition(target);
         updatePlayerPos(target);
         notifyPlayerMoved();
@@ -985,13 +986,13 @@ enum WorldMousePressContexts{
         createEnemy(enemyType, target);
     }
     */
-    function createNPC(pos){
-        local enemyEntry = mEntityFactory_.constructNPCCharacter(pos);
+    function createNPC(pos, data=null){
+        local enemyEntry = mEntityFactory_.constructNPCCharacter(pos, data);
         mActiveEnemies_.rawset(enemyEntry.mEntity_, enemyEntry);
         return enemyEntry;
     }
-    function createNPCWithDialog(pos, dialogPath, startBlock){
-        local entity = createNPC(pos);
+    function createNPCWithDialog(pos, dialogPath, startBlock, data){
+        local entity = createNPC(pos, data);
 
         local en = entity.getEID();
         local collisionPoint = mTriggerCollisionWorld_.addCollisionSender(CollisionWorldTriggerResponses.NPC_INTERACT, en, pos.x, pos.z, 2, _COLLISION_PLAYER);
