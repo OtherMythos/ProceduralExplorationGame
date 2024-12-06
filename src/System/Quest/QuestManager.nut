@@ -22,4 +22,15 @@
         return mQuests_[mQuestLookups_.rawget(name)];
     }
 
+    function getTableForQuests(){
+        local outTable = {};
+
+        foreach(i in mQuests_){
+            local d = i.getTable();
+            outTable.rawset(i.getName(), d);
+        }
+
+        return outTable;
+    }
+
 };

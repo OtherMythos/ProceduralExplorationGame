@@ -54,6 +54,19 @@ _t("findParserChain", "Check the function 'findParserChain' returns a parser cha
     _test.assertEqual(chain[1].getHashVersion(), ::SaveHelpers.hashVersion(1, 0, 0));
 });
 
+_t("getPreviousParserForObject", "Check the function 'getPreviousParserForObject' returns the correct parser for certain values", function(){
+    local saveManager = ::SaveManager();
+    local mockParsers = [
+        SaveFileParser(0, 1, 0),
+        SaveFileParser(0, 3, 0),
+        SaveFileParser(0, 7, 0),
+    ];
+
+    local prev = saveManager.getPreviousParserForObject(0, 7, 0);
+    //local prev = saveManager.getPreviousParserForObjectHash(mockParsers[2].mVersion_);
+    _test.assertEqual(prev.getHashVersion(), ::SaveHelpers.hashVersion(0, 3, 0));
+});
+
 _t("performSchemaCheck", "Check the function 'performSchemaCheck' properly accepts or rejects different json formats.", function(){
     local parser = SaveFileParser(0, 1, 0);
     parser.mJSONSchema_ = {
@@ -295,6 +308,42 @@ _t("performSchemaCheckNestedTables", "Check the function 'performSchemaCheckNest
 
         _test.assertTrue(parser.performSchemaCheck(test));
     }
+});
+
+_t("performSchemaCheckAny", "Check the function schema check will not perform any checks on any 'any' entry", function(){
+    local parser = SaveFileParser(0, 1, 0);
+
+    parser.mJSONSchema_ = {
+        "testFirst": OBJECT_TYPE.ANY,
+        "testSecond": OBJECT_TYPE.INTEGER,
+
+        "testTable": {
+            "first": OBJECT_TYPE.ANY,
+            "second": OBJECT_TYPE.INTEGER
+        }
+    };
+
+    local test = {
+        "testFirst": 10,
+        "testSecond": 30,
+
+        "testTable": {
+            "first": "something",
+            "second": 10
+        }
+    };
+
+    //It's missing the table entry so should fail.
+    _test.assertTrue(parser.performSchemaCheck(test));
+
+    //Change the any values and check it still works
+    test.testFirst = "second";
+    test.testTable.first = false;
+    _test.assertTrue(parser.performSchemaCheck(test));
+    test.testTable.first = {"something": 10}
+    _test.assertTrue(parser.performSchemaCheck(test));
+    test.testSecond = false;
+    _test.assertFalse(parser.performSchemaCheck(test));
 });
 
 _t("getPreviousParserForObject", "Check the function 'getPreviousParserForObject' properly returns the previous parser object.", function(){

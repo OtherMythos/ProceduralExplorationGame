@@ -1,7 +1,9 @@
 ::SaveManager.registerParser(0, 1, 0, class extends SaveFileParser{
     constructor(){
         base.constructor(0, 1, 0);
+    }
 
+    function setup(){
         mJSONSchema_ = {
             "version": OBJECT_TYPE.STRING,
             "versionCount": OBJECT_TYPE.INTEGER,

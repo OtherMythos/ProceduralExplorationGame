@@ -1,7 +1,9 @@
 ::SaveManager.registerParser(0, 3, 0, class extends SaveFileParser{
     constructor(){
         base.constructor(0, 3, 0);
+    }
 
+    function setup(){
         local prev = getPreviousParser();
         assert(prev != null);
         mJSONSchema_ = clone prev.mJSONSchema_;

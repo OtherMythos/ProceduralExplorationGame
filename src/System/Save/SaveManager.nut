@@ -247,7 +247,9 @@
 
     function registerParser(max, min, patch, parser){
         local idx = mParsers_.len();
-        mParsers_.append(parser());
+        local p = parser();
+        mParsers_.append(p);
+        p.setup();
         mParserLookups_.rawset(::SaveHelpers.hashVersion(max, min, patch), idx);
     }
 
@@ -263,3 +265,4 @@ function registerSaveParser(max, min, patch){
 
 registerSaveParser(0, 1, 0);
 registerSaveParser(0, 3, 0);
+registerSaveParser(0, 7, 0);

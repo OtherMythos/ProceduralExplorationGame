@@ -9,6 +9,7 @@ enum SAVE_ENTRIES{
 };
 
 enum OBJECT_TYPE{
+    ANY = "any",
     NULL = "null",
     INTEGER = "integer",
     FLOAT = "float",

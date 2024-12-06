@@ -75,6 +75,8 @@
             if(i == null) continue;
             mCurrentData_.playerEquipped[c] = (i == null ? null : i.getId());
         }
+        local questData = ::Base.mQuestManager.getTableForQuests();
+        mCurrentData_.rawset("quest", questData);
         processTime();
         return mCurrentData_;
     }

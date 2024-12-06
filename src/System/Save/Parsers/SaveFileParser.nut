@@ -61,9 +61,12 @@
             schemaType = schemaType == OBJECT_TYPE.TABLE ? OBJECT_TYPE.TABLE : checkType;
 
             local localType = (typeof i);
-            if(localType != schemaType) return false;
-            if(localType == OBJECT_TYPE.TABLE){
-                if(!performSchemaCheckTable_(i, checkType)) return false;
+            if(schemaType != OBJECT_TYPE.ANY){
+                if(localType != schemaType) return false;
+
+                if(localType == OBJECT_TYPE.TABLE){
+                    if(!performSchemaCheckTable_(i, checkType)) return false;
+                }
             }
         }
 
