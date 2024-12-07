@@ -1,5 +1,18 @@
 ::ScreenManager.Screens[Screen.PLAYER_DEATH_SCREEN] = class extends ::Screen{
 
+    buttonOptions = ["Explore again", "Return to menu"];
+    buttonFunctions = [
+        function(widget, action){
+            ::Base.mExplorationLogic.resetExploration();
+            ::ScreenManager.queueTransition(null, null, mLayerIdx);
+        },
+        function(widget, action){
+            ::ScreenManager.queueTransition(null, null, mLayerIdx);
+            ::ScreenManager.queueTransition(Screen.GAMEPLAY_MAIN_MENU_SCREEN);
+            ::Base.mExplorationLogic.shutdown();
+        }
+    ];
+
     function setup(data){
 
         local winWidth = ::drawable.x * 0.8;
@@ -24,18 +37,6 @@
         layoutLine.addCell(title);
 
         //Add the buttons.
-        local buttonOptions = ["Explore again", "Return to menu"];
-        local buttonFunctions = [
-            function(widget, action){
-                ::Base.mExplorationLogic.resetExploration();
-                ::ScreenManager.queueTransition(null, null, mLayerIdx);
-            },
-            function(widget, action){
-                ::ScreenManager.queueTransition(null, null, mLayerIdx);
-                ::ScreenManager.queueTransition(Screen.GAMEPLAY_MAIN_MENU_SCREEN);
-                ::Base.mExplorationLogic.shutdown();
-            }
-        ];
         foreach(i,c in buttonOptions){
             local button = mWindow_.createButton();
             button.setDefaultFontSize(button.getDefaultFontSize() * 1.5);
