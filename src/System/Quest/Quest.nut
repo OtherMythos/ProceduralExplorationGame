@@ -89,7 +89,6 @@
     function setValue(id, value){
         local v = mValues_[id];
         local e = mEntries_[v.entry];
-        local data = e.data;
 
         local writeValue = value;
         if(typeof value == "bool"){
@@ -97,7 +96,9 @@
         }
 
         local clampMask = ((1 << v.size)-1) << v.shift;
-        e.data = data | ((writeValue << v.shift) & clampMask);
+        //The value is not chaning here because of clamping, fix that.
+        e.data = e.data & ~clampMask;
+        e.data = e.data | ((writeValue << v.shift) & clampMask);
 
         mirrorToRegistry_(v.name, writeValue, v.size == 1);
     }
