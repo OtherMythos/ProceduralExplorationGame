@@ -43,6 +43,12 @@
         return idx;
     }
 
+    function setEntry(name, value){
+        if(!mEntriesLookup_.rawin(name)) return;
+        local idx = mEntriesLookup_.rawget(name);
+        mEntries_[idx].data = value;
+    }
+
     /**
      * Return an entry table for the serialisation system.
      */

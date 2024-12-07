@@ -48,6 +48,17 @@
         mLastSaveTime_ = newTime;
     }
 
+    function copyQuestData_(questTable){
+        local questManager = ::Base.mQuestManager;
+        foreach(c,i in questTable){
+            local q = questManager.getQuestForName(c);
+            if(c == null) continue;
+            foreach(cc,ii in i){
+                q.setEntry(cc, ii);
+            }
+        }
+    }
+
     function setSaveData(data, slotIdx){
         mCurrentSaveSlot_ = slotIdx;
         mCurrentData_ = data;
@@ -61,6 +72,8 @@
         mInventory_.rawSetItems(inventoryData);
         mPlayerCombatStats.mEquippedItems.rawSetItems(equipData);
         mPlayerCombatStats.calculateEquippedStats();
+
+        copyQuestData_(data.quest);
     }
     function getSaveSlot(){
         return mCurrentSaveSlot_;
