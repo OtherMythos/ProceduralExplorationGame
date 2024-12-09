@@ -163,6 +163,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
     mCombatData_ = null;
     mTargetCollisionWorld_ = 0;
     mCollisionPoint_ = null;
+    mModelsFirstFrame_ = true;
 
     mDashDirection_ = null;
 
@@ -253,11 +254,12 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         }
     }
     function setWieldActive(active){
-        if(mCombatData_.mWieldActive == active) return;
+        if(!mModelsFirstFrame_ && mCombatData_.mWieldActive == active) return;
         mCombatData_.setWieldActive(active);
         if(mModel_ != null){
             mModel_.equipDataToCharacterModel(mCombatData_.mEquippedItems, active);
         }
+        mModelsFirstFrame_ = false;
     }
     function setCollisionPoint(point){
         mCollisionPoint_ = point;
