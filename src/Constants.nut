@@ -133,6 +133,7 @@ enum CollisionWorldTriggerResponses{
     DIE,
     NPC_INTERACT,
     PLACED_ITEM_COLLIDE_CHANGE,
+    COLLECTABLE_ITEM_COLLIDE,
 
     MAX = 100
 };

@@ -97,6 +97,9 @@
     function addToInventory(item){
         mInventory_.addToInventory(item);
     }
+    function doesInventoryHaveFreeSlot(){
+        return mInventory_.hasFreeSlot();
+    }
 
     function alterPlayerHealth(amount){
         printf("Altering player health by %i", amount);

@@ -187,6 +187,12 @@
             local manager = world.getEntityManager();
             manager.destroyEntity(entityId);
         });
+        ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.COLLECTABLE_ITEM_COLLIDE] <- TriggerResponse(function(world, entityId, second, collisionStatus){
+            if(collisionStatus != 0x1) return;
+            if(!::Base.mPlayerStats.doesInventoryHaveFreeSlot()) return;
+            local manager = world.getEntityManager();
+            manager.destroyEntity(entityId);
+        });
         ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.NPC_INTERACT] <- TriggerResponse(function(world, entityId, second, collisionStatus){
             if(collisionStatus == 0x1){
                 local manager = world.getEntityManager();
