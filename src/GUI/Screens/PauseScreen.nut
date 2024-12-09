@@ -1,6 +1,24 @@
 
 ::ScreenManager.Screens[Screen.PAUSE_SCREEN] = class extends ::Screen{
 
+    buttonOptions = ["Resume", "Settings", "Return to Main Menu"];
+    buttonFunctions = [
+        function(widget, action){
+            ::Base.mExplorationLogic.setGamePaused(true);
+            closeScreen();
+        },
+        function(widget, action){
+            ::ScreenManager.queueTransition(Screen.SETTINGS_SCREEN, null, 3);
+        },
+        function(widget, action){
+            ::Base.mExplorationLogic.setGamePaused(false);
+            ::Base.mExplorationLogic.shutdown();
+            closeScreen();
+            ::ScreenManager.queueTransition(Screen.GAMEPLAY_MAIN_MENU_SCREEN);
+        }
+    ];
+    mButtons_ = null;
+
     function recreate(){
         mWindow_ = _gui.createWindow("PauseScreen");
         mWindow_.setSize(::drawable);
@@ -19,23 +37,7 @@
         title.setExpandHorizontal(true);
         layoutLine.addCell(title);
 
-        local buttonOptions = ["Resume", "Settings", "Return to Main Menu"];
-        local buttonFunctions = [
-            function(widget, action){
-                ::Base.mExplorationLogic.setGamePaused(true);
-                closeScreen();
-            },
-            function(widget, action){
-                ::ScreenManager.queueTransition(Screen.SETTINGS_SCREEN, null, 3);
-            },
-            function(widget, action){
-                ::Base.mExplorationLogic.setGamePaused(false);
-                ::Base.mExplorationLogic.shutdown();
-                closeScreen();
-                ::ScreenManager.queueTransition(Screen.GAMEPLAY_MAIN_MENU_SCREEN);
-            }
-        ]
-
+        mButtons_ = [];
         foreach(c,i in buttonOptions){
             local button = mWindow_.createButton();
             button.setDefaultFontSize(button.getDefaultFontSize() * 1.5);
@@ -45,6 +47,7 @@
             button.setMinSize(0, 100);
             layoutLine.addCell(button);
             if(c == 0) button.setFocus();
+            mButtons_.append(button);
         }
 
         layoutLine.setMarginForAllCells(0, ::ScreenManager.calculateRatio(20));
@@ -64,7 +67,8 @@
 
     function closeScreen(){
         ::ScreenManager.queueTransition(null, null, mLayerIdx);
-        ::Base.mExplorationLogic.setGamePaused(false);
+        //::Base.mExplorationLogic.setGamePaused(false);
+        ::Base.mExplorationLogic.unPauseExploration();
     }
 
     function update(){
