@@ -111,6 +111,11 @@
     constructor(worldId, preparer){
         base.constructor(worldId, preparer);
 
+        local requestedZoom = ::Base.mPlayerStats.getExplorationCurrentZoom();
+        if(requestedZoom != null){
+            mCurrentZoomLevel_ = requestedZoom;
+        }
+
         mCurrentFoundRegions_ = {};
         mRegionEntries_ = {};
     }
@@ -247,6 +252,7 @@
         if(_input.getButtonAction(::InputManager.zoomOut)){
             mCurrentZoomLevel_ += 0.5;
         }
+        ::Base.mPlayerStats.setExplorationCurrentZoom(mCurrentZoomLevel_);
 
         if(mCurrentZoomLevel_ < MIN_ZOOM) mCurrentZoomLevel_ = MIN_ZOOM;
 

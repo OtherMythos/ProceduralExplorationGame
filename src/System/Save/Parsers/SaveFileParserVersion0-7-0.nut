@@ -11,6 +11,7 @@
         print(_prettyPrint(mDefaultData_));
 
         mJSONSchema_.quest <- OBJECT_TYPE.ANY;
+        mJSONSchema_.playerZoom <- OBJECT_TYPE.FLOAT;
         updateData(mDefaultData_);
     }
 
@@ -18,6 +19,7 @@
     function updateData(data){
         data.version = getVersionString();
         data.quest <- {};
+        data.playerZoom <- 30.0;
         return data;
     }
 

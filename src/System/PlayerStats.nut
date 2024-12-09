@@ -94,6 +94,13 @@
         return mCurrentData_;
     }
 
+    function setExplorationCurrentZoom(zoom){
+        mCurrentData_.playerZoom = zoom;
+    }
+    function getExplorationCurrentZoom(){
+        return mCurrentData_.playerZoom;
+    }
+
     function addToInventory(item){
         mInventory_.addToInventory(item);
     }
