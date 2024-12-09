@@ -1,11 +1,13 @@
 ::BillboardManager.HealthBarBillboard <- class extends ::BillboardManager.Billboard{
 
-    constructor(parent, mask){
+    constructor(parent, mask, totalHealth){
         base.constructor(parent, mask);
-        local panel = ::GuiWidgets.ProgressBar(parent);
-        panel.setBorder(2);
+        local panel = ::GuiWidgets.GameplayProgressBar(parent);
+        panel.setBorder(0);
         //panel.setHidden(false);
-        panel.setSize(80, 10);
+        //local width = 2 + ((totalHealth * totalHealth) *0.002);
+        local width = 2 + (totalHealth / 2);
+        panel.setSize(width.tointeger(), 6);
         mPanel_ = panel;
 
         setPercentage(1.0);

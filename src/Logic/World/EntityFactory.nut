@@ -44,9 +44,9 @@
         return playerEntry;
     }
 
-    function constructBillboard_(entity, manager, node, screen){
+    function constructBillboard_(entity, manager, node, screen, maxHealth){
         local worldMask = (0x1 << mConstructorWorld_.getWorldId());
-        local billboard = ::BillboardManager.HealthBarBillboard(screen.mWindow_, worldMask);
+        local billboard = ::BillboardManager.HealthBarBillboard(screen.mWindow_, worldMask, maxHealth);
         local billboardIdx = screen.mWorldMapDisplay_.mBillboardManager_.trackNode(node, billboard);
         manager.assignComponent(entity, EntityComponents.BILLBOARD, ::EntityManager.Components[EntityComponents.BILLBOARD](billboardIdx));
     }
@@ -94,7 +94,7 @@
         local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(playerNode, healthBarBillboard);
         manager.assignComponent(en, EntityComponents.BILLBOARD, ::EntityManager.Components[EntityComponents.BILLBOARD](billboardIdx));
         */
-        constructBillboard_(en, manager, playerNode, explorationScreen);
+        constructBillboard_(en, manager, playerNode, explorationScreen, playerStats.getPlayerHealth());
         //_component.user[Component.MISC].add(en);
         //_component.user[Component.MISC].set(en, 0, billboardIdx);
 
@@ -118,9 +118,12 @@
         enemyNode.setScale(0.15, 0.15, 0.15);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](enemyNode, true));
 
-        manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](100));
+        local enemyStats = ::Enemies[EnemyId.BEE_HIVE].getStats();
+        local maxHealth = enemyStats.getHealth();
 
-        constructBillboard_(en, manager, enemyNode, explorationScreen);
+        manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](maxHealth));
+
+        constructBillboard_(en, manager, enemyNode, explorationScreen, maxHealth);
 
         local damageWorld = mConstructorWorld_.getDamageWorld();
         local damagePoint = damageWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_ENEMY);
@@ -152,6 +155,7 @@
 
     function constructEnemyBase_(enemyType, pos, explorationScreen){
         local enemyDef = ::Enemies[enemyType];
+        local enemyStats = enemyDef.getStats();
 
         local manager = mConstructorWorld_.getEntityManager();
         local zPos = getZForPos(pos);
@@ -191,7 +195,7 @@
 
         entry.setPosition(targetPos);
 
-        local totalHealth = 60;
+        local totalHealth = enemyStats.getHealth();
         manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](totalHealth));
 
         manager.assignComponent(en, EntityComponents.LIFETIME, ::EntityManager.Components[EntityComponents.LIFETIME](3000 + _random.randInt(100)));
@@ -202,7 +206,7 @@
         local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(enemyNode, billboard);
         manager.assignComponent(en, EntityComponents.BILLBOARD, ::EntityManager.Components[EntityComponents.BILLBOARD](billboardIdx));
         */
-        constructBillboard_(en, manager, enemyNode, explorationScreen);
+        constructBillboard_(en, manager, enemyNode, explorationScreen, totalHealth);
 
         //_component.script.add(en, "res://src/Content/Enemies/BasicEnemyScript.nut");
         local scriptObj = null;

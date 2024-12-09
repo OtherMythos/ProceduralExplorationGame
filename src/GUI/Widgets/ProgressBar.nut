@@ -12,17 +12,20 @@
     mParentContainer_ = null;
     mChildBar_ = null;
 
+    BACKGROUND_DATABLOCK = "gui/progressBarBackground";
+    BAR_DATABLOCK = "gui/progressBarRed";
+
     constructor(parent){
         mParentWin_ = parent;
         mSize_ = Vec2(200, 40);
 
         mParentContainer_ = parent.createPanel();
         mParentContainer_.setSize(mSize_);
-        mParentContainer_.setDatablock("gui/progressBarBackground");
+        mParentContainer_.setDatablock(BACKGROUND_DATABLOCK);
 
         mChildBar_ = parent.createPanel();
         mChildBar_.setSize(mSize_);
-        mChildBar_.setDatablock("gui/progressBarRed");
+        mChildBar_.setDatablock(BAR_DATABLOCK);
 
         mParentContainer_.setClickable(false);
         mChildBar_.setClickable(false);
