@@ -19,8 +19,10 @@
         }
     }
 
-    function destroyed(eid){
-        spawnBee();
+    function destroyed(eid, reason){
+        if(reason == EntityDestroyReason.NO_HEALTH){
+            spawnBee();
+        }
         //TODO This is responsible for calling destruction for models, which breaks from the ECS design pattern.
         ::Base.mExplorationLogic.notifyEnemyDestroyed(eid);
     }

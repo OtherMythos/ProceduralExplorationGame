@@ -9,6 +9,10 @@ _tIntegration("MainMenuToCompleteExplorationThenRestart", "Move from the main me
             "steps": ::_testHelper.STEPS_MAIN_MENU_TO_EXPLORATION_GAMEPLAY
         },
         function(){
+            ::_testHelper.waitFrames(100);
+            ::Base.mExplorationLogic.mCurrentWorld_.findAllRegions();
+        },
+        function(){
             ::_testHelper.waitFrames(300);
             ::Base.mExplorationLogic.gatewayEndExploration();
             ::_testHelper.queryWindowExists("ExplorationEndScreen");

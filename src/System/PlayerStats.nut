@@ -52,7 +52,7 @@
         local questManager = ::Base.mQuestManager;
         foreach(c,i in questTable){
             local q = questManager.getQuestForName(c);
-            if(c == null) continue;
+            if(q == null) continue;
             foreach(cc,ii in i){
                 q.setEntry(cc, ii);
             }

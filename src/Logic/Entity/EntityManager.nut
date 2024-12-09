@@ -196,6 +196,9 @@ EntityManager.EntityManager <- class{
             mVersions_[c]++;
             mFreeList_.append(c);
         }
+        foreach(c,i in mEntityComponentHashes_){
+            assert(i == null);
+        }
     }
 
     function assignComponent(eid, compType, component){
@@ -338,7 +341,7 @@ EntityManager.EntityManager <- class{
                 }
                 else if(i == EntityComponents.SCRIPT){
                     if("destroyed" in component.mScript){
-                        component.mScript.destroyed(eid);
+                        component.mScript.destroyed(eid, reason);
                     }
                 }
                 else if(i == EntityComponents.BILLBOARD){
