@@ -26,10 +26,10 @@
         local entry = mStates_[state];
         assert(entry != null);
         mStateInstance_ = entry();
+        mCurrentState_ = state;
         if(entry != null){
             mStateInstance_.start(this);
         }
-        mCurrentState_ = state;
 
         return true;
     }
