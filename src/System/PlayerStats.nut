@@ -169,6 +169,9 @@
     function getPlayerHealth(){
         return mPlayerCombatStats.mHealth;
     }
+    function getPlayerMaxHealth(){
+        return mPlayerCombatStats.mMaxHealth;
+    }
     function getPlayerHealthPercentage(){
         return mPlayerCombatStats.getHealthPercentage();
     }

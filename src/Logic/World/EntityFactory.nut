@@ -49,6 +49,7 @@
         local billboard = ::BillboardManager.HealthBarBillboard(screen.mWindow_, worldMask, maxHealth);
         local billboardIdx = screen.mWorldMapDisplay_.mBillboardManager_.trackNode(node, billboard);
         manager.assignComponent(entity, EntityComponents.BILLBOARD, ::EntityManager.Components[EntityComponents.BILLBOARD](billboardIdx));
+        return billboard;
     }
 
     function constructPlayer(explorationScreen, playerStats){
@@ -94,11 +95,12 @@
         local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(playerNode, healthBarBillboard);
         manager.assignComponent(en, EntityComponents.BILLBOARD, ::EntityManager.Components[EntityComponents.BILLBOARD](billboardIdx));
         */
-        constructBillboard_(en, manager, playerNode, explorationScreen, playerStats.getPlayerHealth());
+        local playerBillboard = constructBillboard_(en, manager, playerNode, explorationScreen, playerStats.getPlayerMaxHealth());
         //_component.user[Component.MISC].add(en);
         //_component.user[Component.MISC].set(en, 0, billboardIdx);
 
         manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](playerStats.getPlayerHealth()));
+        playerBillboard.setHealth(playerStats.getPlayerHealth());
 
         //_component.script.add(en, "res://src/Content/Enemies/PlayerScript.nut");
 

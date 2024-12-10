@@ -484,8 +484,8 @@ enum WorldMousePressContexts{
     function resetSession(){
         mPlayerEntry_ = mEntityFactory_.constructPlayer(mGui_, ::Base.mPlayerStats);
         local data = {
-            "health": ::Base.mPlayerStats.mPlayerCombatStats.mMaxHealth,
-            "percentage": ::Base.mPlayerStats.mPlayerCombatStats.getHealthPercentage()
+            "health": ::Base.mPlayerStats.getPlayerHealth(),
+            "percentage": ::Base.mPlayerStats.getPlayerHealthPercentage()
         };
         _event.transmit(Event.PLAYER_HEALTH_CHANGED, data);
 
