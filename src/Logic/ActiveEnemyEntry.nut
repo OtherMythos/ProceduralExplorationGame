@@ -362,7 +362,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
             if(newHealth <= 0){
                 mCreatorWorld_.mGui_.mWorldMapDisplay_.mBillboardManager_.untrackNode(billboardIdx);
             }else{
-                mCreatorWorld_.mGui_.mWorldMapDisplay_.mBillboardManager_.updateHealth(billboardIdx, newPercentage);
+                mCreatorWorld_.mGui_.mWorldMapDisplay_.mBillboardManager_.updateHealth(billboardIdx, newHealth);
             }
         }
     }

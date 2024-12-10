@@ -62,8 +62,8 @@
         }
     }
 
-    function updateHealth(id, healthPercent){
-        mTrackedNodes_[id].mBillboard.setPercentage(healthPercent);
+    function updateHealth(id, newHealth){
+        mTrackedNodes_[id].mBillboard.setHealth(newHealth);
     }
     function setVisible(id, visible){
         mTrackedNodes_[id].mBillboard.setVisible(visible);
