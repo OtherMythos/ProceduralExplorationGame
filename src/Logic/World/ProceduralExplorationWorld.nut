@@ -500,6 +500,14 @@
         regionDiscoveredSpawnEnemy(regionEntry, pos);
         //createEnemy(EnemyId.GOBLIN, pos);
         //print(regionEntry.coords);
+
+        local targetBiome = ::MapGenHelpers.getBiomeForRegionType(regionEntry.type);
+        local discoveredData = ::Base.mPlayerStats.processBiomeDiscovered(targetBiome);
+        if(discoveredData != null){
+            local biomeData = ::Biomes[targetBiome];
+            //print("Discovered " + biomeData.getName());
+            ::PopupManager.displayPopup(::PopupManager.PopupData(Popup.REGION_DISCOVERED, biomeData));
+        }
     }
     function discoverRegion(regionId){
         if(regionId > 0 && regionId < mMapData_.regionData.len()){

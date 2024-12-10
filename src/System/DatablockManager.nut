@@ -5,9 +5,16 @@
 ::DatablockManager <- {
 
     mTrackedDatablocks_ = {}
+    mCount_ = 0
 
     function setup(){
 
+    }
+
+    function quickCloneDatablock(blockName){
+        local block = cloneDatablock(blockName, mCount_);
+        mCount_++;
+        return block;
     }
 
     function cloneDatablock(baseBlockName, uniqueId){

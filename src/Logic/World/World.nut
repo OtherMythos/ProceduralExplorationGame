@@ -966,7 +966,7 @@ enum WorldMousePressContexts{
     function appearEnemy(pos){
         local regionId = ::MapGenHelpers.getRegionForData(mMapData_, pos);
         local regionData = mMapData_.regionData[regionId];
-        local targetBiome = ::MapGenHelpers.getBiomeForRegionType(regionData.type);
+        local targetBiome = ::Biomes[::MapGenHelpers.getBiomeForRegionType(regionData.type)];
         local spawnable = targetBiome.mSpawnableEnemies;
         if(spawnable.len() <= 0) return;
         local idx = _random.randIndex(spawnable);

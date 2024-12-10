@@ -66,6 +66,12 @@
             "diffuse" : [0, 0, 0, 0.3]
         },
 
+        "gui/basicTransparent" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse" : [0, 0, 0, 0.0]
+        },
+
         "unlitBlack" :
         {
             "diffuse": [0, 0, 0, 1]

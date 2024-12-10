@@ -34,7 +34,9 @@
                 ::PopupManager.displayPopup(Popup.TOP_RIGHT_OF_SCREEN);
             },
             function(widget, action){
-                ::PopupManager.displayPopup(Popup.REGION_DISCOVERED);
+                //::PopupManager.displayPopup(Popup.REGION_DISCOVERED);
+
+                ::PopupManager.displayPopup(::PopupManager.PopupData(Popup.REGION_DISCOVERED, ::Biomes[BiomeId.DESERT]));
             },
             function(widget, action){
                 ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"numCoins": 10, "start": Vec2(0, 0), "end": Vec2(-2, 0), "money": 10}));

@@ -173,6 +173,13 @@
         return mPlayerCombatStats.getHealthPercentage();
     }
 
+    function processBiomeDiscovered(biomeId){
+        if(biomeId == BiomeId.GRASS_FOREST || biomeId == BiomeId.GRASS_LAND){
+            return null;
+        }
+        return {"level": 0};
+    }
+
     function processPlayerDeath(){
 
     }

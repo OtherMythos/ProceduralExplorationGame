@@ -5,9 +5,11 @@
     mCurrentFontSize_ = 0;
 
     mLabel_ = null;
+    mUnderline_ = null;
+    mUnderlineDatablock_ = null;
 
-    function setup(regionType){
-        mLifespan = 150;
+    function setup(biomeData){
+        setLifespan(320);
         mFadeInTimer_ = mTotalFadeIn_;
         mForceSingleInstance = true;
 
@@ -17,13 +19,19 @@
         mPopupWin_.setConsumeCursor(false);
 
         local label = mPopupWin_.createLabel();
-        local currentFontSize = label.getDefaultFontSize() * 3;
+        local currentFontSize = label.getDefaultFontSize() * 2;
         label.setDefaultFontSize(currentFontSize);
         label.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
-        label.setText(getLabelForRegionType(regionType));
+        label.setText(getLabelForRegionType(biomeData));
         label.setShadowOutline(true, ColourValue(0, 0, 0), Vec2(2, 2));
         mLabel_ = label;
         mCurrentFontSize_ = currentFontSize;
+
+        local underline = mPopupWin_.createPanel();
+        mUnderlineDatablock_ = ::DatablockManager.quickCloneDatablock("gui/basicTransparent");
+        mUnderlineDatablock_.setColour(1, 1, 1, 1);
+        underline.setDatablock(mUnderlineDatablock_);
+        mUnderline_ = underline;
 
         //local targetSize = Vec2(_window.getWidth() * 0.9, 200);
         local targetSize = Vec2(_window.getWidth(), _window.getHeight());
@@ -32,43 +40,59 @@
         setSize(targetSize);
     }
 
-    function getLabelForRegionType(regionType){
+    function getLabelForRegionType(biomeData){
+        if(biomeData == null){
+            return "Discovered a place";
+        }
+        return "Discovered " + biomeData.getName();
+        /*
         if(regionType == RegionType.EXP_FIELDS) return "Discovered the EXP Fields";
         else if(regionType == RegionType.CHERRY_BLOSSOM_FOREST) return "Discovered the Cherry Blossom Forest";
-
-        return "Discovered a place";
+        */
     }
 
     function update(){
-        local doneFadeIn = animateFadeIn();
-        if(doneFadeIn){
-            return tickTimer();
-        }
-        return true;
+        animateFadeIn();
+        return tickTimer();
     }
 
     function animateFadeIn(){
-        if(mFadeInTimer_ <= 0) return true;
+        //if(mFadeInTimer_ <= 0) return true;
 
         //Fade in opacity.
-        local currentPercentage = 1.0-(mFadeInTimer_.tofloat() / mTotalFadeIn_.tofloat());
+        //local currentPercentage = 1.0-(mFadeInTimer_.tofloat() / mTotalFadeIn_.tofloat());
+        local currentPercentage = percentageForFramesAnim(0, 30, PopupAnimType.EASE_OUT_QUART);
         mLabel_.setTextColour(ColourValue(1, 1, 1, currentPercentage));
         mLabel_.setShadowOutline(true, ColourValue(0, 0, 0, currentPercentage), Vec2(2, 2));
         local animVal = 1.0-((pow(1 - currentPercentage, 2)));
         //print("anim val " + (animVal));
-        mLabel_.setDefaultFontSize(mCurrentFontSize_ * animVal);
+        //mLabel_.setDefaultFontSize(mCurrentFontSize_ * animVal);
         mLabel_.sizeToFit(_window.getWidth());
 
         //Fade in position.
         //local pos = getIntendedPosition();
         //pos = Vec2(0, 500 - (currentPercentage * (20 * (mCurrentFontSize_ * labelOpacity))));
-        local animVal = 1.0-((pow(1 - currentPercentage, 4)));
-        local pos = Vec2(_window.getWidth() / 2, 500 - animVal * 200);
-        mLabel_.setCentre(pos);
+        //local animVal = 1.0-((pow(1 - currentPercentage, 4)));
+        local pos = Vec2(_window.getWidth() / 2 - mLabel_.getSize().x / 2 - (20 - animVal * 20), 50);
+        mLabel_.setPosition(pos);
+        //mLabel_.setCentre(pos);
         //mPopupWin_.setPosition(pos);
         //mLabel_.setPosition(pos);
 
-        mFadeInTimer_--;
+        local linePercentage = percentageForFramesAnim(0, 300, PopupAnimType.EASE_OUT_QUART);
+        local s = mLabel_.getSize();
+        local p = mLabel_.getPosition();
+        local offset = (mLabel_.getSize().x) * 0.05;
+        mUnderline_.setSize((mLabel_.getSize().x + offset * 2) * linePercentage, 4);
+        mUnderline_.setPosition(p.x - offset, p.y + s.y*0.9);
+
+        local fadeOutPercentage = percentageForFramesAnim(280, 320, PopupAnimType.EASE_OUT_QUART);
+        if(fadeOutPercentage > 0){
+            mLabel_.setTextColour(1, 1, 1, 1-fadeOutPercentage);
+            mUnderlineDatablock_.setColour(1, 1, 1, 1-fadeOutPercentage);
+        }
+
+        //mFadeInTimer_--;
         return false;
     }
 
@@ -78,7 +102,8 @@
     }
 
     function getIntendedPosition(){
-        return Vec2(_window.getWidth() * 0.05, _window.getHeight() * 0.1);
+        return Vec2();
+        //return Vec2(_window.getWidth() * 0.05, _window.getHeight() * 0.1);
     }
 
 };

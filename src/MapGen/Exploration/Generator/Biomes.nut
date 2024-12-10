@@ -1,18 +1,22 @@
 local Biome = class{
+    mName = null;
     mSpawnableEnemies = null;
-    constructor(spawnableEnemies){
+    constructor(name, spawnableEnemies){
+        mName = name;
         mSpawnableEnemies = spawnableEnemies;
     }
+
+    function getName() { return mName; }
 };
 
 ::Biomes <- array(BiomeId.MAX, null);
 
-::Biomes[BiomeId.NONE] = Biome([]);
+::Biomes[BiomeId.NONE] = Biome("None", []);
 
-::Biomes[BiomeId.GRASS_LAND] = Biome([EnemyId.GOBLIN]);
-::Biomes[BiomeId.GRASS_FOREST] = Biome([EnemyId.GOBLIN]);
-::Biomes[BiomeId.CHERRY_BLOSSOM_FOREST] = Biome([EnemyId.FOREST_GUARDIAN]);
-::Biomes[BiomeId.EXP_FIELD] = Biome([]);
-::Biomes[BiomeId.DESERT] = Biome([EnemyId.SKELETON]);
-::Biomes[BiomeId.SHALLOW_OCEAN] = Biome([EnemyId.SQUID]);
-::Biomes[BiomeId.DEEP_OCEAN] = Biome([EnemyId.SQUID]);
+::Biomes[BiomeId.GRASS_LAND] = Biome("Grass Land", [EnemyId.GOBLIN]);
+::Biomes[BiomeId.GRASS_FOREST] = Biome("Grass Forest", [EnemyId.GOBLIN]);
+::Biomes[BiomeId.CHERRY_BLOSSOM_FOREST] = Biome("Cherry Blossom Forest", [EnemyId.FOREST_GUARDIAN]);
+::Biomes[BiomeId.EXP_FIELD] = Biome("EXP Field", []);
+::Biomes[BiomeId.DESERT] = Biome("Desert", [EnemyId.SKELETON]);
+::Biomes[BiomeId.SHALLOW_OCEAN] = Biome("Shallow Ocean", [EnemyId.SQUID]);
+::Biomes[BiomeId.DEEP_OCEAN] = Biome("Deep Ocean", [EnemyId.SQUID]);
