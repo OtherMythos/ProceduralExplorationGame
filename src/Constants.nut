@@ -170,6 +170,8 @@ enum Event{
     ACTIONS_CHANGED = 1025,
     SYSTEM_SETTINGS_CHANGED = 1026,
 
+    BIOME_DISCOVER_STATS_CHANGED = 1027
+
 }
 
 enum FoundObjectType{

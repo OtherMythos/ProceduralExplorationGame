@@ -40,6 +40,18 @@
             _constructLabel();
         }
         mLabelObject_.setText(mLabel_);
+        positionLabel_();
+    }
+
+    function setLabelShadow(colour, offset=null){
+        if(mLabelObject_ == null){
+            throw "Label does not exist";
+        }
+        if(colour == null){
+            mLabelObject_.setShadowOutline(false);
+            return;
+        }
+        mLabelObject_.setShadowOutline(true, colour, offset);
     }
 
     function setZOrder(zOrder){

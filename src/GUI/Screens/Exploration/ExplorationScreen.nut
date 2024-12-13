@@ -29,6 +29,7 @@ enum ExplorationScreenWidgetType{
     mCurrentPlace_ = null;
     mScrapAllButton_ = null;
     mWieldActiveButton = null;
+    mDiscoverLevelUpScreen_ = null;
 
     mScreenInputCheckList_ = null;
 
@@ -82,6 +83,90 @@ enum ExplorationScreenWidgetType{
             local statsString = data.getStatsString();
             displayWorldStats(statsString);
         }
+    };
+
+    DiscoverLevelUpScreen = class{
+        mParent_ = null;
+        mWindow_ = null;
+
+        mBar_ = null;
+        mLabel_ = null;
+
+        mFrame_ = 0;
+        mPercentAnimCurrent_ = 0;
+        mPercentAnimFinal_ = 0;
+        mFutureLevel_ = 0;
+        mCompleteLevel_ = 0;
+
+        constructor(parent){
+            mParent_ = parent;
+        }
+        function setup(){
+            mWindow_ = mParent_.createWindow("WorldDiscoverLevelUpScreen");
+            mWindow_.setSize(200, 200);
+            mWindow_.setPosition(0, 400);
+            mWindow_.setVisualsEnabled(false);
+            mWindow_.setSkinPack("WindowSkinNoBorder");
+            mWindow_.setVisible(false);
+
+            local layoutLine = _gui.createLayoutLine();
+
+            mLabel_ = mWindow_.createLabel();
+            mLabel_.setText("test");
+            layoutLine.addCell(mLabel_);
+
+            mBar_ = ::GuiWidgets.TwoBarProgressBar(mWindow_);
+            mBar_.setPercentage(0);
+            mBar_.setSecondaryPercentage(0);
+            mBar_.setSize(200, 40);
+            mBar_.addToLayout(layoutLine);
+
+            layoutLine.layout();
+            mBar_.notifyLayout();
+
+            _event.subscribe(Event.BIOME_DISCOVER_STATS_CHANGED, biomeStatsChanged, this);
+        }
+        function update(){
+            mFrame_++;
+            if(mFrame_ > 300) return;
+            if(mFrame_ == 300){
+                mWindow_.setVisible(false);
+                return;
+            }
+            if(mFrame_ == 100){
+                setLabel(mFutureLevel_, mCompleteLevel_);
+            }
+            if(mFrame_ > 100){
+                if(mPercentAnimCurrent_ <= mPercentAnimFinal_){
+                    mPercentAnimCurrent_+=0.005;
+                    mBar_.setSecondaryPercentage(mPercentAnimCurrent_);
+                }
+            }
+
+        }
+        function shutdown(){
+            _event.unsubscribe(Event.BIOME_DISCOVER_STATS_CHANGED, biomeStatsChanged, this);
+        }
+
+        function setLabel(current, total){
+            mBar_.setLabel(format("%i/%i", current, total));
+            mBar_.setLabelShadow(ColourValue(0, 0, 0), Vec2(2, 2));
+        }
+
+        function biomeStatsChanged(id, data){
+            mLabel_.setText(data.biome.getName());
+            mBar_.setPercentage(data.percentageCurrent);
+            mBar_.setSecondaryPercentage(data.percentageCurrent);
+            mFutureLevel_ = data.levelProgress;
+            mCompleteLevel_ = data.completeLevel;
+            setLabel(mFutureLevel_-1, mCompleteLevel_);
+            mPercentAnimCurrent_ = data.percentageCurrent;
+            mPercentAnimFinal_ = data.percentageFuture;
+            mFrame_ = 0;
+            mWindow_.setSize(mWindow_.calculateChildrenSize());
+            mWindow_.setVisible(true);
+        }
+
     };
 
     function setup(data){
@@ -166,6 +251,9 @@ enum ExplorationScreenWidgetType{
         mWorldStatsScreen_ = WorldStatsScreen(mWindow_);
         checkWorldStatsVisible();
 
+        mDiscoverLevelUpScreen_ = DiscoverLevelUpScreen(mWindow_);
+        mDiscoverLevelUpScreen_.setup();
+
         if(::Base.isProfileActive(GameProfile.SCREENSHOT_MODE)){
             mExplorationStatsContainer_.setVisible(false);
             mExplorationMovesContainer_.setVisible(false);
@@ -203,6 +291,7 @@ enum ExplorationScreenWidgetType{
         mExplorationMovesContainer_.update();
         mExplorationStatsContainer_.update();
         mWorldMapDisplay_.update();
+        mDiscoverLevelUpScreen_.update();
 
         mTooltipManager_.update();
     }
@@ -285,6 +374,7 @@ enum ExplorationScreenWidgetType{
         //mLogicInterface_.notifyLeaveExplorationScreen();
         mExplorationStatsContainer_.shutdown();
         mWorldMapDisplay_.shutdown();
+        mDiscoverLevelUpScreen_.shutdown();
         mExplorationPlayerActionsContainer_.shutdown();
         base.shutdown();
     }

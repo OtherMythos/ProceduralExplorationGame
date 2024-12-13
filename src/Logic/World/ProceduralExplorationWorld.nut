@@ -507,6 +507,8 @@
             local biomeData = ::Biomes[targetBiome];
             //print("Discovered " + biomeData.getName());
             ::PopupManager.displayPopup(::PopupManager.PopupData(Popup.REGION_DISCOVERED, biomeData));
+            discoveredData.biome <- biomeData;
+            _event.transmit(Event.BIOME_DISCOVER_STATS_CHANGED, discoveredData);
         }
     }
     function discoverRegion(regionId){

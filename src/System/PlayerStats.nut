@@ -180,7 +180,34 @@
         if(biomeId == BiomeId.GRASS_FOREST || biomeId == BiomeId.GRASS_LAND){
             return null;
         }
-        return {"level": 0};
+        local biomeData = ::Biomes[biomeId];
+        local biomeName = biomeData.getName();
+        if(!mCurrentData_.discoveredBiomes.rawin(biomeName)){
+            mCurrentData_.discoveredBiomes.rawset(biomeName, {
+                "foundAmount": 0
+            });
+        }
+        local d = mCurrentData_.discoveredBiomes.rawget(biomeName);
+
+        local div = 4;
+
+        d.foundAmount++;
+
+        local targetFoundAmount = d.foundAmount;
+        // if(targetFoundAmount % div == 0){
+        //     targetFoundAmount = d.foundAmount;
+        // }
+
+        local newLevel = (d.foundAmount / div).tointeger();
+        local percentageFuture = (d.foundAmount % div).tofloat() / div;
+        local percentageCurrent = ((d.foundAmount-1) % div).tofloat() / div;
+        return {
+            "level": newLevel,
+            "levelProgress": targetFoundAmount,
+            "completeLevel": div,
+            "percentageCurrent": percentageCurrent,
+            "percentageFuture": percentageFuture,
+        };
     }
 
     function processPlayerDeath(){
