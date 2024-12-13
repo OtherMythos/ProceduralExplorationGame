@@ -35,6 +35,8 @@ local ObjAnim = class{
         mTotalCount_ = 1
         mNextState_ = ExplorationScreenComponents.TITLE;
         function start(data){
+            ::Base.mPlayerStats.commitForExplorationSuccess();
+
             local c = data.components;
             c[ExplorationScreenComponents.TITLE].setVisible(false);
             foreach(i in c[ExplorationScreenComponents.TEXT_ENTRIES]) { i.setVisible(false); }

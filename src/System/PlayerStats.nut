@@ -11,9 +11,12 @@
 
     mPlayerCombatStats = null;
 
+    mCurrentExplorationStats_ = null;
+
     constructor(){
         _event.subscribe(Event.PLACE_VISITED, receivePlaceVisitedEvent, this);
         _event.subscribe(Event.PLAYER_DIED, receivePlayerDiedEvent, this);
+        _event.subscribe(Event.GAMEPLAY_SESSION_STARTED, receiveGameplaySessionStarted, this);
 
         mPlacesVisited_ = array(PlaceId.MAX, false);
         mLeanPlacesVisited_ = [];
@@ -26,6 +29,7 @@
     function shutdown(){
         _event.unsubscribe(Event.PLACE_VISITED, receivePlaceVisitedEvent, this);
         _event.unsubscribe(Event.PLAYER_DIED, receivePlayerDiedEvent, this);
+        _event.unsubscribe(Event.GAMEPLAY_SESSION_STARTED, receiveGameplaySessionStarted, this);
     }
 
     function _tostring(){
@@ -166,6 +170,24 @@
         mPlayerCombatStats.setHealthToMax();
     }
 
+    function receiveGameplaySessionStarted(id, data){
+        mCurrentExplorationStats_ = {
+            "discoveredBiomes": {}
+        };
+    }
+
+    function commitForExplorationSuccess(){
+        foreach(c,i in mCurrentExplorationStats_.discoveredBiomes){
+            if(!mCurrentData_.discoveredBiomes.rawin(c)){
+                mCurrentData_.discoveredBiomes.rawset(c, {
+                    "foundAmount": 0
+                });
+            }
+            local d = mCurrentData_.discoveredBiomes.rawget(c);
+            d.foundAmount += i.foundAmount;
+        }
+    }
+
     function getPlayerHealth(){
         return mPlayerCombatStats.mHealth;
     }
@@ -176,18 +198,34 @@
         return mPlayerCombatStats.getHealthPercentage();
     }
 
+    function getLevelForCount(count){
+        if(count == 0) return 0;
+        local counter = count;
+        local level = 1;
+        local idx = 1;
+        while(true){
+            counter -= level;
+            if(counter <= 0){
+                return idx;
+            }
+            level *= 2;
+            idx++;
+        }
+    }
+
     function processBiomeDiscovered(biomeId){
         if(biomeId == BiomeId.GRASS_FOREST || biomeId == BiomeId.GRASS_LAND){
             return null;
         }
+
         local biomeData = ::Biomes[biomeId];
         local biomeName = biomeData.getName();
-        if(!mCurrentData_.discoveredBiomes.rawin(biomeName)){
-            mCurrentData_.discoveredBiomes.rawset(biomeName, {
+        if(!mCurrentExplorationStats_.discoveredBiomes.rawin(biomeName)){
+            mCurrentExplorationStats_.discoveredBiomes.rawset(biomeName, {
                 "foundAmount": 0
             });
         }
-        local d = mCurrentData_.discoveredBiomes.rawget(biomeName);
+        local d = mCurrentExplorationStats_.discoveredBiomes.rawget(biomeName);
 
         local div = 4;
 

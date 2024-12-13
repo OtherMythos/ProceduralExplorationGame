@@ -118,6 +118,9 @@
 
         mCurrentFoundRegions_ = {};
         mRegionEntries_ = {};
+
+        //TODO consider moving this somewhere else.
+        _event.transmit(Event.GAMEPLAY_SESSION_STARTED, null);
     }
 
     function getMapData(){
