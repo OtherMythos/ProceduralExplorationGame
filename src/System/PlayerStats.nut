@@ -213,6 +213,38 @@
         }
     }
 
+    function getTotalForLevel(level){
+        if(level == 0){
+            return 0;
+        }
+        else if(level == 1){
+            return 1;
+        }
+
+        return pow(2, level-1);
+    }
+
+    function getCompleteForLevel(level){
+        if(level == 0){
+            return 0;
+        }
+        else if(level == 1){
+            return 1;
+        }
+
+        local val = 0;
+        for(local i = 0; i < level; i++){
+            val += pow(2, i);
+        }
+        return val;
+    }
+
+    function getLevelTotalForCount(count){
+        local levelForCount = getLevelForCount(count);
+
+        return getTotalForLevel(levelForCount);
+    }
+
     function processBiomeDiscovered(biomeId){
         if(biomeId == BiomeId.GRASS_FOREST || biomeId == BiomeId.GRASS_LAND){
             return null;
@@ -226,23 +258,36 @@
             });
         }
         local d = mCurrentExplorationStats_.discoveredBiomes.rawget(biomeName);
-
-        local div = 4;
-
         d.foundAmount++;
 
-        local targetFoundAmount = d.foundAmount;
-        // if(targetFoundAmount % div == 0){
-        //     targetFoundAmount = d.foundAmount;
-        // }
+        local outData = clone d;
 
-        local newLevel = (d.foundAmount / div).tointeger();
-        local percentageFuture = (d.foundAmount % div).tofloat() / div;
-        local percentageCurrent = ((d.foundAmount-1) % div).tofloat() / div;
+        //Add that to the existing count.
+        if(mCurrentData_.discoveredBiomes.rawin(biomeName)){
+            outData.foundAmount += mCurrentData_.discoveredBiomes.rawget(biomeName).foundAmount;
+        }
+
+        return getBiomeDiscoveredData(outData);
+    }
+
+    function getBiomeDiscoveredData(discoveredData){
+
+        assert(discoveredData.foundAmount != 0);
+        local levelForCount = getLevelForCount(discoveredData.foundAmount);
+        local total  = getCompleteForLevel(levelForCount-1);
+        //local total = getLevelTotalForCount(discoveredData.foundAmount);
+        local newTotal = discoveredData.foundAmount - total;
+        local full = getTotalForLevel(levelForCount+1) - getTotalForLevel(levelForCount);
+
+        local targetFoundAmount = discoveredData.foundAmount;
+
+        local percentageFuture = (newTotal % full).tofloat() / full;
+        if(percentageFuture == 0) percentageFuture = 1.0;
+        local percentageCurrent = ((newTotal-1) % full).tofloat() / full;
         return {
-            "level": newLevel,
-            "levelProgress": targetFoundAmount,
-            "completeLevel": div,
+            "level": levelForCount,
+            "levelProgress": newTotal,
+            "completeLevel": full,
             "percentageCurrent": percentageCurrent,
             "percentageFuture": percentageFuture,
         };
