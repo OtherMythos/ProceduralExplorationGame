@@ -177,6 +177,7 @@
     }
 
     function commitForExplorationSuccess(){
+        if(mCurrentExplorationStats_ == null) return;
         foreach(c,i in mCurrentExplorationStats_.discoveredBiomes){
             if(!mCurrentData_.discoveredBiomes.rawin(c)){
                 mCurrentData_.discoveredBiomes.rawset(c, {
@@ -348,6 +349,7 @@
     }
 
     function getLevel(){
+        if(mCurrentData_ == null) return 0;
         return getLevelForEXP_(mCurrentData_.playerEXP);
     }
 
@@ -374,6 +376,16 @@
         return percentage;
     }
     function addEXP(exp){
+        if(mCurrentData_ == null){
+            return {
+                "startLevel": 0,
+                "endLevel": 0,
+                "startPercentage": 0,
+                "endPercentage": 0,
+                "startEXP": 0,
+                "endEXP": 0
+            };
+        }
         local prevEXP = mCurrentData_.playerEXP;
         local prevLevel = getLevelForEXP_(prevEXP);
         mCurrentData_.playerEXP += exp;
