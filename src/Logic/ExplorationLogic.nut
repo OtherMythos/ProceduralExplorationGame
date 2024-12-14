@@ -198,6 +198,7 @@
         shutdown();
         setup();
 
+        //TODO this duplicates some logic stored in the player stats class.
         mExplorationStats_ = {
             "explorationTimeTaken": 0,
             "totalDiscoveredPlaces": 0,
@@ -323,7 +324,22 @@
     function gatewayEndExploration(){
         pauseExploration();
         mCurrentTimer_.stop();
+
+        local result = null;
+        {
+            result = clone ::Base.mPlayerStats.mCurrentExplorationStats_.discoveredBiomes;
+
+            local totalBiomes = ::Base.mPlayerStats.mCurrentData_.discoveredBiomes;
+            //Determine the numbers to pass
+            foreach(c,i in result){
+                if(!totalBiomes.rawin(c)) continue;
+                i.foundAmount += totalBiomes.rawget(c).foundAmount;
+            }
+        }
+        ::Base.mPlayerStats.commitForExplorationSuccess();
+
         mExplorationStats_.explorationTimeTaken = mCurrentTimer_.getSeconds();
+        mExplorationStats_.rawset("discoveredBiomes", result);
         ::Base.mPlayerStats.processExplorationSuccess();
         if(mGui_) mGui_.notifyGatewayEnd(mExplorationStats_);
     }

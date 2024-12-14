@@ -90,7 +90,8 @@ enum ExplorationScreenWidgetType{
         mWindow_ = null;
 
         mBar_ = null;
-        mLabel_ = null;
+        //mBar_ = null;
+        //mLabel_ = null;
 
         mFrame_ = 0;
         mPercentAnimCurrent_ = 0;
@@ -111,6 +112,7 @@ enum ExplorationScreenWidgetType{
 
             local layoutLine = _gui.createLayoutLine();
 
+            /*
             mLabel_ = mWindow_.createLabel();
             mLabel_.setText("test");
             layoutLine.addCell(mLabel_);
@@ -119,6 +121,10 @@ enum ExplorationScreenWidgetType{
             mBar_.setPercentage(0);
             mBar_.setSecondaryPercentage(0);
             mBar_.setSize(200, 40);
+            mBar_.addToLayout(layoutLine);
+            */
+
+            mBar_ = ::GuiWidgets.ExplorationDiscoverLevelBarWidget(mWindow_);
             mBar_.addToLayout(layoutLine);
 
             layoutLine.layout();
@@ -134,7 +140,7 @@ enum ExplorationScreenWidgetType{
                 return;
             }
             if(mFrame_ == 100){
-                setLabel(mFutureLevel_, mCompleteLevel_);
+                mBar_.setCounter(mFutureLevel_, mCompleteLevel_);
             }
             if(mFrame_ > 100){
                 if(mPercentAnimCurrent_ <= mPercentAnimFinal_){
@@ -148,18 +154,20 @@ enum ExplorationScreenWidgetType{
             _event.unsubscribe(Event.BIOME_DISCOVER_STATS_CHANGED, biomeStatsChanged, this);
         }
 
+        /*
         function setLabel(current, total){
             mBar_.setLabel(format("%i/%i", current, total));
             mBar_.setLabelShadow(ColourValue(0, 0, 0), Vec2(2, 2));
         }
+        */
 
         function biomeStatsChanged(id, data){
-            mLabel_.setText(data.biome.getName());
+            mBar_.setText(data.biome.getName());
             mBar_.setPercentage(data.percentageCurrent);
             mBar_.setSecondaryPercentage(data.percentageCurrent);
             mFutureLevel_ = data.levelProgress;
             mCompleteLevel_ = data.completeLevel;
-            setLabel(mFutureLevel_-1, mCompleteLevel_);
+            mBar_.setCounter(mFutureLevel_-1, mCompleteLevel_);
             mPercentAnimCurrent_ = data.percentageCurrent;
             mPercentAnimFinal_ = data.percentageFuture;
             mFrame_ = 0;

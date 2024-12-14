@@ -5,6 +5,7 @@ enum ExplorationScreenComponents{
     TEXT_ENTRIES,
     LEVEL_INDICATOR,
     EXP_PROGRESS,
+    DISCOVERED_LEVELS,
     END_BUTTONS,
 
     MAX
@@ -35,8 +36,6 @@ local ObjAnim = class{
         mTotalCount_ = 1
         mNextState_ = ExplorationScreenComponents.TITLE;
         function start(data){
-            ::Base.mPlayerStats.commitForExplorationSuccess();
-
             local c = data.components;
             c[ExplorationScreenComponents.TITLE].setVisible(false);
             foreach(i in c[ExplorationScreenComponents.TEXT_ENTRIES]) { i.setVisible(false); }
@@ -100,7 +99,7 @@ local ObjAnim = class{
     };
     ExplorationEndScreenAnimStateMachine.mStates_[ExplorationScreenComponents.EXP_PROGRESS] = class extends ::Util.State{
         mTotalCount_ = 200
-        mNextState_ = ExplorationScreenComponents.END_BUTTONS;
+        mNextState_ = ExplorationScreenComponents.DISCOVERED_LEVELS;
         mObjAnim_ = null;
 
         mEXPOrbTotalLabel_ = null;
@@ -165,6 +164,16 @@ local ObjAnim = class{
             data.components[ExplorationScreenComponents.EXP_PROGRESS].setLabel(format("%i/%i", diff, total));
         }
     };
+    ExplorationEndScreenAnimStateMachine.mStates_[ExplorationScreenComponents.DISCOVERED_LEVELS] = class extends ::Util.State{
+        mTotalCount_ = 120;
+        mNextState_ = ExplorationScreenComponents.END_BUTTONS;
+        function start(data){
+            data.components[ExplorationScreenComponents.DISCOVERED_LEVELS].setVisible(true);
+        }
+        function update(p, data){
+            data.components[ExplorationScreenComponents.DISCOVERED_LEVELS].update(p);
+        }
+    };
     ExplorationEndScreenAnimStateMachine.mStates_[ExplorationScreenComponents.END_BUTTONS] = class extends ::Util.State{
         mTotalCount_ = 20
         mNextState_ = ExplorationScreenComponents.NONE;
@@ -202,6 +211,52 @@ local ObjAnim = class{
             ::ScreenManager.queueTransition(Screen.GAMEPLAY_MAIN_MENU_SCREEN);
         }
     ];
+
+    DiscoveredLevelsScreen = class{
+        mWindow_ = null;
+        mWidgets_ = null;
+        mData_ = null;
+        constructor(parent, data){
+            mWindow_ = parent.createWindow();
+            mWidgets_ = [];
+            mData_ = [];
+
+            local layoutLine = _gui.createLayoutLine();
+            foreach(c,i in data){
+                local discoverData = ::Base.mPlayerStats.getBiomeDiscoveredData(i);
+                mData_.append(discoverData);
+
+                local bar = ::GuiWidgets.ExplorationDiscoverLevelBarWidget(mWindow_);
+                bar.setLabel(c);
+                print(discoverData.percentageCurrent);
+                bar.setPercentage(discoverData.percentageCurrent);
+                bar.setSecondaryPercentage(discoverData.percentageFuture);
+                bar.setCounter(discoverData.levelProgress-1, discoverData.completeLevel);
+                bar.addToLayout(layoutLine);
+
+                mWidgets_.append(bar);
+            }
+            layoutLine.layout();
+
+            foreach(i in mWidgets_){
+                i.notifyLayout();
+            }
+        }
+        function addToLayout(layout){
+            layout.addCell(mWindow_);
+        }
+        function update(frame){
+            if(frame < 0.5) return;
+            foreach(c,i in mWidgets_){
+                local d = mData_[c];
+                i.setPercentage(d.percentageFuture);
+                i.setCounter(d.levelProgress, d.completeLevel);
+            }
+        }
+        function setVisible(vis){
+            mWindow_.setVisible(vis);
+        }
+    };
 
     function setup(data){
 
@@ -255,6 +310,12 @@ local ObjAnim = class{
         levelBar.addToLayout(layoutLine);
         mScreenComponents_[ExplorationScreenComponents.EXP_PROGRESS] <- levelBar;
 
+        local discoveredLevels = DiscoveredLevelsScreen(mWindow_, data.discoveredBiomes);
+        discoveredLevels.addToLayout(layoutLine);
+        discoveredLevels.setVisible(false);
+        mScreenComponents_[ExplorationScreenComponents.DISCOVERED_LEVELS] <- discoveredLevels;
+
+        local endButtonsLayoutLine = _gui.createLayoutLine();
         local endButtons = [];
         foreach(i,c in buttonOptions){
             local button = mWindow_.createButton();
@@ -263,7 +324,7 @@ local ObjAnim = class{
             button.attachListenerForEvent(buttonFunctions[i], _GUI_ACTION_PRESSED, this);
             button.setExpandHorizontal(true);
             button.setMinSize(0, 100);
-            layoutLine.addCell(button);
+            endButtonsLayoutLine.addCell(button);
             endButtons.append(button);
         }
         mScreenComponents_[ExplorationScreenComponents.END_BUTTONS] <- endButtons;
@@ -271,6 +332,15 @@ local ObjAnim = class{
         layoutLine.setSize(winWidth, winHeight);
         layoutLine.setPosition(0, 0);
         layoutLine.layout();
+
+        endButtonsLayoutLine.setSize(winWidth, winHeight);
+        local endY = 0;
+        endButtonsLayoutLine.layout();
+        foreach(i in endButtons){
+            endY += i.getSize().y;
+        }
+        endButtonsLayoutLine.setPosition(0, mWindow_.getSizeAfterClipping().y - endY);
+        endButtonsLayoutLine.layout();
 
         levelBar.notifyLayout();
         levelBar.setPercentage(0.5);

@@ -192,6 +192,7 @@
         _doFile("res://src/GUI/Widgets/ProgressBar.nut");
         _doFile("res://src/GUI/Widgets/TwoBarProgressBar.nut");
         _doFile("res://src/GUI/Widgets/GameplayProgressBar.nut");
+        _doFile("res://src/GUI/Widgets/ExplorationDiscoverLevelBarWidget.nut");
 
         _doFile("res://src/System/SystemSettings.nut");
 

@@ -47,6 +47,13 @@ function start(){
     ::Base.setupFirst();
     ::Base.setup();
     ::Base.setupSecondary();
+
+    if(::getroottable().rawin("developerTools_")){
+        if(developerTools_.rawin("projectSetupComplete")){
+            developerTools_.projectSetupComplete();
+        }
+    }
+
     ::Base.switchToFirstScreen();
 }
 
