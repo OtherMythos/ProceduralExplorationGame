@@ -98,6 +98,7 @@ enum ExplorationScreenWidgetType{
         mPercentAnimFinal_ = 0;
         mFutureLevel_ = 0;
         mCompleteLevel_ = 0;
+        mAnimFrameCount_ = 0.005;
 
         constructor(parent){
             mParent_ = parent;
@@ -111,18 +112,6 @@ enum ExplorationScreenWidgetType{
             mWindow_.setVisible(false);
 
             local layoutLine = _gui.createLayoutLine();
-
-            /*
-            mLabel_ = mWindow_.createLabel();
-            mLabel_.setText("test");
-            layoutLine.addCell(mLabel_);
-
-            mBar_ = ::GuiWidgets.TwoBarProgressBar(mWindow_);
-            mBar_.setPercentage(0);
-            mBar_.setSecondaryPercentage(0);
-            mBar_.setSize(200, 40);
-            mBar_.addToLayout(layoutLine);
-            */
 
             mBar_ = ::GuiWidgets.ExplorationDiscoverLevelBarWidget(mWindow_);
             mBar_.addToLayout(layoutLine);
@@ -144,7 +133,7 @@ enum ExplorationScreenWidgetType{
             }
             if(mFrame_ > 100){
                 if(mPercentAnimCurrent_ <= mPercentAnimFinal_){
-                    mPercentAnimCurrent_+=0.005;
+                    mPercentAnimCurrent_ += mAnimFrameCount_;
                     mBar_.setSecondaryPercentage(mPercentAnimCurrent_);
                 }
             }
@@ -153,13 +142,6 @@ enum ExplorationScreenWidgetType{
         function shutdown(){
             _event.unsubscribe(Event.BIOME_DISCOVER_STATS_CHANGED, biomeStatsChanged, this);
         }
-
-        /*
-        function setLabel(current, total){
-            mBar_.setLabel(format("%i/%i", current, total));
-            mBar_.setLabelShadow(ColourValue(0, 0, 0), Vec2(2, 2));
-        }
-        */
 
         function biomeStatsChanged(id, data){
             mBar_.setText(data.biome.getName());
@@ -170,6 +152,7 @@ enum ExplorationScreenWidgetType{
             mBar_.setCounter(mFutureLevel_-1, mCompleteLevel_);
             mPercentAnimCurrent_ = data.percentageCurrent;
             mPercentAnimFinal_ = data.percentageFuture;
+            mAnimFrameCount_ = (mPercentAnimFinal_ - mPercentAnimCurrent_).tofloat() / 30.0;
             mFrame_ = 0;
             mWindow_.setSize(mWindow_.calculateChildrenSize());
             mWindow_.setVisible(true);
