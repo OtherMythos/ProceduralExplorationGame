@@ -41,4 +41,8 @@
         mLabel_.setText(text);
     }
 
+    function getDerivedCentre(){
+        return mBar_.getDerivedCentre();
+    }
+
 };

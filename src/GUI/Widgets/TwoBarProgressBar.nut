@@ -56,4 +56,8 @@
         mSecondaryPercentage_ = percentage;
         processSize_();
     }
+
+    function getDerivedCentre(){
+        return mSecondaryBar_.getDerivedCentre();
+    }
 };

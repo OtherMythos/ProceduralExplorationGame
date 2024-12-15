@@ -216,10 +216,12 @@ local ObjAnim = class{
         mWindow_ = null;
         mWidgets_ = null;
         mData_ = null;
+        mAnimationsFinished_ = null;
         constructor(parent, data){
             mWindow_ = parent.createWindow();
             mWidgets_ = [];
             mData_ = [];
+            mAnimationsFinished_ = array(data.len(), false);
 
             local layoutLine = _gui.createLayoutLine();
             foreach(c,i in data){
@@ -250,6 +252,13 @@ local ObjAnim = class{
             foreach(c,i in mWidgets_){
                 local d = mData_[c];
                 i.setPercentage(d.percentageFuture);
+                if(d.percentageFuture >= 1.0){
+                    if(!mAnimationsFinished_[c]){
+                        local derivedPosition = i.getDerivedCentre();
+                        ::PopupManager.displayPopup(::PopupManager.PopupData(Popup.SINGLE_TEXT, {"text": "Level up", "posX": derivedPosition.x, "posY": derivedPosition.y, "fontMultiplier": 1.5, "lifespan": 50, "fadeInTime": 10}));
+                        mAnimationsFinished_[c] = true;
+                    }
+                }
                 i.setCounter(d.levelProgress, d.completeLevel);
             }
         }
