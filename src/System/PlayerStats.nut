@@ -184,9 +184,12 @@
                     "foundAmount": 0
                 });
             }
+            //TODO for now, as the same region should never appear twice in the same generation.
+            assert(i.foundAmount <= 1);
             local d = mCurrentData_.discoveredBiomes.rawget(c);
             d.foundAmount += i.foundAmount;
         }
+        mCurrentExplorationStats_ = null;
     }
 
     function getPlayerHealth(){

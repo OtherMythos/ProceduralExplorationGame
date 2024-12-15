@@ -327,7 +327,17 @@
 
         local result = null;
         {
-            result = clone ::Base.mPlayerStats.mCurrentExplorationStats_.discoveredBiomes;
+            //result = clone ::Base.mPlayerStats.mCurrentExplorationStats_.discoveredBiomes;
+            //Annoyingly you can't just clone it because it makes a shallow clone.
+            //TODO wrap this with a proper deep clone function.
+            result = {};
+            foreach(c,i in ::Base.mPlayerStats.mCurrentExplorationStats_.discoveredBiomes){
+                local vv = {};
+                foreach(cc,ii in i){
+                    vv.rawset(cc, ii);
+                }
+                result.rawset(c, vv);
+            }
 
             local totalBiomes = ::Base.mPlayerStats.mCurrentData_.discoveredBiomes;
             //Determine the numbers to pass
