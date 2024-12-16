@@ -24,6 +24,7 @@ namespace ProceduralExplorationGamePlugin{
         static SQInteger tableToExplorationMapData(HSQUIRRELVM vm);
         static SQInteger tableToExplorationMapInputData(HSQUIRRELVM vm, ProceduralExplorationGameCore::ExplorationMapInputData* data);
         static SQInteger setRegionFound(HSQUIRRELVM vm);
+        static SQInteger getRegionFound(HSQUIRRELVM vm);
         static SQInteger setNewMapData(HSQUIRRELVM vm);
         static SQInteger createTerrainFromMapData(HSQUIRRELVM vm);
 

@@ -298,6 +298,20 @@ namespace ProceduralExplorationGamePlugin{
         return 0;
     }
 
+    SQInteger GameCoreNamespace::getRegionFound(HSQUIRRELVM vm){
+        SQInteger regionId;
+        sq_getinteger(vm, 2, &regionId);
+        ProceduralExplorationGameCore::RegionId region = static_cast<ProceduralExplorationGameCore::RegionId>(regionId);
+        if(region == ProceduralExplorationGameCore::INVALID_REGION_ID){
+            return sq_throwerror(vm, "Invalid region id requested.");
+        }
+
+        bool regionFound = ProceduralExplorationGameCore::GameplayState::getFoundRegion(region);
+        sq_pushbool(vm, regionFound);
+
+        return 1;
+    }
+
     SQInteger GameCoreNamespace::setRegionFound(HSQUIRRELVM vm){
         SQInteger regionId;
         sq_getinteger(vm, 2, &regionId);
@@ -554,6 +568,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, fillBufferWithMapLean, "fillBufferWithMapLean", 3, ".uu");
         AV::ScriptUtils::addFunction(vm, fillBufferWithMapComplex, "fillBufferWithMapComplex", 4, ".uui");
         AV::ScriptUtils::addFunction(vm, tableToExplorationMapData, "tableToExplorationMapData", 2, ".t");
+        AV::ScriptUtils::addFunction(vm, getRegionFound, "getRegionFound", 2, ".i");
         AV::ScriptUtils::addFunction(vm, setRegionFound, "setRegionFound", 3, ".ib");
         AV::ScriptUtils::addFunction(vm, setNewMapData, "setNewMapData", 2, ".u");
         AV::ScriptUtils::addFunction(vm, createTerrainFromMapData, "createTerrainFromMapData", 3, ".su");

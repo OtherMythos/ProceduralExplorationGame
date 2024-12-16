@@ -524,6 +524,8 @@
     function processFoundNewRegion(regionId){
         if(regionId == INVALID_REGION_ID) return;
         if(regionId >= mMapData_.regionData.len()) return;
+        if(_gameCore.getRegionFound(regionId)) return;
+
         _gameCore.setRegionFound(regionId, true);
         local regionData = mMapData_.regionData[regionId];
         if(mRegionEntries_.rawin(regionId)){
