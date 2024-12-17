@@ -9,16 +9,37 @@
         //Generate the individual rooms into the array structure.
         _setupRooms(outVals, data.width, data.height);
         //Use a flood fill algorithm to collect combined rooms together.
-        _determineTotalRooms(outVals, data.width, data.height);
+        local floodRooms = _determineTotalRooms(outVals, data.width, data.height);
+
+        local playerStart = _determinePlayerStart(floodRooms);
 
         _determineEdges(outVals, data.width, data.height);
 
         local outData = {
             "width": data.width,
             "height": data.height,
+            "rooms": floodRooms,
+            "playerStart": playerStart,
             "vals": outVals
         };
         return outData;
+    }
+
+    function _determinePlayerStart(floodRooms){
+        local biggestRoom = -1;
+        local biggestRoomIdx = -1;
+        foreach(c,i in floodRooms){
+            if(i.tileCount > biggestRoom){
+                biggestRoomIdx = c;
+                biggestRoom = i.tileCount;
+            }
+        }
+        if(biggestRoomIdx == -1) return;
+
+        local d = floodRooms[biggestRoomIdx].foundPoints;
+        local targetPos = d[_random.randIndex(d)];
+
+        return targetPos;
     }
 
     function _setupRooms(d, w, h){
@@ -96,6 +117,7 @@
     }
 
     function _floodFillData(d, x, y, w, i, entry){
+        entry.foundPoints.append((x & 0xFFFF) | ((y & 0xFFFF) << 16));
         d[x + y * w] = i;
         entry.tileCount++;
 
@@ -120,7 +142,8 @@
             for(local x = 0; x < w; x++){
                 if(d[x + y * w] == true){
                     local entry = {
-                        "tileCount": 0
+                        "tileCount": 0,
+                        "foundPoints": []
                     };
                     //A tile has been found, so start the flood fill.
                     _floodFillData(d, x, y, w, roomIndex, entry);
