@@ -29,6 +29,20 @@
         mMapData_ = mapData;
 
         createScene();
+
+        local width = mMapData_.width;
+        local height = mMapData_.height;
+        for(local y = height-1; y >=0; y--){
+            for(local x = 0; x < width; x++){
+                if(mMapData_.vals[x + y * width] == false) continue;
+                local pos = Vec3(x, 0, y);
+                pos.y = getZForPos(pos);
+                mPlayerEntry_.setPosition(pos);
+                notifyPlayerMoved();
+
+                break;
+            }
+        }
     }
 
     function getPositionForAppearEnemy_(enemyType){

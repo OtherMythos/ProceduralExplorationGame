@@ -935,11 +935,11 @@ enum WorldMousePressContexts{
         appearEnemy(pos);
     }
 
-    function getPositionForAppearEnemy_(enemyType){
+    function getPositionForAppearEnemy_(){
         return Vec3();
     }
 
-    function getPositionForAppearDistraction_(enemyType){
+    function getPositionForAppearDistraction_(){
         return null;
     }
 

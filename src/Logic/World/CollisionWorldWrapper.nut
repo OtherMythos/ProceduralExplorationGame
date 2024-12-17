@@ -146,6 +146,14 @@
                 ::Base.mExplorationLogic.notifyPlaceEnterState(id, false);
             }
         });
+        ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.REGISTER_TELEPORT_LOCATION] <- TriggerResponse(function(world, mapId, receiver, collisionStatus){
+            if(collisionStatus == 0x1){
+                ::Base.mActionManager.registerAction(ActionSlotType.DESCEND, 0, mapId, receiver);
+            }
+            else if(collisionStatus == 0x2){
+                ::Base.mActionManager.unsetAction(0, receiver);
+            }
+        });
         ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.PROJECTILE_DAMAGE] <- TriggerResponse(function(world, projectileId, entityId, collisionStatus){
             if(collisionStatus != 0x1) return;
 

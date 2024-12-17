@@ -126,6 +126,7 @@ enum GameProfile{
 enum CollisionWorldTriggerResponses{
     EXP_ORB,
     OVERWORLD_VISITED_PLACE,
+    REGISTER_TELEPORT_LOCATION,
     PROJECTILE_DAMAGE,
     PASSIVE_DAMAGE,
     BASIC_ENEMY_RECEIVE_PLAYER_SPOTTED,
@@ -292,6 +293,7 @@ enum ActionSlotType{
     TALK_TO,
     VISIT,
     END_EXPLORATION,
+    DESCEND
 };
 
 enum SystemSetting{
@@ -305,6 +307,7 @@ enum SystemSetting{
     "Talk",
     "Visit",
     "End Exploration",
+    "Descend"
 ];
 
 //Characters --------

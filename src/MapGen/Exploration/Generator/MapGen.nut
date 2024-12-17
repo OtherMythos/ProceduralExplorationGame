@@ -108,6 +108,30 @@
 
         retPlaces.append(placeData);
     }
+    function placeDustmiteNests(mapData, nativeMapData, retPlaces){
+        local targetRegions = [];
+        foreach(i in mapData.regionData){
+            if(i.type == RegionType.DESERT){
+                targetRegions.append(i);
+            }
+        }
+        if(targetRegions.len() == 0) return;
+
+        local targetIdx = nativeMapData.randomIntMinMax(0, targetRegions.len()-1);
+        local region = targetRegions[targetIdx];
+
+        local point = ::MapGenHelpers.seedFindRandomPointInRegion(nativeMapData, region);
+
+        local placeData = {
+            "originX": (point >> 16) & 0xFFFF,
+            "originY": point & 0xFFFF,
+            "originWrapped": point,
+            "placeId": PlaceId.DUSTMITE_NEST,
+            "region": region.id
+        };
+
+        retPlaces.append(placeData);
+    }
     function determinePlaces(mapData, nativeMapData, inputMapData){
         /*
         local placeData = [];
@@ -136,6 +160,8 @@
         placeGoblinCampsites(mapData, nativeMapData, retPlaces);
         placeGoblinCampsites(mapData, nativeMapData, retPlaces);
         placeGoblinCampsites(mapData, nativeMapData, retPlaces);
+
+        placeDustmiteNests(mapData, nativeMapData, retPlaces);
 
         return retPlaces;
     }

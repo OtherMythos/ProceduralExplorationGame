@@ -302,7 +302,28 @@
                 return 0.6;
         }
     }
-    function constructSimpleItem(parentNode, meshPath, pos, scale, spoilData=null){
+    function constructSimpleTeleportItem(parentNode, meshPath, pos, scale){
+        local manager = mConstructorWorld_.getEntityManager();
+        local targetPos = pos.copy();
+        targetPos.y = getZForPos(targetPos);
+        local en = manager.createEntity(targetPos);
+
+        local placeNode = parentNode.createChildSceneNode();
+        placeNode.setPosition(targetPos);
+        //TODO make some of these scene static
+        local item = _gameCore.createVoxMeshItem(meshPath);
+        item.setRenderQueueGroup(30);
+        placeNode.attachObject(item);
+        placeNode.setScale(scale, scale, scale);
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](placeNode, true));
+
+        local triggerWorld = mConstructorWorld_.getTriggerWorld();
+        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.REGISTER_TELEPORT_LOCATION, PlaceId.DUSTMITE_NEST, targetPos.x, targetPos.z, 4, _COLLISION_PLAYER);
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
+
+        return en;
+    }
+    function constructSimpleItem(parentNode, meshPath, pos, scale, spoilData=null, totalHealth=null, orientation=null){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = pos.copy();
         targetPos.y = getZForPos(targetPos);
@@ -318,6 +339,9 @@
         item.setRenderQueueGroup(30);
         placeNode.attachObject(item);
         placeNode.setScale(scale, scale, scale);
+        if(orientation != null){
+            placeNode.setOrientation(orientation);
+        }
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](placeNode, true));
 
         local damageWorld = mConstructorWorld_.getDamageWorld();
@@ -330,9 +354,9 @@
             local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SPOILS_DATA, spoilData, null, null);
             manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
         }
-
-        local totalHealth = 10;
-        manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](totalHealth));
+        if(totalHealth != null){
+            manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](totalHealth));
+        }
 
         return en;
     }

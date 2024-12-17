@@ -54,8 +54,8 @@ function GoblinCampPlacement(world, entityFactory, node, placeData, idx){
         ];
     };
 
-    entityFactory.constructSimpleItem(parentNode, "goblinTotem.voxMesh", voxPos + Vec3(4, 0, 3), 0.15, spoils());
-    local campfireEntity = entityFactory.constructSimpleItem(parentNode, "campfireBase.voxMesh", voxPos + Vec3(1, 0, 6), 0.4, spoils());
+    entityFactory.constructSimpleItem(parentNode, "goblinTotem.voxMesh", voxPos + Vec3(4, 0, 3), 0.15, spoils(), 10);
+    local campfireEntity = entityFactory.constructSimpleItem(parentNode, "campfireBase.voxMesh", voxPos + Vec3(1, 0, 6), 0.4, spoils(), 10);
     //Attach the smoke particle effect to the fire.
     {
         local campfireNode = world.getEntityManager().getComponent(campfireEntity, EntityComponents.SCENE_NODE).mNode;
@@ -71,7 +71,7 @@ function GoblinCampPlacement(world, entityFactory, node, placeData, idx){
             SpoilsEntry(SPOILS_ENTRIES.SPAWN_ENEMIES, 1)
         );
     }
-    entityFactory.constructSimpleItem(parentNode, "goblinTent.voxMesh", voxPos, 0.3, s);
+    entityFactory.constructSimpleItem(parentNode, "goblinTent.voxMesh", voxPos, 0.3, s, 10);
 
     return null;
 }
@@ -84,6 +84,27 @@ function GoblinCampAppearFunction(world, placeId, pos){
     }
 }
 
+function DustMiteNestPlacement(world, entityFactory, node, placeData, idx){
+    local parentNode = node.createChildSceneNode();
+    local voxPos = Vec3(placeData.originX, 0, -placeData.originY);
+
+    entityFactory.constructSimpleTeleportItem(parentNode, "dustMiteNest.voxMesh", voxPos, 0.5);
+
+    local spread = 7;
+    for(local i = 0; i < 4 + _random.randInt(3); i++){
+        local s = spread + _random.rand() * 10;
+        local randDir = (_random.rand()*2-1) * PI;
+        local dir = (Vec3(sin(randDir) * s, 0, cos(randDir) * s));
+        local targetPos = voxPos + dir;
+        local orientation = Quat(-PI/(_random.rand()*1.5+1), ::Vec3_UNIT_X);
+        orientation *= Quat(_random.rand()*PI - PI/2, ::Vec3_UNIT_Y);
+        local model = _random.randInt(4) == 0 ? "skeletonBody.voxMesh" : "skeletonHead.voxMesh";
+        entityFactory.constructSimpleItem(parentNode, model, targetPos, 0.15, null, 10, orientation);
+    }
+}
+function DustMiteNestAppearFunction(world, placeId, pos){
+}
+
 ::Places <- array(PlaceId.MAX, null);
 
 ::Places[PlaceId.NONE] = PlaceDef("None", "None", PlaceType.NONE, 0.0, null, null, 0);
@@ -91,8 +112,20 @@ function GoblinCampAppearFunction(world, placeId, pos){
 ::Places[PlaceId.GATEWAY] = PlaceDef("Gateway", "Gateway", PlaceType.GATEWAY, 1.0, GenericPlacement, null, 0);
 
 ::Places[PlaceId.GOBLIN_CAMP] = PlaceDef("Goblin Camp", "Spooky goblin camp", PlaceType.LOCATION, 1.0, GoblinCampPlacement, GoblinCampAppearFunction, 100);
+::Places[PlaceId.DUSTMITE_NEST] = PlaceDef("Dust Mite Nest", "An entrance to a Dust Mite nest.", PlaceType.LOCATION, 1.0, DustMiteNestPlacement, DustMiteNestAppearFunction, 100);
 
 ::PlacesByType <- {};
+
+::getMapNameForPlace_ <- function(placeId){
+    switch(placeId){
+        case PlaceId.DUSTMITE_NEST:{
+            return "chestLocationFirst";
+        }
+        default:{
+            return null;
+        }
+    }
+}
 
 function initialisePlacesLists(){
     for(local i = 0; i < PlaceType.MAX; i++){

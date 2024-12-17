@@ -123,8 +123,14 @@ These actions might be things like 'talk', 'buy things from', etc.
             case ActionSlotType.VISIT:{
                 local world = ::Base.mExplorationLogic.mCurrentWorld_;
                 if(world.getWorldType() == WorldTypes.PROCEDURAL_EXPLORATION_WORLD){
-                    world.visitPlace("testVillage");
+                    local targetMap = ::getMapNameForPlace_(data);
+                    world.visitPlace(targetMap);
                 }
+                break;
+            }
+            case ActionSlotType.DESCEND:{
+                local worldInstance = ::Base.mExplorationLogic.createWorldInstance(WorldTypes.PROCEDURAL_DUNGEON_WORLD, data);
+                ::Base.mExplorationLogic.pushWorld(worldInstance);
                 break;
             }
             case ActionSlotType.END_EXPLORATION:{
