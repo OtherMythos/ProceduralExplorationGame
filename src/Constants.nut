@@ -293,7 +293,8 @@ enum ActionSlotType{
     TALK_TO,
     VISIT,
     END_EXPLORATION,
-    DESCEND
+    DESCEND,
+    ASCEND,
 };
 
 enum SystemSetting{
@@ -307,8 +308,14 @@ enum SystemSetting{
     "Talk",
     "Visit",
     "End Exploration",
-    "Descend"
+    "Descend",
+    "Ascend",
 ];
+
+enum ProceduralDungeonTypes{
+    CATACOMB,
+    DUST_MITE_NEST
+};
 
 //Characters --------
 enum CharacterModelType{

@@ -1,12 +1,13 @@
 
 ::ProceduralDungeonWorldPreparer <- class extends ::WorldPreparer{
 
+    mInputData_ = null;
     mOutData_ = null;
 
     mThread_ = null;
 
-    constructor(){
-
+    constructor(data=null){
+        mInputData_ = data;
     }
 
     #Override
@@ -14,11 +15,14 @@
         assert(mCurrentPercent_ < 1.0);
 
         local gen = ::DungeonGen();
-        local data = {
-            "width": 50,
-            "height": 50,
-        };
-        local outData = gen.generate(data);
+        if(mInputData_ == null || mInputData_.len() == 0){
+            mInputData_ = {
+                "width": 50,
+                "height": 50,
+                "dungeonType": ProceduralDungeonTypes.CATACOMB
+            };
+        }
+        local outData = gen.generate(mInputData_);
 
         mOutData_ = outData;
         mCurrentPercent_ = 1.0;

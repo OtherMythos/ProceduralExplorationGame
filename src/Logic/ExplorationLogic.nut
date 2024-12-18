@@ -112,7 +112,7 @@
                 created = ProceduralExplorationWorld(id, ProceduralExplorationWorldPreparer());
                 break;
             case WorldTypes.PROCEDURAL_DUNGEON_WORLD:
-                created = ProceduralDungeonWorld(id, ProceduralDungeonWorldPreparer());
+                created = ProceduralDungeonWorld(id, ProceduralDungeonWorldPreparer(data));
                 break;
             case WorldTypes.VISITED_LOCATION_WORLD:{
                 local defaultMap = ::BaseHelperFunctions.getDefaultMapName();
@@ -142,11 +142,12 @@
     }
     function popWorld(){
         //There must be at least one world.
-        if(mQueuedWorlds_.len() <= 0) return;
+        if(mQueuedWorlds_.len() <= 0) return false;
         destroyWorld_(mCurrentWorld_);
         local current = mQueuedWorlds_.top();
         mQueuedWorlds_.pop();
         setCurrentWorld_(current);
+        return true;
     }
     function replaceWorld(worldInstance){
         destroyWorld_(mCurrentWorld_);

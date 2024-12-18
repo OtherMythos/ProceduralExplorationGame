@@ -65,6 +65,11 @@
         camera.lookAt(mPosition_.x, zPos, mPosition_.z);
     }
 
+    #Override
+    function processWorldCurrentChange_(current){
+        if(mParentNode_ != null) mParentNode_.setVisible(current);
+    }
+
     function processCameraMove(x, y){
         mRotation_ += Vec2(x, y) * -0.05;
         local first = PI * 0.5;
@@ -86,8 +91,22 @@
         return 1;
     }
 
+    function getWallMeshes(){
+        switch(mMapData_.dungeonType){
+            case ProceduralDungeonTypes.DUST_MITE_NEST:
+                return [
+                    "dustMiteNestDungeonFloor.voxMesh",
+                    "dustMiteNestDungeonWall.voxMesh",
+                    "dustMiteNestDungeonWallCorner.voxMesh"
+                ];
+            case ProceduralDungeonTypes.CATACOMB:
+            default:
+                return ["DungeonFloor.voxMesh", "DungeonWall.voxMesh", "DungeonWallCorner.voxMesh"];
+        }
+    }
+
     function createScene(){
-        mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
+        local wallMeshes = getWallMeshes();
 
         local width = mMapData_.width;
         local height = mMapData_.height;
@@ -103,18 +122,18 @@
                 local newNode = mParentNode_.createChildSceneNode();
                 newNode.setPosition(x * 5, 0, y * 5);
 
-                local itemName = "DungeonFloor.voxMesh";
+                local itemName = wallMeshes[0];
                 local orientation = Quat();
                 if(mask == 0){
                 }else{
                     if(mask == 0x2) orientation = Quat(0, sqrt(0.5), 0, sqrt(0.5));
                     else if(mask == 0x4) orientation = Quat(0, -sqrt(0.5), 0, sqrt(0.5));
                     else if(mask == 0x8) orientation = Quat(0, 1, 0, 0);
-                    itemName = "DungeonWall.voxMesh";
+                    itemName = wallMeshes[1];
 
                     if((mask & (mask - 1)) != 0){
                         //Two bits are true meaning this is a corner.
-                        itemName = "DungeonWallCorner.voxMesh";
+                        itemName = wallMeshes[2];
                         if(mask == 0x3) orientation = Quat(0, sqrt(0.5), 0, sqrt(0.5));
                         if(mask == 0xA) orientation = Quat(0, 1, 0, 0);
                         if(mask == 0xC) orientation = Quat(0, -sqrt(0.5), 0, sqrt(0.5));
@@ -127,6 +146,43 @@
                 newNode.setOrientation(orientation);
             }
         }
+
+        //Place some decorations around the dungeon
+        for(local i = 0; i < 10 + _random.randInt(10); i++){
+            local targetPos = findPosInDungeon_();
+
+            local orientation = Quat(-PI/(_random.rand()*1.5+1), ::Vec3_UNIT_X);
+            orientation *= Quat(_random.rand()*PI - PI/2, ::Vec3_UNIT_Y);
+            local model = _random.randInt(3) == 0 ? "skeletonBody.voxMesh" : "skeletonHead.voxMesh";
+            mEntityFactory_.constructSimpleItem(mParentNode_, model, targetPos, 0.25, null, 10, orientation);
+        }
+
+        mEntityFactory_.constructChestObject(findPosInDungeon_());
+
+        mEntityFactory_.constructSimpleTeleportItem(mParentNode_, "ladderUp.voxMesh", findPosInDungeon_(), 0.5, {
+            "actionType": ActionSlotType.ASCEND,
+            "popWorld": true
+        });
+        local en = mEntityFactory_.constructSimpleTeleportItem(mParentNode_, "ladderDown.voxMesh", findPosInDungeon_(), 0.5, {
+            "actionType": ActionSlotType.DESCEND,
+            "worldType": WorldTypes.PROCEDURAL_DUNGEON_WORLD,
+            "dungeonType": ProceduralDungeonTypes.DUST_MITE_NEST,
+            "width": 50,
+            "height": 50
+        });
+        local pos = mEntityManager_.getPosition(en);
+        pos.y -= 0.6;
+        mEntityManager_.setEntityPosition(en, pos);
+    }
+
+    function findPosInDungeon_(){
+        local targetRoom = mMapData_.rooms[_random.randIndex(mMapData_.rooms)].foundPoints;
+        local point = targetRoom[_random.randIndex(targetRoom)];
+
+        local targetPos = Vec3( (point & 0xFFFF), 0, (point >> 16) & 0xFFFF );
+        targetPos *= 5;
+
+        return targetPos;
     }
 
     #Override

@@ -8,7 +8,7 @@ enum PlaceId{
     GATEWAY,
 
     GOBLIN_CAMP,
-    DUSTMITE_NEST
+    DUSTMITE_NEST,
 
     /*
     HAUNTED_WELL,

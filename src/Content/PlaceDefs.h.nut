@@ -88,7 +88,14 @@ function DustMiteNestPlacement(world, entityFactory, node, placeData, idx){
     local parentNode = node.createChildSceneNode();
     local voxPos = Vec3(placeData.originX, 0, -placeData.originY);
 
-    entityFactory.constructSimpleTeleportItem(parentNode, "dustMiteNest.voxMesh", voxPos, 0.5);
+    local teleData = {
+        "actionType": ActionSlotType.DESCEND,
+        "worldType": WorldTypes.PROCEDURAL_DUNGEON_WORLD,
+        "dungeonType": ProceduralDungeonTypes.DUST_MITE_NEST,
+        "width": 50,
+        "height": 50
+    };
+    entityFactory.constructSimpleTeleportItem(parentNode, "dustMiteNest.voxMesh", voxPos, 0.5, teleData);
 
     local spread = 7;
     for(local i = 0; i < 4 + _random.randInt(3); i++){

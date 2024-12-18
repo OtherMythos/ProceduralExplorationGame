@@ -302,7 +302,7 @@
                 return 0.6;
         }
     }
-    function constructSimpleTeleportItem(parentNode, meshPath, pos, scale){
+    function constructSimpleTeleportItem(parentNode, meshPath, pos, scale, teleData){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = pos.copy();
         targetPos.y = getZForPos(targetPos);
@@ -318,7 +318,7 @@
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](placeNode, true));
 
         local triggerWorld = mConstructorWorld_.getTriggerWorld();
-        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.REGISTER_TELEPORT_LOCATION, PlaceId.DUSTMITE_NEST, targetPos.x, targetPos.z, 4, _COLLISION_PLAYER);
+        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.REGISTER_TELEPORT_LOCATION, teleData, targetPos.x, targetPos.z, 4, _COLLISION_PLAYER);
         manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
 
         return en;
@@ -693,7 +693,7 @@
         return en;
     }
 
-    function constructChestObject(pos){
+    function constructChestObject(pos, spoils=null){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = pos.copy();
         targetPos.y = getZForPos(targetPos);
@@ -713,11 +713,13 @@
         local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.DIE, en, targetPos.x, targetPos.z, 4, _COLLISION_PLAYER);
         manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
 
-        local spoilsData = [
-            SpoilsEntry(SPOILS_ENTRIES.EXP_ORBS, 2 + _random.randInt(16)),
-            SpoilsEntry(SPOILS_ENTRIES.COINS, 24 + _random.randInt(12)),
-            SpoilsEntry(SPOILS_ENTRIES.SPAWN_ENEMIES, 1 + _random.randInt(2)),
-        ];
+        local spoilsData = spoils;
+        if(spoilsData == null){
+            spoilsData = [
+                SpoilsEntry(SPOILS_ENTRIES.EXP_ORBS, 2 + _random.randInt(16)),
+                SpoilsEntry(SPOILS_ENTRIES.COINS, 24 + _random.randInt(12)),
+            ];
+        }
         local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SPOILS_DATA, spoilsData, null, null);
         manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
 

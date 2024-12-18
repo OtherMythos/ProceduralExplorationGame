@@ -7,7 +7,11 @@
         local outVals = array(data.width * data.height, false);
 
         //Generate the individual rooms into the array structure.
-        _setupRooms(outVals, data.width, data.height);
+        if(data.dungeonType == ProceduralDungeonTypes.DUST_MITE_NEST){
+            _setupCoridoors(outVals, data.width, data.height);
+        }else{
+            _setupRooms(outVals, data.width, data.height);
+        }
         //Use a flood fill algorithm to collect combined rooms together.
         local floodRooms = _determineTotalRooms(outVals, data.width, data.height);
 
@@ -20,7 +24,8 @@
             "height": data.height,
             "rooms": floodRooms,
             "playerStart": playerStart,
-            "vals": outVals
+            "vals": outVals,
+            "dungeonType": data.dungeonType
         };
         return outData;
     }
@@ -40,6 +45,69 @@
         local targetPos = d[_random.randIndex(d)];
 
         return targetPos;
+    }
+
+    function _setupCoridoors(d, w, h){
+        local points = [];
+
+        local padding = 6;
+        for(local i = 0; i < 10; i++){
+            local xx = _random.randInt(w - 6) + (6/2);
+            local yy = _random.randInt(h - 6) + (6/2);
+            points.append(Vec2(xx, yy));
+        }
+
+        for(local i = 1; i < points.len()-1; i++){
+            local start = points[i - 1];
+            local end = points[i];
+            local linePoints = calculateLineBetweenPoints(start.x, start.y, end.x, end.y);
+            foreach(p in linePoints){
+                points.append(p);
+            }
+        }
+
+        foreach(i in points){
+            for(local y = -1; y <= 1; y++){
+                for(local x = -1; x <= 1; x++){
+                    local xx = x + i.x;
+                    local yy = y + i.y;
+                    if(xx < 0 || yy < 0 || xx >= w || yy >= h) continue;
+                    d[xx + yy * w] = true;
+                }
+            }
+        }
+    }
+
+    function calculateLineBetweenPoints(startX, startY, endX, endY){
+        local outPoints = [];
+
+        local deltaX = abs(endX.tointeger() - startX.tointeger());
+        local deltaY = abs(endY.tointeger() - startY.tointeger());
+
+        local pointX = startX.tointeger();
+        local pointY = startY.tointeger();
+
+        local horizontalStep = (startX < endX) ? 1 : -1;
+        local verticalStep = (startY < endY) ? 1 : -1;
+
+        local difference = deltaX - deltaY;
+        while(true){
+            local doubleDifference = 2 * difference;
+            if(doubleDifference > -deltaY){
+                difference -= deltaY;
+                pointX += horizontalStep;
+            }
+            if(doubleDifference < deltaX){
+                difference += deltaX;
+                pointY += verticalStep;
+            }
+
+            if(pointX == endX && pointY == endY) break;
+
+            outPoints.append(Vec2(pointX, pointY));
+        }
+
+        return outPoints;
     }
 
     function _setupRooms(d, w, h){
@@ -116,7 +184,7 @@
 
     }
 
-    function _floodFillData(d, x, y, w, i, entry){
+    function _floodFillData(d, x, y, w, h, i, entry){
         entry.foundPoints.append((x & 0xFFFF) | ((y & 0xFFFF) << 16));
         d[x + y * w] = i;
         entry.tileCount++;
@@ -124,10 +192,10 @@
         //Note: It has to be true not just boolean check.
         //TODO do a mask of which tiles were true.
         local mask = 0;
-        if(d[x + (y - 1) * w] == true) { _floodFillData(d, x, y - 1, w, i, entry); mask = mask | 0x1; }
-        if(d[(x - 1) + y * w] == true) { _floodFillData(d, x - 1, y, w, i, entry); mask = mask | 0x2; }
-        if(d[(x + 1) + y * w] == true) { _floodFillData(d, x + 1, y, w, i, entry); mask = mask | 0x4; }
-        if(d[x + (y + 1) * w] == true) { _floodFillData(d, x, y + 1, w, i, entry); mask = mask | 0x8; }
+        if(y > 0 && d[x + (y - 1) * w] == true) { _floodFillData(d, x, y - 1, w, h, i, entry); mask = mask | 0x1; }
+        if(x > 0 && d[(x - 1) + y * w] == true) { _floodFillData(d, x - 1, y, w, h, i, entry); mask = mask | 0x2; }
+        if(y < w-1 && d[(x + 1) + y * w] == true) { _floodFillData(d, x + 1, y, w, h, i, entry); mask = mask | 0x4; }
+        if(y < h-1 && d[x + (y + 1) * w] == true) { _floodFillData(d, x, y + 1, w, h, i, entry); mask = mask | 0x8; }
 
         //d[x + y * w] = (i | (mask << 24));
 
@@ -146,7 +214,7 @@
                         "foundPoints": []
                     };
                     //A tile has been found, so start the flood fill.
-                    _floodFillData(d, x, y, w, roomIndex, entry);
+                    _floodFillData(d, x, y, w, h, roomIndex, entry);
 
                     roomIndex++;
                     outData.append(entry);

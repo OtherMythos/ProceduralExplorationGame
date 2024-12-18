@@ -137,3 +137,9 @@ variationSeed: %i";
 
     return format("Created enemy '%s'", enemyName);
 });
+::DebugConsole.registerCommand("popWorld", "Pop a world from the exploration logic", 0, "", function(command){
+    local logic = ::Base.mExplorationLogic;
+    local result = logic.popWorld();
+
+    return result ? "Popped world" : "There must be at least one queued world.";
+});

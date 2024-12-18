@@ -128,9 +128,15 @@ These actions might be things like 'talk', 'buy things from', etc.
                 }
                 break;
             }
+            case ActionSlotType.ASCEND:
             case ActionSlotType.DESCEND:{
-                local worldInstance = ::Base.mExplorationLogic.createWorldInstance(WorldTypes.PROCEDURAL_DUNGEON_WORLD, data);
-                ::Base.mExplorationLogic.pushWorld(worldInstance);
+                if(data.rawin("popWorld")){
+                    ::Base.mExplorationLogic.popWorld();
+                }else{
+                    local worldType = data.worldType;
+                    local worldInstance = ::Base.mExplorationLogic.createWorldInstance(worldType, data);
+                    ::Base.mExplorationLogic.pushWorld(worldInstance);
+                }
                 break;
             }
             case ActionSlotType.END_EXPLORATION:{
