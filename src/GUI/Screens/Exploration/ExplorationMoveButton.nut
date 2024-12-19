@@ -19,6 +19,7 @@
 
         local button = parentWin.createButton();
         button.setText(::Moves[mTargetMoveId_].getName());
+        button.setKeyboardNavigable(false);
         button.setHidden(false);
         button.setUserId(buttonId);
         button.attachListenerForEvent(buttonPressed, _GUI_ACTION_PRESSED, this);
