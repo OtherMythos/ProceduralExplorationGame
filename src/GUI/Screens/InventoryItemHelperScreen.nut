@@ -14,7 +14,8 @@
         mBackgroundWindow_.setColour(ColourValue(1, 1, 1, 0.8));
 
         mWindow_ = _gui.createWindow("InventoryItemHelperScreen");
-        mWindow_.setSize(data.size);
+        //Start it quite big so that labels or buttons expand as expected.
+        mWindow_.setSize(800, 800);
         mWindow_.setPosition(data.pos);
         mWindow_.setClipBorders(10, 10, 10, 10);
         mWindow_.setZOrder(61);
@@ -40,6 +41,9 @@
         }
 
         layoutLine.layout();
+
+        local childrenSize = mWindow_.calculateChildrenSize();
+        mWindow_.setSize(childrenSize.x, data.size.y);
 
         mData_.bus.notifyEvent(InventoryBusEvents.ITEM_HELPER_SCREEN_BEGAN, null);
     }
