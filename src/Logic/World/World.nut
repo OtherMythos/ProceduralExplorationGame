@@ -422,8 +422,6 @@ enum WorldMousePressContexts{
         //checkForFlagPlacement();
         //checkForFlagUpdate();
         checkForPlayerMoveBegin();
-        checkForEnemyAppear();
-        checkForDistractionAppear();
         checkPlayerInputs();
         checkPlayerCombatLogic();
 

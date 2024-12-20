@@ -200,6 +200,8 @@
         if(!isActive()) return;
 
         base.update();
+        checkForEnemyAppear();
+        checkForDistractionAppear();
 
         mCloudManager_.update();
 
@@ -208,6 +210,38 @@
         }
 
         checkWorldZoomState();
+    }
+
+    function checkForEnemyAppear(){
+        if(::Base.isProfileActive(GameProfile.DISABLE_ENEMY_SPAWN)) return;
+
+        local foundSomething = _random.randInt(1000) == 0;
+        if(!foundSomething) return;
+        if(mActiveEnemies_.len() >= 20){
+            print("can't add any more enemies");
+            return;
+        }
+        //appearEnemy(_random.randInt(EnemyId.GOBLIN, EnemyId.MAX-1));
+        local pos = MapGenHelpers.findRandomPointOnLand(mMapData_, mPlayerEntry_.getPosition(), 50);
+        appearEnemy(pos);
+    }
+
+    function checkForDistractionAppear(){
+        if(::Base.isProfileActive(GameProfile.DISABLE_DISTRACTION_SPAWN)) return;
+
+        mAppearDistractionLogic_.update();
+
+        local target = getPositionForAppearDistraction_();
+        if(target == null) return;
+        if(mAppearDistractionLogic_.checkAppearForObject(WorldDistractionType.PERCENTAGE_ENCOUNTER)){
+            mEntityFactory_.constructPercentageEncounter(target, mGui_);
+        }
+        if(mAppearDistractionLogic_.checkAppearForObject(WorldDistractionType.HEALTH_ORB)){
+            mEntityFactory_.constructHealthOrbEncounter(target);
+        }
+        if(mAppearDistractionLogic_.checkAppearForObject(WorldDistractionType.EXP_ORB)){
+            mEntityFactory_.constructEXPTrailEncounter(target);
+        }
     }
 
     #Override
