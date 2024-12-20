@@ -108,6 +108,7 @@
     }
 
     function loadFiles(){
+        _doFile("res://src/System/EnumDef.nut");
         _doFile("res://src/System/InputManager.nut");
         _doFile("res://src/Util/VoxToMesh.nut");
         _doFile("res://src/Util/IdPool.nut");
@@ -125,15 +126,15 @@
         _doFile("res://src/Content/Equippables.nut");
         _doFile("res://src/Content/Enemies.nut");
         _doFile("res://src/Content/Items.nut");
-        _doFile("res://src/Content/PlaceConstants.h.nut");
         _doFile("res://src/Content/Places.nut");
         _doFile("res://src/Content/FoundObject.nut");
         _doFile("res://src/Content/CombatData.nut");
         _doFile("res://src/Content/Moves.nut");
         _doFile("res://src/Content/StatsEntry.nut");
 
+        loadEnumFiles();
+        ::EnumDef.commitEnums();
         _doFile("res://src/System/PlayerStats.nut");
-
         loadContentFiles();
 
         //TODO shift this off somewhere else.
@@ -257,6 +258,16 @@
 
         _doFile("res://src/GUI/RenderIconManager.nut");
         ::RenderIconManager.setup();
+
+        ::ItemHelper.setupItemIds_();
+
+    }
+
+    function loadEnumFiles(){
+        //The enums and defs need to be registered separately so the def can use the enum.
+        _doFile("res://src/Content/ItemEnums.nut");
+        _doFile("res://src/Content/EnemyEnums.nut");
+        _doFile("res://src/Content/PlaceEnums.nut");
     }
 
     function loadContentFiles(){

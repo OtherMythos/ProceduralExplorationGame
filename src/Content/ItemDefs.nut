@@ -1,17 +1,3 @@
-enum ItemId{
-    NONE,
-    HEALTH_POTION,
-    LARGE_HEALTH_POTION,
-
-    SIMPLE_SWORD,
-    SIMPLE_SHIELD,
-    SIMPLE_TWO_HANDED_SWORD,
-    BONE_MACE,
-
-    APPLE,
-
-    MAX,
-};
 
 ::Items <- array(ItemId.MAX, null);
 
@@ -28,8 +14,6 @@ enum ItemId{
 
 ::Items[ItemId.APPLE] = ItemDef("Apple", "Fibrous fruit", "apple.voxMesh", "item_apple", ItemType.CONSUMABLE, 5, EquippableId.NONE);
 //-------------------------------
-
-::ItemHelper.setupItemIds_();
 
 ::ItemHelper.itemToStats <- function(item){
     local stat = ::StatsEntry();

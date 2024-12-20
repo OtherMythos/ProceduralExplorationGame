@@ -1,0 +1,14 @@
+
+::EnumDef.addToEnum("ItemId", @"
+
+    HEALTH_POTION,
+    LARGE_HEALTH_POTION,
+
+    SIMPLE_SWORD,
+    SIMPLE_SHIELD,
+    SIMPLE_TWO_HANDED_SWORD,
+    BONE_MACE,
+
+    APPLE,
+
+");
