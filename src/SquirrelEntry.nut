@@ -42,6 +42,7 @@ function start(){
         _doFile("res://developerTools.nut");
     }
 
+    _doFile("res://src/BaseImpl.nut");
     _doFile("res://src/Base.nut");
     checkForProjectExtra();
     ::Base.setupFirst();

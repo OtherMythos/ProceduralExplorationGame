@@ -14,7 +14,7 @@ namespace ProceduralExplorationGameCore{
 
     #include "../../../../src/MapGen/Exploration/Generator/MapConstants.h.nut"
 
-    #include "../../../../src/Content/PlaceConstants.h.nut"
+    //#include "../../../../src/Content/PlaceConstants.h.nut"
 
     static const AV::uint8 MapVoxelColour[] = {
         VOXEL_VALUES
@@ -50,12 +50,14 @@ namespace ProceduralExplorationGameCore{
         PlacedItemId type;
     };
 
+/*
     struct PlaceData{
         WorldCoord originX;
         WorldCoord originY;
         RegionId region;
         PlaceId type;
     };
+ */
 
     struct RiverData{
         WorldPoint origin;
@@ -66,7 +68,7 @@ namespace ProceduralExplorationGameCore{
     public:
         std::string name;
         std::string desc;
-        PlaceType t;
+        //PlaceType t;
         float rarity;
         AV::uint32 minLandmass;
         AV::uint8 necessaryFeatures;
@@ -74,15 +76,15 @@ namespace ProceduralExplorationGameCore{
         PlaceDef(){
             this->name = "";
             this->desc = "";
-            this->t = PlaceType::NONE;
+            //this->t = PlaceType::NONE;
             this->rarity = 0.0;
             this->minLandmass = 0;
             this->necessaryFeatures = 0;
         }
-        PlaceDef(const std::string& name, const std::string& desc, PlaceType t, float rarity, AV::uint32 minLandmass = 10, AV::uint8 necessaryFeatures = 0x0){
+        PlaceDef(const std::string& name, const std::string& desc, float rarity, AV::uint32 minLandmass = 10, AV::uint8 necessaryFeatures = 0x0){
             this->name = name;
             this->desc = desc;
-            this->t = t;
+            //this->t = t;
             this->rarity = rarity;
             this->minLandmass = minLandmass;
             this->necessaryFeatures = necessaryFeatures;
@@ -101,7 +103,7 @@ namespace ProceduralExplorationGameCore{
         AV::uint32 numRegions;
         AV::uint8 seaLevel;
 
-        AV::uint16 placeFrequency[(size_t)PlaceType::MAX];
+        //AV::uint16 placeFrequency[(size_t)PlaceType::MAX];
     };
 
     struct ExplorationMapData{
@@ -130,7 +132,7 @@ namespace ProceduralExplorationGameCore{
         //TODO switch these to not be pointers.
         std::vector<FloodFillEntry*> waterData;
         std::vector<FloodFillEntry*> landData;
-        std::vector<PlaceData> placeData;
+        //std::vector<PlaceData> placeData;
         std::vector<RiverData> riverData;
 
         struct BufferData{

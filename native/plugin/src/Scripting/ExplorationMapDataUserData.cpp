@@ -112,6 +112,7 @@ namespace ProceduralExplorationGamePlugin{
         }
         sq_rawset(vm, -3);
     }
+/*
     inline void pushPlaceData(HSQUIRRELVM vm, const char* key, std::vector<ProceduralExplorationGameCore::PlaceData>& placeData){
         sq_pushstring(vm, key, -1);
         sq_newarray(vm, placeData.size());
@@ -130,6 +131,7 @@ namespace ProceduralExplorationGamePlugin{
         }
         sq_rawset(vm, -3);
     }
+ */
     inline void pushPlacedItemData(HSQUIRRELVM vm, const char* key, std::vector<ProceduralExplorationGameCore::PlacedItemData>& itemData){
         sq_pushstring(vm, key, -1);
         sq_newarray(vm, itemData.size());

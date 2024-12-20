@@ -16,6 +16,8 @@
 ::Base <- {
     mExplorationLogic = null
 
+    mBaseImpls_ = []
+
     mPlayerStats = null
     mDialogManager = null
     mQuestManager = null
@@ -99,12 +101,24 @@
         return ::ScreenManager.ScreenData(screenId, data);
     }
 
-    function setupSecondary(){
+    function registerBaseImpl(impl){
+        mBaseImpls_.append(impl);
+    }
+    function registerBasicBaseImp(impl){
+        //Ensure it has priority and is registered first.
+        mBaseImpls_.insert(0, impl);
+    }
 
+    function setupSecondary(){
+        foreach(i in mBaseImpls_){
+            i.setupSecondary()
+        }
     }
 
     function setupFirst(){
-
+        foreach(i in mBaseImpls_){
+            i.setupFirst()
+        }
     }
 
     function loadFiles(){
@@ -265,15 +279,15 @@
 
     function loadEnumFiles(){
         //The enums and defs need to be registered separately so the def can use the enum.
-        _doFile("res://src/Content/ItemEnums.nut");
-        _doFile("res://src/Content/EnemyEnums.nut");
-        _doFile("res://src/Content/PlaceEnums.nut");
+        foreach(i in mBaseImpls_){
+            i.loadEnumFiles();
+        }
     }
 
     function loadContentFiles(){
-        _doFile("res://src/Content/ItemDefs.nut");
-        _doFile("res://src/Content/EnemyDefs.nut");
-        _doFile("res://src/Content/PlaceDefs.h.nut");
+        foreach(i in mBaseImpls_){
+            i.loadContentFiles();
+        }
     }
 
     function setup(){
@@ -284,6 +298,12 @@
         checkUserParams();
         registerProfiles_();
         setupDeveloperWorkaroundsPre_();
+
+        _doFile("res://src/Content/BaseBasic.nut");
+        registerBasicBaseImp(::BaseBasic());
+        foreach(i in mBaseImpls_){
+            i.setup();
+        }
 
         /*
         if(!(::Base.isProfileActive(GameProfile.FORCE_WINDOWED))){

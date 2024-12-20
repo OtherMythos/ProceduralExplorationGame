@@ -13,7 +13,7 @@ This class merges enum definition into a string and then compiles that as a Squi
             local root = format("enum %s {\nNONE,", name);
             mEnums_.rawset(name, root);
         }
-        print(mEnums_[name])
+        //print(mEnums_[name])
         mEnums_[name] += content;
         print(mEnums_[name])
     }

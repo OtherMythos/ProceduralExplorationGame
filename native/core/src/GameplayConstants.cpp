@@ -11,7 +11,7 @@ namespace ProceduralExplorationGameCore{
     const GameplayConstants::PlacesByTypeVec& GameplayConstants::getPlacesByType() { return GameplayConstants::mPlacesByType; }
 
     void GameplayConstants::initialise(){
-        mPlaces.resize((size_t)PlaceId::MAX);
+        //mPlaces.resize((size_t)PlaceId::MAX);
         //#include "../../../src/Content/PlaceDefs.h.nut"
 
         /*

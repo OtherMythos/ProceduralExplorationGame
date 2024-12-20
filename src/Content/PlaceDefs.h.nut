@@ -35,7 +35,8 @@ DEFINE_PLACE(PlaceIdConst(PlaceId.LOCATION_1, ::LOCATION_1), PlaceDef("Dungeon",
 #undef DEFINE_PLACE
 
 */
-
+//TODO sort the need for this thing out.
+::testPlaceDefs <-{
 function GenericPlacement(world, entityFactory, node, placeData, idx){
     return entityFactory.constructPlace(placeData, idx);
 }
@@ -112,14 +113,24 @@ function DustMiteNestPlacement(world, entityFactory, node, placeData, idx){
 function DustMiteNestAppearFunction(world, placeId, pos){
 }
 
+function initialisePlacesLists(){
+    for(local i = 0; i < PlaceType.MAX; i++){
+        ::PlacesByType[i] <- [];
+    }
+    foreach(c,i in ::Places){
+        ::PlacesByType[i.getType()].append(c);
+    }
+}
+};
+
 ::Places <- array(PlaceId.MAX, null);
 
 ::Places[PlaceId.NONE] = PlaceDef("None", "None", PlaceType.NONE, 0.0, null, null, 0);
 
-::Places[PlaceId.GATEWAY] = PlaceDef("Gateway", "Gateway", PlaceType.GATEWAY, 1.0, GenericPlacement, null, 0);
+::Places[PlaceId.GATEWAY] = PlaceDef("Gateway", "Gateway", PlaceType.GATEWAY, 1.0, testPlaceDefs.GenericPlacement, null, 0);
 
-::Places[PlaceId.GOBLIN_CAMP] = PlaceDef("Goblin Camp", "Spooky goblin camp", PlaceType.LOCATION, 1.0, GoblinCampPlacement, GoblinCampAppearFunction, 100);
-::Places[PlaceId.DUSTMITE_NEST] = PlaceDef("Dust Mite Nest", "An entrance to a Dust Mite nest.", PlaceType.LOCATION, 1.0, DustMiteNestPlacement, DustMiteNestAppearFunction, 100);
+::Places[PlaceId.GOBLIN_CAMP] = PlaceDef("Goblin Camp", "Spooky goblin camp", PlaceType.LOCATION, 1.0, testPlaceDefs.GoblinCampPlacement, testPlaceDefs.GoblinCampAppearFunction, 100);
+::Places[PlaceId.DUSTMITE_NEST] = PlaceDef("Dust Mite Nest", "An entrance to a Dust Mite nest.", PlaceType.LOCATION, 1.0, testPlaceDefs.DustMiteNestPlacement, testPlaceDefs.DustMiteNestAppearFunction, 100);
 
 ::PlacesByType <- {};
 
@@ -134,13 +145,5 @@ function DustMiteNestAppearFunction(world, placeId, pos){
     }
 }
 
-function initialisePlacesLists(){
-    for(local i = 0; i < PlaceType.MAX; i++){
-        ::PlacesByType[i] <- [];
-    }
-    foreach(c,i in ::Places){
-        ::PlacesByType[i.getType()].append(c);
-    }
-}
 
-initialisePlacesLists();
+testPlaceDefs.initialisePlacesLists();

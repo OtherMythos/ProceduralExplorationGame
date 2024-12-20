@@ -273,6 +273,7 @@ namespace ProceduralExplorationGamePlugin{
                 }
             }
             else if(t == OT_ARRAY){
+                /*
                 if(strcmp(k, "placeFrequency") == 0){
                     //Read the values from the array.
                     SQInteger placesSize = sq_getsize(vm, -1);
@@ -285,11 +286,12 @@ namespace ProceduralExplorationGamePlugin{
 
                         SQInteger frequency = 0;
                         sq_getinteger(vm, -1, &frequency);
-                        data->placeFrequency[i] = frequency;
+                        //data->placeFrequency[i] = frequency;
 
                         sq_pop(vm, 1);
                     }
                 }
+                 */
             }
             sq_pop(vm,2); //pop the key and value
         }
