@@ -97,6 +97,7 @@
         local region = targetRegions[targetIdx];
 
         local point = ::MapGenHelpers.seedFindRandomPointInRegion(nativeMapData, region);
+        if(point == INVALID_WORLD_POINT) return;
 
         local placeData = {
             "originX": (point >> 16) & 0xFFFF,
@@ -121,6 +122,7 @@
         local region = targetRegions[targetIdx];
 
         local point = ::MapGenHelpers.seedFindRandomPointInRegion(nativeMapData, region);
+        if(point == INVALID_WORLD_POINT) return;
 
         local placeData = {
             "originX": (point >> 16) & 0xFFFF,

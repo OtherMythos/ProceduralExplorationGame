@@ -71,7 +71,9 @@
     }
 
     function seedFindRandomPointInRegion(native, regionData){
-        local randomIdx = native.randomIntMinMax(0, regionData.coords.len()-1);
+        local l = regionData.coords.len();
+        if(l == 0) return INVALID_WORLD_POINT;
+        local randomIdx = native.randomIntMinMax(0, l - 1);
         return regionData.coords[randomIdx];
     }
 
