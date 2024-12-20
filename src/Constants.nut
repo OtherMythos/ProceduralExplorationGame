@@ -327,6 +327,7 @@ enum CharacterModelType{
     SKELETON,
     FOREST_GUARDIAN,
     BEE,
+    DUST_MITE_WORKER,
 
     MAX
 };
@@ -340,6 +341,7 @@ enum CharacterModelType{
         case CharacterModelType.SKELETON: return "Skeleton";
         case CharacterModelType.FOREST_GUARDIAN: return "Forest Guardian";
         case CharacterModelType.BEE: return "Bee";
+        case CharacterModelType.DUST_MITE_WORKER: return "Dust Mite Worker";
         default:{
             assert(false);
         }
@@ -361,8 +363,10 @@ enum CharacterModelPartType{
 
     LEFT_MISC_1,
     LEFT_MISC_2,
+    LEFT_MISC_3,
     RIGHT_MISC_1,
     RIGHT_MISC_2,
+    RIGHT_MISC_3,
 
     MAX
 };

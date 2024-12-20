@@ -29,6 +29,7 @@
         mMapData_ = mapData;
 
         createScene();
+        spawnEnemies();
 
         local targetPos = mMapData_.playerStart;
         local pos = Vec3(targetPos & 0xFFFF, 0, (targetPos >> 16) & 0xFFFF);
@@ -102,6 +103,12 @@
             case ProceduralDungeonTypes.CATACOMB:
             default:
                 return ["DungeonFloor.voxMesh", "DungeonWall.voxMesh", "DungeonWallCorner.voxMesh"];
+        }
+    }
+
+    function spawnEnemies(){
+        for(local i = 0; i < 3 + _random.randInt(3); i++){
+            createEnemy(EnemyId.DUST_MITE_WORKER, findPosInDungeon_());
         }
     }
 

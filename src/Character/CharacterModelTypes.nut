@@ -212,3 +212,34 @@ local ModelType = class{
     ],
     [CharacterModelAnimId.NONE, CharacterModelAnimId.NONE, CharacterModelAnimId.NONE]
 );
+::ModelTypes[CharacterModelType.DUST_MITE_WORKER] = ModelType("build/assets/characterAnimations/forestGuardianAnimation.xml",
+    [
+        Entry(
+            "dustMiteWorker.voxMesh", CharacterModelPartType.BODY,
+            [
+                Entry(null, CharacterModelPartType.NONE, null, ::Vec3_ZERO, ::Vec3_UNIT_SCALE, null, CharacterModelEquipNodeType.WEAPON_STORE)
+            ]
+            , Vec3(0, 0, 0)
+        ),
+        Entry(
+            "dustMiteWorkerLeftFoot.voxMesh", CharacterModelPartType.LEFT_MISC_1, null, Vec3(3, 1, 0)
+        ),
+        Entry(
+            "dustMiteWorkerLeftFoot.voxMesh", CharacterModelPartType.LEFT_MISC_2, null, Vec3(3, 1, -3)
+        ),
+        Entry(
+            "dustMiteWorkerLeftFoot.voxMesh", CharacterModelPartType.LEFT_MISC_3, null, Vec3(3, 1, -6)
+        ),
+
+        Entry(
+            "dustMiteWorkerRightFoot.voxMesh", CharacterModelPartType.RIGHT_MISC_1, null, Vec3(-3, 1, 0)
+        ),
+        Entry(
+            "dustMiteWorkerRightFoot.voxMesh", CharacterModelPartType.RIGHT_MISC_2, null, Vec3(-3, 1, -3)
+        ),
+        Entry(
+            "dustMiteWorkerRightFoot.voxMesh", CharacterModelPartType.RIGHT_MISC_3, null, Vec3(-3, 1, -6)
+        )
+    ],
+    [CharacterModelAnimId.NONE, CharacterModelAnimId.NONE, CharacterModelAnimId.NONE]
+);
