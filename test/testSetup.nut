@@ -423,12 +423,14 @@ function end(){
 }
 
 function checkForAdditionalIncludes(){
+    _doFile("script://../src/System/EnumDef.nut");
     local additional = _settings.getUserSetting("Additional")
     if(additional != null){
         if(typeof additional != "string") throw "Additional includes must be string paths, separated by commas.";
         local paths = split(additional, ",");
         foreach(i in paths){
             _doFile(i);
+            ::EnumDef.commitEnums();
         }
     }
 }
