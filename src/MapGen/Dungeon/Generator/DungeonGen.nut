@@ -14,6 +14,7 @@
         }
         //Use a flood fill algorithm to collect combined rooms together.
         local floodRooms = _determineTotalRooms(outVals, data.width, data.height);
+        local roomWeighted = _weightAndSortRooms(floodRooms);
 
         local playerStart = _determinePlayerStart(floodRooms);
 
@@ -25,7 +26,8 @@
             "rooms": floodRooms,
             "playerStart": playerStart,
             "vals": outVals,
-            "dungeonType": data.dungeonType
+            "dungeonType": data.dungeonType,
+            "weighted": roomWeighted
         };
         return outData;
     }
@@ -244,5 +246,38 @@
                 d[x + y * w] = val | (mask << 24);
             }
         }
+    }
+
+    function _weightAndSortRooms(floodRooms){
+        local totalTiles = 0;
+        foreach(i in floodRooms){
+            totalTiles += i.tileCount;
+        }
+
+        floodRooms.sort(function(a,b){
+            if(a.tileCount<b.tileCount) return 1;
+            else if(a.tileCount>b.tileCount) return -1;
+            return 0;
+        });
+
+        local weighted = array(100, 0);
+        local count = 0;
+        local startIdx = floodRooms.len() > 100 ? 100 : floodRooms.len()-1;
+        for(local i = startIdx; i >= 0; i--){
+            local weightFloat = (floodRooms[i].tileCount.tofloat() / totalTiles) * 100;
+            local weight = weightFloat >= 1.0 ? weightFloat.tointeger() : 1;
+            for(local y = 0; y < weight; y++){
+                weighted[count] = i;
+                count++;
+                //Drop out if the array is populated.
+                if(count >= 100){
+                    //Assuming we stop on the largest room.
+                    assert(i == 0);
+                    return weighted;
+                }
+            }
+        }
+
+        return weighted;
     }
 };

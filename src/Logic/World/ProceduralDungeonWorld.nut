@@ -183,7 +183,8 @@
     }
 
     function findPosInDungeon_(){
-        local targetRoom = mMapData_.rooms[_random.randIndex(mMapData_.rooms)].foundPoints;
+        local roomId = mMapData_.weighted[_random.randIndex(mMapData_.weighted)];
+        local targetRoom = mMapData_.rooms[roomId].foundPoints;
         local point = targetRoom[_random.randIndex(targetRoom)];
 
         local targetPos = Vec3( (point & 0xFFFF), 0, (point >> 16) & 0xFFFF );
