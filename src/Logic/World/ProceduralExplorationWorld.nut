@@ -223,6 +223,9 @@
         }
         //appearEnemy(_random.randInt(EnemyId.GOBLIN, EnemyId.MAX-1));
         local pos = MapGenHelpers.findRandomPointOnLand(mMapData_, mPlayerEntry_.getPosition(), 50);
+        if(pos == null){
+            return;
+        }
         appearEnemy(pos);
     }
 

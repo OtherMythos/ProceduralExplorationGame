@@ -17,6 +17,7 @@ enum EntityComponents{
     PROXIMITY,
     DATABLOCK,
     DIALOG,
+    TRAVERSABLE_TERRAIN,
 
     MAX
 
@@ -278,6 +279,18 @@ EntityManager.EntityManager <- class{
         processPositionChange_(eid, idx, targetPos);
     }
 
+    function checkEntityPositionPotential(eid, newPos){
+        //
+        local world = (eid >> 60) & 0xF;
+        if(world != mId) throw "Entity does not belong to this world.";
+        local version = (eid >> 30) & 0x3FFFFFFF;
+        local idx = eid & 0x3FFFFFFF;
+        if(mVersions_[idx] != version) throw "Entity is invalid";
+        //
+        local oldPos = mEntityPositions_[idx];
+        return processEntityPositionPotential_(eid, idx, newPos, oldPos);
+    }
+
     function moveTowards(eid, targetPos, anim){
         //
         local world = (eid >> 60) & 0xF;
@@ -289,6 +302,22 @@ EntityManager.EntityManager <- class{
         local pos = mEntityPositions_[idx];
         pos.moveTowards(targetPos, anim);
         processPositionChange_(eid, idx, pos);
+    }
+
+    function processEntityPositionPotential_(eid, idx, newPos, oldPos){
+        local targetPos = newPos;
+        if(mEntityComponentHashes_[idx] & (1<<EntityComponents.TRAVERSABLE_TERRAIN)){
+            local c = mComponents_[EntityComponents.TRAVERSABLE_TERRAIN].getCompForEid(eid);
+
+            local traverse = mCreatorWorld_.getTraverseTerrainForPosition(targetPos);
+
+            print(traverse);
+            if((c.mTraversableTerrain & traverse) == 0){
+                targetPos = oldPos;
+            }
+        }
+
+        return targetPos;
     }
 
     function processPositionChange_(eid, idx, newPos){

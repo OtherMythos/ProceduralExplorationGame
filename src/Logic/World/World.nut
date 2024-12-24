@@ -794,20 +794,25 @@ enum WorldMousePressContexts{
         }
     }
 
-    function teleportPlayerToRaycast(){
+    function getPositionForRaycast(){
         local inWindow = mGui_.checkPlayerInputPosition(_input.getMouseX(), _input.getMouseY());
-        if(inWindow != null){
-            local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
-            assert(camera != null);
-            local mTestPlane_ = Plane(::Vec3_UNIT_Y, Vec3(0, 0, 0));
-            local ray = camera.getCameraToViewportRay(_input.getMouseX().tofloat()/_window.getWidth().tofloat(), _input.getMouseY().tofloat()/_window.getHeight().tofloat());
-            local point = ray.intersects(mTestPlane_);
-            if(point == false){
-                return;
-            }
-            local worldPoint = ray.getPoint(point);
+        if(inWindow == null) return null;
 
-            setPlayerPosition(worldPoint.x, worldPoint.z);
+        local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
+        assert(camera != null);
+        local mTestPlane_ = Plane(::Vec3_UNIT_Y, Vec3(0, 0, 0));
+        local ray = camera.getCameraToViewportRay(_input.getMouseX().tofloat()/_window.getWidth().tofloat(), _input.getMouseY().tofloat()/_window.getHeight().tofloat());
+        local point = ray.intersects(mTestPlane_);
+        if(point == false){
+            return null;
+        }
+        local worldPoint = ray.getPoint(point);
+        return worldPoint;
+    }
+    function teleportPlayerToRaycast(){
+        local pos = getPositionForRaycast();
+        if(pos != null){
+            setPlayerPosition(pos.x, pos.z);
         }
     }
 

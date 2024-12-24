@@ -270,16 +270,13 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
     function getTargetCollisionWorld(){
         return mTargetCollisionWorld_;
     }
-    function isPositionWalkable(intended){
-        local traverseTypes = ::Enemies[mEnemy_].getTraversableTerrain();
-        local traverse = mCreatorWorld_.getTraverseTerrainForPosition(mPos_);
-
-        return traverseTypes & traverse;
-    }
     function move_(pos, amount){
-        //First check if that section of the map is walkable.
-        if(!isPositionWalkable(pos)){
-            return false;
+        //Check for potential obsticles.
+        if(mEntity_ != null){
+            local result = mCreatorWorld_.getEntityManager().checkEntityPositionPotential(mEntity_, pos);
+            if(result <=> pos){
+                return false;
+            }
         }
 
         setPosition(pos);

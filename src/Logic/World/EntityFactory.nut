@@ -197,6 +197,11 @@
 
         entry.setPosition(targetPos);
 
+        local traversable = enemyDef.getTraversableTerrain();
+        if(traversable != EnemyTraversableTerrain.ALL){
+            manager.assignComponent(en, EntityComponents.TRAVERSABLE_TERRAIN, ::EntityManager.Components[EntityComponents.TRAVERSABLE_TERRAIN](traversable));
+        }
+
         local totalHealth = enemyStats.getHealth();
         manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](totalHealth));
 

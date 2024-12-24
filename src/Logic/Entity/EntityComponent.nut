@@ -175,3 +175,13 @@
     }
 
 };
+
+::EntityManager.Components[EntityComponents.TRAVERSABLE_TERRAIN] = class extends ::EntityManager.Component{
+
+    mTraversableTerrain = null;
+
+    constructor(traversableTerrain){
+        mTraversableTerrain = traversableTerrain;
+    }
+
+};

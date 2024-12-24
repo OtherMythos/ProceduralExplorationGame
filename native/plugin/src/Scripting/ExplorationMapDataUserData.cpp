@@ -275,7 +275,7 @@ namespace ProceduralExplorationGamePlugin{
         ProceduralExplorationGameCore::WaterId outWater = ProceduralExplorationGameCore::INVALID_WATER_ID;
 
         if(outVec.x < 0 || outVec.z < 0 || outVec.x >= mapData->width || outVec.z >= mapData->height){
-            sq_pushbool(vm, false);
+            sq_pushbool(vm, true);
             return 1;
         }
 
