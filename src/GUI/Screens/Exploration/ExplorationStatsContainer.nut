@@ -18,6 +18,8 @@
         //The window is only responsible for laying things out.
         mWindow_ = _gui.createWindow("ExplorationScreen", parentWin);
         mWindow_.setClickable(false);
+        //Shrink to the correct size later on.
+        mWindow_.setSize(400, 700);
         //mWindow_.setVisualsEnabled(false);
 
         mLayoutLine_ = _gui.createLayoutLine();
@@ -27,7 +29,8 @@
         mPlayerHealthBar_.setPercentage(1.0);
         mPlayerHealthBar_.addToLayout(mLayoutLine_);
 
-        local mobileInterface = (::Base.getTargetInterface() == TargetInterface.MOBILE);
+        //local mobileInterface = (::Base.getTargetInterface() == TargetInterface.MOBILE);
+        local mobileInterface = true;
         local targetLayout = mLayoutLine_;
         if(mobileInterface){
             mHorizontalLayoutLine_ = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
@@ -36,6 +39,8 @@
 
         mInventoryButton_ = mWindow_.createButton();
         mInventoryButton_.setText("Inventory");
+        mInventoryButton_.setExpandVertical(true);
+        mInventoryButton_.setExpandHorizontal(true);
         targetLayout.addCell(mInventoryButton_);
         mInventoryButton_.attachListenerForEvent(function(widget, action){
             ::Base.mExplorationLogic.mCurrentWorld_.showInventory();
@@ -44,6 +49,8 @@
         if(::Base.getTargetInterface() != TargetInterface.MOBILE){
             mWieldPutAway_ = mWindow_.createButton();
             mWieldPutAway_.setText("Wield");
+            mWieldPutAway_.setExpandVertical(true);
+            mWieldPutAway_.setExpandHorizontal(true);
             targetLayout.addCell(mWieldPutAway_);
             mWieldPutAway_.attachListenerForEvent(function(widget, action){
                 ::Base.mPlayerStats.toggleWieldActive();
@@ -64,6 +71,8 @@
         }
 
         mLayoutLine_.setMarginForAllCells(10, 10);
+        mPlayerHealthBar_.mParentContainer_.setMargin(0, 0);
+
         //mLayoutLine_.layout();
 
         //TODO this is to get the layout to work but is a bit gross.
@@ -107,6 +116,7 @@
     function sizeLayout(){
         mPlayerHealthBar_.setMinSize(Vec2(mWindow_.getSizeAfterClipping().x, 50));
         mLayoutLine_.setSize(mWindow_.getSize());
+        mHorizontalLayoutLine_.setSize(mWindow_.getSize());
         if(mHorizontalLayoutLine_){
             mHorizontalLayoutLine_.setSize(mWindow_.getSize());
         }
@@ -116,6 +126,8 @@
         }
 
         mPlayerHealthBar_.notifyLayout();
+
+        mWindow_.setSize(mWindow_.calculateChildrenSize());
     }
 
     function playerHealthChanged(id, data){
