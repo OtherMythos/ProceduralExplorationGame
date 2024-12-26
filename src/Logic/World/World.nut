@@ -414,6 +414,8 @@ enum WorldMousePressContexts{
     }
 
     function update(){
+        if(!isActive()) return;
+
         checkCameraChange();
         checkOrientatingCamera();
         checkHighlightEnemy();
@@ -423,6 +425,8 @@ enum WorldMousePressContexts{
         //checkForFlagUpdate();
         checkForPlayerMoveBegin();
         checkPlayerInputs();
+        //Some of the player inputs might have deactivated this world, so check again.
+        if(!isActive()) return;
         checkPlayerCombatLogic();
 
         if(::Base.isProfileActive(GameProfile.ENABLE_RIGHT_CLICK_WORKAROUNDS)){
@@ -945,9 +949,9 @@ enum WorldMousePressContexts{
         local targetEnemy = spawnable[idx];
         createEnemy(targetEnemy, pos);
     }
-    function createEnemyFromPlayer(enemyType){
+    function createEnemyFromPlayer(enemyType, distance=20){
         local target = getPlayerPosition().copy();
-        target += _random.randVec3() * 20;
+        target += _random.randVec3() * distance;
         if(target == null) return;
         createEnemy(enemyType, target);
     }
