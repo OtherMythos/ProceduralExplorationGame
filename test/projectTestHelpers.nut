@@ -23,6 +23,22 @@
     }
 };
 
+::_testHelper.STEPS_WAIT_FOR_EXPLORATION_END_SCREEN <- function(){
+    if(::_testHelper.queryWindow("ExplorationEndScreen") == null){
+        ::_testHelper.repeatStep();
+        return;
+    }
+    local w = ::_testHelper.getWidgetForText("Return to menu");
+    if(w == null){
+        ::_testHelper.repeatStep();
+        return;
+    }
+    if(!w.getVisible()){
+        ::_testHelper.repeatStep();
+        return;
+    }
+};
+
 ::_testHelper.STEPS_MAIN_MENU_TO_EXPLORATION_GAMEPLAY <- [
     function(){
         ::_testHelper.mousePressWidgetForText("Play");

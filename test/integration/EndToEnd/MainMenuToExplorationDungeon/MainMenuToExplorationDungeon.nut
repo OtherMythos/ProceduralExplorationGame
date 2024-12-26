@@ -1,7 +1,7 @@
 _tIntegration("MainMenuToExplorationDungeon", "Begin an exploration, start pushing worlds and check they can all be popped succesfully", {
     "start": function(){
         ::_testHelper.clearAllSaves();
-        ::_testHelper.setDefaultWaitFrames(20);
+        ::_testHelper.setDefaultWaitFrames(10);
         ::count <- 0;
     },
 
@@ -10,14 +10,12 @@ _tIntegration("MainMenuToExplorationDungeon", "Begin an exploration, start pushi
             "steps": ::_testHelper.STEPS_MAIN_MENU_TO_EXPLORATION_GAMEPLAY
         },
         function(){
-            ::_testHelper.waitFrames(100);
             ::Base.mExplorationLogic.mCurrentWorld_.findAllRegions();
         },
         {
             "repeat": 5,
             "steps": [
                 function(){
-                    ::_testHelper.waitFrames(50);
                     local data = {
                         "worldType": WorldTypes.PROCEDURAL_DUNGEON_WORLD,
                         "dungeonType": ProceduralDungeonTypes.DUST_MITE_NEST,
@@ -28,7 +26,6 @@ _tIntegration("MainMenuToExplorationDungeon", "Begin an exploration, start pushi
                     ::Base.mExplorationLogic.pushWorld(worldInstance);
                 },
                 function(){
-                    ::_testHelper.waitFrames(50);
                     ::Base.mExplorationLogic.mCurrentWorld_.createEnemyFromPlayer(1, 5);
                 }
             ]
@@ -37,22 +34,17 @@ _tIntegration("MainMenuToExplorationDungeon", "Begin an exploration, start pushi
             "repeat": 5,
             "steps": [
                 function(){
-                    ::_testHelper.waitFrames(50);
                     ::Base.mExplorationLogic.popWorld();
                 }
             ]
         },
         function(){
-            ::_testHelper.waitFrames(300);
             ::Base.mExplorationLogic.gatewayEndExploration();
             ::_testHelper.queryWindowExists("ExplorationEndScreen");
         },
+        ::_testHelper.STEPS_WAIT_FOR_EXPLORATION_END_SCREEN,
         function(){
-            if(::_testHelper.getWidgetForText("Return to menu") != null){
-                ::_testHelper.mousePressWidgetForText("Return to menu");
-            }else{
-                _testHelper.repeatStep();
-            }
+            ::_testHelper.mousePressWidgetForText("Return to menu");
         },
         function(){
             ::_testHelper.queryWindowExists("GameplayMainMenu");
