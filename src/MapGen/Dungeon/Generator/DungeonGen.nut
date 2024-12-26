@@ -4,6 +4,8 @@
     }
 
     function generate(data){
+        _random.seed(data.seed);
+
         local outVals = array(data.width * data.height, false);
 
         //Generate the individual rooms into the array structure.
@@ -20,6 +22,8 @@
 
         _determineEdges(outVals, data.width, data.height);
 
+        _random.seed(_system.time());
+
         local outData = {
             "width": data.width,
             "height": data.height,
@@ -27,7 +31,8 @@
             "playerStart": playerStart,
             "vals": outVals,
             "dungeonType": data.dungeonType,
-            "weighted": roomWeighted
+            "weighted": roomWeighted,
+            "seed": data.seed
         };
         return outData;
     }

@@ -20,7 +20,8 @@ _tIntegration("MainMenuToExplorationDungeon", "Begin an exploration, start pushi
                         "worldType": WorldTypes.PROCEDURAL_DUNGEON_WORLD,
                         "dungeonType": ProceduralDungeonTypes.DUST_MITE_NEST,
                         "width": 50,
-                        "height": 50
+                        "height": 50,
+                        "seed": 10
                     };
                     local worldInstance = ::Base.mExplorationLogic.createWorldInstance(WorldTypes.PROCEDURAL_DUNGEON_WORLD, data);
                     ::Base.mExplorationLogic.pushWorld(worldInstance);

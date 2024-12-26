@@ -19,7 +19,8 @@
             mInputData_ = {
                 "width": 50,
                 "height": 50,
-                "dungeonType": ProceduralDungeonTypes.CATACOMB
+                "dungeonType": ProceduralDungeonTypes.CATACOMB,
+                "seed": _random.randInt(1000)
             };
         }
         local outData = gen.generate(mInputData_);
