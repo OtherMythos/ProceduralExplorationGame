@@ -27,6 +27,7 @@ namespace ProceduralExplorationGamePlugin{
         static SQInteger getRegionFound(HSQUIRRELVM vm);
         static SQInteger setNewMapData(HSQUIRRELVM vm);
         static SQInteger createTerrainFromMapData(HSQUIRRELVM vm);
+        static SQInteger createCollisionDetectionWorld(HSQUIRRELVM vm);
 
         static SQInteger beginMapGen(HSQUIRRELVM vm);
         static SQInteger getMapGenStage(HSQUIRRELVM vm);

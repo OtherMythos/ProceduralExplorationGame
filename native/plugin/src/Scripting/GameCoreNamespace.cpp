@@ -14,6 +14,8 @@
 #include "Scripting/ScriptNamespace/Classes/Scene/ParsedAvSceneUserData.h"
 #include "Scripting/ScriptNamespace/Classes/Ogre/Scene/SceneNodeUserData.h"
 #include "Scripting/ScriptNamespace/Classes/Animation/AnimationInfoUserData.h"
+#include "Collision/CollisionDetectionWorld.h"
+#include "Scripting/ScriptNamespace/Classes/CollisionWorldClass.h"
 
 #include "MapGen/ExplorationMapViewer.h"
 #include "MapGen/ExplorationMapDataPrerequisites.h"
@@ -464,6 +466,17 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger GameCoreNamespace::createCollisionDetectionWorld(HSQUIRRELVM vm){
+        SQInteger id;
+        sq_getinteger(vm, 2, &id);
+
+        ProceduralExplorationGameCore::CollisionDetectionWorld* world = new ProceduralExplorationGameCore::CollisionDetectionWorld(id);
+
+        AV::CollisionWorldClass::collisionWorldToUserData(vm, world);
+
+        return 1;
+    }
+
     SQInteger GameCoreNamespace::createVoxMeshItem(HSQUIRRELVM vm){
         SQInteger size = sq_gettop(vm);
         Ogre::SceneMemoryMgrTypes targetType = Ogre::SCENE_DYNAMIC;
@@ -575,6 +588,8 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, setNewMapData, "setNewMapData", 2, ".u");
         AV::ScriptUtils::addFunction(vm, createTerrainFromMapData, "createTerrainFromMapData", 3, ".su");
         AV::ScriptUtils::addFunction(vm, getNameForMapGenStage, "getNameForMapGenStage", 2, ".i");
+
+        AV::ScriptUtils::addFunction(vm, createCollisionDetectionWorld, "createCollisionDetectionWorld", 2, ".i");
 
         AV::ScriptUtils::addFunction(vm, beginMapGen, "beginMapGen", 2, ".t");
         AV::ScriptUtils::addFunction(vm, getMapGenStage, "getMapGenStage");

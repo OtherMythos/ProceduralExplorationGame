@@ -86,6 +86,9 @@
                     triggerWorld, damageWorld, combatTargetWorld
                 )
             );
+
+            local collisionRadius = 1.5;
+            manager.assignComponent(en, EntityComponents.COLLISION_DETECTION, ::EntityManager.Components[EntityComponents.COLLISION_DETECTION](collisionRadius));
         }
 
         /*
@@ -328,7 +331,7 @@
 
         return en;
     }
-    function constructSimpleItem(parentNode, meshPath, pos, scale, spoilData=null, totalHealth=null, orientation=null){
+    function constructSimpleItem(parentNode, meshPath, pos, scale, collisionRadius=null, spoilData=null, totalHealth=null, orientation=null){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = pos.copy();
         targetPos.y = getZForPos(targetPos);
@@ -355,6 +358,10 @@
         local combatTargetPoint = combatTargetWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_ENEMY);
         manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO, ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](collisionPoint, combatTargetPoint, damageWorld, combatTargetWorld));
 
+        if(collisionRadius != null){
+            mConstructorWorld_.getCollisionDetectionWorld().
+                addCollisionPoint(targetPos.x, targetPos.z, collisionRadius, 0xFF, _COLLISION_WORLD_ENTRY_SENDER);
+        }
         if(spoilData != null){
             local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SPOILS_DATA, spoilData, null, null);
             manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);

@@ -212,6 +212,7 @@ enum WorldMousePressContexts{
     mDamageCollisionWorld_ = null;
     mTriggerCollisionWorld_ = null;
     mCombatTargetCollisionWorld_ = null;
+    mCollisionDetectionWorld_ = null;
     mEntityManager_ = null;
 
     mMovementCooldown_ = 0;
@@ -312,6 +313,9 @@ enum WorldMousePressContexts{
     function getCombatTargetWorld(){
         return mCombatTargetCollisionWorld_;
     }
+    function getCollisionDetectionWorld(){
+        return mCollisionDetectionWorld_;
+    }
     function getEntityManager(){
         return mEntityManager_;
     }
@@ -372,6 +376,7 @@ enum WorldMousePressContexts{
         mDamageCollisionWorld_ = CollisionWorldWrapper(this, 0);
         mTriggerCollisionWorld_ = CollisionWorldWrapper(this, 1);
         mCombatTargetCollisionWorld_ = CollisionWorldWrapper(this, 2);
+        mCollisionDetectionWorld_ = _gameCore.createCollisionDetectionWorld(3);
 
         mEntityManager_ = EntityManager.createEntityManager(this);
     }
@@ -465,6 +470,7 @@ enum WorldMousePressContexts{
         mDamageCollisionWorld_.processCollision();
         mTriggerCollisionWorld_.processCollision();
         mCombatTargetCollisionWorld_.processCollision();
+        mCollisionDetectionWorld_.processCollision();
     }
 
     function setCurrentWorld(current){

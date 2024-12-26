@@ -185,3 +185,13 @@
     }
 
 };
+
+::EntityManager.Components[EntityComponents.COLLISION_DETECTION] = class extends ::EntityManager.Component{
+
+    mRadius = false;
+
+    constructor(radius){
+        mRadius = radius;
+    }
+
+};

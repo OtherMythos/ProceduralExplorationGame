@@ -161,7 +161,7 @@
             local orientation = Quat(-PI/(_random.rand()*1.5+1), ::Vec3_UNIT_X);
             orientation *= Quat(_random.rand()*PI - PI/2, ::Vec3_UNIT_Y);
             local model = _random.randInt(3) == 0 ? "skeletonBody.voxMesh" : "skeletonHead.voxMesh";
-            mEntityFactory_.constructSimpleItem(mParentNode_, model, targetPos, 0.25, null, 10, orientation);
+            mEntityFactory_.constructSimpleItem(mParentNode_, model, targetPos, 0.25, null, null, 10, orientation);
         }
 
         mEntityFactory_.constructChestObject(findPosInDungeon_());

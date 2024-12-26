@@ -18,6 +18,7 @@ enum EntityComponents{
     DATABLOCK,
     DIALOG,
     TRAVERSABLE_TERRAIN,
+    COLLISION_DETECTION,
 
     MAX
 
@@ -311,8 +312,15 @@ EntityManager.EntityManager <- class{
 
             local traverse = mCreatorWorld_.getTraverseTerrainForPosition(targetPos);
 
-            print(traverse);
             if((c.mTraversableTerrain & traverse) == 0){
+                targetPos = oldPos;
+            }
+        }
+        if(mEntityComponentHashes_[idx] & (1<<EntityComponents.COLLISION_DETECTION)){
+            local c = mComponents_[EntityComponents.COLLISION_DETECTION].getCompForEid(eid);
+            local w = mCreatorWorld_.getCollisionDetectionWorld();
+            local collided = w.checkCollisionPoint(targetPos.x, targetPos.z, c.mRadius);
+            if(collided){
                 targetPos = oldPos;
             }
         }

@@ -55,8 +55,8 @@ function GoblinCampPlacement(world, entityFactory, node, placeData, idx){
         ];
     };
 
-    entityFactory.constructSimpleItem(parentNode, "goblinTotem.voxMesh", voxPos + Vec3(4, 0, 3), 0.15, spoils(), 10);
-    local campfireEntity = entityFactory.constructSimpleItem(parentNode, "campfireBase.voxMesh", voxPos + Vec3(1, 0, 6), 0.4, spoils(), 10);
+    entityFactory.constructSimpleItem(parentNode, "goblinTotem.voxMesh", voxPos + Vec3(4, 0, 3), 0.15, 0.05, spoils(), 10);
+    local campfireEntity = entityFactory.constructSimpleItem(parentNode, "campfireBase.voxMesh", voxPos + Vec3(1, 0, 6), 0.4, null, spoils(), 10);
     //Attach the smoke particle effect to the fire.
     {
         local campfireNode = world.getEntityManager().getComponent(campfireEntity, EntityComponents.SCENE_NODE).mNode;
@@ -72,7 +72,7 @@ function GoblinCampPlacement(world, entityFactory, node, placeData, idx){
             SpoilsEntry(SPOILS_ENTRIES.SPAWN_ENEMIES, 1)
         );
     }
-    entityFactory.constructSimpleItem(parentNode, "goblinTent.voxMesh", voxPos, 0.3, s, 10);
+    entityFactory.constructSimpleItem(parentNode, "goblinTent.voxMesh", voxPos, 0.3, 2.5, s, 10);
 
     return null;
 }
@@ -108,7 +108,7 @@ function DustMiteNestPlacement(world, entityFactory, node, placeData, idx){
         local orientation = Quat(-PI/(_random.rand()*1.5+1), ::Vec3_UNIT_X);
         orientation *= Quat(_random.rand()*PI - PI/2, ::Vec3_UNIT_Y);
         local model = _random.randInt(4) == 0 ? "skeletonBody.voxMesh" : "skeletonHead.voxMesh";
-        entityFactory.constructSimpleItem(parentNode, model, targetPos, 0.15, null, 10, orientation);
+        entityFactory.constructSimpleItem(parentNode, model, targetPos, 0.15, null, null, 10, orientation);
     }
 }
 function DustMiteNestAppearFunction(world, placeId, pos){
