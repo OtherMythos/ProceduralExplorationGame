@@ -466,11 +466,41 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
-    SQInteger GameCoreNamespace::createCollisionDetectionWorld(HSQUIRRELVM vm){
-        SQInteger id;
-        sq_getinteger(vm, 2, &id);
+    SQInteger GameCoreNamespace::setupCollisionDataForWorld(HSQUIRRELVM vm){
+        AV::CollisionWorldObject* world;
+        AV::CollisionWorldClass::readCollisionWorldFromUserData(vm, 2, &world);
 
-        ProceduralExplorationGameCore::CollisionDetectionWorld* world = new ProceduralExplorationGameCore::CollisionDetectionWorld(id);
+        ProceduralExplorationGameCore::CollisionDetectionWorld* collision = dynamic_cast<ProceduralExplorationGameCore::CollisionDetectionWorld*>(world);
+        assert(collision);
+
+        std::vector<bool> data;
+        SQInteger arraySize = sq_getsize(vm, -1);
+        data.resize(arraySize);
+
+        for(SQInteger i = 0; i < arraySize; i++){
+            sq_pushinteger(vm, i);
+            sq_get(vm, -2);
+
+            SQObjectType t = sq_gettype(vm, -1);
+            assert(t == OT_BOOL || t == OT_INTEGER);
+
+            data[i] = (t == OT_BOOL);
+
+            sq_pop(vm, 1);
+        }
+
+        collision->setCollisionGrid(data);
+
+        return 0;
+    }
+
+    SQInteger GameCoreNamespace::createCollisionDetectionWorld(HSQUIRRELVM vm){
+        SQInteger id, width, height;
+        sq_getinteger(vm, 2, &id);
+        sq_getinteger(vm, 3, &width);
+        sq_getinteger(vm, 4, &height);
+
+        ProceduralExplorationGameCore::CollisionDetectionWorld* world = new ProceduralExplorationGameCore::CollisionDetectionWorld(id, width, height);
 
         AV::CollisionWorldClass::collisionWorldToUserData(vm, world);
 
@@ -590,6 +620,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, getNameForMapGenStage, "getNameForMapGenStage", 2, ".i");
 
         AV::ScriptUtils::addFunction(vm, createCollisionDetectionWorld, "createCollisionDetectionWorld", 2, ".i");
+        AV::ScriptUtils::addFunction(vm, setupCollisionDataForWorld, "setupCollisionDataForWorld", 3, ".ua");
 
         AV::ScriptUtils::addFunction(vm, beginMapGen, "beginMapGen", 2, ".t");
         AV::ScriptUtils::addFunction(vm, getMapGenStage, "getMapGenStage");

@@ -28,6 +28,8 @@
 
         mMapData_ = mapData;
 
+        _gameCore.setupCollisionDataForWorld(mCollisionDetectionWorld_, mMapData_.vals);
+
         createScene();
         spawnEnemies();
 
