@@ -23,7 +23,7 @@ namespace ProceduralExplorationGameCore{
                 int xxx = xx / 5;
                 int yyy = yy / 5;
                 if(xxx < 0 || yyy < 0 || xxx >= mWidth || yyy >= mHeight) continue;
-                if(mCollisionGrid[xxx + yyy * width]){
+                if(mCollisionGrid[xxx + yyy * mWidth]){
                     return true;
                 }
             }
