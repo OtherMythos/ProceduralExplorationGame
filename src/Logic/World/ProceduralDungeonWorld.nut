@@ -28,7 +28,7 @@
 
         mMapData_ = mapData;
 
-        _gameCore.setupCollisionDataForWorld(mCollisionDetectionWorld_, mMapData_.vals);
+        _gameCore.setupCollisionDataForWorld(mCollisionDetectionWorld_, mMapData_.vals, mMapData_.width, mMapData_.height);
 
         createScene();
         spawnEnemies();
@@ -117,6 +117,9 @@
     function createScene(){
         local wallMeshes = getWallMeshes();
 
+        local sceneNode = mParentNode_.createChildSceneNode();
+        sceneNode.setPosition(3, 0, 3);
+
         local width = mMapData_.width;
         local height = mMapData_.height;
         local voxData = array(width * height, null);
@@ -128,7 +131,7 @@
 
                 local mask = (val >> 24) & 0xF;
 
-                local newNode = mParentNode_.createChildSceneNode();
+                local newNode = sceneNode.createChildSceneNode();
                 newNode.setPosition(x * 5, 0, y * 5);
 
                 local itemName = wallMeshes[0];

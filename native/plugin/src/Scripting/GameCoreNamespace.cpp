@@ -470,6 +470,12 @@ namespace ProceduralExplorationGamePlugin{
         AV::CollisionWorldObject* world;
         AV::CollisionWorldClass::readCollisionWorldFromUserData(vm, 2, &world);
 
+        SQInteger width, height;
+        sq_getinteger(vm, 4, &width);
+        sq_getinteger(vm, 5, &height);
+        //Get the array at the top.
+        sq_pop(vm, 2);
+
         ProceduralExplorationGameCore::CollisionDetectionWorld* collision = dynamic_cast<ProceduralExplorationGameCore::CollisionDetectionWorld*>(world);
         assert(collision);
 
@@ -489,7 +495,7 @@ namespace ProceduralExplorationGamePlugin{
             sq_pop(vm, 1);
         }
 
-        collision->setCollisionGrid(data);
+        collision->setCollisionGrid(data, width, height);
 
         return 0;
     }
@@ -497,10 +503,8 @@ namespace ProceduralExplorationGamePlugin{
     SQInteger GameCoreNamespace::createCollisionDetectionWorld(HSQUIRRELVM vm){
         SQInteger id, width, height;
         sq_getinteger(vm, 2, &id);
-        sq_getinteger(vm, 3, &width);
-        sq_getinteger(vm, 4, &height);
 
-        ProceduralExplorationGameCore::CollisionDetectionWorld* world = new ProceduralExplorationGameCore::CollisionDetectionWorld(id, width, height);
+        ProceduralExplorationGameCore::CollisionDetectionWorld* world = new ProceduralExplorationGameCore::CollisionDetectionWorld(id);
 
         AV::CollisionWorldClass::collisionWorldToUserData(vm, world);
 
@@ -620,7 +624,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, getNameForMapGenStage, "getNameForMapGenStage", 2, ".i");
 
         AV::ScriptUtils::addFunction(vm, createCollisionDetectionWorld, "createCollisionDetectionWorld", 2, ".i");
-        AV::ScriptUtils::addFunction(vm, setupCollisionDataForWorld, "setupCollisionDataForWorld", 3, ".ua");
+        AV::ScriptUtils::addFunction(vm, setupCollisionDataForWorld, "setupCollisionDataForWorld", 5, ".uaii");
 
         AV::ScriptUtils::addFunction(vm, beginMapGen, "beginMapGen", 2, ".t");
         AV::ScriptUtils::addFunction(vm, getMapGenStage, "getMapGenStage");

@@ -2,10 +2,8 @@
 
 namespace ProceduralExplorationGameCore{
 
-    CollisionDetectionWorld::CollisionDetectionWorld(int worldId, int width, int height)
-        : AV::CollisionWorldBruteForce(worldId),
-        mWidth(width),
-        mHeight(height) {
+    CollisionDetectionWorld::CollisionDetectionWorld(int worldId)
+        : AV::CollisionWorldBruteForce(worldId) {
 
     }
 
@@ -32,7 +30,9 @@ namespace ProceduralExplorationGameCore{
         return false;
     }
 
-    void CollisionDetectionWorld::setCollisionGrid(std::vector<bool>& collisionGrid){
+    void CollisionDetectionWorld::setCollisionGrid(std::vector<bool>& collisionGrid, int width, int height){
+        mWidth = width;
+        mHeight = height;
         mCollisionGrid = std::move(collisionGrid);
     }
 
