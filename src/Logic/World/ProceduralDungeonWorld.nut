@@ -5,6 +5,7 @@
 
     constructor(worldId, preparer){
         base.constructor(worldId, preparer);
+        mWorldScaleSize_ = 5;
     }
 
     #Override
@@ -35,7 +36,7 @@
 
         local targetPos = mMapData_.playerStart;
         local pos = Vec3(targetPos & 0xFFFF, 0, (targetPos >> 16) & 0xFFFF);
-        pos *= 5;
+        pos *= mWorldScaleSize_;
         pos.y = getZForPos(pos);
         mPlayerEntry_.setPosition(pos);
         notifyPlayerMoved();
@@ -132,7 +133,7 @@
                 local mask = (val >> 24) & 0xF;
 
                 local newNode = sceneNode.createChildSceneNode();
-                newNode.setPosition(x * 5, 0, y * 5);
+                newNode.setPosition(x * mWorldScaleSize_, 0, y * mWorldScaleSize_);
 
                 local itemName = wallMeshes[0];
                 local orientation = Quat();

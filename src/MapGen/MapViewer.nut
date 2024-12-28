@@ -18,9 +18,11 @@
         mPanel_ = null;
         mParent_ = null;
         mMapData_ = null;
-        constructor(parentWin, mapData, size=5){
+        mMapScale_ = null;
+        constructor(parentWin, mapData, size=5, scale=1){
             mParent_ = parentWin;
             mMapData_ = mapData;
+            mMapScale_ = scale;
 
             mPanel_ = parentWin.createPanel();
             mPanel_.setSize(size, size);
@@ -28,9 +30,11 @@
             setDatablock("placeMapIndicator");
         }
         function setCentre(x, y){
+            printf("x: %f y: %f", x, y);
             local intendedPos = Vec2(x.tofloat() / mMapData_.width.tofloat(), y.tofloat() / mMapData_.height.tofloat());
             intendedPos *= mParent_.getSize();
-            mPanel_.setCentre(intendedPos.x, -intendedPos.y);
+            mPanel_.setCentre(intendedPos.x / mMapScale_, intendedPos.y / mMapScale_);
+            //mPanel_.setCentre(intendedPos.x, -intendedPos.y);
         }
         function setDatablock(datablock){
             mPanel_.setDatablock(datablock);
@@ -197,12 +201,12 @@
         }
     }
 
-    function setPlayerPosition(x, y){
+    function setPlayerPosition(x, y, worldScale=1){
         if(mMapData_ == null) return;
         if(mLabelWindow_ == null) return;
 
         if(mPlayerLocationPanel_ == null){
-            mPlayerLocationPanel_ = PlaceMarkerIcon(mLabelWindow_, mMapData_);
+            mPlayerLocationPanel_ = PlaceMarkerIcon(mLabelWindow_, mMapData_, 5, worldScale);
             mPlayerLocationPanel_.setDatablock("playerMapIndicator");
         }
         mPlayerLocationPanel_.setCentre(x, y);

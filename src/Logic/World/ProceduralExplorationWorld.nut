@@ -310,6 +310,13 @@
     }
 
     #Override
+    function updateMapViewerPlayerPosition_(playerPos){
+        local p = playerPos.copy();
+        p.z = -p.z;
+        base.updateMapViewerPlayerPosition_(p);
+    }
+
+    #Override
     function getZForPos(pos){
         //Move somewhere else.
 

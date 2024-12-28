@@ -214,6 +214,7 @@ enum WorldMousePressContexts{
     mCombatTargetCollisionWorld_ = null;
     mCollisionDetectionWorld_ = null;
     mEntityManager_ = null;
+    mWorldScaleSize_ = 1;
 
     mMovementCooldown_ = 0;
     mMovementCooldownTotal_ = 30;
@@ -894,14 +895,17 @@ enum WorldMousePressContexts{
         local playerPos = Vec3(mPlayerEntry_.mPos_.x, 0, mPlayerEntry_.mPos_.z);
         updatePlayerPos(playerPos);
         //_world.setPlayerPosition(SlotPosition(playerPos));
-        //TODO remove direct access.
-        if(mGui_.mWorldMapDisplay_.mMapViewer_){
-            mGui_.mWorldMapDisplay_.mMapViewer_.setPlayerPosition(playerPos.x, playerPos.z);
-        }
+        updateMapViewerPlayerPosition_(playerPos);
 
         local changed = mPlayerEntry_.checkVoxelChange();
         if(changed){
             notifyPlayerVoxelChange();
+        }
+    }
+    function updateMapViewerPlayerPosition_(playerPos){
+        //TODO remove direct access.
+        if(mGui_.mWorldMapDisplay_.mMapViewer_){
+            mGui_.mWorldMapDisplay_.mMapViewer_.setPlayerPosition(playerPos.x, playerPos.z, mWorldScaleSize_);
         }
     }
 
