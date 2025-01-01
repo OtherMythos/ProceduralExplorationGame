@@ -210,6 +210,9 @@
 
         manager.assignComponent(en, EntityComponents.LIFETIME, ::EntityManager.Components[EntityComponents.LIFETIME](3000 + _random.randInt(100)));
 
+        local collisionRadius = 1;
+        manager.assignComponent(en, EntityComponents.COLLISION_DETECTION, ::EntityManager.Components[EntityComponents.COLLISION_DETECTION](collisionRadius));
+
         /*
         local worldMask = (0x1 << mConstructorWorld_.getWorldId());
         local billboard = ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_, worldMask)
