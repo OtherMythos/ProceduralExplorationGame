@@ -111,9 +111,20 @@
         }
     }
 
+    function enemyTypeSpawn_(){
+        switch(mMapData_.dungeonType){
+            case ProceduralDungeonTypes.DUST_MITE_NEST:
+                return EnemyId.DUST_MITE_WORKER;
+            case ProceduralDungeonTypes.CATACOMB:
+            default:
+                return EnemyId.SKELETON;
+        }
+    }
+
     function spawnEnemies(){
+        local enemyType = enemyTypeSpawn_();
         for(local i = 0; i < 3 + _random.randInt(3); i++){
-            createEnemy(EnemyId.DUST_MITE_WORKER, findPosInDungeon_());
+            createEnemy(enemyType, findPosInDungeon_());
         }
     }
 
