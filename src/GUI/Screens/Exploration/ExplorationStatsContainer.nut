@@ -19,7 +19,9 @@
         mWindow_ = _gui.createWindow("ExplorationScreen", parentWin);
         mWindow_.setClickable(false);
         //Shrink to the correct size later on.
-        mWindow_.setSize(400, 700);
+        if(::Base.getTargetInterface() != TargetInterface.MOBILE){
+            mWindow_.setSize(400, 700);
+        }
         //mWindow_.setVisualsEnabled(false);
 
         mLayoutLine_ = _gui.createLayoutLine();
@@ -127,7 +129,9 @@
 
         mPlayerHealthBar_.notifyLayout();
 
-        mWindow_.setSize(mWindow_.calculateChildrenSize());
+        if(::Base.getTargetInterface() != TargetInterface.MOBILE){
+            mWindow_.setSize(mWindow_.calculateChildrenSize());
+        }
     }
 
     function playerHealthChanged(id, data){
