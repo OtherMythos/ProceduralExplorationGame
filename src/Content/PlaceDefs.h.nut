@@ -94,10 +94,14 @@ function DustMiteNestPlacement(world, entityFactory, node, placeData, idx){
         "worldType": WorldTypes.PROCEDURAL_DUNGEON_WORLD,
         "dungeonType": ProceduralDungeonTypes.DUST_MITE_NEST,
         "seed": _random.randInt(1000),
+        "radius": 6
         "width": 50,
         "height": 50
     };
     entityFactory.constructSimpleTeleportItem(parentNode, "dustMiteNest.voxMesh", voxPos, 0.5, teleData);
+
+    world.getCollisionDetectionWorld().
+        addCollisionPoint(voxPos.x, voxPos.z, 4, 0xFF, _COLLISION_WORLD_ENTRY_SENDER);
 
     local spread = 7;
     for(local i = 0; i < 4 + _random.randInt(3); i++){
