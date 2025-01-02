@@ -329,7 +329,11 @@
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](placeNode, true));
 
         local triggerWorld = mConstructorWorld_.getTriggerWorld();
-        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.REGISTER_TELEPORT_LOCATION, teleData, targetPos.x, targetPos.z, teleData.radius, _COLLISION_PLAYER);
+        local targetRadius = 4;
+        if(teleData.rawin("radius")){
+            targetRadius = teleData.radius;
+        }
+        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.REGISTER_TELEPORT_LOCATION, teleData, targetPos.x, targetPos.z, targetRadius, _COLLISION_PLAYER);
         manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
 
         return en;

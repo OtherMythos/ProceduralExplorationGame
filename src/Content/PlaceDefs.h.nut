@@ -94,7 +94,7 @@ function DustMiteNestPlacement(world, entityFactory, node, placeData, idx){
         "worldType": WorldTypes.PROCEDURAL_DUNGEON_WORLD,
         "dungeonType": ProceduralDungeonTypes.DUST_MITE_NEST,
         "seed": _random.randInt(1000),
-        "radius": 6
+        "radius": 6,
         "width": 50,
         "height": 50
     };
