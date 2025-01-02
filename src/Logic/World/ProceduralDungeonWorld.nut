@@ -3,6 +3,8 @@
     mMapData_ = null;
     mVoxMesh_ = null;
 
+    mOffset_ = Vec3(3, 0, 3);
+
     constructor(worldId, preparer){
         base.constructor(worldId, preparer);
         mWorldScaleSize_ = 5;
@@ -119,7 +121,7 @@
         local wallMeshes = getWallMeshes();
 
         local sceneNode = mParentNode_.createChildSceneNode();
-        sceneNode.setPosition(3, 0, 3);
+        sceneNode.setPosition(mOffset_);
 
         local width = mMapData_.width;
         local height = mMapData_.height;
@@ -196,6 +198,7 @@
 
         local targetPos = Vec3( (point & 0xFFFF), 0, (point >> 16) & 0xFFFF );
         targetPos *= 5;
+        targetPos += mOffset_;
 
         return targetPos;
     }
