@@ -212,4 +212,8 @@
         mPlayerLocationPanel_.setCentre(x, y);
     }
 
+    function getMinimapVisible(){
+        return true;
+    }
+
 }

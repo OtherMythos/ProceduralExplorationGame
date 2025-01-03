@@ -60,7 +60,12 @@
     }
 
     function setVisible(visible){
-        mMapViewerWindow_.setVisible(visible);
+        local minimapVisible = true;
+        if(mMapViewer_ != null){
+            minimapVisible = mMapViewer_.getMinimapVisible();
+        }
+        local target = minimapVisible && visible;
+        mMapViewerWindow_.setVisible(target);
     }
 
     function notifyPlaceDiscovered(id, data){

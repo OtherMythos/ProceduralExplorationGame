@@ -17,6 +17,13 @@
         }
     }
 
+    function getMinimapVisible(){
+        if(mMapData_.meta.rawin("minimapVisible")){
+            return mMapData_.meta.minimapVisible;
+        }
+        return true;
+    }
+
     function notifyNewPlaceFound(id, pos){
         //TODO Stub for now but in future dispatch this sort of thing with events.
     }
