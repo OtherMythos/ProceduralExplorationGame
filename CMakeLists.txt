@@ -32,3 +32,14 @@ if(NATIVE_CORE_LIBRARY AND PROCEDURAL_EXPLORATION_GAME_PLUGIN)
 else()
     message( FATAL_ERROR "Unable to find game native libraries")
 endif()
+
+file(GLOB PROJ_TO_BUNDLE
+    src
+    extra
+    build
+    avSetup.cfg
+    OgreResources.cfg
+)
+#Remove any hidden files from the glob.
+list(FILTER PROJ_TO_BUNDLE EXCLUDE REGEX "\\/\\..+$")
+set(PROJ_TO_BUNDLE "${PROJ_TO_BUNDLE}" CACHE INTERNAL "PROJ_TO_BUNDLE")
