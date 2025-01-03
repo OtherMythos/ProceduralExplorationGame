@@ -134,6 +134,13 @@
         return mExplorationScenePanel_.getSize();
     }
 
+    function setPosition(x, y){
+        mExplorationScenePanel_.setPosition(x, y);
+    }
+    function setSize(x, y){
+        mExplorationScenePanel_.setSize(x, y);
+    }
+
     function getWorldPositionInScreenSpace(pos){
         local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
         local worldPos = camera.getWorldPosInWindow(pos);

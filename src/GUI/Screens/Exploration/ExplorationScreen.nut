@@ -30,6 +30,7 @@ enum ExplorationScreenWidgetType{
     mScrapAllButton_ = null;
     mWieldActiveButton = null;
     mDiscoverLevelUpScreen_ = null;
+    mLayoutLine_ = null;
 
     mScreenInputCheckList_ = null;
 
@@ -211,6 +212,7 @@ enum ExplorationScreenWidgetType{
         layoutLine.setSize(layoutSize);
         layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
         layoutLine.layout();
+        mLayoutLine_ = layoutLine;
 
         mWorldMapDisplay_.notifyResize();
 
