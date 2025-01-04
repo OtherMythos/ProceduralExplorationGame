@@ -98,10 +98,7 @@ function DustMiteNestPlacement(world, entityFactory, node, placeData, idx){
         "width": 50,
         "height": 50
     };
-    entityFactory.constructSimpleTeleportItem(parentNode, "dustMiteNest.voxMesh", voxPos, 0.5, teleData);
-
-    world.getCollisionDetectionWorld().
-        addCollisionPoint(voxPos.x, voxPos.z, 4, 0xFF, _COLLISION_WORLD_ENTRY_SENDER);
+    entityFactory.constructSimpleTeleportItem(parentNode, "dustMiteNest.voxMesh", voxPos, 0.5, teleData, 4);
 
     local spread = 7;
     for(local i = 0; i < 4 + _random.randInt(3); i++){

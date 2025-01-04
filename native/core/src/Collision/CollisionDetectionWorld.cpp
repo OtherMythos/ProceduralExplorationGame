@@ -27,7 +27,7 @@ namespace ProceduralExplorationGameCore{
             }
         }
 
-        return false;
+        return pointCheck;
     }
 
     void CollisionDetectionWorld::setCollisionGrid(std::vector<bool>& collisionGrid, int width, int height){
