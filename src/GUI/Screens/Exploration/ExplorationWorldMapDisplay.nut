@@ -2,6 +2,7 @@
 
     mExplorationScenePanel_ = null;
     mCompositorId_ = null;
+    mVisible_ = false;
 
     mMapViewerPanel_ = null;
     mMapViewer_ = null;
@@ -57,6 +58,8 @@
         if(worldType == WorldTypes.PROCEDURAL_EXPLORATION_WORLD){
             mMapViewer_.setDrawOption(MapViewerDrawOptions.VISIBLE_REGIONS, true);
         }
+
+        setVisible(mVisible_);
     }
 
     function setVisible(visible){
@@ -66,6 +69,8 @@
         }
         local target = minimapVisible && visible;
         mMapViewerWindow_.setVisible(target);
+
+        mVisible_ = visible;
     }
 
     function notifyPlaceDiscovered(id, data){
