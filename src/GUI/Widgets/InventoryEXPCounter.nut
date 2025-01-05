@@ -1,8 +1,8 @@
 ::GuiWidgets.InventoryEXPCounter <- class extends ::GuiWidgets.InventoryBaseCounter{
 
-    constructor(parent){
+    constructor(parent, parentObj=null){
         mBaseLabel_ = "EXP orbs";
-        setup(parent);
+        setup(parent, parentObj);
 
         mCurrentAnim_ = 0;
 

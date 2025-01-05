@@ -1,6 +1,7 @@
 ::GuiWidgets.InventoryBaseCounter <- class{
     mLabel_ = null;
     mBaseLabel_ = "Base";
+    mParentObj_ = null;
 
     mCurrentAnim_ = 0;
     mAnimTo_ = 0;
@@ -9,12 +10,13 @@
         setup(parent);
     }
 
-    function setup(parent){
+    function setup(parent, parentObj=null){
         mLabel_ = parent.createLabel();
         mLabel_.setMargin(10, 10);
         mAnimTo_ = mCurrentAnim_;
         setLabelTo(mCurrentAnim_);
 
+        mParentObj_ = parentObj;
     }
     function shutdown(){
 
@@ -22,6 +24,9 @@
 
     function setLabelTo(moneyVal){
         mLabel_.setText(format("%s: %i", mBaseLabel_, moneyVal));
+        if(mParentObj_ != null){
+            mParentObj_.notifyCounterChanged();
+        }
     }
 
     function addToLayout(layout){

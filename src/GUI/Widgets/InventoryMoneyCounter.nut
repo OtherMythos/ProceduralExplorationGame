@@ -1,10 +1,10 @@
 ::GuiWidgets.InventoryMoneyCounter <- class extends ::GuiWidgets.InventoryBaseCounter{
 
     destroyed = false;
-    constructor(parent){
+    constructor(parent, parentObj=null){
         mBaseLabel_ = "Money";
         mCurrentAnim_ = ::Base.mPlayerStats.mInventory_.getMoney();
-        setup(parent);
+        setup(parent, parentObj);
 
         _event.subscribe(Event.MONEY_ADDED, receiveMoneyAnimFinished, this);
         _event.subscribe(Event.MONEY_CHANGED, receiveMoneyChanged, this);

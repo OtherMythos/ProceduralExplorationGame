@@ -59,9 +59,9 @@
             }, _GUI_ACTION_PRESSED, this);
         }
 
-        mMoneyCounter_ = ::GuiWidgets.InventoryMoneyCounter(mWindow_);
+        mMoneyCounter_ = ::GuiWidgets.InventoryMoneyCounter(mWindow_, this);
         mMoneyCounter_.addToLayout(targetLayout);
-        mEXPCounter_ = ::GuiWidgets.InventoryEXPCounter(mWindow_);
+        mEXPCounter_ = ::GuiWidgets.InventoryEXPCounter(mWindow_, this);
         mEXPCounter_.addToLayout(targetLayout);
 
         mTargetEnemyWidget_ = ::GuiWidgets.TargetEnemyWidget(mWindow_);
@@ -132,6 +132,10 @@
         if(::Base.getTargetInterface() != TargetInterface.MOBILE){
             mWindow_.setSize(mWindow_.calculateChildrenSize());
         }
+    }
+
+    function notifyCounterChanged(){
+        sizeLayout();
     }
 
     function playerHealthChanged(id, data){
