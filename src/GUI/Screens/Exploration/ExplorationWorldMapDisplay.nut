@@ -116,7 +116,11 @@
         mExplorationScenePanel_.setDatablock(datablock);
 
         local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION);
-        mBillboardManager_ = ::BillboardManager(camera, mExplorationScenePanel_.getSize(), winPos);
+        if(mBillboardManager_ == null){
+            mBillboardManager_ = ::BillboardManager(camera, mExplorationScenePanel_.getSize(), winPos);
+        }else{
+            mBillboardManager_.setNewValues(camera, mExplorationScenePanel_.getSize(), winPos);
+        }
     }
 
     function update(){

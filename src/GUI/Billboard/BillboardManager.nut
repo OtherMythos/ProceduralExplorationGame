@@ -27,6 +27,13 @@
 
     }
 
+    function setNewValues(camera, size, pos){
+        mCamera_ = camera;
+        mSize_ = size;
+        mPos_ = pos;
+        update();
+    }
+
     function update(){
         foreach(i in mTrackedNodes_){
             if(i == null) continue;
