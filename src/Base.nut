@@ -180,6 +180,9 @@
 
         mPlayerStats = ::PlayerStats();
 
+        _doFile("res://src/System/MultiTouchManager.nut");
+        ::MultiTouchManager.setup();
+
         _doFile("res://src/System/Save/SaveConstants.nut");
         _doFile("res://src/System/Save/Parsers/SaveFileParser.nut");
         _doFile("res://src/System/Save/SaveManager.nut");
@@ -418,6 +421,7 @@
         ::PopupManager.shutdown();
         mPlayerStats.shutdown();
         mActionManager.shutdown();
+        ::MultiTouchManager.shutdown();
     }
 
     function update(){

@@ -199,6 +199,9 @@ enum WorldMousePressContexts{
     mGui_ = null;
     mTargetManager_ = null;
 
+    mPinchToZoomActive_ = false;
+    mPinchToZoomWarmDown_ = 5;
+
     mEntityFactory_ = null;
 
     mCurrentHighlightEnemy_ = null;
@@ -678,20 +681,32 @@ enum WorldMousePressContexts{
         mCurrentTargetEnemy_ = mCurrentHighlightEnemy_;
     }
     function checkForPlayerMoveBegin(){
+            if(mPinchToZoomActive_){
+                mMouseContext_.notifyMouseEnded();
+            }
+
         if(mBlockAllInputs_) return;
         if(!mGui_) return;
-        if(!_input.getMouseButton(_MB_LEFT) || mMouseContext_.getCurrentState() != null) return;
+        if(!_input.getMouseButton(_MB_LEFT) || mMouseContext_.getCurrentState() != null){
+            mPinchToZoomWarmDown_ = 5;
+            return;
+        }
 
         local inWindow = mGui_.checkPlayerInputPosition(_input.getMouseX(), _input.getMouseY());
         if(inWindow != null){
-            local result = mMouseContext_.requestOrientingCamera();
+            if(!mPinchToZoomActive_){
+                mPinchToZoomWarmDown_--;
+                if(mPinchToZoomWarmDown_ <= 0 || ::Base.getTargetInterface() != TargetInterface.MOBILE){
+                    local result = mMouseContext_.requestOrientingCamera();
 
-            assert(result);
+                    assert(result);
 
-            if(::Base.getTargetInterface() == TargetInterface.MOBILE){
-                local double = mMouseContext_.checkDoubleClick();
-                if(double){
-                    performPlayerDash();
+                    if(::Base.getTargetInterface() == TargetInterface.MOBILE){
+                        local double = mMouseContext_.checkDoubleClick();
+                        if(double){
+                            performPlayerDash();
+                        }
+                    }
                 }
             }
         }
@@ -1262,6 +1277,15 @@ enum WorldMousePressContexts{
         mMouseContext_.requestOrientingCamera();
     }
     function checkOrientatingCamera(){
+
+        local zoomDelta = ::MultiTouchManager.determinePinchToZoom();
+        mPinchToZoomActive_ = (zoomDelta != null);
+        if(zoomDelta != null){
+            mCurrentZoomLevel_ += zoomDelta * 40;
+            if(mCurrentZoomLevel_ < MIN_ZOOM) mCurrentZoomLevel_ = MIN_ZOOM;
+            return;
+        }
+
         if(mMouseContext_.getCurrentState() != WorldMousePressContexts.ORIENTING_CAMERA) return;
         print("orientating");
 
