@@ -230,6 +230,7 @@
     }
 
     function checkForDistractionAppear(){
+        return;
         if(::Base.isProfileActive(GameProfile.DISABLE_DISTRACTION_SPAWN)) return;
 
         mAppearDistractionLogic_.update();
