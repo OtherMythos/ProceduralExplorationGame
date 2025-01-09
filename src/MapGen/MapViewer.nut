@@ -109,6 +109,7 @@
     };
 
     constructor(){
+        setupBlendblock();
     }
 
     function shutdown(){
@@ -126,7 +127,6 @@
 
         local timer = Timer();
         timer.start();
-            ::MapViewerCount++;
             setupTextures(mMapData_);
             uploadToTexture();
         timer.stop();
@@ -135,6 +135,7 @@
     }
 
     function setupBlendblock(){
+        ::MapViewerCount++;
         local blend = _hlms.getBlendblock({
             "src_blend_factor": _HLMS_SBF_SOURCE_ALPHA,
             "dst_blend_factor": _HLMS_SBF_ONE_MINUS_SOURCE_ALPHA,
