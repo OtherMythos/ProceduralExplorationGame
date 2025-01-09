@@ -2,7 +2,7 @@
 
     mExplorationScenePanel_ = null;
     mCompositorId_ = null;
-    mVisible_ = false;
+    mVisible_ = true;
 
     mMapViewerPanel_ = null;
     mMapViewer_ = null;
