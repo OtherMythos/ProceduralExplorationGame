@@ -33,9 +33,12 @@
         resetSession();
     }
 
-    function createScene(){
-        mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
+    #Override
+    function processWorldCurrentChange_(current){
+        if(mParentNode_ != null) mParentNode_.setVisible(current);
+    }
 
+    function createScene(){
         local floorNode = mParentNode_.createChildSceneNode();
         local floorItem = _scene.createItem("Plane.mesh");
         floorItem.setCastsShadows(false);
@@ -43,19 +46,6 @@
         floorItem.setDatablock("testingFloor");
         floorNode.attachObject(floorItem);
         floorNode.setScale(150, 500, 150);
-
-        /*
-        {
-            for(local i = 0; i < 2; i++){
-                local cubeNode = mParentNode_.createChildSceneNode();
-                local cubeItem = _scene.createItem("cube");
-                cubeItem.setRenderQueueGroup(30);
-                cubeNode.attachObject(cubeItem);
-                cubeNode.setPosition(i, 0, 0);
-                cubeNode.setScale(0.1, 0.1, 0.1);
-            }
-        }
-        */
     }
 
     function updateCameraPosition(){
