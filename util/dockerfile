@@ -11,9 +11,9 @@ RUN python3 -m pip install numpy
 
 #Build it here to avoid any discrepancies between x86 and arm.
 RUN mkdir /goxelBuild
-RUN wget https://github.com/guillaumechereau/goxel/archive/refs/tags/v0.11.0.zip -P /goxelBuild/
+RUN wget https://github.com/guillaumechereau/goxel/archive/refs/tags/v0.15.1.zip -P /goxelBuild/
 RUN cd /goxelBuild/ && unzip *.zip
-RUN cd /goxelBuild/goxel-0.11.0 && make release && make install
+RUN cd /goxelBuild/goxel-0.15.1 && make release && make install
 
 #Build the VoxelConverterTool
 RUN mkdir /VoxelConverterTool
