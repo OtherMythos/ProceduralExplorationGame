@@ -350,7 +350,7 @@
 
         return en;
     }
-    function constructSimpleItem(parentNode, meshPath, pos, scale, collisionRadius=null, spoilData=null, totalHealth=null, orientation=null){
+    function constructSimpleItem(parentNode, meshPath, pos, scale, collisionRadius=null, spoilData=null, totalHealth=null, orientation=null, posOffset=null){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = pos.copy();
         targetPos.y = getZForPos(targetPos);
@@ -362,9 +362,15 @@
         //local meshTarget = itemData.type == PlacedItemId.CHERRY_BLOSSOM_TREE ? "treeCherryBlossom.voxMesh" : "tree.voxMesh";
         placeNode.setPosition(targetPos);
         //TODO make some of these scene static
+        local attachNode = placeNode;
+        if(posOffset != null){
+            local offsetNode = placeNode.createChildSceneNode();
+            offsetNode.setPosition(posOffset);
+            attachNode = offsetNode;
+        }
         local item = _gameCore.createVoxMeshItem(meshPath);
         item.setRenderQueueGroup(30);
-        placeNode.attachObject(item);
+        attachNode.attachObject(item);
         placeNode.setScale(scale, scale, scale);
         if(orientation != null){
             placeNode.setOrientation(orientation);
@@ -372,23 +378,33 @@
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](placeNode, true));
 
         local damageWorld = mConstructorWorld_.getDamageWorld();
-        local collisionPoint = damageWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_ENEMY);
         local combatTargetWorld = mConstructorWorld_.getCombatTargetWorld();
-        local combatTargetPoint = combatTargetWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_ENEMY);
+        local collisionPoint = null;
+        local combatTargetPoint = null;
+        if(totalHealth != null){
+            collisionPoint = damageWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_ENEMY);
+            combatTargetPoint = combatTargetWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_ENEMY);
+        }
 
         if(collisionRadius != null){
             local collisionDetectionWorld = mConstructorWorld_.getCollisionDetectionWorld();
             local collisionDetectionPoint = collisionDetectionWorld.addCollisionPoint(targetPos.x, targetPos.z, collisionRadius, 0xFF, _COLLISION_WORLD_ENTRY_SENDER);
 
-            manager.assignComponent(en, EntityComponents.COLLISION_POINT_THREE, ::EntityManager.Components[EntityComponents.COLLISION_POINT_THREE](
-                collisionPoint, combatTargetPoint, collisionDetectionPoint,
-                damageWorld, combatTargetWorld, collisionDetectionWorld
-            ));
+            if(collisionPoint != null){
+                manager.assignComponent(en, EntityComponents.COLLISION_POINT_THREE, ::EntityManager.Components[EntityComponents.COLLISION_POINT_THREE](
+                    collisionPoint, combatTargetPoint, collisionDetectionPoint,
+                    damageWorld, combatTargetWorld, collisionDetectionWorld
+                ));
+            }else{
+                manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionDetectionPoint, collisionDetectionWorld));
+            }
         }else{
-            manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO, ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](
-                collisionPoint, combatTargetPoint,
-                damageWorld, combatTargetWorld
-            ));
+            if(collisionPoint != null){
+                manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO, ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](
+                    collisionPoint, combatTargetPoint,
+                    damageWorld, combatTargetWorld
+                ));
+            }
         }
 
         if(spoilData != null){

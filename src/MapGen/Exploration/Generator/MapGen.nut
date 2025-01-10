@@ -109,6 +109,33 @@
 
         retPlaces.append(placeData);
     }
+    function placeGarriton(mapData, nativeMapData, retPlaces){
+        local targetRegions = [];
+        foreach(i in mapData.regionData){
+            if(i.total >= 100 && i.total <= 1500){
+                if(i.type == 0){
+                    targetRegions.append(i);
+                }
+            }
+        }
+        if(targetRegions.len() == 0) return;
+
+        local targetIdx = nativeMapData.randomIntMinMax(0, targetRegions.len()-1);
+        local region = targetRegions[targetIdx];
+
+        local point = ::MapGenHelpers.seedFindRandomPointInRegion(nativeMapData, region);
+        if(point == INVALID_WORLD_POINT) return;
+
+        local placeData = {
+            "originX": (point >> 16) & 0xFFFF,
+            "originY": point & 0xFFFF,
+            "originWrapped": point,
+            "placeId": PlaceId.GARRITON,
+            "region": region.id
+        };
+
+        retPlaces.append(placeData);
+    }
     function placeDustmiteNests(mapData, nativeMapData, retPlaces){
         local targetRegions = [];
         foreach(i in mapData.regionData){
@@ -162,6 +189,7 @@
         placeGoblinCampsites(mapData, nativeMapData, retPlaces);
         placeGoblinCampsites(mapData, nativeMapData, retPlaces);
         placeGoblinCampsites(mapData, nativeMapData, retPlaces);
+        //placeGarriton(mapData, nativeMapData, retPlaces);
 
         placeDustmiteNests(mapData, nativeMapData, retPlaces);
 

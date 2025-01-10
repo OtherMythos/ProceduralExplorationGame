@@ -4,6 +4,8 @@
 
     GOBLIN_CAMP,
     DUSTMITE_NEST,
+
+    GARRITON
 ");
 
 enum PlaceType{

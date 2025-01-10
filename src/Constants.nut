@@ -295,6 +295,7 @@ enum ActionSlotType{
     END_EXPLORATION,
     DESCEND,
     ASCEND,
+    ENTER
 };
 
 enum SystemSetting{
@@ -310,6 +311,7 @@ enum SystemSetting{
     "End Exploration",
     "Descend",
     "Ascend",
+    "Enter"
 ];
 
 enum ProceduralDungeonTypes{

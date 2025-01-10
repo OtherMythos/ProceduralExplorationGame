@@ -128,6 +128,7 @@ These actions might be things like 'talk', 'buy things from', etc.
                 }
                 break;
             }
+            case ActionSlotType.ENTER:
             case ActionSlotType.ASCEND:
             case ActionSlotType.DESCEND:{
                 if(data.rawin("popWorld")){

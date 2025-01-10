@@ -115,6 +115,38 @@ function DustMiteNestPlacement(world, entityFactory, node, placeData, idx){
 function DustMiteNestAppearFunction(world, placeId, pos){
 }
 
+function GarritonPlacement(world, entityFactory, node, placeData, idx){
+    local parentNode = node.createChildSceneNode();
+    local voxPos = Vec3(placeData.originX, 0, -placeData.originY);
+
+    /*
+    local teleData = {
+        "actionType": ActionSlotType.DESCEND,
+        "worldType": WorldTypes.PROCEDURAL_DUNGEON_WORLD,
+        "dungeonType": ProceduralDungeonTypes.DUST_MITE_NEST,
+        "seed": _random.randInt(1000),
+        "radius": 6,
+        "width": 50,
+        "height": 50
+    };
+    entityFactory.constructSimpleTeleportItem(parentNode, "house1.voxMesh", voxPos, 0.5, teleData, 4);
+    */
+
+    local teleData = {
+        "actionType": ActionSlotType.ENTER,
+        "worldType": WorldTypes.VISITED_LOCATION_WORLD,
+        "radius": 6,
+    };
+    local triggerWorld = world.getTriggerWorld();
+    entityFactory.constructSimpleItem(parentNode, "house1.voxMesh", voxPos + Vec3(-10, 0, 0), 0.6, 7, null, null, null, Vec3(0, 0, 4));
+    local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.REGISTER_TELEPORT_LOCATION, teleData, voxPos.x, voxPos.z, 4, _COLLISION_PLAYER);
+
+    entityFactory.constructSimpleItem(parentNode, "house1.voxMesh", voxPos + Vec3(30, 0, -20), 0.6, 7, null, null, null, Vec3(0, 0, 4));
+
+
+
+}
+
 function initialisePlacesLists(){
     for(local i = 0; i < PlaceType.MAX; i++){
         ::PlacesByType[i] <- [];
@@ -133,6 +165,7 @@ function initialisePlacesLists(){
 
 ::Places[PlaceId.GOBLIN_CAMP] = PlaceDef("Goblin Camp", "Spooky goblin camp", PlaceType.LOCATION, 1.0, testPlaceDefs.GoblinCampPlacement, testPlaceDefs.GoblinCampAppearFunction, 100);
 ::Places[PlaceId.DUSTMITE_NEST] = PlaceDef("Dust Mite Nest", "An entrance to a Dust Mite nest.", PlaceType.LOCATION, 1.0, testPlaceDefs.DustMiteNestPlacement, testPlaceDefs.DustMiteNestAppearFunction, 100);
+::Places[PlaceId.GARRITON] = PlaceDef("Garriton", "A nice town", PlaceType.LOCATION, 1.0, testPlaceDefs.GarritonPlacement, null, 100);
 
 ::PlacesByType <- {};
 
