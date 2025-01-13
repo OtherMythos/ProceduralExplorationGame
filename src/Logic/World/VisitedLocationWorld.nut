@@ -42,6 +42,13 @@
 
         mMapData_ = mapData;
 
+        if(mMapData_.meta.rawin("width")){
+            mMapData_.width = mMapData_.meta.width;
+        }
+        if(mMapData_.meta.rawin("height")){
+            mMapData_.height = mMapData_.meta.height;
+        }
+
         readMapMeta();
         createScene();
     }
@@ -104,6 +111,7 @@
         local x = mPlayerEntry_.getPosition().x.tointeger();
         local y = -mPlayerEntry_.getPosition().z.tointeger();
         if(x < 0 || y < 0 || x >= mMapData_.width || y >= mMapData_.height){
+            print("Player left visited location");
             ::Base.mExplorationLogic.popWorld();
         }
     }
