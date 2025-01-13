@@ -606,6 +606,10 @@ namespace ProceduralExplorationGamePlugin{
 
         ProceduralExplorationGameCore::VoxMeshSceneDataInserter inserter(sceneManager);
         AV::AnimationInfoBlockPtr animData = inserter.insertSceneDataGetAnimInfo(file, node);
+        if(!animData){
+            sq_pushnull(vm);
+            return 1;
+        }
         AV::AnimationInfoUserData::blockPtrToUserData(vm, animData);
 
         return 1;
