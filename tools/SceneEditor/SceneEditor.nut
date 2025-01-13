@@ -360,7 +360,9 @@ enum TerrainEditState{
 
     function notifyBusEvent(event, data){
         if(event == SceneEditorFramework_BusEvents.REQUEST_SAVE){
-            mTerrainChunkManager.performSave(mTargetMap);
+            if(mVisitedPlacesMapData.terrainActive()){
+                mTerrainChunkManager.performSave(mTargetMap);
+            }
 
             local writer = SceneEditorDataPointWriter();
             writer.performSave(mTargetMap, mSceneTree);

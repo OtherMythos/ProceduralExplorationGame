@@ -29,6 +29,7 @@ namespace ProceduralExplorationGamePlugin{
         static SQInteger getHeight(HSQUIRRELVM vm);
         static SQInteger getNumDataPoints(HSQUIRRELVM vm);
         static SQInteger getDataPointAt(HSQUIRRELVM vm);
+        static SQInteger terrainActive(HSQUIRRELVM vm);
 
         static SQInteger getAltitudeForCoord(HSQUIRRELVM vm);
         static SQInteger getVoxelForCoord(HSQUIRRELVM vm);

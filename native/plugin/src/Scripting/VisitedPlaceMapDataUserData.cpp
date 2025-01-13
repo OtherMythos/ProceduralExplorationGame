@@ -160,6 +160,15 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger VisitedPlaceMapDataUserData::terrainActive(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
+        SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
+
+        sq_pushbool(vm, !mapData->voxelValues.empty());
+
+        return 1;
+    }
+
     SQInteger VisitedPlaceMapDataUserData::getDataPointAt(HSQUIRRELVM vm){
         ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
         SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
@@ -305,6 +314,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, getWidth, "getWidth");
         AV::ScriptUtils::addFunction(vm, getHeight, "getHeight");
         AV::ScriptUtils::addFunction(vm, getNumDataPoints, "getNumDataPoints");
+        AV::ScriptUtils::addFunction(vm, terrainActive, "terrainActive");
         AV::ScriptUtils::addFunction(vm, getDataPointAt, "getDataPointAt", 3, ".ia");
         AV::ScriptUtils::addFunction(vm, getAltitudeForCoord, "getAltitudeForCoord", 3, ".ii");
         AV::ScriptUtils::addFunction(vm, getVoxelForCoord, "getVoxelForCoord", 3, ".ii");
