@@ -143,3 +143,8 @@ variationSeed: %i";
 
     return result ? "Popped world" : "There must be at least one queued world.";
 });
+::DebugConsole.registerCommand("pos", "Get the current position of the player", 0, "", function(command){
+    local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+
+    return format("Player position: %s", currentWorld.getPlayerPosition().tostring());
+});
