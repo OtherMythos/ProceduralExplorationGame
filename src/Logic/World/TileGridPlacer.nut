@@ -19,7 +19,7 @@
                 local val = v[x + y * width];
                 if(val == false) continue;
 
-                local mask = (val >> 24) & 0xF;
+                local mask = (val >> 4) & 0xF;
 
                 local newNode = sceneNode.createChildSceneNode();
                 newNode.setPosition(x * mWorldScaleSize_, 0, y * mWorldScaleSize_);

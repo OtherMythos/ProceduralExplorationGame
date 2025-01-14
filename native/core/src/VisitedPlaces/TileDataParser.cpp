@@ -42,7 +42,7 @@ namespace ProceduralExplorationGameCore{
                 const char c = line.at(i);
                 if(c == ','){
                     int outValue = std::stoi(ss.str());
-                    destination.push_back(static_cast<AV::uint32>(outValue));
+                    destination.push_back(static_cast<TilePoint>(outValue));
                     ss.str(std::string());
                     width++;
                     continue;

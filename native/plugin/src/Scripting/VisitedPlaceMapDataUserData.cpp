@@ -283,7 +283,7 @@ namespace ProceduralExplorationGamePlugin{
             return 1;
         }
 
-        pushArray<AV::uint32>(vm, mapData->tileValues);
+        pushArray<TilePoint>(vm, mapData->tileValues);
 
         return 1;
     }

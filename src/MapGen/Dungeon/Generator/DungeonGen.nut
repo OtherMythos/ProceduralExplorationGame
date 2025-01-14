@@ -248,7 +248,7 @@
                 if(_checkEdges(d, (x + 1), y, w, h)) mask = mask | 0x4;
                 if(_checkEdges(d, x, (y + 1), w, h)) mask = mask | 0x8;
 
-                d[x + y * w] = val | (mask << 24);
+                d[x + y * w] = (val & 0xF) | (mask << 4);
             }
         }
     }
