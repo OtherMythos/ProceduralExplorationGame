@@ -1,0 +1,25 @@
+<scene>
+    <empty>
+        <user0 value="bed.voxMesh">
+            <position x="15.1035" y="0.900623" z="4.45509"/>
+        </user0>
+        <user0 value="drawer.voxMesh">
+            <position x="4.50855" y="0.784447" z="1.62454"/>
+        </user0>
+        <user0 value="plantPot.voxMesh">
+            <position x="33.9984" y="4.57478" z="21.0019"/>
+        </user0>
+        <user0 value="table.voxMesh">
+            <position x="33.7117" y="0.748718" z="21.8506"/>
+        </user0>
+        <user0 value="chair.voxMesh">
+            <position x="32.4252" y="3" z="16.8495"/>
+        </user0>
+        <user0 value="chair.voxMesh">
+            <position x="32.6249" y="3" z="30.3188"/>
+        </user0>
+        <user1 value="0-0">
+            <position x="23.7862" y="0.496315" z="28.7989"/>
+        </user1>
+    </empty>
+</scene>

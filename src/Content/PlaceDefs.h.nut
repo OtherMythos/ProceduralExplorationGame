@@ -136,6 +136,7 @@ function GarritonPlacement(world, entityFactory, node, placeData, idx){
         "actionType": ActionSlotType.ENTER,
         "worldType": WorldTypes.VISITED_LOCATION_WORLD,
         "radius": 6,
+        "mapName": "houseInterior"
     };
     local triggerWorld = world.getTriggerWorld();
     entityFactory.constructSimpleItem(parentNode, "house1.voxMesh", voxPos + Vec3(-10, 0, 0), 0.6, 7, null, null, null, Vec3(0, 0, 4));
