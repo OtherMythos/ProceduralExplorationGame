@@ -4,6 +4,7 @@
     mTargetMap_ = null;
     mTerrainChunkManager_ = null;
     mSwimAllowed_ = true;
+    mTileGridPlacer_ = null;
 
     mPlayerStartPos_ = null;
 
@@ -17,7 +18,11 @@
         mPlayerStartPos_ = Vec3();
 
         mTerrainChunkManager_ = TerrainChunkManager(worldId);
-        preparer.provideChunkManager(mTerrainChunkManager_)
+        preparer.provideChunkManager(mTerrainChunkManager_);
+
+        mTileGridPlacer_ = ::TileGridPlacer([
+            "InteriorFloor.voxMesh", "InteriorWall.voxMesh", "InteriorWallCorner.voxMesh"
+        ], 5);
     }
 
     #Override
@@ -109,7 +114,7 @@
 
     function checkIfPlayerHasLeft(){
         local x = mPlayerEntry_.getPosition().x.tointeger();
-        local y = -mPlayerEntry_.getPosition().z.tointeger();
+        local y = mPlayerEntry_.getPosition().z.tointeger();
         if(x < 0 || y < 0 || x >= mMapData_.width || y >= mMapData_.height){
             print("Player left visited location");
             ::Base.mExplorationLogic.popWorld();
@@ -151,6 +156,13 @@
         }
     }
 
+    function placeGrid_(){
+        local tileArray = mMapData_.native.getTileArray();
+        if(tileArray != null){
+            local tileNode = mTileGridPlacer_.insertGridToScene(mParentNode_, tileArray, mMapData_.mapData.tilesWidth, mMapData_.mapData.tilesHeight);
+        }
+    }
+
     function createScene(){
         local targetNode = mParentNode_.createChildSceneNode();
         local animData = null;
@@ -186,6 +198,8 @@
             oceanNode.setScale(500, 500, 500)
             oceanNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
         }
+
+        placeGrid_();
 
         //Parse data points
         local native = mMapData_.native;

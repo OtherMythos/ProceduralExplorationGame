@@ -151,6 +151,24 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger VisitedPlaceMapDataUserData::getTilesWidth(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
+        SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
+
+        sq_pushinteger(vm, mapData->tilesWidth);
+
+        return 1;
+    }
+
+    SQInteger VisitedPlaceMapDataUserData::getTilesHeight(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
+        SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
+
+        sq_pushinteger(vm, mapData->tilesHeight);
+
+        return 1;
+    }
+
     SQInteger VisitedPlaceMapDataUserData::getNumDataPoints(HSQUIRRELVM vm){
         ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
         SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
@@ -247,6 +265,29 @@ namespace ProceduralExplorationGamePlugin{
         return 0;
     }
 
+    template<typename T>
+    inline void pushArray(HSQUIRRELVM vm, const std::vector<T>& vec){
+        sq_newarray(vm, vec.size());
+        for(size_t i = 0; i < vec.size(); i++){
+            sq_pushinteger(vm, i);
+            sq_pushinteger(vm, vec[i]);
+            sq_rawset(vm, -3);
+        }
+    }
+    SQInteger VisitedPlaceMapDataUserData::getTileArray(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
+        SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
+
+        if(mapData->tileValues.empty()){
+            sq_pushnull(vm);
+            return 1;
+        }
+
+        pushArray<AV::uint32>(vm, mapData->tileValues);
+
+        return 1;
+    }
+
     SQInteger VisitedPlaceMapDataUserData::setVoxelForCoord(HSQUIRRELVM vm){
         ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
         SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
@@ -313,6 +354,8 @@ namespace ProceduralExplorationGamePlugin{
 
         AV::ScriptUtils::addFunction(vm, getWidth, "getWidth");
         AV::ScriptUtils::addFunction(vm, getHeight, "getHeight");
+        AV::ScriptUtils::addFunction(vm, getTilesWidth, "getTilesWidth");
+        AV::ScriptUtils::addFunction(vm, getTilesHeight, "getTilesHeight");
         AV::ScriptUtils::addFunction(vm, getNumDataPoints, "getNumDataPoints");
         AV::ScriptUtils::addFunction(vm, terrainActive, "terrainActive");
         AV::ScriptUtils::addFunction(vm, getDataPointAt, "getDataPointAt", 3, ".ia");
@@ -320,6 +363,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, getVoxelForCoord, "getVoxelForCoord", 3, ".ii");
         AV::ScriptUtils::addFunction(vm, setAltitudeForCoord, "setAltitudeForCoord", 4, ".iii");
         AV::ScriptUtils::addFunction(vm, setVoxelForCoord, "setVoxelForCoord", 4, ".iii");
+        AV::ScriptUtils::addFunction(vm, getTileArray, "getTileArray");
 
         AV::ScriptUtils::addFunction(vm, castRayForTerrain, "castRayForTerrain", 2, ".u");
 

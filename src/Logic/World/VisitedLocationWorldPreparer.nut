@@ -48,6 +48,8 @@
         local mapData = {
             "width": nativeData.getWidth(),
             "height": nativeData.getHeight(),
+            "tilesWidth": nativeData.getTilesWidth(),
+            "tilesHeight": nativeData.getTilesHeight(),
             "native": nativeData
         };
 
