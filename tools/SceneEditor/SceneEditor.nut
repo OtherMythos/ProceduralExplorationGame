@@ -27,6 +27,7 @@ enum TerrainEditState{
     mAcceptHandle = null
 
     mTerrainChunkManager = null
+    mTileGridPlacer = null
     mVisitedPlacesMapData = null
 
     mEditingTerrain = false
@@ -172,6 +173,15 @@ enum TerrainEditState{
         mTerrainChunkManager.generateInitialItems();
         local targetParent = _scene.getRootSceneNode().createChildSceneNode();
         mTerrainChunkManager.setupParentNode(targetParent);
+
+        mTileGridPlacer = ::TileGridPlacer([
+            "InteriorFloor.voxMesh", "InteriorWall.voxMesh", "InteriorWallCorner.voxMesh"
+        ], 5);
+        local gridTarget = _scene.getRootSceneNode().createChildSceneNode();
+        local tileArray = mVisitedPlacesMapData.getTileArray();
+        if(tileArray != null){
+            mTileGridPlacer.insertGridToScene(gridTarget, tileArray, mVisitedPlacesMapData.getTilesWidth(), mVisitedPlacesMapData.getTilesHeight());
+        }
 
         local winSceneTree = guiFrameworkBase.createWindow(SceneEditorFramework_GUIPanelId.SCENE_TREE, "Scene Tree");
         mEditorBase.setupGUIWindow(SceneEditorFramework_GUIPanelId.SCENE_TREE, winSceneTree.getWin());
