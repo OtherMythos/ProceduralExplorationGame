@@ -90,7 +90,7 @@ namespace ProceduralExplorationGameCore{
 
         outData->tileValues.clear();
 
-        if(!readMapDataFile_<AV::uint32>(outData, outPath, "tileData.txt", outData->tileValues, mapName)) return false;
+        if(!readMapDataFile_<TilePoint>(outData, outPath, "tileData.txt", outData->tileValues, mapName)) return false;
 
         return true;
     }
