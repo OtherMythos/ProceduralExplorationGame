@@ -21,5 +21,8 @@
         <user1 value="0-0">
             <position x="23.7862" y="0.496315" z="28.7989"/>
         </user1>
+        <user1 value="1-0">
+            <position x="10.3313" y="0.496315" z="15.8232"/>
+        </user1>
     </empty>
 </scene>

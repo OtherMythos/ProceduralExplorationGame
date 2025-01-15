@@ -10,4 +10,11 @@
 
     function update(world){
     }
+
+    function setupForNPCDataPoint(world, pos, minor){
+        local npcData = {
+            "idleWalk": false
+        };
+        world.createNPCWithDialog(pos, "res://src/Content/HouseInterior/houseSpeech.dialog", 0, npcData);
+    }
 };

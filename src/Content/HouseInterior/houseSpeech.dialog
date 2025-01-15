@@ -1,0 +1,8 @@
+<Dialog_Script>
+
+    <b id = "0">
+        <ts>Hello! Welcome to my home.</ts>
+        <jmp id="1" />
+    </b>
+
+</Dialog_Script>
