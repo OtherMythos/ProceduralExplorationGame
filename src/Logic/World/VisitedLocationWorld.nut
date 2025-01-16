@@ -5,6 +5,7 @@
     mTerrainChunkManager_ = null;
     mSwimAllowed_ = true;
     mTileGridPlacer_ = null;
+    mForceZPos_ = null;
 
     mPlayerStartPos_ = null;
 
@@ -52,6 +53,12 @@
         }
         if(mMapData_.meta.rawin("height")){
             mMapData_.height = mMapData_.meta.height;
+        }
+
+        if(mMapData_.meta.rawin("zPos")){
+            mForceZPos_ = mMapData_.meta.zPos;
+        }else{
+            mForceZPos_ = null;
         }
 
         readMapMeta();
@@ -139,6 +146,10 @@
 
     #Override
     function getZForPos(pos){
+        if(mForceZPos_ != null){
+            return mForceZPos_;
+        }
+
         if(mMapData_ == null) return 0;
 
         return mMapData_.native.getAltitudeForPos(pos) * PROCEDURAL_WORLD_UNIT_MULTIPLIER;

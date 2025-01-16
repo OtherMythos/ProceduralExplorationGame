@@ -4,5 +4,6 @@
     "swimAllowed": false,
     "minimapVisible": false,
     "width": 50,
-    "height": 50
+    "height": 50,
+    "zPos": 0.5
 }
