@@ -51,6 +51,12 @@ enum TerrainEditState{
     mCurrentHitPositionPlane = Vec3()
     mTestPlane_ = Plane(::Vec3_UNIT_Y, Vec3(0, 0, 0))
 
+    mEditTileData_ = {
+        "tile": 1,
+        "tileType": 0,
+        "tileRotation": 0
+    }
+
     function createLights(){
         //TODO remove the copy and pasting from base.
         //Create lighting upfront so all objects can share it.
@@ -323,7 +329,9 @@ enum TerrainEditState{
 
                     if(_input.getMouseButton(_MB_LEFT)){
 
-                        setTileToGrid(chunkX, chunkY, 1);
+                        local v = mEditTileData_.tile;
+                        v = v | (mEditTileData_.tileType << 4);
+                        setTileToGrid(chunkX, chunkY, v);
 
                     }
                 }
@@ -448,6 +456,19 @@ enum TerrainEditState{
     }
     function getEditingTileGrid(){
         return mEditingTileGrid;
+    }
+    function setEditingTile(tile){
+        mEditTileData_.tile = tile;
+    }
+    function setEditingTileType(tileType){
+        mEditTileData_.tileType = tileType;
+    }
+    function setEditingTileRotation(tileRotation){
+        mEditTileData_.tileRotation = tileRotation;
+    }
+
+    function getTileEditData(){
+        return mEditTileData_;
     }
 
     function getTerrainEditState(){
