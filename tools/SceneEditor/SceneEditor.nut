@@ -343,7 +343,19 @@ enum TerrainEditState{
         if(x < 0 || y < 0 || x >= mVisitedPlacesMapData.getTilesWidth() || y >= mVisitedPlacesMapData.getTilesHeight()) return;
 
         local idx = x + y * mVisitedPlacesMapData.getTilesWidth();
-        if(mCurrentTileData[idx] == val) return;
+        local oldVal = mCurrentTileData[idx];
+        if(oldVal == val) return;
+
+        local A = ::SceneEditorFramework.Actions[SceneEditorFramework_Action.USER_1];
+        local action = A(this);
+        action.populateForCoord(x, y, oldVal, val);
+        action.performAction();
+        mEditorBase.pushAction(action);
+
+    }
+
+    function setTileToGrid_(x, y, val){
+        local idx = x + y * mVisitedPlacesMapData.getTilesWidth();
         mCurrentTileData[idx] = val;
         regenerateTileGrid();
     }

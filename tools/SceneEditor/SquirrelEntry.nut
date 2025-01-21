@@ -31,6 +31,7 @@ function start(){
     _doFile("res://SceneEditorGUITerrainToolProperties.nut");
     _doFile("res://SceneEditorGUITileGridProperties.nut");
     _doFile("res://actions/TerrainValueChangeAction.nut");
+    _doFile("res://actions/TileGridChangeAction.nut");
 
     ::Base.setup();
 }
