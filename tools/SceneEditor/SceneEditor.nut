@@ -28,12 +28,19 @@ enum TerrainEditState{
 
     mTerrainChunkManager = null
     mTileGridPlacer = null
+    mCurrentTileData = null
+    mTileSceneNode = null
     mVisitedPlacesMapData = null
+    mTileSize = 5
 
     mEditingTerrain = false
+    mEditingTileGrid = false
     mEditingTerrainMode = TerrainEditState.NONE
     mEditTerrainColourValue = 0
     mEditTerrainHeightValue = 0
+
+    mWindowTileGrid_ = null
+    mWindowTerrainTool_ = null
 
     mGuiInputStealerWindow_ = null
     mGuiInputStealer_ = null
@@ -41,6 +48,8 @@ enum TerrainEditState{
     mTerrainEditActive_ = false
 
     mCurrentHitPosition = Vec3()
+    mCurrentHitPositionPlane = Vec3()
+    mTestPlane_ = Plane(::Vec3_UNIT_Y, Vec3(0, 0, 0))
 
     function createLights(){
         //TODO remove the copy and pasting from base.
@@ -98,6 +107,9 @@ enum TerrainEditState{
             }
             function raycastForMovementGizmo(){
                 return ::Base.castRayForTerrain();
+            }
+            function basicMouseInteractionEnabled(){
+                return !::Base.mEditingTerrain && !::Base.mEditingTileGrid;
             }
         };
 
@@ -176,12 +188,9 @@ enum TerrainEditState{
 
         mTileGridPlacer = ::TileGridPlacer([
             "InteriorFloor.voxMesh", "InteriorWall.voxMesh", "InteriorWallCorner.voxMesh"
-        ], 5);
-        local gridTarget = _scene.getRootSceneNode().createChildSceneNode();
-        local tileArray = mVisitedPlacesMapData.getTileArray();
-        if(tileArray != null){
-            mTileGridPlacer.insertGridToScene(gridTarget, tileArray, mVisitedPlacesMapData.getTilesWidth(), mVisitedPlacesMapData.getTilesHeight());
-        }
+        ], mTileSize);
+        mCurrentTileData = mVisitedPlacesMapData.getTileArray();
+        regenerateTileGrid();
 
         local winSceneTree = guiFrameworkBase.createWindow(SceneEditorFramework_GUIPanelId.SCENE_TREE, "Scene Tree");
         mEditorBase.setupGUIWindow(SceneEditorFramework_GUIPanelId.SCENE_TREE, winSceneTree.getWin());
@@ -196,7 +205,12 @@ enum TerrainEditState{
         local winTerrainTools = guiFrameworkBase.createWindow(SceneEditorFramework_GUIPanelId.USER_CUSTOM_1, "Terrain Tools");
         winTerrainTools.setSize(500, 500);
         winTerrainTools.setPosition(0, 500);
-        mEditorBase.setupGUIWindowForClass(SceneEditorFramework_GUIPanelId.USER_CUSTOM_1, winTerrainTools.getWin(), ::SceneEditorGUITerrainToolProperties);
+        mWindowTerrainTool_ = mEditorBase.setupGUIWindowForClass(SceneEditorFramework_GUIPanelId.USER_CUSTOM_1, winTerrainTools.getWin(), ::SceneEditorGUITerrainToolProperties);
+
+        local winTileGrid = guiFrameworkBase.createWindow(SceneEditorFramework_GUIPanelId.USER_CUSTOM_2, "Tile Grid");
+        winTileGrid.setSize(500, 500);
+        winTileGrid.setPosition(0, 600);
+        mWindowTileGrid_ = mEditorBase.setupGUIWindowForClass(SceneEditorFramework_GUIPanelId.USER_CUSTOM_2, winTileGrid.getWin(), ::SceneEditorGUITileGridProperties);
 
         guiFrameworkBase.loadWindowStates("user://windowState.json");
 
@@ -300,6 +314,21 @@ enum TerrainEditState{
                 }
             }
         }
+        if(!::guiFrameworkBase.mouseInteracting() && mEditingTileGrid){
+            if(::SceneEditorFramework.HelperFunctions.sceneEditorInteractable()){
+                local point = mCurrentHitPositionPlane;
+                if(point != null){
+                    local chunkX = (point.x / mTileSize).tointeger();
+                    local chunkY = (point.z / mTileSize).tointeger();
+
+                    if(_input.getMouseButton(_MB_LEFT)){
+
+                        setTileToGrid(chunkX, chunkY, 1);
+
+                    }
+                }
+            }
+        }
         if(mTerrainEditActive_ && !_input.getMouseButton(_MB_LEFT)){
             mTerrainEditActive_ = false;
             mTerrainChunkManager.notifyActionEnd();
@@ -308,6 +337,25 @@ enum TerrainEditState{
 
     function shutdown(){
         guiFrameworkBase.serialiseWindowStates("user://windowState.json");
+    }
+
+    function setTileToGrid(x, y, val){
+        if(x < 0 || y < 0 || x >= mVisitedPlacesMapData.getTilesWidth() || y >= mVisitedPlacesMapData.getTilesHeight()) return;
+
+        local idx = x + y * mVisitedPlacesMapData.getTilesWidth();
+        if(mCurrentTileData[idx] == val) return;
+        mCurrentTileData[idx] = val;
+        regenerateTileGrid();
+    }
+
+    function regenerateTileGrid(){
+        if(mTileSceneNode != null){
+            mTileSceneNode.destroyNodeAndChildren();
+        }
+        mTileSceneNode = _scene.getRootSceneNode().createChildSceneNode();
+        if(mCurrentTileData != null){
+            mTileGridPlacer.insertGridToScene(mTileSceneNode, mCurrentTileData, mVisitedPlacesMapData.getTilesWidth(), mVisitedPlacesMapData.getTilesHeight());
+        }
     }
 
     function getTargetEditMap(){
@@ -323,15 +371,31 @@ enum TerrainEditState{
         mEditorBase.sceneSafeUpdate();
 
         mCurrentHitPosition = castRayForTerrain();
+        mCurrentHitPositionPlane = castRayForPlane();
     }
 
-    function castRayForTerrain(){
+    function castRay_(){
         local mousePos = Vec2(_input.getMouseX(), _input.getMouseY());
         local mouseTarget = mousePos / _window.getSize();
         local ray = _camera.getCameraToViewportRay(mouseTarget.x, mouseTarget.y);
 
+        return ray;
+    }
+
+    function castRayForTerrain(){
+        local ray = castRay_();
+
         local outPos = mVisitedPlacesMapData.castRayForTerrain(ray);
         return outPos;
+    }
+
+    function castRayForPlane(){
+        local ray = castRay_();
+
+        local dist = ray.intersects(mTestPlane_);
+        if(dist == false) return null;
+        local worldPoint = ray.getPoint(dist);
+        return worldPoint;
     }
 
     function notifyFPSBegan(){
@@ -340,6 +404,17 @@ enum TerrainEditState{
 
     function setEditTerrain(edit){
         mEditingTerrain = edit;
+        mEditingTileGrid = false;
+
+        mWindowTerrainTool_.refreshButtons();
+        mWindowTileGrid_.refreshButtons();
+    }
+    function setEditTileGrid(edit){
+        mEditingTileGrid = edit;
+        mEditingTerrain = false;
+
+        mWindowTerrainTool_.refreshButtons();
+        mWindowTileGrid_.refreshButtons();
     }
     function setEditTerrainHeight(edit){
         mEditingTerrainMode = edit ? TerrainEditState.HEIGHT : null;
@@ -354,6 +429,13 @@ enum TerrainEditState{
 
     function setEditTerrainHeightValue(height){
         mEditTerrainHeightValue = height;
+    }
+
+    function getEditingTerrain(){
+        return mEditingTerrain;
+    }
+    function getEditingTileGrid(){
+        return mEditingTileGrid;
     }
 
     function getTerrainEditState(){

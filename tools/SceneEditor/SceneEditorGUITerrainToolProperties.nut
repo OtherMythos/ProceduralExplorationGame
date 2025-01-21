@@ -70,6 +70,7 @@
 
     function refreshButtons(){
         local state = ::Base.getTerrainEditState();
+        mEditTerrain_.setValue(::Base.getEditingTerrain());
         mEditTerrainHeight_.setValue(state == TerrainEditState.HEIGHT);
         mEditTerrainColour_.setValue(state == TerrainEditState.COLOUR);
         mEditTerrainHeightValue_.setValue(::Base.getTerrainEditHeight());

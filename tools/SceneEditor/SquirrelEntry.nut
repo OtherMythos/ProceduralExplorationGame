@@ -29,6 +29,7 @@ function start(){
     _doFile("res://SceneEditor.nut");
     _doFile("res://SceneEditorDataPointWriter.nut");
     _doFile("res://SceneEditorGUITerrainToolProperties.nut");
+    _doFile("res://SceneEditorGUITileGridProperties.nut");
     _doFile("res://actions/TerrainValueChangeAction.nut");
 
     ::Base.setup();
