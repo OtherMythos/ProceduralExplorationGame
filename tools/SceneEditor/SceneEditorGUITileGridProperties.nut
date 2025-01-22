@@ -30,25 +30,14 @@
         }));
         mTileTypeInput_.addToLayout(layout);
 
-        mTileType_ = ::EditorGUIFramework.Widget.NumericInput(mParent_, false, "tile type");
-        mTileType_.attachListener(::EditorGUIFramework.Listener(function(widget, action){
-            if(action == EditorGUIFramework_WidgetCallbackEvent.VALUE_CHANGED){
-                local val = widget.getValue();
-
-                ::Base.setEditingTileType(val);
-            }
-        }));
-        mTileType_.addToLayout(layout);
-
-        mTileRotation_ = ::EditorGUIFramework.Widget.NumericInput(mParent_, false, "tile rotation");
-        mTileRotation_.attachListener(::EditorGUIFramework.Listener(function(widget, action){
-            if(action == EditorGUIFramework_WidgetCallbackEvent.VALUE_CHANGED){
-                local val = widget.getValue();
-
-                ::Base.setEditingTileRotation(val);
-            }
-        }));
-        mTileRotation_.addToLayout(layout);
+        mTileRotation_ = mParent_.createSpinner();
+        mTileRotation_.setOptions(["0", "90", "180", "270"]);
+        mTileRotation_.attachListenerForEvent(function(widget, action){
+            local value = widget.getValueRaw();
+            print(value);
+            ::Base.setEditingTileRotation(value);
+        }, _GUI_ACTION_VALUE_CHANGED);
+        layout.addCell(mTileRotation_);
 
         layout.layout();
 
@@ -59,8 +48,7 @@
         mEditTileGrid_.setValue(::Base.getEditingTileGrid());
         local tileEditData = ::Base.getTileEditData();
         mTileTypeInput_.setValue(tileEditData.tile);
-        mTileType_.setValue(tileEditData.tileType);
-        mTileRotation_.setValue(tileEditData.tileRotation);
+        mTileRotation_.setValueRaw(tileEditData.tileRotation);
     }
 
 };

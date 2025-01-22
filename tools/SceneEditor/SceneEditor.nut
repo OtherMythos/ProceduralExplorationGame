@@ -53,7 +53,6 @@ enum TerrainEditState{
 
     mEditTileData_ = {
         "tile": 1,
-        "tileType": 0,
         "tileRotation": 0
     }
 
@@ -330,7 +329,7 @@ enum TerrainEditState{
                     if(_input.getMouseButton(_MB_LEFT)){
 
                         local v = mEditTileData_.tile;
-                        v = v | (mEditTileData_.tileType << 4);
+                        v = v | mEditTileData_.tileRotation << 5;
                         setTileToGrid(chunkX, chunkY, v);
 
                     }
@@ -460,9 +459,6 @@ enum TerrainEditState{
     function setEditingTile(tile){
         mEditTileData_.tile = tile;
     }
-    function setEditingTileType(tileType){
-        mEditTileData_.tileType = tileType;
-    }
     function setEditingTileRotation(tileRotation){
         mEditTileData_.tileRotation = tileRotation;
     }
@@ -491,6 +487,9 @@ enum TerrainEditState{
 
             local writer = SceneEditorDataPointWriter();
             writer.performSave(mTargetMap, mSceneTree);
+
+            local tileDataWriter = ::TileDataWriter();
+            tileDataWriter.performSave(mTargetMap, mCurrentTileData, mVisitedPlacesMapData.getTilesWidth());
         }
     }
 
