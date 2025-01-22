@@ -26,6 +26,7 @@ function start(){
 
     _doFile("res://SceneEditorTerrainChunkManager.nut");
     _doFile("res://SceneEditorVoxelSelectionPopup.nut");
+    _doFile("res://SceneEditorTileGridResizePopup.nut");
     _doFile("res://SceneEditor.nut");
     _doFile("res://SceneEditorDataPointWriter.nut");
     _doFile("res://TileDataWriter.nut");

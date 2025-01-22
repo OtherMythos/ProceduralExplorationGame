@@ -46,6 +46,13 @@
         }, _GUI_ACTION_VALUE_CHANGED);
         layout.addCell(mTileRotation_);
 
+        local resizeGridButton = mParent_.createButton();
+        resizeGridButton.setText("Resize grid");
+        resizeGridButton.attachListenerForEvent(function(widget, action){
+            ::SceneEditorTileGridResizePopup.showPopup(::Base.mCurrentTileDataWidth, ::Base.mCurrentTileDataHeight);
+        }, _GUI_ACTION_PRESSED, this);
+        layout.addCell(resizeGridButton);
+
         layout.layout();
 
         refreshButtons();

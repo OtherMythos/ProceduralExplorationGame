@@ -29,6 +29,8 @@ enum TerrainEditState{
     mTerrainChunkManager = null
     mTileGridPlacer = null
     mCurrentTileData = null
+    mCurrentTileDataWidth = 0
+    mCurrentTileDataHeight = 0
     mTileSceneNode = null
     mVisitedPlacesMapData = null
     mTileSize = 5
@@ -197,6 +199,8 @@ enum TerrainEditState{
             "InteriorFloor.voxMesh", "InteriorWall.voxMesh", "InteriorWallCorner.voxMesh"
         ], mTileSize);
         mCurrentTileData = mVisitedPlacesMapData.getTileArray();
+        mCurrentTileDataWidth = mVisitedPlacesMapData.getTilesWidth();
+        mCurrentTileDataHeight = mVisitedPlacesMapData.getTilesHeight();
         regenerateTileGrid();
 
         local winSceneTree = guiFrameworkBase.createWindow(SceneEditorFramework_GUIPanelId.SCENE_TREE, "Scene Tree");
@@ -237,10 +241,32 @@ enum TerrainEditState{
     }
 
     function positionLineBox(){
-        local width = mVisitedPlacesMapData.getTilesWidth() * mTileSize;
-        local height = mVisitedPlacesMapData.getTilesHeight() * mTileSize;
+        local width = mCurrentTileDataWidth * mTileSize;
+        local height = mCurrentTileDataHeight * mTileSize;
         mTileGridBoxNode_.setScale(width / 2, 20, height / 2);
         mTileGridBoxNode_.setPosition(width / 2 + 0.5, 0, height / 2 + 0.5);
+    }
+
+    function resizeTileGrid(newWidth, newHeight){
+        printf("Resizing tile grid from %i %i to %i %i", mCurrentTileDataWidth, mCurrentTileDataHeight, newWidth, newHeight);
+        local oldWidth = mCurrentTileDataWidth;
+        local oldHeight = mCurrentTileDataHeight;
+        mCurrentTileDataWidth = newWidth;
+        mCurrentTileDataHeight = newHeight;
+
+        local newArray = array(newWidth * newHeight, TileGridMasks.HOLE);
+        for(local y = 0; y < oldHeight; y++){
+            for(local x = 0; x < oldWidth; x++){
+                if(x >= mCurrentTileDataWidth || y >= mCurrentTileDataHeight) continue;
+                local val = mCurrentTileData[x + y * oldWidth];
+                newArray[x + y * newWidth] = val;
+            }
+        }
+
+        mCurrentTileData = newArray;
+
+        positionLineBox();
+        regenerateTileGrid();
     }
 
     function attemptLoadSceneTree(targetMap){
@@ -364,9 +390,9 @@ enum TerrainEditState{
     }
 
     function setTileToGrid(x, y, val){
-        if(x < 0 || y < 0 || x >= mVisitedPlacesMapData.getTilesWidth() || y >= mVisitedPlacesMapData.getTilesHeight()) return;
+        if(x < 0 || y < 0 || x >= mCurrentTileDataWidth || y >= mCurrentTileDataHeight) return;
 
-        local idx = x + y * mVisitedPlacesMapData.getTilesWidth();
+        local idx = x + y * mCurrentTileDataWidth;
         local oldVal = mCurrentTileData[idx];
         if(oldVal == val) return;
 
@@ -379,7 +405,7 @@ enum TerrainEditState{
     }
 
     function setTileToGrid_(x, y, val){
-        local idx = x + y * mVisitedPlacesMapData.getTilesWidth();
+        local idx = x + y * mCurrentTileDataWidth;
         mCurrentTileData[idx] = val;
         regenerateTileGrid();
     }
@@ -391,7 +417,7 @@ enum TerrainEditState{
         mTileSceneNode = _scene.getRootSceneNode().createChildSceneNode();
         mTileSceneNode.setPosition(3, 0, 3);
         if(mCurrentTileData != null){
-            mTileGridPlacer.insertGridToScene(mTileSceneNode, mCurrentTileData, mVisitedPlacesMapData.getTilesWidth(), mVisitedPlacesMapData.getTilesHeight());
+            mTileGridPlacer.insertGridToScene(mTileSceneNode, mCurrentTileData, mCurrentTileDataWidth, mCurrentTileDataHeight);
         }
     }
 
@@ -512,7 +538,7 @@ enum TerrainEditState{
             writer.performSave(mTargetMap, mSceneTree);
 
             local tileDataWriter = ::TileDataWriter();
-            tileDataWriter.performSave(mTargetMap, mCurrentTileData, mVisitedPlacesMapData.getTilesWidth());
+            tileDataWriter.performSave(mTargetMap, mCurrentTileData, mCurrentTileDataWidth);
         }
     }
 
