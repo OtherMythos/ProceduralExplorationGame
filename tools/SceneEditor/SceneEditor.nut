@@ -53,7 +53,8 @@ enum TerrainEditState{
 
     mEditTileData_ = {
         "tile": 1,
-        "tileRotation": 0
+        "tileRotation": 0,
+        "drawHoles": false
     }
 
     function createLights(){
@@ -330,6 +331,9 @@ enum TerrainEditState{
 
                         local v = mEditTileData_.tile;
                         v = v | mEditTileData_.tileRotation << 5;
+                        if(mEditTileData_.drawHoles){
+                            v = TileGridMasks.HOLE;
+                        }
                         setTileToGrid(chunkX, chunkY, v);
 
                     }
@@ -372,6 +376,7 @@ enum TerrainEditState{
             mTileSceneNode.destroyNodeAndChildren();
         }
         mTileSceneNode = _scene.getRootSceneNode().createChildSceneNode();
+        mTileSceneNode.setPosition(3, 0, 3);
         if(mCurrentTileData != null){
             mTileGridPlacer.insertGridToScene(mTileSceneNode, mCurrentTileData, mVisitedPlacesMapData.getTilesWidth(), mVisitedPlacesMapData.getTilesHeight());
         }
@@ -458,6 +463,9 @@ enum TerrainEditState{
     }
     function setEditingTile(tile){
         mEditTileData_.tile = tile;
+    }
+    function setTileDrawHoles(holes){
+        mEditTileData_.drawHoles = holes;
     }
     function setEditingTileRotation(tileRotation){
         mEditTileData_.tileRotation = tileRotation;

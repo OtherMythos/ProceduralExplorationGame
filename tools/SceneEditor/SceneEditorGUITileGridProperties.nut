@@ -20,6 +20,13 @@
         }, _GUI_ACTION_RELEASED);
         layout.addCell(mEditTileGrid_);
 
+        mEditTileGrid_ = mParent_.createCheckbox();
+        mEditTileGrid_.setText("Draw holes");
+        mEditTileGrid_.attachListenerForEvent(function(widget, action){
+            ::Base.setTileDrawHoles(widget.getValue());
+        }, _GUI_ACTION_RELEASED);
+        layout.addCell(mEditTileGrid_);
+
         mTileTypeInput_ = ::EditorGUIFramework.Widget.NumericInput(mParent_, false, "tile");
         mTileTypeInput_.attachListener(::EditorGUIFramework.Listener(function(widget, action){
             if(action == EditorGUIFramework_WidgetCallbackEvent.VALUE_CHANGED){
@@ -49,6 +56,7 @@
         local tileEditData = ::Base.getTileEditData();
         mTileTypeInput_.setValue(tileEditData.tile);
         mTileRotation_.setValueRaw(tileEditData.tileRotation);
+        mEditTileGrid_.setValue(tileEditData.drawHoles);
     }
 
 };

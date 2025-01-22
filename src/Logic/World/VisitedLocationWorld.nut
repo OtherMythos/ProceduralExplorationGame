@@ -171,6 +171,7 @@
         local tileArray = mMapData_.native.getTileArray();
         if(tileArray != null){
             local tileNode = mTileGridPlacer_.insertGridToScene(mParentNode_, tileArray, mMapData_.mapData.tilesWidth, mMapData_.mapData.tilesHeight);
+            tileNode.setPosition(3, 0, 3);
 
             tileArray.apply(function(item){
                 return item != 1 ? true : 1;
