@@ -22,6 +22,8 @@
 
         _determineEdges(outVals, data.width, data.height);
 
+        local resolvedTiles = _resolveTiles(outVals, data.width, data.height);
+
         _random.seed(_system.time());
 
         local outData = {
@@ -31,6 +33,7 @@
             "playerStart": playerStart,
             "vals": outVals,
             "dungeonType": data.dungeonType,
+            "resolvedTiles": resolvedTiles,
             "weighted": roomWeighted,
             "seed": data.seed
         };
@@ -284,5 +287,37 @@
         }
 
         return weighted;
+    }
+
+    function _resolveTiles(data, width, height){
+        local outVals = array(width * height, TileGridMasks.HOLE);
+
+        foreach(c,i in data){
+            if(i == false) continue;
+
+            local mask = (i >> 4) & 0xF;
+
+            local writeValue = 0x0;
+            local orientation = 0x0;
+
+            if(mask != 0){
+                if(mask == 0x2) orientation = TileGridMasks.ROTATE_90;
+                else if(mask == 0x4) orientation = TileGridMasks.ROTATE_180;
+                else if(mask == 0x8) orientation = TileGridMasks.ROTATE_270;
+                writeValue = 0x1;
+
+                if((mask & (mask - 1)) != 0){
+                    //Two bits are true meaning this is a corner.
+                    if(mask == 0x3) orientation = TileGridMasks.ROTATE_90;
+                    if(mask == 0xA) orientation = TileGridMasks.ROTATE_270;
+                    if(mask == 0xC) orientation = TileGridMasks.ROTATE_180;
+                    writeValue = 0x2;
+                }
+            }
+
+            outVals[c] = (writeValue & 0xF) | (orientation);
+        }
+
+        return outVals;
     }
 };

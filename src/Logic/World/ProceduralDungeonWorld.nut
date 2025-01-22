@@ -130,7 +130,7 @@
 
     function createScene(){
         local gridPlacer = ::TileGridPlacer(getWallMeshes(), mWorldScaleSize_);
-        local gridNode = gridPlacer.insertGridToScene(mParentNode_, mMapData_.vals, mMapData_.width, mMapData_.height);
+        local gridNode = gridPlacer.insertGridToScene(mParentNode_, mMapData_.resolvedTiles, mMapData_.width, mMapData_.height);
         gridNode.setPosition(mOffset_);
 
         //Place some decorations around the dungeon

@@ -319,6 +319,13 @@ enum ProceduralDungeonTypes{
     DUST_MITE_NEST
 };
 
+enum TileGridMasks{
+    HOLE = 0x80,
+    ROTATE_90 = 0x20,
+    ROTATE_180 = 0x40,
+    ROTATE_270 = 0x60,
+}
+
 //Characters --------
 enum CharacterModelType{
     NONE,
