@@ -38,6 +38,7 @@ enum TerrainEditState{
     mEditingTerrainMode = TerrainEditState.NONE
     mEditTerrainColourValue = 0
     mEditTerrainHeightValue = 0
+    mTileGridBoxNode_ = null
 
     mWindowTileGrid_ = null
     mWindowTerrainTool_ = null
@@ -226,8 +227,20 @@ enum TerrainEditState{
         mGuiInputStealer_.setSize(50, 50);
         mGuiInputStealerWindow_.setVisible(false);
 
+        mTileGridBoxNode_ = mParentNode.createChildSceneNode();
+        mTileGridBoxNode_.attachObject(_scene.createItem("lineBox"));
+        mTileGridBoxNode_.setVisible(false);
+        positionLineBox();
+
         //::posMesh <- _mesh.create("cube");
         //posMesh.setPosition(mCurrentHitPosition);
+    }
+
+    function positionLineBox(){
+        local width = mVisitedPlacesMapData.getTilesWidth() * mTileSize;
+        local height = mVisitedPlacesMapData.getTilesHeight() * mTileSize;
+        mTileGridBoxNode_.setScale(width / 2, 20, height / 2);
+        mTileGridBoxNode_.setPosition(width / 2 + 0.5, 0, height / 2 + 0.5);
     }
 
     function attemptLoadSceneTree(targetMap){
@@ -436,6 +449,8 @@ enum TerrainEditState{
     function setEditTileGrid(edit){
         mEditingTileGrid = edit;
         mEditingTerrain = false;
+
+        mTileGridBoxNode_.setVisible(edit);
 
         mWindowTerrainTool_.refreshButtons();
         mWindowTileGrid_.refreshButtons();
