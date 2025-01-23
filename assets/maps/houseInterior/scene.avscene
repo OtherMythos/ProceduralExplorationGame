@@ -1,25 +1,29 @@
 <scene>
     <empty>
         <user0 value="bed.voxMesh">
-            <position x="15.1035" y="0.900623" z="4.45509"/>
+            <position x="16.5466" y="0.900623" z="7.56467"/>
         </user0>
         <user0 value="drawer.voxMesh">
-            <position x="4.50855" y="0.784447" z="1.62454"/>
+            <position x="6.06775" y="0.784447" z="4.65822"/>
         </user0>
-        <user0 value="plantPot.voxMesh">
-            <position x="33.9984" y="4.57478" z="21.0019"/>
-        </user0>
-        <user0 value="table.voxMesh">
-            <position x="33.7117" y="0.748718" z="21.8506"/>
-        </user0>
-        <user0 value="chair.voxMesh">
-            <position x="32.4252" y="3" z="16.8495"/>
-        </user0>
-        <user0 value="chair.voxMesh">
-            <position x="32.6249" y="3" z="30.3188"/>
-        </user0>
+        <empty>
+            <user0 value="plantPot.voxMesh">
+                <position x="33.9984" y="4.57478" z="21.0019"/>
+                <orientation x="0" y="1" z="0" w="0"/>
+            </user0>
+            <user0 value="table.voxMesh">
+                <position x="33.7117" y="0.748718" z="21.8506"/>
+            </user0>
+            <user0 value="chair.voxMesh">
+                <position x="32.4252" y="0.916405" z="16.8495"/>
+            </user0>
+            <user0 value="chair.voxMesh">
+                <position x="35.8311" y="0.625608" z="25.5233"/>
+                <orientation x="0" y="1" z="0" w="0"/>
+            </user0>
+        </empty>
         <user1 value="0-0">
-            <position x="23.7862" y="0.496315" z="28.7989"/>
+            <position x="25.7033" y="0.496315" z="49.1389"/>
         </user1>
         <user1 value="1-0">
             <position x="10.3313" y="0.496315" z="15.8232"/>

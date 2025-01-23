@@ -41,6 +41,7 @@ enum TerrainEditState{
     mEditTerrainColourValue = 0
     mEditTerrainHeightValue = 0
     mTileGridBoxNode_ = null
+    mTileGridIndicatorNode_ = null
 
     mWindowTileGrid_ = null
     mWindowTerrainTool_ = null
@@ -359,12 +360,16 @@ enum TerrainEditState{
                 }
             }
         }
+        local drawTileIndicator = false;
         if(!::guiFrameworkBase.mouseInteracting() && mEditingTileGrid){
             if(::SceneEditorFramework.HelperFunctions.sceneEditorInteractable()){
+                local chunkX = null;
+                local chunkY = null;
+
                 local point = mCurrentHitPositionPlane;
                 if(point != null){
-                    local chunkX = (point.x / mTileSize).tointeger();
-                    local chunkY = (point.z / mTileSize).tointeger();
+                    chunkX = (point.x / mTileSize).tointeger();
+                    chunkY = (point.z / mTileSize).tointeger();
 
                     if(_input.getMouseButton(_MB_LEFT)){
 
@@ -376,9 +381,13 @@ enum TerrainEditState{
                         setTileToGrid(chunkX, chunkY, v);
 
                     }
+
+                    drawTileIndicator = true;
+                    positionTileIndicator_(chunkX * mTileSize, chunkY * mTileSize);
                 }
             }
         }
+        if(mTileGridIndicatorNode_ != null) mTileGridIndicatorNode_.setVisible(drawTileIndicator);
         if(mTerrainEditActive_ && !_input.getMouseButton(_MB_LEFT)){
             mTerrainEditActive_ = false;
             mTerrainChunkManager.notifyActionEnd();
@@ -402,6 +411,19 @@ enum TerrainEditState{
         action.performAction();
         mEditorBase.pushAction(action);
 
+    }
+
+    function positionTileIndicator_(posX, posY){
+        if(mTileGridIndicatorNode_ != null){
+            mTileGridIndicatorNode_.destroyNodeAndChildren();
+        }
+        mTileGridIndicatorNode_ = mParentNode.createChildSceneNode();
+        mTileGridIndicatorNode_.setVisible(true);
+
+        mTileGridIndicatorNode_.setPosition(posX + 3, 0.02, posY + 3);
+
+        local item = mTileGridPlacer.populateNodeForTile(mTileGridIndicatorNode_, mEditTileData_.tile, mEditTileData_.tileRotation << 5);
+        item.setDatablock("SceneEditorTool/TileGridHighlight");
     }
 
     function setTileToGrid_(x, y, val){

@@ -9,5 +9,33 @@
                 "texture": "voxelPalette.png"
             }
         }
+    },
+
+    "blendblocks" :
+    {
+        "transparentBlend" :
+        {
+            "dst_blend_factor" : "one",
+            "src_blend_factor" : "one"
+        }
+    },
+
+    "pbs":{
+        "SceneEditorTool/TileGridHighlight" :
+        {
+            "workflow": "metallic",
+            "blendblock": "transparentBlend",
+
+            "diffuse" :
+            {
+                "value" : [1, 0.5, 1],
+                "texture" : "voxelPalette.png"
+            },
+            "transparency" :
+            {
+                "value" : 2,
+                "mode" : "Transparent"
+            }
+        }
     }
 }
