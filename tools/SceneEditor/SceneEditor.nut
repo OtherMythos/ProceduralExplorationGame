@@ -167,6 +167,12 @@ enum TerrainEditState{
         mEditorBase = ::SceneEditorFramework.Base();
         mEditorBase.mBus_.subscribeObject(this);
 
+        mGuiInputStealerWindow_ = _gui.createWindow("guiInputStealer");
+        mGuiInputStealerWindow_.setSize(10, 20);
+        mGuiInputStealer_ = mGuiInputStealerWindow_.createButton();
+        mGuiInputStealer_.setSize(50, 50);
+        mGuiInputStealerWindow_.setVisible(false);
+
         mParentNode = _scene.getRootSceneNode().createChildSceneNode();
 
         local targetMap = getTargetEditMap();
@@ -225,12 +231,6 @@ enum TerrainEditState{
         mWindowTileGrid_ = mEditorBase.setupGUIWindowForClass(SceneEditorFramework_GUIPanelId.USER_CUSTOM_2, winTileGrid.getWin(), ::SceneEditorGUITileGridProperties);
 
         guiFrameworkBase.loadWindowStates("user://windowState.json");
-
-        mGuiInputStealerWindow_ = _gui.createWindow("guiInputStealer");
-        mGuiInputStealerWindow_.setSize(10, 20);
-        mGuiInputStealer_ = mGuiInputStealerWindow_.createButton();
-        mGuiInputStealer_.setSize(50, 50);
-        mGuiInputStealerWindow_.setVisible(false);
 
         mTileGridBoxNode_ = mParentNode.createChildSceneNode();
         mTileGridBoxNode_.attachObject(_scene.createItem("lineBox"));
@@ -468,6 +468,7 @@ enum TerrainEditState{
     }
 
     function castRayForTerrain(){
+        if(mVisitedPlacesMapData == null) return;
         local ray = castRay_();
 
         local outPos = mVisitedPlacesMapData.castRayForTerrain(ray);
