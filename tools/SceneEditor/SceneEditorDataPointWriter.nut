@@ -20,6 +20,8 @@
         local outFile = File();
         outFile.open(path);
 
+        local totalUserData = 0;
+
         local parents = [];
         local indent = 0;
         local current = null;
@@ -52,7 +54,13 @@
 
                 outFile.write(format("%f,%f,%f,%s", resolvedPosition.x, resolvedPosition.y, resolvedPosition.z, i.data.value));
                 outFile.write("\n");
+
+                totalUserData++;
             }
+        }
+
+        if(totalUserData == 0){
+            _system.remove(path);
         }
     }
 

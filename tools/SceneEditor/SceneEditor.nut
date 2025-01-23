@@ -560,8 +560,10 @@ enum TerrainEditState{
             local writer = SceneEditorDataPointWriter();
             writer.performSave(mTargetMap, mSceneTree);
 
-            local tileDataWriter = ::TileDataWriter();
-            tileDataWriter.performSave(mTargetMap, mCurrentTileData, mCurrentTileDataWidth);
+            if(mCurrentTileData != null){
+                local tileDataWriter = ::TileDataWriter();
+                tileDataWriter.performSave(mTargetMap, mCurrentTileData, mCurrentTileDataWidth);
+            }
         }
     }
 
