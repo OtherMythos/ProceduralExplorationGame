@@ -16,3 +16,4 @@ util/VoxelConverterTool/build
 util/helper/token
 extra/
 util/buildHelper/buildPaths
+.dirTimestamps.json

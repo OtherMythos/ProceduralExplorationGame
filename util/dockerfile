@@ -5,9 +5,8 @@ RUN apt-get update && apt-get install -y \
     libglfw3-dev \
     libgtk-3-dev \
     unzip \
-    cmake
-
-RUN python3 -m pip install numpy
+    cmake \
+    python3-numpy
 
 #Build it here to avoid any discrepancies between x86 and arm.
 RUN mkdir /goxelBuild
