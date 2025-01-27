@@ -30,6 +30,7 @@
             }else{
                 label = mWindow_.createLabel();
                 label.setDefaultFontSize(label.getDefaultFontSize() * 1.5);
+                label.setShadowOutline(true, ColourValue(0, 0, 0), Vec2(2, 2));
             }
             mLayoutLine_.addCell(label);
             mLabels_[i] = label;
