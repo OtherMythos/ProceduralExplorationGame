@@ -8,7 +8,7 @@ const GAME_VERSION_SUFFIX = "alpha";
 #define const static const int
 
 const GAME_VERSION_MAJOR = 0;
-const GAME_VERSION_MINOR = 7;
+const GAME_VERSION_MINOR = 8;
 const GAME_VERSION_PATCH = 0;
 
 #undef const
