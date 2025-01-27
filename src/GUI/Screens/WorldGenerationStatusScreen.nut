@@ -67,7 +67,7 @@
 
         mProgressLabels_.append(label);
 
-        mLabelLayout_.setSize(::drawable);
+        mLabelLayout_.setSize(drawable.x, 100000);
         mLabelLayout_.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
         mLabelLayout_.layout();
 
