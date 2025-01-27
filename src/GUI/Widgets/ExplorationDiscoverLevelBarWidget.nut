@@ -6,6 +6,7 @@
     constructor(parent){
         mLabel_ = parent.createLabel();
         mLabel_.setText("test");
+        mLabel_.setShadowOutline(true, ColourValue(0, 0, 0), Vec2(2, 2));
 
         mBar_ = ::GuiWidgets.TwoBarProgressBar(parent);
         mBar_.setPercentage(0);

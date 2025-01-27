@@ -6,7 +6,9 @@
 
     mLabel_ = null;
     mUnderline_ = null;
+    mUnderlineShadow_ = null;
     mUnderlineDatablock_ = null;
+    mUnderlineShadowDatablock_ = null;
 
     function setup(biomeData){
         setLifespan(320);
@@ -28,6 +30,12 @@
         mCurrentFontSize_ = currentFontSize;
 
         local underline = mPopupWin_.createPanel();
+        mUnderlineShadowDatablock_ = ::DatablockManager.quickCloneDatablock("gui/basicTransparent");
+        mUnderlineShadowDatablock_.setColour(0, 0, 0, 1);
+        underline.setDatablock(mUnderlineShadowDatablock_);
+        mUnderlineShadow_ = underline;
+
+        underline = mPopupWin_.createPanel();
         mUnderlineDatablock_ = ::DatablockManager.quickCloneDatablock("gui/basicTransparent");
         mUnderlineDatablock_.setColour(1, 1, 1, 1);
         underline.setDatablock(mUnderlineDatablock_);
@@ -85,11 +93,14 @@
         local offset = (mLabel_.getSize().x) * 0.05;
         mUnderline_.setSize((mLabel_.getSize().x + offset * 2) * linePercentage, 4);
         mUnderline_.setPosition(p.x - offset, p.y + s.y*0.9);
+        mUnderlineShadow_.setSize(mUnderline_.getSize());
+        mUnderlineShadow_.setPosition(mUnderline_.getPosition() + 1);
 
         local fadeOutPercentage = percentageForFramesAnim(280, 320, PopupAnimType.EASE_OUT_QUART);
         if(fadeOutPercentage > 0){
             mLabel_.setTextColour(1, 1, 1, 1-fadeOutPercentage);
             mUnderlineDatablock_.setColour(1, 1, 1, 1-fadeOutPercentage);
+            mUnderlineShadowDatablock_.setColour(0, 0, 0, 1-fadeOutPercentage);
         }
 
         //mFadeInTimer_--;
