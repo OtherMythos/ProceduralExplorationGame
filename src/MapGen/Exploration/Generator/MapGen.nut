@@ -189,7 +189,7 @@
         placeGoblinCampsites(mapData, nativeMapData, retPlaces);
         placeGoblinCampsites(mapData, nativeMapData, retPlaces);
         placeGoblinCampsites(mapData, nativeMapData, retPlaces);
-        placeGarriton(mapData, nativeMapData, retPlaces);
+        //placeGarriton(mapData, nativeMapData, retPlaces);
 
         placeDustmiteNests(mapData, nativeMapData, retPlaces);
 
