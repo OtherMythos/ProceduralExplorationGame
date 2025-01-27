@@ -174,7 +174,7 @@
             tileNode.setPosition(3, 0, 3);
 
             tileArray.apply(function(item){
-                return item != 1 ? true : 1;
+                return (item & 0xF) != 0 ? true : 1;
             });
             _gameCore.setupCollisionDataForWorld(mCollisionDetectionWorld_, tileArray, mMapData_.mapData.tilesWidth, mMapData_.mapData.tilesHeight);
         }
