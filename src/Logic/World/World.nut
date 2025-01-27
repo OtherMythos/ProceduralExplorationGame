@@ -929,6 +929,8 @@ enum WorldMousePressContexts{
     }
 
     function notifyEnemyDestroyed(eid){
+        if(!mActiveEnemies_.rawin(eid)) return;
+
         mActiveEnemies_[eid].notifyDestroyed();
         mActiveEnemies_.rawdelete(eid);
         if(eid == mCurrentTargetEnemy_){
