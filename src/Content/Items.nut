@@ -6,7 +6,8 @@ enum ItemType{
     NONE,
     EQUIPPABLE,
     CONSUMABLE,
-    MONEY
+    MONEY,
+    LORE_CONTENT
 };
 
 //Separate rotation parameters into re-useable objects.
@@ -37,6 +38,7 @@ enum ItemEquipTransformType{
     }
 
     function getData() { return mData_; }
+    function getDefData() { return mItem_.getDefData(); }
     function isNone() { return mItemId_ == ItemId.NONE; }
     function getDef(){ return mItem_; }
     function getId(){ return mItem_.getId(); }
@@ -63,11 +65,12 @@ enum ItemEquipTransformType{
     mType = ItemType.NONE;
     mScrapVal = 0;
     mIcon = null;
+    mDefData = null;
 
     mEquippableData = EquippableId.NONE;
     mEquipTransformType = ItemEquipTransformType.NONE;
 
-    constructor(name, desc, mesh, icon, type, scrapVal, equippableData, equippableTransformType=ItemEquipTransformType.NONE){
+    constructor(name, desc, mesh, icon, type, scrapVal, defData, equippableData=null, equippableTransformType=ItemEquipTransformType.NONE){
         mName = name;
         mDesc = desc;
         mMesh = mesh;
@@ -75,6 +78,7 @@ enum ItemEquipTransformType{
         mIcon = icon;
         mScrapVal = scrapVal;
         mEquippableData = equippableData;
+        mDefData = defData;
         mEquipTransformType = equippableTransformType;
 
         //Sanity checks.
@@ -91,6 +95,7 @@ enum ItemEquipTransformType{
     function getType(){ return mType; }
     function getName(){ return mName; }
     function getDescription(){ return mDesc; }
+    function getDefData(){ return mDefData; }
     function getMesh(){ return mMesh; }
     function getScrapVal(){ return mScrapVal; }
     function getEquippableData(){ return mEquippableData; }

@@ -81,13 +81,17 @@
             function(widget, action){
                 mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_UNEQUIP, mData_.idx);
                 closeScreen();
-            }
+            },
+            function(widget, action){
+                ::Base.mExplorationLogic.readLoreContent(item);
+                closeScreen();
+            },
         ];
 
         if(itemType == ItemType.EQUIPPABLE){
             if(mData_.gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
                 buttonOptions[0] = "UnEquip";
-                buttonFunctions[0] = buttonFunctions[buttonFunctions.len()-1];
+                buttonFunctions[0] = buttonFunctions[buttonFunctions.len()-2];
             }else{
                 local equipData = ::Equippables[item.getEquippableData()];
                 local equipSlot = equipData.getEquippedSlot();
@@ -105,9 +109,13 @@
                     });
                 }else{
                     buttonOptions[0] = "Equip";
-                    buttonFunctions[0] = buttonFunctions[buttonFunctions.len()-2];
+                    buttonFunctions[0] = buttonFunctions[buttonFunctions.len()-3];
                 }
             }
+        }
+        else if(itemType == ItemType.LORE_CONTENT){
+            buttonOptions[0] = "Read";
+            buttonFunctions[0] = buttonFunctions[buttonFunctions.len()-1];
         }
 
         return [buttonOptions, buttonFunctions];

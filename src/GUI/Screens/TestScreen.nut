@@ -19,6 +19,7 @@
             "Trigger linear coin effect",
             "Trigger linear orb effect",
             "Trigger single text popup",
+            "Read book",
             "Generate render icon"
         ];
         local buttonFunctions = [
@@ -49,6 +50,9 @@
             },
             function(widget, action){
                 ::PopupManager.displayPopup(::PopupManager.PopupData(Popup.SINGLE_TEXT, {"text": "You clicked the mouse", "posX": _input.getMouseX(), "posY": _input.getMouseY(), "fontMultiplier": 1.5, "lifespan": 50, "fadeInTime": 10}));
+            },
+            function(widget, action){
+                ::Base.mExplorationLogic.readLoreContent(::Items[ItemId.BOOK_OF_GOBLIN_STORIES]);
             },
             function(widget, action){
                 local renderIcon = ::RenderIconManager.createIcon("cube");

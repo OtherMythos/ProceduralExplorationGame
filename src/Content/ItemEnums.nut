@@ -9,6 +9,8 @@
     SIMPLE_TWO_HANDED_SWORD,
     BONE_MACE,
 
+    BOOK_OF_GOBLIN_STORIES,
+
     APPLE,
 
 ");

@@ -364,6 +364,14 @@
         mCurrentWorld_.setOrientatingCamera(orientating);
     }
 
+    function readLoreContent(item){
+
+        _doFile("res://build/assets/readables/" + item.getDefData());
+
+        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.READABLE_CONTENT_SCREEN, {"content": readable}), null, 3);
+        getroottable().rawdelete("readable");
+    }
+
     function toggleWieldActive(){
         ::Base.mExplorationLogic.toggleWieldActive();
     }

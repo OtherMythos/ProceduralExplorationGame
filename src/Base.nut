@@ -248,6 +248,7 @@
         _doFile("res://src/GUI/Screens/VisitedPlacesScreen.nut");
         _doFile("res://src/GUI/Screens/DialogScreen.nut");
         _doFile("res://src/GUI/Screens/TestScreen.nut");
+        _doFile("res://src/GUI/Screens/ReadableContentScreen.nut");
         _doFile("res://src/GUI/Screens/SaveEditScreen.nut");
         _doFile("res://src/GUI/Screens/WorldGenerationStatusScreen.nut");
         _doFile("res://src/GUI/Screens/NewSaveValuesScreen.nut");

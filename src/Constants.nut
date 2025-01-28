@@ -208,6 +208,7 @@ enum Screen{
     INVENTORY_ITEM_HELPER_SCREEN,
     PAUSE_SCREEN,
     SETTINGS_SCREEN,
+    READABLE_CONTENT_SCREEN,
 
     MAX
 };
@@ -230,7 +231,8 @@ enum Screen{
     "newSaveValuesScreen",
     "inventoryItemHelperScreen",
     "pauseScreen",
-    "settingsScreen"
+    "settingsScreen",
+    "readableContentScreen"
 ];
 
 enum Popup{
