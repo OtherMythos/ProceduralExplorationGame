@@ -11,6 +11,7 @@ enum InventoryBusEvents{
     ITEM_INFO_REQUEST_UNEQUIP,
     ITEM_INFO_REQUEST_USE,
     ITEM_INFO_REQUEST_SCRAP,
+    ITEM_INFO_REQUEST_MOVE_TO_INVENTORY,
 };
 
 ::ScreenManager.Screens[Screen.INVENTORY_SCREEN] = class extends ::Screen{
@@ -19,11 +20,15 @@ enum InventoryBusEvents{
     mOverlayWindow_ = null;
     mInventoryGrid_ = null;
     mInventoryEquippedGrid_ = null;
+    mSecondaryInventoryGrid_ = null;
     mHoverInfo_ = null;
     mInventory_ = null;
     mMoneyCounter_ = null;
     mPlayerStats_ = null;
     mPlayerInspector_ = null;
+
+    useSecondaryGrid = false;
+    mSecondaryItems_ = null;
 
     mPreviousHighlight_ = null;
 
@@ -150,6 +155,11 @@ enum InventoryBusEvents{
         _event.subscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent, this);
         _event.subscribe(Event.PLAYER_EQUIP_CHANGED, receivePlayerEquipChangedEvent, this);
 
+        if(useSecondaryGrid){
+            mSecondaryItems_ = array(4 * 4, null);
+            mSecondaryItems_[0] = ::Item(ItemId.APPLE);
+        }
+
         if( !(data.rawin("disableBackground") && data.disableBackground) ){
             createBackgroundScreen_();
         }
@@ -220,6 +230,13 @@ enum InventoryBusEvents{
         //mInventoryEquippedGrid_.addToLayout(layoutLine);
         mInventoryEquippedGrid_.addToLayout(layoutHorizontal);
 
+        if(useSecondaryGrid){
+            mSecondaryInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID_SECONDARY, mInventoryBus_, mHoverInfo_, buttonCover);
+            mSecondaryInventoryGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, 4, 4);
+            //mSecondaryInventoryGrid_.addToLayout(layoutLine);
+            mSecondaryInventoryGrid_.addToLayout(layoutHorizontal);
+        }
+
         mInventoryGrid_.connectNeighbours(mInventoryEquippedGrid_, inventoryButton);
         mInventoryEquippedGrid_.connectNeighbours(mInventoryGrid_, inventoryButton);
 
@@ -244,6 +261,9 @@ enum InventoryBusEvents{
         mInventoryGrid_.notifyLayout();
         mInventoryGrid_.setNewGridIcons(mInventory_.mInventoryItems_);
         mInventoryEquippedGrid_.setNewGridIcons(mPlayerStats_.mPlayerCombatStats.mEquippedItems.mItems);
+        if(useSecondaryGrid){
+            mSecondaryInventoryGrid_.setNewGridIcons(mSecondaryItems_);
+        }
         //container.sizeInner();
         if(!mobile){
             mPlayerInspector_.notifyLayout();
@@ -299,14 +319,32 @@ enum InventoryBusEvents{
         else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_SCRAP){
             scrapItem(data);
         }
+        else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_TO_INVENTORY){
+            local item = mSecondaryItems_[data.idx];
+            local success = mInventory_.addToInventory(item);
+            if(!success){
+                return;
+            }
+
+            mSecondaryItems_[data.idx] = null;
+            mSecondaryInventoryGrid_.setNewGridIcons(mSecondaryItems_);
+        }
         else if(
             event == InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP ||
             event == InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP_LEFT_HAND ||
             event == InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP_RIGHT_HAND)
         {
-            local item = mInventory_.getItemForIdx(data);
+
+            local item =null;
+            if(data.gridType == InventoryGridType.INVENTORY_GRID){
+                item = mInventory_.getItemForIdx(data.idx);
+                mInventory_.removeFromInventory(data.idx);
+            }else if(data.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
+                item = mSecondaryItems_[data.idx];
+                mSecondaryItems_[data.idx] = null;
+                mSecondaryInventoryGrid_.setNewGridIcons(mSecondaryItems_);
+            }
             assert(item != null);
-            mInventory_.removeFromInventory(data);
 
             local equippableData = ::Equippables[item.getEquippableData()];
             local equipSlot = equippableData.getEquippedSlot();
@@ -360,6 +398,10 @@ enum InventoryBusEvents{
         if(inventoryData.gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
             targetItem = mPlayerStats_.getEquippedItem(idx+1);
             mPlayerStats_.unEquipItem(idx+1);
+        }else if(inventoryData.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
+            targetItem = mSecondaryItems_[idx];
+            mSecondaryItems_[idx] = null;
+            mSecondaryInventoryGrid_.setNewGridIcons(mSecondaryItems_);
         }else{
             targetItem = mInventory_.getItemForIdx(idx);
             mInventory_.removeFromInventory(idx);
@@ -377,6 +419,9 @@ enum InventoryBusEvents{
             //TODO remove direct access, properly pass the player stats in some other point.
             selectedItem = mPlayerStats_.getEquippedItem(idx+1);
             targetGrid = mInventoryEquippedGrid_;
+        }else if(inventoryData.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
+            selectedItem = mSecondaryItems_[idx];
+            targetGrid = mSecondaryInventoryGrid_;
         }else{
             selectedItem = mInventory_.getItemForIdx(idx);
             targetGrid = mInventoryGrid_;
@@ -421,7 +466,12 @@ enum InventoryBusEvents{
             //Skip the NONE object.
             local item = mPlayerStats_.getEquippedItem(idx+1);
             setHoverMenuToItem(item);
-        }else{
+        }
+        else if(inventoryData.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
+            local item = mSecondaryItems_[idx];
+            setHoverMenuToItem(item);
+        }
+        else{
             local item = mInventory_.getItemForIdx(idx);
             setHoverMenuToItem(item);
         }

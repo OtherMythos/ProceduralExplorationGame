@@ -83,7 +83,8 @@ enum StatType{
 
 enum InventoryGridType{
     INVENTORY_GRID,
-    INVENTORY_EQUIPPABLES
+    INVENTORY_EQUIPPABLES,
+    INVENTORY_GRID_SECONDARY
 };
 
 //Profiles define how the game should operate,

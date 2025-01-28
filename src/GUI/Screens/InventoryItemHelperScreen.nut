@@ -100,11 +100,13 @@
                     buttonOptions[0] = "Equip Left Hand"
                     buttonOptions.insert(1, "Equip Right Hand");
                     buttonFunctions[0] = function(widget, action){
-                        mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP_LEFT_HAND, mData_.idx);
+                        local data = {"idx": mData_.idx, "gridType": mData_.gridType};
+                        mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP_LEFT_HAND, data);
                         closeScreen();
                     };
                     buttonFunctions.insert(1, function(widget, action){
-                        mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP_RIGHT_HAND, mData_.idx);
+                        local data = {"idx": mData_.idx, "gridType": mData_.gridType};
+                        mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP_RIGHT_HAND, data);
                         closeScreen();
                     });
                 }else{
@@ -116,6 +118,15 @@
         else if(itemType == ItemType.LORE_CONTENT){
             buttonOptions[0] = "Read";
             buttonFunctions[0] = buttonFunctions[buttonFunctions.len()-1];
+        }
+
+        if(mData_.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
+            buttonOptions.insert(1, "Move to Inventory");
+            buttonFunctions.insert(1, function(widget, action){
+                local data = {"idx": mData_.idx, "gridType": mData_.gridType};
+                mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_TO_INVENTORY, data);
+                closeScreen();
+            });
         }
 
         return [buttonOptions, buttonFunctions];

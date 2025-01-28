@@ -75,9 +75,9 @@
         mWindow_ = parentWin.createWindow("InventoryGrid");
         mWindow_.setSkinPack("WindowSkinNoBorder");
 
-        if(mInventoryType_ == InventoryGridType.INVENTORY_GRID){
+        if(mInventoryType_ == InventoryGridType.INVENTORY_GRID || mInventoryType_ == InventoryGridType.INVENTORY_GRID_SECONDARY){
             mItemIcons_ = array(inventoryWidth * inventoryHeight);
-        }else{
+        }else if(mInventoryType_ == InventoryGridType.INVENTORY_EQUIPPABLES){
             inventoryWidth = 1;
             inventoryHeight = EquippedSlotTypes.MAX-2;
             mItemIcons_ = array(inventoryHeight);
