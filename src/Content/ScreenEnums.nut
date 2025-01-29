@@ -21,3 +21,25 @@
     READABLE_CONTENT_SCREEN,
 
 ");
+
+::EnumDef.addToString("ScreenString", [
+    "mainMenuScreen",
+    "helpScreen",
+    "saveSelectionScreen",
+    "gamePlayMainMenuScreen",
+    "explorationScreen",
+    "itemInfoScreen",
+    "inventoryScreen",
+    "visitedPlacesScreen",
+    "dialogScreen",
+    "testScreen",
+    "saveEditScreen",
+    "explorationEndScreen",
+    "playerDeathScreen",
+    "worldGenerationStatusScreen",
+    "newSaveValuesScreen",
+    "inventoryItemHelperScreen",
+    "pauseScreen",
+    "settingsScreen",
+    "readableContentScreen",
+]);

@@ -15,13 +15,27 @@ This class merges enum definition into a string and then compiles that as a Squi
         }
         //print(mEnums_[name])
         mEnums_[name] += content;
-        print(mEnums_[name])
+        //print(mEnums_[name])
+    }
+
+    /**
+     * Define string to match enum, for instance
+     * enum Screen { MAIN_MENU, SECOND_MENU }
+     * ::ScreenStrings <- ["mainMenu", "secondMenu"]
+     */
+    function addToString(name, content){
+        if(!getroottable().rawin(name)){
+            content.insert(0, "none");
+            getroottable().rawset(name, content);
+        }else{
+            getroottable().rawget(name).extend(content);
+        }
     }
 
     function commitEnums(){
         foreach(c,i in mEnums_){
             i += "\nMAX\n};";
-            print(i);
+            //print(i);
             local buffer = _compileBuffer(i);
             buffer();
         }

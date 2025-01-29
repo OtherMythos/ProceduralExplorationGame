@@ -19,13 +19,13 @@ Separated from the Base.nut file so enums can be used.
     function getScreenDataForForcedScreen(screenId){
         local data = null;
         if(screenId == Screen.INVENTORY_SCREEN){
-            data = {"stats": mPlayerStats}
+            data = {"stats": ::Base.mPlayerStats}
         }
         else if(screenId == Screen.EXPLORATION_SCREEN){
-            data = {"logic": mExplorationLogic}
+            data = {"logic": ::Base.mExplorationLogic}
         }
         else if(screenId == Screen.VISITED_PLACES_SCREEN){
-            data = {"stats": mPlayerStats}
+            data = {"stats": ::Base.mPlayerStats}
         }
         return ::ScreenManager.ScreenData(screenId, data);
     }
@@ -33,7 +33,7 @@ Separated from the Base.nut file so enums can be used.
         printf("Setting up game profile post setup '%s'", ::GameProfileString[profile]);
         switch(profile){
             case GameProfile.DEVELOPMENT_BEGIN_EXPLORATION:
-                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
+                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
                 break;
             case GameProfile.TEST_SCREEN:
                 ::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);

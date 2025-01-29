@@ -248,6 +248,9 @@
         ::EnumDef.addToEnum("Screen", @"
             SCREEN,
         ");
+        ::EnumDef.addToString("ScreenString", [
+            "screen"
+        ]);
     }
 
     function loadEnumFiles(){
