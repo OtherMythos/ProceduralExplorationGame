@@ -136,6 +136,7 @@ enum CollisionWorldTriggerResponses{
     NPC_INTERACT,
     PLACED_ITEM_COLLIDE_CHANGE,
     COLLECTABLE_ITEM_COLLIDE,
+    ITEM_SEARCH,
 
     MAX = 100
 };
@@ -298,7 +299,8 @@ enum ActionSlotType{
     END_EXPLORATION,
     DESCEND,
     ASCEND,
-    ENTER
+    ENTER,
+    ITEM_SEARCH
 };
 
 enum SystemSetting{
@@ -314,7 +316,8 @@ enum SystemSetting{
     "End Exploration",
     "Descend",
     "Ascend",
-    "Enter"
+    "Enter",
+    "Item Search"
 ];
 
 enum ProceduralDungeonTypes{

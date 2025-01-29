@@ -19,6 +19,7 @@ enum EntityComponents{
     DIALOG,
     TRAVERSABLE_TERRAIN,
     COLLISION_DETECTION,
+    INVENTORY_ITEMS,
 
     MAX
 

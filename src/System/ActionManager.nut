@@ -144,6 +144,10 @@ These actions might be things like 'talk', 'buy things from', etc.
                 ::Base.mExplorationLogic.gatewayEndExploration();
                 break;
             }
+            case ActionSlotType.ITEM_SEARCH:{
+                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, data), null, 2);
+                break;
+            }
             default:{
                 throw "Attempted to execute an invalid action slot.";
             }

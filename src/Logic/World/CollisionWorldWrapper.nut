@@ -216,6 +216,23 @@
                 ::Base.mActionManager.unsetAction(0, entityId);
             }
         });
+        ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.ITEM_SEARCH] <- TriggerResponse(function(world, entityId, second, collisionStatus){
+            if(collisionStatus == 0x1){
+                local manager = world.getEntityManager();
+                assert(manager.hasComponent(entityId, EntityComponents.INVENTORY_ITEMS));
+                local comp = manager.getComponent(entityId, EntityComponents.INVENTORY_ITEMS);
+                local data = {
+                    "width": comp.mWidth,
+                    "height": comp.mHeight,
+                    "items": comp.mItems,
+                    "stats": ::Base.mPlayerStats
+                };
+
+                ::Base.mActionManager.registerAction(ActionSlotType.ITEM_SEARCH, 0, data, entityId);
+            }else if(collisionStatus == 0x2){
+                ::Base.mActionManager.unsetAction(0, entityId);
+            }
+        });
         ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.PLACED_ITEM_COLLIDE_CHANGE] <- TriggerResponse(function(world, entityId, second, collisionStatus){
             if(collisionStatus != 0x1) return;
             local entityManager = world.getEntityManager();

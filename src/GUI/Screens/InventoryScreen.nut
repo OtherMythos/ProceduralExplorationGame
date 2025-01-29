@@ -27,8 +27,10 @@ enum InventoryBusEvents{
     mPlayerStats_ = null;
     mPlayerInspector_ = null;
 
-    useSecondaryGrid = false;
+    mUseSecondaryGrid_ = false;
     mSecondaryItems_ = null;
+    mSecondaryWidth_ = 0;
+    mSecondaryHeight_ = 0;
 
     mPreviousHighlight_ = null;
 
@@ -155,9 +157,13 @@ enum InventoryBusEvents{
         _event.subscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent, this);
         _event.subscribe(Event.PLAYER_EQUIP_CHANGED, receivePlayerEquipChangedEvent, this);
 
-        if(useSecondaryGrid){
-            mSecondaryItems_ = array(4 * 4, null);
-            mSecondaryItems_[0] = ::Item(ItemId.APPLE);
+        if(data.rawin("items")){
+            //mSecondaryItems_ = array(4 * 4, null);
+            //mSecondaryItems_[0] = ::Item(ItemId.APPLE);
+            mSecondaryItems_ = data.items;
+            mSecondaryWidth_ = data.width;
+            mSecondaryHeight_ = data.height;
+            mUseSecondaryGrid_ = true;
         }
 
         if( !(data.rawin("disableBackground") && data.disableBackground) ){
@@ -230,9 +236,9 @@ enum InventoryBusEvents{
         //mInventoryEquippedGrid_.addToLayout(layoutLine);
         mInventoryEquippedGrid_.addToLayout(layoutHorizontal);
 
-        if(useSecondaryGrid){
+        if(mUseSecondaryGrid_){
             mSecondaryInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID_SECONDARY, mInventoryBus_, mHoverInfo_, buttonCover);
-            mSecondaryInventoryGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, 4, 4);
+            mSecondaryInventoryGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, mSecondaryWidth_, mSecondaryHeight_);
             //mSecondaryInventoryGrid_.addToLayout(layoutLine);
             mSecondaryInventoryGrid_.addToLayout(layoutHorizontal);
         }
@@ -261,7 +267,7 @@ enum InventoryBusEvents{
         mInventoryGrid_.notifyLayout();
         mInventoryGrid_.setNewGridIcons(mInventory_.mInventoryItems_);
         mInventoryEquippedGrid_.setNewGridIcons(mPlayerStats_.mPlayerCombatStats.mEquippedItems.mItems);
-        if(useSecondaryGrid){
+        if(mUseSecondaryGrid_){
             mSecondaryInventoryGrid_.setNewGridIcons(mSecondaryItems_);
         }
         //container.sizeInner();

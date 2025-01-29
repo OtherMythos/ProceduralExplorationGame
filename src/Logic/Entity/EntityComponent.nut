@@ -195,3 +195,18 @@
     }
 
 };
+
+::EntityManager.Components[EntityComponents.INVENTORY_ITEMS] = class extends ::EntityManager.Component{
+
+    mItems = null;
+    mWidth = 0
+    mHeight = 0
+
+    constructor(items, width, height){
+        mItems = items;
+        mWidth = width;
+        mHeight = height;
+    }
+
+};
+
