@@ -122,7 +122,6 @@
         _doFile("res://src/Content/StatsEntry.nut");
 
         defineBaseEnums();
-
         loadEnumFiles();
         ::EnumDef.commitEnums();
         _doFile("res://src/System/PlayerStats.nut");
@@ -242,6 +241,7 @@
 
         _doFile("res://src/BaseHelperFunctions.nut")
 
+        loadFilesEnd();
     }
 
     function defineBaseEnums(){
@@ -263,6 +263,12 @@
     function loadContentFiles(){
         foreach(i in mBaseImpls_){
             i.loadContentFiles();
+        }
+    }
+
+    function loadFilesEnd(){
+        foreach(i in mBaseImpls_){
+            i.loadFilesEnd();
         }
     }
 

@@ -9,14 +9,10 @@
     }
 
     function loadEnumFiles(){
-        _doFile("res://src/Content/ItemEnums.nut");
-        _doFile("res://src/Content/EnemyEnums.nut");
-        _doFile("res://src/Content/PlaceEnums.nut");
-        _doFile("res://src/Content/ScreenEnums.nut");
-    }
-
-    function loadDefFiles(){
-
+        _doFile("script://ItemEnums.nut");
+        _doFile("script://EnemyEnums.nut");
+        _doFile("script://PlaceEnums.nut");
+        _doFile("script://ScreenEnums.nut");
     }
 
     function loadContentFiles(){
@@ -29,7 +25,7 @@
 
     }
 
-    function setupSecondary(){
+    function loadFilesEnd(){
         _doFile("res://src/GUI/Screens/MainMenuScreen.nut");
         _doFile("res://src/GUI/Screens/HelpScreen.nut");
         _doFile("res://src/GUI/Screens/SaveSelectionScreen.nut");
@@ -47,6 +43,10 @@
         _doFile("res://src/GUI/Screens/InventoryItemHelperScreen.nut");
         _doFile("res://src/GUI/Screens/PauseScreen.nut");
         _doFile("res://src/GUI/Screens/SettingsScreen.nut");
+    }
+
+    function setupSecondary(){
+
     }
 
 }
