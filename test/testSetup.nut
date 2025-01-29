@@ -383,16 +383,16 @@
 };
 
 function start(){
-    _doFile("script://../src/Helpers.nut")
-    _doFile("script://../src/Constants.nut")
-    _doFile("script://../src/System/Save/SaveConstants.nut")
-    _doFile("script://../src/System/Save/Parsers/SaveFileParser.nut")
-    _doFile("script://../src/System/Save/SaveManager.nut")
+    _doFile("script://../src/Helpers.nut");
+    _doFile("script://../src/Constants.nut");
+    _doFile("script://../src/System/Save/SaveConstants.nut");
+    _doFile("script://../src/System/Save/Parsers/SaveFileParser.nut");
+    _doFile("script://../src/System/Save/SaveManager.nut");
 
     {
         //Setup all of Base's enums before continuing.
-        _doFile("script://../src/BaseImpl.nut")
-        _doFile("script://../src/Base.nut")
+        _doFile("script://../src/BaseImpl.nut");
+        _doFile("script://../src/Base.nut");
         _doFile("script://../src/System/EnumDef.nut");
         _doFile("script://../src/Content/BaseBasic.nut");
         ::Base.registerBasicBaseImp(::BaseBasic());
