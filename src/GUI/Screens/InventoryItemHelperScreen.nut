@@ -43,7 +43,7 @@
         layoutLine.layout();
 
         local childrenSize = mWindow_.calculateChildrenSize();
-        mWindow_.setSize(childrenSize.x, data.size.y);
+        mWindow_.setSize(childrenSize.x, childrenSize.y >= data.size.y ? childrenSize.y : data.size.y);
 
         mData_.bus.notifyEvent(InventoryBusEvents.ITEM_HELPER_SCREEN_BEGAN, null);
     }

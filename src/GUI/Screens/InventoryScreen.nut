@@ -288,6 +288,8 @@ enum InventoryBusEvents{
         if(mPreviousHighlight_ != null){
             if(mPreviousHighlight_.gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
                 mInventoryEquippedGrid_.highlightForIdx(mPreviousHighlight_.id);
+            }else if(mPreviousHighlight_.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
+                mSecondaryInventoryGrid_.highlightForIdx(mPreviousHighlight_.id);
             }else{
                 mInventoryGrid_.highlightForIdx(mPreviousHighlight_.id);
             }

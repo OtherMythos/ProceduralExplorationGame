@@ -1097,10 +1097,13 @@ enum WorldMousePressContexts{
         mPlayerEntry_.checkAttackState(mPlayerTargetRadius_.len() >= 1);
     }
 
-    function showInventory(){
+    function showInventory(data=null){
+        local targetData = data;
+        if(targetData == null){
+            targetData = {"stats": ::Base.mPlayerStats};
+        }
         notifyModalPopupScreen();
-        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN,
-            {"stats": ::Base.mPlayerStats}),
+        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, targetData),
             null, 1);
         ::Base.mExplorationLogic.pauseExploration();
     }

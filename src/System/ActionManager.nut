@@ -145,7 +145,8 @@ These actions might be things like 'talk', 'buy things from', etc.
                 break;
             }
             case ActionSlotType.ITEM_SEARCH:{
-                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, data), null, 2);
+                //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, data), null, 2);
+                ::Base.mExplorationLogic.mCurrentWorld_.showInventory(data);
                 break;
             }
             default:{
