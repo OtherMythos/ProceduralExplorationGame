@@ -1,18 +1,6 @@
 //TODO temporary
 ::currentNativeMapData <- null;
 
-::BaseHelperFunctions <- {
-    function getDefaultWorld(){
-        return WorldTypes.PROCEDURAL_EXPLORATION_WORLD;
-    }
-    function getDefaultMapName(){
-        return "testVillage";
-    }
-    function getMapsDir(){
-        return "res://build/assets/maps/";
-    }
-};
-
 ::Base <- {
     mExplorationLogic = null
 
@@ -87,19 +75,6 @@
         }
         return null;
     }
-    function getScreenDataForForcedScreen(screenId){
-        local data = null;
-        if(screenId == Screen.INVENTORY_SCREEN){
-            data = {"stats": mPlayerStats}
-        }
-        else if(screenId == Screen.EXPLORATION_SCREEN){
-            data = {"logic": mExplorationLogic}
-        }
-        else if(screenId == Screen.VISITED_PLACES_SCREEN){
-            data = {"stats": mPlayerStats}
-        }
-        return ::ScreenManager.ScreenData(screenId, data);
-    }
 
     function registerBaseImpl(impl){
         mBaseImpls_.append(impl);
@@ -145,6 +120,8 @@
         _doFile("res://src/Content/CombatData.nut");
         _doFile("res://src/Content/Moves.nut");
         _doFile("res://src/Content/StatsEntry.nut");
+
+        defineBaseEnums();
 
         loadEnumFiles();
         ::EnumDef.commitEnums();
@@ -238,23 +215,6 @@
         _doFile("res://src/GUI/VersionInfoWindow.nut");
         ::ScreenManager.setup();
         _doFile("res://src/GUI/Screens/Screen.nut");
-        _doFile("res://src/GUI/Screens/MainMenuScreen.nut");
-        _doFile("res://src/GUI/Screens/HelpScreen.nut");
-        _doFile("res://src/GUI/Screens/SaveSelectionScreen.nut");
-        _doFile("res://src/GUI/Screens/GameplayMainMenuScreen.nut");
-        _doFile("res://src/GUI/Screens/Exploration/ExplorationScreen.nut");
-        _doFile("res://src/GUI/Screens/ItemInfoScreen.nut");
-        _doFile("res://src/GUI/Screens/InventoryScreen.nut");
-        _doFile("res://src/GUI/Screens/VisitedPlacesScreen.nut");
-        _doFile("res://src/GUI/Screens/DialogScreen.nut");
-        _doFile("res://src/GUI/Screens/TestScreen.nut");
-        _doFile("res://src/GUI/Screens/ReadableContentScreen.nut");
-        _doFile("res://src/GUI/Screens/SaveEditScreen.nut");
-        _doFile("res://src/GUI/Screens/WorldGenerationStatusScreen.nut");
-        _doFile("res://src/GUI/Screens/NewSaveValuesScreen.nut");
-        _doFile("res://src/GUI/Screens/InventoryItemHelperScreen.nut");
-        _doFile("res://src/GUI/Screens/PauseScreen.nut");
-        _doFile("res://src/GUI/Screens/SettingsScreen.nut");
 
         _doFile("res://src/Logic/EntityTargetManager.nut");
         _doFile("res://src/Logic/ActiveEnemyEntry.nut");
@@ -280,6 +240,14 @@
 
         ::ItemHelper.setupItemIds_();
 
+        _doFile("res://src/BaseHelperFunctions.nut")
+
+    }
+
+    function defineBaseEnums(){
+        ::EnumDef.addToEnum("Screen", @"
+            SCREEN,
+        ");
     }
 
     function loadEnumFiles(){
@@ -355,7 +323,7 @@
     function setupDeveloperWorkaroundsPost_(){
         if(mGameProfiles_ != null){
             foreach(i in mGameProfiles_){
-                setupForProfilePost_(i);
+                ::BaseHelperFunctions.setupForProfilePost_(i);
             }
         }
     }
@@ -364,15 +332,11 @@
         local forcedScreen = determineForcedScreen();
         if(forcedScreen == null && ::ScreenManager.getScreenForLayer() == null){
             //If nothing was setup then switch to the main menu.
-            ::ScreenManager.transitionToScreen(getScreenDataForForcedScreen(getStartingScreen()));
+            ::ScreenManager.transitionToScreen(::BaseHelperFunctions.getScreenDataForForcedScreen(::BaseHelperFunctions.getStartingScreen()));
         }
         if(forcedScreen != null){
-            ::ScreenManager.transitionToScreen(getScreenDataForForcedScreen(forcedScreen));
+            ::ScreenManager.transitionToScreen(::BaseHelperFunctions.getScreenDataForForcedScreen(forcedScreen));
         }
-    }
-
-    function getStartingScreen(){
-        return Screen.MAIN_MENU_SCREEN;
     }
 
     function getGameProfiles(){
@@ -393,26 +357,6 @@
                 break;
             case GameProfile.FORCE_SMALL_WORLD:
                 mForceSmallWorld = true;
-                break;
-            default:
-                break;
-        }
-    }
-
-    function setupForProfilePost_(profile){
-        printf("Setting up game profile post setup '%s'", ::GameProfileString[profile]);
-        switch(profile){
-            case GameProfile.DEVELOPMENT_BEGIN_EXPLORATION:
-                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": mExplorationLogic}));
-                break;
-            case GameProfile.TEST_SCREEN:
-                ::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);
-                break;
-            case GameProfile.DEBUG_OVERLAY_COMBAT:
-                ::DebugOverlayManager.setupOverlay(DebugOverlayId.COMBAT);
-                break;
-            case GameProfile.DEBUG_OVERLAY_INPUT:
-                ::DebugOverlayManager.setupOverlay(DebugOverlayId.INPUT);
                 break;
             default:
                 break;

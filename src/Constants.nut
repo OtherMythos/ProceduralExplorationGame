@@ -190,6 +190,7 @@ enum ItemInfoMode{
     KEEP_SCRAP_SPOILS,
 };
 
+/*
 enum Screen{
     SCREEN,
     MAIN_MENU_SCREEN,
@@ -214,6 +215,7 @@ enum Screen{
 
     MAX
 };
+*/
 ::ScreenString <- [
     "screen",
     "mainMenuScreen",
