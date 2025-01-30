@@ -1,6 +1,23 @@
+enum InventoryItemHelperScreenFunctions{
+    USE,
+    SCRAP,
+    CANCEL,
+    EQUIP,
+    EQUIP_LEFT_HAND,
+    EQUIP_RIGHT_HAND,
+    UNEQUIP,
+    READ,
+    MOVE_TO_INVENTORY,
+    MOVE_OUT_OF_INVENTORY,
+
+    MAX
+};
+
 ::ScreenManager.Screens[Screen.INVENTORY_ITEM_HELPER_SCREEN] = class extends ::Screen{
 
     mData_ = null;
+
+    mButtonFunctions_ = array(InventoryItemHelperScreenFunctions.MAX);
 
     function setup(data){
         mData_ = data;
@@ -56,78 +73,44 @@
     function getButtonOptionsForItem(item){
         local itemType = item.getType();
 
-        local buttonOptions = [
-            "Use",
-            "Scrap",
-            "Cancel"
-        ];
-        local buttonFunctions = [
-            function(widget, action){
-                mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_USE, mData_.idx);
-                closeScreen();
-            },
-            function(widget, action){
-                local data = {"idx": mData_.idx, "gridType": mData_.gridType};
-                mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_SCRAP, data);
-                closeScreen();
-            },
-            function(widget, action){
-                closeScreen();
-            },
-            function(widget, action){
-                mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP, mData_.idx);
-                closeScreen();
-            },
-            function(widget, action){
-                mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_UNEQUIP, mData_.idx);
-                closeScreen();
-            },
-            function(widget, action){
-                ::Base.mExplorationLogic.readLoreContent(item);
-                closeScreen();
-            },
-        ];
+        local buttonOptions = [];
+        local buttonFunctions = [];
 
         if(itemType == ItemType.EQUIPPABLE){
             if(mData_.gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
-                buttonOptions[0] = "UnEquip";
-                buttonFunctions[0] = buttonFunctions[buttonFunctions.len()-2];
+                buttonOptions.append("UnEquip");
+                buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.UNEQUIP]);
             }else{
                 local equipData = ::Equippables[item.getEquippableData()];
                 local equipSlot = equipData.getEquippedSlot();
                 if(equipSlot == EquippedSlotTypes.HAND){
-                    //Give the option of which hand to equip to.
-                    buttonOptions[0] = "Equip Left Hand"
-                    buttonOptions.insert(1, "Equip Right Hand");
-                    buttonFunctions[0] = function(widget, action){
-                        local data = {"idx": mData_.idx, "gridType": mData_.gridType};
-                        mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP_LEFT_HAND, data);
-                        closeScreen();
-                    };
-                    buttonFunctions.insert(1, function(widget, action){
-                        local data = {"idx": mData_.idx, "gridType": mData_.gridType};
-                        mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP_RIGHT_HAND, data);
-                        closeScreen();
-                    });
+                    buttonOptions.append("Equip Left Hand");
+                    buttonOptions.append("Equip Right Hand");
+                    buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.EQUIP_LEFT_HAND]);
+                    buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.EQUIP_RIGHT_HAND]);
                 }else{
-                    buttonOptions[0] = "Equip";
-                    buttonFunctions[0] = buttonFunctions[buttonFunctions.len()-3];
+                    buttonOptions.append("Equip");
+                    buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.EQUIP]);
                 }
             }
-        }
-        else if(itemType == ItemType.LORE_CONTENT){
-            buttonOptions[0] = "Read";
-            buttonFunctions[0] = buttonFunctions[buttonFunctions.len()-1];
+        }else if(itemType == ItemType.LORE_CONTENT){
+            buttonOptions.append("Read");
+            buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.READ]);
+        }else{
+            buttonOptions.append("Use");
+            buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.USE]);
         }
 
+        buttonOptions.append("Scrap");
+        buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.SCRAP]);
+
         if(mData_.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
-            buttonOptions.insert(1, "Move to Inventory");
-            buttonFunctions.insert(1, function(widget, action){
-                local data = {"idx": mData_.idx, "gridType": mData_.gridType};
-                mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_TO_INVENTORY, data);
-                closeScreen();
-            });
+            buttonOptions.append("Move to Inventory");
+            buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.MOVE_TO_INVENTORY]);
         }
+
+        buttonOptions.append("Cancel");
+        buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.CANCEL]);
 
         return [buttonOptions, buttonFunctions];
     }
@@ -136,3 +119,45 @@
         ::ScreenManager.transitionToScreen(null, null, mLayerIdx);
     }
 }
+
+local b = ::ScreenManager.Screens[Screen.INVENTORY_ITEM_HELPER_SCREEN].mButtonFunctions_;
+
+b[InventoryItemHelperScreenFunctions.USE] = function(widget, action){
+    mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_USE, mData_.idx);
+    closeScreen();
+};
+b[InventoryItemHelperScreenFunctions.SCRAP] =function(widget, action){
+    local data = {"idx": mData_.idx, "gridType": mData_.gridType};
+    mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_SCRAP, data);
+    closeScreen();
+};
+b[InventoryItemHelperScreenFunctions.CANCEL] = function(widget, action){
+    closeScreen();
+};
+b[InventoryItemHelperScreenFunctions.EQUIP] = function(widget, action){
+    mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP, mData_.idx);
+    closeScreen();
+};
+b[InventoryItemHelperScreenFunctions.EQUIP_LEFT_HAND] = function(widget, action){
+    local data = {"idx": mData_.idx, "gridType": mData_.gridType};
+    mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP_LEFT_HAND, data);
+    closeScreen();
+};
+b[InventoryItemHelperScreenFunctions.EQUIP_RIGHT_HAND] = function(widget, action){
+    local data = {"idx": mData_.idx, "gridType": mData_.gridType};
+    mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP_RIGHT_HAND, data);
+    closeScreen();
+};
+b[InventoryItemHelperScreenFunctions.UNEQUIP] = function(widget, action){
+    mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_UNEQUIP, mData_.idx);
+    closeScreen();
+};
+b[InventoryItemHelperScreenFunctions.READ] = function(widget, action){
+    ::Base.mExplorationLogic.readLoreContent(item);
+    closeScreen();
+};
+b[InventoryItemHelperScreenFunctions.MOVE_TO_INVENTORY] = function(widget, action){
+    local data = {"idx": mData_.idx, "gridType": mData_.gridType};
+    mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_TO_INVENTORY, data);
+    closeScreen();
+};
