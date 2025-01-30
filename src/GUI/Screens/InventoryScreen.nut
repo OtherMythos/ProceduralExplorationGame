@@ -12,6 +12,7 @@ enum InventoryBusEvents{
     ITEM_INFO_REQUEST_USE,
     ITEM_INFO_REQUEST_SCRAP,
     ITEM_INFO_REQUEST_MOVE_TO_INVENTORY,
+    ITEM_INFO_REQUEST_MOVE_OUT_OF_INVENTORY,
 };
 
 ::ScreenManager.Screens[Screen.INVENTORY_SCREEN] = class extends ::Screen{
@@ -337,6 +338,25 @@ enum InventoryBusEvents{
             mSecondaryItems_[data.idx] = null;
             mSecondaryInventoryGrid_.setNewGridIcons(mSecondaryItems_);
         }
+        else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_OUT_OF_INVENTORY){
+            assert(mSecondaryItems_ != null);
+            local foundHole = false;
+            local holeIdx = -1;
+            foreach(c,i in mSecondaryItems_){
+                if(i == null){
+                    foundHole = true;
+                    holeIdx = c;
+                    break;
+                }
+            }
+            if(!foundHole) return;
+            assert(holeIdx != -1);
+
+            local item = mInventory_.getItemForIdx(data.idx);
+            mInventory_.removeFromInventory(data.idx);
+            mSecondaryItems_[holeIdx] = item;
+            mSecondaryInventoryGrid_.setNewGridIcons(mSecondaryItems_);
+        }
         else if(
             event == InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP ||
             event == InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP_LEFT_HAND ||
@@ -455,7 +475,8 @@ enum InventoryBusEvents{
             "item": selectedItem,
             "idx": idx,
             "gridType": inventoryData.gridType
-            "bus": mInventoryBus_
+            "bus": mInventoryBus_,
+            "secondaryGrid": mUseSecondaryGrid_
         };
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_ITEM_HELPER_SCREEN, data), null, mLayerIdx+1);
     }

@@ -109,6 +109,11 @@ enum InventoryItemHelperScreenFunctions{
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.MOVE_TO_INVENTORY]);
         }
 
+        if(mData_.secondaryGrid && mData_.gridType == InventoryGridType.INVENTORY_GRID){
+            buttonOptions.append("Move out of Inventory");
+            buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.MOVE_OUT_OF_INVENTORY]);
+        }
+
         buttonOptions.append("Cancel");
         buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.CANCEL]);
 
@@ -159,5 +164,10 @@ b[InventoryItemHelperScreenFunctions.READ] = function(widget, action){
 b[InventoryItemHelperScreenFunctions.MOVE_TO_INVENTORY] = function(widget, action){
     local data = {"idx": mData_.idx, "gridType": mData_.gridType};
     mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_TO_INVENTORY, data);
+    closeScreen();
+};
+b[InventoryItemHelperScreenFunctions.MOVE_OUT_OF_INVENTORY] = function(widget, action){
+    local data = {"idx": mData_.idx, "gridType": mData_.gridType};
+    mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_OUT_OF_INVENTORY, data);
     closeScreen();
 };

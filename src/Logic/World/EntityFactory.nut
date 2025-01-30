@@ -815,6 +815,8 @@
         local invHeight = 2;
         local items = array(invWidth * invHeight, null);
         items[0] = ::Item(ItemId.APPLE);
+        items[1] = ::Item(ItemId.APPLE);
+        items[2] = ::Item(ItemId.APPLE);
         items[3] = ::Item(ItemId.BOOK_OF_GOBLIN_STORIES);
         local inventoryItemsComponent = ::EntityManager.Components[EntityComponents.INVENTORY_ITEMS](items, invWidth, invHeight);
         manager.assignComponent(en, EntityComponents.INVENTORY_ITEMS, inventoryItemsComponent);
