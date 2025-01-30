@@ -83,7 +83,9 @@
     }
 
     function update(){
-
+        if(_input.getButtonAction(::InputManager.menuBack, _INPUT_PRESSED)){
+            if(::ScreenManager.isScreenTop(mLayerIdx)) closeScreen();
+        }
     }
 
     function closeScreen(){

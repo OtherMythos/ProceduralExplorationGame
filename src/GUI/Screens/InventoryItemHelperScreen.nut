@@ -158,7 +158,8 @@ b[InventoryItemHelperScreenFunctions.UNEQUIP] = function(widget, action){
     closeScreen();
 };
 b[InventoryItemHelperScreenFunctions.READ] = function(widget, action){
-    ::Base.mExplorationLogic.readLoreContent(item);
+    local data = {"idx": mData_.idx, "gridType": mData_.gridType};
+    mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_READ, data);
     closeScreen();
 };
 b[InventoryItemHelperScreenFunctions.MOVE_TO_INVENTORY] = function(widget, action){

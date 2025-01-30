@@ -96,6 +96,16 @@
         return mActiveScreens_[layerIdx] != null;
     }
 
+    function isScreenTop(layerIdx){
+        for(local i = layerIdx+1; i < mActiveScreens_.len(); i++){
+            if(mActiveScreens_[i] != null){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     /**
      * Immediate transition to a new screen.
      */

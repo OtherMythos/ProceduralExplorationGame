@@ -13,6 +13,7 @@ enum InventoryBusEvents{
     ITEM_INFO_REQUEST_SCRAP,
     ITEM_INFO_REQUEST_MOVE_TO_INVENTORY,
     ITEM_INFO_REQUEST_MOVE_OUT_OF_INVENTORY,
+    ITEM_INFO_REQUEST_READ,
 };
 
 ::ScreenManager.Screens[Screen.INVENTORY_SCREEN] = class extends ::Screen{
@@ -415,6 +416,17 @@ enum InventoryBusEvents{
             //TODO check if the inventory has space.
             mInventory_.addToInventory(item);
         }
+        else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_READ){
+            local item = null;
+            if(data.gridType == InventoryGridType.INVENTORY_GRID){
+                item = mInventory_.getItemForIdx(data.idx);
+            }else if(data.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
+                item = mSecondaryItems_[data.idx];
+            }
+            if(item == null) return;
+
+            ::Base.mExplorationLogic.readLoreContent(item);
+        }
         else if(event == InventoryBusEvents.ITEM_HELPER_SCREEN_ENDED){
             highlightPrevious();
         }
@@ -542,7 +554,7 @@ enum InventoryBusEvents{
         }
 
         if(_input.getButtonAction(::InputManager.menuBack, _INPUT_PRESSED)){
-            if(!::ScreenManager.isScreenPresentForLayer(mLayerIdx+1)) closeInventory();
+            if(::ScreenManager.isScreenTop(mLayerIdx)) closeInventory();
         }
     }
 
