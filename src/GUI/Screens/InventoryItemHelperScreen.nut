@@ -128,7 +128,8 @@ enum InventoryItemHelperScreenFunctions{
 local b = ::ScreenManager.Screens[Screen.INVENTORY_ITEM_HELPER_SCREEN].mButtonFunctions_;
 
 b[InventoryItemHelperScreenFunctions.USE] = function(widget, action){
-    mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_USE, mData_.idx);
+    local data = {"idx": mData_.idx, "gridType": mData_.gridType};
+    mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_USE, data);
     closeScreen();
 };
 b[InventoryItemHelperScreenFunctions.SCRAP] =function(widget, action){

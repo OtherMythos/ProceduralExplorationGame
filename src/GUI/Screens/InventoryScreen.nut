@@ -322,9 +322,16 @@ enum InventoryBusEvents{
             processItemHover(null);
         }
         else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_USE){
-            local itemForIdx = mInventory_.getItemForIdx(data);
-            ::ItemHelper.actuateItem(itemForIdx);
-            mInventory_.removeFromInventory(data);
+            if(data.gridType == InventoryGridType.INVENTORY_GRID){
+                local itemForIdx = mInventory_.getItemForIdx(data.idx);
+                ::ItemHelper.actuateItem(itemForIdx);
+                mInventory_.removeFromInventory(data.idx);
+            }else if(data.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
+                local item = mSecondaryItems_[data.idx];
+                mSecondaryItems_[data.idx] = null;
+                mSecondaryInventoryGrid_.setNewGridIcons(mSecondaryItems_);
+                ::ItemHelper.actuateItem(item);
+            }
         }
         else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_SCRAP){
             scrapItem(data);
