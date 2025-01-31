@@ -1,6 +1,7 @@
 ::InputManager <- {
 
     mActionSets_ = []
+    mCurrentActionSet_ = null
 
     function setup(){
         _input.setActionSets({
@@ -43,6 +44,9 @@
                 }
             },
             "DebugConsole" : {
+                "Buttons" : {
+                    "CloseDebugConsole": "#CloseDebugConsole",
+                }
             }
         });
 
@@ -78,6 +82,8 @@
         ::InputManager.menuInteract <- _input.getButtonActionHandle("MenuInteract");
         ::InputManager.menuBack <- _input.getButtonActionHandle("MenuBack");
         ::InputManager.closePause <- _input.getButtonActionHandle("ClosePause");
+
+        ::InputManager.closeDebugConsole <- _input.getButtonActionHandle("CloseDebugConsole");
 
         _input.mapControllerInput(_BA_LEFT, this.explorationMove);
         _input.mapControllerInput(_BA_RIGHT, this.explorationCamera);
@@ -118,12 +124,18 @@
         _input.mapKeyboardInput(_K_Z, this.dialogNext);
 
         _input.mapKeyboardInput(_K_ESCAPE, this.menuBack);
+        _input.mapKeyboardInput(_K_ESCAPE, this.closeDebugConsole);
 
         //_input.setActionSetForDevice(_ANY_INPUT_DEVICE, ::InputManager.actionSetGameplay);
         setActionSet(InputActionSets.EXPLORATION);
     }
 
+    function getCurrentActionSet(){
+        return mCurrentActionSet_;
+    }
+
     function setActionSet(actionSet){
+        mCurrentActionSet_ = actionSet;
         local target = mActionSets_[actionSet];
         _input.setActionSetForDevice(_ANY_INPUT_DEVICE, target);
     }

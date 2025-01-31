@@ -9,6 +9,7 @@
     mActive_ = false
     COMMAND_POINTER = "> "
     mTogglePressed_ = false
+    mPreviousActionSet_ = null
 
     DebugCommandEntry = class{
         mName = null;
@@ -58,6 +59,8 @@
 
             mCommandBox_.attachListenerForEvent(editboxCallback, _GUI_ACTION_VALUE_CHANGED, this);
 
+            mPreviousActionSet_ = ::InputManager.getCurrentActionSet();
+
             positionOutputLabel();
         }else{
             assert(mCommandBox_ != null);
@@ -65,7 +68,7 @@
             mCommandBox_ = null;
         }
 
-        ::InputManager.setActionSet(active ? InputActionSets.DEBUG_CONSOLE : InputActionSets.EXPLORATION);
+        ::InputManager.setActionSet(active ? InputActionSets.DEBUG_CONSOLE : mPreviousActionSet_);
     }
 
     function update(){
@@ -76,6 +79,10 @@
             }
         }else{
             mTogglePressed_ = false;
+        }
+
+        if(_input.getButtonAction(::InputManager.closeDebugConsole, _INPUT_PRESSED)){
+            toggleActive();
         }
     }
 
