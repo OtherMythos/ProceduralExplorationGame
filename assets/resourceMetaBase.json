@@ -1,0 +1,6 @@
+{
+    "profiles":{
+        "Universal": {"IndependantBuildable":true}
+    },
+    "DefaultProfile": "Universal"
+}
