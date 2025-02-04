@@ -69,12 +69,13 @@ namespace VoxelConverterTool{
         std::vector<VoxelId> voxData;
         voxData.resize(256 * 256 * 256, EMPTY_VOXEL);
 
-        int minX = 128;
-        int minY = 128;
-        int minZ = 128;
-        int maxX = 128;
-        int maxY = 128;
-        int maxZ = 128;
+        static const int INVALID_POS = -100;
+        int minX = INVALID_POS;
+        int minY = INVALID_POS;
+        int minZ = INVALID_POS;
+        int maxX = INVALID_POS;
+        int maxY = INVALID_POS;
+        int maxZ = INVALID_POS;
 
         while(getline(myfile, line)){
             if(line.at(0) == '#') continue;
@@ -96,25 +97,38 @@ namespace VoxelConverterTool{
             int yy = v.y + 128;
             int zz = v.z + 128;
 
-            if(xx < minX) minX = xx;
-            if(yy < minY) minY = yy;
-            if(zz < minZ) minZ = zz;
+            if(xx < minX || minX == INVALID_POS) minX = xx;
+            if(yy < minY || minY == INVALID_POS) minY = yy;
+            if(zz < minZ || minZ == INVALID_POS) minZ = zz;
 
-            if(xx > maxX) maxX = xx;
-            if(yy > maxY) maxY = yy;
-            if(zz > maxZ) maxZ = zz;
+            if(xx > maxX || minX == INVALID_POS) maxX = xx;
+            if(yy > maxY || minY == INVALID_POS) maxY = yy;
+            if(zz > maxZ || minZ == INVALID_POS) maxZ = zz;
+
+            if(
+               xx >= 256 || yy >= 256 || zz >= 256 ||
+               xx < 0 || yy < 0 || zz < 0
+               ){
+                   continue;
+               }
 
             voxData[xx + (yy * 256) + (zz * 256 * 256)] = v.vox;
         }
 
         outData.data = std::move(voxData);
-        outData.minX = minX;
-        outData.minY = minY;
-        outData.minZ = minZ;
-        outData.maxX = maxX;
-        outData.maxY = maxY;
-        outData.maxZ = maxZ;
+        outData.minX = _clampMaxMin(minX);
+        outData.minY = _clampMaxMin(minY);
+        outData.minZ = _clampMaxMin(minZ);
+        outData.maxX = _clampMaxMin(maxX);
+        outData.maxY = _clampMaxMin(maxY);
+        outData.maxZ = _clampMaxMin(maxZ);
 
         return true;
+    }
+
+    int VoxelFileParser::_clampMaxMin(int val) const{
+        if(val < 0) return 0;
+        if(val >= 0xFF) return 0xFF-1;
+        return val;
     }
 }

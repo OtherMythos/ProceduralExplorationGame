@@ -34,6 +34,7 @@ namespace VoxelConverterTool{
 
         void _parseLineToData(const std::string& line, ParsedVoxel& vox);
         VoxelId _parseHexToVoxel(const std::string& hexValue);
+        int _clampMaxMin(int val) const;
 
         std::map<VoxHex, VoxelId> mResolvedVoxels;
     };

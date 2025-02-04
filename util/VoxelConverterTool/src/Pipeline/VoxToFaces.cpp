@@ -86,8 +86,6 @@ namespace VoxelConverterTool{
         currentMinX = currentMinY = currentMinZ = 128;
         currentMaxX = currentMaxY = currentMaxZ = 128;
 
-        int width = parsedVox.maxX - parsedVox.minX;
-        int height = parsedVox.maxY - parsedVox.minY;
         for(int z = parsedVox.minZ; z <= parsedVox.maxZ; z++)
         for(int y = parsedVox.minY; y <= parsedVox.maxY; y++)
         for(int x = parsedVox.minX; x <= parsedVox.maxX; x++){
