@@ -5,8 +5,7 @@
 
     }
 
-    function performSave(mapName, tree){
-        local filePath = "res://../../assets/maps/" + mapName + "/dataPoints.txt";
+    function performSave(filePath, tree){
         if(_system.exists(filePath)){
             _system.remove(filePath);
         }

@@ -4,6 +4,13 @@ enum TerrainEditState{
     COLOUR
 };
 
+enum SceneEditorMapType{
+    MAP,
+    PLACE,
+
+    MAX
+}
+
 ::SceneEditorWindowListener <- class extends ::EditorGUIFramework.WindowManagerListener{
     function resized(id, newSize){
         ::Base.mEditorBase.resizeGUIWindow(id, newSize);
@@ -59,6 +66,22 @@ enum TerrainEditState{
         "tile": 1,
         "tileRotation": 0,
         "drawHoles": false
+    }
+
+    TargetMapType = class{
+        mName_ = null;
+        mMapType_ = null;
+        constructor(name, mapType){
+            mName_ = name;
+            mMapType_ = mapType;
+        }
+
+        function getName(){
+            return mName_;
+        }
+        function getMapType(){
+            return mMapType_;
+        }
     }
 
     function createLights(){
@@ -189,7 +212,7 @@ enum TerrainEditState{
 
         _gameCore.setMapsDirectory("res://../../assets/maps/");
 
-        _gameCore.beginParseVisitedLocation(targetMap);
+        _gameCore.beginParseVisitedLocation(targetMap.getName());
         local mapClaim = null;
         while(mapClaim == null){
             mapClaim = _gameCore.checkClaimParsedVisitedLocation();
@@ -270,10 +293,26 @@ enum TerrainEditState{
         regenerateTileGrid();
     }
 
-    function attemptLoadSceneTree(targetMap){
-        local targetPath = format("res://../../assets/maps/%s/scene.avscene", targetMap);
-        if(!_system.exists(targetPath)){
+    function getFileForMapTarget(targetMap, fileName){
+        local val = null;
+        if(targetMap.getMapType() == SceneEditorMapType.MAP){
+            val = "res://../../assets/maps/%s/%s"
+        }
+        else if(targetMap.getMapType() == SceneEditorMapType.PLACE){
+            val = "res://../../assets/places/%s/%s"
+        }
+        if(val == null){
             return null;
+        }
+
+        return format(val, targetMap.getName(), fileName);
+    }
+
+    function attemptLoadSceneTree(targetMap){
+        local targetPath = getFileForMapTarget(targetMap, "scene.avScene");
+        //local targetPath = format(dir, targetMap.getName());
+        if(!_system.exists(targetPath)){
+            mEditorBase.createBaseSceneTreeFile(targetPath);
         }
         return mEditorBase.loadSceneTree(mParentNode, targetPath);
     }
@@ -445,11 +484,22 @@ enum TerrainEditState{
 
     function getTargetEditMap(){
         local editMap = _settings.getUserSetting("editMap");
-        print(editMap);
+        //print(editMap);
         if(editMap != null && typeof editMap == "string"){
-            return editMap;
+            return TargetMapType(editMap, SceneEditorMapType.MAP);
         }
+
+        local editPlace = _settings.getUserSetting("editPlace");
+        //print(editPlace);
+        if(editPlace != null && typeof editPlace == "string"){
+            return TargetMapType(editPlace, SceneEditorMapType.PLACE);
+        }
+
         return null;
+    }
+
+    function getTargetMapType(){
+        return mTargetMap;
     }
 
     function sceneSafeUpdate(){
@@ -554,15 +604,16 @@ enum TerrainEditState{
     function notifyBusEvent(event, data){
         if(event == SceneEditorFramework_BusEvents.REQUEST_SAVE){
             if(mVisitedPlacesMapData.terrainActive()){
-                mTerrainChunkManager.performSave(mTargetMap);
+                mTerrainChunkManager.performSave(mTargetMap.getName());
             }
 
+            local filePath = getFileForMapTarget(mTargetMap, "dataPoints.txt");
             local writer = SceneEditorDataPointWriter();
-            writer.performSave(mTargetMap, mSceneTree);
+            writer.performSave(filePath, mSceneTree);
 
             if(mCurrentTileData != null){
                 local tileDataWriter = ::TileDataWriter();
-                tileDataWriter.performSave(mTargetMap, mCurrentTileData, mCurrentTileDataWidth);
+                tileDataWriter.performSave(mTargetMap.getName(), mCurrentTileData, mCurrentTileDataWidth);
             }
         }
     }

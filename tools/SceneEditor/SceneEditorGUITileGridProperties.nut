@@ -13,6 +13,12 @@
     function setup(){
         local layout = _gui.createLayoutLine();
 
+        if(::Base.getTargetMapType().getMapType() == SceneEditorMapType.PLACE){
+            local label = mParent_.createLabel();
+            label.setText("Tile grid properties do not apply for places.");
+            return;
+        }
+
         mEditTileGrid_ = mParent_.createCheckbox();
         mEditTileGrid_.setText("Edit tile grid");
         mEditTileGrid_.attachListenerForEvent(function(widget, action){

@@ -15,6 +15,12 @@
     function setup(){
         local layout = _gui.createLayoutLine();
 
+        if(::Base.getTargetMapType().getMapType() == SceneEditorMapType.PLACE){
+            local label = mParent_.createLabel();
+            label.setText("Terrain Properties do not apply for places.");
+            return;
+        }
+
         mEditTerrain_ = mParent_.createCheckbox();
         mEditTerrain_.setText("Edit terrain");
         mEditTerrain_.attachListenerForEvent(function(widget, action){
