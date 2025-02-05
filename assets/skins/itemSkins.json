@@ -160,6 +160,54 @@
             {
                 "all" : [48, 128, 16, 16]
             }
+        },
+        "item_bookGreen" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [32, 96, 16, 16]
+            }
+        },
+        "item_bookRed" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [48, 96, 16, 16]
+            }
+        },
+        "item_bookBrown" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [64, 96, 16, 16]
+            }
+        },
+        "item_bookYellow" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [32, 112, 16, 16]
+            }
+        },
+        "item_bookBlue" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [48, 112, 16, 16]
+            }
+        },
+        "item_noteScrap" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [64, 112, 16, 16]
+            }
         }
 
     }
