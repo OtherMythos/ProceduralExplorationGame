@@ -39,7 +39,7 @@ class AssetModuleGox(AssetModule):
                 retPath = retPath.with_suffix(".voxMesh")
                 print(retPath)
                 voxMeshTarget = self.prepareOutputDirectoryForFile(retPath, True)
-                self.exportToVoxMesh(goxelTxtTarget, voxMeshTarget)
+                self.exportToVoxMesh(goxelTxtTarget, voxMeshTarget, True)
         else:
             retPath = filePath.with_suffix(".txt")
             goxelTxtTarget = self.prepareOutputDirectoryForFile(retPath, True)
@@ -102,8 +102,11 @@ class AssetModuleGox(AssetModule):
 
         return fileValid
 
-    def exportToVoxMesh(self, filePath, outPath):
+    def exportToVoxMesh(self, filePath, outPath, centre=False):
         devnull = open(os.devnull, 'w')
-        process = subprocess.Popen(["VoxelConverterTool", str(filePath), str(outPath)], stdout=subprocess.PIPE, stderr=devnull)
+        command = ["VoxelConverterTool", str(filePath), str(outPath)]
+        if centre:
+            command.append("-c")
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=devnull)
         process.wait()
         devnull.close()
