@@ -12,10 +12,13 @@ function start(){
     _doFile("res://CharacterInspectorHelper.nut");
     ::generateFloorGrid();
 
+    _doFile("res://../../src/System/EnumDef.nut");
     _doFile("res://../../src/Constants.nut");
     _doFile("res://../../src/Helpers.nut");
     _doFile("res://../../src/Content/Equippables.nut");
     _doFile("res://../../src/Content/Items.nut");
+    _doFile("res://../../src/Content/ItemEnums.nut");
+    ::EnumDef.commitEnums();
     _doFile("res://../../src/Content/ItemDefs.nut");
 
     _doFile("res://../../src/Util/VoxToMesh.nut");
