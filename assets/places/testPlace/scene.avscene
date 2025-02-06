@@ -1,0 +1,27 @@
+<scene>
+    <user0 value="house1.voxMesh">
+        <scale x="0.3" y="0.3" z="0.3"/>
+        <orientation x="0" y="1" z="0" w="0"/>
+    </user0>
+    <user0 value="house1.voxMesh">
+        <scale x="0.3" y="0.3" z="0.3"/>
+        <orientation x="0" y="1" z="0" w="0"/>
+    </user0>
+    <user0 value="house1.voxMesh">
+        <position x="-9.79128" y="0" z="-10.5205"/>
+        <scale x="0.3" y="0.3" z="0.3"/>
+        <orientation x="0" y="1.7" z="0" w="1"/>
+    </user0>
+    <user0 value="plantPot.voxMesh">
+        <position x="2.47889" y="0" z="-2.32548"/>
+        <scale x="0.2" y="0.2" z="0.2"/>
+    </user0>
+    <user0 value="bench.voxMesh">
+        <position x="1.44859" y="0" z="-15.8418"/>
+        <scale x="0.3" y="0.3" z="0.3"/>
+    </user0>
+    <user0 value="well.voxMesh">
+        <position x="0.586453" y="0" z="-10.5804"/>
+        <scale x="0.3" y="0.3" z="0.3"/>
+    </user0>
+</scene>

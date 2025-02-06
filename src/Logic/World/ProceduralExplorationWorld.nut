@@ -407,21 +407,18 @@
     function setupPlaces(){
         //TODO see about getting rid of this.
         mActivePlaces_ = [];
+        local placer = ::PlacePlacer();
         foreach(c,i in mMapData_.placeData){
             local regionEntry = mRegionEntries_[i.region];
 
             local node = regionEntry.mDecoratioNode_;
-            local placeData = ::Places[i.placeId];
-            local placementFunction = placeData.getPlacementFunction();
-            local placeEntry = (placeData.getPlacementFunction())(this, mEntityFactory_, node, i, c);
-            local pos = Vec3(i.originX, 0, -i.originY);
-            if(placeData.getRegionAppearFunction() != null){
-                regionEntry.pushFuncPlace(i.placeId, pos);
-            }
+            local placeDefine = ::Places[i.placeId];
+
+            local placeEntry = placer.placeIntoWorld(i, placeDefine, node, this, regionEntry, c);
+
             if(placeEntry == null) continue;
 
-            //local placeEntry = mEntityFactory_.constructPlace(i, c, ::Base.mExplorationLogic.mGui_);
-            local beaconEntity = mEntityFactory_.constructPlaceIndicatorBeacon(pos);
+            local beaconEntity = mEntityFactory_.constructPlaceIndicatorBeacon(placeEntry.getPosition());
             mActivePlaces_.append(placeEntry);
             regionEntry.pushPlace(placeEntry, beaconEntity);
         }

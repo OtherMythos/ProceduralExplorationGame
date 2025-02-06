@@ -148,6 +148,18 @@ function GarritonPlacement(world, entityFactory, node, placeData, idx){
 
 }
 
+function TemplePlacement(world, entityFactory, node, placeData, idx){
+    local parentNode = node.createChildSceneNode();
+    local voxPos = Vec3(placeData.originX, 0, -placeData.originY);
+
+    local width = 1;
+    local height = 1;
+    local inv = array(width * height, null);
+    inv[0] = ::Item(ItemId.BOOK_OF_GOBLIN_STORIES);
+    entityFactory.constructChestObjectInventory(voxPos, parentNode, inv, width, height);
+
+}
+
 function initialisePlacesLists(){
     for(local i = 0; i < PlaceType.MAX; i++){
         ::PlacesByType[i] <- [];
@@ -160,13 +172,14 @@ function initialisePlacesLists(){
 
 ::Places <- array(PlaceId.MAX, null);
 
-::Places[PlaceId.NONE] = PlaceDef("None", "None", PlaceType.NONE, 0.0, null, null, 0);
+::Places[PlaceId.NONE] = PlaceDef("None", "None", PlaceType.NONE, 0.0, null, null, null, 0);
 
-::Places[PlaceId.GATEWAY] = PlaceDef("Gateway", "Gateway", PlaceType.GATEWAY, 1.0, testPlaceDefs.GenericPlacement, null, 0);
+::Places[PlaceId.GATEWAY] = PlaceDef("Gateway", "Gateway", PlaceType.GATEWAY, 1.0, testPlaceDefs.GenericPlacement, null, null, 0);
 
-::Places[PlaceId.GOBLIN_CAMP] = PlaceDef("Goblin Camp", "Spooky goblin camp", PlaceType.LOCATION, 1.0, testPlaceDefs.GoblinCampPlacement, testPlaceDefs.GoblinCampAppearFunction, 100);
-::Places[PlaceId.DUSTMITE_NEST] = PlaceDef("Dust Mite Nest", "An entrance to a Dust Mite nest.", PlaceType.LOCATION, 1.0, testPlaceDefs.DustMiteNestPlacement, testPlaceDefs.DustMiteNestAppearFunction, 100);
-::Places[PlaceId.GARRITON] = PlaceDef("Garriton", "A nice town", PlaceType.LOCATION, 1.0, testPlaceDefs.GarritonPlacement, null, 100);
+::Places[PlaceId.GOBLIN_CAMP] = PlaceDef("Goblin Camp", "Spooky goblin camp", PlaceType.LOCATION, 1.0, testPlaceDefs.GoblinCampPlacement, testPlaceDefs.GoblinCampAppearFunction, null, 100);
+::Places[PlaceId.DUSTMITE_NEST] = PlaceDef("Dust Mite Nest", "An entrance to a Dust Mite nest.", PlaceType.LOCATION, 1.0, testPlaceDefs.DustMiteNestPlacement, testPlaceDefs.DustMiteNestAppearFunction, null, 100);
+::Places[PlaceId.GARRITON] = PlaceDef("Garriton", "A nice town", PlaceType.LOCATION, 1.0, null, null, "testPlace", 100);
+::Places[PlaceId.TEMPLE] = PlaceDef("Temple", "Some sort of temple", PlaceType.LOCATION, 1.0, testPlaceDefs.TemplePlacement, null, null, 100);
 
 ::PlacesByType <- {};
 

@@ -258,6 +258,10 @@ enum InventoryBusEvents{
         }
 
         layoutHorizontal.setMarginForAllCells(10, 0);
+        if(mUseSecondaryGrid_){
+            //Add some spacing to make the chest contents more obvious.
+            mSecondaryInventoryGrid_.mWindow_.setMargin(150, 0);
+        }
         layoutLine.addCell(layoutHorizontal);
 
         layoutLine.setMarginForAllCells(0, 5);

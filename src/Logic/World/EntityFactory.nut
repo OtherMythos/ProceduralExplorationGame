@@ -791,14 +791,15 @@
 
     }
 
-    function constructChestObject(pos, spoils=null){
+    function constructChestObjectInventory(pos, node, inventory, inventoryWidth, inventoryHeight){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = pos.copy();
         targetPos.y = getZForPos(targetPos);
 
         local en = manager.createEntity(targetPos);
 
-        local parentNode = mBaseSceneNode_.createChildSceneNode();
+        //local parentNode = mBaseSceneNode_.createChildSceneNode();
+        local parentNode = node;
         parentNode.setScale(0.15, 0.15, 0.15);
         parentNode.setPosition(targetPos);
         local item = _gameCore.createVoxMeshItem("treasureChestBase.voxMesh");
@@ -811,14 +812,7 @@
         local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.ITEM_SEARCH, en, targetPos.x, targetPos.z, 4, _COLLISION_PLAYER);
         manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
 
-        local invWidth = 2;
-        local invHeight = 2;
-        local items = array(invWidth * invHeight, null);
-        items[0] = ::Item(ItemId.APPLE);
-        items[1] = ::Item(ItemId.APPLE);
-        items[2] = ::Item(ItemId.APPLE);
-        items[3] = ::Item(ItemId.BOOK_OF_GOBLIN_STORIES);
-        local inventoryItemsComponent = ::EntityManager.Components[EntityComponents.INVENTORY_ITEMS](items, invWidth, invHeight);
+        local inventoryItemsComponent = ::EntityManager.Components[EntityComponents.INVENTORY_ITEMS](inventory, inventoryWidth, inventoryHeight);
         manager.assignComponent(en, EntityComponents.INVENTORY_ITEMS, inventoryItemsComponent);
 
         local lidNode = parentNode.createChildSceneNode();
