@@ -10,7 +10,7 @@
             local insertNode = node.createChildSceneNode();
             insertNode.setPosition(pos);
             local sceneFile = _scene.parseSceneFile("res://build/assets/places/"+placeFile+"/scene.avScene");
-            local animData = _gameCore.insertParsedSceneFileGetAnimInfo(sceneFile, insertNode);
+            local animData = _gameCore.insertParsedSceneFileGetAnimInfo(sceneFile, insertNode, world.getCollisionDetectionWorld());
             assert(animData == null);
             for(local i = 0; i < node.getNumChildren(); i++){
                 local child = node.getChild(i);

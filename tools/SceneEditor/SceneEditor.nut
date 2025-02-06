@@ -124,6 +124,13 @@ enum SceneEditorMapType{
                     case 1:{
                         break;
                     }
+                    case 2:{
+                        local item = _scene.createItem("lineSphere");
+
+                        item.setRenderQueueGroup(30);
+                        item.setQueryFlags(1 << 20);
+                        parentNode.attachObject(item);
+                    }
                 }
             }
             function getNameForUserEntry(userId){
@@ -134,6 +141,10 @@ enum SceneEditorMapType{
                     }
                     case 1:{
                         return "userData";
+                        break;
+                    }
+                    case 2:{
+                        return "collider";
                         break;
                     }
                 }

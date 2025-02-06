@@ -184,7 +184,7 @@
         local targetNode = mParentNode_.createChildSceneNode();
         local animData = null;
         if(mMapData_.parsedSceneFile != null){
-            animData = _gameCore.insertParsedSceneFileGetAnimInfo(mMapData_.parsedSceneFile, targetNode);
+            animData = _gameCore.insertParsedSceneFileGetAnimInfo(mMapData_.parsedSceneFile, targetNode, mCollisionDetectionWorld_);
         }
         if(animData != null){
             mCurrentWorldAnim_ = _animation.createAnimation("sceneAnim", animData);

@@ -595,16 +595,16 @@ namespace ProceduralExplorationGamePlugin{
         AV::ParsedSceneFile* file = 0;
         AV::ParsedAvSceneUserData::readSceneObjectFromUserData(vm, 2, &file);
 
+        AV::CollisionWorldObject* collisionWorld;
+        SCRIPT_CHECK_RESULT(AV::CollisionWorldClass::readCollisionWorldFromUserData(vm, 4, &collisionWorld));
+        ProceduralExplorationGameCore::CollisionDetectionWorld* detectionWorld = dynamic_cast<ProceduralExplorationGameCore::CollisionDetectionWorld*>(collisionWorld);
+
         Ogre::SceneNode* node = 0;
         SQInteger top = sq_gettop(vm);
         Ogre::SceneManager* sceneManager = AV::BaseSingleton::getSceneManager();
-        if(top == 3){
-            SCRIPT_CHECK_RESULT(AV::SceneNodeUserData::readSceneNodeFromUserData(vm, 3, &node));
-        }else{
-            node = sceneManager->getRootSceneNode();
-        }
+        SCRIPT_CHECK_RESULT(AV::SceneNodeUserData::readSceneNodeFromUserData(vm, 3, &node));
 
-        ProceduralExplorationGameCore::VoxMeshSceneDataInserter inserter(sceneManager);
+        ProceduralExplorationGameCore::VoxMeshSceneDataInserter inserter(sceneManager, detectionWorld);
         AV::AnimationInfoBlockPtr animData = inserter.insertSceneDataGetAnimInfo(file, node);
         if(!animData){
             sq_pushnull(vm);
@@ -642,7 +642,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, setMapsDirectory, "setMapsDirectory", 2, ".s");
 
         AV::ScriptUtils::addFunction(vm, voxeliseMeshForVoxelData, "voxeliseMeshForVoxelData", 6, ".saiii");
-        AV::ScriptUtils::addFunction(vm, insertParsedSceneFileVoxMeshGetAnimInfo, "insertParsedSceneFileGetAnimInfo", -2, ".uu");
+        AV::ScriptUtils::addFunction(vm, insertParsedSceneFileVoxMeshGetAnimInfo, "insertParsedSceneFileGetAnimInfo", 4, ".uuu");
     }
 
 };
