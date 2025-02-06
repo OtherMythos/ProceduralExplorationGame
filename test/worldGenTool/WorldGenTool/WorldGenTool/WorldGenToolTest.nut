@@ -2,6 +2,8 @@ _tIntegration("WorldGenToolTest", "Sanity test to check that the world gen tool 
     "steps": [
         function(){
             ::_testHelper.waitFrames(50);
+
+            ::_testHelper.queryTextExists("World Gen Tool");
         }
     ]
 });

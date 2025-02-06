@@ -2,6 +2,8 @@ _tIntegration("CharacterInspectorToolTest", "Sanity test to check that the chara
     "steps": [
         function(){
             ::_testHelper.waitFrames(50);
+
+            ::_testHelper.queryTextExists("Entity Data");
         }
     ]
 });
