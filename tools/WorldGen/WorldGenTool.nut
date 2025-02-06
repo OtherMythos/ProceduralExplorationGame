@@ -1,9 +1,12 @@
 function start(){
     _gui.setScrollSpeed(5.0);
 
+    _doFile("res://../../src/System/EnumDef.nut");
     _doFile("res://../../src/Helpers.nut");
     _doFile("res://../../src/Util/VoxToMesh.nut");
-    _doFile("res://../../src/Content/PlaceConstants.h.nut");
+    _doFile("res://../../src/Constants.nut");
+    _doFile("res://../../src/Content/PlaceEnums.nut");
+    ::EnumDef.commitEnums();
     _doFile("res://../../src/Content/Places.nut");
     _doFile("res://../../src/Content/PlaceDefs.h.nut");
     _doFile("res://../../src/MapGen/Exploration/Generator/MapConstants.h.nut");
