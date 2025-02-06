@@ -55,7 +55,7 @@
 
         local mapsDir = ::BaseHelperFunctions.getMapsDir();
 
-        local path = mapsDir + targetMap + "/scene.avscene";
+        local path = mapsDir + targetMap + "/scene.avScene";
         local parsedFile = null;
         if(_system.exists(path)){
             printf("Loading scene file with path '%s'", path);

@@ -404,14 +404,22 @@ function start(){
     checkForAdditionalIncludes();
 
     //Run the test script itself.
-    local setupFile = _settings.getUserSetting("SetupFile")
+    local setupFile = _settings.getUserSetting("SetupFile");
     if(typeof setupFile != "string") throw "No test setup file was provided.";
     _doFile(setupFile);
+
+    //Determine the base setup file, if there is one.
+    local baseScript = _settings.getUserSetting("BaseScript");
+    if(baseScript != null){
+        if(typeof baseScript != "string") throw "Wrong type defined for baseScript";
+    }else{
+        baseScript = "script://../src/SquirrelEntry.nut";
+    }
 
     if(::_testSystem.integration){
         //Run the base setup for the integration project.
         local contextTable = {};
-        _doFileWithContext("script://../src/SquirrelEntry.nut", contextTable);
+        _doFileWithContext(baseScript, contextTable);
         ::_testSystem.registerSetupContext(contextTable);
         ::_testSystem.start();
     }else{
