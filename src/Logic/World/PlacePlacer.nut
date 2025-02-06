@@ -9,7 +9,7 @@
         if(placeFile != null){
             local insertNode = node.createChildSceneNode();
             insertNode.setPosition(pos);
-            local sceneFile = _scene.parseSceneFile("res://assets/places/"+placeFile+"/scene.avScene");
+            local sceneFile = _scene.parseSceneFile("res://build/assets/places/"+placeFile+"/scene.avScene");
             local animData = _gameCore.insertParsedSceneFileGetAnimInfo(sceneFile, insertNode);
             assert(animData == null);
             for(local i = 0; i < node.getNumChildren(); i++){
