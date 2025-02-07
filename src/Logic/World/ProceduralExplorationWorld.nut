@@ -73,9 +73,22 @@
                     //Perform the spawn functions for the specific place
                     local placeData = mPlaceIds_[i];
                     local placeDef = ::Places[placeData[0]];
+
+                    //TODO depreciate and remove
                     local appearFunction = placeDef.getRegionAppearFunction();
                     if(appearFunction != null){
                         appearFunction(mCreatorWorld_, placeData[0], placeData[1]);
+                    }
+
+                    local placeFileName = placeDef.getPlaceFileName();
+                    if(placeFileName == null) continue;
+
+                    local scriptPath = "res://build/assets/places/" + placeFileName + "/script.nut";
+                    if(_system.exists(scriptPath)){
+                        _doFile(scriptPath);
+                        if(::PlaceScriptObject.rawin("appear")){
+                            ::PlaceScriptObject.appear(mCreatorWorld_, placeData[0], placeData[1]);
+                        }
                     }
                 }
             }

@@ -18,6 +18,7 @@
                 childPos.y = world.getZForPos(childPos);
                 child.setPosition(childPos);
             }
+            regionEntry.pushFuncPlace(placeData.placeId, pos);
         }else{
             local placementFunction = placeDefine.getPlacementFunction();
             //NOTE replaced c with 0 here
