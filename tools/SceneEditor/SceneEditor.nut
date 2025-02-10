@@ -133,9 +133,10 @@ enum SceneEditorMapType{
                     }
                 }
             }
-            function getNameForUserEntry(userId){
+            function getNameForUserEntry(userId, entry){
                 switch(userId){
                     case 0:{
+                        return entry.data.value;
                         return "mesh";
                         break;
                     }
@@ -147,6 +148,9 @@ enum SceneEditorMapType{
                         return "collider";
                         break;
                     }
+                    default:
+                        return "Unknown";
+                        break;
                 }
             }
             function raycastForMovementGizmo(){
