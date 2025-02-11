@@ -7,6 +7,7 @@
     mNativeMapData_ = null;
     mReturnPlaces_ = null;
     mPlacesCollisionWorld_ = null;
+    mData_ = null;
 
     constructor(mapData, nativeMapData){
         mMapData_ = mapData;
@@ -30,8 +31,10 @@
 
     function _determineRegionBySize(){
         local targetRegions = [];
+        local min = mData_.minVox;
+        local max = mData_.maxVox;
         foreach(i in mMapData_.regionData){
-            if(i.total >= 100 && i.total <= 1500){
+            if(i.total >= min && i.total <= max){
                 if(i.type == 0){
                     targetRegions.append(i);
                 }
@@ -42,17 +45,33 @@
 
     function _determineRegionByType(){
         local targetRegions = [];
+        local r = mData_.region;
         foreach(i in mMapData_.regionData){
-            if(i.type == RegionType.DESERT){
+            if(i.type == r){
                 targetRegions.append(i);
             }
         }
         return targetRegions;
     }
 
-    function placeLocation(placeId, determineRegionFunction){
+    function _checkPlacementVoxelsAreLand(x, y){
+        local w = mData_.floorWidth;
+        local h = mData_.floorHeight;
+        for(local yy = y - h; yy < y + h; yy++){
+            for(local xx = x - w; xx < x + w; xx++){
+                //Optimistaion, remove the vec3 wrapper.
+                if(mNativeMapData_.getIsWaterForPos(Vec3(xx, 0, -yy))) return false;
+            }
+        }
+
+        return true;
+    }
+
+    function placeLocation(placeId, determineRegionFunction, checkPlacement){
         local targetRegions = determineRegionFunction();
         if(targetRegions.len() == 0) return;
+
+        local radius = mData_.radius;
 
         for(local i = 0; i < 100; i++){
             local targetIdx = mNativeMapData_.randomIntMinMax(0, targetRegions.len()-1);
@@ -63,10 +82,13 @@
 
             local originX = (point >> 16) & 0xFFFF;
             local originY = point & 0xFFFF;
-            local RADIUS = 50;
-            if(mPlacesCollisionWorld_.checkCollisionPoint(originX, originY, RADIUS)) continue;
+            if(mPlacesCollisionWorld_.checkCollisionPoint(originX, originY, radius)) continue;
 
-            mPlacesCollisionWorld_.addCollisionPoint(originX, originY, RADIUS);
+            if(checkPlacement != null){
+                if(!checkPlacement(originX, originY)) continue;
+            }
+
+            mPlacesCollisionWorld_.addCollisionPoint(originX, originY, radius);
 
             local placeData = {
                 "originX": originX,
@@ -85,14 +107,23 @@
         mReturnPlaces_ = [];
         mPlacesCollisionWorld_ = CollisionWorld(_COLLISION_WORLD_BRUTE_FORCE);
 
+        mData_ = {
+            "region": RegionType.DESERT,
+            "minVox": 100,
+            "maxVox": 1500,
+            "radius": 50,
+            "floorWidth": 8,
+            "floorHeight": 8,
+        };
+
         placeGateway();
-        placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize);
-        placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize);
-        placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize);
-        placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize);
-        placeLocation(PlaceId.GARRITON, _determineRegionBySize);
-        placeLocation(PlaceId.TEMPLE, _determineRegionBySize);
-        placeLocation(PlaceId.DUSTMITE_NEST, _determineRegionByType);
+        placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize, _checkPlacementVoxelsAreLand);
+        placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize, _checkPlacementVoxelsAreLand);
+        placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize, _checkPlacementVoxelsAreLand);
+        placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize, _checkPlacementVoxelsAreLand);
+        placeLocation(PlaceId.GARRITON, _determineRegionBySize, _checkPlacementVoxelsAreLand);
+        placeLocation(PlaceId.TEMPLE, _determineRegionBySize, _checkPlacementVoxelsAreLand);
+        placeLocation(PlaceId.DUSTMITE_NEST, _determineRegionByType, _checkPlacementVoxelsAreLand);
 
         local retPlaces = mReturnPlaces_;
         mReturnPlaces_ = null;
