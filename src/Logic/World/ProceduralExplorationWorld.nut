@@ -87,7 +87,7 @@
                     if(_system.exists(scriptPath)){
                         _doFile(scriptPath);
                         if(::PlaceScriptObject.rawin("appear")){
-                            ::PlaceScriptObject.appear(mCreatorWorld_, placeData[0], placeData[1]);
+                            ::PlaceScriptObject.appear(mCreatorWorld_, placeData[0], placeData[1], mDecoratioNode_);
                         }
                     }
                 }
