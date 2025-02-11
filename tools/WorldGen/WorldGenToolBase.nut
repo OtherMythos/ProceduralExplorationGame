@@ -171,7 +171,8 @@ enum VoxPickerType{
                 setGenerationInProgress(false);
 
                 mCurrentMapData_ = result.explorationMapDataToTable();
-                mCurrentMapData_.rawset("placeData", ::ScriptedMapGen.determinePlaces(mCurrentMapData_, result, mInputData_));
+                local scriptMapGen = ::ScriptedMapGen(mCurrentMapData_, result);
+                mCurrentMapData_.rawset("placeData", scriptMapGen.determinePlaces());
                 mMapViewer_.displayMapData(mCurrentMapData_, mCurrentNativeMapData_);
                 updateTimeData(mCurrentMapData_);
             }else{

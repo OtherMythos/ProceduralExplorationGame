@@ -1,11 +1,20 @@
 /**
  * Map gen steps which are performed on the script side rather than forced into c++.
  */
-::ScriptedMapGen <- {
+::ScriptedMapGen <- class{
 
-    function placeGateway(mapData, nativeMapData, retPlaces){
-        local point = mapData.gatewayPosition;
-        local region = ::MapGenHelpers.getRegionForPoint(nativeMapData, point);
+    mMapData_ = null;
+    mNativeMapData_ = null;
+    mReturnPlaces_ = null;
+
+    constructor(mapData, nativeMapData){
+        mMapData_ = mapData;
+        mNativeMapData_ = nativeMapData;
+    }
+
+    function placeGateway(){
+        local point = mMapData_.gatewayPosition;
+        local region = ::MapGenHelpers.getRegionForPoint(mNativeMapData_, point);
 
         local placeData = {
             "originX": (point >> 16) & 0xFFFF,
@@ -15,126 +24,66 @@
             "region": region
         };
 
-        retPlaces.append(placeData);
+        mReturnPlaces_.append(placeData);
     }
-    function placeGoblinCampsites(mapData, nativeMapData, retPlaces){
+
+    function _determineRegionBySize(){
         local targetRegions = [];
-        foreach(i in mapData.regionData){
+        foreach(i in mMapData_.regionData){
             if(i.total >= 100 && i.total <= 1500){
                 if(i.type == 0){
                     targetRegions.append(i);
                 }
             }
         }
-        if(targetRegions.len() == 0) return;
-
-        local targetIdx = nativeMapData.randomIntMinMax(0, targetRegions.len()-1);
-        local region = targetRegions[targetIdx];
-
-        local point = ::MapGenHelpers.seedFindRandomPointInRegion(nativeMapData, region);
-        if(point == INVALID_WORLD_POINT) return;
-
-        local placeData = {
-            "originX": (point >> 16) & 0xFFFF,
-            "originY": point & 0xFFFF,
-            "originWrapped": point,
-            "placeId": PlaceId.GOBLIN_CAMP,
-            "region": region.id
-        };
-
-        retPlaces.append(placeData);
+        return targetRegions;
     }
-    function placeGarriton(mapData, nativeMapData, retPlaces){
+
+    function _determineRegionByType(){
         local targetRegions = [];
-        foreach(i in mapData.regionData){
-            if(i.total >= 100 && i.total <= 1500){
-                if(i.type == 0){
-                    targetRegions.append(i);
-                }
-            }
-        }
-        if(targetRegions.len() == 0) return;
-
-        local targetIdx = nativeMapData.randomIntMinMax(0, targetRegions.len()-1);
-        local region = targetRegions[targetIdx];
-
-        local point = ::MapGenHelpers.seedFindRandomPointInRegion(nativeMapData, region);
-        if(point == INVALID_WORLD_POINT) return;
-
-        local placeData = {
-            "originX": (point >> 16) & 0xFFFF,
-            "originY": point & 0xFFFF,
-            "originWrapped": point,
-            "placeId": PlaceId.GARRITON,
-            "region": region.id
-        };
-
-        retPlaces.append(placeData);
-    }
-    function placeTemple(mapData, nativeMapData, retPlaces){
-        local targetRegions = [];
-        foreach(i in mapData.regionData){
-            if(i.total >= 100 && i.total <= 1500){
-                if(i.type == 0){
-                    targetRegions.append(i);
-                }
-            }
-        }
-        if(targetRegions.len() == 0) return;
-
-        local targetIdx = nativeMapData.randomIntMinMax(0, targetRegions.len()-1);
-        local region = targetRegions[targetIdx];
-
-        local point = ::MapGenHelpers.seedFindRandomPointInRegion(nativeMapData, region);
-        if(point == INVALID_WORLD_POINT) return;
-
-        local placeData = {
-            "originX": (point >> 16) & 0xFFFF,
-            "originY": point & 0xFFFF,
-            "originWrapped": point,
-            "placeId": PlaceId.TEMPLE,
-            "region": region.id
-        };
-
-        retPlaces.append(placeData);
-    }
-    function placeDustmiteNests(mapData, nativeMapData, retPlaces){
-        local targetRegions = [];
-        foreach(i in mapData.regionData){
+        foreach(i in mMapData_.regionData){
             if(i.type == RegionType.DESERT){
                 targetRegions.append(i);
             }
         }
+        return targetRegions;
+    }
+
+    function placeLocation(placeId, determineRegionFunction){
+        local targetRegions = determineRegionFunction();
         if(targetRegions.len() == 0) return;
 
-        local targetIdx = nativeMapData.randomIntMinMax(0, targetRegions.len()-1);
+        local targetIdx = mNativeMapData_.randomIntMinMax(0, targetRegions.len()-1);
         local region = targetRegions[targetIdx];
 
-        local point = ::MapGenHelpers.seedFindRandomPointInRegion(nativeMapData, region);
+        local point = ::MapGenHelpers.seedFindRandomPointInRegion(mNativeMapData_, region);
         if(point == INVALID_WORLD_POINT) return;
 
         local placeData = {
             "originX": (point >> 16) & 0xFFFF,
             "originY": point & 0xFFFF,
             "originWrapped": point,
-            "placeId": PlaceId.DUSTMITE_NEST,
+            "placeId": placeId,
             "region": region.id
         };
 
-        retPlaces.append(placeData);
+        mReturnPlaces_.append(placeData);
     }
-    function determinePlaces(mapData, nativeMapData, inputMapData){
-        local retPlaces = [];
 
-        placeGateway(mapData, nativeMapData, retPlaces);
-        placeGoblinCampsites(mapData, nativeMapData, retPlaces);
-        placeGoblinCampsites(mapData, nativeMapData, retPlaces);
-        placeGoblinCampsites(mapData, nativeMapData, retPlaces);
-        placeGoblinCampsites(mapData, nativeMapData, retPlaces);
-        placeGarriton(mapData, nativeMapData, retPlaces);
-        placeTemple(mapData, nativeMapData, retPlaces);
+    function determinePlaces(){
+        mReturnPlaces_ = [];
 
-        placeDustmiteNests(mapData, nativeMapData, retPlaces);
+        placeGateway();
+        placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize);
+        placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize);
+        placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize);
+        placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize);
+        placeLocation(PlaceId.GARRITON, _determineRegionBySize);
+        placeLocation(PlaceId.TEMPLE, _determineRegionBySize);
+        placeLocation(PlaceId.DUSTMITE_NEST, _determineRegionByType);
+
+        local retPlaces = mReturnPlaces_;
+        mReturnPlaces_ = null;
 
         return retPlaces;
     }
