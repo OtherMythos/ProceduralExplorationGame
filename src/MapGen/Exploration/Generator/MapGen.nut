@@ -6,6 +6,7 @@
     mMapData_ = null;
     mNativeMapData_ = null;
     mReturnPlaces_ = null;
+    mPlacesCollisionWorld_ = null;
 
     constructor(mapData, nativeMapData){
         mMapData_ = mapData;
@@ -53,25 +54,36 @@
         local targetRegions = determineRegionFunction();
         if(targetRegions.len() == 0) return;
 
-        local targetIdx = mNativeMapData_.randomIntMinMax(0, targetRegions.len()-1);
-        local region = targetRegions[targetIdx];
+        for(local i = 0; i < 100; i++){
+            local targetIdx = mNativeMapData_.randomIntMinMax(0, targetRegions.len()-1);
+            local region = targetRegions[targetIdx];
 
-        local point = ::MapGenHelpers.seedFindRandomPointInRegion(mNativeMapData_, region);
-        if(point == INVALID_WORLD_POINT) return;
+            local point = ::MapGenHelpers.seedFindRandomPointInRegion(mNativeMapData_, region);
+            if(point == INVALID_WORLD_POINT) continue;
 
-        local placeData = {
-            "originX": (point >> 16) & 0xFFFF,
-            "originY": point & 0xFFFF,
-            "originWrapped": point,
-            "placeId": placeId,
-            "region": region.id
-        };
+            local originX = (point >> 16) & 0xFFFF;
+            local originY = point & 0xFFFF;
+            local RADIUS = 50;
+            if(mPlacesCollisionWorld_.checkCollisionPoint(originX, originY, RADIUS)) continue;
 
-        mReturnPlaces_.append(placeData);
+            mPlacesCollisionWorld_.addCollisionPoint(originX, originY, RADIUS);
+
+            local placeData = {
+                "originX": originX,
+                "originY": originY,
+                "originWrapped": point,
+                "placeId": placeId,
+                "region": region.id
+            };
+
+            mReturnPlaces_.append(placeData);
+            return;
+        }
     }
 
     function determinePlaces(){
         mReturnPlaces_ = [];
+        mPlacesCollisionWorld_ = CollisionWorld(_COLLISION_WORLD_BRUTE_FORCE);
 
         placeGateway();
         placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize);
