@@ -179,6 +179,20 @@ enum SceneEditorMapType{
         local sceneQueryFunction = function(){
             mEditorBase.getActiveSceneTree().setObjectTransformCoordinateType(SceneEditorFramework_BasicCoordinateType.RAYCAST);
         }
+
+        local showWindowSceneTreeFunction = function(){
+            setupWindow(SceneEditorFramework_GUIPanelId.SCENE_TREE);
+        }
+        local showWindowObjectPropertiesFunction = function(){
+            setupWindow(SceneEditorFramework_GUIPanelId.OBJECT_PROPERTIES);
+        }
+        local showWindowTerrainToolsFunction = function(){
+            setupWindow(SceneEditorFramework_GUIPanelId.USER_CUSTOM_1);
+        }
+        local showWindowTileGridFunction = function(){
+            setupWindow(SceneEditorFramework_GUIPanelId.USER_CUSTOM_2);
+        }
+
         ::guiFrameworkBase <- ::EditorGUIFramework.Base();
         ::guiFrameworkBase.setToolbar(::EditorGUIFramework.Toolbar([
             ["File", [
@@ -190,6 +204,12 @@ enum SceneEditorMapType{
                 ["Position transform", positionFunction.bindenv(this)],
                 ["Scale transform", scaleFunction.bindenv(this)],
                 ["Terrain query transform", sceneQueryFunction.bindenv(this)],
+            ]],
+            ["Window", [
+                ["Scene Tree", showWindowSceneTreeFunction.bindenv(this)],
+                ["Object Properties", showWindowObjectPropertiesFunction.bindenv(this)],
+                ["Terrain Tools", showWindowTerrainToolsFunction.bindenv(this)],
+                ["Tile Grid", showWindowTileGridFunction.bindenv(this)],
             ]]
         ]));
         local windowListener = ::SceneEditorWindowListener();
@@ -204,6 +224,7 @@ enum SceneEditorMapType{
 
         mEditorBase = ::SceneEditorFramework.Base();
         mEditorBase.mBus_.subscribeObject(this);
+        ::guiFrameworkBase.mBus_.subscribeObject(GUIEventWrapper(this));
 
         mGuiInputStealerWindow_ = _gui.createWindow("guiInputStealer");
         mGuiInputStealerWindow_.setSize(10, 20);
@@ -248,25 +269,10 @@ enum SceneEditorMapType{
         mCurrentTileDataHeight = mVisitedPlacesMapData.getTilesHeight();
         regenerateTileGrid();
 
-        local winSceneTree = guiFrameworkBase.createWindow(SceneEditorFramework_GUIPanelId.SCENE_TREE, "Scene Tree");
-        mEditorBase.setupGUIWindow(SceneEditorFramework_GUIPanelId.SCENE_TREE, winSceneTree.getWin());
-        winSceneTree.setPosition(100, 100);
-        winSceneTree.setPosition(500, 500);
-
-        local winObjectProperties = guiFrameworkBase.createWindow(SceneEditorFramework_GUIPanelId.OBJECT_PROPERTIES, "Object Properties");
-        winObjectProperties.setSize(500, 500);
-        winObjectProperties.setPosition(200, 200);
-        mEditorBase.setupGUIWindow(SceneEditorFramework_GUIPanelId.OBJECT_PROPERTIES, winObjectProperties.getWin());
-
-        local winTerrainTools = guiFrameworkBase.createWindow(SceneEditorFramework_GUIPanelId.USER_CUSTOM_1, "Terrain Tools");
-        winTerrainTools.setSize(500, 500);
-        winTerrainTools.setPosition(0, 500);
-        mWindowTerrainTool_ = mEditorBase.setupGUIWindowForClass(SceneEditorFramework_GUIPanelId.USER_CUSTOM_1, winTerrainTools.getWin(), ::SceneEditorGUITerrainToolProperties);
-
-        local winTileGrid = guiFrameworkBase.createWindow(SceneEditorFramework_GUIPanelId.USER_CUSTOM_2, "Tile Grid");
-        winTileGrid.setSize(500, 500);
-        winTileGrid.setPosition(0, 600);
-        mWindowTileGrid_ = mEditorBase.setupGUIWindowForClass(SceneEditorFramework_GUIPanelId.USER_CUSTOM_2, winTileGrid.getWin(), ::SceneEditorGUITileGridProperties);
+        setupWindow(SceneEditorFramework_GUIPanelId.SCENE_TREE);
+        setupWindow(SceneEditorFramework_GUIPanelId.OBJECT_PROPERTIES);
+        setupWindow(SceneEditorFramework_GUIPanelId.USER_CUSTOM_1);
+        setupWindow(SceneEditorFramework_GUIPanelId.USER_CUSTOM_2);
 
         guiFrameworkBase.loadWindowStates("user://windowState.json");
 
@@ -277,6 +283,39 @@ enum SceneEditorMapType{
 
         //::posMesh <- _mesh.create("cube");
         //posMesh.setPosition(mCurrentHitPosition);
+    }
+
+    function getTitleForWindow_(winType){
+        switch(winType){
+            case SceneEditorFramework_GUIPanelId.SCENE_TREE: return "Scene Tree";
+            case SceneEditorFramework_GUIPanelId.OBJECT_PROPERTIES: return "Object Properties";
+            case SceneEditorFramework_GUIPanelId.USER_CUSTOM_1: return "Terrain Tools";
+            case SceneEditorFramework_GUIPanelId.USER_CUSTOM_2: return "Tile Grid";
+            default: {
+                return "Unknown Window"
+            }
+        }
+    }
+    function setupWindow(winType){
+        if(guiFrameworkBase.windowForIdExists(winType)) return;
+        local winTitle = getTitleForWindow_(winType);
+        local guiWin = guiFrameworkBase.createWindow(winType, winTitle);
+
+        if(winType == SceneEditorFramework_GUIPanelId.USER_CUSTOM_1){
+            mWindowTerrainTool_ = mEditorBase.setupGUIWindowForClass(SceneEditorFramework_GUIPanelId.USER_CUSTOM_1, guiWin.getWin(), ::SceneEditorGUITerrainToolProperties);
+        }else if(winType == SceneEditorFramework_GUIPanelId.USER_CUSTOM_2){
+            mWindowTileGrid_ = mEditorBase.setupGUIWindowForClass(SceneEditorFramework_GUIPanelId.USER_CUSTOM_2, guiWin.getWin(), ::SceneEditorGUITileGridProperties);
+        }else{
+            mEditorBase.setupGUIWindow(winType, guiWin.getWin());
+        }
+
+        guiWin.setPosition(100, 100);
+        guiWin.setPosition(500, 500);
+    }
+
+    function processWindowClosed(winType){
+        printf("Registering close for window %i", winType);
+        mEditorBase.closeGUIWindow(winType);
     }
 
     function positionLineBox(){
@@ -631,6 +670,21 @@ enum SceneEditorMapType{
                 tileDataWriter.performSave(mTargetMap.getName(), mCurrentTileData, mCurrentTileDataWidth);
             }
         }
+    }
+
+    GUIEventWrapper = class{
+
+        mParent_ = null;
+        constructor(parent){
+            mParent_ = parent;
+        }
+
+        function notifyBusEvent(event, data){
+            if(event == EditorGUIFramework_BusEvent.WINDOW_CLOSED){
+                mParent_.processWindowClosed(data);
+            }
+        }
+
     }
 
 };
