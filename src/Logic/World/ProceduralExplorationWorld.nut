@@ -438,7 +438,19 @@
     }
 
     function createPlacedItems(){
-        foreach(c,i in mMapData_.placedItems){
+        local list = mMapData_.placedItems;
+        //Check for nulls in the list.
+        local i = 0;
+        while(i < list.len()){
+            if(list[i] == null){
+                list.remove(i);
+            }else{
+                i++;
+            }
+        }
+
+        foreach(c,i in list){
+            //When generating places check if one of them has a point in the blob and if so set that placed item to null, then later remove.
             local node = mRegionEntries_[i.region].mDecoratioNode_;
             mEntityFactory_.constructPlacedItem(node, i, c);
             //mActivePlaces_.append(itemEntry);

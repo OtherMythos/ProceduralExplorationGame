@@ -67,6 +67,21 @@
         return true;
     }
 
+    function _removePlacedItems(x, y){
+        local totalWidth = mMapData_.width;
+        local w = mData_.floorWidth;
+        local h = mData_.floorHeight;
+        for(local yy = y - h; yy < y + h; yy++){
+            for(local xx = x - w; xx < x + w; xx++){
+                mMapData_.placedItemsBuffer.seek((xx + yy * totalWidth) * 2);
+                local val = mMapData_.placedItemsBuffer.readn('w');
+                if(val != 0xFFFF){
+                    mMapData_.placedItems[val] = null;
+                }
+            }
+        }
+    }
+
     function placeLocation(placeId, determineRegionFunction, checkPlacement){
         local targetRegions = determineRegionFunction();
         if(targetRegions.len() == 0) return;
@@ -87,6 +102,8 @@
             if(checkPlacement != null){
                 if(!checkPlacement(originX, originY)) continue;
             }
+
+            _removePlacedItems(originX, originY);
 
             mPlacesCollisionWorld_.addCollisionPoint(originX, originY, radius);
 

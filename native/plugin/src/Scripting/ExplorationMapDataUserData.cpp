@@ -150,6 +150,21 @@ namespace ProceduralExplorationGamePlugin{
         }
         sq_rawset(vm, -3);
     }
+    inline void generatePushedItemBuffer(HSQUIRRELVM vm, const char* key, AV::uint32 width, AV::uint32 height, std::vector<ProceduralExplorationGameCore::PlacedItemData>& itemData){
+        size_t len = width * height * sizeof(AV::uint16);
+        sq_pushstring(vm, key, -1);
+        void* b = sqstd_createblob(vm, len);
+        AV::uint16* buf = static_cast<AV::uint16*>(b);
+        memset(buf, 0xFFFF, len);
+
+        AV::uint16 c = 0;
+        for(const ProceduralExplorationGameCore::PlacedItemData& d : itemData){
+            *(buf + (d.originX + d.originY * width)) = c;
+            c++;
+        }
+
+        sq_rawset(vm, -3);
+    }
     inline void pushBuffer(HSQUIRRELVM vm, const char* key, void* buf, size_t size){
         sq_pushstring(vm, key, -1);
         //Annoyingly I have to create a new blob and copy the buffer over to that.
@@ -178,6 +193,7 @@ namespace ProceduralExplorationGamePlugin{
         //pushPlaceData(vm, "placeData", mapData->placeData);
         pushRegionData(vm, "regionData", mapData->regionData);
         pushPlacedItemData(vm, "placedItems", mapData->placedItems);
+        generatePushedItemBuffer(vm, "placedItemsBuffer", mapData->width, mapData->height, mapData->placedItems);
 
         //pushBuffer(vm, "voxelBuffer", mapData->voxelBuffer, mapData->voxelBufferSize);
         //pushBuffer(vm, "secondaryVoxBuffer", mapData->secondaryVoxelBuffer, mapData->secondaryVoxelBufferSize);
