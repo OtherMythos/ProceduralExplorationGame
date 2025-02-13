@@ -8,15 +8,19 @@
         //TODO eventually depreciate and remove the placement function logic.
         if(placeFile != null){
             local insertNode = node.createChildSceneNode();
-            insertNode.setPosition(pos - placeDefine.mCentre);
+            local insertPos = pos - placeDefine.mCentre;
+            insertPos.y = 0;
+            insertNode.setPosition(insertPos);
             local sceneFile = _scene.parseSceneFile("res://build/assets/places/"+placeFile+"/scene.avScene");
             local animData = _gameCore.insertParsedSceneFileGetAnimInfo(sceneFile, insertNode, world.getCollisionDetectionWorld());
             assert(animData == null);
-            for(local i = 0; i < node.getNumChildren(); i++){
-                local child = node.getChild(i);
-                local childPos = child.getPositionVec3();
-                childPos.y = world.getZForPos(childPos);
-                child.setPosition(childPos);
+            for(local i = 0; i < insertNode.getNumChildren(); i++){
+                local child = insertNode.getChild(i);
+                local originalPos = child.getPositionVec3();
+                local worldPos = insertPos + originalPos;
+                local newPos = originalPos;
+                newPos.y = world.getZForPos(insertPos);
+                child.setPosition(newPos);
             }
             regionEntry.pushFuncPlace(placeData.placeId, pos);
 
