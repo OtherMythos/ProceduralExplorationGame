@@ -69,6 +69,7 @@
     }
 
     function _removePlacedItems(x, y){
+        local totalWidth = mMapData_.width;
         local halfX = mData_.halfX;
         local halfY = mData_.halfY;
 
