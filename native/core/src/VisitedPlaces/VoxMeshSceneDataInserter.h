@@ -2,6 +2,7 @@
 
 #include "VoxMeshSceneDataInserter.h"
 #include "World/Slot/Recipe/AvScene/AvSceneDataInserter.h"
+#include "OgreVector3.h"
 
 #include "Animation/AnimationData.h"
 
@@ -11,7 +12,7 @@ namespace ProceduralExplorationGameCore{
 
     class VoxMeshSceneDataInserter : public AV::AVSceneDataInserter{
     public:
-        VoxMeshSceneDataInserter(Ogre::SceneManager* sceneManager, ProceduralExplorationGameCore::CollisionDetectionWorld* detectionWorld);
+        VoxMeshSceneDataInserter(Ogre::SceneManager* sceneManager, ProceduralExplorationGameCore::CollisionDetectionWorld* detectionWorld, const Ogre::Vector3& offset);
         ~VoxMeshSceneDataInserter();
 
         /**
@@ -20,5 +21,6 @@ namespace ProceduralExplorationGameCore{
         virtual bool insertUserObject(AV::uint8 idx, const AV::SceneObjectEntry& e, const AV::SceneObjectData& d, const std::vector<Ogre::String>& strings, Ogre::SceneNode* parent);
     private:
         CollisionDetectionWorld* mCollisionWorld;
+        Ogre::Vector3 mOffset;
     };
 }

@@ -8,7 +8,7 @@
         //TODO eventually depreciate and remove the placement function logic.
         if(placeFile != null){
             local insertNode = node.createChildSceneNode();
-            insertNode.setPosition(pos);
+            insertNode.setPosition(pos - placeDefine.mCentre);
             local sceneFile = _scene.parseSceneFile("res://build/assets/places/"+placeFile+"/scene.avScene");
             local animData = _gameCore.insertParsedSceneFileGetAnimInfo(sceneFile, insertNode, world.getCollisionDetectionWorld());
             assert(animData == null);
@@ -19,6 +19,15 @@
                 child.setPosition(childPos);
             }
             regionEntry.pushFuncPlace(placeData.placeId, pos);
+
+            //Add the bounding box for debugging
+            //TODO turn that into a developer profile.
+            /*
+            local debugNode = insertNode.createChildSceneNode();
+            debugNode.setPosition(placeDefine.mCentre);
+            debugNode.attachObject(_scene.createItem("lineBox"));
+            debugNode.setScale(placeDefine.mHalf);
+            */
         }else{
             local placementFunction = placeDefine.getPlacementFunction();
             //NOTE replaced c with 0 here

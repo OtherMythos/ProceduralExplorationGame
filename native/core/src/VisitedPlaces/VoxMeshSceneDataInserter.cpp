@@ -7,9 +7,10 @@
 
 namespace ProceduralExplorationGameCore{
 
-    VoxMeshSceneDataInserter::VoxMeshSceneDataInserter(Ogre::SceneManager* sceneManager, ProceduralExplorationGameCore::CollisionDetectionWorld* detectionWorld)
+    VoxMeshSceneDataInserter::VoxMeshSceneDataInserter(Ogre::SceneManager* sceneManager, ProceduralExplorationGameCore::CollisionDetectionWorld* detectionWorld, const Ogre::Vector3& offset)
         : AV::AVSceneDataInserter(sceneManager),
-        mCollisionWorld(detectionWorld) {
+        mCollisionWorld(detectionWorld),
+        mOffset(offset) {
 
     }
 
@@ -36,7 +37,7 @@ namespace ProceduralExplorationGameCore{
         }
         else if(idx == 2){
             Ogre::Vector3 parentPos = parent->_getDerivedPositionUpdated();
-            mCollisionWorld->addCollisionPoint(parentPos.x + d.pos.x, parentPos.z + d.pos.z, d.scale.x);
+            mCollisionWorld->addCollisionPoint(parentPos.x + d.pos.x - mOffset.x, parentPos.z + d.pos.z - mOffset.z, d.scale.x);
         }
 
         return true;

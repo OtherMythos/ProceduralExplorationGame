@@ -655,6 +655,28 @@ enum SceneEditorMapType{
         return mEditTerrainColourValue;
     }
 
+    function writeEditorMetaFile_(path){
+        local aabb = mSceneTree.determineAABB();
+
+        local size = aabb.getSize();
+        local centre = aabb.getCentre();
+        local half = aabb.getHalfSize();
+        local data = {
+            "centreX": centre.x,
+            "centreY": centre.y,
+            "centreZ": centre.z,
+
+            "halfX": half.x,
+            "halfY": half.y,
+            "halfZ": half.z,
+
+            "radius": aabb.getRadius()
+        };
+
+        _system.writeJsonAsFile(path, data);
+        printf("Writing editorMeta to path '%s'", path);
+    }
+
     function notifyBusEvent(event, data){
         if(event == SceneEditorFramework_BusEvents.REQUEST_SAVE){
             if(mVisitedPlacesMapData.terrainActive()){
@@ -664,6 +686,11 @@ enum SceneEditorMapType{
             local filePath = getFileForMapTarget(mTargetMap, "dataPoints.txt");
             local writer = SceneEditorDataPointWriter();
             writer.performSave(filePath, mSceneTree);
+
+            if(getTargetMapType().getMapType() == SceneEditorMapType.PLACE){
+                filePath = getFileForMapTarget(mTargetMap, "editorMeta.json");
+                writeEditorMetaFile_(filePath);
+            }
 
             if(mCurrentTileData != null){
                 local tileDataWriter = ::TileDataWriter();

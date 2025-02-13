@@ -55,10 +55,11 @@
     }
 
     function _checkPlacementVoxelsAreLand(x, y){
-        local w = mData_.floorWidth;
-        local h = mData_.floorHeight;
-        for(local yy = y - h; yy < y + h; yy++){
-            for(local xx = x - w; xx < x + w; xx++){
+        local halfX = mData_.halfX;
+        local halfY = mData_.halfY;
+
+        for(local yy = y - halfX; yy < y + halfY; yy++){
+            for(local xx = x - halfX; xx < x + halfX; xx++){
                 //Optimistaion, remove the vec3 wrapper.
                 if(mNativeMapData_.getIsWaterForPos(Vec3(xx, 0, -yy))) return false;
             }
@@ -68,11 +69,12 @@
     }
 
     function _removePlacedItems(x, y){
-        local totalWidth = mMapData_.width;
-        local w = mData_.floorWidth;
-        local h = mData_.floorHeight;
-        for(local yy = y - h; yy < y + h; yy++){
-            for(local xx = x - w; xx < x + w; xx++){
+        local halfX = mData_.halfX;
+        local halfY = mData_.halfY;
+
+        //+ is correct for min because of the case of negative mins.
+        for(local yy = y - halfX; yy < y + halfY; yy++){
+            for(local xx = x - halfX; xx < x + halfX; xx++){
                 mMapData_.placedItemsBuffer.seek((xx + yy * totalWidth) * 2);
                 local val = mMapData_.placedItemsBuffer.readn('w');
                 if(val != 0xFFFF){
@@ -82,11 +84,20 @@
         }
     }
 
+    function roundAwayFromZero(v){
+        return (v > 0 ? ceil(v) : floor(v)).tointeger();
+    }
+
     function placeLocation(placeId, determineRegionFunction, checkPlacement){
+        local placeData = ::Places[placeId];
         local targetRegions = determineRegionFunction();
         if(targetRegions.len() == 0) return;
 
-        local radius = mData_.radius;
+        if(placeData.mHalf != null){
+            mData_.halfX = roundAwayFromZero(placeData.mHalf.x);
+            mData_.halfY = roundAwayFromZero(placeData.mHalf.z);
+        }
+        local radius = placeData.mRadius;
 
         for(local i = 0; i < 100; i++){
             local targetIdx = mNativeMapData_.randomIntMinMax(0, targetRegions.len()-1);
@@ -97,10 +108,14 @@
 
             local originX = (point >> 16) & 0xFFFF;
             local originY = point & 0xFFFF;
-            if(mPlacesCollisionWorld_.checkCollisionPoint(originX, originY, radius)) continue;
+            if(mPlacesCollisionWorld_.checkCollisionPoint(originX, originY, radius)){
+                continue;
+            }
 
             if(checkPlacement != null){
-                if(!checkPlacement(originX, originY)) continue;
+                if(!checkPlacement(originX, originY)){
+                    continue;
+                }
             }
 
             _removePlacedItems(originX, originY);
@@ -128,9 +143,12 @@
             "region": RegionType.DESERT,
             "minVox": 100,
             "maxVox": 1500,
-            "radius": 50,
-            "floorWidth": 8,
-            "floorHeight": 8,
+            "radius": 8,
+
+            "centreX": 0,
+            "centreY": 0,
+            "halfX": 5,
+            "halfY": 5,
         };
 
         placeGateway();

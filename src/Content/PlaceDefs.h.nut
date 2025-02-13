@@ -168,6 +168,21 @@ function initialisePlacesLists(){
         ::PlacesByType[i.getType()].append(c);
     }
 }
+
+function initialisePlaceEditorMeta(){
+    foreach(c,i in ::Places){
+        local placeFile = i.getPlaceFileName();
+        if(placeFile == null) continue;
+        local path = "res://build/assets/places/"+placeFile+"/editorMeta.json";
+        if(!_system.exists(path)){
+            continue;
+        }
+        local jsonTable = _system.readJSONAsTable(path);
+        i.mCentre = Vec3(jsonTable.centreX, jsonTable.centreY, jsonTable.centreZ);
+        i.mHalf = Vec3(jsonTable.halfX, jsonTable.halfY, jsonTable.halfZ);
+        i.mRadius = jsonTable.radius;
+    }
+}
 };
 
 ::Places <- array(PlaceId.MAX, null);
@@ -196,3 +211,4 @@ function initialisePlacesLists(){
 
 
 testPlaceDefs.initialisePlacesLists();
+testPlaceDefs.initialisePlaceEditorMeta();

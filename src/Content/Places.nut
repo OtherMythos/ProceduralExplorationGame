@@ -28,6 +28,12 @@
     mRegionAppearFunction = null;
     mPlaceFileName = null;
 
+    //Editor meta
+    mHalf = null;
+    mCentre = null;
+    mRadius = 10;
+    //
+
     constructor(name, desc, placeType, rarity, placementFunction, regionAppearFunction, placeFileName, minLandmass = 10, necessaryFeatures = 0){
         mName = name;
         mDesc = desc;
