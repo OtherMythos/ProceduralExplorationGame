@@ -154,7 +154,11 @@ enum SceneEditorMapType{
                 }
             }
             function raycastForMovementGizmo(){
-                return ::Base.castRayForTerrain();
+                local result = ::Base.castRayForTerrain();
+                if(result == null){
+                    result = ::Base.castRayForPlane();
+                }
+                return result;
             }
             function basicMouseInteractionEnabled(){
                 return !::Base.mEditingTerrain && !::Base.mEditingTileGrid;
