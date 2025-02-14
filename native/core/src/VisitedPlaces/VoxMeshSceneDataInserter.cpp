@@ -37,7 +37,8 @@ namespace ProceduralExplorationGameCore{
         }
         else if(idx == 2){
             Ogre::Vector3 parentPos = parent->_getDerivedPositionUpdated();
-            mCollisionWorld->addCollisionPoint(parentPos.x + d.pos.x - mOffset.x, parentPos.z + d.pos.z - mOffset.z, d.scale.x);
+            Ogre::Vector3 parentScale = parent->_getDerivedScaleUpdated();
+            mCollisionWorld->addCollisionPoint(parentPos.x + d.pos.x - mOffset.x, parentPos.z + d.pos.z - mOffset.z, (parentScale * d.scale).x);
         }
 
         return true;
