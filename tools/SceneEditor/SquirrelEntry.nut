@@ -24,6 +24,8 @@ function start(){
     _doFile("res://../../src/Logic/World/TerrainChunkManager.nut");
     _doFile("res://../../src/Logic/World/TileGridPlacer.nut");
 
+    _doFile("res://../CharacterInspector/CharacterInspectorHelper.nut");
+
     _doFile("res://SceneEditorTerrainChunkManager.nut");
     _doFile("res://SceneEditorVoxelSelectionPopup.nut");
     _doFile("res://SceneEditorTileGridResizePopup.nut");

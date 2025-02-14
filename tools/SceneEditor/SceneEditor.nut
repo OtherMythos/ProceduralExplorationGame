@@ -285,6 +285,8 @@ enum SceneEditorMapType{
         mTileGridBoxNode_.setVisible(false);
         positionLineBox();
 
+        ::generateFloorGrid();
+
         //::posMesh <- _mesh.create("cube");
         //posMesh.setPosition(mCurrentHitPosition);
     }
