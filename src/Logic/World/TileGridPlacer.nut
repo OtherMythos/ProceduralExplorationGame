@@ -31,6 +31,7 @@
     }
 
     function populateNodeForTile(node, tile, tileRotation){
+        if(tile < 0 || tile >= mTileMeshes_.len()) return null;
         local itemName = mTileMeshes_[tile];
         local orientation = Quat();
 

@@ -316,6 +316,12 @@ enum SceneEditorMapType{
     function processWindowClosed(winType){
         printf("Registering close for window %i", winType);
         mEditorBase.closeGUIWindow(winType);
+
+        if(winType == SceneEditorFramework_GUIPanelId.USER_CUSTOM_1){
+            mWindowTerrainTool_ = null;
+        }else if(winType == SceneEditorFramework_GUIPanelId.USER_CUSTOM_2){
+            mWindowTileGrid_ = null;
+        }
     }
 
     function positionLineBox(){
@@ -516,7 +522,9 @@ enum SceneEditorMapType{
         mTileGridIndicatorNode_.setPosition(posX + 3, 0.02, posY + 3);
 
         local item = mTileGridPlacer.populateNodeForTile(mTileGridIndicatorNode_, mEditTileData_.tile, mEditTileData_.tileRotation << 5);
-        item.setDatablock("SceneEditorTool/TileGridHighlight");
+        if(item != null){
+            item.setDatablock("SceneEditorTool/TileGridHighlight");
+        }
     }
 
     function setTileToGrid_(x, y, val){
@@ -596,8 +604,8 @@ enum SceneEditorMapType{
         mEditingTerrain = edit;
         mEditingTileGrid = false;
 
-        mWindowTerrainTool_.refreshButtons();
-        mWindowTileGrid_.refreshButtons();
+        if(mWindowTerrainTool_ != null) mWindowTerrainTool_.refreshButtons();
+        //mWindowTileGrid_.refreshButtons();
     }
     function setEditTileGrid(edit){
         mEditingTileGrid = edit;
@@ -605,8 +613,8 @@ enum SceneEditorMapType{
 
         mTileGridBoxNode_.setVisible(edit);
 
-        mWindowTerrainTool_.refreshButtons();
-        mWindowTileGrid_.refreshButtons();
+        //mWindowTerrainTool_.refreshButtons();
+        if(mWindowTileGrid_ != null) mWindowTileGrid_.refreshButtons();
     }
     function setEditTerrainHeight(edit){
         mEditingTerrainMode = edit ? TerrainEditState.HEIGHT : null;
