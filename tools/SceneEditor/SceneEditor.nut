@@ -49,6 +49,7 @@ enum SceneEditorMapType{
     mEditTerrainHeightValue = 0
     mTileGridBoxNode_ = null
     mTileGridIndicatorNode_ = null
+    mCurrentSceneRightClick_ = null
 
     mWindowTileGrid_ = null
     mWindowTerrainTool_ = null
@@ -720,6 +721,9 @@ enum SceneEditorMapType{
                 local tileDataWriter = ::TileDataWriter();
                 tileDataWriter.performSave(mTargetMap.getName(), mCurrentTileData, mCurrentTileDataWidth);
             }
+        }
+        else if(event == SceneEditorFramework_BusEvents.SCENE_TREE_OPTIONS_MENU_REQUEST){
+            mCurrentSceneRightClick_ = ::SceneEditorRightClickMenuManager(data, mSceneTree);
         }
     }
 
