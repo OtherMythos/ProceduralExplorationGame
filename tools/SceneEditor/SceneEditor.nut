@@ -125,7 +125,8 @@ enum SceneEditorMapType{
                         break;
                     }
                     case 2:{
-                        local item = _scene.createItem("lineSphere");
+                        local val = entryData.value.tointeger();
+                        local item = _scene.createItem(val == 0 ? "lineSphere" : "lineBox");
 
                         item.setRenderQueueGroup(30);
                         item.setQueryFlags(1 << 20);
@@ -162,6 +163,15 @@ enum SceneEditorMapType{
             }
             function basicMouseInteractionEnabled(){
                 return !::Base.mEditingTerrain && !::Base.mEditingTileGrid;
+            }
+            function getObjectPropertiesEntryPanelForUserEntry(userId){
+                if(userId == 0){
+                    return ::SceneEditorFramework.SceneEditorGUIObjectPropertyEntryVoxMesh;
+                }
+                else if(userId == 2){
+                    return ::SceneEditorFramework.SceneEditorGUIObjectPropertyEntryCollider;
+                }
+                return null;
             }
         };
 
