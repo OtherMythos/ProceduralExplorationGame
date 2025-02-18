@@ -19,7 +19,7 @@
                 local originalPos = child.getPositionVec3();
                 local worldPos = insertPos + originalPos;
                 local newPos = originalPos;
-                newPos.y = world.getZForPos(insertPos);
+                newPos.y = world.getZForPos(worldPos);
                 child.setPosition(newPos);
             }
             regionEntry.pushFuncPlace(placeData.placeId, pos);
