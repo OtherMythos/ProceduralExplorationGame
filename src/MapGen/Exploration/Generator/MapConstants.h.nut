@@ -75,6 +75,9 @@ enum PlacedItemId{
     CHERRY_BLOSSOM_TREE,
     CACTUS,
     TREE_APPLE,
+    FLOWER_PURPLE,
+    FLOWER_RED,
+    FLOWER_WHITE,
 
     MAX
 };

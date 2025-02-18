@@ -253,3 +253,10 @@
             };
             world.mEntityFactory_.constructPlacedItem(targetNode, data, null);
         });
+        ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.PICK] <- TriggerResponse(function(world, entityId, second, collisionStatus){
+            if(collisionStatus == 0x1){
+                ::Base.mActionManager.registerAction(ActionSlotType.PICK, 0, entityId, entityId);
+            }else if(collisionStatus == 0x2){
+                ::Base.mActionManager.unsetAction(0, entityId);
+            }
+        });

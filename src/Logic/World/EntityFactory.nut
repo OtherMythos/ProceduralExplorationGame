@@ -299,6 +299,15 @@
             case PlacedItemId.CACTUS:{
                 return "cactus1.voxMesh";
             }
+            case PlacedItemId.FLOWER_PURPLE:{
+                return "flower.flowerPurple.voxMesh";
+            }
+            case PlacedItemId.FLOWER_WHITE:{
+                return "flower.flowerWhite.voxMesh";
+            }
+            case PlacedItemId.FLOWER_RED:{
+                return "flower.flowerRed.voxMesh";
+            }
             default:{
                 return "tree.voxMesh";
             }
@@ -307,6 +316,11 @@
     function getScaleForPlacedItemType_(item){
         switch(item){
             case PlacedItemId.CACTUS:{
+                return 0.3;
+            }
+            case PlacedItemId.FLOWER_RED:
+            case PlacedItemId.FLOWER_PURPLE:
+            case PlacedItemId.FLOWER_WHITE:{
                 return 0.3;
             }
             default:
@@ -417,7 +431,7 @@
 
         return en;
     }
-    function constructPlacedItem(parentNode, itemData, idx){
+    function constructPlacedItem(parentNode, itemData, idx=0){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = Vec3(itemData.originX, 0, -itemData.originY);
         targetPos.y = getZForPos(targetPos);
@@ -451,12 +465,23 @@
         }
         else if(itemType == PlacedItemId.TREE_APPLE){
             local triggerWorld = mConstructorWorld_.getTriggerWorld();
-        local playerInteraction = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.PLACED_ITEM_COLLIDE_CHANGE, en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
+            local playerInteraction = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.PLACED_ITEM_COLLIDE_CHANGE, en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
 
             manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO, ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](
                 collisionPoint, playerInteraction,
                 damageWorld, triggerWorld
             ));
+        }else if(itemType == PlacedItemId.FLOWER_RED){
+            local triggerWorld = mConstructorWorld_.getTriggerWorld();
+            local playerInteraction = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.PICK, en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
+
+            manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO, ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](
+                collisionPoint, playerInteraction,
+                damageWorld, triggerWorld
+            ));
+
+            local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.GIVE_ITEM, ::Item(ItemId.FLOWER_RED), null, null);
+            manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
         }else{
             manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, damageWorld));
         }

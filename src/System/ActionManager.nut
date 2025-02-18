@@ -149,6 +149,14 @@ These actions might be things like 'talk', 'buy things from', etc.
                 ::Base.mExplorationLogic.mCurrentWorld_.showInventory(data);
                 break;
             }
+            case ActionSlotType.PICK:{
+                local world = ::Base.mExplorationLogic.mCurrentWorld_;
+                local manager = world.getEntityManager();
+                if(manager.entityValid(data)){
+                    manager.destroyEntity(data, EntityDestroyReason.CONSUMED);
+                }
+                break;
+            }
             default:{
                 throw "Attempted to execute an invalid action slot.";
             }

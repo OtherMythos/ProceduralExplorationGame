@@ -208,6 +208,30 @@
             {
                 "all" : [64, 112, 16, 16]
             }
+        },
+        "item_flowerWhite" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [48, 144, 16, 16]
+            }
+        },
+        "item_flowerRed" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [64, 144, 16, 16]
+            }
+        },
+        "item_flowerPurple" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [80, 144, 16, 16]
+            }
         }
 
     }

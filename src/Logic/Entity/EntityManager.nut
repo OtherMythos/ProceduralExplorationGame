@@ -29,7 +29,8 @@ enum EntityDestroyReason{
     NONE,
     LIFETIME,
     NO_HEALTH,
-    DESTROY_ALL
+    DESTROY_ALL,
+    CONSUMED
 };
 
 enum SpoilsComponentType{

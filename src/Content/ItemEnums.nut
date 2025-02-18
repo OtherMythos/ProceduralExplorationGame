@@ -12,5 +12,8 @@
     BOOK_OF_GOBLIN_STORIES,
 
     APPLE,
+    FLOWER_WHITE,
+    FLOWER_RED,
+    FLOWER_PURPLE,
 
 ");
