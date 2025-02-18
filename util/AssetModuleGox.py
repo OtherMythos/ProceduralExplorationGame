@@ -29,6 +29,10 @@ class AssetModuleGox(AssetModule):
         if(resSettings.separateLayers):
             #Separate layers iterates all layers and exports them separately
             goxelLayers = self.goxelDetermineLayers(filePath)
+            if goxelLayers is None:
+                print(f"Warning: No layers found for {filePath}")
+                return
+
             for i in goxelLayers:
                 retPath = filePath.with_name(f"{filePath.stem}.{i}.txt")
                 goxelTxtTarget = self.prepareOutputDirectoryForFile(retPath, True)
@@ -51,7 +55,7 @@ class AssetModuleGox(AssetModule):
 
     def goxelExportToObj(self, inPath, outPath):
         devnull = open(os.devnull, 'w')
-        process = subprocess.Popen(["xvfb-run", "goxel", str(inPath), "-e", str(outPath)], stdout=devnull, stderr=devnull)
+        process = subprocess.Popen(["goxel", str(inPath), "-e", str(outPath)], stdout=devnull, stderr=devnull)
         process.wait()
         devnull.close()
 
@@ -69,25 +73,25 @@ class AssetModuleGox(AssetModule):
         return i == 3
 
     def goxelDetermineLayers(self, inPath):
-        devnull = open(os.devnull, 'w')
-        result = subprocess.run(["xvfb-run", "goxel", str(inPath), "--list"], capture_output=True, text=True)
+        result = subprocess.run(["goxel", str(inPath), "--list"], capture_output=True, text=True)
+        if result.stdout is "":
+            return None
 
         layerNames = {line.split(": ")[1] for line in result.stdout.splitlines() if "layer:" in line}
-
-        devnull.close()
 
         return layerNames
 
     def goxelExportToTxt(self, inPath, outPath, layerName=None):
         devnull = open(os.devnull, 'w')
 
-        command = ["xvfb-run", "goxel", str(inPath), "-e", str(outPath)]
+        command = ["goxel", str(inPath), "-e", str(outPath)]
         if layerName is not None:
             command.append("--layer=" + layerName)
 
         process = subprocess.Popen(command, stdout=devnull, stderr=devnull)
         #result = subprocess.run(command, capture_output=True, text=True)
         #print(result.stdout)
+        #print(result.stderr)
         process.wait()
 
         fileValid = True
