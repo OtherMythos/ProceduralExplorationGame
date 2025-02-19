@@ -38,7 +38,17 @@ namespace ProceduralExplorationGameCore{
         else if(idx == 2){
             Ogre::Vector3 parentPos = parent->_getDerivedPositionUpdated();
             Ogre::Vector3 parentScale = parent->_getDerivedScaleUpdated();
-            mCollisionWorld->addCollisionPoint(parentPos.x + d.pos.x - mOffset.x, parentPos.z + d.pos.z - mOffset.z, (parentScale * d.scale).x);
+
+            const std::string& v = strings[d.idx];
+            const Ogre::Vector2 targetPos(parentPos.x + mOffset.x, parentPos.z + mOffset.z);
+            //const Ogre::Vector3 targetScale(parentScale * d.scale);
+            const Ogre::Vector3 targetScale(parentScale * d.scale);
+            if(v == "0"){
+                mCollisionWorld->addCollisionPoint(targetPos.x, targetPos.y, targetScale.x);
+            }
+            else if(v == "1"){
+                mCollisionWorld->addCollisionRectangle(targetPos.x - targetScale.x / 2, targetPos.y - targetScale.y / 2, targetScale.x*2, targetScale.z*2);
+            }
         }
 
         return true;

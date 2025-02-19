@@ -33,7 +33,7 @@
     function setEntry(entry){
         mEntry_ = entry;
 
-        mColliderTypes_.setValueRaw(entry.data.value);
+        mColliderTypes_.setValueRaw(entry.data.value.tointeger());
     }
 
 
