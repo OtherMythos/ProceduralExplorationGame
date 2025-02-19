@@ -27,7 +27,11 @@
             <scale x="8.00171" y="8.00171" z="8.00171"/>
         </user2>
     </user0>
+    <user1 value="0-0"/>
     <user1 value="0-1">
-        <position x="1.44859" y="0" z="-15.8418"/>
+        <position x="-9.38439" y="0" z="-10.8872"/>
+    </user1>
+    <user1 value="1-0">
+        <position x="6.24436" y="0" z="-6.45741"/>
     </user1>
 </scene>

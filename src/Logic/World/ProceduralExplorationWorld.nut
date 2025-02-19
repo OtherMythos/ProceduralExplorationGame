@@ -83,10 +83,29 @@
                     local placeFileName = placeDef.getPlaceFileName();
                     if(placeFileName == null) continue;
 
+                    //TODO nasty duplication
                     local scriptPath = "res://build/assets/places/" + placeFileName + "/script.nut";
                     if(_system.exists(scriptPath)){
                         _doFile(scriptPath);
                         if(::PlaceScriptObject.rawin("appear")){
+
+                            local dataFile = null;
+                            local dataPointPath = "res://build/assets/places/" + placeFileName + "/dataPoints.txt";
+                            if(_system.exists(dataPointPath)){
+                                local dataPoints = _gameCore.DataPointFile();
+                                dataPoints.readFile(dataPointPath);
+
+                                local data = array(2);
+                                for(local i = 0; i < dataPoints.getNumDataPoints(); i++){
+                                    dataPoints.getDataPointAt(i, data);
+                                    local val = data[1];
+                                    local major = (val >> 16) & 0xFFFF;
+                                    local minor = val & 0xFFFF;
+
+                                    ::PlaceScriptObject.processDataPointBecameVisible(mCreatorWorld_, placeData[1] + data[0] - placeDef.mCentre, major, minor, mDecoratioNode_);
+                                }
+                            }
+
                             ::PlaceScriptObject.appear(mCreatorWorld_, placeData[0], placeData[1], mDecoratioNode_);
                         }
                     }
@@ -144,7 +163,7 @@
                 local minor = val & 0xFFFF;
                 //processDataPoint(data[0], major, minor);
 
-                ::PlaceScriptObject.processDataPoint(mCreatorWorld_, pos + data[0] - placeDef.mCentre, major, minor, mDecoratioNode_);
+                ::PlaceScriptObject.processDataPointCreation(mCreatorWorld_, pos + data[0] - placeDef.mCentre, major, minor, mDecoratioNode_);
             }
 
         }
