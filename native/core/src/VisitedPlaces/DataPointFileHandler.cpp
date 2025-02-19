@@ -76,6 +76,8 @@ namespace ProceduralExplorationGameCore{
             bool result = parseLineForFile_(outVec, line);
             if(!result) return result;
         }
+
+        return true;
     }
 
     bool DataPointFileHandler::readMapData(VisitedPlaceMapData* outData, const std::string& mapName) const{
