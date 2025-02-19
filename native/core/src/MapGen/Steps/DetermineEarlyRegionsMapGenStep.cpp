@@ -165,7 +165,7 @@ namespace ProceduralExplorationGameCore{
         while(it != mapData->regionData.end()){
             if(it->total == 0){
                 assert(it->coords.size() == 0);
-                mapData->regionData.erase(it);
+                it = mapData->regionData.erase(it);
             }else{
                 it++;
             }
