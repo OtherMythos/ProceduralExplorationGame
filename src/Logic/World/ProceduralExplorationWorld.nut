@@ -109,6 +109,44 @@
         }
         function pushFuncPlace(placeId, pos){
             mPlaceIds_.append([placeId, pos]);
+
+            processPlaceCreation(placeId, pos);
+        }
+        function processPlaceCreation(placeId, pos){
+            local placeDef = ::Places[placeId];
+
+            local placeFileName = placeDef.getPlaceFileName();
+            if(placeFileName == null) return;
+
+            local dataPointPath = "res://build/assets/places/" + placeFileName + "/dataPoints.txt";
+            if(!_system.exists(dataPointPath)){
+                return;
+            }
+
+            local scriptPath = "res://build/assets/places/" + placeFileName + "/script.nut";
+            if(!_system.exists(scriptPath)){
+                return;
+            }
+
+            _doFile(scriptPath);
+            if(!::PlaceScriptObject.rawin("processDataPoint")){
+                return;
+            }
+
+            local dataPoints = _gameCore.DataPointFile();
+            dataPoints.readFile(dataPointPath);
+
+            local data = array(2);
+            for(local i = 0; i < dataPoints.getNumDataPoints(); i++){
+                dataPoints.getDataPointAt(i, data);
+                local val = data[1];
+                local major = (val >> 16) & 0xFFFF;
+                local minor = val & 0xFFFF;
+                //processDataPoint(data[0], major, minor);
+
+                ::PlaceScriptObject.processDataPoint(mCreatorWorld_, pos + data[0] - placeDef.mCentre, major, minor, mDecoratioNode_);
+            }
+
         }
         function destroy(){
             if(mLandItem_ != null){

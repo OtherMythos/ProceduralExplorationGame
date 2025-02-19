@@ -7,6 +7,7 @@
 #include "Scripting/GameCoreNamespace.h"
 #include "Scripting/ExplorationMapDataUserData.h"
 #include "Scripting/VisitedPlaceMapDataUserData.h"
+#include "Scripting/DataPointFileUserData.h"
 
 #include "GameplayConstants.h"
 #include "GameCoreLogger.h"
@@ -53,6 +54,7 @@ namespace ProceduralExplorationGamePlugin{
 
         AV::ScriptVM::setupDelegateTable(ExplorationMapDataUserData::setupDelegateTable);
         AV::ScriptVM::setupDelegateTable(VisitedPlaceMapDataUserData::setupDelegateTable);
+        AV::ScriptVM::setupDelegateTable(DataPointFileParserUserData::setupDelegateTable);
 
         Ogre::VoxMeshManager* meshManager = OGRE_NEW Ogre::VoxMeshManager();
         meshManager->_initialise();

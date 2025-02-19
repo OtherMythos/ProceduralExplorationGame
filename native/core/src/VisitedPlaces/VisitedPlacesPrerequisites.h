@@ -8,15 +8,9 @@
 
 namespace ProceduralExplorationGameCore{
 
-    typedef AV::uint32 DataPointWrapped;
     typedef AV::uint8 TilePoint;
 
     static const TilePoint EMPTY_TILE = 0;
-
-    struct DataPointData{
-        float x, y, z;
-        DataPointWrapped wrapped;
-    };
 
     struct VisitedPlaceMapData{
         AV::uint32 width;

@@ -18,6 +18,8 @@
 #include "Collision/CollisionDetectionWorld.h"
 #include "Scripting/ScriptNamespace/Classes/CollisionWorldClass.h"
 
+#include "Scripting/DataPointFileUserData.h"
+
 #include "MapGen/ExplorationMapViewer.h"
 #include "MapGen/ExplorationMapDataPrerequisites.h"
 #include "MapGen/MapGen.h"
@@ -592,6 +594,14 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger GameCoreNamespace::createDataPointFileParser(HSQUIRRELVM vm){
+        DataPointFileParserUserData::WrappedDataPointFile* dataFile = new DataPointFileParserUserData::WrappedDataPointFile();
+
+        DataPointFileParserUserData::dataPointFileHandlerToUserData(vm, dataFile);
+
+        return 1;
+    }
+
     SQInteger GameCoreNamespace::insertParsedSceneFileVoxMeshGetAnimInfo(HSQUIRRELVM vm){
         AV::ParsedSceneFile* file = 0;
         AV::ParsedAvSceneUserData::readSceneObjectFromUserData(vm, 2, &file);
@@ -649,6 +659,8 @@ namespace ProceduralExplorationGamePlugin{
 
         AV::ScriptUtils::addFunction(vm, voxeliseMeshForVoxelData, "voxeliseMeshForVoxelData", 6, ".saiii");
         AV::ScriptUtils::addFunction(vm, insertParsedSceneFileVoxMeshGetAnimInfo, "insertParsedSceneFileGetAnimInfo", -4, ".uuuu");
+
+        AV::ScriptUtils::addFunction(vm, createDataPointFileParser, "DataPointFile");
     }
 
 };

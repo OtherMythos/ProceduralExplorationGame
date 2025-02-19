@@ -24,7 +24,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    bool DataPointFileHandler::parseLineForFile_(VisitedPlaceMapData* outData, const std::string& line) const{
+    bool DataPointFileHandler::parseLineForFile_(std::vector<ProceduralExplorationGameCore::DataPointData>& outVec, const std::string& line) const{
         std::stringstream ss;
 
         float vals[3];
@@ -56,9 +56,26 @@ namespace ProceduralExplorationGameCore{
 
         DataPointWrapped wrappedData = AV::uint32(AV::uint16(num1)) << 16 | AV::uint16(num2);
 
-        outData->dataPointValues.push_back({vals[0], vals[1], vals[2], wrappedData});
+        outVec.push_back({vals[0], vals[1], vals[2], wrappedData});
 
         return true;
+    }
+
+    bool DataPointFileHandler::readData(std::vector<ProceduralExplorationGameCore::DataPointData>& outVec, const std::string& filePath) const{
+        if(!std::filesystem::exists(filePath)){
+            return false;
+        }
+
+        std::string line;
+        std::ifstream myfile(filePath);
+        if(!myfile.is_open()){
+            return false;
+        }
+
+        while(getline(myfile, line)){
+            bool result = parseLineForFile_(outVec, line);
+            if(!result) return result;
+        }
     }
 
     bool DataPointFileHandler::readMapData(VisitedPlaceMapData* outData, const std::string& mapName) const{
@@ -67,22 +84,8 @@ namespace ProceduralExplorationGameCore{
 
         std::filesystem::path p(outPath);
         p = p / mapName / "dataPoints.txt";
-        if(!std::filesystem::exists(p)){
-            return false;
-        }
 
-        std::string line;
-        std::ifstream myfile(p.string());
-        if(!myfile.is_open()){
-            return false;
-        }
-
-        while(getline(myfile, line)){
-            bool result = parseLineForFile_(outData, line);
-            if(!result) return result;
-        }
-
-        return true;
+        return readData(outData->dataPointValues, p.string());
     }
 
 }
