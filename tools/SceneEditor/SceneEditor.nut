@@ -169,6 +169,9 @@ enum SceneEditorMapType{
                 if(userId == 0){
                     return ::SceneEditorFramework.SceneEditorGUIObjectPropertyEntryVoxMesh;
                 }
+                else if(userId == 1){
+                    return ::SceneEditorFramework.SceneEditorGUIObjectPropertyEntryDataPoint;
+                }
                 else if(userId == 2){
                     return ::SceneEditorFramework.SceneEditorGUIObjectPropertyEntryCollider;
                 }

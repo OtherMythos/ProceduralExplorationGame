@@ -44,12 +44,7 @@
             current = i;
 
             if(i.nodeType == SceneEditorFramework_SceneTreeEntryType.USER1){
-                //Determine all the parents position.
-                local resolvedPosition = Vec3();
-                foreach(d in parents){
-                    resolvedPosition += d.position;
-                }
-                resolvedPosition += i.position;
+                local resolvedPosition = i.getPositionDerived();
 
                 outFile.write(format("%f,%f,%f,%s", resolvedPosition.x, resolvedPosition.y, resolvedPosition.z, i.data.value));
                 outFile.write("\n");

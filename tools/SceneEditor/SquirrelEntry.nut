@@ -34,6 +34,7 @@ function start(){
     _doFile("res://TileDataWriter.nut");
     _doFile("res://SceneEditorGUITerrainToolProperties.nut");
     _doFile("res://SceneEditorGUIObjectPropertyEntryVoxMesh.nut");
+    _doFile("res://SceneEditorGUIObjectPropertyEntryDataPoint.nut");
     _doFile("res://SceneEditorGUIObjectPropertyEntryCollider.nut");
     _doFile("res://SceneEditorGUITileGridProperties.nut");
     _doFile("res://SceneEditorRightClickMenuManager.nut");
