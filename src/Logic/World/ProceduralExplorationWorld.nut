@@ -102,7 +102,10 @@
                                     local major = (val >> 16) & 0xFFFF;
                                     local minor = val & 0xFFFF;
 
-                                    ::PlaceScriptObject.processDataPointBecameVisible(mCreatorWorld_, placeData[1] + data[0] - placeDef.mCentre, major, minor, mDecoratioNode_);
+
+                                    if(::PlaceScriptObject.rawin("processDataPointBecameVisible")){
+                                        ::PlaceScriptObject.processDataPointBecameVisible(mCreatorWorld_, placeData[1] + data[0] - placeDef.mCentre, major, minor, mDecoratioNode_);
+                                    }
                                 }
                             }
 
@@ -148,7 +151,7 @@
             }
 
             _doFile(scriptPath);
-            if(!::PlaceScriptObject.rawin("processDataPoint")){
+            if(!::PlaceScriptObject.rawin("processDataPointCreation")){
                 return;
             }
 
