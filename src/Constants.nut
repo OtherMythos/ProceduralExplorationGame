@@ -138,6 +138,7 @@ enum CollisionWorldTriggerResponses{
     COLLECTABLE_ITEM_COLLIDE,
     ITEM_SEARCH,
     PICK,
+    READ_LORE,
 
     MAX = 100
 };
@@ -255,7 +256,8 @@ enum ActionSlotType{
     ASCEND,
     ENTER,
     ITEM_SEARCH,
-    PICK
+    PICK,
+    READ_LORE
 };
 
 enum SystemSetting{
@@ -273,7 +275,8 @@ enum SystemSetting{
     "Ascend",
     "Enter",
     "Item Search",
-    "Pick"
+    "Pick",
+    "Read"
 ];
 
 enum ProceduralDungeonTypes{

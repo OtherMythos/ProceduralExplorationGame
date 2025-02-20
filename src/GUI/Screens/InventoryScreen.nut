@@ -436,7 +436,7 @@ enum InventoryBusEvents{
             }
             if(item == null) return;
 
-            ::Base.mExplorationLogic.readLoreContent(item);
+            ::Base.mExplorationLogic.readLoreContentForItem(item);
         }
         else if(event == InventoryBusEvents.ITEM_HELPER_SCREEN_ENDED){
             highlightPrevious();

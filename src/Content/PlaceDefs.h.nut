@@ -195,6 +195,7 @@ function initialisePlaceEditorMeta(){
 ::Places[PlaceId.DUSTMITE_NEST] = PlaceDef("Dust Mite Nest", "An entrance to a Dust Mite nest.", PlaceType.LOCATION, 1.0, testPlaceDefs.DustMiteNestPlacement, testPlaceDefs.DustMiteNestAppearFunction, null, 100);
 ::Places[PlaceId.GARRITON] = PlaceDef("Garriton", "A nice town", PlaceType.LOCATION, 1.0, null, null, "testPlace", 100);
 ::Places[PlaceId.TEMPLE] = PlaceDef("Temple", "Some sort of temple", PlaceType.LOCATION, 1.0, null, null, "temple", 100);
+::Places[PlaceId.GRAVEYARD] = PlaceDef("Graveyard", "An old graveyard", PlaceType.LOCATION, 1.0, null, null, "graveyard", 100);
 
 ::PlacesByType <- {};
 

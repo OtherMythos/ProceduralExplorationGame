@@ -364,9 +364,19 @@
         mCurrentWorld_.setOrientatingCamera(orientating);
     }
 
-    function readLoreContent(item){
+    function readLoreContentForItem(item){
+        local targetPath = "res://build/assets/readables/" + item.getDefData();
+        readLoreContentPath(targetPath);
+    }
 
-        _doFile("res://build/assets/readables/" + item.getDefData());
+    function readReadable(readable){
+        local targetPath = format("res://build/assets/readables/%s.nut", readable);
+        readLoreContentPath(targetPath);
+    }
+
+    function readLoreContentPath(readablePath){
+        if(!_system.exists(readablePath)) throw "Could not find lore content for path " + readablePath;
+        _doFile(readablePath);
 
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.READABLE_CONTENT_SCREEN, {"content": readable}), null, 3);
         getroottable().rawdelete("readable");

@@ -52,7 +52,7 @@
                 ::PopupManager.displayPopup(::PopupManager.PopupData(Popup.SINGLE_TEXT, {"text": "You clicked the mouse", "posX": _input.getMouseX(), "posY": _input.getMouseY(), "fontMultiplier": 1.5, "lifespan": 50, "fadeInTime": 10}));
             },
             function(widget, action){
-                ::Base.mExplorationLogic.readLoreContent(::Items[ItemId.BOOK_OF_GOBLIN_STORIES]);
+                ::Base.mExplorationLogic.readLoreContentForItem(::Items[ItemId.BOOK_OF_GOBLIN_STORIES]);
             },
             function(widget, action){
                 local renderIcon = ::RenderIconManager.createIcon("cube");

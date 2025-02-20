@@ -7,7 +7,8 @@
 
     GARRITON,
 
-    TEMPLE
+    TEMPLE,
+    GRAVEYARD
 ");
 
 enum PlaceType{

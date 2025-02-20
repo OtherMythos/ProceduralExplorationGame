@@ -260,3 +260,10 @@
                 ::Base.mActionManager.unsetAction(0, entityId);
             }
         });
+        ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.READ_LORE] <- TriggerResponse(function(world, entityId, second, collisionStatus){
+            if(collisionStatus == 0x1){
+                ::Base.mActionManager.registerAction(ActionSlotType.READ_LORE, 0, entityId, entityId);
+            }else if(collisionStatus == 0x2){
+                ::Base.mActionManager.unsetAction(0, entityId);
+            }
+        });

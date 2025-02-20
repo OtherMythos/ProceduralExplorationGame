@@ -157,6 +157,10 @@ These actions might be things like 'talk', 'buy things from', etc.
                 }
                 break;
             }
+            case ActionSlotType.READ_LORE:{
+                local world = ::Base.mExplorationLogic.readReadable(data);
+                break;
+            }
             default:{
                 throw "Attempted to execute an invalid action slot.";
             }
