@@ -437,7 +437,7 @@ enum SceneEditorMapType{
         checkKeyCommands();
         ::SceneEditorFPSCamera.update();
         //_input.(i, _INPUT_PRESSED)
-        ::SceneEditorFPSCamera.setSpeedModifier(_input.getButtonAction(mAcceptHandle));
+        ::SceneEditorFPSCamera.setSpeedModifier(_input.getRawKeyScancodeInput(KeyScancode.LSHIFT));
 
         //if(mCurrentHitPosition != null){
             //posMesh.setPosition(mCurrentHitPosition);
