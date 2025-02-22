@@ -3,6 +3,11 @@ enum KeyScancode{
     LCOMMAND = 231,
     LSHIFT = 225,
 
+    NUMBER_1 = 30,
+    NUMBER_2 = 31,
+    NUMBER_3 = 32,
+    NUMBER_4 = 33,
+
     Z = 29
 };
 
@@ -29,6 +34,7 @@ function start(){
     _doFile("res://SceneEditorTerrainChunkManager.nut");
     _doFile("res://SceneEditorVoxelSelectionPopup.nut");
     _doFile("res://SceneEditorTileGridResizePopup.nut");
+    _doFile("res://SceneEditorSceneWindowButtons.nut");
     _doFile("res://SceneEditor.nut");
     _doFile("res://SceneEditorDataPointWriter.nut");
     _doFile("res://TileDataWriter.nut");

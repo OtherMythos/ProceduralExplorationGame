@@ -68,14 +68,7 @@
             mHorizontalLayout_.addCell(button);
         }
 
-        local maxHeight = 0;
-        foreach(i in buttons){
-            local size = i.getSize().y;
-            if(size > maxHeight) maxHeight = size;
-        }
-        foreach(i in buttons){
-            i.setSize(i.getSize().x, maxHeight);
-        }
+        local maxHeight = ::evenOutButtonsForHeight(buttons);
 
         mHorizontalLayout_.setMarginForAllCells(10, 0);
         mHorizontalLayout_.setPosition(0, winSize.y - maxHeight - 10);

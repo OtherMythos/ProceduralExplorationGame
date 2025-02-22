@@ -92,3 +92,16 @@
     diff.y = 0;
     return pos + (diff * (minRadius + radius));
 }
+
+::evenOutButtonsForHeight <- function(buttons){
+    local maxHeight = 0;
+    foreach(i in buttons){
+        local size = i.getSize().y;
+        if(size > maxHeight) maxHeight = size;
+    }
+    foreach(i in buttons){
+        i.setSize(i.getSize().x, maxHeight);
+    }
+
+    return maxHeight;
+}

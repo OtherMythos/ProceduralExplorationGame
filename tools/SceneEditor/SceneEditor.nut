@@ -50,6 +50,7 @@ enum SceneEditorMapType{
     mTileGridBoxNode_ = null
     mTileGridIndicatorNode_ = null
     mCurrentSceneRightClick_ = null
+    mSceneButtons_ = null
 
     mWindowTileGrid_ = null
     mWindowTerrainTool_ = null
@@ -250,6 +251,8 @@ enum SceneEditorMapType{
         mGuiInputStealer_.setSize(50, 50);
         mGuiInputStealerWindow_.setVisible(false);
 
+        mSceneButtons_ = SceneEditorSceneWindowButtons();
+
         mParentNode = _scene.getRootSceneNode().createChildSceneNode();
 
         local targetMap = getTargetEditMap();
@@ -300,6 +303,12 @@ enum SceneEditorMapType{
         positionLineBox();
 
         ::generateFloorGrid();
+
+        print(::guiFrameworkBase.getToolbar());
+        local toolbarSize = ::guiFrameworkBase.getToolbar().getSize();
+        toolbarSize.x = 10;
+        toolbarSize.y += 10;
+        mSceneButtons_.setPosition(toolbarSize);
 
         //::posMesh <- _mesh.create("cube");
         //posMesh.setPosition(mCurrentHitPosition);
@@ -438,6 +447,16 @@ enum SceneEditorMapType{
         ::SceneEditorFPSCamera.update();
         //_input.(i, _INPUT_PRESSED)
         ::SceneEditorFPSCamera.setSpeedModifier(_input.getRawKeyScancodeInput(KeyScancode.LSHIFT));
+
+        if(_input.getRawKeyScancodeInput(KeyScancode.NUMBER_1)){
+            mEditorBase.getActiveSceneTree().setObjectTransformCoordinateType(SceneEditorFramework_BasicCoordinateType.POSITION);
+        }
+        if(_input.getRawKeyScancodeInput(KeyScancode.NUMBER_2)){
+            mEditorBase.getActiveSceneTree().setObjectTransformCoordinateType(SceneEditorFramework_BasicCoordinateType.SCALE);
+        }
+        if(_input.getRawKeyScancodeInput(KeyScancode.NUMBER_3)){
+            mEditorBase.getActiveSceneTree().setObjectTransformCoordinateType(SceneEditorFramework_BasicCoordinateType.RAYCAST);
+        }
 
         //if(mCurrentHitPosition != null){
             //posMesh.setPosition(mCurrentHitPosition);
