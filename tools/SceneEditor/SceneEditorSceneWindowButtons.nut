@@ -2,6 +2,7 @@
 
     mWindow_ = null;
     mButtons_ = null;
+    mMagenticOption_ = null;
 
     constructor(parentWindow, parentGuiWindow){
         this.mWindow_ = parentWindow;
@@ -35,6 +36,13 @@
             layout.addCell(button);
             mButtons_.append(button);
         }
+
+        mMagenticOption_ = this.mWindow_.createCheckbox();
+        mMagenticOption_.setText("Magnetic");
+        mMagenticOption_.attachListenerForEvent(function(widget, event){
+            ::Base.mEditorBase.getActiveSceneTree().setMagneticEdit(widget.getValue());
+        }, _GUI_ACTION_RELEASED, this);
+        layout.addCell(mMagenticOption_);
 
         layout.setMarginForAllCells(5, 0);
         layout.setPosition(-5, 0);
