@@ -3,10 +3,11 @@
     mWindow_ = null;
     mButtons_ = null;
 
-    constructor(){
-        mWindow_ = _gui.createWindow("SceneEditorSceneWindowButtons");
-        mWindow_.setVisualsEnabled(false);
-        mWindow_.setSkin("EditorGUIFramework/WindowNoBorder");
+    constructor(parentWindow, parentGuiWindow){
+        this.mWindow_ = parentWindow;
+        //mWindow_ = _gui.createWindow("SceneEditorSceneWindowButtons");
+        //mWindow_.setVisualsEnabled(false);
+        //mWindow_.setSkin("EditorGUIFramework/WindowNoBorder");
         mButtons_ = [];
 
         local layout = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
@@ -42,11 +43,11 @@
         ::evenOutButtonsForHeight(mButtons_);
 
         local childSize = mWindow_.calculateChildrenSize();
-        mWindow_.setSize(childSize);
+        parentGuiWindow.setSize(childSize);
     }
 
     function setPosition(pos){
-        mWindow_.setPosition(pos);
+        //mWindow_.setPosition(pos);
     }
 
 };

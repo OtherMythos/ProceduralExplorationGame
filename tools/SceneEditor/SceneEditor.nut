@@ -251,7 +251,10 @@ enum SceneEditorMapType{
         mGuiInputStealer_.setSize(50, 50);
         mGuiInputStealerWindow_.setVisible(false);
 
-        mSceneButtons_ = SceneEditorSceneWindowButtons();
+        local sceneButtonsWindow = guiFrameworkBase.createWindow(200, "SceneEditorButtons", {borderless = true, saveWindowState = false});
+        sceneButtonsWindow.setSaveWindowState(false);
+        mSceneButtons_ = SceneEditorSceneWindowButtons(sceneButtonsWindow.getWin(), sceneButtonsWindow);
+        sceneButtonsWindow.getWin().setVisualsEnabled(false);
 
         mParentNode = _scene.getRootSceneNode().createChildSceneNode();
 
@@ -308,7 +311,7 @@ enum SceneEditorMapType{
         local toolbarSize = ::guiFrameworkBase.getToolbar().getSize();
         toolbarSize.x = 10;
         toolbarSize.y += 10;
-        mSceneButtons_.setPosition(toolbarSize);
+        sceneButtonsWindow.setPosition(toolbarSize);
 
         //::posMesh <- _mesh.create("cube");
         //posMesh.setPosition(mCurrentHitPosition);
@@ -338,7 +341,6 @@ enum SceneEditorMapType{
             mEditorBase.setupGUIWindow(winType, guiWin.getWin());
         }
 
-        guiWin.setPosition(100, 100);
         guiWin.setPosition(500, 500);
     }
 
