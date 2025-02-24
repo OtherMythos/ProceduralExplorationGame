@@ -471,7 +471,11 @@
                 collisionPoint, playerInteraction,
                 damageWorld, triggerWorld
             ));
-        }else if(itemType == PlacedItemId.FLOWER_RED){
+        }else if(
+            itemType == PlacedItemId.FLOWER_RED ||
+            itemType == PlacedItemId.FLOWER_WHITE ||
+            itemType == PlacedItemId.FLOWER_PURPLE
+        ){
             local triggerWorld = mConstructorWorld_.getTriggerWorld();
             local playerInteraction = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.PICK, en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
 
@@ -480,7 +484,12 @@
                 damageWorld, triggerWorld
             ));
 
-            local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.GIVE_ITEM, ::Item(ItemId.FLOWER_RED), null, null);
+            local flowerItem = ItemId.FLOWER_RED;
+            if(itemType == PlacedItemId.FLOWER_RED) flowerItem = ItemId.FLOWER_RED;
+            else if(itemType == PlacedItemId.FLOWER_WHITE) flowerItem = ItemId.FLOWER_WHITE;
+            else if(itemType == PlacedItemId.FLOWER_PURPLE) flowerItem = ItemId.FLOWER_PURPLE;
+
+            local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.GIVE_ITEM, ::Item(flowerItem), null, null);
             manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
         }else{
             manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, damageWorld));

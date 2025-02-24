@@ -49,8 +49,10 @@ namespace ProceduralExplorationGameCore{
         if(flags & static_cast<AV::uint8>(MapVoxelTypes::RIVER)) return;
         if(altitude >= mapData->seaLevel + 10){
             if(processRValue(mapData, x, y, moisture >= 150 ? 1 : 6)){
-                if(moisture < 150 && mapGenRandomIntMinMax(0, 30) == 0){
-                    PLACE_ITEM(PlacedItemId::FLOWER_RED);
+                if(moisture < 150 && mapGenRandomIntMinMax(0, 3) == 0){
+                    static const PlacedItemId VALS[] = {PlacedItemId::FLOWER_RED, PlacedItemId::FLOWER_WHITE, PlacedItemId::FLOWER_PURPLE};
+                    size_t val = mapGenRandomIntMinMax(0, 3);
+                    PLACE_ITEM(VALS[val]);
                 }else{
                     bool apple = (mapGenRandomIntMinMax(0, 100) == 0);
                     PLACE_ITEM(apple ? PlacedItemId::TREE_APPLE : PlacedItemId::TREE);
