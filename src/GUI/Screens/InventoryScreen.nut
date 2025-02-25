@@ -248,8 +248,10 @@ enum InventoryBusEvents{
         mInventoryGrid_.connectNeighbours(mInventoryEquippedGrid_, inventoryButton);
         if(mSecondaryInventoryGrid_ != null){
             mInventoryEquippedGrid_.connectNeighbours([mInventoryGrid_, mSecondaryInventoryGrid_], inventoryButton);
+            mSecondaryInventoryGrid_.connectNeighbours(mInventoryEquippedGrid_, inventoryButton);
+        }else{
+            mInventoryEquippedGrid_.connectNeighbours(mInventoryGrid_, inventoryButton);
         }
-        mSecondaryInventoryGrid_.connectNeighbours(mInventoryEquippedGrid_, inventoryButton);
 
         inventoryButton.setNextWidget(mInventoryGrid_.mWidgets_[0], _GUI_BORDER_RIGHT);
         inventoryButton.setNextWidget(mInventoryGrid_.mWidgets_[0], _GUI_BORDER_BOTTOM);
