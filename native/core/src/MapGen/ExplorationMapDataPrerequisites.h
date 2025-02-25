@@ -21,6 +21,8 @@ namespace ProceduralExplorationGameCore{
     };
     #undef VOXEL_VALUES
 
+    static const RegionId REGION_ID_WATER = 100;
+
     struct RegionData{
         RegionId id;
         AV::uint32 total;
@@ -269,6 +271,8 @@ namespace ProceduralExplorationGameCore{
             outRegions.insert(*REGION_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(xp, yp + 1)));
             outRegions.insert(*REGION_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(xp, yp - 1)));
         }
+
+        outRegions.erase(REGION_ID_WATER);
     }
 
     static void mergeRegionData(ExplorationMapData* mapData, RegionData& d, RegionData& sd){

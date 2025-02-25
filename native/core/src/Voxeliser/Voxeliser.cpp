@@ -319,13 +319,14 @@ namespace ProceduralExplorationGameCore{
                 AV::uint8 regionId = static_cast<AV::uint8>((voxSecondary >> 8) & 0xFF);
                 voxPtr++;
                 secondaryVoxPtr++;
-                RegionBufferEntry& bufEntry = regionEntries[regionId];
 
                 float voxFloat = (float)(vox & 0xFF);
                 if(voxFloat < seaLevel){
                     altitudes[x+y*width] = -1.0f;
                     continue;
                 }
+
+                RegionBufferEntry& bufEntry = regionEntries[regionId];
 
                 AV::uint8 altitude = static_cast<AV::uint8>(((voxFloat - (float)seaLevel) / (float)ABOVE_GROUND) * (float)WORLD_DEPTH) + 1;
                 AV::uint8 voxelMeta = (vox >> 8) & static_cast<AV::uint8>(MAP_VOXEL_MASK);
@@ -359,9 +360,9 @@ namespace ProceduralExplorationGameCore{
                 AV::uint8 regionId = static_cast<AV::uint8>((voxSecondary >> 8) & 0xFF);
                 voxPtr++;
                 secondaryVoxPtr++;
-                RegionBufferEntry& bufEntry = regionEntries[regionId];
                 float vox = altitudes[x+y*width];
                 if(vox == -1.0f) continue;
+                    RegionBufferEntry& bufEntry = regionEntries[regionId];
                 //If the voxel altitude isn't 0 then there must be active voxels.
                 assert(bufEntry.mNumActiveVox > 0);
                 //TODO optimistion try and make this loop only consider the secondary voxel, for the sake of cache efficiency.

@@ -111,12 +111,6 @@ namespace ProceduralExplorationGameCore{
             //it++;
         }
 
-        //Write the region ids to the buffer.
-        for(const RegionData& r : mapData->regionData){
-            for(WorldPoint p : r.coords){
-                *REGION_PTR_FOR_COORD(mapData, p) = r.id;
-            }
-        }
     }
 
     IsolateRegionsMapGenJob::IsolateRegionsMapGenJob(){

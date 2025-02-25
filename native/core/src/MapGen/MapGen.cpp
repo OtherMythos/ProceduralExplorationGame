@@ -29,6 +29,7 @@
 #include "MapGen/Steps/DetermineRegionTypesMapGenStep.h"
 #include "MapGen/Steps/MergeExpandableRegionsMapGenStep.h"
 #include "MapGen/Steps/PopulateFinalBiomesMapGenStep.h"
+#include "MapGen/Steps/WriteFinalRegionValuesMapGenStep.h"
 //#include "MapGen/Steps/DeterminePlacesMapGenStep.h"
 #include "MapGen/Steps/MergeSmallRegionsMapGenStep.h"
 #include "MapGen/Steps/MergeIsolatedRegionsMapGenStep.h"
@@ -49,6 +50,7 @@ namespace ProceduralExplorationGameCore{
         {"Remove Redundant Water", new RemoveRedundantWaterMapGenStep()},
         {"Determine Early Regions", new DetermineEarlyRegionsMapGenStep()},
         {"Isolate Regions", new IsolateRegionsMapGenStep()},
+        {"Write Final Region", new WriteFinalRegionValuesMapGenStep()},
         {"Merge Small Regions", new MergeSmallRegionsMapGenStep()},
         {"Merge Isolated Regions", new MergeIsolatedRegionsMapGenStep()},
         {"Determine Region Types", new DetermineRegionTypesMapGenStep()},

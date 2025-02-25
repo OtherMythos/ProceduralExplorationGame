@@ -31,7 +31,7 @@ namespace ProceduralExplorationGameCore{
 
             for(RegionId r : foundRegions){
                 //TODO do I need this?
-                if(r == 0x0) continue;
+                if(r == 0x0 || r == REGION_ID_WATER) continue;
                 RegionData& sd = mapData->regionData[r];
                 if(d.id == sd.id) continue;
                 mergeRegionData(mapData, d, sd);
