@@ -74,6 +74,7 @@
             button.attachListenerForEvent(buttonFunctions[c], _GUI_ACTION_PRESSED, this);
             buttons.append(button);
             mHorizontalLayout_.addCell(button);
+            if(c == 0) button.setFocus();
         }
 
         local maxHeight = ::evenOutButtonsForHeight(buttons);
