@@ -78,6 +78,8 @@ namespace ProceduralExplorationGameCore{
             WorldCoord originX, originY;
             READ_WORLD_POINT(originData[river], originX, originY);
 
+            outData.push_back(WRAP_WORLD_POINT(originX, originY));
+
             WorldCoord currentX = originX;
             WorldCoord currentY = originY;
             for(int i = 0; i < 100; i++){
