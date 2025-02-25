@@ -46,6 +46,7 @@
         label.setSize(targetSize)
 
         setSize(targetSize);
+        mPopupWin_.setHidden(::Base.isProfileActive(GameProfile.SCREENSHOT_MODE));
     }
 
     function getLabelForRegionType(biomeData){

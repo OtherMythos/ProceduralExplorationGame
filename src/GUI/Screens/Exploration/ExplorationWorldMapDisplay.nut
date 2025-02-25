@@ -67,7 +67,7 @@
         if(mMapViewer_ != null){
             minimapVisible = mMapViewer_.getMinimapVisible();
         }
-        local target = minimapVisible && visible;
+        local target = minimapVisible && visible && !::Base.isProfileActive(GameProfile.SCREENSHOT_MODE);
         mMapViewerWindow_.setVisible(target);
 
         mVisible_ = visible;

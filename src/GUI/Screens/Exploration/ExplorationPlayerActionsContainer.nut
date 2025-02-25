@@ -68,7 +68,7 @@
         foreach(c,i in data){
             if(i.populated()){
                 mLabels_[c].setText(getActionString(c) + i.tostring());
-                mLabels_[c].setVisible(true);
+                mLabels_[c].setVisible(true && !::Base.isProfileActive(GameProfile.SCREENSHOT_MODE));
             }else{
                 mLabels_[c].setText(" ");
                 mLabels_[c].setVisible(false);

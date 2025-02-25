@@ -156,7 +156,7 @@ enum ExplorationScreenWidgetType{
             mAnimFrameCount_ = (mPercentAnimFinal_ - mPercentAnimCurrent_).tofloat() / 30.0;
             mFrame_ = 0;
             mWindow_.setSize(mWindow_.calculateChildrenSize());
-            mWindow_.setVisible(true);
+            mWindow_.setVisible(true && !::Base.isProfileActive(GameProfile.SCREENSHOT_MODE));
         }
 
     };
