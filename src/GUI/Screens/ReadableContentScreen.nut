@@ -37,6 +37,14 @@
         layoutLine.layout();
 
         constructButtons(mWindow_.getSize());
+
+        ::InputManager.setActionSet(InputActionSets.MENU);
+    }
+
+    function shutdown(){
+        base.shutdown();
+
+        ::InputManager.setActionSet(InputActionSets.EXPLORATION);
     }
 
     function constructButtons(winSize){
