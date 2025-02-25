@@ -132,13 +132,21 @@
         mInventoryHeight_ = inventoryHeight;
     }
 
-    function connectNeighbours(neighbourGrid, backButton){
+    function connectNeighbours(neighbourGridMultiple, backButton){
         local borders = [
             _GUI_BORDER_TOP,
             _GUI_BORDER_BOTTOM,
             _GUI_BORDER_LEFT,
             _GUI_BORDER_RIGHT,
         ];
+
+        local neighbourGrid = neighbourGridMultiple;
+        local secondaryGrid = null;
+        if(typeof neighbourGrid == "array"){
+            neighbourGrid = neighbourGridMultiple[0];
+            secondaryGrid = neighbourGridMultiple[1];
+        }
+
         for(local y = 0; y < mInventoryHeight_; y++){
             for(local x = 0; x < mInventoryWidth_; x++){
                 local targetWidget = mWidgets_[x + y * mInventoryWidth_];
@@ -156,13 +164,21 @@
                         if(xa < 0 || ya < 0){
                             if(mInventoryType_ == InventoryGridType.INVENTORY_GRID){
                                 widget = backButton;
-                            }else{
+                            }else if(mInventoryType_ == InventoryGridType.INVENTORY_EQUIPPABLES){
+                                widget = ya < 0 ? backButton : neighbourGrid.getNeighbourWidgetForIdx(y);
+                            }else if(mInventoryType_ == InventoryGridType.INVENTORY_GRID_SECONDARY){
                                 widget = ya < 0 ? backButton : neighbourGrid.getNeighbourWidgetForIdx(y);
                             }
                         }else if(xa >= mInventoryWidth_){
                             if(mInventoryType_ == InventoryGridType.INVENTORY_GRID){
                                 widget = neighbourGrid.getNeighbourWidgetForIdx(y);
-                            }else{
+                            }else if(mInventoryType_ == InventoryGridType.INVENTORY_EQUIPPABLES){
+                                if(secondaryGrid != null){
+                                    widget = secondaryGrid.getNeighbourWidgetForIdx(y);
+                                }else{
+                                    widget = null;
+                                }
+                            }else if(mInventoryType_ == InventoryGridType.INVENTORY_GRID_SECONDARY){
                                 widget = null;
                             }
                         }else if(ya >= mInventoryHeight_){
@@ -184,7 +200,10 @@
         if(mInventoryType_ == InventoryGridType.INVENTORY_GRID){
             xa = mInventoryWidth_ - 1;
             ya = idx;
-        }else{
+        }else if(mInventoryType_ == InventoryGridType.INVENTORY_EQUIPPABLES){
+            xa = 0;
+            ya = idx;
+        }else if(mInventoryType_ == InventoryGridType.INVENTORY_GRID_SECONDARY){
             xa = 0;
             ya = idx;
         }

@@ -19,7 +19,13 @@ Separated from the Base.nut file so enums can be used.
     function getScreenDataForForcedScreen(screenId){
         local data = null;
         if(screenId == Screen.INVENTORY_SCREEN){
-            data = {"stats": ::Base.mPlayerStats}
+            //data = {"stats": ::Base.mPlayerStats}
+            data = {
+                "stats": ::Base.mPlayerStats,
+                "width": 2,
+                "height": 2,
+                "items": [null, null, null, null]
+            }
         }
         else if(screenId == Screen.EXPLORATION_SCREEN){
             data = {"logic": ::Base.mExplorationLogic}
