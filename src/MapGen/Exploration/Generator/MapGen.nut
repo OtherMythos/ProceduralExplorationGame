@@ -58,10 +58,24 @@
         local halfX = mData_.halfX;
         local halfY = mData_.halfY;
 
+        local foundRegion = null;
         for(local yy = y - halfX; yy < y + halfY; yy++){
             for(local xx = x - halfX; xx < x + halfX; xx++){
                 //Optimistaion, remove the vec3 wrapper.
-                if(mNativeMapData_.getIsWaterForPos(Vec3(xx, 0, -yy))) return false;
+                local pos = Vec3(xx, 0, -yy);
+                if(mNativeMapData_.getIsWaterForPos(pos)) return false;
+
+                /*
+                local region = mNativeMapData_.getRegionForPos(pos);
+                if(region != foundRegion){
+                    //To start it off
+                    if(foundRegion == null){
+                        foundRegion = region;
+                    }else{
+                        return false;
+                    }
+                }
+                */
             }
         }
 
