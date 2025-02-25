@@ -83,5 +83,7 @@
 
     function closeScreen(){
         ::ScreenManager.backupScreen(mLayerIdx);
+
+        ::Base.mExplorationLogic.unPauseExploration();
     }
 };

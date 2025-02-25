@@ -380,6 +380,8 @@
 
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.READABLE_CONTENT_SCREEN, {"content": readable}), null, 3);
         getroottable().rawdelete("readable");
+
+        pauseExploration();
     }
 
     function toggleWieldActive(){
