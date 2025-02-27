@@ -96,6 +96,14 @@
                 "all" : [208, 128, 16, 16]
             }
         },
+        "item_coconut" :
+        {
+            "copy_from" : "SpriteBase",
+            "grid_uv" :
+            {
+                "all" : [208, 144, 16, 16]
+            }
+        },
         "item_banana" :
         {
             "copy_from" : "SpriteBase",

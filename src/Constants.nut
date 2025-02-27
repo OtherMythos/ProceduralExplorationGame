@@ -138,6 +138,7 @@ enum CollisionWorldTriggerResponses{
     COLLECTABLE_ITEM_COLLIDE,
     ITEM_SEARCH,
     PICK,
+    PICK_KEEP_PLACED_ITEM,
     READ_LORE,
 
     MAX = 100
@@ -257,7 +258,7 @@ enum ActionSlotType{
     ENTER,
     ITEM_SEARCH,
     PICK,
-    READ_LORE
+    READ_LORE,
 };
 
 enum SystemSetting{

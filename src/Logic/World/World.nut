@@ -1197,7 +1197,7 @@ enum WorldMousePressContexts{
         }
     }
 
-    function actuateSpoils(data, position){
+    function actuateSpoils(en, data, position){
         if(data.mType == SpoilsComponentType.SPOILS_DATA){
             foreach(i in data.mFirst){
                 if(i.mType == SPOILS_ENTRIES.EXP_ORBS){
@@ -1255,6 +1255,21 @@ enum WorldMousePressContexts{
         else if(data.mType == SpoilsComponentType.GIVE_ITEM){
             printf("Giving player item %s", data.mFirst.tostring());
             ::Base.mPlayerStats.addToInventory(data.mFirst);
+        }
+        else if(data.mType == SpoilsComponentType.PICK_KEEP_PLACED_ITEM){
+            ::Base.mPlayerStats.addToInventory(data.mFirst);
+                //Destroy the old entity and replace with a new one.
+
+                local sceneNode = mEntityManager_.getComponent(en, EntityComponents.SCENE_NODE).mNode;
+                local targetNode = sceneNode.getParent();
+                //entityManager.destroyEntity(data);
+
+                local data = {
+                    "originX": position.x,
+                    "originY": -position.z,
+                    "type": data.mSecond
+                };
+                mEntityFactory_.constructPlacedItem(targetNode, data, null);
         }
     }
 

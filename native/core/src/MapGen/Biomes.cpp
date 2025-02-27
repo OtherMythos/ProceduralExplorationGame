@@ -59,6 +59,11 @@ namespace ProceduralExplorationGameCore{
                 }
             }
         }
+        else if(altitude >= mapData->seaLevel && altitude < mapData->seaLevel + 10){
+            if(processRValue(mapData, x, y, 8)){
+                PLACE_ITEM(PlacedItemId::PALM_TREE_COCONUTS);
+            }
+        }
     }
     //
     //

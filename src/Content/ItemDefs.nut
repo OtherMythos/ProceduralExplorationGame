@@ -14,6 +14,7 @@
 
 ::Items[ItemId.BOOK_OF_GOBLIN_STORIES] = ItemDef("Book of Goblin Stories", "A crudely written tomb of popular goblin stories", "boneMace.voxMesh", "item_bookBrown", ItemType.LORE_CONTENT, 0, "BookOfGoblinTales.nut", EquippableId.NONE);
 ::Items[ItemId.APPLE] = ItemDef("Apple", "Fibrous fruit", "apple.voxMesh", "item_apple", ItemType.CONSUMABLE, 5, null, EquippableId.NONE);
+::Items[ItemId.COCONUT] = ItemDef("Coconut", "Weirdly milky for a fruit", "apple.voxMesh", "item_coconut", ItemType.CONSUMABLE, 5, null, EquippableId.NONE);
 ::Items[ItemId.FLOWER_WHITE] = ItemDef("White Flower", "A white delecate flower", "flower.flowerWhite.voxMesh", "item_flowerWhite", ItemType.CONSUMABLE, 5, null, EquippableId.NONE);
 ::Items[ItemId.FLOWER_RED] = ItemDef("Red Flower", "A red delecate flower", "flower.flowerRed.voxMesh", "item_flowerRed", ItemType.CONSUMABLE, 5, null, EquippableId.NONE);
 ::Items[ItemId.FLOWER_PURPLE] = ItemDef("Purple Flower", "A purple delecate flower", "flower.flowerPurple.voxMesh", "item_flowerPurple", ItemType.CONSUMABLE, 5, null, EquippableId.NONE);
@@ -28,7 +29,8 @@
             stat.mRestorativeHealth = 10;
             return stat;
         }
-        case ItemId.APPLE: {
+        case ItemId.APPLE:
+        case ItemId.COCONUT: {
             stat.mRestorativeHealth = 5;
             return stat;
         }

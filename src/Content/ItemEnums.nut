@@ -16,4 +16,6 @@
     FLOWER_RED,
     FLOWER_PURPLE,
 
+    COCONUT,
+
 ");

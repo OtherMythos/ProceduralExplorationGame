@@ -308,6 +308,12 @@
             case PlacedItemId.FLOWER_RED:{
                 return "flower.flowerRed.voxMesh";
             }
+            case PlacedItemId.PALM_TREE:{
+                return "palmTree.voxMesh";
+            }
+            case PlacedItemId.PALM_TREE_COCONUTS:{
+                return "coconutPalmTree.voxMesh";
+            }
             default:{
                 return "tree.voxMesh";
             }
@@ -321,6 +327,10 @@
             case PlacedItemId.FLOWER_RED:
             case PlacedItemId.FLOWER_PURPLE:
             case PlacedItemId.FLOWER_WHITE:{
+                return 0.3;
+            }
+            case PlacedItemId.PALM_TREE:
+            case PlacedItemId.PALM_TREE_COCONUTS:{
                 return 0.3;
             }
             default:
@@ -463,14 +473,30 @@
                 damageWorld, damageWorld
             ));
         }
-        else if(itemType == PlacedItemId.TREE_APPLE){
+        else if(itemType == PlacedItemId.TREE_APPLE || itemType == PlacedItemId.PALM_TREE_COCONUTS){
             local triggerWorld = mConstructorWorld_.getTriggerWorld();
-            local playerInteraction = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.PLACED_ITEM_COLLIDE_CHANGE, en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
+            local playerInteraction = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.PICK, en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
 
             manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO, ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](
                 collisionPoint, playerInteraction,
                 damageWorld, triggerWorld
             ));
+
+            local targetChange = null;
+            local targetItem = null;
+            if(itemType == PlacedItemId.TREE_APPLE){
+                targetChange = PlacedItemId.TREE;
+                targetItem = ItemId.APPLE;
+            }
+            else if(itemType == PlacedItemId.PALM_TREE_COCONUTS){
+                targetChange = PlacedItemId.PALM_TREE;
+                targetItem = ItemId.COCONUT;
+            }
+            assert(targetChange != null);
+            assert(targetItem != null);
+
+            local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.PICK_KEEP_PLACED_ITEM, ::Item(targetItem), targetChange, null);
+            manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
         }else if(
             itemType == PlacedItemId.FLOWER_RED ||
             itemType == PlacedItemId.FLOWER_WHITE ||

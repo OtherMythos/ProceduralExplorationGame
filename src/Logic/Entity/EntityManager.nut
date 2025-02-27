@@ -7,7 +7,6 @@ enum EntityComponents{
     COLLISION_POINT,
     COLLISION_POINT_TWO,
     COLLISION_POINT_THREE,
-    SCENE_NODE,
     LIFETIME,
     ANIMATION,
     BILLBOARD,
@@ -20,6 +19,7 @@ enum EntityComponents{
     TRAVERSABLE_TERRAIN,
     COLLISION_DETECTION,
     INVENTORY_ITEMS,
+    SCENE_NODE,
 
     MAX
 
@@ -40,7 +40,8 @@ enum SpoilsComponentType{
     EXP_TRAIL,
     ADD_HEALTH,
     GIVE_MONEY,
-    SPAWN_EXP_ORBS
+    SPAWN_EXP_ORBS,
+    PICK_KEEP_PLACED_ITEM
 };
 enum ProximityComponentType{
     PLAYER,
@@ -391,7 +392,7 @@ EntityManager.EntityManager <- class{
                 }
                 else if(i == EntityComponents.SPOILS){
                     if(reason != EntityDestroyReason.LIFETIME && reason != EntityDestroyReason.DESTROY_ALL){
-                        mCreatorWorld_.actuateSpoils(component, mEntityPositions_[idx]);
+                        mCreatorWorld_.actuateSpoils(eid, component, mEntityPositions_[idx]);
                     }
                 }
             }
