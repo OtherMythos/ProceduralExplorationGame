@@ -2,6 +2,7 @@
 
 export TARGET_DIR=~/gameLinux
 export FILE_BASE=buildLinux
+export REPO_NAME=ProceduralExplorationGame
 
 ./script/downloadLatest.sh
 chmod +x $TARGET_DIR/*
