@@ -6,6 +6,7 @@
 #include "GameplayState.h"
 #include "GamePrerequisites.h"
 #include "Voxeliser/Voxeliser.h"
+#include "Voxeliser/VoxSceneDumper.h"
 
 #include "Scripting/ScriptNamespace/Classes/Ogre/Graphics/TextureBoxUserData.h"
 #include "Scripting/ScriptNamespace/Classes/Ogre/Graphics/MeshUserData.h"
@@ -631,6 +632,17 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger GameCoreNamespace::dumpSceneToObj(HSQUIRRELVM vm){
+        const SQChar *path;
+        sq_getstring(vm, -2, &path);
+
+        ProceduralExplorationGameCore::VoxSceneDumper dumper;
+        auto it = Ogre::Root::getSingleton().getSceneManagerIterator();
+        dumper.dumpToObjFile(path, it.getNext()->getRootSceneNode());
+
+        return 0;
+    }
+
     void GameCoreNamespace::setupNamespace(HSQUIRRELVM vm){
         AV::ScriptUtils::addFunction(vm, getGameCoreVersion, "getGameCoreVersion");
 
@@ -659,6 +671,8 @@ namespace ProceduralExplorationGamePlugin{
 
         AV::ScriptUtils::addFunction(vm, voxeliseMeshForVoxelData, "voxeliseMeshForVoxelData", 6, ".saiii");
         AV::ScriptUtils::addFunction(vm, insertParsedSceneFileVoxMeshGetAnimInfo, "insertParsedSceneFileGetAnimInfo", -4, ".uuuu");
+
+        AV::ScriptUtils::addFunction(vm, dumpSceneToObj, "dumpSceneToObj", 2, ".s");
 
         AV::ScriptUtils::addFunction(vm, createDataPointFileParser, "DataPointFile");
     }

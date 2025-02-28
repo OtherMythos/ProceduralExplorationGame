@@ -48,6 +48,8 @@ namespace ProceduralExplorationGamePlugin{
 
         static SQInteger insertParsedSceneFileVoxMeshGetAnimInfo(HSQUIRRELVM vm);
 
+        static SQInteger dumpSceneToObj(HSQUIRRELVM vm);
+
         static ProceduralExplorationGameCore::MapGen* currentMapGen;
         static ProceduralExplorationGameCore::VisitedPlacesParser* currentVisitedPlacesParser;
     };

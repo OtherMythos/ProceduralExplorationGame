@@ -9,6 +9,9 @@
 #include "Scripting/VisitedPlaceMapDataUserData.h"
 #include "Scripting/DataPointFileUserData.h"
 
+#include "Voxeliser/VoxSceneDumper.h"
+#include "Ogre.h"
+
 #include "GameplayConstants.h"
 #include "GameCoreLogger.h"
 
@@ -61,6 +64,10 @@ namespace ProceduralExplorationGamePlugin{
         meshManager->_setVaoManager(Ogre::Root::getSingleton().getRenderSystem()->getVaoManager());
         Ogre::VoxMeshItemFactory* factory = OGRE_NEW Ogre::VoxMeshItemFactory();
         Ogre::Root::getSingletonPtr()->addMovableObjectFactory(factory);
+
+        ProceduralExplorationGameCore::VoxSceneDumper dumper;
+        auto it = Ogre::Root::getSingleton().getSceneManagerIterator();
+        //dumper.dumpToObjFile("/tmp/out.obj", it.getNext()->getRootSceneNode());
 
     }
 
