@@ -2,6 +2,7 @@
 
     mActionSets_ = []
     mCurrentActionSet_ = null
+    mPushedActionSets_ = []
 
     function setup(){
         _input.setActionSets({
@@ -127,7 +128,7 @@
         _input.mapKeyboardInput(_K_ESCAPE, this.closeDebugConsole);
 
         //_input.setActionSetForDevice(_ANY_INPUT_DEVICE, ::InputManager.actionSetGameplay);
-        setActionSet(InputActionSets.EXPLORATION);
+        pushActionSet(InputActionSets.EXPLORATION);
     }
 
     function getCurrentActionSet(){
@@ -138,5 +139,19 @@
         mCurrentActionSet_ = actionSet;
         local target = mActionSets_[actionSet];
         _input.setActionSetForDevice(_ANY_INPUT_DEVICE, target);
+    }
+
+    function pushActionSet(actionSet){
+        local setId = mPushedActionSets_.len();
+        mPushedActionSets_.append(actionSet);
+        setActionSet(actionSet);
+        return setId;
+    }
+
+    //SetId to perform some sanity checks incase the popped order is wrong.
+    function popActionSet(setId=null){
+        assert((mPushedActionSets_.len() - 1) == setId);
+        mPushedActionSets_.remove(mPushedActionSets_.len() - 1);
+        setActionSet(mPushedActionSets_.top());
     }
 }

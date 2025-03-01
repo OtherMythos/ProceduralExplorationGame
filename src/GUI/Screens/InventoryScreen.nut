@@ -34,6 +34,8 @@ enum InventoryBusEvents{
     mSecondaryWidth_ = 0;
     mSecondaryHeight_ = 0;
 
+    mActionSetId_ = null;
+
     mPreviousHighlight_ = null;
 
     mInventoryWidth = 5;
@@ -288,7 +290,7 @@ enum InventoryBusEvents{
 
         inventoryButton.setFocus();
 
-        ::InputManager.setActionSet(InputActionSets.MENU);
+        mActionSetId_ = ::InputManager.pushActionSet(InputActionSets.MENU);
     }
 
     function highlightPrevious(){
@@ -559,7 +561,7 @@ enum InventoryBusEvents{
         _event.unsubscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent);
         _event.unsubscribe(Event.PLAYER_EQUIP_CHANGED, receivePlayerEquipChangedEvent);
 
-        ::InputManager.setActionSet(InputActionSets.EXPLORATION);
+        ::InputManager.popActionSet(mActionSetId_);
     }
 
     function update(){

@@ -1,6 +1,8 @@
 
 ::ScreenManager.Screens[Screen.PAUSE_SCREEN] = class extends ::Screen{
 
+    mActionSetId_ = null;
+
     buttonOptions = ["Resume", "Settings", "Return to Main Menu"];
     buttonFunctions = [
         function(widget, action){
@@ -57,12 +59,12 @@
         layoutLine.layout();
 
         //TODO rather than doing this in screens it would make more sense to have a system to manage it.
-        ::InputManager.setActionSet(InputActionSets.MENU);
+        mActionSetId_ = ::InputManager.pushActionSet(InputActionSets.MENU);
     }
 
     function shutdown(){
         base.shutdown();
-        ::InputManager.setActionSet(InputActionSets.EXPLORATION);
+        ::InputManager.popActionSet(mActionSetId_);
     }
 
     function closeScreen(){

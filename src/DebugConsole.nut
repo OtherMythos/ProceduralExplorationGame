@@ -11,6 +11,8 @@
     mTogglePressed_ = false
     mPreviousActionSet_ = null
 
+    mActionSetId_ = null
+
     DebugCommandEntry = class{
         mName = null;
         mDescription = null;
@@ -62,13 +64,15 @@
             mPreviousActionSet_ = ::InputManager.getCurrentActionSet();
 
             positionOutputLabel();
+
+            mActionSetId_ = ::InputManager.pushActionSet(InputActionSets.DEBUG_CONSOLE);
         }else{
             assert(mCommandBox_ != null);
             _gui.destroy(mCommandBox_);
             mCommandBox_ = null;
-        }
 
-        ::InputManager.setActionSet(active ? InputActionSets.DEBUG_CONSOLE : mPreviousActionSet_);
+            ::InputManager.popActionSet(mActionSetId_);
+        }
     }
 
     function update(){
