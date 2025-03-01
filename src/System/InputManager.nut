@@ -127,7 +127,6 @@
         _input.mapKeyboardInput(_K_ESCAPE, this.menuBack);
         _input.mapKeyboardInput(_K_ESCAPE, this.closeDebugConsole);
 
-        //_input.setActionSetForDevice(_ANY_INPUT_DEVICE, ::InputManager.actionSetGameplay);
         pushActionSet(InputActionSets.EXPLORATION);
     }
 

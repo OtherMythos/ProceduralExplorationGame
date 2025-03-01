@@ -6,7 +6,7 @@
     buttonOptions = ["Resume", "Settings", "Return to Main Menu"];
     buttonFunctions = [
         function(widget, action){
-            ::Base.mExplorationLogic.setGamePaused(true);
+            ::Base.mExplorationLogic.setGamePaused(false);
             closeScreen();
         },
         function(widget, action){

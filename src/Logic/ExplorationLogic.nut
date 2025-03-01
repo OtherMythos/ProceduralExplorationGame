@@ -20,6 +20,7 @@
 
     mQueuedWorlds_ = null;
     mIdPool_ = null;
+    mPauseCount_ = 0;
 
     mGui_ = null;
     mInputs_ = null;
@@ -254,12 +255,24 @@
     }
 
     function pauseExploration(){
+        mPauseCount_++;
+        if(mExplorationPaused_) return;
+
         print("Pausing exploration");
         mExplorationPaused_ = true;
         _state.setPauseState(0xFFFF);
     }
 
     function unPauseExploration(){
+        mPauseCount_--;
+        if(mPauseCount_ > 0){
+            return;
+        }
+
+        //Make sure it doesn't become negative.
+        mPauseCount_ = 0;
+        if(!mExplorationPaused_) return;
+
         print("UnPausing exploration");
         mExplorationPaused_ = false;
         _state.setPauseState(0x0);
