@@ -30,6 +30,7 @@
 #include "MapGen/Steps/MergeExpandableRegionsMapGenStep.h"
 #include "MapGen/Steps/PopulateFinalBiomesMapGenStep.h"
 #include "MapGen/Steps/WriteFinalRegionValuesMapGenStep.h"
+#include "MapGen/Steps/PlaceItemsForBiomesMapGenStep.h"
 //#include "MapGen/Steps/DeterminePlacesMapGenStep.h"
 #include "MapGen/Steps/MergeSmallRegionsMapGenStep.h"
 #include "MapGen/Steps/MergeIsolatedRegionsMapGenStep.h"
@@ -63,6 +64,7 @@ namespace ProceduralExplorationGameCore{
         {"Carve Rivers", new CarveRiversMapGenStep()},
         {"Determine Player Start", new DeterminePlayerStartMapGenStep()},
         {"Determine Gateway Position", new DetermineGatewayPositionMapGenStep()},
+        {"Place Items For Biomes", new PlaceItemsForBiomesMapGenStep()},
         //{"Determine Regions", new DetermineRegionsMapGenStep()},
         //{"Determine Places", new DeterminePlacesMapGenStep()},
     };

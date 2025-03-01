@@ -1,4 +1,4 @@
-#include "PopulateFinalBiomesMapGenStep.h"
+#include "PlaceItemsForBiomesMapGenStep.h"
 
 #include "MapGen/ExplorationMapDataPrerequisites.h"
 #include "MapGen/Biomes.h"
@@ -7,32 +7,32 @@
 
 namespace ProceduralExplorationGameCore{
 
-    PopulateFinalBiomesMapGenStep::PopulateFinalBiomesMapGenStep(){
+    PlaceItemsForBiomesMapGenStep::PlaceItemsForBiomesMapGenStep(){
 
     }
 
-    PopulateFinalBiomesMapGenStep::~PopulateFinalBiomesMapGenStep(){
+    PlaceItemsForBiomesMapGenStep::~PlaceItemsForBiomesMapGenStep(){
 
     }
 
-    void PopulateFinalBiomesMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    void PlaceItemsForBiomesMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         int div = 4;
         int divHeight = input->height / div;
         for(int i = 0; i < 4; i++){
-            PopulateFinalBiomesMapGenJob job;
+            PlaceItemsForBiomesMapGenJob job;
             job.processJob(mapData, 0, i * divHeight, input->width, i * divHeight + divHeight);
         }
     }
 
-    PopulateFinalBiomesMapGenJob::PopulateFinalBiomesMapGenJob(){
+    PlaceItemsForBiomesMapGenJob::PlaceItemsForBiomesMapGenJob(){
 
     }
 
-    PopulateFinalBiomesMapGenJob::~PopulateFinalBiomesMapGenJob(){
+    PlaceItemsForBiomesMapGenJob::~PlaceItemsForBiomesMapGenJob(){
 
     }
 
-    void PopulateFinalBiomesMapGenJob::processJob(ExplorationMapData* mapData, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb){
+    void PlaceItemsForBiomesMapGenJob::processJob(ExplorationMapData* mapData, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb){
         const WorldPoint wrappedStartPoint = WRAP_WORLD_POINT(xa, ya);
         AV::uint32* fullSecondaryVoxPtr = FULL_PTR_FOR_COORD_SECONDARY(mapData, wrappedStartPoint);
         AV::uint32* fullVoxPtr = FULL_PTR_FOR_COORD(mapData, wrappedStartPoint);
@@ -54,21 +54,9 @@ namespace ProceduralExplorationGameCore{
 
                 const Biome& b = Biome::getBiomeForId(mapData->regionData[regionId].type);
 
-/*
                 Biome::PlaceObjectFunction placeFunc = b.getPlacementFunction();
                 assert(placeFunc != 0);
                 (*placeFunc)(mapData->placedItems, mapData, x, y, altitude, regionId, flags, moisture);
-                */
-
-                Biome::DetermineVoxFunction voxFunc = b.getVoxFunction();
-                assert(voxFunc != 0);
-                MapVoxelTypes finalVox = (*voxFunc)(altitude, moisture, mapData);
-                *(reinterpret_cast<AV::uint8*>(fullVoxPtrWrite)+1) |= (static_cast<AV::uint8>(finalVox) & static_cast<AV::uint8>(MAP_VOXEL_MASK));
-
-                Biome::DetermineAltitudeFunction altFunc = b.getAltitudeFunction();
-                assert(altFunc != 0);
-                AV::uint8 finalAltitude = (*altFunc)(altitude, moisture, x, y, mapData);
-                *(reinterpret_cast<AV::uint8*>(fullVoxPtrWrite)) = finalAltitude;
             }
         }
     }
