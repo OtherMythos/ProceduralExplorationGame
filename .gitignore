@@ -17,3 +17,4 @@ util/helper/token
 extra/
 util/buildHelper/buildPaths
 .dirTimestamps.json
+resBuildFlags.sh
