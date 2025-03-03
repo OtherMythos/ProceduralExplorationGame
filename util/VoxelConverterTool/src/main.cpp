@@ -67,6 +67,11 @@ int main(int argc, char *argv[]){
     VoxelConverterTool::ParsedVoxFile out;
     p.parseFile(inputVals[INPUT_INPUT_FILE], out);
 
+    if(out.data.empty()){
+        std::cerr << "Error: No vertices parsed for input." << std::endl;
+        return 1;
+    }
+
     if(totalFlags[FLAG_AUTO_CENTRE]){
         VoxelConverterTool::AutoCentre c;
         c.centreForParsedFile(out);
