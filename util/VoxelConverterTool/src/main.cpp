@@ -63,6 +63,17 @@ int main(int argc, char *argv[]){
 
     parseArgs(argc, argv, totalFlags, inputVals);
 
+    if(!inputVals[INPUT_INPUT_FILE]){
+        std::cerr << "Error: No input file specified." << std::endl;
+        printHelp();
+        return 1;
+    }
+    if(!inputVals[INPUT_OUTPUT_FILE]){
+        std::cerr << "Error: No output file specified." << std::endl;
+        printHelp();
+        return 1;
+    }
+
     VoxelConverterTool::VoxelFileParser p;
     VoxelConverterTool::ParsedVoxFile out;
     p.parseFile(inputVals[INPUT_INPUT_FILE], out);
