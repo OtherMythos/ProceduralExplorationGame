@@ -3,6 +3,7 @@
 #include "File/VoxelFileParser.h"
 #include "Pipeline/VoxToFaces.h"
 #include "Pipeline/FacesToVerticesFile.h"
+#include "Pipeline/FaceMerger.h"
 #include "Pipeline/AutoCentre.h"
 
 #include <cstring>
@@ -29,6 +30,10 @@ void printHelp(){
 [inputFile] [outputFile]";
 
     std::cout << help << std::endl;
+}
+
+void printStats(const VoxelConverterTool::OutputFaces& out){
+    std::cout << "Wrote " << out.outFaces.size() << " faces" << std::endl;
 }
 
 void parseArgs(int argc, char *argv[], bool (&totalFlags)[FLAG_MAX], const char* (&totalInputs)[INPUT_MAX]){
@@ -93,8 +98,13 @@ int main(int argc, char *argv[]){
     VoxelConverterTool::VoxToFaces f;
     f.voxToFaces(out, outFaces);
 
+    VoxelConverterTool::FaceMerger merger;
+    VoxelConverterTool::OutputFaces mergedFaces = merger.mergeFaces(outFaces);
+
     VoxelConverterTool::FacesToVerticesFile outFile;
-    outFile.writeToFile(inputVals[INPUT_OUTPUT_FILE], outFaces);
+    outFile.writeToFile(inputVals[INPUT_OUTPUT_FILE], mergedFaces);
+
+    printStats(outFaces);
 
     return 0;
 }

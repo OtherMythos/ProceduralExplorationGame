@@ -116,6 +116,9 @@ namespace VoxelConverterTool{
         faces.maxX = currentMaxX;
         faces.maxY = currentMaxY;
         faces.maxZ = currentMaxZ;
+        faces.deltaX = faces.maxX - faces.minX;
+        faces.deltaY = faces.maxY - faces.minY;
+        faces.deltaZ = faces.maxZ - faces.minZ;
     }
 
 }

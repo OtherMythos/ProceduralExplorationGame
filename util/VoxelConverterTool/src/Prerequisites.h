@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <vector>
 
 namespace VoxelConverterTool{
 
@@ -12,6 +13,18 @@ namespace VoxelConverterTool{
     typedef uint16 VoxelId;
     static const VoxelId EMPTY_VOXEL = 0x8000;
     typedef uint64 WrappedFace;
+    typedef uint8 FaceId;
+
+    struct OutputFaces{
+        std::vector<WrappedFace> outFaces;
+        int minX, minY, minZ;
+        int maxX, maxY, maxZ;
+        int deltaX, deltaY, deltaZ;
+
+        size_t calcMeshSizeBytes() const{
+            return outFaces.size() * 4 * 6 * sizeof(uint32);
+        }
+    };
 
     struct WrappedFaceContainer{
         uint8 x, y, z;
@@ -20,7 +33,7 @@ namespace VoxelConverterTool{
         uint8 faceMask;
     };
     static WrappedFace _wrapFace(const WrappedFaceContainer& c){
-        return 
+        return
             static_cast<uint64>(c.x) |
             static_cast<uint64>(c.y) << 8 |
             static_cast<uint64>(c.z) << 16 |
