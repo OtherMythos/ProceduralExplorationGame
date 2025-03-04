@@ -30,7 +30,7 @@
 	@end
 
 	uint magicNumber = originalSecond & uint(0x1FFFFFFF);
-	float3 normVal = float3(0, 0, 0);
+	float3 normVal = inVs_normal;
 	#undef inVs_normal
 	#define inVs_normal normVal
 

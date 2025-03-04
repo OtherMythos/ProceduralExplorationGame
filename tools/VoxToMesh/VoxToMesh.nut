@@ -91,9 +91,11 @@ function setupGui(){
 
         ::registerTimeTaken(t.getSeconds());
 
-        local item = _gameCore.createVoxMeshItem(meshObj);
+        local item = _scene.createItem(mMesh_);
         local newNode = _scene.getRootSceneNode().createChildSceneNode();
         newNode.attachObject(item);
+
+        ::mesh <- _mesh.create("cube");
 
         mNode_ = newNode;
     }
