@@ -97,9 +97,9 @@ namespace VoxelConverterTool{
                 uint32 ambientMask = getVerticeBorder(parsedVox, f, x, y, z);
                 //Submit this face
 
-                const WrappedFaceContainer c = {x, y, z, v, ambientMask, f};
-                WrappedFace face = _wrapFace(c);
-                faces.outFaces.push_back(face);
+                const WrappedFaceContainer c = {x, y, z, 1, 1, 1, v, ambientMask, f};
+                //WrappedFace face = _wrapFace(c);
+                faces.outFaces.push_back(c);
             }
             if(x < currentMinX) currentMinX = x;
             if(y < currentMinY) currentMinY = y;

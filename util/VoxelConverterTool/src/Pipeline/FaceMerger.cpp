@@ -41,6 +41,9 @@ namespace VoxelConverterTool{
     }
 
     int FaceMerger::getDirectionBForNormalType(FaceNormalType ft) const{
+        if(ft == FaceNormalType::Z){
+            return 1;
+        }
         return FACES_NORMALS[static_cast<size_t>(ft)].y;
     }
 
@@ -49,14 +52,32 @@ namespace VoxelConverterTool{
         int minB = -1;
         int maxA = -1;
         int maxB = -1;
+
+        bool first = true;
         for(uint64 f : intermediateFaces){
             int aCoord = static_cast<int>(f & 0xFFFF);
             int bCoord = static_cast<int>((f >> 32) & 0xFFFF);
 
-            minA = aCoord;
-            minB = bCoord;
-            assert(aCoord >= 0);
-            assert(bCoord >= 0);
+            if(first){
+                minA = aCoord;
+                minB = bCoord;
+                maxA = aCoord + 1;
+                maxB = bCoord + 1;
+                first = false;
+            }else{
+                if(aCoord < minA){
+                    minA = aCoord;
+                }
+                if(bCoord < minB){
+                    minB = bCoord;
+                }
+                if(aCoord + 1 > maxA){
+                    maxA = aCoord + 1;
+                }
+                if(bCoord + 1 > maxB){
+                    maxB = bCoord + 1;
+                }
+            }
         }
 
         WrappedFaceContainer container;
@@ -65,10 +86,13 @@ namespace VoxelConverterTool{
         container.z = gridSlice;
         container.x = minA;
         container.y = minB;
+        container.sizeX = maxA - minA;
+        container.sizeY = maxB - minB;
+        container.sizeZ = 0;
         container.faceMask = f;
         FaceNormalType ft = FACE_NORMAL_TYPES[f];
-        WrappedFace wf = _wrapFace(container);
-        faces.outFaces.push_back(wf);
+        //WrappedFace wf = _wrapFace(container);
+        faces.outFaces.push_back(container);
     }
 
     void FaceMerger::expandFace(int& numFacesMerged, int aCoord, int bCoord, int gridSlice, int aSize, int bSize, FaceId f, FaceIntermediateContainer& fcc, const VoxelConverterTool::OutputFaces& faces, std::vector<FaceIntermediateWrapped>& wrapped, std::set<uint64>& intermediateFaces){
@@ -76,12 +100,17 @@ namespace VoxelConverterTool{
         assert(aCoord >= 0);
         assert(bCoord >= 0);
 
+        uint64 newIntermediateFace = static_cast<uint64>(aCoord) | static_cast<uint64>(bCoord) << 32;
+
         const int width = 256;
         const int height = 256;
 
         size_t idx = aCoord + (bCoord * width) + (gridSlice * width * height);
         FaceIntermediateWrapped fiw = wrapped[idx];
         if(fiw == INVALID_FACE_INTERMEDIATE) return;
+        //if(intermediateFaces.find(newIntermediateFace) != intermediateFaces.end()) return;
+        assert(intermediateFaces.find(newIntermediateFace) == intermediateFaces.end());
+
         FaceIntermediateContainer fc;
         _unwrapFaceIntermediate(fiw, fc);
 
@@ -100,12 +129,11 @@ namespace VoxelConverterTool{
         //Prevent infinite loops
         assert(dirA != 0 || dirB != 0);
 
-        intermediateFaces.insert(static_cast<uint64>(aCoord) | static_cast<uint64>(bCoord) << 32);
+        intermediateFaces.insert(newIntermediateFace);
         wrapped[idx] = INVALID_FACE_INTERMEDIATE;
         numFacesMerged++;
 
-        return;
-        expandFace(numFacesMerged, aCoord + dirA, bCoord + dirB, gridSlice, aSize, bSize, f, fc, faces, wrapped, intermediateFaces);
+        expandFace(numFacesMerged, aCoord + 0, bCoord + dirB, gridSlice, aSize, bSize, f, fc, faces, wrapped, intermediateFaces);
 
     }
 
@@ -144,12 +172,13 @@ namespace VoxelConverterTool{
         VoxelConverterTool::OutputFaces outFaces;
 
         for(FaceId f = 0; f < 6; f++){
+            if(f != 3) continue;
             FaceNormalType ft = FACE_NORMAL_TYPES[f];
 
             //Produce an easily searchable data structure containing only the target faces.
-            for(const WrappedFace wf : faces.outFaces){
-                WrappedFaceContainer fc;
-                _unwrapFace(wf, fc);
+            for(const WrappedFaceContainer& fc : faces.outFaces){
+                //WrappedFaceContainer fc;
+                //_unwrapFace(wf, fc);
 
                 int xx = fc.x;
                 int yy = fc.y;

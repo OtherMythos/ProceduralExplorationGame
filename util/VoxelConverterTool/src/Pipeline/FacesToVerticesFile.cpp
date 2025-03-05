@@ -141,9 +141,9 @@ namespace VoxelConverterTool{
         // Header
         size_t meshSizeBytes = outFaces.calcMeshSizeBytes();
         writeChunkHeader(M_SUBMESH_M_GEOMETRY_VERTEX_BUFFER, meshSizeBytes);
-        for(WrappedFace f : outFaces.outFaces){
-            WrappedFaceContainer fd;
-            _unwrapFace(f, fd);
+        for(const WrappedFaceContainer& fd : outFaces.outFaces){
+            //WrappedFaceContainer fd;
+            //_unwrapFace(f, fd);
 
             float texCoordX = (static_cast<float>(fd.vox % COLS_WIDTH) / COLS_WIDTH) + TILE_WIDTH;
             float texCoordY = (static_cast<float>((static_cast<uint32>(static_cast<float>(fd.vox) / COLS_WIDTH))) / COLS_HEIGHT) + TILE_HEIGHT;
@@ -151,9 +151,9 @@ namespace VoxelConverterTool{
             //Write the four vertices to the file.
             for(int i = 0; i < 4; i++){
                 uint32 fv = FACES_VERTICES[fd.faceMask * 4 + i]*3;
-                int xx = (VERTICES_POSITIONS[fv] + fd.x);
-                int yy = (VERTICES_POSITIONS[fv + 1] + fd.y);
-                int zz = (VERTICES_POSITIONS[fv + 2] + fd.z);
+                int xx = (VERTICES_POSITIONS[fv] * fd.sizeX + fd.x);
+                int yy = (VERTICES_POSITIONS[fv + 1] * fd.sizeY + fd.y);
+                int zz = (VERTICES_POSITIONS[fv + 2] * fd.sizeZ + fd.z);
                 //assert(xx <= 0x2FF && xx >= -0x2FF);
                 //assert(yy <= 0x2FF && yy >= -0x2FF);
                 //assert(zz <= 0x2FF && zz >= -0x2FF);

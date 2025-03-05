@@ -104,7 +104,7 @@ int main(int argc, char *argv[]){
     VoxelConverterTool::FacesToVerticesFile outFile;
     outFile.writeToFile(inputVals[INPUT_OUTPUT_FILE], mergedFaces);
 
-    printStats(outFaces);
+    printStats(mergedFaces);
 
     return 0;
 }

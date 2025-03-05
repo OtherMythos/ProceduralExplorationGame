@@ -15,8 +15,16 @@ namespace VoxelConverterTool{
     typedef uint64 WrappedFace;
     typedef uint8 FaceId;
 
+
+    struct WrappedFaceContainer{
+        uint8 x, y, z;
+        uint8 sizeX, sizeY, sizeZ;
+        VoxelId vox;
+        uint32 ambientMask;
+        uint8 faceMask;
+    };
     struct OutputFaces{
-        std::vector<WrappedFace> outFaces;
+        std::vector<WrappedFaceContainer> outFaces;
         int minX, minY, minZ;
         int maxX, maxY, maxZ;
         int deltaX, deltaY, deltaZ;
@@ -24,13 +32,6 @@ namespace VoxelConverterTool{
         size_t calcMeshSizeBytes() const{
             return outFaces.size() * 4 * 6 * sizeof(uint32);
         }
-    };
-
-    struct WrappedFaceContainer{
-        uint8 x, y, z;
-        VoxelId vox;
-        uint32 ambientMask;
-        uint8 faceMask;
     };
     static WrappedFace _wrapFace(const WrappedFaceContainer& c){
         return
