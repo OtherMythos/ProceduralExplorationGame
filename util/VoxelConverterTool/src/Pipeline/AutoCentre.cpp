@@ -38,6 +38,7 @@ namespace VoxelConverterTool{
                     int newX = (x + -shiftX + width) % width;
                     int newZ = (z + -shiftZ + height) % height;
 
+                    //TODO check and remove this
                     bool thing = false;
                     if(p.data[x + (z * width) + (y * width * height)] != EMPTY_VOXEL){
                         thing = true;

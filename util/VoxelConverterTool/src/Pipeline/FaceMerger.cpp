@@ -44,7 +44,7 @@ namespace VoxelConverterTool{
         return FACES_NORMALS[static_cast<size_t>(ft)].y;
     }
 
-    void FaceMerger::commitFaces(VoxelConverterTool::OutputFaces& faces, std::set<uint64>& intermediateFaces, FaceIntermediateContainer& fc, int gridSlice){
+    void FaceMerger::commitFaces(VoxelConverterTool::OutputFaces& faces, std::set<uint64>& intermediateFaces, FaceIntermediateContainer& fc, int gridSlice, FaceId f){
         int minA = -1;
         int minB = -1;
         int maxA = -1;
@@ -55,21 +55,31 @@ namespace VoxelConverterTool{
 
             minA = aCoord;
             minB = bCoord;
+            assert(aCoord >= 0);
+            assert(bCoord >= 0);
         }
 
         WrappedFaceContainer container;
-        WrappedFace wf = _wrapFace(container);
         container.vox = fc.v;
         container.ambientMask = fc.a;
         container.z = gridSlice;
         container.x = minA;
         container.y = minB;
+        container.faceMask = f;
+        FaceNormalType ft = FACE_NORMAL_TYPES[f];
+        WrappedFace wf = _wrapFace(container);
         faces.outFaces.push_back(wf);
     }
 
-    void FaceMerger::expandFace(int& numFacesMerged, int aCoord, int bCoord, int gridSlice, int aSize, int bSize, FaceNormalType ft, FaceIntermediateContainer& fcc, const VoxelConverterTool::OutputFaces& faces, std::vector<FaceIntermediateWrapped>& wrapped, std::set<uint64>& intermediateFaces){
+    void FaceMerger::expandFace(int& numFacesMerged, int aCoord, int bCoord, int gridSlice, int aSize, int bSize, FaceId f, FaceIntermediateContainer& fcc, const VoxelConverterTool::OutputFaces& faces, std::vector<FaceIntermediateWrapped>& wrapped, std::set<uint64>& intermediateFaces){
 
-        size_t idx = aCoord + (bCoord * faces.deltaX) + (gridSlice * faces.deltaX * faces.deltaZ);
+        assert(aCoord >= 0);
+        assert(bCoord >= 0);
+
+        const int width = 256;
+        const int height = 256;
+
+        size_t idx = aCoord + (bCoord * width) + (gridSlice * width * height);
         FaceIntermediateWrapped fiw = wrapped[idx];
         if(fiw == INVALID_FACE_INTERMEDIATE) return;
         FaceIntermediateContainer fc;
@@ -84,6 +94,7 @@ namespace VoxelConverterTool{
 
         _unwrapFaceIntermediate(fiw, fcc);
 
+        FaceNormalType ft = FACE_NORMAL_TYPES[f];
         int dirA = getDirectionAForNormalType(ft);
         int dirB = getDirectionBForNormalType(ft);
         //Prevent infinite loops
@@ -93,23 +104,26 @@ namespace VoxelConverterTool{
         wrapped[idx] = INVALID_FACE_INTERMEDIATE;
         numFacesMerged++;
 
-        expandFace(numFacesMerged, aCoord + dirA, bCoord + dirB, gridSlice, aSize, bSize, ft, fc, faces, wrapped, intermediateFaces);
+        return;
+        expandFace(numFacesMerged, aCoord + dirA, bCoord + dirB, gridSlice, aSize, bSize, f, fc, faces, wrapped, intermediateFaces);
 
     }
 
-    void FaceMerger::expand2DGrid(int z, FaceNormalType ft, const VoxelConverterTool::OutputFaces& inFaces, std::vector<FaceIntermediateWrapped>& wrapped, VoxelConverterTool::OutputFaces& outFaces){
+    void FaceMerger::expand2DGrid(int z, FaceId f, const VoxelConverterTool::OutputFaces& inFaces, std::vector<FaceIntermediateWrapped>& wrapped, VoxelConverterTool::OutputFaces& outFaces){
 
-        const int width = inFaces.deltaX;
-        const int height = inFaces.deltaZ;
+        //const int width = inFaces.deltaX;
+        //const int height = inFaces.deltaZ;
+        const int width = 256;
+        const int height = 256;
 
         std::set<uint64> foundFaces;
         for(int y = 0; y < height; y++){
             for(int x = 0; x < width; x++){
                 FaceIntermediateContainer fc;
                 int numFacesMerged = 0;
-                expandFace(numFacesMerged, x, y, z, width, height, ft, fc, inFaces, wrapped, foundFaces);
+                expandFace(numFacesMerged, x, y, z, width, height, f, fc, inFaces, wrapped, foundFaces);
                 if(!foundFaces.empty()){
-                    commitFaces(outFaces, foundFaces, fc, z);
+                    commitFaces(outFaces, foundFaces, fc, z, f);
                     foundFaces.clear();
                 }
             }
@@ -119,8 +133,13 @@ namespace VoxelConverterTool{
 
     VoxelConverterTool::OutputFaces FaceMerger::mergeFaces(const VoxelConverterTool::OutputFaces& faces){
         std::vector<FaceIntermediateWrapped> faceBuffer;
-        size_t bufSize = faces.deltaX * faces.deltaY * faces.deltaZ;
+        //size_t bufSize = faces.deltaX * faces.deltaY * faces.deltaZ;
+        size_t bufSize = 256 * 256 * 256;
         faceBuffer.resize(bufSize, INVALID_FACE_INTERMEDIATE);
+
+        const int width = 256;
+        const int height = 256;
+        const int depth = 256;
 
         VoxelConverterTool::OutputFaces outFaces;
 
@@ -132,26 +151,38 @@ namespace VoxelConverterTool{
                 WrappedFaceContainer fc;
                 _unwrapFace(wf, fc);
 
-                int xx = fc.x - faces.minX;
-                int yy = fc.y - faces.minY;
-                int zz = fc.z - faces.minZ;
+                int xx = fc.x;
+                int yy = fc.y;
+                int zz = fc.z;
 
                 if(fc.faceMask != f) continue;
                 FaceIntermediateContainer fic = {fc.vox, fc.ambientMask};
                 FaceIntermediateWrapped fi =_wrapFaceIntermediate(fic);
-                size_t idx = xx + (yy * faces.deltaX) + (zz * faces.deltaX * faces.deltaZ);
+                size_t idx = xx + (yy * width) + (zz * width * height);
                 assert(idx < faceBuffer.size());
                 faceBuffer[idx] = fi;
             }
 
-            for(int z = 0; z < faces.deltaY; z++){
-                expand2DGrid(z, ft, faces, faceBuffer, outFaces);
+            for(int z = 0; z < depth; z++){
+                expand2DGrid(z, f, faces, faceBuffer, outFaces);
             }
 
             for(FaceIntermediateWrapped fiw : faceBuffer){
                 assert(fiw == INVALID_FACE_INTERMEDIATE);
             }
         }
+
+        outFaces.deltaX = faces.deltaX;
+        outFaces.deltaY = faces.deltaY;
+        outFaces.deltaZ = faces.deltaZ;
+
+        outFaces.minX = faces.minX;
+        outFaces.minY = faces.minY;
+        outFaces.minZ = faces.minZ;
+
+        outFaces.maxX = faces.maxX;
+        outFaces.maxY = faces.maxY;
+        outFaces.maxZ = faces.maxZ;
 
         return outFaces;
     }
