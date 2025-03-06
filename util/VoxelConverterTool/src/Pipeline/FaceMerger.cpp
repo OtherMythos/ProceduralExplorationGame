@@ -1,5 +1,6 @@
 #include "FaceMerger.h"
 
+#include <iostream>
 #include <cassert>
 #include <set>
 
@@ -105,14 +106,30 @@ namespace VoxelConverterTool{
         container.x = flipACoord(f, minA, gridSlice) + (f == 4 ? 1 : 0);
         container.y = minB;
         if(f == 0){
+            container.z = minB;
+            container.x = minA;
+            container.y = gridSlice;
+        }
+        if(f == 1){
+            container.z = minB;
+            container.x = minA;
+            container.y = gridSlice + 1;
+
+            container.sizeX = maxA - minA;
+            container.sizeY = 0;
+            container.sizeZ = maxB - minB;
+        }
+
+
+        if(f == 0){
             container.sizeX = maxA - minA;
             container.sizeY = 0;
             container.sizeZ = maxB - minB;
         }
         else if(f == 1){
-            container.sizeX = maxA - minA;
-            container.sizeY = maxB - minB;
-            container.sizeZ = maxB - minB;
+            //container.sizeX = maxA - minA;
+            //container.sizeY = maxB - minB;
+            //container.sizeZ = maxB - minB;
         }
         else if(f == 3){
             container.sizeX = maxA - minA;
@@ -134,6 +151,14 @@ namespace VoxelConverterTool{
         faces.outFaces.push_back(container);
     }
 
+    size_t calculateIdx(FaceId f, int a, int b, int gridSlice, int width, int height){
+        if(f == 0 || f == 1){
+            return a + (gridSlice * width) + (b * width * height);
+        }else{
+            return flipACoord(f, a, gridSlice) + (b * width) + (flipSliceCoord(f, a, gridSlice) * width * height);
+        }
+    }
+
     void FaceMerger::expandFace(int& numFacesMerged, int aCoord, int bCoord, int gridSlice, int aSize, int bSize, FaceId f, FaceIntermediateContainer& fcc, const VoxelConverterTool::OutputFaces& faces, std::vector<FaceIntermediateWrapped>& wrapped, std::set<uint64>& intermediateFaces){
 
         assert(aCoord >= 0);
@@ -143,7 +168,7 @@ namespace VoxelConverterTool{
         const int height = 256;
 
         uint64 startFace = static_cast<uint64>(aCoord) | static_cast<uint64>(bCoord) << 32;
-        size_t startIdx = flipACoord(f, aCoord, gridSlice) + (bCoord * width) + (flipSliceCoord(f, aCoord, gridSlice) * width * height);
+        size_t startIdx = calculateIdx(f, aCoord, bCoord, gridSlice, width, height);
         FaceIntermediateWrapped startFiw = wrapped[startIdx];
 
         if(startFiw == INVALID_FACE_INTERMEDIATE) return;
@@ -160,7 +185,7 @@ namespace VoxelConverterTool{
         while(true){
             int nextA = maxA + dirA;
             uint64 checkFace = static_cast<uint64>(nextA) | static_cast<uint64>(bCoord) << 32;
-            size_t checkIdx = flipACoord(f, nextA, gridSlice) + (bCoord * width) + (flipSliceCoord(f, nextA, gridSlice) * width * height);
+            size_t checkIdx = calculateIdx(f, nextA, bCoord, gridSlice, width, height);
 
             if(nextA < 0 || nextA >= aSize || wrapped[checkIdx] == INVALID_FACE_INTERMEDIATE || intermediateFaces.find(checkFace) != intermediateFaces.end()){
                 break;
@@ -184,7 +209,7 @@ namespace VoxelConverterTool{
 
             for(int x = aCoord; x <= maxA; ++x){
                 uint64 checkFace = static_cast<uint64>(x) | static_cast<uint64>(nextB) << 32;
-                size_t checkIdx = flipACoord(f, x, gridSlice) + (nextB * width) + (flipSliceCoord(f, x, gridSlice) * width * height);
+                size_t checkIdx = calculateIdx(f, x, nextB, gridSlice, width, height);
 
                 if(nextB < 0 || nextB >= bSize || wrapped[checkIdx] == INVALID_FACE_INTERMEDIATE || intermediateFaces.find(checkFace) != intermediateFaces.end()){
                     canExpandB = false;
@@ -208,7 +233,7 @@ namespace VoxelConverterTool{
         for(int y=bCoord; y <= maxB; ++y){
             for(int x=aCoord; x <= maxA; ++x){
                 uint64 mergedFace = static_cast<uint64>(x) | static_cast<uint64>(y) << 32;
-                size_t mergedIdx = flipACoord(f, x, gridSlice) + (y * width) + (flipSliceCoord(f, x, gridSlice) * width * height);
+                size_t mergedIdx = calculateIdx(f, x, y, gridSlice, width, height);
 
                 intermediateFaces.insert(mergedFace);
                 wrapped[mergedIdx] = INVALID_FACE_INTERMEDIATE;
@@ -254,7 +279,7 @@ namespace VoxelConverterTool{
         for(FaceId f = 0; f < 6; f++){
             //if(f != 3) continue;
             //if(f < 4) continue;
-            //if(f != 4) continue;
+            //if(f != 1) continue;
             FaceNormalType ft = FACE_NORMAL_TYPES[f];
 
             //Produce an easily searchable data structure containing only the target faces.
@@ -294,6 +319,10 @@ namespace VoxelConverterTool{
         outFaces.maxX = faces.maxX;
         outFaces.maxY = faces.maxY;
         outFaces.maxZ = faces.maxZ;
+
+        std::cout << faces.outFaces.size() << std::endl;
+        std::cout << outFaces.outFaces.size() << std::endl;
+        std::cout << float(outFaces.outFaces.size()) / float(faces.outFaces.size()) << std::endl;
 
         return outFaces;
     }
