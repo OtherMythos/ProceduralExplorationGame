@@ -97,44 +97,84 @@ namespace VoxelConverterTool{
 
     void FaceMerger::expandFace(int& numFacesMerged, int aCoord, int bCoord, int gridSlice, int aSize, int bSize, FaceId f, FaceIntermediateContainer& fcc, const VoxelConverterTool::OutputFaces& faces, std::vector<FaceIntermediateWrapped>& wrapped, std::set<uint64>& intermediateFaces){
 
-        assert(aCoord >= 0);
-        assert(bCoord >= 0);
-
-        uint64 newIntermediateFace = static_cast<uint64>(aCoord) | static_cast<uint64>(bCoord) << 32;
+        assert(aCoord>=0);
+        assert(bCoord>=0);
 
         const int width = 256;
         const int height = 256;
 
-        size_t idx = aCoord + (bCoord * width) + (gridSlice * width * height);
-        FaceIntermediateWrapped fiw = wrapped[idx];
-        if(fiw == INVALID_FACE_INTERMEDIATE) return;
-        //if(intermediateFaces.find(newIntermediateFace) != intermediateFaces.end()) return;
-        assert(intermediateFaces.find(newIntermediateFace) == intermediateFaces.end());
+        uint64 startFace = static_cast<uint64>(aCoord) | static_cast<uint64>(bCoord)<<32;
+        size_t startIdx = aCoord + (bCoord * width) + (gridSlice * width * height);
+        FaceIntermediateWrapped startFiw = wrapped[startIdx];
 
-        FaceIntermediateContainer fc;
-        _unwrapFaceIntermediate(fiw, fc);
+        if(startFiw==INVALID_FACE_INTERMEDIATE) return;
+        assert(intermediateFaces.find(startFace)==intermediateFaces.end());
 
-        if(numFacesMerged > 0){
-            //If this is not the first face found, check if the face types match.
-            if(fcc.a != fc.a || fcc.v != fc.v){
-                return;
-            }
-        }
-
-        _unwrapFaceIntermediate(fiw, fcc);
+        _unwrapFaceIntermediate(startFiw, fcc);
 
         FaceNormalType ft = FACE_NORMAL_TYPES[f];
         int dirA = getDirectionAForNormalType(ft);
         int dirB = getDirectionBForNormalType(ft);
-        //Prevent infinite loops
-        assert(dirA != 0 || dirB != 0);
+        assert(dirA!=0 || dirB!=0);
 
-        intermediateFaces.insert(newIntermediateFace);
-        wrapped[idx] = INVALID_FACE_INTERMEDIATE;
-        numFacesMerged++;
+        int maxA = aCoord;
+        while(true){
+            int nextA = maxA + dirA;
+            uint64 checkFace = static_cast<uint64>(nextA) | static_cast<uint64>(bCoord)<<32;
+            size_t checkIdx = nextA + (bCoord * width) + (gridSlice * width * height);
 
-        expandFace(numFacesMerged, aCoord + 0, bCoord + dirB, gridSlice, aSize, bSize, f, fc, faces, wrapped, intermediateFaces);
+            if(nextA<0 || nextA>=aSize || wrapped[checkIdx]==INVALID_FACE_INTERMEDIATE || intermediateFaces.find(checkFace)!=intermediateFaces.end()){
+                break;
+            }
 
+            FaceIntermediateContainer checkFc;
+            _unwrapFaceIntermediate(wrapped[checkIdx], checkFc);
+
+            if(checkFc.a!=fcc.a || checkFc.v!=fcc.v){
+                break;
+            }
+
+            maxA = nextA;
+        }
+
+        int maxB = bCoord;
+        bool canExpandB = true;
+        while(canExpandB){
+            int nextB = maxB + dirB;
+
+            for(int x=aCoord; x<=maxA; ++x){
+                uint64 checkFace = static_cast<uint64>(x) | static_cast<uint64>(nextB)<<32;
+                size_t checkIdx = x + (nextB * width) + (gridSlice * width * height);
+
+                if(nextB<0 || nextB>=bSize || wrapped[checkIdx]==INVALID_FACE_INTERMEDIATE || intermediateFaces.find(checkFace)!=intermediateFaces.end()){
+                    canExpandB = false;
+                    break;
+                }
+
+                FaceIntermediateContainer checkFc;
+                _unwrapFaceIntermediate(wrapped[checkIdx], checkFc);
+
+                if(checkFc.a!=fcc.a || checkFc.v!=fcc.v){
+                    canExpandB = false;
+                    break;
+                }
+            }
+
+            if(canExpandB){
+                maxB = nextB;
+            }
+        }
+
+        for(int y=bCoord; y<=maxB; ++y){
+            for(int x=aCoord; x<=maxA; ++x){
+                uint64 mergedFace = static_cast<uint64>(x) | static_cast<uint64>(y)<<32;
+                size_t mergedIdx = x + (y * width) + (gridSlice * width * height);
+
+                intermediateFaces.insert(mergedFace);
+                wrapped[mergedIdx] = INVALID_FACE_INTERMEDIATE;
+                numFacesMerged++;
+            }
+        }
     }
 
     void FaceMerger::expand2DGrid(int z, FaceId f, const VoxelConverterTool::OutputFaces& inFaces, std::vector<FaceIntermediateWrapped>& wrapped, VoxelConverterTool::OutputFaces& outFaces){
