@@ -34,6 +34,7 @@ namespace VoxelConverterTool{
     }
 
     int FaceMerger::getDirectionAForNormalType(FaceNormalType ft) const{
+        return 1;
         if(ft == FaceNormalType::Z){
             return 1;
         }
@@ -41,6 +42,7 @@ namespace VoxelConverterTool{
     }
 
     int FaceMerger::getDirectionBForNormalType(FaceNormalType ft) const{
+        return 1;
         if(ft == FaceNormalType::Z){
             return 1;
         }
@@ -86,9 +88,30 @@ namespace VoxelConverterTool{
         container.z = gridSlice;
         container.x = minA;
         container.y = minB;
-        container.sizeX = maxA - minA;
-        container.sizeY = maxB - minB;
-        container.sizeZ = 0;
+        if(f == 0){
+            container.sizeX = maxA - minA;
+            container.sizeY = 0;
+            container.sizeZ = maxB - minB;
+        }
+        else if(f == 1){
+            container.sizeX = maxA - minA;
+            container.sizeY = maxB - minB;
+            container.sizeZ = maxB - minB;
+        }
+        else if(f == 3){
+            container.sizeX = maxA - minA;
+            container.sizeY = maxB - minB;
+            container.sizeZ = 1;
+        }else if(f == 2){
+            container.sizeX = maxA - minA;
+            container.sizeY = maxB - minB;
+            container.sizeZ = 0;
+        }else{
+            container.sizeX = maxA - minA;
+            container.sizeY = maxB - minB;
+            container.sizeZ = maxB - minB;
+        }
+        assert(container.sizeX >= 0 && container.sizeY >= 0 && container.sizeZ >= 0);
         container.faceMask = f;
         FaceNormalType ft = FACE_NORMAL_TYPES[f];
         //WrappedFace wf = _wrapFace(container);
@@ -97,40 +120,40 @@ namespace VoxelConverterTool{
 
     void FaceMerger::expandFace(int& numFacesMerged, int aCoord, int bCoord, int gridSlice, int aSize, int bSize, FaceId f, FaceIntermediateContainer& fcc, const VoxelConverterTool::OutputFaces& faces, std::vector<FaceIntermediateWrapped>& wrapped, std::set<uint64>& intermediateFaces){
 
-        assert(aCoord>=0);
-        assert(bCoord>=0);
+        assert(aCoord >= 0);
+        assert(bCoord >= 0);
 
         const int width = 256;
         const int height = 256;
 
-        uint64 startFace = static_cast<uint64>(aCoord) | static_cast<uint64>(bCoord)<<32;
+        uint64 startFace = static_cast<uint64>(aCoord) | static_cast<uint64>(bCoord) << 32;
         size_t startIdx = aCoord + (bCoord * width) + (gridSlice * width * height);
         FaceIntermediateWrapped startFiw = wrapped[startIdx];
 
-        if(startFiw==INVALID_FACE_INTERMEDIATE) return;
-        assert(intermediateFaces.find(startFace)==intermediateFaces.end());
+        if(startFiw == INVALID_FACE_INTERMEDIATE) return;
+        assert(intermediateFaces.find(startFace) == intermediateFaces.end());
 
         _unwrapFaceIntermediate(startFiw, fcc);
 
         FaceNormalType ft = FACE_NORMAL_TYPES[f];
         int dirA = getDirectionAForNormalType(ft);
         int dirB = getDirectionBForNormalType(ft);
-        assert(dirA!=0 || dirB!=0);
+        assert(dirA != 0 || dirB != 0);
 
         int maxA = aCoord;
         while(true){
             int nextA = maxA + dirA;
-            uint64 checkFace = static_cast<uint64>(nextA) | static_cast<uint64>(bCoord)<<32;
+            uint64 checkFace = static_cast<uint64>(nextA) | static_cast<uint64>(bCoord) << 32;
             size_t checkIdx = nextA + (bCoord * width) + (gridSlice * width * height);
 
-            if(nextA<0 || nextA>=aSize || wrapped[checkIdx]==INVALID_FACE_INTERMEDIATE || intermediateFaces.find(checkFace)!=intermediateFaces.end()){
+            if(nextA < 0 || nextA >= aSize || wrapped[checkIdx] == INVALID_FACE_INTERMEDIATE || intermediateFaces.find(checkFace) != intermediateFaces.end()){
                 break;
             }
 
             FaceIntermediateContainer checkFc;
             _unwrapFaceIntermediate(wrapped[checkIdx], checkFc);
 
-            if(checkFc.a!=fcc.a || checkFc.v!=fcc.v){
+            if(checkFc.a != fcc.a || checkFc.v != fcc.v){
                 break;
             }
 
@@ -142,11 +165,11 @@ namespace VoxelConverterTool{
         while(canExpandB){
             int nextB = maxB + dirB;
 
-            for(int x=aCoord; x<=maxA; ++x){
-                uint64 checkFace = static_cast<uint64>(x) | static_cast<uint64>(nextB)<<32;
+            for(int x = aCoord; x <= maxA; ++x){
+                uint64 checkFace = static_cast<uint64>(x) | static_cast<uint64>(nextB) << 32;
                 size_t checkIdx = x + (nextB * width) + (gridSlice * width * height);
 
-                if(nextB<0 || nextB>=bSize || wrapped[checkIdx]==INVALID_FACE_INTERMEDIATE || intermediateFaces.find(checkFace)!=intermediateFaces.end()){
+                if(nextB < 0 || nextB >= bSize || wrapped[checkIdx] == INVALID_FACE_INTERMEDIATE || intermediateFaces.find(checkFace) != intermediateFaces.end()){
                     canExpandB = false;
                     break;
                 }
@@ -154,7 +177,7 @@ namespace VoxelConverterTool{
                 FaceIntermediateContainer checkFc;
                 _unwrapFaceIntermediate(wrapped[checkIdx], checkFc);
 
-                if(checkFc.a!=fcc.a || checkFc.v!=fcc.v){
+                if(checkFc.a != fcc.a || checkFc.v != fcc.v){
                     canExpandB = false;
                     break;
                 }
@@ -165,9 +188,9 @@ namespace VoxelConverterTool{
             }
         }
 
-        for(int y=bCoord; y<=maxB; ++y){
-            for(int x=aCoord; x<=maxA; ++x){
-                uint64 mergedFace = static_cast<uint64>(x) | static_cast<uint64>(y)<<32;
+        for(int y=bCoord; y <= maxB; ++y){
+            for(int x=aCoord; x <= maxA; ++x){
+                uint64 mergedFace = static_cast<uint64>(x) | static_cast<uint64>(y) << 32;
                 size_t mergedIdx = x + (y * width) + (gridSlice * width * height);
 
                 intermediateFaces.insert(mergedFace);
@@ -212,7 +235,9 @@ namespace VoxelConverterTool{
         VoxelConverterTool::OutputFaces outFaces;
 
         for(FaceId f = 0; f < 6; f++){
-            if(f != 3) continue;
+            //if(f != 3) continue;
+            //if(f < 4) continue;
+            if(f != 4) continue;
             FaceNormalType ft = FACE_NORMAL_TYPES[f];
 
             //Produce an easily searchable data structure containing only the target faces.
