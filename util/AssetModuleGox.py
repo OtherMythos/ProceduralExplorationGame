@@ -26,7 +26,16 @@ class AssetModuleGox(AssetModule):
 
         #Goxel changes
 
+        extraFlags = ""
+
+        if(resSettings.disableAmbient):
+            extraFlags = extraFlags + " -a "
+        if(resSettings.disableFaces):
+            faces = ",".join(map(str, resSettings.disableFaces))
+            extraFlags = extraFlags + " -f " + faces
+
         if(resSettings.separateLayers):
+            extraFlags = extraFlags + " -c "
             #Separate layers iterates all layers and exports them separately
             goxelLayers = self.goxelDetermineLayers(filePath)
             if goxelLayers is None:
@@ -43,7 +52,7 @@ class AssetModuleGox(AssetModule):
                 retPath = retPath.with_suffix(".voxMesh")
                 print(retPath)
                 voxMeshTarget = self.prepareOutputDirectoryForFile(retPath, True)
-                self.exportToVoxMesh(goxelTxtTarget, voxMeshTarget, True)
+                self.exportToVoxMesh(goxelTxtTarget, voxMeshTarget, extraFlags)
         else:
             retPath = filePath.with_suffix(".txt")
             goxelTxtTarget = self.prepareOutputDirectoryForFile(retPath, True)
@@ -51,7 +60,7 @@ class AssetModuleGox(AssetModule):
 
             retPath = filePath.with_suffix(".voxMesh")
             voxMeshTarget = self.prepareOutputDirectoryForFile(retPath, True)
-            self.exportToVoxMesh(goxelTxtTarget, voxMeshTarget)
+            self.exportToVoxMesh(goxelTxtTarget, voxMeshTarget, extraFlags)
 
     def goxelExportToObj(self, inPath, outPath):
         devnull = open(os.devnull, 'w')
@@ -74,7 +83,7 @@ class AssetModuleGox(AssetModule):
 
     def goxelDetermineLayers(self, inPath):
         result = subprocess.run(["goxel", str(inPath), "--list"], capture_output=True, text=True)
-        if result.stdout is "":
+        if result.stdout == "":
             return None
 
         layerNames = {line.split(": ")[1] for line in result.stdout.splitlines() if "layer:" in line}
@@ -106,11 +115,13 @@ class AssetModuleGox(AssetModule):
 
         return fileValid
 
-    def exportToVoxMesh(self, filePath, outPath, centre=False):
+    def exportToVoxMesh(self, filePath, outPath, extraFlags=""):
         devnull = open(os.devnull, 'w')
         command = ["VoxelConverterTool", str(filePath), str(outPath)]
-        if centre:
-            command.append("-c")
+        if extraFlags != "":
+            vals = extraFlags.split(' ')
+            vals = [string for string in vals if string != ""]
+            command.extend(vals)
         process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=devnull)
         process.wait()
         devnull.close()

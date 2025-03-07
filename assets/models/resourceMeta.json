@@ -3,6 +3,14 @@
         "flower.gox": {
             "separateLayers": true
         },
+        "tree.gox": {
+            "disableAmbient": true,
+            "disableFaces": [0]
+        },
+        "treeCherryBlossom.gox": {
+            "disableAmbient": true,
+            "disableFaces": [0]
+        },
         "graveyard.gox": {
             "separateLayers": true
         }
