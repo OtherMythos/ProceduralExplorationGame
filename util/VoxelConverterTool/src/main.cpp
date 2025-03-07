@@ -5,13 +5,14 @@
 #include "Pipeline/FacesToVerticesFile.h"
 #include "Pipeline/FaceMerger.h"
 #include "Pipeline/AutoCentre.h"
+#include "Util/Timer.h"
 
 #include <cstring>
 
 #include "Prerequisites.h"
 
 enum Flags{
-    FLAG_GREEDY_MESH,
+    FLAG_DISABLE_GREEDY_MESH,
     FLAG_AUTO_CENTRE,
 
     FLAG_MAX
@@ -25,7 +26,7 @@ enum Inputs{
 
 void printHelp(){
     const char* help = "VoxelConverterTool - Convert an exported voxel file into a VoxMesh format. \n \
--g Enable greedy meshing (not implemented yet \n \
+-g Disable face merging\n \
 -c Enable auto centering, where the tool will shift the origin of the mesh automatically\n \
 [inputFile] [outputFile]";
 
@@ -33,7 +34,7 @@ void printHelp(){
 }
 
 void printStats(const VoxelConverterTool::OutputFaces& out){
-    std::cout << "Wrote " << out.outFaces.size() << " faces" << std::endl;
+    std::cout << std::endl << "Wrote " << out.outFaces.size() << " faces" << std::endl;
 }
 
 void parseArgs(int argc, char *argv[], bool (&totalFlags)[FLAG_MAX], const char* (&totalInputs)[INPUT_MAX]){
@@ -43,7 +44,7 @@ void parseArgs(int argc, char *argv[], bool (&totalFlags)[FLAG_MAX], const char*
     while(current < argc){
         const char* val = argv[current];
         if(strcmp(val, "-g") == 0){
-            totalFlags[FLAG_GREEDY_MESH] = true;
+            totalFlags[FLAG_DISABLE_GREEDY_MESH] = true;
         }else if(strcmp(val, "-c") == 0){
             totalFlags[FLAG_AUTO_CENTRE] = true;
         }else{
@@ -79,6 +80,9 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
+    VoxelConverterTool::Timer t;
+    t.start();
+
     VoxelConverterTool::VoxelFileParser p;
     VoxelConverterTool::ParsedVoxFile out;
     p.parseFile(inputVals[INPUT_INPUT_FILE], out);
@@ -88,23 +92,49 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
+    t.stop();
+    std::cout << "Time to parse file: " << t << std::endl;
+
     if(totalFlags[FLAG_AUTO_CENTRE]){
+        t.start();
         VoxelConverterTool::AutoCentre c;
         c.centreForParsedFile(out);
+        t.stop();
+        std::cout << "Time to centre voxels: " << t << std::endl;
     }
 
     //
+    t.start();
     VoxelConverterTool::OutputFaces outFaces;
     VoxelConverterTool::VoxToFaces f;
     f.voxToFaces(out, outFaces);
+    t.stop();
+    std::cout << "Time to resolve faces: " << t << std::endl;
 
-    VoxelConverterTool::FaceMerger merger;
-    VoxelConverterTool::OutputFaces mergedFaces = merger.mergeFaces(outFaces);
+    size_t previousNumFaces = outFaces.outFaces.size();
+    size_t mergedFaces = outFaces.outFaces.size();
+    if(!totalFlags[FLAG_DISABLE_GREEDY_MESH]){
+        t.start();
+        VoxelConverterTool::FaceMerger merger;
+        outFaces = merger.mergeFaces(outFaces);
+        t.stop();
+        std::cout << "Time to perform greedy meshing: " << t << std::endl;
+        mergedFaces = outFaces.outFaces.size();
+    }
 
+    t.start();
     VoxelConverterTool::FacesToVerticesFile outFile;
-    outFile.writeToFile(inputVals[INPUT_OUTPUT_FILE], mergedFaces);
+    outFile.writeToFile(inputVals[INPUT_OUTPUT_FILE], outFaces);
+    t.stop();
+    std::cout << "Time to write vertices: " << t << std::endl;
 
-    printStats(mergedFaces);
+    if(!totalFlags[FLAG_DISABLE_GREEDY_MESH]){
+        std::cout << "Pre merge face number: " << previousNumFaces << std::endl;
+        std::cout << "Merged face number: " << mergedFaces << std::endl;
+        std::cout << "Merge improvements: " << (float(mergedFaces) / float(previousNumFaces)) << std::endl;
+    }
+
+    printStats(outFaces);
 
     return 0;
 }

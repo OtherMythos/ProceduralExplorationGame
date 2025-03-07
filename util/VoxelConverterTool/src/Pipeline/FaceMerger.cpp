@@ -320,10 +320,6 @@ namespace VoxelConverterTool{
         outFaces.maxY = faces.maxY;
         outFaces.maxZ = faces.maxZ;
 
-        std::cout << faces.outFaces.size() << std::endl;
-        std::cout << outFaces.outFaces.size() << std::endl;
-        std::cout << float(outFaces.outFaces.size()) / float(faces.outFaces.size()) << std::endl;
-
         return outFaces;
     }
 
