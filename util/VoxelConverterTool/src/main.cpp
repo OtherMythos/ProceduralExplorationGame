@@ -73,8 +73,6 @@ void parseDisableFaces(InputArgs& args, const char* input){
         if(i < 0 || i >= VoxelConverterTool::MAX_FACES) continue;
         args.disabledFaces[i] = true;
     }
-
-    return result;
 }
 
 void parseArgs(int argc, char *argv[], InputArgs& args){
