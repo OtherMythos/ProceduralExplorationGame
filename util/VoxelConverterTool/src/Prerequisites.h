@@ -14,6 +14,7 @@ namespace VoxelConverterTool{
     static const VoxelId EMPTY_VOXEL = 0x8000;
     typedef uint64 WrappedFace;
     typedef uint8 FaceId;
+    static const FaceId MAX_FACES = 6;
 
 
     struct WrappedFaceContainer{

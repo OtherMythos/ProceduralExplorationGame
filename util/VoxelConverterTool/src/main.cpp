@@ -8,12 +8,14 @@
 #include "Util/Timer.h"
 
 #include <cstring>
+#include <sstream>
 
 #include "Prerequisites.h"
 
 enum Flags{
     FLAG_DISABLE_GREEDY_MESH,
     FLAG_AUTO_CENTRE,
+    FLAG_DISABLE_FACE,
 
     FLAG_MAX
 };
@@ -22,6 +24,12 @@ enum Inputs{
     INPUT_OUTPUT_FILE,
 
     INPUT_MAX
+};
+
+struct InputArgs{
+    bool totalFlags[FLAG_MAX];
+    const char* totalInputs[INPUT_MAX];
+    bool disabledFaces[VoxelConverterTool::MAX_FACES];
 };
 
 void printHelp(){
@@ -37,20 +45,62 @@ void printStats(const VoxelConverterTool::OutputFaces& out){
     std::cout << std::endl << "Wrote " << out.outFaces.size() << " faces" << std::endl;
 }
 
-void parseArgs(int argc, char *argv[], bool (&totalFlags)[FLAG_MAX], const char* (&totalInputs)[INPUT_MAX]){
+void parseDisableFaces(InputArgs& args, const char* input){
+    if (!input || *input == '\0') {
+        throw std::invalid_argument("Input string is null or empty");
+    }
+
+    std::set<int> result;
+    std::stringstream ss(input);
+    std::string token;
+
+    while (std::getline(ss, token, ',')) {
+        if (token.empty()) {
+            throw std::invalid_argument("Malformed input: consecutive commas or trailing comma detected");
+        }
+
+        try {
+            result.insert(std::stoi(token));
+        } catch (const std::exception&) {
+            throw std::invalid_argument("Malformed input: contains non-numeric values");
+        }
+    }
+
+    for(int i : result){
+        if(i < 0 || i >= VoxelConverterTool::MAX_FACES) continue;
+        args.disabledFaces[i] = true;
+    }
+
+    return result;
+}
+
+void parseArgs(int argc, char *argv[], InputArgs& args){
 
     int inputCount = 0;
     int current = 1;
+    bool flagValue = false;
+    Flags flagType = FLAG_MAX;
     while(current < argc){
         const char* val = argv[current];
-        if(strcmp(val, "-g") == 0){
-            totalFlags[FLAG_DISABLE_GREEDY_MESH] = true;
-        }else if(strcmp(val, "-c") == 0){
-            totalFlags[FLAG_AUTO_CENTRE] = true;
+        if(!flagValue){
+            if(strcmp(val, "-g") == 0){
+                args.totalFlags[FLAG_DISABLE_GREEDY_MESH] = true;
+            }else if(strcmp(val, "-c") == 0){
+                args.totalFlags[FLAG_AUTO_CENTRE] = true;
+            }else if(strcmp(val, "-f") == 0){
+                flagType = FLAG_DISABLE_FACE;
+                args.totalFlags[flagType] = true;
+                flagValue = true;
+            }else{
+                //Assume it's an input
+                args.totalInputs[inputCount] = val;
+                inputCount++;
+            }
         }else{
-            //Assume it's an input
-            totalInputs[inputCount] = val;
-            inputCount++;
+            if(flagType == FLAG_DISABLE_FACE){
+                parseDisableFaces(args, val);
+            }
+            flagValue = true;
         }
         current++;
     }
@@ -62,19 +112,17 @@ int main(int argc, char *argv[]){
         return 0;
     }
 
-    bool totalFlags[FLAG_MAX];
-    const char* inputVals[INPUT_MAX];
-    memset(&totalFlags[0], 0, sizeof(totalFlags));
-    memset(&inputVals[0], 0, sizeof(inputVals));
+    InputArgs inputArgs;
+    memset(&inputArgs, 0, sizeof(InputArgs));
 
-    parseArgs(argc, argv, totalFlags, inputVals);
+    parseArgs(argc, argv, inputArgs);
 
-    if(!inputVals[INPUT_INPUT_FILE]){
+    if(!inputArgs.totalInputs[INPUT_INPUT_FILE]){
         std::cerr << "Error: No input file specified." << std::endl;
         printHelp();
         return 1;
     }
-    if(!inputVals[INPUT_OUTPUT_FILE]){
+    if(!inputArgs.totalInputs[INPUT_OUTPUT_FILE]){
         std::cerr << "Error: No output file specified." << std::endl;
         printHelp();
         return 1;
@@ -85,7 +133,7 @@ int main(int argc, char *argv[]){
 
     VoxelConverterTool::VoxelFileParser p;
     VoxelConverterTool::ParsedVoxFile out;
-    p.parseFile(inputVals[INPUT_INPUT_FILE], out);
+    p.parseFile(inputArgs.totalInputs[INPUT_INPUT_FILE], out);
 
     if(out.data.empty()){
         std::cerr << "Error: No vertices parsed for input." << std::endl;
@@ -95,7 +143,10 @@ int main(int argc, char *argv[]){
     t.stop();
     std::cout << "Time to parse file: " << t << std::endl;
 
-    if(totalFlags[FLAG_AUTO_CENTRE]){
+    t.stop();
+    std::cout << "Time to parse file: " << t << std::endl;
+
+    if(inputArgs.totalFlags[FLAG_AUTO_CENTRE]){
         t.start();
         VoxelConverterTool::AutoCentre c;
         c.centreForParsedFile(out);
@@ -107,13 +158,13 @@ int main(int argc, char *argv[]){
     t.start();
     VoxelConverterTool::OutputFaces outFaces;
     VoxelConverterTool::VoxToFaces f;
-    f.voxToFaces(out, outFaces);
+    f.voxToFaces(out, outFaces, inputArgs.disabledFaces);
     t.stop();
     std::cout << "Time to resolve faces: " << t << std::endl;
 
     size_t previousNumFaces = outFaces.outFaces.size();
     size_t mergedFaces = outFaces.outFaces.size();
-    if(!totalFlags[FLAG_DISABLE_GREEDY_MESH]){
+    if(!inputArgs.totalFlags[FLAG_DISABLE_GREEDY_MESH]){
         t.start();
         VoxelConverterTool::FaceMerger merger;
         outFaces = merger.mergeFaces(outFaces);
@@ -124,15 +175,7 @@ int main(int argc, char *argv[]){
 
     t.start();
     VoxelConverterTool::FacesToVerticesFile outFile;
-    outFile.writeToFile(inputVals[INPUT_OUTPUT_FILE], outFaces);
-    t.stop();
-    std::cout << "Time to write vertices: " << t << std::endl;
-
-    if(!totalFlags[FLAG_DISABLE_GREEDY_MESH]){
-        std::cout << "Pre merge face number: " << previousNumFaces << std::endl;
-        std::cout << "Merged face number: " << mergedFaces << std::endl;
-        std::cout << "Merge improvements: " << (float(mergedFaces) / float(previousNumFaces)) << std::endl;
-    }
+    outFile.writeToFile(inputArgs.totalInputs[INPUT_OUTPUT_FILE], outFaces);
 
     printStats(outFaces);
 

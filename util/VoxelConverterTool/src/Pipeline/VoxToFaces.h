@@ -15,7 +15,7 @@ namespace VoxelConverterTool{
         VoxToFaces();
         ~VoxToFaces();
 
-        void voxToFaces(const ParsedVoxFile& parsedVox, OutputFaces& faces);
+        void voxToFaces(const ParsedVoxFile& parsedVox, OutputFaces& faces, const bool (&disabled)[MAX_FACES]);
 
     private:
         VoxelId readVoxelFromData_(const ParsedVoxFile& parsedVox, int x, int y, int z);
