@@ -12,7 +12,7 @@ docker pull ghcr.io/othermythos/asset-builder-image-voxel:latest
 #docker build -t asset-builder-image-voxel util/
 
 #Make sure the output exists.
-if [ -v "$SKIP_DELETION" ]; then
+if [ ! -z "${SKIP_DELETION+x}" ]; then
     echo "Clearing build directory"
     rm -rf ${SCRIPT_DIR}/build
     mkdir -p ${SCRIPT_DIR}/build/assets
