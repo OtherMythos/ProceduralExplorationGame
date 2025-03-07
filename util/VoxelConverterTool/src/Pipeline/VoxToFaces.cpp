@@ -79,7 +79,7 @@ namespace VoxelConverterTool{
         return ret;
     }
 
-    void VoxToFaces::voxToFaces(const ParsedVoxFile& parsedVox, OutputFaces& faces, const bool (&disabled)[MAX_FACES]){
+    void VoxToFaces::voxToFaces(const ParsedVoxFile& parsedVox, OutputFaces& faces, const bool (&disabled)[MAX_FACES], bool disableAmbient){
         //Recalculate the max and min incase some faces have been removed.
         int currentMinX, currentMinY, currentMinZ;
         int currentMaxX, currentMaxY, currentMaxZ;
@@ -95,7 +95,11 @@ namespace VoxelConverterTool{
             for(int f = 0; f < MAX_FACES; f++){
                 if(disabled[f]) continue;
                 if(!blockIsFaceVisible(neighbourMask, f)) continue;
-                uint32 ambientMask = getVerticeBorder(parsedVox, f, x, y, z);
+
+                uint32 ambientMask = 0xFFFFFFFF;
+                if(!disableAmbient){
+                    ambientMask = getVerticeBorder(parsedVox, f, x, y, z);
+                }
                 //Submit this face
 
                 const WrappedFaceContainer c = {x, y, z, 1, 1, 1, v, ambientMask, f};

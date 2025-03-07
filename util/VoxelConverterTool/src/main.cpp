@@ -16,6 +16,7 @@ enum Flags{
     FLAG_DISABLE_GREEDY_MESH,
     FLAG_AUTO_CENTRE,
     FLAG_DISABLE_FACE,
+    FLAG_DISABLE_AMBIENT,
 
     FLAG_MAX
 };
@@ -36,6 +37,8 @@ void printHelp(){
     const char* help = "VoxelConverterTool - Convert an exported voxel file into a VoxMesh format. \n \
 -g Disable face merging\n \
 -c Enable auto centering, where the tool will shift the origin of the mesh automatically\n \
+-f Disable a specific number of faces. Faces to be disabled are deliniated with a comma, i.e '1,2'\n \
+-a Disable all ambient calculations\n \
 [inputFile] [outputFile]";
 
     std::cout << help << std::endl;
@@ -91,6 +94,8 @@ void parseArgs(int argc, char *argv[], InputArgs& args){
                 flagType = FLAG_DISABLE_FACE;
                 args.totalFlags[flagType] = true;
                 flagValue = true;
+            }else if(strcmp(val, "-a") == 0){
+                args.totalFlags[FLAG_DISABLE_AMBIENT] = true;
             }else{
                 //Assume it's an input
                 args.totalInputs[inputCount] = val;
@@ -100,7 +105,7 @@ void parseArgs(int argc, char *argv[], InputArgs& args){
             if(flagType == FLAG_DISABLE_FACE){
                 parseDisableFaces(args, val);
             }
-            flagValue = true;
+            flagValue = false;
         }
         current++;
     }
@@ -158,7 +163,7 @@ int main(int argc, char *argv[]){
     t.start();
     VoxelConverterTool::OutputFaces outFaces;
     VoxelConverterTool::VoxToFaces f;
-    f.voxToFaces(out, outFaces, inputArgs.disabledFaces);
+    f.voxToFaces(out, outFaces, inputArgs.disabledFaces, inputArgs.totalFlags[FLAG_DISABLE_AMBIENT]);
     t.stop();
     std::cout << "Time to resolve faces: " << t << std::endl;
 
