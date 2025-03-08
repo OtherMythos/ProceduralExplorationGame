@@ -18,6 +18,9 @@ function setup(){
 }
 
 function start(){
+    ::drawWireframe <- false;
+    ::wireframeToggleDown <- false;
+
     _gui.setScrollSpeed(5.0);
     local deadzone = 0.2;
     _input.setDefaultAxisDeadzone(deadzone);
@@ -60,6 +63,21 @@ function start(){
 
 function update(){
     ::Base.update();
+
+    //F4
+    if(_input.getRawKeyScancodeInput(61)){
+        if(!::wireframeToggleDown){
+            ::wireframeToggleDown = true;
+            ::drawWireframe = !::drawWireframe;
+
+            local datablock = _hlms.getDatablock("baseVoxelMaterial");
+            datablock.setMacroblock(_hlms.getMacroblock({
+                "polygonMode": ::drawWireframe ? _PM_WIREFRAME : _PM_SOLID
+            }));
+        }
+    }else{
+        ::wireframeToggleDown = false;
+    }
 }
 
 function end(){
