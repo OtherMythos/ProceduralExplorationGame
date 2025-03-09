@@ -3,6 +3,7 @@
 #include "File/VoxelFileParser.h"
 #include "Pipeline/VoxToFaces.h"
 #include "Pipeline/FacesToVerticesFile.h"
+#include "Pipeline/FacesToObjFile.h"
 #include "Pipeline/FaceMerger.h"
 #include "Pipeline/AutoCentre.h"
 #include "Util/Timer.h"
@@ -17,6 +18,7 @@ enum Flags{
     FLAG_AUTO_CENTRE,
     FLAG_DISABLE_FACE,
     FLAG_DISABLE_AMBIENT,
+    FLAG_EXPORT_OBJ,
 
     FLAG_MAX
 };
@@ -39,6 +41,7 @@ void printHelp(){
 -c Enable auto centering, where the tool will shift the origin of the mesh automatically\n \
 -f Disable a specific number of faces. Faces to be disabled are deliniated with a comma, i.e '1,2'\n \
 -a Disable all ambient calculations\n \
+-o Export as .obj\n \
 [inputFile] [outputFile]";
 
     std::cout << help << std::endl;
@@ -94,6 +97,8 @@ void parseArgs(int argc, char *argv[], InputArgs& args){
                 flagValue = true;
             }else if(strcmp(val, "-a") == 0){
                 args.totalFlags[FLAG_DISABLE_AMBIENT] = true;
+            }else if(strcmp(val, "-o") == 0){
+                args.totalFlags[FLAG_EXPORT_OBJ] = true;
             }else{
                 //Assume it's an input
                 args.totalInputs[inputCount] = val;
@@ -177,8 +182,15 @@ int main(int argc, char *argv[]){
     }
 
     t.start();
-    VoxelConverterTool::FacesToVerticesFile outFile;
-    outFile.writeToFile(inputArgs.totalInputs[INPUT_OUTPUT_FILE], outFaces);
+    if(inputArgs.totalFlags[FLAG_EXPORT_OBJ]){
+        VoxelConverterTool::FacesToObjFile objOutFile;
+        objOutFile.writeToFile(inputArgs.totalInputs[INPUT_OUTPUT_FILE], outFaces);
+    }else{
+        VoxelConverterTool::FacesToVerticesFile outFile;
+        outFile.writeToFile(inputArgs.totalInputs[INPUT_OUTPUT_FILE], outFaces);
+    }
+    t.stop();
+    std::cout << "Time to export file: " << t << std::endl;
 
     printStats(outFaces);
 
