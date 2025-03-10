@@ -53,6 +53,8 @@ namespace ProceduralExplorationGameCore{
                     static const PlacedItemId VALS[] = {PlacedItemId::FLOWER_RED, PlacedItemId::FLOWER_WHITE, PlacedItemId::FLOWER_PURPLE};
                     size_t val = mapGenRandomIntMinMax(0, 3);
                     PLACE_ITEM(VALS[val]);
+                }else if(moisture < 150 && mapGenRandomIntMinMax(0, 3) == 0){
+                    PLACE_ITEM(PlacedItemId::BERRY_BUSH_BERRIES);
                 }else{
                     bool apple = (mapGenRandomIntMinMax(0, 100) == 0);
                     PLACE_ITEM(apple ? PlacedItemId::TREE_APPLE : PlacedItemId::TREE);

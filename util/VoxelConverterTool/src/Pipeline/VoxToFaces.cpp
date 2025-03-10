@@ -79,7 +79,7 @@ namespace VoxelConverterTool{
         return ret;
     }
 
-    void VoxToFaces::voxToFaces(const ParsedVoxFile& parsedVox, OutputFaces& faces){
+    void VoxToFaces::voxToFaces(const ParsedVoxFile& parsedVox, OutputFaces& faces, const bool (&disabled)[MAX_FACES], bool disableAmbient){
         //Recalculate the max and min incase some faces have been removed.
         int currentMinX, currentMinY, currentMinZ;
         int currentMaxX, currentMaxY, currentMaxZ;
@@ -92,14 +92,19 @@ namespace VoxelConverterTool{
             VoxelId v = readVoxelFromData_(parsedVox, x, y, z);
             if(v == EMPTY_VOXEL) continue;
             uint8 neighbourMask = getNeighbourMask(parsedVox, x, y, z);
-            for(int f = 0; f < 6; f++){
+            for(int f = 0; f < MAX_FACES; f++){
+                if(disabled[f]) continue;
                 if(!blockIsFaceVisible(neighbourMask, f)) continue;
-                uint32 ambientMask = getVerticeBorder(parsedVox, f, x, y, z);
+
+                uint32 ambientMask = 0xFFFFFFFF;
+                if(!disableAmbient){
+                    ambientMask = getVerticeBorder(parsedVox, f, x, y, z);
+                }
                 //Submit this face
 
-                const WrappedFaceContainer c = {x, y, z, v, ambientMask, f};
-                WrappedFace face = _wrapFace(c);
-                faces.outFaces.push_back(face);
+                const WrappedFaceContainer c = {x, y, z, 1, 1, 1, v, ambientMask, f};
+                //WrappedFace face = _wrapFace(c);
+                faces.outFaces.push_back(c);
             }
             if(x < currentMinX) currentMinX = x;
             if(y < currentMinY) currentMinY = y;
@@ -116,6 +121,9 @@ namespace VoxelConverterTool{
         faces.maxX = currentMaxX;
         faces.maxY = currentMaxY;
         faces.maxZ = currentMaxZ;
+        faces.deltaX = faces.maxX - faces.minX;
+        faces.deltaY = faces.maxY - faces.minY;
+        faces.deltaZ = faces.maxZ - faces.minZ;
     }
 
 }

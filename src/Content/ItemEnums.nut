@@ -17,5 +17,6 @@
     FLOWER_PURPLE,
 
     COCONUT,
+    RED_BERRIES
 
 ");

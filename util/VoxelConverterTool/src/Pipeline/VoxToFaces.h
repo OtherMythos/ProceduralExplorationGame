@@ -10,22 +10,12 @@ namespace VoxelConverterTool{
 
     struct ParsedVoxFile;
 
-    struct OutputFaces{
-        std::vector<WrappedFace> outFaces;
-        float minX, minY, minZ;
-        float maxX, maxY, maxZ;
-
-        size_t calcMeshSizeBytes() const{
-            return outFaces.size() * 4 * 6 * sizeof(uint32);
-        }
-    };
-
     class VoxToFaces{
     public:
         VoxToFaces();
         ~VoxToFaces();
 
-        void voxToFaces(const ParsedVoxFile& parsedVox, OutputFaces& faces);
+        void voxToFaces(const ParsedVoxFile& parsedVox, OutputFaces& faces, const bool (&disabled)[MAX_FACES], bool disableAmbient);
 
     private:
         VoxelId readVoxelFromData_(const ParsedVoxFile& parsedVox, int x, int y, int z);

@@ -314,6 +314,12 @@
             case PlacedItemId.PALM_TREE_COCONUTS:{
                 return "coconutPalmTree.voxMesh";
             }
+            case PlacedItemId.BERRY_BUSH:{
+                return "berryBush.voxMesh";
+            }
+            case PlacedItemId.BERRY_BUSH_BERRIES:{
+                return "berryBushBerries.voxMesh";
+            }
             default:{
                 return "tree.voxMesh";
             }
@@ -332,6 +338,10 @@
             case PlacedItemId.PALM_TREE:
             case PlacedItemId.PALM_TREE_COCONUTS:{
                 return 0.3;
+            }
+            case PlacedItemId.BERRY_BUSH:
+            case PlacedItemId.BERRY_BUSH_BERRIES:{
+                return 0.2;
             }
             default:
                 return 0.6;
@@ -473,7 +483,10 @@
                 damageWorld, damageWorld
             ));
         }
-        else if(itemType == PlacedItemId.TREE_APPLE || itemType == PlacedItemId.PALM_TREE_COCONUTS){
+        else if(
+            itemType == PlacedItemId.TREE_APPLE || itemType == PlacedItemId.PALM_TREE_COCONUTS ||
+            itemType == PlacedItemId.BERRY_BUSH_BERRIES
+        ){
             local triggerWorld = mConstructorWorld_.getTriggerWorld();
             local playerInteraction = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.PICK, en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
 
@@ -491,6 +504,10 @@
             else if(itemType == PlacedItemId.PALM_TREE_COCONUTS){
                 targetChange = PlacedItemId.PALM_TREE;
                 targetItem = ItemId.COCONUT;
+            }
+            else if(itemType == PlacedItemId.BERRY_BUSH_BERRIES){
+                targetChange = PlacedItemId.BERRY_BUSH;
+                targetItem = ItemId.RED_BERRIES;
             }
             assert(targetChange != null);
             assert(targetItem != null);

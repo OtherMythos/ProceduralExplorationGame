@@ -6,6 +6,7 @@
     mContainerWindow_ = null;
 
     mDialogOptionsButtons_ = null;
+    mActionSetId_ = null;
 
     function receiveDialogSpokenEvent(id, data){
         setNewDialogText(data);
@@ -49,7 +50,7 @@
 
         base.setup(data);
 
-        ::InputManager.setActionSet(InputActionSets.DIALOG);
+        mActionSetId_ = ::InputManager.pushActionSet(InputActionSets.DIALOG);
 
         _event.subscribe(Event.DIALOG_SPOKEN, receiveDialogSpokenEvent, this);
         _event.subscribe(Event.DIALOG_OPTION, receiveDialogOptionEvent, this);
@@ -59,7 +60,7 @@
     function shutdown(){
         base.shutdown();
 
-        ::InputManager.setActionSet(InputActionSets.EXPLORATION);
+        ::InputManager.popActionSet(mActionSetId_);
 
         _event.unsubscribe(Event.DIALOG_SPOKEN, receiveDialogSpokenEvent, this);
         _event.unsubscribe(Event.DIALOG_OPTION, receiveDialogOptionEvent, this);

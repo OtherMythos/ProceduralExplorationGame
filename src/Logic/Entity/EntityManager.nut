@@ -14,12 +14,12 @@ enum EntityComponents{
     SCRIPT,
     SPOILS,
     PROXIMITY,
-    DATABLOCK,
     DIALOG,
     TRAVERSABLE_TERRAIN,
     COLLISION_DETECTION,
     INVENTORY_ITEMS,
     SCENE_NODE,
+    DATABLOCK,
 
     MAX
 

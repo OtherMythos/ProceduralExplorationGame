@@ -2,6 +2,7 @@
 
     mWindow_ = null;
     mReadableContent_ = null;
+    mActionSetId_ = null;
 
     function setup(data){
 
@@ -38,13 +39,7 @@
 
         constructButtons(mWindow_.getSize());
 
-        ::InputManager.setActionSet(InputActionSets.MENU);
-    }
-
-    function shutdown(){
-        base.shutdown();
-
-        ::InputManager.setActionSet(InputActionSets.EXPLORATION);
+        mActionSetId_ = ::InputManager.pushActionSet(InputActionSets.MENU);
     }
 
     function constructButtons(winSize){
@@ -94,5 +89,7 @@
         ::ScreenManager.backupScreen(mLayerIdx);
 
         ::Base.mExplorationLogic.unPauseExploration();
+
+        ::InputManager.popActionSet(mActionSetId_);
     }
 };

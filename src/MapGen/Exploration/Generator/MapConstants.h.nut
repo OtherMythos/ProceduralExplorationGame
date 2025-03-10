@@ -80,6 +80,8 @@ enum PlacedItemId{
     FLOWER_PURPLE,
     FLOWER_RED,
     FLOWER_WHITE,
+    BERRY_BUSH,
+    BERRY_BUSH_BERRIES,
 
     MAX
 };
