@@ -634,7 +634,7 @@ namespace ProceduralExplorationGamePlugin{
 
     SQInteger GameCoreNamespace::dumpSceneToObj(HSQUIRRELVM vm){
         const SQChar *path;
-        sq_getstring(vm, -2, &path);
+        sq_getstring(vm, -1, &path);
 
         ProceduralExplorationGameCore::VoxSceneDumper dumper;
         auto it = Ogre::Root::getSingleton().getSceneManagerIterator();
