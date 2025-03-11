@@ -344,44 +344,40 @@ namespace ProceduralExplorationGameCore{
 
                     size_t cc = 0;
                     for (size_t v = 0; v < vertexCount; ++v) {
-                            const float* ptr = vertexData + (cc * 6);
+                        const float* ptr = vertexData + (cc * 6);
 
-                                Ogre::uint32 original = *(reinterpret_cast<const Ogre::uint32*>(ptr));
-                                Ogre::uint32 originalSecond = *(reinterpret_cast<const Ogre::uint32*>(ptr) + 1);
+                        Ogre::uint32 original = *(reinterpret_cast<const Ogre::uint32*>(ptr));
+                        Ogre::uint32 originalSecond = *(reinterpret_cast<const Ogre::uint32*>(ptr) + 1);
 
-                            Ogre::uint32 magicNumber = originalSecond & uint(0x1FFFFFFF);
-                            //assert(magicNumber == 0x15FBF7DB || magicNumber == 0x15FBB7DB);
-                            if(magicNumber != 0x15FBF7DB && magicNumber != 0x15FBB7DB) continue;
+                        Ogre::uint32 magicNumber = originalSecond & uint(0x1FFFFFFF);
+                        if(magicNumber != 0x15FBF7DB && magicNumber != 0x15FBB7DB) continue;
 
-                            int offset = 0;
-                            if(magicNumber == 0x15FBB7DB){
-                                offset = 128;
-                            }
+                        int offset = 0;
+                        if(magicNumber == 0x15FBB7DB){
+                            offset = 128;
+                        }
 
-                            int pos_x = int(original & uint(0x3FF)) - offset;
-                            int pos_y = int((original >> 10) & uint(0x3FF)) - offset;
-                            int pos_z = int((original >> 20) & uint(0x3FF)) - offset;
+                        int pos_x = int(original & uint(0x3FF)) - offset;
+                        int pos_y = int((original >> 10) & uint(0x3FF)) - offset;
+                        int pos_z = int((original >> 20) & uint(0x3FF)) - offset;
 
+                        float texX = *(ptr + 4);
+                        float texY = *(ptr + 5);
 
+                        Ogre::uint32 voxelId = convertUVToVoxelID(texX, texY);
 
-                            float texX = *(ptr + 4);
-                            float texY = *(ptr + 5);
+                        uint norm = uint((originalSecond >> 29) & uint(0x3));
+                        uint ambient = uint((original >> 30) & uint(0x3));
 
-                            Ogre::uint32 voxelId = convertUVToVoxelID(texX, texY);
-
-                            uint norm = uint((originalSecond >> 29) & uint(0x3));
-                            uint ambient = uint((original >> 30) & uint(0x3));
-
-                            Ogre::Vector3 pos = worldTransform * Ogre::Vector3(pos_x, pos_y, pos_z);
-                            Ogre::Vector3 normal = worldTransform * FACES_NORMALS[norm];
-                            out.verts.push_back({pos.x, pos.y, pos.z, normal.x, normal.y, normal.z,
-                                vals[voxelId].r / 255.0f,
-                                vals[voxelId].g / 255.0f,
-                                vals[voxelId].b / 255.0f,
-                            });
+                        Ogre::Vector3 pos = worldTransform * Ogre::Vector3(pos_x, pos_y, pos_z);
+                        Ogre::Vector3 normal = worldTransform * FACES_NORMALS[norm];
+                        out.verts.push_back({pos.x, pos.y, pos.z, normal.x, normal.y, normal.z,
+                            vals[voxelId].r / 255.0f,
+                            vals[voxelId].g / 255.0f,
+                            vals[voxelId].b / 255.0f,
+                        });
                         cc++;
                     }
-
                 }
             }
         }

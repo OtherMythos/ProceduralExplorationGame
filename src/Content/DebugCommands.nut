@@ -148,8 +148,8 @@ variationSeed: %i";
 
     return format("Player position: %s", currentWorld.getPlayerPosition().tostring());
 });
-::DebugConsole.registerCommand("d", "Dump the entire scene to an obj file", 0, "", function(command){
-    _gameCore.dumpSceneToObj("/tmp/out.obj");
+::DebugConsole.registerCommand("dumpToObj", "Dump the entire scene to an obj file", 0, "", function(command){
+    local scenePath = _gameCore.dumpSceneToObj();
 
-    return "Dumped entire scene to disc";
+    return "Dumped to " + scenePath;
 });
