@@ -129,6 +129,8 @@ namespace ProceduralExplorationGameCore{
         size_t blueNoiseBufferSize;
         void* riverBuffer;
 
+        AV::uint8* waterTextureBuffer;
+
         std::vector<RegionData> regionData;
         std::vector<PlacedItemData> placedItems;
         //TODO switch these to not be pointers.

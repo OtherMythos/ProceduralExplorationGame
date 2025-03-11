@@ -419,6 +419,19 @@
         return 0.5 + clampedAltitude * PROCEDURAL_WORLD_UNIT_MULTIPLIER;
     }
 
+    function getWaterDatablock_(){
+        local waterBlock = _hlms.getDatablock("testBlock");
+        if(waterBlock == null){
+            waterBlock = _hlms.unlit.createDatablock("testBlock");
+        }
+        local sampler = _hlms.getSamplerblock({
+            "mag": "point"
+        });
+        waterBlock.setTexture(0, "testTexture", sampler);
+
+        return waterBlock
+    }
+
     function createScene(){
         //mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
 
@@ -437,10 +450,11 @@
         local oceanItem = _scene.createItem("plane");
         oceanItem.setCastsShadows(false);
         oceanItem.setRenderQueueGroup(30);
-        oceanItem.setDatablock("oceanUnlit");
+        oceanItem.setDatablock(getWaterDatablock_());
         oceanNode.attachObject(oceanItem);
         //NOTE: As we're re-orientating later 1 must be the scale for z
-        oceanNode.setScale(2000, 2000, 1);
+        oceanNode.setScale(300, 300, 1);
+        oceanNode.setPosition(300 - 0.5, 0.5, -300 - 0.5);
         oceanNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
 
     }

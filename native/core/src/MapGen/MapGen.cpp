@@ -34,6 +34,13 @@
 //#include "MapGen/Steps/DeterminePlacesMapGenStep.h"
 #include "MapGen/Steps/MergeSmallRegionsMapGenStep.h"
 #include "MapGen/Steps/MergeIsolatedRegionsMapGenStep.h"
+#include "MapGen/Steps/GenerateWaterTextureMapGenStep.h"
+
+//TODO move somewhere else
+#include "Ogre.h"
+#include "OgreStagingTexture.h"
+#include "OgreTextureBox.h"
+#include "OgreTextureGpuManager.h"
 
 #include "System/Util/Timer/Timer.h"
 
@@ -65,6 +72,7 @@ namespace ProceduralExplorationGameCore{
         {"Determine Player Start", new DeterminePlayerStartMapGenStep()},
         {"Determine Gateway Position", new DetermineGatewayPositionMapGenStep()},
         {"Place Items For Biomes", new PlaceItemsForBiomesMapGenStep()},
+        {"Generate Water Texture", new GenerateWaterTextureMapGenStep()},
         //{"Determine Regions", new DetermineRegionsMapGenStep()},
         //{"Determine Places", new DeterminePlacesMapGenStep()},
     };
@@ -125,6 +133,36 @@ namespace ProceduralExplorationGameCore{
         delete mParentThread;
         ExplorationMapData* out = mMapData;
         mMapData = 0;
+
+
+
+        Ogre::TextureGpu* tex = 0;
+        Ogre::TextureGpuManager* manager = Ogre::Root::getSingletonPtr()->getRenderSystem()->getTextureGpuManager();
+        tex = manager->findTextureNoThrow("testTexture");
+        if(!tex){
+            tex = manager->createTexture("testTexture", Ogre::GpuPageOutStrategy::Discard, Ogre::TextureFlags::ManualTexture, Ogre::TextureTypes::Type2D);
+            tex->setPixelFormat(Ogre::PixelFormatGpu::PFG_R8_UNORM);
+            tex->setResolution(out->width, out->height);
+            tex->scheduleTransitionTo(Ogre::GpuResidency::Resident);
+        }
+
+        Ogre::StagingTexture *stagingTexture = manager->getStagingTexture(out->width, out->height, tex->getDepth(), tex->getNumSlices(), tex->getPixelFormat());
+        stagingTexture->startMapRegion();
+        Ogre::TextureBox texBox = stagingTexture->mapRegion(out->width, out->height, tex->getDepth(), tex->getNumSlices(), tex->getPixelFormat());
+
+        Ogre::uint8* pDest = static_cast<Ogre::uint8*>(texBox.at(0, 0, 0));
+        memcpy(pDest, out->waterTextureBuffer, out->width * out->height);
+
+        stagingTexture->stopMapRegion();
+        stagingTexture->upload(texBox, tex, 0, 0, 0, false);
+
+        manager->removeStagingTexture( stagingTexture );
+        stagingTexture = 0;
+
+
+
+
+
         return out;
     }
 };
