@@ -349,7 +349,7 @@ namespace ProceduralExplorationGameCore{
                         Ogre::uint32 original = *(reinterpret_cast<const Ogre::uint32*>(ptr));
                         Ogre::uint32 originalSecond = *(reinterpret_cast<const Ogre::uint32*>(ptr) + 1);
 
-                        Ogre::uint32 magicNumber = originalSecond & uint(0x1FFFFFFF);
+                        Ogre::uint32 magicNumber = originalSecond & Ogre::uint32(0x1FFFFFFF);
                         if(magicNumber != 0x15FBF7DB && magicNumber != 0x15FBB7DB) continue;
 
                         int offset = 0;
@@ -357,17 +357,17 @@ namespace ProceduralExplorationGameCore{
                             offset = 128;
                         }
 
-                        int pos_x = int(original & uint(0x3FF)) - offset;
-                        int pos_y = int((original >> 10) & uint(0x3FF)) - offset;
-                        int pos_z = int((original >> 20) & uint(0x3FF)) - offset;
+                        int pos_x = int(original & Ogre::uint32(0x3FF)) - offset;
+                        int pos_y = int((original >> 10) & Ogre::uint32(0x3FF)) - offset;
+                        int pos_z = int((original >> 20) & Ogre::uint32(0x3FF)) - offset;
 
                         float texX = *(ptr + 4);
                         float texY = *(ptr + 5);
 
                         Ogre::uint32 voxelId = convertUVToVoxelID(texX, texY);
 
-                        uint norm = uint((originalSecond >> 29) & uint(0x3));
-                        uint ambient = uint((original >> 30) & uint(0x3));
+                        Ogre::uint32 norm = Ogre::uint32((originalSecond >> 29) & Ogre::uint32(0x3));
+                        Ogre::uint32 ambient = Ogre::uint32((original >> 30) & Ogre::uint32(0x3));
 
                         Ogre::Vector3 pos = worldTransform * Ogre::Vector3(pos_x, pos_y, pos_z);
                         Ogre::Vector3 normal = worldTransform * FACES_NORMALS[norm];
