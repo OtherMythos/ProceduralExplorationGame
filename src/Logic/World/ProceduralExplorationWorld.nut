@@ -422,12 +422,14 @@
     function getWaterDatablock_(){
         local waterBlock = _hlms.getDatablock("testBlock");
         if(waterBlock == null){
-            waterBlock = _hlms.unlit.createDatablock("testBlock");
+            waterBlock = _hlms.pbs.createDatablock("testBlock");
         }
         local sampler = _hlms.getSamplerblock({
             "mag": "point"
         });
-        waterBlock.setTexture(0, "testTexture", sampler);
+        waterBlock.setWorkflow(_PBS_WORKFLOW_METALLIC);
+        waterBlock.setTexture(0, "testTexture");
+        waterBlock.setSamplerblock(0, sampler);
 
         return waterBlock
     }
@@ -447,15 +449,15 @@
 
         //Create the ocean plane
         local oceanNode = mParentNode_.createChildSceneNode();
-        local oceanItem = _scene.createItem("plane");
+        local oceanItem = _scene.createItem("Plane.mesh");
         oceanItem.setCastsShadows(false);
         oceanItem.setRenderQueueGroup(30);
         oceanItem.setDatablock(getWaterDatablock_());
         oceanNode.attachObject(oceanItem);
         //NOTE: As we're re-orientating later 1 must be the scale for z
-        oceanNode.setScale(300, 300, 1);
+        oceanNode.setScale(300, 1, 300);
         oceanNode.setPosition(300 - 0.5, 0.5, -300 - 0.5);
-        oceanNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
+        //oceanNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
 
     }
 
