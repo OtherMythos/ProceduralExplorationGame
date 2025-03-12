@@ -140,7 +140,7 @@ namespace ProceduralExplorationGameCore{
         Ogre::TextureGpuManager* manager = Ogre::Root::getSingletonPtr()->getRenderSystem()->getTextureGpuManager();
         tex = manager->findTextureNoThrow("testTexture");
         if(!tex){
-            tex = manager->createTexture("testTexture", Ogre::GpuPageOutStrategy::Discard, Ogre::TextureFlags::ManualTexture, Ogre::TextureTypes::Type2D);
+            tex = manager->createTexture("testTexture", Ogre::GpuPageOutStrategy::Discard, Ogre::TextureFlags::ManualTexture, Ogre::TextureTypes::Type2DArray);
             tex->setPixelFormat(Ogre::PixelFormatGpu::PFG_R8_UNORM);
             tex->setResolution(out->width, out->height);
             tex->scheduleTransitionTo(Ogre::GpuResidency::Resident);

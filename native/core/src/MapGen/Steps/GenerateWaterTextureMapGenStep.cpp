@@ -4,6 +4,7 @@
 #include "MapGen/Biomes.h"
 
 #include <cassert>
+#include <cstring>
 
 namespace ProceduralExplorationGameCore{
 
@@ -83,7 +84,6 @@ namespace ProceduralExplorationGameCore{
     }
 
     void GenerateWaterTextureMapGenJob::processJob(ExplorationMapData* mapData, AV::uint8* buffer, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb){
-
         for(int y = ya; y < yb; y++){
             for(int x = xa; x < xb; x++){
                 const WorldPoint altitudePoint = WRAP_WORLD_POINT(x, y);
@@ -97,7 +97,7 @@ namespace ProceduralExplorationGameCore{
                 if(*altitude >= mapData->seaLevel - 20){
                     val = 150;
                 }
-                *(buffer + (x + (mapData->width - y) * mapData->width)) = val;
+                *(buffer + (x + (mapData->width - 1 - y) * mapData->width)) = val;
 
             }
         }
