@@ -39,7 +39,7 @@ namespace ProceduralExplorationGameCore{
         return false;
     }
     template<typename T, typename C, typename TT, int S>
-    void inline _floodFillForPos(T comparisonFunction, C readFunction, int x, int y, ExplorationMapData* mapData, AV::uint32 currentIdx, std::vector<RegionId>& vals, std::vector<FloodFillEntry*>& outData, bool writeToBlob=true){
+    void inline _floodFillForPos(T comparisonFunction, C readFunction, int x, int y, ExplorationMapData* mapData, AV::uint32& currentIdx, std::vector<RegionId>& vals, std::vector<FloodFillEntry*>& outData, bool writeToBlob=true){
         TT altitude = readFunction(mapData, x, y);
 
         if(comparisonFunction(mapData, altitude)){

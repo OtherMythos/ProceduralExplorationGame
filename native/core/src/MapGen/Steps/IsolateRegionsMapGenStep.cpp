@@ -44,9 +44,10 @@ namespace ProceduralExplorationGameCore{
         WorldCoord xp, yp;
         READ_WORLD_POINT(startingCoord, xp, yp);
         //void inline _floodFillForPos(T comparisonFunction, C readFunction, int x, int y, ExplorationMapData* mapData, AV::uint32 currentIdx, std::vector<RegionId>& vals, std::vector<FloodFillEntry*>& outData, bool writeToBlob=true){
+        AV::uint32 currentIdx = 0;
         _floodFillForPos
             <bool(ExplorationMapData*, WrappedAltitudeRegion),WrappedAltitudeRegion(ExplorationMapData*, AV::uint32, AV::uint32), AV::uint32, 2>
-            (comparisonValues, readValues, xp, yp, mapData, 0, vals, regionResult, false);
+            (comparisonValues, readValues, xp, yp, mapData, currentIdx, vals, regionResult, false);
         //mapData->waterData = std::move(waterResult);
 
         assert(regionResult.size() == 1);

@@ -109,9 +109,9 @@ namespace ProceduralExplorationGameCore{
                         *(b++) = 1;
                     }
                 }else{
-                    *(b++) = 0;
-                    *(b++) = 0;
-                    *(b++) = 0;
+                    *(b++) = 0.2;
+                    *(b++) = 0.2;
+                    *(b++) = 0.8;
                 }
                 *(b++) = 0xFF;
 
