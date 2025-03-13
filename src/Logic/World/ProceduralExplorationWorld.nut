@@ -12,6 +12,7 @@
 
     mAnimIncrement_ = 0.0;
     mWaterDatablock_ = null;
+    mOutsideWaterDatablock_ = null;
 
     mCloudManager_ = null;
 
@@ -272,6 +273,13 @@
         return MapGenHelpers.findRandomPointOnLand(mMapData_, mPlayerEntry_.getPosition(), 200, 100);
     }
 
+    function updateWaterBlock(waterBlock){
+        if(waterBlock != null){
+            waterBlock.setUserValue(0, 1.0, mAnimIncrement_, 0.0, 0.0);
+            waterBlock.setDetailMapOffset(0, Vec2(sin(mAnimIncrement_ * 0.1), mAnimIncrement_ * 0.05));
+        }
+    }
+
     function update(){
         if(!isActive()) return;
 
@@ -280,10 +288,8 @@
         checkForDistractionAppear();
 
         mAnimIncrement_ += 0.01;
-        if(mWaterDatablock_ != null){
-            mWaterDatablock_.setUserValue(0, 1.0, mAnimIncrement_, 0.0, 0.0);
-            mWaterDatablock_.setDetailMapOffset(0, Vec2(sin(mAnimIncrement_ * 0.1), mAnimIncrement_ * 0.05));
-        }
+        updateWaterBlock(mWaterDatablock_);
+        updateWaterBlock(mOutsideWaterDatablock_);
         if(mAnimIncrement_ >= 1000.0){
             mAnimIncrement_ = 0.0;
         }
@@ -431,10 +437,10 @@
         return 0.5 + clampedAltitude * PROCEDURAL_WORLD_UNIT_MULTIPLIER;
     }
 
-    function getWaterDatablock_(){
-        local waterBlock = _hlms.getDatablock("testBlock");
+    function getWaterDatablock_(name, outside=false){
+        local waterBlock = _hlms.getDatablock(name);
         if(waterBlock == null){
-            waterBlock = _hlms.pbs.createDatablock("testBlock");
+            waterBlock = _hlms.pbs.createDatablock(name);
         }
         local sampler = _hlms.getSamplerblock({
             "mag": "point"
@@ -446,14 +452,18 @@
             "mag": "point"
         });
         waterBlock.setWorkflow(_PBS_WORKFLOW_METALLIC);
+        if(!outside){
         //waterBlock.setTexture(_PBSM_DIFFUSE, "checkerPattern.png");
         waterBlock.setTexture(_PBSM_DIFFUSE, "testTexture");
         //waterBlock.setTexture(_PBSM_DIFFUSE, "testTexture");
         //waterBlock.setTexture(_PBSM_DIFFUSE, "red.png");
         //waterBlock.setDiffuse(1, 1, 1);
-        waterBlock.setSamplerblock(_PBSM_DIFFUSE, sampler);
         //waterBlock.setTexture(_PBSM_DETAIL0, "testTexture");
         waterBlock.setTexture(_PBSM_DETAIL_WEIGHT, "testTextureMask");
+        }else{
+            waterBlock.setTexture(_PBSM_DIFFUSE, "blueTexture");
+        }
+        waterBlock.setSamplerblock(_PBSM_DIFFUSE, sampler);
         waterBlock.setTexture(_PBSM_DETAIL0, "waterWaves.png");
 
         waterBlock.setDetailMapOffset(0, Vec2(0.5, 0.5));
@@ -494,18 +504,29 @@
             //parentNode.setPosition(mMapData_.width / 2, 40, -mMapData_.height / 2);
         }
 
-        //Create the ocean plane
-        local oceanNode = mParentNode_.createChildSceneNode();
-        local oceanItem = _scene.createItem("Plane.mesh");
-        oceanItem.setCastsShadows(false);
-        oceanItem.setRenderQueueGroup(30);
-        mWaterDatablock_ = getWaterDatablock_();
-        oceanItem.setDatablock(mWaterDatablock_);
-        oceanNode.attachObject(oceanItem);
-        //NOTE: As we're re-orientating later 1 must be the scale for z
-        oceanNode.setScale(300, 1, 300);
-        oceanNode.setPosition(300 - 0.5, 0.5, -300 - 0.5);
-        //oceanNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
+        local planes = [];
+        local waterBlock = getWaterDatablock_("waterBlock");
+        local surroundBlock = getWaterDatablock_("outsideWaterBlock", true);
+        for(local y = 0; y < 3; y++)
+        for(local x = 0; x < 3; x++){
+            //Create the ocean plane
+            local oceanNode = mParentNode_.createChildSceneNode();
+            local oceanItem = _scene.createItem("Plane.mesh");
+            oceanItem.setCastsShadows(false);
+            oceanItem.setRenderQueueGroup(30);
+            oceanItem.setDatablock(surroundBlock);
+            oceanNode.attachObject(oceanItem);
+            //NOTE: As we're re-orientating later 1 must be the scale for z
+            oceanNode.setScale(300, 1, 300);
+            oceanNode.setPosition((x * 600) - 300 - 0.5, 0.5, (y * 600) + -300 - 0.5 - 600);
+            //oceanNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
+            planes.append(oceanItem);
+        }
+
+        planes[4].setDatablock(waterBlock);
+
+        mWaterDatablock_ = waterBlock;
+        mOutsideWaterDatablock_ = surroundBlock;
 
     }
 
