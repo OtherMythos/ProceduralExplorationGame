@@ -282,6 +282,7 @@
         mAnimIncrement_ += 0.01;
         if(mWaterDatablock_ != null){
             mWaterDatablock_.setUserValue(0, 1.0, mAnimIncrement_, 0.0, 0.0);
+            mWaterDatablock_.setDetailMapOffset(0, Vec2(sin(mAnimIncrement_ * 0.1), mAnimIncrement_ * 0.05));
         }
         if(mAnimIncrement_ >= 1000.0){
             mAnimIncrement_ = 0.0;
@@ -438,10 +439,44 @@
         local sampler = _hlms.getSamplerblock({
             "mag": "point"
         });
+        local wrapSampler = _hlms.getSamplerblock({
+            "u": "wrap",
+            "v": "wrap",
+            "w": "wrap",
+            "mag": "point"
+        });
         waterBlock.setWorkflow(_PBS_WORKFLOW_METALLIC);
-        waterBlock.setTexture(0, "testTexture");
-        waterBlock.setSamplerblock(0, sampler);
-        waterBlock.setUserValue(0, 1.0, 0.0, 0.0, 0.0);
+        //waterBlock.setTexture(_PBSM_DIFFUSE, "checkerPattern.png");
+        waterBlock.setTexture(_PBSM_DIFFUSE, "testTexture");
+        //waterBlock.setTexture(_PBSM_DIFFUSE, "testTexture");
+        //waterBlock.setTexture(_PBSM_DIFFUSE, "red.png");
+        //waterBlock.setDiffuse(1, 1, 1);
+        waterBlock.setSamplerblock(_PBSM_DIFFUSE, sampler);
+        //waterBlock.setTexture(_PBSM_DETAIL0, "testTexture");
+        waterBlock.setTexture(_PBSM_DETAIL_WEIGHT, "testTextureMask");
+        waterBlock.setTexture(_PBSM_DETAIL0, "waterWaves.png");
+
+        waterBlock.setDetailMapOffset(0, Vec2(0.5, 0.5));
+        //waterBlock.setDetailMapWeight(0, 0.1);
+        //waterBlock.setDetailMapWeight(0, 0.5);
+        //waterBlock.setDetailMapOffset(0, Vec2());
+        //waterBlock.setDetailMapScale(0, Vec2(1, 1));
+        //waterBlock.setDetailMapBlendMode(0, 9);
+        waterBlock.setSamplerblock(_PBSM_DETAIL0, wrapSampler);
+
+        //print(waterBlock.getMetalness());
+        //assert(false);
+        waterBlock.setRoughness(1.0);
+        waterBlock.setMetalness(0.0);
+
+        //waterBlock.setTexture(_PBSM_DETAIL1, "waterWaves.png");
+
+        //waterBlock.setSamplerblock(_PBSM_DETAIL1, wrapSampler);
+
+        //waterBlock.setDetailMapOffset(1, Vec2(0.5, 0));
+        waterBlock.setDetailMapScale(0, Vec2(20, 20));
+        //waterBlock.setDetailMapWeight(0, 1);
+        //waterBlock.setUserValue(0, 1.0, 0.0, 0.0, 0.0);
 
         return waterBlock
     }

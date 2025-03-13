@@ -14,7 +14,7 @@
 
 @piece( custom_ps_preLights )
 
-	if(material.userValue[0].x == 1.0){
+	if(material.userValue[0].x == 1.0 && false){
 		@property( diffuse_map )
 		/*
 		float2 animUV = inPs.uv@value(uv_diffuse);

@@ -130,6 +130,7 @@ namespace ProceduralExplorationGameCore{
         void* riverBuffer;
 
         AV::uint32* waterTextureBuffer;
+        AV::uint32* waterTextureBufferMask;
 
         std::vector<RegionData> regionData;
         std::vector<PlacedItemData> placedItems;

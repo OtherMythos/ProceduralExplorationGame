@@ -25,7 +25,7 @@ namespace ProceduralExplorationGameCore{
         GenerateWaterTextureMapGenJob();
         ~GenerateWaterTextureMapGenJob();
 
-        void processJob(ExplorationMapData* mapData, AV::uint32* startCoord, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb);
+        void processJob(ExplorationMapData* mapData, AV::uint32* buffer, AV::uint32* bufferMask, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb);
 
     };
 

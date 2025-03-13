@@ -5,7 +5,8 @@
         {
             "u" : "wrap",
             "v" : "wrap",
-            "w" : "wrap"
+            "w" : "wrap",
+            "mag" : "point"
         }
     },
 
