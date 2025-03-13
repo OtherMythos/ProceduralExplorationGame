@@ -1,4 +1,63 @@
+@piece( custom_ps_preExecution )
+	#define material materialArray[inPs.materialId]
+
+	@property( diffuse_map )
+	if(material.userValue[0].x == 1.0){
+			float2 animUV = inPs.uv@value(uv_diffuse);
+			animUV.x = animUV.x + sin(material.userValue[0].y * 2) * 0.001;
+			animUV.y = animUV.y + cos(material.userValue[0].y * 2) * 0.001;
+
+			inPs.uv0.xy = animUV;
+	}
+	@end
+@end
+
 @piece( custom_ps_preLights )
+
+	if(material.userValue[0].x == 1.0){
+		@property( diffuse_map )
+		/*
+		float2 animUV = inPs.uv@value(uv_diffuse);
+		animUV.x = animUV.x + sin(material.userValue[0].y * 2) * 0.001;
+		animUV.y = animUV.y + cos(material.userValue[0].y * 2) * 0.001;
+		*/
+
+		float PI = 3.14159265359;
+		float2 uv = inPs.uv@value(uv_diffuse);
+		float time = material.userValue[0].y * 10;
+		float d1 = mod(uv.x + uv.y, PI*2);
+		float d2 = mod((uv.x + uv.y + 0.25) * 1.3, PI*6);
+		d1 = time * 0.07 + d1;
+		d2 = time * 0.5 + d2;
+		float2 dist = float2(
+			sin(d1) * 0.15 + sin(d2) * 0.05,
+			cos(d1) * 0.15 + cos(d2) * 0.05
+		);
+		float2 animUV = uv + dist * 0.01;
+
+
+		inPs.uv0.xy = animUV;
+
+/*
+		float val = SampleDiffuse( textureMaps@value( diffuse_map_idx ),
+										   samplerState@value(diffuse_map_sampler),
+										   UV_DIFFUSE( animUV ),
+										   texIndex_diffuseIdx ).x;
+		if(val == 100.0/255.0){
+			pixelData.diffuse.xyz = float3(0.125, 0.435, 0.788);
+		}
+		else if(val == 150.0/255.0){
+			pixelData.diffuse.xyz = float3(0.7, 0.929, 0.925);
+		}else{
+			pixelData.diffuse.xyz = float3(0, 0, 0);
+		}
+		pixelData.diffuse.xyz = float3(0, 0, 0);
+		*/
+
+		@end
+	}
+
+
 	pixelData.diffuse.xyz *= inPs.diffuse;
 @end
 

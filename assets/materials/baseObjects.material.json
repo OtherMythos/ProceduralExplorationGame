@@ -66,13 +66,13 @@
         "MaskedWorld":
         {
             "workflow": "metallic",
-            "blendblock": "transparentBlend",
+            "#blendblock": "transparentBlend",
 
             "diffuse":
             {
                 "value": [1, 1, 1]
             },
-            "transparency" :
+            "#transparency" :
             {
                 "value" : 0.4,
                 "mode" : "Transparent"

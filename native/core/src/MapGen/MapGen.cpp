@@ -141,7 +141,7 @@ namespace ProceduralExplorationGameCore{
         tex = manager->findTextureNoThrow("testTexture");
         if(!tex){
             tex = manager->createTexture("testTexture", Ogre::GpuPageOutStrategy::Discard, Ogre::TextureFlags::ManualTexture, Ogre::TextureTypes::Type2DArray);
-            tex->setPixelFormat(Ogre::PixelFormatGpu::PFG_R8_UNORM);
+            tex->setPixelFormat(Ogre::PixelFormatGpu::PFG_RGBA32_FLOAT);
             tex->setResolution(out->width, out->height);
             tex->scheduleTransitionTo(Ogre::GpuResidency::Resident);
         }
@@ -150,8 +150,8 @@ namespace ProceduralExplorationGameCore{
         stagingTexture->startMapRegion();
         Ogre::TextureBox texBox = stagingTexture->mapRegion(out->width, out->height, tex->getDepth(), tex->getNumSlices(), tex->getPixelFormat());
 
-        Ogre::uint8* pDest = static_cast<Ogre::uint8*>(texBox.at(0, 0, 0));
-        memcpy(pDest, out->waterTextureBuffer, out->width * out->height);
+        Ogre::uint32* pDest = static_cast<Ogre::uint32*>(texBox.at(0, 0, 0));
+        memcpy(pDest, out->waterTextureBuffer, out->width * out->height * sizeof(float) * 4);
 
         stagingTexture->stopMapRegion();
         stagingTexture->upload(texBox, tex, 0, 0, 0, false);

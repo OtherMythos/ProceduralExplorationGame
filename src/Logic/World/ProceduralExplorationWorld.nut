@@ -10,6 +10,9 @@
     mCurrentFoundRegions_ = null;
     mRegionEntries_ = null;
 
+    mAnimIncrement_ = 0.0;
+    mWaterDatablock_ = null;
+
     mCloudManager_ = null;
 
     ProceduralRegionEntry = class{
@@ -276,6 +279,14 @@
         checkForEnemyAppear();
         checkForDistractionAppear();
 
+        mAnimIncrement_ += 0.01;
+        if(mWaterDatablock_ != null){
+            mWaterDatablock_.setUserValue(0, 1.0, mAnimIncrement_, 0.0, 0.0);
+        }
+        if(mAnimIncrement_ >= 1000.0){
+            mAnimIncrement_ = 0.0;
+        }
+
         mCloudManager_.update();
 
         foreach(c,i in mRegionEntries_){
@@ -430,6 +441,7 @@
         waterBlock.setWorkflow(_PBS_WORKFLOW_METALLIC);
         waterBlock.setTexture(0, "testTexture");
         waterBlock.setSamplerblock(0, sampler);
+        waterBlock.setUserValue(0, 1.0, 0.0, 0.0, 0.0);
 
         return waterBlock
     }
@@ -452,7 +464,8 @@
         local oceanItem = _scene.createItem("Plane.mesh");
         oceanItem.setCastsShadows(false);
         oceanItem.setRenderQueueGroup(30);
-        oceanItem.setDatablock(getWaterDatablock_());
+        mWaterDatablock_ = getWaterDatablock_();
+        oceanItem.setDatablock(mWaterDatablock_);
         oceanNode.attachObject(oceanItem);
         //NOTE: As we're re-orientating later 1 must be the scale for z
         oceanNode.setScale(300, 1, 300);

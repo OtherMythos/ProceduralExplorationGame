@@ -33,8 +33,8 @@ namespace ProceduralExplorationGameCore{
             Ogre::uint8* pDest = static_cast<Ogre::uint8*>(texBox.at(0, 0, 0));
          */
 
-        size_t bufSize = input->width * input->height * sizeof(AV::uint8);
-        AV::uint8* buffer = static_cast<AV::uint8*>(malloc(bufSize));
+        size_t bufSize = input->width * input->height * sizeof(float) * 4;
+        AV::uint32* buffer = static_cast<AV::uint32*>(malloc(bufSize));
         memset(buffer, 0, bufSize);
 
         /*
@@ -83,21 +83,37 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void GenerateWaterTextureMapGenJob::processJob(ExplorationMapData* mapData, AV::uint8* buffer, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb){
+    void GenerateWaterTextureMapGenJob::processJob(ExplorationMapData* mapData, AV::uint32* buffer, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb){
         for(int y = ya; y < yb; y++){
             for(int x = xa; x < xb; x++){
                 const WorldPoint altitudePoint = WRAP_WORLD_POINT(x, y);
                 const AV::uint8* altitude = VOX_PTR_FOR_COORD_CONST(mapData, altitudePoint);
+                const AV::uint8* waterGroup = WATER_GROUP_PTR_FOR_COORD_CONST(mapData, altitudePoint);
 
+                /*
                 if(*altitude >= mapData->seaLevel){
                     continue;
                 }
+                 */
 
-                AV::uint8 val = 100;
-                if(*altitude >= mapData->seaLevel - 20){
-                    val = 150;
+                float* b = reinterpret_cast<float*>((buffer) + (x + (mapData->height - y) * mapData->width) * 4);
+
+                if(*waterGroup == 0 || *waterGroup == INVALID_WATER_ID){
+                    if(*altitude >= mapData->seaLevel - 20){
+                        *(b++) = 0.4;
+                        *(b++) = 0.4;
+                        *(b++) = 1;
+                    }else{
+                        *(b++) = 0;
+                        *(b++) = 0;
+                        *(b++) = 1;
+                    }
+                }else{
+                    *(b++) = 0;
+                    *(b++) = 0;
+                    *(b++) = 0;
                 }
-                *(buffer + (x + (mapData->width - 1 - y) * mapData->width)) = val;
+                *(b++) = 0xFF;
 
             }
         }
