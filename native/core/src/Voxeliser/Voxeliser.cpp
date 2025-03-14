@@ -12,6 +12,8 @@
 
 namespace ProceduralExplorationGameCore{
 
+    static const int OCEAN_EDGE_LENGTH = 4;
+
     static const Ogre::VertexElement2Vec elemVec = {
         Ogre::VertexElement2(Ogre::VET_FLOAT3, Ogre::VES_POSITION),
         Ogre::VertexElement2(Ogre::VET_FLOAT1, Ogre::VES_NORMAL),
@@ -383,7 +385,7 @@ namespace ProceduralExplorationGameCore{
                         AV::uint32 fv = FACES_VERTICES[f * 4 + i]*3;
                         AV::uint32 xx = (VERTICES_POSITIONS[fv] + x);
                         AV::uint32 yy = (VERTICES_POSITIONS[fv + 1] + yInverse);
-                        AV::uint32 zz = (VERTICES_POSITIONS[fv + 2] + altitude);
+                        AV::uint32 zz = (VERTICES_POSITIONS[fv + 2] + altitude + OCEAN_EDGE_LENGTH);
 
                         AV::uint8 ambient = (ambientMask >> 8 * i) & 0xFF;
                         assert(ambient >= 0 && ambient <= 3);
@@ -427,6 +429,8 @@ namespace ProceduralExplorationGameCore{
                 if(testAltitude < altitude){
                     //The altidue is lower so need to draw some triangles.
                     AV::uint32 altitudeDelta = altitude - testAltitude;
+                    //For the faces about to hit the ocean, extend it slightly so more complex water animations can be used.
+                    bool lengthen = (testAltitude == 0 && altitude == 1);
                     for(AV::uint32 zAlt = 0; zAlt < altitudeDelta; zAlt++){
                         //Loop down and draw the triangles.
 
@@ -436,7 +440,7 @@ namespace ProceduralExplorationGameCore{
                             AV::uint32 fv = FACES_VERTICES[f * 4 + i]*3;
                             AV::uint32 xx = VERTICES_POSITIONS[fv] + x;
                             AV::uint32 yy = VERTICES_POSITIONS[fv + 1] + y;
-                            AV::uint32 zz = VERTICES_POSITIONS[fv + 2] + faceAltitude;
+                            AV::uint32 zz = VERTICES_POSITIONS[fv + 2] * (lengthen ? OCEAN_EDGE_LENGTH : 1) + faceAltitude + OCEAN_EDGE_LENGTH + (lengthen ? -(OCEAN_EDGE_LENGTH-1) : 0);
 
                             AV::uint8 ambient = (ambientMask >> 8 * i) & 0xFF;
                             assert(ambient >= 0 && ambient <= 3);

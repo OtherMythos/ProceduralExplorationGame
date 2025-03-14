@@ -64,6 +64,9 @@
 		inValues.x = float(pos_x)-0.5;
 		inValues.y = float(pos_y)-0.5;
 		inValues.z = float(pos_z)-0.5;
+		if(magicNumber == uint(0x15FBF7DB)){
+			inValues.z -= 4.0;
+		}
 
 		uint norm = uint((originalSecond >> 29) & uint(0x3));
 		uint ambient = uint((original >> 30) & uint(0x3));
