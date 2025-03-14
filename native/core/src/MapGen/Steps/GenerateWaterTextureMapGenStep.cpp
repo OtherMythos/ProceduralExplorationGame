@@ -19,9 +19,9 @@ namespace ProceduralExplorationGameCore{
     void GenerateWaterTextureMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
 
         size_t bufSize = input->width * input->height * sizeof(float) * 4;
-        AV::uint32* buffer = static_cast<AV::uint32*>(malloc(bufSize));
+        float* buffer = static_cast<float*>(malloc(bufSize));
         memset(buffer, 0, bufSize);
-        AV::uint32* bufferMask = static_cast<AV::uint32*>(malloc(bufSize));
+        float* bufferMask = static_cast<float*>(malloc(bufSize));
         memset(bufferMask, 0, bufSize);
 
         int div = 4;
@@ -56,10 +56,12 @@ namespace ProceduralExplorationGameCore{
         *((*buf)) = 0xFF;
     }
 
-    void GenerateWaterTextureMapGenJob::processJob(ExplorationMapData* mapData, AV::uint32* buffer, AV::uint32* bufferMask, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb){
+    void GenerateWaterTextureMapGenJob::processJob(ExplorationMapData* mapData, float* buffer, float* bufferMask, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb){
         for(int y = ya; y < yb; y++){
             for(int x = xa; x < xb; x++){
-                const WorldPoint altitudePoint = WRAP_WORLD_POINT(x, y);
+                int yy = y + 1;
+                if(yy >= mapData->width) yy = mapData->width-1;
+                const WorldPoint altitudePoint = WRAP_WORLD_POINT(x, yy);
                 const AV::uint8* altitude = VOX_PTR_FOR_COORD_CONST(mapData, altitudePoint);
                 const AV::uint8* waterGroup = WATER_GROUP_PTR_FOR_COORD_CONST(mapData, altitudePoint);
 
@@ -69,8 +71,10 @@ namespace ProceduralExplorationGameCore{
                 }
                  */
 
-                float* b = reinterpret_cast<float*>((buffer) + (x + (mapData->height - y ) * mapData->width) * 4);
-                float* bMask = reinterpret_cast<float*>((bufferMask) + (x + (mapData->height - y ) * mapData->width) * 4);
+                int reverseWidth = mapData->width - y - 1;
+                if(reverseWidth >= mapData->width) continue;
+                float* b = ((buffer) + ((x + reverseWidth * mapData->width) * 4));
+                float* bMask = ((bufferMask) + ((x + reverseWidth * mapData->width) * 4));
 
                 int seaLevelCutoff = 40;
                 int seaLevelCutoffSecond = 8;

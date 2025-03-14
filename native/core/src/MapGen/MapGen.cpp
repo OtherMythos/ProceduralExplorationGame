@@ -151,7 +151,7 @@ namespace ProceduralExplorationGameCore{
             stagingTexture->startMapRegion();
             Ogre::TextureBox texBox = stagingTexture->mapRegion(out->width, out->height, tex->getDepth(), tex->getNumSlices(), tex->getPixelFormat());
 
-            Ogre::uint32* pDest = static_cast<Ogre::uint32*>(texBox.at(0, 0, 0));
+            float* pDest = static_cast<float*>(texBox.at(0, 0, 0));
             memcpy(pDest, out->waterTextureBuffer, out->width * out->height * sizeof(float) * 4);
 
             stagingTexture->stopMapRegion();

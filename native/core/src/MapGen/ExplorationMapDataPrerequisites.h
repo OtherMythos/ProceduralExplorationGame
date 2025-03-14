@@ -129,8 +129,8 @@ namespace ProceduralExplorationGameCore{
         size_t blueNoiseBufferSize;
         void* riverBuffer;
 
-        AV::uint32* waterTextureBuffer;
-        AV::uint32* waterTextureBufferMask;
+        float* waterTextureBuffer;
+        float* waterTextureBufferMask;
 
         std::vector<RegionData> regionData;
         std::vector<PlacedItemData> placedItems;
