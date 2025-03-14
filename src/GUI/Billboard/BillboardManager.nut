@@ -38,11 +38,13 @@
         foreach(i in mTrackedNodes_){
             if(i == null) continue;
             local pos = mCamera_.getWorldPosInWindow(i.mNode.getPositionVec3());
-            pos = Vec2((pos.x + 1) / 2, (-pos.y + 1) / 2);
-            local posVisible = i.mBillboard.posVisible(pos);
-            if(posVisible){
-                i.mBillboard.setPosition(mPos_ + (pos * mSize_));
+            if(pos == null){
+                i.mBillboard.setCullVisible(false);
+                continue;
             }
+            i.mBillboard.setCullVisible(true);
+            pos = Vec2((pos.x + 1) / 2, (-pos.y + 1) / 2);
+            i.mBillboard.setPosition(mPos_ + (pos * mSize_));
         }
     }
 
