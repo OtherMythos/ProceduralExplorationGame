@@ -69,8 +69,8 @@ namespace ProceduralExplorationGameCore{
                 }
                  */
 
-                float* b = reinterpret_cast<float*>((buffer) + (x + (mapData->height - y - 1) * mapData->width) * 4);
-                float* bMask = reinterpret_cast<float*>((bufferMask) + (x + (mapData->height - y - 1) * mapData->width) * 4);
+                float* b = reinterpret_cast<float*>((buffer) + (x + (mapData->height - y ) * mapData->width) * 4);
+                float* bMask = reinterpret_cast<float*>((bufferMask) + (x + (mapData->height - y ) * mapData->width) * 4);
 
                 int seaLevelCutoff = 40;
                 int seaLevelCutoffSecond = 8;
