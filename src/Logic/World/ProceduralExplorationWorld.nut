@@ -443,7 +443,8 @@
         local waterBlock = _hlms.getDatablock(name);
         if(waterBlock == null){
             waterBlock = _hlms.pbs.createDatablock(name);
-            waterBlock.setMacroblock(_hlms.getMacroblock( { "polygonMode": _PM_WIREFRAME } ));
+            //waterBlock.setMacroblock(_hlms.getMacroblock( { "polygonMode": _PM_WIREFRAME } ));
+            waterBlock.setMacroblock(_hlms.getMacroblock( { "polygonMode": _PM_SOLID } ));
         }
         local sampler = _hlms.getSamplerblock({
             "mag": "point"
