@@ -294,6 +294,8 @@
             mAnimIncrement_ = 0.0;
         }
 
+        _gameCore.update();
+
         mCloudManager_.update();
 
         foreach(c,i in mRegionEntries_){
@@ -441,6 +443,7 @@
         local waterBlock = _hlms.getDatablock(name);
         if(waterBlock == null){
             waterBlock = _hlms.pbs.createDatablock(name);
+            waterBlock.setMacroblock(_hlms.getMacroblock( { "polygonMode": _PM_WIREFRAME } ));
         }
         local sampler = _hlms.getSamplerblock({
             "mag": "point"
@@ -511,7 +514,7 @@
         for(local x = 0; x < 3; x++){
             //Create the ocean plane
             local oceanNode = mParentNode_.createChildSceneNode();
-            local oceanItem = _scene.createItem("Plane.mesh");
+            local oceanItem = _scene.createItem("WaterPlane.mesh");
             oceanItem.setCastsShadows(false);
             oceanItem.setRenderQueueGroup(30);
             oceanItem.setDatablock(surroundBlock);

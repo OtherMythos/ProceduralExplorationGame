@@ -37,6 +37,8 @@
 #include "Ogre/OgreVoxMeshItem.h"
 #include "Ogre/OgreVoxMeshManager.h"
 
+#include "GameCorePBSHlmsListener.h"
+
 #include "../../../../src/Versions.h.nut"
 
 #include <sqstdblob.h>
@@ -646,6 +648,13 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger GameCoreNamespace::update(HSQUIRRELVM vm){
+        //TODO make this accurate to delta times.
+        GameCorePBSHlmsListener::mTimeValue += 0.03;
+
+        return 0;
+    }
+
     void GameCoreNamespace::setupNamespace(HSQUIRRELVM vm){
         AV::ScriptUtils::addFunction(vm, getGameCoreVersion, "getGameCoreVersion");
 
@@ -665,6 +674,8 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, getMapGenStage, "getMapGenStage");
         AV::ScriptUtils::addFunction(vm, checkClaimMapGen, "checkClaimMapGen");
         AV::ScriptUtils::addFunction(vm, getTotalMapGenStages, "getTotalMapGenStages");
+
+        AV::ScriptUtils::addFunction(vm, update, "update");
 
         AV::ScriptUtils::addFunction(vm, createVoxMeshItem, "createVoxMeshItem", -2, ".si");
 

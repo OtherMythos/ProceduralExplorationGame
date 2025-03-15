@@ -52,6 +52,8 @@ namespace ProceduralExplorationGamePlugin{
 
         static ProceduralExplorationGameCore::MapGen* currentMapGen;
         static ProceduralExplorationGameCore::VisitedPlacesParser* currentVisitedPlacesParser;
+
+        static SQInteger update(HSQUIRRELVM vm);
     };
 
 };

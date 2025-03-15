@@ -25,6 +25,8 @@
 
 #include "Ogre.h"
 #include "Ogre/OgreVoxMeshItem.h"
+#include "OgreHlms.h"
+#include "GameCorePBSHlmsListener.h"
 
 namespace ProceduralExplorationGamePlugin{
 
@@ -65,9 +67,9 @@ namespace ProceduralExplorationGamePlugin{
         Ogre::VoxMeshItemFactory* factory = OGRE_NEW Ogre::VoxMeshItemFactory();
         Ogre::Root::getSingletonPtr()->addMovableObjectFactory(factory);
 
-        ProceduralExplorationGameCore::VoxSceneDumper dumper;
-        auto it = Ogre::Root::getSingleton().getSceneManagerIterator();
-        //dumper.dumpToObjFile("/tmp/out.obj", it.getNext()->getRootSceneNode());
+        GameCorePBSHlmsListener* pbsListener = new GameCorePBSHlmsListener();
+        Ogre::Hlms *hlmsPbs = Ogre::Root::getSingleton().getHlmsManager()->getHlms( Ogre::HLMS_PBS );
+        hlmsPbs->setListener( pbsListener );
 
     }
 
