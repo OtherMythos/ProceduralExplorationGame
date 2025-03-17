@@ -16,6 +16,7 @@ enum CompositorSceneType{
     mActiveCompositors_ = []
     mTotalCompositors_ = 0
     mCompositorsForTypes = array(CompositorSceneType.MAX, null)
+    mTextures_ = []
 
     CompositorDef = class{
         mWorkspace = null;
@@ -35,16 +36,39 @@ enum CompositorSceneType{
         function destroy(){
             _compositor.removeWorkspace(mWorkspace);
             _hlms.destroyDatablock(mDatablock);
-            _graphics.destroyTexture(mTexture);
+            //_graphics.destroyTexture(mTexture);
         }
     }
 
     function setup(){
-        mRenderWindowWorkspace_ = _compositor.addWorkspace([_window.getRenderTexture()], _camera.getCamera(), "renderWindowWorkspace", true);
+        for(local i = 0; i < CompositorSceneType.MAX; i++){
+            local newTex = _graphics.createTexture("compositor/renderTexture" + i);
+            newTex.setResolution(100, 100);
+            newTex.scheduleTransitionTo(_GPU_RESIDENCY_RESIDENT);
+            mTextures_.append(newTex);
+        }
+
+        refreshRenderWindowWorkspace_();
+
+    }
+
+    function refreshRenderWindowWorkspace_(){
+        if(mRenderWindowWorkspace_ != null){
+            _compositor.removeWorkspace(mRenderWindowWorkspace_);
+        }
+        local textures = [_window.getRenderTexture()];
+        foreach(i in mTextures_){
+            textures.append(i);
+        }
+        mRenderWindowWorkspace_ = _compositor.addWorkspace(textures, _camera.getCamera(), "renderWindowWorkspace", true);
     }
 
     function createCompositorWorkspace(workspaceName, size, compositorSceneType){
-        local newTex = _graphics.createTexture("compositor/renderTexture" + mTotalCompositors_);
+        //local newTex = _graphics.createTexture("compositor/renderTexture" + mTotalCompositors_);
+        local newTex = mTextures_[compositorSceneType];
+        //newTex.waitForData();
+        newTex.scheduleTransitionTo(_GPU_RESIDENCY_ON_STORAGE);
+        //newTex.waitForData();
         newTex.setResolution(size.x.tointeger(), size.y.tointeger());
         newTex.scheduleTransitionTo(_GPU_RESIDENCY_RESIDENT);
         local newCamera = _scene.createCamera("compositor/camera" + mTotalCompositors_);
@@ -66,6 +90,8 @@ enum CompositorSceneType{
         mTotalCompositors_++;
 
         print("Added compositor with id " + id)
+
+        refreshRenderWindowWorkspace_();
 
         return id;
     }

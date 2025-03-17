@@ -1,6 +1,8 @@
 #pragma once
 
+#define final 
 #include "OgreMesh2.h"
+#undef final
 
 namespace Ogre{
 

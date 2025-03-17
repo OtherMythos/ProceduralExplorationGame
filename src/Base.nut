@@ -464,7 +464,7 @@
         //Extra check to ensure a debug and release plugin was loaded.
         local engineVersion = _settings.getEngineVersion();
         if(nativeVersion.build != engineVersion.build){
-            throw "Mismatch in engine and plugin build type";
+            throw format("Mismatch in engine and plugin build type. Plugin is '%s' engine is '%s'", nativeVersion.build, engineVersion.build);
         }
     }
 

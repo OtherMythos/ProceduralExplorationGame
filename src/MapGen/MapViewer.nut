@@ -169,7 +169,7 @@
         local sampler = _hlms.getSamplerblock({
             "mag": "point"
         });
-        mCompositorDatablock_.setTexture(0, mCompositorTexture_, sampler);
+        //mCompositorDatablock_.setTexture(0, mCompositorTexture_, sampler);
     }
 
     function uploadToTexture(){
