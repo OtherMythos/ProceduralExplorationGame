@@ -1,8 +1,10 @@
 #pragma once
 
-#define final 
+#define _ALLOW_KEYWORD_MACROS
+#define final
 #include "OgreMesh2.h"
 #undef final
+#undef _ALLOW_KEYWORD_MACROS
 
 namespace Ogre{
 
