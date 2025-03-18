@@ -172,6 +172,11 @@ compositor_node renderTexture30Node
             {
                 all store_or_resolve
             }
+
+            rq_first 0
+            rq_last 31
+
+            shadows default_simpleShadowNode
         }
     }
 }
