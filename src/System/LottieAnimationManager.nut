@@ -105,6 +105,7 @@ const LOTTIE_MANAGER_SPRITES_WIDTH = 10;
 
             mStagingTexture_.stopMapRegion();
             mStagingTexture_.upload(textureBox, mTexture_, 0);
+            mTexture_.barrierSolveTexture();
         }
 
         function singleBufferTransfer_(){
@@ -118,6 +119,7 @@ const LOTTIE_MANAGER_SPRITES_WIDTH = 10;
 
             mStagingTexture_.stopMapRegion();
             mStagingTexture_.upload(textureBox, mTexture_, 0);
+            mTexture_.barrierSolveTexture();
         }
 
         function createDatablock_(){
@@ -126,6 +128,7 @@ const LOTTIE_MANAGER_SPRITES_WIDTH = 10;
             });
             local datablock = _hlms.unlit.createDatablock("lottieManagerDatablock" + mId_, blendBlock);
             datablock.setTexture(0, mTexture_);
+            mTexture_.barrierSolveTexture();
 
             mDatablock_ = datablock;
         }
