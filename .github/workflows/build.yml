@@ -239,6 +239,7 @@ jobs:
     strategy:
       matrix:
         buildType: [Debug, Release]
+        rendersystem: [OpenGL, Vulkan]
 
     steps:
       - name: Setup OpenGL
@@ -269,7 +270,7 @@ jobs:
           cp -r checkout/test .
           chmod +x ./av-x86_64.AppImage
           mkdir /tmp/testLogs
-          xvfb-run python avTools/testRunner/testRunner.py -l /tmp/testLogs -e ./av-x86_64.AppImage -p test/avTests.cfg -o /home/runner/work/results.xml
+          xvfb-run python avTools/testRunner/testRunner.py -l /tmp/testLogs -e ./av-x86_64.AppImage -p test/avTests.cfg -o /home/runner/work/results.xml --flags="--rendersystem ${{ matrix.rendersystem }}"
       - name: Check results
         if: always()
         run: |
