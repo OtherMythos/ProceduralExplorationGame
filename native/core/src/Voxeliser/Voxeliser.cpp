@@ -104,7 +104,7 @@ namespace ProceduralExplorationGameCore{
                     verts.push_back(val);
 
                     //TODO Magic number for now to avoid it breaking the regular materials.
-                    val = f << 29 | 0x15FBF7DB;
+                    val = f << 29 | VOXELISER_MAGIC_NUMBER;
                     //val = f;
                     verts.push_back(val);
                     //verts.push_back(f);
@@ -224,7 +224,7 @@ namespace ProceduralExplorationGameCore{
                     AV::uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
                     //TODO Magic number for now to avoid it breaking the regular materials.
                     (*bufEntry.mVertsWritePtr++) = val;
-                    val = f << 29 | 0x15FBF7DB;
+                    val = f << 29 | TERRAIN_MAGIC_NUMBER;
                     (*bufEntry.mVertsWritePtr++) = val;
                     (*bufEntry.mVertsWritePtr++) = 0x0;
                     (*bufEntry.mVertsWritePtr++) = 0x0;
@@ -273,7 +273,7 @@ namespace ProceduralExplorationGameCore{
 
                         AV::uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
                         (*outBuffer.mVertsWritePtr++) = val;
-                        val = f << 29 | 0x15FBF7DB;
+                        val = f << 29 | TERRAIN_MAGIC_NUMBER;
                         (*outBuffer.mVertsWritePtr++) = val;
                         (*outBuffer.mVertsWritePtr++) = 0x0;
                         (*outBuffer.mVertsWritePtr++) = 0x0;
@@ -392,7 +392,7 @@ namespace ProceduralExplorationGameCore{
 
                         AV::uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
                         (*bufEntry.mVertsWritePtr++) = val;
-                        val = f << 29 | 0x15FBF7DB;
+                        val = f << 29 | TERRAIN_MAGIC_NUMBER;
                         (*bufEntry.mVertsWritePtr++) = val;
                         (*bufEntry.mVertsWritePtr++) = 0x0;
                         (*bufEntry.mVertsWritePtr++) = 0x0;
@@ -448,7 +448,7 @@ namespace ProceduralExplorationGameCore{
                             AV::uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
                             //TODO Magic number for now to avoid it breaking the regular materials.
                             (*bufEntry.mVertsWritePtr++) = val;
-                            val = f << 29 | 0x15FBF7DB;
+                            val = f << 29 | TERRAIN_MAGIC_NUMBER;
                             (*bufEntry.mVertsWritePtr++) = val;
                             (*bufEntry.mVertsWritePtr++) = 0x0;
                             (*bufEntry.mVertsWritePtr++) = 0x0;

@@ -407,11 +407,11 @@
     function setupBaseMeshes(){
         local voxMesh = VoxToMesh();
 
-        local voxData = array(1, 188);
+        local voxData = array(1, 205);
 
-        voxMesh.createMeshForVoxelData("EXPOrbMesh", voxData, 1, 1, 1);
-        voxData[0] = 216;
-        voxMesh.createMeshForVoxelData("HealthOrbMesh", voxData, 1, 1, 1);
+        _gameCore.voxeliseMeshForVoxelData("EXPOrbMesh", voxData, 1, 1, 1);
+        voxData[0] = 200;
+        _gameCore.voxeliseMeshForVoxelData("HealthOrbMesh", voxData, 1, 1, 1);
     }
 
     function setupBaseMaterials(){

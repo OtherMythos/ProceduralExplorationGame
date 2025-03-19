@@ -13,6 +13,9 @@ namespace ProceduralExplorationGameCore{
     static const float TILE_WIDTH = (1.0 / COLS_WIDTH) / 2.0;
     static const float TILE_HEIGHT = (1.0 / COLS_HEIGHT) / 2.0;
 
+    static const AV::uint32 TERRAIN_MAGIC_NUMBER = 0x15FBF7DB;
+    static const AV::uint32 VOXELISER_MAGIC_NUMBER = 0x15FBF7FB;
+
     static const int MASKS[] = {
         0, -1, 0,
         0, 1, 0,

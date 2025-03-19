@@ -31,6 +31,11 @@
 	float3 diffuse;
 @end
 @piece( custom_vs_preExecution )
+
+    #define TERRAIN_MAGIC_NUMBER 0x15FBF7DB
+    #define VOXELISER_MAGIC_NUMBER 0x15FBF7FB
+    #define OFFLINE_VOXELISER_MAGIC_NUMBER 0x15FBB7DB
+
     const float3 FACES_NORMALS[6] = {
         float3(0, -1,  0),
         float3(0,  1,  0),
@@ -57,9 +62,9 @@
 	#undef inVs_vertex
 	#define inVs_vertex inValues
 
-	if(magicNumber == uint(0x15FBF7DB) || magicNumber == uint(0x15FBB7DB)){
+	if(magicNumber == uint(TERRAIN_MAGIC_NUMBER) || magicNumber == uint(OFFLINE_VOXELISER_MAGIC_NUMBER) || magicNumber == uint(VOXELISER_MAGIC_NUMBER)){
 		int offset = 0;
-		if(magicNumber == uint(0x15FBB7DB)){
+		if(magicNumber == uint(OFFLINE_VOXELISER_MAGIC_NUMBER)){
 			offset = 128;
 		}
 		int pos_x = int(original & uint(0x3FF)) - offset;
@@ -68,7 +73,7 @@
 		inValues.x = float(pos_x)-0.5;
 		inValues.y = float(pos_y)-0.5;
 		inValues.z = float(pos_z)-0.5;
-		if(magicNumber == uint(0x15FBF7DB)){
+		if(magicNumber == uint(TERRAIN_MAGIC_NUMBER)){
 			inValues.z -= 4.0;
 		}
 
@@ -94,3 +99,4 @@
 
 
 @end
+
