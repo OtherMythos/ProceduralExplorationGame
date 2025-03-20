@@ -64,7 +64,7 @@
     constructor(parentWorld, id){
         mParentWorld_ = parentWorld;
         mId_ = id;
-        mCollisionWorld_ = CollisionWorld(_COLLISION_WORLD_BRUTE_FORCE, mId_);
+        mCollisionWorld_ = CollisionWorld(_COLLISION_WORLD_OCTREE, mId_);
 
         //mTriggerResponses_ = {};
         mTriggerData_ = {};
