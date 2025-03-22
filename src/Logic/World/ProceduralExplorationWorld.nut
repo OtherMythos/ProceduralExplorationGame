@@ -16,6 +16,8 @@
 
     mCloudManager_ = null;
 
+    mTerrain_ = null;
+
     ProceduralRegionEntry = class{
         mCreatorWorld_ = null;
         mEntityManager_ = null;
@@ -188,6 +190,8 @@
     constructor(worldId, preparer){
         base.constructor(worldId, preparer);
 
+        mTerrain_ = [];
+
         local requestedZoom = ::Base.mPlayerStats.getExplorationCurrentZoom();
         if(requestedZoom != null){
             mCurrentZoomLevel_ = requestedZoom;
@@ -248,6 +252,22 @@
         pos.y = getZForPos(pos);
         mPlayerEntry_.setPosition(pos);
         notifyPlayerMoved();
+
+        if(false){
+            local rel = mMapData_.width / 1024.0;
+            local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION);
+            for(local y = 0; y < 3; y++){
+                for(local x = 0; x < 3; x++){
+                    local terrain = _scene.createTerrain(camera);
+                    terrain.load("height.png", Vec3(mMapData_.width/2 + mMapData_.width * x - (mMapData_.width), 0, -mMapData_.height/2 + mMapData_.height * y - (mMapData_.height)), Vec3(mMapData_.width + rel, 100, mMapData_.height + rel));
+                    local node = _scene.getRootSceneNode().createChildSceneNode(_SCENE_STATIC);
+                    node.attachObject(terrain);
+                    terrain.setRenderQueueGroup(30);
+
+                    mTerrain_.append(terrain);
+                }
+            }
+        }
     }
 
     function shutdown(){
@@ -303,6 +323,12 @@
         }
 
         checkWorldZoomState();
+
+        if(mTerrain_ != null){
+            foreach(i in mTerrain_){
+                i.update();
+            }
+        }
     }
 
     function checkForEnemyAppear(){

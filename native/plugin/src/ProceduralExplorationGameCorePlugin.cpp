@@ -71,6 +71,9 @@ namespace ProceduralExplorationGamePlugin{
         Ogre::Hlms *hlmsPbs = Ogre::Root::getSingleton().getHlmsManager()->getHlms( Ogre::HLMS_PBS );
         hlmsPbs->setListener( pbsListener );
 
+        Ogre::Hlms *hlmsTerra = Ogre::Root::getSingleton().getHlmsManager()->getHlms(Ogre::HLMS_USER3);
+        hlmsTerra->setListener( pbsListener );
+
     }
 
 }

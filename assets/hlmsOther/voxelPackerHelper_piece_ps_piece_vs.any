@@ -1,0 +1,12 @@
+@piece( custom_vs_preExecution )
+
+	//inVs_vertex.y += sin(inVs_vertex.x*600) * 0.25;
+	//outVs.uv0.y
+	//inVs_vertex.y += cos(inVs_vertex.z*600) * 0.25;
+	//inVs_vertex.x += sin(inVs_vertex.x*600) * 0.001;
+
+@end
+
+@piece( custom_passBuffer )
+	float time;
+@end

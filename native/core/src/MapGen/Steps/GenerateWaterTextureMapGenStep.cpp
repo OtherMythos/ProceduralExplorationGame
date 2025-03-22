@@ -46,14 +46,14 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    static void _writeToBuffer(float** buf, float r, float g, float b){
+    static void _writeToBuffer(float** buf, float r, float g, float b, float a=255.0){
         *((*buf)) = r / 255;
         (*buf)++;
         *((*buf)) = g / 255;
         (*buf)++;
         *((*buf)) = b / 255;
         (*buf)++;
-        *((*buf)) = 0xFF;
+        *((*buf)) = a / 255;
     }
 
     void GenerateWaterTextureMapGenJob::processJob(ExplorationMapData* mapData, float* buffer, float* bufferMask, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb){
@@ -97,13 +97,13 @@ namespace ProceduralExplorationGameCore{
 
                 if(*waterGroup == 0 || *waterGroup == INVALID_WATER_ID){
                     if(*altitude < mapData->seaLevel - seaLevelCutoff){
-                        _writeToBuffer(&bMask, 255, 0, 0);
+                        _writeToBuffer(&bMask, 255, 0, 0, 0);
                     }
                     else if(*altitude > mapData->seaLevel - seaLevelCutoff && *altitude < mapData->seaLevel - seaLevelCutoffSecond){
-                        _writeToBuffer(&bMask, 20, 0, 0);
+                        _writeToBuffer(&bMask, 20, 0, 0, 0);
                     }
                     else{
-                        _writeToBuffer(&bMask, 0, 0, 0);
+                        _writeToBuffer(&bMask, 0, 0, 0, 0);
                     }
                 }
             }
