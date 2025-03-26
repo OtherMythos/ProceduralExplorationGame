@@ -468,6 +468,7 @@
         //TODO make some of these scene static
         local item = _gameCore.createVoxMeshItem(meshTarget);
         item.setRenderQueueGroup(30);
+        item.setDatablock("voxelMaterialTree");
         placeNode.attachObject(item);
         local scale = getScaleForPlacedItemType_(itemType);
         placeNode.setScale(scale, scale, scale);

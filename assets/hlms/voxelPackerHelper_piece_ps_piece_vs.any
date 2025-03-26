@@ -80,6 +80,17 @@
 		uint norm = uint((originalSecond >> 29) & uint(0x3));
 		uint ambient = uint((original >> 30) & uint(0x3));
 
+		@property(treeVertices)
+			int voxel = (originalSecond & 0xFF);
+			float mod = 2.0;
+			if(voxel == 137){
+				mod = 0.0;
+			}
+			inValues.y += sin(inValues.y*600 + passBuf.time) * 0.05 * mod;
+			inValues.z += cos(inValues.z*600 + passBuf.time) * 0.10 * mod;
+			inValues.x += sin(inValues.x*600 + passBuf.time) * 0.05 * mod;
+		@end
+
 		normVal = FACES_NORMALS[norm];
 
 		//If the renderable does not require pixel shading because it is a shadow caster for instance, these settings won't always be available.

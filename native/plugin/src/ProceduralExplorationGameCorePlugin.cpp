@@ -65,6 +65,9 @@ namespace ProceduralExplorationGamePlugin{
             if(v & ProceduralExplorationGameCore::HLMS_OCEAN_VERTICES){
                 hlms->setProperty("oceanVertices", true);
             }
+            if(v & ProceduralExplorationGameCore::HLMS_TREE_VERTICES){
+                hlms->setProperty("treeVertices", true);
+            }
         }
     };
 
@@ -143,6 +146,13 @@ namespace ProceduralExplorationGamePlugin{
                 ProceduralExplorationGameCore::HLMS_TERRAIN;
             writeFlagToDatablock("MaskedWorld", v);
 
+        }
+
+        {
+            AV::uint32 v = ProceduralExplorationGameCore::HLMS_PACKED_VOXELS |
+                ProceduralExplorationGameCore::HLMS_PACKED_OFFLINE_VOXELS |
+                ProceduralExplorationGameCore::HLMS_TREE_VERTICES;
+            writeFlagToDatablock("baseVoxelMaterial", v, "voxelMaterialTree");
         }
     }
 
