@@ -81,7 +81,7 @@
 		uint ambient = uint((original >> 30) & uint(0x3));
 
 		@property(treeVertices)
-			int voxel = (originalSecond & 0xFF);
+			uint voxel = (originalSecond & 0xFF);
 			float mod = 2.0;
 			if(voxel == 137){
 				mod = 0.0;
