@@ -89,7 +89,13 @@
 		@end
 
 	@else
-		outVs.diffuse = float3(1, 1, 1);
+		float4 inValues = inVs_vertex;
+		#undef inVs_vertex
+		#define inVs_vertex inValues
+
+		@property( !hlms_shadowcaster || !hlms_shadow_uses_depth_texture || alpha_test || exponential_shadow_maps )
+			outVs.diffuse = float3(1, 1, 1);
+		@end
 
 		@property(oceanVertices)
 			inVs_vertex.y += sin(inVs_vertex.x*600 + passBuf.time) * 0.25;
