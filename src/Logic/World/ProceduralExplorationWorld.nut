@@ -71,7 +71,7 @@
         function setVisible_(){
             local vis = mWorldActive_ && mVisible_;
             if(mLandNode_){
-                mLandItem_.setDatablock(vis ? "baseVoxelMaterial" : "MaskedWorld");
+                mLandItem_.setDatablock(vis ? "baseVoxelMaterialTerrain" : "MaskedWorld");
             }
 
             if(vis){
@@ -295,7 +295,6 @@
 
     function updateWaterBlock(waterBlock){
         if(waterBlock != null){
-            waterBlock.setUserValue(0, 1.0, mAnimIncrement_, 0.0, 0.0);
             waterBlock.setDetailMapOffset(0, Vec2(sin(mAnimIncrement_ * 0.1), mAnimIncrement_ * 0.05));
         }
     }
@@ -517,6 +516,8 @@
         waterBlock.setDetailMapScale(0, Vec2(20, 20));
         //waterBlock.setDetailMapWeight(0, 1);
         //waterBlock.setUserValue(0, 1.0, 0.0, 0.0, 0.0);
+
+        _gameCore.setHlmsFlagForDatablock(waterBlock, 1 << 3);
 
         return waterBlock
     }

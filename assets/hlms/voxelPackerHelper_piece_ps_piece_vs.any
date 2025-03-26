@@ -32,50 +32,50 @@
 @end
 @piece( custom_vs_preExecution )
 
-    #define TERRAIN_MAGIC_NUMBER 0x15FBF7DB
-    #define VOXELISER_MAGIC_NUMBER 0x15FBF7FB
-    #define OFFLINE_VOXELISER_MAGIC_NUMBER 0x15FBB7DB
+	@property(packedVoxels)
 
-    const float3 FACES_NORMALS[6] = {
-        float3(0, -1,  0),
-        float3(0,  1,  0),
-        float3(0,  0, -1),
-        float3(0,  0,  1),
-        float3(1,  0,  0),
-        float3(-1, 0,  0),
-    };
+		const float3 FACES_NORMALS[6] = {
+			float3(0, -1,  0),
+			float3(0,  1,  0),
+			float3(0,  0, -1),
+			float3(0,  0,  1),
+			float3(1,  0,  0),
+			float3(-1, 0,  0),
+		};
 
-	float4 inValues = inVs_vertex;
-	@property( syntax == metal )
-		uint original = as_type<uint>(inValues.x);
-		uint originalSecond = as_type<uint>(inValues.y);
-	@else
-		uint original = floatBitsToUint(inValues.x);
-		uint originalSecond = floatBitsToUint(inValues.y);
-	@end
+		float4 inValues = inVs_vertex;
+		@property( syntax == metal )
+			uint original = as_type<uint>(inValues.x);
+			uint originalSecond = as_type<uint>(inValues.y);
+		@else
+			uint original = floatBitsToUint(inValues.x);
+			uint originalSecond = floatBitsToUint(inValues.y);
+		@end
 
-	uint magicNumber = originalSecond & uint(0x1FFFFFFF);
-	float3 normVal = float3(0, 0, 0);
-	#undef inVs_normal
-	#define inVs_normal normVal
+		uint magicNumber = originalSecond & uint(0x1FFFFFFF);
+		float3 normVal = float3(0, 0, 0);
+		#undef inVs_normal
+		#define inVs_normal normVal
 
-	#undef inVs_vertex
-	#define inVs_vertex inValues
+		#undef inVs_vertex
+		#define inVs_vertex inValues
 
-	if(magicNumber == uint(TERRAIN_MAGIC_NUMBER) || magicNumber == uint(OFFLINE_VOXELISER_MAGIC_NUMBER) || magicNumber == uint(VOXELISER_MAGIC_NUMBER)){
-		int offset = 0;
-		if(magicNumber == uint(OFFLINE_VOXELISER_MAGIC_NUMBER)){
-			offset = 128;
-		}
-		int pos_x = int(original & uint(0x3FF)) - offset;
-		int pos_y = int((original >> 10) & uint(0x3FF)) - offset;
-		int pos_z = int((original >> 20) & uint(0x3FF)) - offset;
+
+		int pos_x = int(original & uint(0x3FF));
+		int pos_y = int((original >> 10) & uint(0x3FF));
+		int pos_z = int((original >> 20) & uint(0x3FF));
+		@property(offlineVoxels)
+			pos_x -= 128;
+			pos_y -= 128;
+			pos_z -= 128;
+		@end
+
 		inValues.x = float(pos_x)-0.5;
 		inValues.y = float(pos_y)-0.5;
 		inValues.z = float(pos_z)-0.5;
-		if(magicNumber == uint(TERRAIN_MAGIC_NUMBER)){
+		@property(voxelTerrain)
 			inValues.z -= 4.0;
-		}
+		@end
 
 		uint norm = uint((originalSecond >> 29) & uint(0x3));
 		uint ambient = uint((original >> 30) & uint(0x3));
@@ -87,15 +87,16 @@
 			float ambientVal = float(ambient)/3;
 			outVs.diffuse = float3(ambientVal, ambientVal, ambientVal);
 		@end
-	}else{
-		@property( !hlms_shadowcaster || !hlms_shadow_uses_depth_texture || alpha_test || exponential_shadow_maps )
-			outVs.diffuse = float3(1, 1, 1);
-		@end
 
-		inValues.y += sin(inValues.x*600 + passBuf.time) * 0.25;
-		inValues.y += cos(inValues.z*600 + passBuf.time) * 0.25;
-		inValues.x += sin(inValues.x*600 + passBuf.time) * 0.001;
-	}
+	@else
+		outVs.diffuse = float3(1, 1, 1);
+
+		@property(oceanVertices)
+			inVs_vertex.y += sin(inVs_vertex.x*600 + passBuf.time) * 0.25;
+			inVs_vertex.y += cos(inVs_vertex.z*600 + passBuf.time) * 0.25;
+			inVs_vertex.x += sin(inVs_vertex.x*600 + passBuf.time) * 0.001;
+		@end
+	@end
 
 
 @end

@@ -416,7 +416,7 @@
 
     function setupBaseMaterials(){
         local datablock = _hlms.getDatablock("baseVoxelMaterial");
-        datablock.setUserValue(0, 0.5, 0, 0, 0);
+        //datablock.setUserValue(0, 0.5, 0, 0, 0);
     }
 
     function setFullscreenState(fullscreen){

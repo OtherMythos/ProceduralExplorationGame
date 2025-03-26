@@ -1,6 +1,7 @@
 #include "GameCoreNamespace.h"
 
 #include "Scripting/ScriptNamespace/ScriptUtils.h"
+#include "Scripting/ScriptNamespace/Classes/Ogre/Hlms/DatablockUserData.h"
 #include "ExplorationMapDataUserData.h"
 #include "VisitedPlaceMapDataUserData.h"
 #include "GameplayState.h"
@@ -36,6 +37,7 @@
 
 #include "Ogre/OgreVoxMeshItem.h"
 #include "Ogre/OgreVoxMeshManager.h"
+#include "Hlms/Pbs/OgreHlmsPbsDatablock.h"
 
 #include "GameCorePBSHlmsListener.h"
 
@@ -448,6 +450,25 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger GameCoreNamespace::setHlmsFlagForDatablock(HSQUIRRELVM vm){
+        Ogre::HlmsDatablock* db = 0;
+        SCRIPT_CHECK_RESULT(AV::DatablockUserData::getPtrFromUserData(vm, 2, &db));
+        Ogre::HlmsPbsDatablock* pbsDb = static_cast<Ogre::HlmsPbsDatablock*>(db);
+
+        SQInteger f;
+        sq_getinteger(vm, 3, &f);
+
+        AV::uint32 flag = static_cast<AV::uint32>(f);
+
+        Ogre::Vector4 vals = Ogre::Vector4::ZERO;
+        AV::uint32 v = static_cast<AV::uint32>(f);
+        vals.x = *reinterpret_cast<Ogre::Real*>(&v);
+
+        pbsDb->setUserValue(0, vals);
+
+        return 0;
+    }
+
     SQInteger GameCoreNamespace::checkClaimMapGen(HSQUIRRELVM vm){
         if(!GameCoreNamespace::currentMapGen){
             return sq_throwerror(vm, "Map gen is not active.");
@@ -674,6 +695,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, getMapGenStage, "getMapGenStage");
         AV::ScriptUtils::addFunction(vm, checkClaimMapGen, "checkClaimMapGen");
         AV::ScriptUtils::addFunction(vm, getTotalMapGenStages, "getTotalMapGenStages");
+        AV::ScriptUtils::addFunction(vm, setHlmsFlagForDatablock, "setHlmsFlagForDatablock", 3, ".ui");
 
         AV::ScriptUtils::addFunction(vm, update, "update");
 
