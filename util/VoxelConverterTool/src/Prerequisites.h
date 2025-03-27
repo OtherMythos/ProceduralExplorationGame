@@ -14,8 +14,13 @@ namespace VoxelConverterTool{
     static const VoxelId EMPTY_VOXEL = 0x8000;
     typedef uint64 WrappedFace;
     typedef uint8 FaceId;
+    typedef uint8 VoxelAnimValue;
     static const FaceId MAX_FACES = 6;
 
+    struct ParamAnimVoxel{
+        VoxelId voxel;
+        VoxelAnimValue value; // Must be in the range [0, 4]
+    };
 
     struct WrappedFaceContainer{
         uint8 x, y, z;
@@ -23,6 +28,7 @@ namespace VoxelConverterTool{
         VoxelId vox;
         uint32 ambientMask;
         uint8 faceMask;
+        VoxelAnimValue anim;
     };
     struct OutputFaces{
         std::vector<WrappedFaceContainer> outFaces;

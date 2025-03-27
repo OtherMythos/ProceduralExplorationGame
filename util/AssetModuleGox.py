@@ -33,6 +33,8 @@ class AssetModuleGox(AssetModule):
         if(resSettings.disableFaces):
             faces = ",".join(map(str, resSettings.disableFaces))
             extraFlags = extraFlags + " -f " + faces
+        if(resSettings.animValues):
+            extraFlags = extraFlags + " -v " + resSettings.animValues
 
         if(resSettings.separateLayers):
             extraFlags = extraFlags + " -c "

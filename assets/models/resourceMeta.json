@@ -5,12 +5,30 @@
         },
         "tree.gox": {
             "disableAmbient": true,
-            "disableFaces": [0]
+            "disableFaces": [0],
+            "animValues": "191,3"
         },
         "treeCherryBlossom.gox": {
             "disableAmbient": true,
-            "disableFaces": [0]
+            "disableFaces": [0],
+            "animValues": "48,3"
         },
+        "coconutPalmTree.gox": {
+            "animValues": "75,3;190,3;137,3"
+        },
+        "palmTree.gox": {
+            "animValues": "75,3;190,3"
+        },
+        "treeApple.gox": {
+            "animValues": "191,3;217,3"
+        },
+        "berryBush.gox": {
+            "animValues": "191,3;228,3"
+        },
+        "berryBushBerries.gox": {
+            "animValues": "191,3;228,3;216,3"
+        },
+
         "graveyard.gox": {
             "separateLayers": true
         }

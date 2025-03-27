@@ -6,6 +6,7 @@
 #include "Pipeline/FacesToObjFile.h"
 #include "Pipeline/FaceMerger.h"
 #include "Pipeline/AutoCentre.h"
+#include "Pipeline/AnimValuesDeterminer.h"
 #include "Util/Timer.h"
 
 #include <cstring>
@@ -19,6 +20,7 @@ enum Flags{
     FLAG_DISABLE_FACE,
     FLAG_DISABLE_AMBIENT,
     FLAG_EXPORT_OBJ,
+    FLAG_ANIM_VALUE_VOXEL,
 
     FLAG_MAX
 };
@@ -33,6 +35,7 @@ struct InputArgs{
     bool totalFlags[FLAG_MAX];
     const char* totalInputs[INPUT_MAX];
     bool disabledFaces[VoxelConverterTool::MAX_FACES];
+    std::vector<VoxelConverterTool::ParamAnimVoxel> animVoxels;
 };
 
 void printHelp(){
@@ -41,6 +44,7 @@ void printHelp(){
 -c Enable auto centering, where the tool will shift the origin of the mesh automatically\n \
 -f Disable a specific number of faces. Faces to be disabled are deliniated with a comma, i.e '1,2'\n \
 -a Disable all ambient calculations\n \
+-v Write animation values to specific voxels, i.e '112,0;113,4' where 112 is a voxel type to receive an anim value of 0 and 113 will receive 4\n \
 -o Export as .obj\n \
 [inputFile] [outputFile]";
 
@@ -49,6 +53,30 @@ void printHelp(){
 
 void printStats(const VoxelConverterTool::OutputFaces& out){
     std::cout << std::endl << "Wrote " << out.outFaces.size() << " faces" << std::endl;
+}
+
+ void parseVoxelAnimData(InputArgs& args, const char* input){
+    std::stringstream ss(input);
+    std::string pair;
+
+    while (std::getline(ss, pair, ';')) {
+        std::stringstream pairStream(pair);
+        std::string idStr, valueStr;
+
+        if (std::getline(pairStream, idStr, ',') && std::getline(pairStream, valueStr)) {
+            int id = std::stoi(idStr);
+            int value = std::stoi(valueStr);
+
+            if (id >= 0 && id <= 255 && value >= 0 && value <= 3) {
+                VoxelConverterTool::ParamAnimVoxel vox;
+                vox.voxel = static_cast<VoxelConverterTool::uint8>(id);
+                vox.value = static_cast<VoxelConverterTool::uint8>(value);
+                args.animVoxels.push_back(vox);
+            } else {
+                std::cerr << "Invalid input: " << pair << std::endl;
+            }
+        }
+    }
 }
 
 void parseDisableFaces(InputArgs& args, const char* input){
@@ -99,6 +127,9 @@ void parseArgs(int argc, char *argv[], InputArgs& args){
                 args.totalFlags[FLAG_DISABLE_AMBIENT] = true;
             }else if(strcmp(val, "-o") == 0){
                 args.totalFlags[FLAG_EXPORT_OBJ] = true;
+            }else if(strcmp(val, "-v") == 0){
+                flagValue = true;
+                flagType = FLAG_ANIM_VALUE_VOXEL;
             }else{
                 //Assume it's an input
                 args.totalInputs[inputCount] = val;
@@ -108,6 +139,10 @@ void parseArgs(int argc, char *argv[], InputArgs& args){
             if(flagType == FLAG_DISABLE_FACE){
                 parseDisableFaces(args, val);
             }
+            else if(flagType == FLAG_ANIM_VALUE_VOXEL){
+                parseVoxelAnimData(args, val);
+            }
+
             flagValue = false;
         }
         current++;
@@ -180,6 +215,9 @@ int main(int argc, char *argv[]){
         std::cout << "Time to perform greedy meshing: " << t << std::endl;
         mergedFaces = outFaces.outFaces.size();
     }
+
+    VoxelConverterTool::AnimValuesDeterminer animDeterminer;
+    animDeterminer.determineAnimValuesForFaces(outFaces, inputArgs.animVoxels);
 
     t.start();
     if(inputArgs.totalFlags[FLAG_EXPORT_OBJ]){

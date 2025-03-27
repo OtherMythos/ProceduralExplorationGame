@@ -102,7 +102,7 @@ namespace VoxelConverterTool{
                 }
                 //Submit this face
 
-                const WrappedFaceContainer c = {x, y, z, 1, 1, 1, v, ambientMask, f};
+                const WrappedFaceContainer c = {x, y, z, 1, 1, 1, v, ambientMask, f, 0};
                 //WrappedFace face = _wrapFace(c);
                 faces.outFaces.push_back(c);
             }
