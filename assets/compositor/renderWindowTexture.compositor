@@ -159,7 +159,32 @@ compositor_node_shadow default_simpleShadowNode
 compositor_node renderTexture30Node
 {
     in 0 renderTexture
-    target renderTexture
+
+	texture rt0				target_width target_height PFG_RGBA8_UNORM_SRGB
+	texture depthTexture	target_width target_height PFG_D32_FLOAT
+    texture sceneRender     target_width target_height PFG_RGBA32_FLOAT
+
+	rtv rt0
+	{
+		depth_stencil depthTexture
+	}
+
+	texture depthTextureCopy target_width target_height PFG_D32_FLOAT
+
+    target rt0
+	{
+		pass render_scene
+		{
+			load
+			{
+				all				clear
+				clear_colour	0.2 0.4 0.6 1
+			}
+			overlays	off
+		}
+	}
+
+    target sceneRender
     {
         pass render_scene
         {
@@ -177,6 +202,20 @@ compositor_node renderTexture30Node
             rq_last 31
 
             shadows default_simpleShadowNode
+        }
+    }
+
+    target renderTexture
+    {
+        pass clear
+        {
+
+        }
+        pass render_quad
+        {
+            material Postprocess/OutlineDraw
+            input 0 sceneRender
+            input 1 depthTexture
         }
     }
 }

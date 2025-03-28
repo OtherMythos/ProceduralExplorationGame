@@ -1,0 +1,64 @@
+
+fragment_program Postprocess/outlineDraw_ps_GLSL glsl
+{
+	source outlineDraw_ps.glsl
+	default_params
+	{
+		param_named RT int 0
+	}
+}
+
+fragment_program Postprocess/outlineDraw_ps_VK glslvk
+{
+	source outlineDraw_ps.glsl
+}
+
+fragment_program Postprocess/outlineDraw_ps_Metal metal
+{
+	source outlineDraw_ps.metal
+	shader_reflection_pair_hint Ogre/Compositor/Quad_vs
+}
+
+fragment_program Postprocess/outlineDraw_ps unified
+{
+	delegate Postprocess/outlineDraw_ps_GLSL
+	delegate Postprocess/outlineDraw_ps_VK
+	delegate Postprocess/outlineDraw_ps_Metal
+}
+
+material Postprocess/OutlineDraw
+{
+    technique
+    {
+
+		pass
+		{
+			depth_check off
+			depth_write off
+
+			cull_hardware none
+
+			vertex_program_ref Ogre/Compositor/Quad_vs
+			{
+			}
+
+			fragment_program_ref Postprocess/outlineDraw_ps
+			{
+				param_named near float 1
+				param_named far float 100
+				param_named edgeThreshold float 0.005
+			}
+
+			texture_unit RT
+			{
+				tex_address_mode clamp
+				filtering trilinear
+			}
+			texture_unit depth
+			{
+				tex_address_mode clamp
+				filtering trilinear
+			}
+		}
+	}
+}
