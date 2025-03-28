@@ -181,6 +181,9 @@ compositor_node renderTexture30Node
 				clear_colour	0.2 0.4 0.6 1
 			}
 			overlays	off
+
+            rq_first 0
+            rq_last 31
 		}
 	}
 
@@ -191,7 +194,7 @@ compositor_node renderTexture30Node
             load
             {
                 all clear
-                clear_colour 0.1 0.1 0.1 1
+                clear_colour 0.5 0.89 1 1
             }
             store
             {
