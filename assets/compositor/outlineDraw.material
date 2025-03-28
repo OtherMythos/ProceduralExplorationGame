@@ -4,7 +4,8 @@ fragment_program Postprocess/outlineDraw_ps_GLSL glsl
 	source outlineDraw_ps.glsl
 	default_params
 	{
-		param_named RT int 0
+		param_named Image int 0
+		param_named Depth int 1
 	}
 }
 
@@ -49,12 +50,12 @@ material Postprocess/OutlineDraw
 				param_named edgeThreshold float 0.005
 			}
 
-			texture_unit RT
+			texture_unit Image
 			{
 				tex_address_mode clamp
 				filtering trilinear
 			}
-			texture_unit depth
+			texture_unit Depth
 			{
 				tex_address_mode clamp
 				filtering trilinear

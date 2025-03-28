@@ -37,7 +37,7 @@
 #define readUniform( x ) x
 
 #define outVs_Position gl_Position
-#define OGRE_Sample( tex, sampler, uv ) texture( tex, uv )
+#define OGRE_Sample( tex, sampler, uv ) texture( vkSampler2D(tex, sampler), uv )
 #define OGRE_SampleLevel( tex, sampler, uv, lod ) textureLod( tex, uv.xy, lod )
 #define OGRE_SampleArray2D( tex, sampler, uv, arrayIdx ) texture( tex, vec3( uv, arrayIdx ) )
 #define OGRE_SampleArray2DLevel( tex, sampler, uv, arrayIdx, lod ) textureLod( tex, vec3( uv, arrayIdx ), lod )
@@ -59,8 +59,8 @@ in block
 vulkan_layout( ogre_t0 ) uniform texture2D Image;
 vulkan_layout( ogre_t1 ) uniform texture2D Depth;
 
-vulkan( layout( ogre_s0 ) uniform sampler samplerState )
-vulkan( layout( ogre_s1 ) uniform sampler DepthSampler )
+vulkan( layout( ogre_s0 ) uniform sampler samplerState; )
+vulkan( layout( ogre_s1 ) uniform sampler DepthSampler; )
 
 vulkan( layout( ogre_P0 ) uniform params { )
     uniform float near;
