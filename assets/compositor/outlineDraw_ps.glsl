@@ -35,6 +35,7 @@
 #define PARAMS_ARG
 
 #define readUniform( x ) x
+#define returnFinalColour( x ) fragColour = ( x )
 
 #define outVs_Position gl_Position
 #define OGRE_Sample( tex, sampler, uv ) texture( vkSampler2D(tex, sampler), uv )
@@ -91,5 +92,5 @@ void main()
 
     float edgeFactor = step(readUniform(edgeThreshold), edge);
 
-    fragColour = mix(OGRE_Sample( Image, samplerState, inPs.uv0 ) , float4(0, 0, 0, 1.0), edgeFactor);
+    returnFinalColour(mix(OGRE_Sample( Image, samplerState, inPs.uv0 ) , float4(0, 0, 0, 1.0), edgeFactor));
 }

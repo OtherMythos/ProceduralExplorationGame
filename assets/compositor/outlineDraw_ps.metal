@@ -1,6 +1,17 @@
 #include <metal_stdlib>
 using namespace metal;
 
+
+//----------------------------------------------------------
+
+#define sizeForTexture( x ) float2(x.get_width(), x.get_height())
+#define OGRE_Sample( tex, sampler, uv ) tex.sample( sampler, uv )
+
+#define readUniform( x ) p.x
+
+#define returnFinalColour( x ) return x
+//----------------------------------------------------------
+
 struct PS_INPUT
 {
     float2 uv0;
@@ -39,16 +50,16 @@ fragment float4 main_metal
     constant Params &p [[buffer(PARAMETER_SLOT)]]
 )
 {
-    float2 texelSize = float2(Depth.get_width(), Depth.get_height());
+    float2 texelSize = sizeForTexture(Depth);
     float stepX = 1.0 / texelSize.x;
     float stepY = 1.0 / texelSize.y;
 
     // Sample depth values
-    float dCenter    = Depth.sample(DepthSampler, inPs.uv0).x;
-    float dLeft      = Depth.sample(DepthSampler, inPs.uv0 + float2(-stepX, 0)).x;
-    float dRight     = Depth.sample(DepthSampler, inPs.uv0 + float2(stepX, 0)).x;
-    float dTop       = Depth.sample(DepthSampler, inPs.uv0 + float2(0, -stepY)).x;
-    float dBottom    = Depth.sample(DepthSampler, inPs.uv0 + float2(0, stepY)).x;
+    float dCenter = OGRE_Sample( Depth, DepthSampler, inPs.uv0).x;
+    float dLeft      = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(-stepX, 0)).x;
+    float dRight     = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(stepX, 0)).x;
+    float dTop       = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(0, -stepY)).x;
+    float dBottom    = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(0, stepY)).x;
 
     const float epsilon = 1e-4; // Small bias to prevent artifacts
     float edge = 0.0;
@@ -58,13 +69,7 @@ fragment float4 main_metal
     edge += abs(dCenter - dBottom) > epsilon ? abs(dCenter - dBottom) : 0.0;
     edge *= 50;
 
-    float edgeFactor = step(p.edgeThreshold, edge);
+    float edgeFactor = step(readUniform(edgeThreshold), edge);
 
-    //return float4(edge, edge, edge, 1.0);
-    //return float4(dCenter, dCenter, dCenter, 1.0);
-    //return float4(inPs.uv0.x, inPs.uv0.x, inPs.uv0.x, 1.0);
-    //float3 edgeColor = float3(1, 1, 1);
-    //return mix(float4(0.0), float4(edgeColor, 1.0), edgeFactor);
-    //return float4(edgeFactor, edgeFactor, edgeFactor, 1.0);
-    return mix(Image.sample(samplerState, inPs.uv0), float4(0, 0, 0, 1.0), edgeFactor);
+    returnFinalColour(mix(OGRE_Sample( Image, samplerState, inPs.uv0 ) , float4(0, 0, 0, 1.0), edgeFactor));
 }
