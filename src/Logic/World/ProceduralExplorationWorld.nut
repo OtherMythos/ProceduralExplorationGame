@@ -544,7 +544,7 @@
             local oceanNode = mParentNode_.createChildSceneNode();
             local oceanItem = _scene.createItem("WaterPlane.mesh");
             oceanItem.setCastsShadows(false);
-            _gameCore.writeFlagsToItem(oceanItem, 1 << 3);
+            _gameCore.writeFlagsToItem(oceanItem, HLMS_OCEAN_VERTICES);
             oceanItem.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_WATER);
             oceanItem.setDatablock(surroundBlock);
             oceanNode.attachObject(oceanItem);
@@ -583,7 +583,7 @@
             local decorationNode = regionNode.createChildSceneNode();
 
             local item = _scene.createItem(i);
-            _gameCore.writeFlagsToItem(item, 1 | (1 << 1));
+            _gameCore.writeFlagsToItem(item, HLMS_PACKED_VOXELS | HLMS_TERRAIN);
             item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_TERRRAIN);
             item.setCastsShadows(false);
             local landNode = regionNode.createChildSceneNode();

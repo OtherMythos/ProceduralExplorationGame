@@ -6,6 +6,7 @@
 #include "OgreSubMesh2.h"
 
 #include "GamePrerequisites.h"
+#include "MapGen/ExplorationMapDataPrerequisites.h"
 
 namespace Ogre{
 

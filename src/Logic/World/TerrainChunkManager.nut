@@ -125,7 +125,7 @@
         local item = _scene.createItem(meshObj);
         item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_TERRRAIN);
         item.setCastsShadows(false);
-        _gameCore.writeFlagsToItem(item, 1);
+        _gameCore.writeFlagsToItem(item, HLMS_PACKED_VOXELS);
         return item;
     }
 

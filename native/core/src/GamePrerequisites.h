@@ -20,14 +20,6 @@ namespace ProceduralExplorationGameCore{
     static const WaterId INVALID_WATER_ID = 0xFF;
     static const WorldPoint INVALID_WORLD_POINT = 0xFFFFFFFF;
 
-    enum GameCoreHlmsProperties{
-        HLMS_PACKED_VOXELS = 1u,
-        HLMS_TERRAIN = 1u << 1u,
-        HLMS_PACKED_OFFLINE_VOXELS = 1u << 2u,
-        HLMS_OCEAN_VERTICES = 1u << 3u,
-        HLMS_TREE_VERTICES = 1u << 4u,
-    };
-
     typedef AV::uint32 DataPointWrapped;
     struct DataPointData{
         float x, y, z;

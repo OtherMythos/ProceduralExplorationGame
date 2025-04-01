@@ -468,7 +468,7 @@
         //TODO make some of these scene static
         local item = _gameCore.createVoxMeshItem(meshTarget);
         item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
-        _gameCore.writeFlagsToItem(item, 1 | (1 << 2) | (1 << 4));
+        _gameCore.writeFlagsToItem(item, HLMS_PACKED_VOXELS | HLMS_PACKED_OFFLINE_VOXELS | HLMS_TREE_VERTICES);
         placeNode.attachObject(item);
         local scale = getScaleForPlacedItemType_(itemType);
         placeNode.setScale(scale, scale, scale);
@@ -800,6 +800,7 @@
         local OBJECT_SCALE = 0.1;
         //Construct this first so we know the radius to offset by.
         local item = _gameCore.createVoxMeshItem(wrappedItem.getMesh());
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         targetPos.y += item.getLocalRadius() * OBJECT_SCALE;
 
         local en = manager.createEntity(targetPos);
@@ -839,7 +840,7 @@
         parentNode.setScale(0.15, 0.15, 0.15);
         parentNode.setPosition(targetPos);
         local item = _gameCore.createVoxMeshItem("treasureChestBase.voxMesh");
-        //item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         local baseNode = parentNode.createChildSceneNode();
         baseNode.attachObject(item);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](parentNode, true));
@@ -860,6 +861,7 @@
 
         local lidNode = parentNode.createChildSceneNode();
         item = _gameCore.createVoxMeshItem("treasureChestLid.voxMesh");
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         lidNode.attachObject(item);
         lidNode.setPosition(0, 6, 0);
 
@@ -881,6 +883,7 @@
         parentNode.setScale(0.15, 0.15, 0.15);
         parentNode.setPosition(targetPos);
         local item = _gameCore.createVoxMeshItem("treasureChestBase.voxMesh");
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         //item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         local baseNode = parentNode.createChildSceneNode();
         baseNode.attachObject(item);
@@ -895,6 +898,7 @@
 
         local lidNode = parentNode.createChildSceneNode();
         item = _gameCore.createVoxMeshItem("treasureChestLid.voxMesh");
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         lidNode.attachObject(item);
         lidNode.setPosition(0, 6, 0);
 
