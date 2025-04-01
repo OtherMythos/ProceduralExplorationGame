@@ -36,13 +36,15 @@
 @end
 
 @piece( custom_vs_posExecution )
-	float4 positionRelativeToCam = mul(worldPos, passBuf.viewProj);
-	float distance = length(positionRelativeToCam.xyz);
-	float density = 0.003;
-	float gradient = 3.5;
-	float visibility = exp(-pow(distance * density, gradient));
-	visibility = clamp(visibility, 0.0, 1.0);
-	outVs.fog = visibility;
+	@property( !hlms_shadowcaster || !hlms_shadow_uses_depth_texture || alpha_test || exponential_shadow_maps )
+		float4 positionRelativeToCam = mul(worldPos, passBuf.viewProj);
+		float distance = length(positionRelativeToCam.xyz);
+		float density = 0.003;
+		float gradient = 3.5;
+		float visibility = exp(-pow(distance * density, gradient));
+		visibility = clamp(visibility, 0.0, 1.0);
+		outVs.fog = visibility;
+	@end
 @end
 
 @piece( custom_vs_preExecution )

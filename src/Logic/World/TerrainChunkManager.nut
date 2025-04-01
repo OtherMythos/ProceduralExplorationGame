@@ -125,6 +125,7 @@
         local item = _scene.createItem(meshObj);
         item.setRenderQueueGroup(30);
         item.setCastsShadows(false);
+        _gameCore.writeFlagsToItem(meshObj, 1 | (1 << 1));
         return item;
     }
 

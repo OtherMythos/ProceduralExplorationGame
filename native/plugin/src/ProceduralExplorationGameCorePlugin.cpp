@@ -30,6 +30,7 @@
 #include "Ogre/OgreVoxMeshItem.h"
 #include "OgreHlms.h"
 #include "GameCorePBSHlmsListener.h"
+#include "OgreRenderable.h"
 
 namespace ProceduralExplorationGamePlugin{
 
@@ -46,12 +47,10 @@ namespace ProceduralExplorationGamePlugin{
 
     class HlmsGameCoreCustomHlmsListener : public Ogre::HlmsAVCustomListener{
     public:
-        void calculateHashForPreCreate( Ogre::HlmsPbsAVCustom* hlms, Ogre::Renderable *renderable, Ogre::PiecesMap *inOutPieces ){
-            assert( dynamic_cast<Ogre::HlmsPbsDatablock *>( renderable->getDatablock() ) );
-            Ogre::HlmsPbsDatablock *datablock = static_cast<Ogre::HlmsPbsDatablock *>( renderable->getDatablock() );
-
-            const Ogre::Vector4 f = datablock->getUserValue(0);
-            AV::uint32 v = *(reinterpret_cast<const AV::uint32*>(&f.x));
+        inline void _defineProperties(Ogre::HlmsPbsAVCustom* hlms, Ogre::Renderable *renderable){
+            if(!renderable->hasCustomParameter(0)) return;
+            const Ogre::Vector4& params = renderable->getCustomParameter(0);
+            AV::uint32 v = *(reinterpret_cast<const AV::uint32*>(&params.x));
 
             if(v & ProceduralExplorationGameCore::HLMS_PACKED_VOXELS){
                 hlms->setProperty("packedVoxels", true);
@@ -68,6 +67,12 @@ namespace ProceduralExplorationGamePlugin{
             if(v & ProceduralExplorationGameCore::HLMS_TREE_VERTICES){
                 hlms->setProperty("treeVertices", true);
             }
+        }
+        void calculateHashForPreCaster( Ogre::HlmsPbsAVCustom* hlms, Ogre::Renderable *renderable, Ogre::PiecesMap *inOutPieces, const Ogre::PiecesMap *normalPassPieces ){
+            _defineProperties(hlms, renderable);
+        }
+        void calculateHashForPreCreate( Ogre::HlmsPbsAVCustom* hlms, Ogre::Renderable *renderable, Ogre::PiecesMap *inOutPieces ){
+            _defineProperties(hlms, renderable);
         }
     };
 
@@ -123,37 +128,6 @@ namespace ProceduralExplorationGamePlugin{
         Ogre::HlmsPbsAVCustom* customPbs = dynamic_cast<Ogre::HlmsPbsAVCustom*>(hlmsPbs);
         assert(customPbs);
         customPbs->registerCustomListener(new HlmsGameCoreCustomHlmsListener());
-
-        {
-            writeFlagToDatablock("baseVoxelMaterial", ProceduralExplorationGameCore::HLMS_PACKED_VOXELS);
-        }
-
-        {
-            AV::uint32 v = ProceduralExplorationGameCore::HLMS_PACKED_VOXELS |
-                ProceduralExplorationGameCore::HLMS_TERRAIN;
-            writeFlagToDatablock("baseVoxelMaterial", v, "baseVoxelMaterialTerrain");
-        }
-
-        {
-            AV::uint32 v = ProceduralExplorationGameCore::HLMS_PACKED_VOXELS |
-                ProceduralExplorationGameCore::HLMS_PACKED_OFFLINE_VOXELS;
-            writeFlagToDatablock("baseVoxelMaterial", v, "baseVoxelMaterialOffline");
-        }
-
-        {
-            AV::uint32 v =
-                ProceduralExplorationGameCore::HLMS_PACKED_VOXELS |
-                ProceduralExplorationGameCore::HLMS_TERRAIN;
-            writeFlagToDatablock("MaskedWorld", v);
-
-        }
-
-        {
-            AV::uint32 v = ProceduralExplorationGameCore::HLMS_PACKED_VOXELS |
-                ProceduralExplorationGameCore::HLMS_PACKED_OFFLINE_VOXELS |
-                ProceduralExplorationGameCore::HLMS_TREE_VERTICES;
-            writeFlagToDatablock("baseVoxelMaterial", v, "voxelMaterialTree");
-        }
     }
 
 }

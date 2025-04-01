@@ -1,9 +1,11 @@
 #include "OgreVoxMeshItem.h"
 
-#include "OgreItem.h"
 #include "OgreMeshManager2.h"
 #include "OgreVoxMesh.h"
 #include "OgreVoxMeshManager.h"
+#include "OgreSubMesh2.h"
+
+#include "GamePrerequisites.h"
 
 namespace Ogre{
 
@@ -14,7 +16,15 @@ namespace Ogre{
     VoxMeshItem::VoxMeshItem( IdType id, ObjectMemoryManager *objectMemoryManager, SceneManager *manager, const MeshPtr& mesh )
         : Item( id, objectMemoryManager, manager, mesh )
     {
+        for(Ogre::Renderable* r : mRenderables){
+            Ogre::Vector4 vals = Ogre::Vector4::ZERO;
+            Ogre::uint32 v = ProceduralExplorationGameCore::HLMS_PACKED_VOXELS |
+                ProceduralExplorationGameCore::HLMS_PACKED_OFFLINE_VOXELS;
+            vals.x = *reinterpret_cast<Ogre::Real*>(&v);
+            r->setCustomParameter(0, vals);
+        }
 
+        setDatablock("baseVoxelMaterial");
     }
 
     const String& VoxMeshItem::getMovableType(void) const

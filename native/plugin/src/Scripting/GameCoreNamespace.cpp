@@ -495,6 +495,24 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger GameCoreNamespace::writeFlagsToItem(HSQUIRRELVM vm){
+        Ogre::MovableObject* outObject = 0;
+        AV::MovableObjectUserData::readMovableObjectFromUserData(vm, 2, &outObject);
+
+        SQInteger flags = 0;
+        sq_getinteger(vm, 3, &flags);
+
+        Ogre::Item* item = dynamic_cast<Ogre::Item*>(outObject);
+        assert(item);
+        Ogre::Vector4 vals = Ogre::Vector4::ZERO;
+        vals.x = *reinterpret_cast<Ogre::Real*>(&flags);
+        for(Ogre::Renderable* r : item->mRenderables){
+            r->setCustomParameter(0, vals);
+        }
+
+        return 0;
+    }
+
     SQInteger GameCoreNamespace::setupCollisionDataForWorld(HSQUIRRELVM vm){
         AV::CollisionWorldObject* world;
         AV::CollisionWorldClass::readCollisionWorldFromUserData(vm, 2, &world);
@@ -687,6 +705,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, setNewMapData, "setNewMapData", 2, ".u");
         AV::ScriptUtils::addFunction(vm, createTerrainFromMapData, "createTerrainFromMapData", 3, ".su");
         AV::ScriptUtils::addFunction(vm, getNameForMapGenStage, "getNameForMapGenStage", 2, ".i");
+        AV::ScriptUtils::addFunction(vm, writeFlagsToItem, "writeFlagsToItem", 3, ".ui");
 
         AV::ScriptUtils::addFunction(vm, createCollisionDetectionWorld, "createCollisionDetectionWorld", 2, ".i");
         AV::ScriptUtils::addFunction(vm, setupCollisionDataForWorld, "setupCollisionDataForWorld", 5, ".uaii");

@@ -71,7 +71,7 @@
         function setVisible_(){
             local vis = mWorldActive_ && mVisible_;
             if(mLandNode_){
-                mLandItem_.setDatablock(vis ? "baseVoxelMaterialTerrain" : "MaskedWorld");
+                mLandItem_.setDatablock(vis ? "baseVoxelMaterial" : "MaskedWorld");
             }
 
             if(vis){
@@ -544,6 +544,7 @@
             local oceanNode = mParentNode_.createChildSceneNode();
             local oceanItem = _scene.createItem("WaterPlane.mesh");
             oceanItem.setCastsShadows(false);
+            _gameCore.writeFlagsToItem(oceanItem, 1 << 3);
             oceanItem.setRenderQueueGroup(30);
             oceanItem.setDatablock(surroundBlock);
             oceanNode.attachObject(oceanItem);
@@ -582,6 +583,7 @@
             local decorationNode = regionNode.createChildSceneNode();
 
             local item = _scene.createItem(i);
+            _gameCore.writeFlagsToItem(item, 1 | (1 << 1));
             item.setRenderQueueGroup(30);
             item.setCastsShadows(false);
             local landNode = regionNode.createChildSceneNode();

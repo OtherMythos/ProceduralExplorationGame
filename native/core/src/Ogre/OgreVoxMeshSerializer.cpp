@@ -129,7 +129,7 @@ namespace Ogre{
         pMesh->_setBounds(foundAABB);
         pMesh->_setBoundingSphereRadius(foundRadius);
 
-        subMesh->setMaterialName("baseVoxelMaterialOffline");
+        //subMesh->setMaterialName("baseVoxelMaterial");
 
         stream->seek(0);
     }

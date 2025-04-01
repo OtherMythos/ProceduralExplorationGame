@@ -171,7 +171,7 @@ namespace ProceduralExplorationGameCore{
         mesh->_setBounds(bounds);
         mesh->_setBoundingSphereRadius(bounds.getRadius());
 
-        subMesh->setMaterialName("baseVoxelMaterial");
+        //subMesh->setMaterialName("baseVoxelMaterial");
 
         *outMesh = mesh;
 
