@@ -497,7 +497,7 @@ namespace ProceduralExplorationGamePlugin{
 
     SQInteger GameCoreNamespace::writeFlagsToItem(HSQUIRRELVM vm){
         Ogre::MovableObject* outObject = 0;
-        AV::MovableObjectUserData::readMovableObjectFromUserData(vm, 2, &outObject);
+        SCRIPT_ASSERT_RESULT(AV::MovableObjectUserData::readMovableObjectFromUserData(vm, 2, &outObject, AV::MovableObjectType::Item));
 
         SQInteger flags = 0;
         sq_getinteger(vm, 3, &flags);
