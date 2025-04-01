@@ -123,9 +123,9 @@
         if(meshObj == null) return null;
 
         local item = _scene.createItem(meshObj);
-        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_TERRRAIN);
         item.setCastsShadows(false);
-        _gameCore.writeFlagsToItem(item, 1 | (1 << 1));
+        _gameCore.writeFlagsToItem(item, 1);
         return item;
     }
 
