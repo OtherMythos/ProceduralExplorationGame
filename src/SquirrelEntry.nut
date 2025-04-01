@@ -15,6 +15,15 @@ function setup(){
     }
 
     _window.setDefaultFullscreen(windowed ? _WINDOW_WINDOWED : _WINDOW_FULLSCREEN_BORDERLESS);
+    if(windowed){
+        _window.setIntendedWidth(1920);
+        _window.setIntendedHeight(1080);
+    }else{
+        local displaySize = _window.getDisplaySize(0);
+
+        _window.setIntendedWidth(displaySize.x.tointeger());
+        _window.setIntendedHeight(displaySize.y.tointeger());
+    }
 }
 
 function start(){

@@ -26,7 +26,7 @@
 	//For debug purposes
 	//outPs_colour0.xyz = float3(inPs.diffuse.xyz);
 
-	const float3 fogColour(0.5, 0.89, 1);
+	float3 fogColour = float3(0.5, 0.89, 1);
 	outPs_colour0.xyz = mix(fogColour, outPs_colour0.xyz, inPs.fog);
 @end
 
@@ -36,6 +36,7 @@
 @end
 
 @piece( custom_vs_posExecution )
+
 	@property( !hlms_shadowcaster || !hlms_shadow_uses_depth_texture || alpha_test || exponential_shadow_maps )
 		float4 positionRelativeToCam = mul(worldPos, passBuf.viewProj);
 		float distance = length(positionRelativeToCam.xyz);
@@ -45,6 +46,7 @@
 		visibility = clamp(visibility, 0.0, 1.0);
 		outVs.fog = visibility;
 	@end
+
 @end
 
 @piece( custom_vs_preExecution )
