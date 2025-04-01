@@ -161,15 +161,22 @@ compositor_node renderTexture30Node
     in 0 renderTexture
 
 	texture rt0				target_width target_height PFG_RGBA8_UNORM_SRGB
-	texture depthTexture	target_width target_height PFG_D32_FLOAT
+	texture depthTextureDecorations	target_width target_height PFG_D32_FLOAT
+
+	texture rt1				target_width target_height PFG_RGBA8_UNORM_SRGB
+	texture depthTextureGround	target_width target_height PFG_D32_FLOAT
+
     texture sceneRender     target_width target_height PFG_RGBA32_FLOAT
+	texture finalDepth	target_width target_height PFG_RGBA32_FLOAT
 
 	rtv rt0
 	{
-		depth_stencil depthTexture
+		depth_stencil depthTextureDecorations
 	}
-
-	texture depthTextureCopy target_width target_height PFG_D32_FLOAT
+	rtv rt1
+	{
+		depth_stencil depthTextureGround
+	}
 
     target rt0
 	{
@@ -186,6 +193,35 @@ compositor_node renderTexture30Node
             rq_last 31
 		}
 	}
+    target rt1
+	{
+		pass render_scene
+		{
+			load
+			{
+				all				clear
+				clear_colour	0.2 0.4 0.6 1
+			}
+			overlays	off
+
+            rq_first 0
+            rq_last 25
+		}
+	}
+    //Determine the final depth
+    target finalDepth
+    {
+        pass clear
+        {
+
+        }
+        pass render_quad
+        {
+            material Postprocess/MergeDepth
+            input 0 depthTextureGround
+            input 1 depthTextureDecorations
+        }
+    }
 
     target sceneRender
     {
@@ -218,7 +254,7 @@ compositor_node renderTexture30Node
         {
             material Postprocess/OutlineDraw
             input 0 sceneRender
-            input 1 depthTexture
+            input 1 finalDepth
         }
     }
 }
