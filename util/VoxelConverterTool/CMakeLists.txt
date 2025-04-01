@@ -1,5 +1,5 @@
 project(VoxelConverterTool)
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.5)
 
 file(GLOB_RECURSE tool_srcs "src/*.cpp")
 
