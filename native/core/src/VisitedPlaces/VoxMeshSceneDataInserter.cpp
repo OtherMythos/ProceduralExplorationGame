@@ -5,6 +5,8 @@
 #include "Ogre/OgreVoxMeshItem.h"
 #include "Collision/CollisionDetectionWorld.h"
 
+#include "MapGen/ExplorationMapDataPrerequisites.h"
+
 namespace ProceduralExplorationGameCore{
 
     VoxMeshSceneDataInserter::VoxMeshSceneDataInserter(Ogre::SceneManager* sceneManager, ProceduralExplorationGameCore::CollisionDetectionWorld* detectionWorld, const Ogre::Vector3& offset)
@@ -33,6 +35,7 @@ namespace ProceduralExplorationGameCore{
                 obj = sceneManager->createMovableObject(Ogre::VoxMeshItemFactory::FACTORY_TYPE_NAME, &(sceneManager->_getEntityMemoryManager(targetType)), &params);
             //)
 
+            obj->setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
             parent->attachObject(obj);
         }
         else if(idx == 2){
