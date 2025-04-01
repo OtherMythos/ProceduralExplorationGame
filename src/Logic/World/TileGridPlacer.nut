@@ -47,7 +47,7 @@
         }
 
         local item = _gameCore.createVoxMeshItem(itemName);
-        item.setRenderQueueGroup(30);
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         node.attachObject(item);
         node.setOrientation(orientation);
 

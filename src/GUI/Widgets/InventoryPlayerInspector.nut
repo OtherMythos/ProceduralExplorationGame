@@ -28,7 +28,7 @@
 
             local characterGenerator = CharacterGenerator();
             local playerNode = _scene.getRootSceneNode().createChildSceneNode();
-            mCharacterModel_ = characterGenerator.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, 50);
+            mCharacterModel_ = characterGenerator.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, RENDER_QUEUE_INVENTORY_PREVIEW);
             //playerNode.setScale(0.5, 0.5, 0.5);
             local combatStats = ::Base.mPlayerStats.mPlayerCombatStats;
             updateForEquipChange(combatStats.mEquippedItems, combatStats.mWieldActive);

@@ -32,7 +32,7 @@
         local playerEntry = ActiveEnemyEntry(mConstructorWorld_, EnemyId.NONE, targetPos, en);
 
         local playerNode = mBaseSceneNode_.createChildSceneNode();
-        local playerModel = mCharacterGenerator_.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, 30);
+        local playerModel = mCharacterGenerator_.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, RENDER_QUEUE_EXPLORATION);
         playerNode.setScale(0.5, 0.5, 0.5);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](playerNode));
         playerEntry.setModel(playerModel);
@@ -59,7 +59,7 @@
         local playerEntry = ActiveEnemyEntry(mConstructorWorld_, EnemyId.NONE, targetPos, en);
 
         local playerNode = mBaseSceneNode_.createChildSceneNode();
-        local playerModel = mCharacterGenerator_.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, 30);
+        local playerModel = mCharacterGenerator_.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, RENDER_QUEUE_EXPLORATION);
         playerNode.setScale(0.5, 0.5, 0.5);
         //_component.sceneNode.add(en, playerNode);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](playerNode));
@@ -171,7 +171,7 @@
         local enemyNode = mBaseSceneNode_.createChildSceneNode();
 
         local modelType = enemyDef.getModelType();
-        local characterModel = mCharacterGenerator_.createCharacterModel(enemyNode, {"type": modelType}, 30, 1 << 4);
+        local characterModel = mCharacterGenerator_.createCharacterModel(enemyNode, {"type": modelType}, RENDER_QUEUE_EXPLORATION, 1 << 4);
 
         entry.setTargetCollisionWorld(_COLLISION_PLAYER);
 
@@ -357,7 +357,7 @@
         placeNode.setPosition(targetPos);
         //TODO make some of these scene static
         local item = _gameCore.createVoxMeshItem(meshPath);
-        item.setRenderQueueGroup(30);
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         placeNode.attachObject(item);
         placeNode.setScale(scale, scale, scale);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](placeNode, true));
@@ -403,7 +403,7 @@
             attachNode = offsetNode;
         }
         local item = _gameCore.createVoxMeshItem(meshPath);
-        item.setRenderQueueGroup(30);
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         attachNode.attachObject(item);
         placeNode.setScale(scale, scale, scale);
         if(orientation != null){
@@ -467,7 +467,7 @@
         placeNode.setPosition(targetPos);
         //TODO make some of these scene static
         local item = _gameCore.createVoxMeshItem(meshTarget);
-        item.setRenderQueueGroup(30);
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         _gameCore.writeFlagsToItem(item, 1 | (1 << 2) | (1 << 4));
         placeNode.attachObject(item);
         local scale = getScaleForPlacedItemType_(itemType);
@@ -563,7 +563,7 @@
 
         placeNode.setPosition(targetPos);
         local item = _gameCore.createVoxMeshItem(meshTarget);
-        item.setRenderQueueGroup(30);
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         placeNode.attachObject(item);
         placeNode.setScale(0.3, 0.3, 0.3);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](placeNode, true));
@@ -602,7 +602,7 @@
         placeNode.setPosition(targetPos);
         placeNode.setScale(0.4, 0.4, 0.4);
         local item = _scene.createItem("EXPOrbMesh");
-        item.setRenderQueueGroup(30);
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         local animNode = placeNode.createChildSceneNode();
         animNode.attachObject(item);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](placeNode, true));
@@ -635,7 +635,7 @@
         local item = _scene.createItem("Cylinder.mesh");
         item.setDatablock("PercentageEncounterCylinder");
         item.setCastsShadows(false);
-        item.setRenderQueueGroup(30);
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         parentNode.attachObject(item);
         //Add a bit of offset to the top to avoid z fighting.
         parentNode.setScale(RADIUS, 9 + _random.rand(), RADIUS);
@@ -672,7 +672,7 @@
         local parentNode = mBaseSceneNode_.createChildSceneNode();
         parentNode.setPosition(targetPos);
         local item = _scene.createItem("EXPOrbMesh");
-        item.setRenderQueueGroup(30);
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         parentNode.setScale(1.5, 1.5, 1.5);
         local animNode = parentNode.createChildSceneNode();
         animNode.attachObject(item);
@@ -705,7 +705,7 @@
         local parentNode = mBaseSceneNode_.createChildSceneNode();
         parentNode.setPosition(targetPos);
         local item = _scene.createItem("HealthOrbMesh");
-        item.setRenderQueueGroup(30);
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         parentNode.setScale(1.5, 1.5, 1.5);
         local animNode = parentNode.createChildSceneNode();
         local scaleNode = animNode.createChildSceneNode();
@@ -739,7 +739,7 @@
         local parentNode = mBaseSceneNode_.createChildSceneNode();
         parentNode.setPosition(targetPos);
         local item = _gameCore.createVoxMeshItem("coin.voxMesh");
-        item.setRenderQueueGroup(30);
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         local animNode = parentNode.createChildSceneNode();
         animNode.setScale(0.1, 0.1, 0.1);
         animNode.attachObject(item);
@@ -772,7 +772,7 @@
         local parentNode = mBaseSceneNode_.createChildSceneNode();
         parentNode.setPosition(targetPos);
         local item = _scene.createItem("EXPOrbMesh");
-        item.setRenderQueueGroup(30);
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         local animNode = parentNode.createChildSceneNode();
         animNode.attachObject(item);
         animNode.setScale(1.5, 100, 1.5);
@@ -839,7 +839,7 @@
         parentNode.setScale(0.15, 0.15, 0.15);
         parentNode.setPosition(targetPos);
         local item = _gameCore.createVoxMeshItem("treasureChestBase.voxMesh");
-        //item.setRenderQueueGroup(30);
+        //item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         local baseNode = parentNode.createChildSceneNode();
         baseNode.attachObject(item);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](parentNode, true));
@@ -881,7 +881,7 @@
         parentNode.setScale(0.15, 0.15, 0.15);
         parentNode.setPosition(targetPos);
         local item = _gameCore.createVoxMeshItem("treasureChestBase.voxMesh");
-        //item.setRenderQueueGroup(30);
+        //item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         local baseNode = parentNode.createChildSceneNode();
         baseNode.attachObject(item);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](parentNode, true));

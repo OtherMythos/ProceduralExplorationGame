@@ -29,7 +29,7 @@
             }
 
             local item = _gameCore.createVoxMeshItem(mesh);
-            item.setRenderQueueGroup(66);
+            item.setRenderQueueGroup(RENDER_QUEUE_EFFECT_FG);
             mNode_.attachObject(item);
             mMeshItem_ = item;
         }

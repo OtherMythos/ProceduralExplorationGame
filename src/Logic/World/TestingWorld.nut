@@ -42,7 +42,7 @@
         local floorNode = mParentNode_.createChildSceneNode();
         local floorItem = _scene.createItem("Plane.mesh");
         floorItem.setCastsShadows(false);
-        floorItem.setRenderQueueGroup(30);
+        floorItem.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         floorItem.setDatablock("testingFloor");
         floorNode.attachObject(floorItem);
         floorNode.setScale(150, 500, 150);

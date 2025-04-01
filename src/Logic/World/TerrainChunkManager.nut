@@ -123,7 +123,7 @@
         if(meshObj == null) return null;
 
         local item = _scene.createItem(meshObj);
-        item.setRenderQueueGroup(30);
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         item.setCastsShadows(false);
         _gameCore.writeFlagsToItem(meshObj, 1 | (1 << 1));
         return item;

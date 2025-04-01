@@ -182,7 +182,7 @@ compositor_node renderTexture30Node
 			}
 			overlays	off
 
-            rq_first 0
+            rq_first 25
             rq_last 31
 		}
 	}

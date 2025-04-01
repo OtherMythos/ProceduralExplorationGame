@@ -21,7 +21,7 @@
         local animNode = mSceneNode_.createChildSceneNode();
 
         local targetItem = _gameCore.createVoxMeshItem("enemyTargetMarker.voxMesh");
-        targetItem.setRenderQueueGroup(30);
+        targetItem.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         animNode.attachObject(targetItem);
         animNode.setScale(0.5, 0.5, 0.5);
         animNode.setPosition(0, 1, 0);
@@ -111,7 +111,7 @@ enum WorldMousePressContexts{
         function setupCloud(){
             local newNode = mParentNode_.createChildSceneNode();
             local item = _gameCore.createVoxMeshItem("cloud.voxMesh");
-            item.setRenderQueueGroup(70);
+            item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_CLOUD);
             newNode.attachObject(item);
             local outPos = _random.randVec3() * mSize_;
             outPos.y = 50;
@@ -1112,7 +1112,7 @@ enum WorldMousePressContexts{
     function queueLocationFlag(pos){
         local flagNode = mParentNode_.createChildSceneNode();
         local flagItem = _gameCore.createVoxMeshItem("locationFlag.mesh");
-        flagItem.setRenderQueueGroup(30);
+        flagItem.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         flagNode.attachObject(flagItem);
         pos.y = getZForPos(pos);
         flagNode.setPosition(pos);

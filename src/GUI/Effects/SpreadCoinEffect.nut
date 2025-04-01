@@ -125,7 +125,7 @@ local SpreadCoinEffectStateMachine = class extends ::Util.StateMachine{
             local newNode = parentNode.createChildSceneNode();
             local animNode = newNode.createChildSceneNode();
             local coinItem = _gameCore.createVoxMeshItem("coin.voxMesh");
-            coinItem.setRenderQueueGroup(65);
+            coinItem.setRenderQueueGroup(RENDER_QUEUE_EFFECT_FG);
             animNode.attachObject(coinItem);
             animNode.setScale(scale, scale, scale);
             //TODO will want to animate the coin rotation as well.

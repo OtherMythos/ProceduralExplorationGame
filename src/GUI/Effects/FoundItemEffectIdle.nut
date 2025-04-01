@@ -75,7 +75,7 @@ const FOUND_ITEM_IDLE_EFFECT_Z = 12;
             local newNode = parent.createChildSceneNode();
             local animNode = newNode.createChildSceneNode();
             local particleItem = _scene.createItem("plane");
-            particleItem.setRenderQueueGroup(65);
+            particleItem.setRenderQueueGroup(RENDER_QUEUE_EFFECT_FG);
             animNode.attachObject(particleItem);
             animNode.setScale(mParticleScale_, mParticleScale_, mParticleScale_);
 

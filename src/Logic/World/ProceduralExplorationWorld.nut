@@ -262,7 +262,7 @@
                     terrain.load("height.png", Vec3(mMapData_.width/2 + mMapData_.width * x - (mMapData_.width), 0, -mMapData_.height/2 + mMapData_.height * y - (mMapData_.height)), Vec3(mMapData_.width + rel, 100, mMapData_.height + rel));
                     local node = _scene.getRootSceneNode().createChildSceneNode(_SCENE_STATIC);
                     node.attachObject(terrain);
-                    terrain.setRenderQueueGroup(30);
+                    terrain.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
 
                     mTerrain_.append(terrain);
                 }
@@ -545,7 +545,7 @@
             local oceanItem = _scene.createItem("WaterPlane.mesh");
             oceanItem.setCastsShadows(false);
             _gameCore.writeFlagsToItem(oceanItem, 1 << 3);
-            oceanItem.setRenderQueueGroup(30);
+            oceanItem.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_WATER);
             oceanItem.setDatablock(surroundBlock);
             oceanNode.attachObject(oceanItem);
             //NOTE: As we're re-orientating later 1 must be the scale for z
@@ -584,7 +584,7 @@
 
             local item = _scene.createItem(i);
             _gameCore.writeFlagsToItem(item, 1 | (1 << 1));
-            item.setRenderQueueGroup(30);
+            item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_TERRRAIN);
             item.setCastsShadows(false);
             local landNode = regionNode.createChildSceneNode();
             landNode.attachObject(item);

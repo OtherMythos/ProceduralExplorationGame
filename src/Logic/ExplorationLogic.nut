@@ -295,7 +295,7 @@
             childNode.setPosition(0.5, 0, 0);
             childNode.setScale(1.5, 1.5, 1.5);
             local item = _gameCore.createVoxMeshItem("locationFlag.voxMesh");
-            item.setRenderQueueGroup(30);
+            item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
             childNode.attachObject(item);
 
             //Do a coin effect.

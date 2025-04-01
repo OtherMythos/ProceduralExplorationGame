@@ -113,7 +113,7 @@ local LinearEXPOrbEffectStateMachine = class extends ::Util.StateMachine{
             local newNode = parentNode.createChildSceneNode();
             local animNode = newNode.createChildSceneNode();
             local coinItem = _scene.createItem("EXPOrbMesh");
-            coinItem.setRenderQueueGroup(65);
+            coinItem.setRenderQueueGroup(RENDER_QUEUE_EFFECT_FG);
             animNode.attachObject(coinItem);
             animNode.setScale(scale, scale, scale);
             local newQuat = Quat(_random.rand()*1.0, Vec3(0.1, 1, 0))
