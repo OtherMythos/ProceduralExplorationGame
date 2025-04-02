@@ -47,6 +47,7 @@ namespace ProceduralExplorationGamePlugin{
 
     class HlmsGameCoreCustomHlmsListener : public Ogre::HlmsAVCustomListener{
     public:
+        template <bool CasterPass>
         inline void _defineProperties(Ogre::HlmsPbsAVCustom* hlms, Ogre::Renderable *renderable){
             if(!renderable->hasCustomParameter(0)) return;
             const Ogre::Vector4& params = renderable->getCustomParameter(0);
@@ -54,6 +55,12 @@ namespace ProceduralExplorationGamePlugin{
 
             if(v & ProceduralExplorationGameCore::HLMS_PACKED_VOXELS){
                 hlms->setProperty("packedVoxels", true);
+                if(!CasterPass){
+                    hlms->setProperty( Ogre::HlmsBaseProp::Normal, 1 );
+                    hlms->setProperty( Ogre::HlmsBaseProp::UvCount0, Ogre::v1::VertexElement::getTypeCount( Ogre::VET_FLOAT2 ) );
+                    const Ogre::uint32 numTextures = 1u;
+                    hlms->setProperty( Ogre::HlmsBaseProp::UvCount, numTextures );
+                }
             }
             if(v & ProceduralExplorationGameCore::HLMS_TERRAIN){
                 hlms->setProperty("voxelTerrain", true);
@@ -69,10 +76,10 @@ namespace ProceduralExplorationGamePlugin{
             }
         }
         void calculateHashForPreCaster( Ogre::HlmsPbsAVCustom* hlms, Ogre::Renderable *renderable, Ogre::PiecesMap *inOutPieces, const Ogre::PiecesMap *normalPassPieces ){
-            _defineProperties(hlms, renderable);
+            _defineProperties<true>(hlms, renderable);
         }
         void calculateHashForPreCreate( Ogre::HlmsPbsAVCustom* hlms, Ogre::Renderable *renderable, Ogre::PiecesMap *inOutPieces ){
-            _defineProperties(hlms, renderable);
+            _defineProperties<false>(hlms, renderable);
         }
     };
 

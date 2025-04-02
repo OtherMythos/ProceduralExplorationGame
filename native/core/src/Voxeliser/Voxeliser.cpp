@@ -16,8 +16,9 @@ namespace ProceduralExplorationGameCore{
 
     static const Ogre::VertexElement2Vec elemVec = {
         Ogre::VertexElement2(Ogre::VET_FLOAT3, Ogre::VES_POSITION),
-        Ogre::VertexElement2(Ogre::VET_FLOAT1, Ogre::VES_NORMAL),
-        Ogre::VertexElement2(Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES),
+        //Ogre::VertexElement2(Ogre::VET_FLOAT3, Ogre::VES_POSITION),
+        //Ogre::VertexElement2(Ogre::VET_FLOAT1, Ogre::VES_NORMAL),
+        //Ogre::VertexElement2(Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES),
     };
 
     Voxeliser::Voxeliser(){
@@ -80,8 +81,8 @@ namespace ProceduralExplorationGameCore{
             VoxelId v = *voxPtr;
             voxPtr++;
             if(v == EMPTY_VOXEL) continue;
-            float texCoordX = (static_cast<float>(v % COLS_WIDTH) / COLS_WIDTH) + TILE_WIDTH;
-            float texCoordY = (static_cast<float>((static_cast<AV::uint32>(static_cast<float>(v) / COLS_WIDTH))) / COLS_HEIGHT) + TILE_HEIGHT;
+            //float texCoordX = (static_cast<float>(v % COLS_WIDTH) / COLS_WIDTH) + TILE_WIDTH;
+            //float texCoordY = (static_cast<float>((static_cast<AV::uint32>(static_cast<float>(v) / COLS_WIDTH))) / COLS_HEIGHT) + TILE_HEIGHT;
             AV::uint8 neighbourMask = getNeighbourMask(data, x, y, z, width, height, depth);
             for(int f = 0; f < 6; f++){
                 if(!blockIsFaceVisible(neighbourMask, f)) continue;
@@ -103,17 +104,16 @@ namespace ProceduralExplorationGameCore{
                     AV::uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
                     verts.push_back(val);
 
-                    //TODO Magic number for now to avoid it breaking the regular materials.
-                    val = f << 29 | VOXELISER_MAGIC_NUMBER;
+                    val = f << 29 | v;
                     //val = f;
                     verts.push_back(val);
                     //verts.push_back(f);
                     verts.push_back(0);
                     //TODO just to pad it out, long term I shouldn't need this.
-                    verts.push_back(0);
+                    //verts.push_back(0);
 
-                    verts.push_back(*(reinterpret_cast<AV::uint32*>(&texCoordX)));
-                    verts.push_back(*(reinterpret_cast<AV::uint32*>(&texCoordY)));
+                    //verts.push_back(*(reinterpret_cast<AV::uint32*>(&texCoordX)));
+                    //verts.push_back(*(reinterpret_cast<AV::uint32*>(&texCoordY)));
                 }
                 numVerts += 4;
             }
@@ -198,7 +198,7 @@ namespace ProceduralExplorationGameCore{
         return ret;
     }
 
-    void Voxeliser::writeFaceToMeshVisitedPlace(int targetX, int targetY, AV::uint32 xVal, AV::uint32 yVal, AV::uint32 x, AV::uint32 y, AV::uint32 f, AV::uint8 altitude, const std::vector<AV::uint8>& altitudes, AV::uint32 width, AV::uint32 height, float texCoordX, float texCoordY, AV::uint32 totalWidth, AV::uint32 totalHeight, RegionBufferEntry& bufEntry) const{
+    void Voxeliser::writeFaceToMeshVisitedPlace(int targetX, int targetY, AV::uint32 xVal, AV::uint32 yVal, AV::uint32 x, AV::uint32 y, AV::uint32 f, AV::uint8 altitude, const std::vector<AV::uint8>& altitudes, AV::uint32 width, AV::uint32 height, AV::uint8 v, AV::uint32 totalWidth, AV::uint32 totalHeight, RegionBufferEntry& bufEntry) const{
         if(targetX < 0 || targetY < 0 || targetX >= totalWidth || targetY >= totalHeight) return;
         AV::uint8 testAltitude = altitudes[targetX + targetY * totalWidth];
         if(testAltitude <= 0) return;
@@ -222,14 +222,13 @@ namespace ProceduralExplorationGameCore{
                     assert(ambient >= 0 && ambient <= 3);
 
                     AV::uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
-                    //TODO Magic number for now to avoid it breaking the regular materials.
                     (*bufEntry.mVertsWritePtr++) = val;
-                    val = f << 29 | TERRAIN_MAGIC_NUMBER;
+                    val = f << 29 | v;
                     (*bufEntry.mVertsWritePtr++) = val;
                     (*bufEntry.mVertsWritePtr++) = 0x0;
-                    (*bufEntry.mVertsWritePtr++) = 0x0;
-                    *reinterpret_cast<float*>(bufEntry.mVertsWritePtr++) = texCoordX;
-                    *reinterpret_cast<float*>(bufEntry.mVertsWritePtr++) = texCoordY;
+                    //(*bufEntry.mVertsWritePtr++) = 0x0;
+                    //*reinterpret_cast<float*>(bufEntry.mVertsWritePtr++) = texCoordX;
+                    //*reinterpret_cast<float*>(bufEntry.mVertsWritePtr++) = texCoordY;
                 }
                 bufEntry.mNumTris += 2;
                 bufEntry.mNumVerts+=4;
@@ -256,8 +255,8 @@ namespace ProceduralExplorationGameCore{
 
                 AV::uint32 yInverse = y;
 
-                float texCoordX = (static_cast<float>(v % COLS_WIDTH) / COLS_WIDTH) + TILE_WIDTH;
-                float texCoordY = (static_cast<float>((static_cast<AV::uint32>(static_cast<float>(v) / COLS_WIDTH))) / COLS_HEIGHT) + TILE_HEIGHT;
+                //float texCoordX = (static_cast<float>(v % COLS_WIDTH) / COLS_WIDTH) + TILE_WIDTH;
+                //float texCoordY = (static_cast<float>((static_cast<AV::uint32>(static_cast<float>(v) / COLS_WIDTH))) / COLS_HEIGHT) + TILE_HEIGHT;
 
                 {
                     AV::uint32 f = 3;
@@ -273,20 +272,20 @@ namespace ProceduralExplorationGameCore{
 
                         AV::uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
                         (*outBuffer.mVertsWritePtr++) = val;
-                        val = f << 29 | TERRAIN_MAGIC_NUMBER;
+                        val = f << 29 | v;
                         (*outBuffer.mVertsWritePtr++) = val;
                         (*outBuffer.mVertsWritePtr++) = 0x0;
-                        (*outBuffer.mVertsWritePtr++) = 0x0;
-                        *reinterpret_cast<float*>(outBuffer.mVertsWritePtr++) = texCoordX;
-                        *reinterpret_cast<float*>(outBuffer.mVertsWritePtr++) = texCoordY;
+                        //(*outBuffer.mVertsWritePtr++) = 0x0;
+                        //*reinterpret_cast<float*>(outBuffer.mVertsWritePtr++) = texCoordX;
+                        //*reinterpret_cast<float*>(outBuffer.mVertsWritePtr++) = texCoordY;
                     }
                     outBuffer.mNumTris += 2;
                     outBuffer.mNumVerts += 4;
                 }
-                writeFaceToMeshVisitedPlace(x, (int)y-1, xVal, yVal, x, yInverse, 0, altitude, mapData->altitudeValues, widthVal, heightVal, texCoordX, texCoordY, mapData->width, mapData->height, outBuffer);
-                writeFaceToMeshVisitedPlace(x, (int)y+1, xVal, yVal, x, yInverse, 1, altitude, mapData->altitudeValues, widthVal, heightVal, texCoordX, texCoordY, mapData->width, mapData->height, outBuffer);
-                writeFaceToMeshVisitedPlace((int)x+1, y, xVal, yVal, x, yInverse, 4, altitude, mapData->altitudeValues, widthVal, heightVal, texCoordX, texCoordY, mapData->width, mapData->height, outBuffer);
-                writeFaceToMeshVisitedPlace((int)x-1, y, xVal, yVal, x, yInverse, 5, altitude, mapData->altitudeValues, widthVal, heightVal, texCoordX, texCoordY, mapData->width, mapData->height, outBuffer);
+                writeFaceToMeshVisitedPlace(x, (int)y-1, xVal, yVal, x, yInverse, 0, altitude, mapData->altitudeValues, widthVal, heightVal, v, mapData->width, mapData->height, outBuffer);
+                writeFaceToMeshVisitedPlace(x, (int)y+1, xVal, yVal, x, yInverse, 1, altitude, mapData->altitudeValues, widthVal, heightVal, v, mapData->width, mapData->height, outBuffer);
+                writeFaceToMeshVisitedPlace((int)x+1, y, xVal, yVal, x, yInverse, 4, altitude, mapData->altitudeValues, widthVal, heightVal, v, mapData->width, mapData->height, outBuffer);
+                writeFaceToMeshVisitedPlace((int)x-1, y, xVal, yVal, x, yInverse, 5, altitude, mapData->altitudeValues, widthVal, heightVal, v, mapData->width, mapData->height, outBuffer);
             }
         }
 
@@ -374,8 +373,8 @@ namespace ProceduralExplorationGameCore{
                 AV::uint32 yInverse = y;
 
                 //TODO shift this logic off somewhere else in memory.
-                float texCoordX = (static_cast<float>(v % COLS_WIDTH) / COLS_WIDTH) + TILE_WIDTH;
-                float texCoordY = (static_cast<float>((static_cast<AV::uint32>(static_cast<float>(v) / COLS_WIDTH))) / COLS_HEIGHT) + TILE_HEIGHT;
+                //float texCoordX = (static_cast<float>(v % COLS_WIDTH) / COLS_WIDTH) + TILE_WIDTH;
+                //float texCoordY = (static_cast<float>((static_cast<AV::uint32>(static_cast<float>(v) / COLS_WIDTH))) / COLS_HEIGHT) + TILE_HEIGHT;
 
                 //write the upwards face
                 {
@@ -392,21 +391,21 @@ namespace ProceduralExplorationGameCore{
 
                         AV::uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
                         (*bufEntry.mVertsWritePtr++) = val;
-                        val = f << 29 | TERRAIN_MAGIC_NUMBER;
+                        val = f << 29 | v;
                         (*bufEntry.mVertsWritePtr++) = val;
                         (*bufEntry.mVertsWritePtr++) = 0x0;
-                        (*bufEntry.mVertsWritePtr++) = 0x0;
-                        *reinterpret_cast<float*>(bufEntry.mVertsWritePtr++) = texCoordX;
-                        *reinterpret_cast<float*>(bufEntry.mVertsWritePtr++) = texCoordY;
+                        //(*bufEntry.mVertsWritePtr++) = 0x0;
+                        //*reinterpret_cast<float*>(bufEntry.mVertsWritePtr++) = texCoordX;
+                        //*reinterpret_cast<float*>(bufEntry.mVertsWritePtr++) = texCoordY;
                     }
                     bufEntry.mNumTris += 2;
                     bufEntry.mNumVerts += 4;
                 }
                 //Calculate the remaining altitude faces
-                writeFaceToMesh(x, (int)y-1, x, yInverse, 0, altitude, altitudes, width, height, texCoordX, texCoordY, bufEntry);
-                writeFaceToMesh(x, (int)y+1, x, yInverse, 1, altitude, altitudes, width, height, texCoordX, texCoordY, bufEntry);
-                writeFaceToMesh((int)x+1, y, x, yInverse, 4, altitude, altitudes, width, height, texCoordX, texCoordY, bufEntry);
-                writeFaceToMesh((int)x-1, y, x, yInverse, 5, altitude, altitudes, width, height, texCoordX, texCoordY, bufEntry);
+                writeFaceToMesh(x, (int)y-1, x, yInverse, 0, altitude, altitudes, width, height, v, bufEntry);
+                writeFaceToMesh(x, (int)y+1, x, yInverse, 1, altitude, altitudes, width, height, v, bufEntry);
+                writeFaceToMesh((int)x+1, y, x, yInverse, 4, altitude, altitudes, width, height, v, bufEntry);
+                writeFaceToMesh((int)x-1, y, x, yInverse, 5, altitude, altitudes, width, height, v, bufEntry);
             }
         }
 
@@ -419,7 +418,7 @@ namespace ProceduralExplorationGameCore{
         *outNumRegions = numRegions;
     }
 
-    void Voxeliser::writeFaceToMesh(AV::uint32 targetX, AV::uint32 targetY, AV::uint32 x, AV::uint32 y, AV::uint32 f, AV::uint32 altitude, const std::vector<float>& altitudes, AV::uint32 width, AV::uint32 height, float texCoordX, float texCoordY, RegionBufferEntry& bufEntry) const{
+    void Voxeliser::writeFaceToMesh(AV::uint32 targetX, AV::uint32 targetY, AV::uint32 x, AV::uint32 y, AV::uint32 f, AV::uint32 altitude, const std::vector<float>& altitudes, AV::uint32 width, AV::uint32 height, AV::uint8 v, RegionBufferEntry& bufEntry) const{
         //Assuming there's no voxels around the outskirt this check can be avoided.
         //if(!(targetX < 0 || targetY < 0 || targetX >= width || targetY >= height)){
             float vox = altitudes[targetX + targetY * width];
@@ -448,12 +447,12 @@ namespace ProceduralExplorationGameCore{
                             AV::uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
                             //TODO Magic number for now to avoid it breaking the regular materials.
                             (*bufEntry.mVertsWritePtr++) = val;
-                            val = f << 29 | TERRAIN_MAGIC_NUMBER;
+                            val = f << 29 | v;
                             (*bufEntry.mVertsWritePtr++) = val;
                             (*bufEntry.mVertsWritePtr++) = 0x0;
-                            (*bufEntry.mVertsWritePtr++) = 0x0;
-                            *reinterpret_cast<float*>(bufEntry.mVertsWritePtr++) = texCoordX;
-                            *reinterpret_cast<float*>(bufEntry.mVertsWritePtr++) = texCoordY;
+                            //(*bufEntry.mVertsWritePtr++) = 0x0;
+                            //*reinterpret_cast<float*>(bufEntry.mVertsWritePtr++) = texCoordX;
+                            //*reinterpret_cast<float*>(bufEntry.mVertsWritePtr++) = texCoordY;
                         }
                         bufEntry.mNumTris += 2;
                         bufEntry.mNumVerts+=4;

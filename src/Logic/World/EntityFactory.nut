@@ -119,6 +119,7 @@
 
         local enemyNode = mBaseSceneNode_.createChildSceneNode();
         local mesh = _gameCore.createVoxMeshItem("beeHive.voxMesh");
+        mesh.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         enemyNode.attachObject(mesh);
         enemyNode.setScale(0.15, 0.15, 0.15);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](enemyNode, true));

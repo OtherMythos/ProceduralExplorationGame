@@ -37,7 +37,7 @@ namespace VoxelConverterTool{
         int deltaX, deltaY, deltaZ;
 
         size_t calcMeshSizeBytes() const{
-            return outFaces.size() * 4 * 6 * sizeof(uint32);
+            return outFaces.size() * 4 * 3 * sizeof(uint32);
         }
     };
     static WrappedFace _wrapFace(const WrappedFaceContainer& c){

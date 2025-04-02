@@ -79,9 +79,7 @@ namespace Ogre{
         Ogre::RenderSystem *renderSystem = Ogre::Root::getSingletonPtr()->getRenderSystem();
         Ogre::VaoManager *vaoManager = renderSystem->getVaoManager();
         static const Ogre::VertexElement2Vec elemVec = {
-            Ogre::VertexElement2(Ogre::VET_FLOAT3, Ogre::VES_POSITION),
-            Ogre::VertexElement2(Ogre::VET_FLOAT1, Ogre::VES_NORMAL),
-            Ogre::VertexElement2(Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES),
+            Ogre::VertexElement2(Ogre::VET_FLOAT3, Ogre::VES_POSITION)
         };
         try{
             //TODO should keep as shadow buffer be true?
@@ -135,7 +133,7 @@ namespace Ogre{
     }
 
     uint8* VoxMeshSerializer::readVertexBuffer(DataStreamPtr& stream, Mesh* pMesh, size_t* outNumVerts){
-        size_t bytesPerVertex = sizeof(unsigned int) * 6;
+        size_t bytesPerVertex = sizeof(unsigned int) * 3;
         size_t numVertices = mCurrentstreamLen / bytesPerVertex;
         uint8 *vertexData = reinterpret_cast<uint8*>( OGRE_MALLOC_SIMD(
                                 sizeof(uint8) * bytesPerVertex * numVertices,
