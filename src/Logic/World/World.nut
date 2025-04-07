@@ -82,6 +82,81 @@ enum WorldMousePressContexts{
         }
     };
 
+    WindStreakManager = class{
+        mParentNode_ = null;
+        mActiveWinds_ = null;
+        mActiveWindDirection_ = null;
+        mSize_ = null;
+        NUM_WIND = 100;
+        Wind = class{
+            node = null;
+            direction = null;
+            mapSize = null;
+            constructor(node, direction, mapSize){
+                this.node = node;
+                this.direction = direction;
+                this.mapSize = mapSize;
+
+                resetPosition(true);
+            }
+
+            function resetPosition(start=false){
+                local outPos = mapSize.copy();
+                outPos.x *= _random.rand();
+                outPos.y = 1;
+                outPos.z = -outPos.z;
+                if(start){
+                    outPos.z += _random.rand() * mapSize.z;
+                }
+                node.setPosition(outPos);
+            }
+
+            function update(){
+                local windPosition = node.getPositionVec3();
+                windPosition += direction;
+                if(windPosition.z <= mapSize.z){
+                    resetPosition();
+                    return;
+                }
+                node.setPosition(windPosition);
+            }
+        };
+        constructor(parent, width, height){
+            mSize_ = Vec3(width, 0, -height);
+            mParentNode_ = parent;
+            mActiveWinds_ = [];
+            mActiveWindDirection_ = [];
+            for(local i = 0; i < NUM_WIND; i++){
+                local newWindStreak = setupWindStreak();
+                mActiveWinds_.append(newWindStreak);
+            }
+        }
+
+        function setupWindStreak(){
+            local newNode = mParentNode_.createChildSceneNode();
+            local item = _scene.createItem("WindStreak.mesh");
+            item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
+            _gameCore.writeFlagsToItem(item, HLMS_WIND_STREAKS);
+            item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_WIND);
+            item.setDatablock("WindStreak");
+            newNode.attachObject(item);
+            newNode.setScale(0.2, 0.2, 2 + 4 * _random.rand());
+
+            local offsetSize = 0.2;
+            local offset = (_random.rand() * offsetSize * 2) - offsetSize;
+            local windDir = Vec3(0 + offset, 0, -0.8 + _random.rand() * -0.2);
+            newNode.setOrientation(Quat(-offset, Vec3(0, 1, 0)));
+
+            return Wind(newNode, windDir, mSize_);
+        }
+
+        function update(){
+            foreach(i in mActiveWinds_){
+                i.update();
+            }
+        }
+    };
+
     CloudManager = class{
         mParentNode_ = null;
         NUM_CLOUDS = 9;

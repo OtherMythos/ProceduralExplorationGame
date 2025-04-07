@@ -18,6 +18,7 @@ namespace Ogre{
         : Item( id, objectMemoryManager, manager, mesh )
     {
         for(Ogre::Renderable* r : mRenderables){
+            assert(!r->hasCustomParameter(0));
             Ogre::Vector4 vals = Ogre::Vector4::ZERO;
             Ogre::uint32 v = ProceduralExplorationGameCore::HLMS_PACKED_VOXELS |
                 ProceduralExplorationGameCore::HLMS_PACKED_OFFLINE_VOXELS;

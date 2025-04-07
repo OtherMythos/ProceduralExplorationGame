@@ -74,6 +74,9 @@ namespace ProceduralExplorationGamePlugin{
             if(v & ProceduralExplorationGameCore::HLMS_TREE_VERTICES){
                 hlms->setProperty("treeVertices", true);
             }
+            if(v & ProceduralExplorationGameCore::HLMS_WIND_STREAKS){
+                hlms->setProperty("windStreaks", true);
+            }
         }
         void calculateHashForPreCaster( Ogre::HlmsPbsAVCustom* hlms, Ogre::Renderable *renderable, Ogre::PiecesMap *inOutPieces, const Ogre::PiecesMap *normalPassPieces ){
             _defineProperties<true>(hlms, renderable);

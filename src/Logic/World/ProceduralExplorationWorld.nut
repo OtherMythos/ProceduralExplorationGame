@@ -15,6 +15,7 @@
     mOutsideWaterDatablock_ = null;
 
     mCloudManager_ = null;
+    mWindStreakManager_ = null;
 
     mTerrain_ = null;
 
@@ -242,6 +243,7 @@
         voxeliseMap();
 
         mCloudManager_ = CloudManager(mParentNode_, mMapData_.width, mMapData_.height);
+        mWindStreakManager_ = WindStreakManager(mParentNode_, mMapData_.width, mMapData_.height);
 
         setupPlaces();
         createPlacedItems();
@@ -316,6 +318,7 @@
         _gameCore.update();
 
         mCloudManager_.update();
+        mWindStreakManager_.update();
 
         foreach(c,i in mRegionEntries_){
             i.update();

@@ -169,6 +169,8 @@ compositor_node renderTexture30Node
     texture sceneRender     target_width target_height PFG_RGBA32_FLOAT
 	texture finalDepth	target_width target_height PFG_RGBA32_FLOAT
 
+    texture windTexture     960 540 PFG_RGBA32_FLOAT
+
 	rtv rt0
 	{
 		depth_stencil depthTextureDecorations
@@ -241,6 +243,28 @@ compositor_node renderTexture30Node
             rq_last 31
 
             shadows default_simpleShadowNode
+        }
+    }
+
+    target windTexture
+    {
+        pass clear
+        {
+            colour_value 0 0 0 0
+        }
+        pass render_scene
+        {
+            rq_first 40
+            rq_last 41
+        }
+    }
+
+    target sceneRender{
+        pass render_quad
+        {
+            material Postprocess/lowResCopy
+            input 0 sceneRender
+            input 1 windTexture
         }
     }
 

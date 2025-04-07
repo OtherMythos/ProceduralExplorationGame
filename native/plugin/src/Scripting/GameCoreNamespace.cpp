@@ -507,7 +507,14 @@ namespace ProceduralExplorationGamePlugin{
         Ogre::Vector4 vals = Ogre::Vector4::ZERO;
         vals.x = *reinterpret_cast<Ogre::Real*>(&flags);
         for(Ogre::Renderable* r : item->mRenderables){
+            if(r->hasCustomParameter(0)){
+                Ogre::Vector4 param = r->getCustomParameter(0);
+                AV::uint32 v = *(reinterpret_cast<const AV::uint32*>(&param.x));
+                //assert(!r->hasCustomParameter(0));
+            }
             r->setCustomParameter(0, vals);
+            const Ogre::Vector4 currentParam = r->getCustomParameter(0);
+            assert(currentParam == vals);
         }
 
         return 0;

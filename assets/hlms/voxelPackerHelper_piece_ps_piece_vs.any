@@ -27,7 +27,11 @@
 	//outPs_colour0.xyz = float3(inPs.diffuse.xyz);
 
 	float3 fogColour = float3(0.5, 0.89, 1);
-	outPs_colour0.xyz = mix(fogColour, outPs_colour0.xyz, inPs.fog);
+	//outPs_colour0.xyz = mix(fogColour, outPs_colour0.xyz, inPs.fog);
+
+	@property(windStreaks)
+		outPs_colour0.xyz = float3(1, 1, 1);
+	@end
 @end
 
 @piece( custom_VStoPS )
@@ -64,7 +68,6 @@
 			uint originalSecond = floatBitsToUint(inValues.y);
 		@end
 
-		uint magicNumber = originalSecond & uint(0x1FFFFFFF);
 		float3 normVal = float3(0, 0, 0);
 		#undef inVs_normal
 		#define inVs_normal normVal
@@ -125,6 +128,11 @@
 			inVs_vertex.y += sin(inVs_vertex.x*600 + passBuf.time) * 0.25;
 			inVs_vertex.y += cos(inVs_vertex.z*600 + passBuf.time) * 0.25;
 			inVs_vertex.x += sin(inVs_vertex.x*600 + passBuf.time) * 0.001;
+		@end
+
+		@property(windStreaks)
+			inVs_vertex.y += sin(inVs_vertex.z*10 + passBuf.time) * 0.75;
+			inVs_vertex.x += sin(inVs_vertex.z*3 + passBuf.time * 4) * 2.75;
 		@end
 	@end
 

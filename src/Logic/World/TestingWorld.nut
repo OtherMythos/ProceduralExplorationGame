@@ -1,11 +1,15 @@
 ::TestingWorld <- class extends ::World{
 
+    mWindStreakManager_ = null;
+
     constructor(worldId, preparer){
         base.constructor(worldId, preparer);
     }
 
     function resetSession(){
         base.resetSession();
+
+        mWindStreakManager_ = WindStreakManager(mParentNode_, 100, 100);
 
         callLogicScript();
 
@@ -79,6 +83,14 @@
         }
 
         updateCameraPosition();
+    }
+
+    function update(){
+        base.update();
+
+        _gameCore.update();
+
+        mWindStreakManager_.update();
     }
 
     #Override
