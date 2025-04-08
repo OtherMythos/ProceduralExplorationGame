@@ -96,7 +96,7 @@
 
         mParentWindow_ = _gui.createWindow("DebugConsole");
         mParentWindow_.setPosition(0, 0);
-        mParentWindow_.setSize(1920, 1080);
+        mParentWindow_.setSize(_window.getSize());
         mParentWindow_.setZOrder(200);
 
         mOutputLabel_ = mParentWindow_.createLabel();
