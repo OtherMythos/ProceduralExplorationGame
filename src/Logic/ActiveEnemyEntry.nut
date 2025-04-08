@@ -302,7 +302,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         local zQuery = mCreatorWorld_.getZForPos(intended);
         intended.y = zQuery;
         if(inWater){
-            if(::Enemies[mEnemy_].getAllowSwimState()) intended.y = -1.4;
+            if(::Enemies[mEnemy_].getAllowSwimState()) intended.y -= 1.8;
         }
         move_(intended, amount);
     }
