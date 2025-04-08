@@ -16,6 +16,7 @@ layout(std140) uniform;
 
 vulkan_layout( OGRE_POSITION ) in vec4 vertex;
 
+@property(!packedVoxels)
 @property( hlms_normal )vulkan_layout( OGRE_NORMAL ) in float3 normal;@end
 @property( hlms_qtangent )vulkan_layout( OGRE_NORMAL ) in midf4 qtangent;@end
 
@@ -32,6 +33,8 @@ vulkan_layout( OGRE_POSITION ) in vec4 vertex;
 
 @foreach( hlms_uv_count, n )
 	vulkan_layout( OGRE_TEXCOORD@n ) in vec@value( hlms_uv_count@n ) uv@n;@end
+
+@end
 
 @property( GL_ARB_base_instance )
 	vulkan_layout( OGRE_DRAWID ) in uint drawId;
