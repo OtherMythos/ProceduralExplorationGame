@@ -55,7 +55,7 @@ material Postprocess/MergeDepthComplete
 			texture_unit second
 			{
 				tex_address_mode clamp
-				filtering trilinear
+				filtering none
 			}
 		}
 	}

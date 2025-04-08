@@ -68,7 +68,7 @@ void main()
     float f = OGRE_Sample(First, firstSampler, inPs.uv0).x;
     float s = OGRE_Sample(Second, secondSampler, inPs.uv0).x;
 
-    if(s > 0 && s >= f){
+    if(s > 0.0005 && s >= f){
         returnFinalColour(float4(1, 1, 1, 1));
     }else{
         returnFinalColour(float4(0, 0, 0, 1));
