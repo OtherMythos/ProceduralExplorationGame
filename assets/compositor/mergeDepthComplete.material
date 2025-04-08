@@ -1,7 +1,7 @@
 
 fragment_program Postprocess/MergeDepthComplete_ps_GLSL glsl
 {
-	source MergeDepthComplete_ps.glsl
+	source mergeDepthComplete_ps.glsl
 	default_params
 	{
 		param_named First int 0
@@ -11,12 +11,12 @@ fragment_program Postprocess/MergeDepthComplete_ps_GLSL glsl
 
 fragment_program Postprocess/MergeDepthComplete_ps_VK glslvk
 {
-	source MergeDepthComplete_ps.glsl
+	source mergeDepthComplete_ps.glsl
 }
 
 fragment_program Postprocess/MergeDepthComplete_ps_Metal metal
 {
-	source MergeDepthComplete_ps.metal
+	source mergeDepthComplete_ps.metal
 	shader_reflection_pair_hint Ogre/Compositor/Quad_vs
 }
 
