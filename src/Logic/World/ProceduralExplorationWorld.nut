@@ -49,7 +49,7 @@
             mBeacons_ = [];
         }
         function update(){
-            if(mAnimCount_ < 0) return;
+            if(mAnimCount_ <= 0) return;
             local animIdx = mAnimCount_.tofloat() / mMaxAnim_.tofloat();
             mAnimCount_--;
             local animPos = mAnimCount_ * -0.10;
