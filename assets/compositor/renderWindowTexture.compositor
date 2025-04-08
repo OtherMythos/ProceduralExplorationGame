@@ -170,6 +170,7 @@ compositor_node renderTexture30Node
 	texture finalDepth	target_width target_height PFG_RGBA32_FLOAT
 
     texture windTexture     960 540 PFG_RGBA32_FLOAT
+	texture depthWind	960 540 PFG_D32_FLOAT
 
 	rtv rt0
 	{
@@ -178,6 +179,10 @@ compositor_node renderTexture30Node
 	rtv sceneRender
 	{
 		depth_stencil depthTextureGround
+	}
+	rtv windTexture
+	{
+		depth_stencil depthWind
 	}
 
     target rt0
@@ -242,6 +247,16 @@ compositor_node renderTexture30Node
         {
             rq_first 40
             rq_last 41
+        }
+    }
+
+    target windTexture
+    {
+        pass render_quad
+        {
+            material Postprocess/MergeDepthComplete
+            input 0 depthTextureGround
+            input 1 depthWind
         }
     }
 

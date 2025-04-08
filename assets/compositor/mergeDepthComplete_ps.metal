@@ -35,12 +35,12 @@ fragment float4 main_metal
     constant Params &p [[buffer(PARAMETER_SLOT)]]
 )
 {
-    float4 f = OGRE_Sample(First, firstSampler, inPs.uv0);
-    float4 s = OGRE_Sample(Second, secondSampler, inPs.uv0);
+    float f = OGRE_Sample(First, firstSampler, inPs.uv0).x;
+    float s = OGRE_Sample(Second, secondSampler, inPs.uv0).x;
 
-    if(s.x == 0.0){
-        returnFinalColour(f);
+    if(s > 0 && s >= f){
+        returnFinalColour(float4(1, 1, 1, 1));
     }else{
-        returnFinalColour(mix(f, s, 0.5));
+        returnFinalColour(float4(0, 0, 0, 1));
     }
 }
