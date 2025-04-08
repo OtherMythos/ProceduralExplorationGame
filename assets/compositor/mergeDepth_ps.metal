@@ -38,7 +38,7 @@ fragment float4 main_metal
     float f = OGRE_Sample(First, firstSampler, inPs.uv0).x;
     float s = OGRE_Sample(Second, secondSampler, inPs.uv0).x;
 
-    if(f < s){
+    if(s > 0 && s >= f){
         returnFinalColour(float4(1, 0, 0, 1));
     }else{
         returnFinalColour(float4(0, 0, 0, 1));
