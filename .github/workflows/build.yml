@@ -6,7 +6,7 @@ on:
 
 jobs:
   buildNativeLinux:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         buildType: [Debug, Release]
@@ -95,7 +95,7 @@ jobs:
 
   build:
     needs: ['buildNativeLinux', 'buildNativeWindows']
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     outputs:
       sha_short: ${{ steps.vars.outputs.sha_short }}
@@ -177,7 +177,7 @@ jobs:
           path: ${{ github.workspace }}
 
   buildLinux:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs: build
     strategy:
       matrix:
