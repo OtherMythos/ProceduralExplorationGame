@@ -106,6 +106,7 @@ compositor_node renderMainGameplayNode
 
     texture windTexture     target_width_scaled 0.5 target_height_scaled 0.5 PFG_RGBA32_FLOAT
 	texture depthWind	target_width_scaled 0.5 target_height_scaled 0.5 PFG_D32_FLOAT
+    texture finalWindTexture     target_width_scaled 0.5 target_height_scaled 0.5 PFG_RGBA32_FLOAT
 
 	rtv rt0
 	{
@@ -185,7 +186,7 @@ compositor_node renderMainGameplayNode
         }
     }
 
-    target windTexture
+    target finalWindTexture
     {
         pass render_quad
         {
@@ -200,7 +201,7 @@ compositor_node renderMainGameplayNode
         {
             material Postprocess/lowResCopy
             input 0 sceneRender
-            input 1 windTexture
+            input 1 finalWindTexture
         }
     }
 
