@@ -429,7 +429,7 @@ namespace ProceduralExplorationGameCore{
                     //The altidue is lower so need to draw some triangles.
                     AV::uint32 altitudeDelta = altitude - testAltitude;
                     //For the faces about to hit the ocean, extend it slightly so more complex water animations can be used.
-                    bool lengthen = (testAltitude == 0 && altitude == 1);
+                    bool lengthen = (testAltitude == 0);
                     for(AV::uint32 zAlt = 0; zAlt < altitudeDelta; zAlt++){
                         //Loop down and draw the triangles.
 
