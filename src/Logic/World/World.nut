@@ -118,6 +118,7 @@ enum WorldMousePressContexts{
                     resetPosition();
                     return;
                 }
+                windPosition.y = 8;
                 node.setPosition(windPosition);
             }
         };
