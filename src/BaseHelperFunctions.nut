@@ -38,9 +38,13 @@ Separated from the Base.nut file so enums can be used.
     function setupForProfilePost_(profile){
         printf("Setting up game profile post setup '%s'", ::GameProfileString[profile]);
         switch(profile){
-            case GameProfile.DEVELOPMENT_BEGIN_EXPLORATION:
+            case GameProfile.DEVELOPMENT_BEGIN_EXPLORATION:{
+                local save = ::Base.mSaveManager.produceSave();
+                ::Base.mPlayerStats.setSaveData(save, 0);
+
                 ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
                 break;
+            }
             case GameProfile.TEST_SCREEN:
                 ::ScreenManager.transitionToScreen(Screen.TEST_SCREEN);
                 break;

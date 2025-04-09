@@ -8,7 +8,6 @@
         assert(prev != null);
         mJSONSchema_ = clone prev.mJSONSchema_;
         mDefaultData_ = clone prev.mDefaultData_;
-        print(_prettyPrint(mDefaultData_));
 
         mJSONSchema_.quest <- OBJECT_TYPE.ANY;
         mJSONSchema_.playerZoom <- OBJECT_TYPE.FLOAT;
