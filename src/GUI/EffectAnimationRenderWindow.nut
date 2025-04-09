@@ -40,10 +40,10 @@
 
     function getCompositorTypeWorkspace(compType){
         if(compType == CompositorSceneType.BG_EFFECT){
-            return "renderTexture60_65Workspace";
+            return "renderTextureBGEffectWorkspace";
         }
         else if(compType == CompositorSceneType.FG_EFFECT){
-            return "renderTexture65_70Workspace";
+            return "renderTextureFGEffectWorkspace";
         }else{
             assert(false);
         }

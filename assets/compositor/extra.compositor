@@ -1,5 +1,5 @@
 
-compositor_node renderTexture60_65Node
+compositor_node renderTextureBGEffectNode
 {
     in 0 renderTexture
     target renderTexture
@@ -11,11 +11,11 @@ compositor_node renderTexture60_65Node
         pass render_scene
         {
             rq_first 60
-            rq_last 65
+            rq_last 61
         }
     }
 }
-compositor_node renderTexture65_70Node
+compositor_node renderTextureFGEffectNode
 {
     in 0 renderTexture
     target renderTexture
@@ -27,12 +27,12 @@ compositor_node renderTexture65_70Node
         pass render_scene
         {
             rq_first 65
-            rq_last 70
+            rq_last 66
         }
     }
 }
 
-compositor_node renderTexture50_60Node
+compositor_node renderTextureInventoryNode
 {
     in 0 renderTexture
     target renderTexture
@@ -44,24 +44,20 @@ compositor_node renderTexture50_60Node
         pass render_scene
         {
             rq_first 50
-            rq_last 61
+            rq_last 51
         }
     }
 }
 
-workspace renderTexture30Workspace
+workspace renderTextureInventoryWorkspace
 {
-    connect_output renderTexture30Node 0
+    connect_output renderTextureInventoryNode 0
 }
-workspace renderTexture50_60Workspace
+workspace renderTextureBGEffectWorkspace
 {
-    connect_output renderTexture50_60Node 0
+    connect_output renderTextureBGEffectNode 0
 }
-workspace renderTexture60_65Workspace
+workspace renderTextureFGEffectWorkspace
 {
-    connect_output renderTexture60_65Node 0
-}
-workspace renderTexture65_70Workspace
-{
-    connect_output renderTexture65_70Node 0
+    connect_output renderTextureFGEffectNode 0
 }

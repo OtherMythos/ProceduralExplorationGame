@@ -110,7 +110,7 @@
         local winSize = mExplorationScenePanel_.getSize() * ::resolutionMult;
         local winPos = mExplorationScenePanel_.getPosition();
 
-        local compId = ::CompositorManager.createCompositorWorkspace("renderTexture30Workspace", winSize, CompositorSceneType.EXPLORATION);
+        local compId = ::CompositorManager.createCompositorWorkspace("mainGameplayRenderWorkspace", winSize, CompositorSceneType.EXPLORATION);
         local datablock = ::CompositorManager.getDatablockForCompositor(compId);
         mCompositorId_ = compId;
         mExplorationScenePanel_.setDatablock(datablock);

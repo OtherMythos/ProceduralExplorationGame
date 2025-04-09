@@ -17,13 +17,18 @@
 ];
 #endif
 
-const RENDER_QUEUE_EXPLORATION_WATER = 21;
-const RENDER_QUEUE_EXPLORATION_TERRRAIN = 22;
-const RENDER_QUEUE_EXPLORATION = 25;
+//10-19 - Rendered and included in the shadow map.
+const RENDER_QUEUE_EXPLORATION_WATER = 11;
+const RENDER_QUEUE_EXPLORATION_TERRRAIN = 12;
+const RENDER_QUEUE_EXPLORATION = 15;
+//20 - 29 - Rendered and not included in the shadow map
+//30 - 39 - Not rendered but included in the shadow map
+const RENDER_QUEUE_EXPLORATION_CLOUD = 30;
+//40 - 50 - Miscellaneous for the gameplay scene
 const RENDER_QUEUE_EXPLORATION_WIND = 40;
-const RENDER_QUEUE_EXPLORATION_CLOUD = 70;
 
 const RENDER_QUEUE_INVENTORY_PREVIEW = 50;
+const RENDER_QUEUE_EFFECT_BG = 60;
 const RENDER_QUEUE_EFFECT_FG = 65;
 
 enum MapVoxelTypes{
