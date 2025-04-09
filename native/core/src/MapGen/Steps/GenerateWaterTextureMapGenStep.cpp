@@ -108,6 +108,28 @@ namespace ProceduralExplorationGameCore{
                 }
             }
         }
+
+        //Write some pixels on the sides of fresh water, to help accomodate for vertex animations.
+        //Start at 1 to skip the ocean.
+        for(size_t i = 1; i < mapData->waterData.size(); i++){
+            const FloodFillEntry* e = mapData->waterData[i];
+
+            for(WorldPoint p : e->edges){
+                WorldCoord xx, yy;
+                READ_WORLD_POINT(p, xx, yy);
+
+                for(int ya = -1; ya < 2; ya++){
+                    for(int xa = -1; xa < 2; xa++){
+                        int xxa = int(xx) + xa;
+                        int yya = int(yy) + ya;
+                        int reverseWidth = mapData->width - yya - 1;
+                        float* b = ((buffer) + ((xxa + reverseWidth * mapData->width) * 4));
+
+                        _writeToBuffer(&b, 0, 0, 150);
+                    }
+                }
+            }
+        }
     }
 
 }
