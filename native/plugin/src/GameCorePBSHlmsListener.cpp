@@ -8,6 +8,7 @@ namespace ProceduralExplorationGamePlugin
 {
 
     float GameCorePBSHlmsListener::mTimeValue = 0.0f;
+    Ogre::Vector3 GameCorePBSHlmsListener::mPlayerPosition = Ogre::Vector3::ZERO;
 
     GameCorePBSHlmsListener::GameCorePBSHlmsListener(){
 
@@ -18,11 +19,14 @@ namespace ProceduralExplorationGamePlugin
     }
 
     Ogre::uint32 GameCorePBSHlmsListener::getPassBufferSize(const Ogre::CompositorShadowNode *shadowNode, bool casterPass, bool dualParaboloid, Ogre::SceneManager *sceneManager) const {
-        return sizeof(float);
+        return sizeof(float) + sizeof(float) * 3;
     }
 
     float* GameCorePBSHlmsListener::preparePassBuffer(const Ogre::CompositorShadowNode *shadowNode, bool casterPass, bool dualParaboloid, Ogre::SceneManager *sceneManager, float *passBufferPtr){
         *passBufferPtr++ = mTimeValue;
+        *passBufferPtr++ = mPlayerPosition.x;
+        *passBufferPtr++ = mPlayerPosition.y;
+        *passBufferPtr++ = mPlayerPosition.z;
 
         return passBufferPtr;
     }

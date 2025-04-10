@@ -16,6 +16,9 @@
 
 @piece( custom_passBuffer )
 	float time;
+	float playerPositionX;
+	float playerPositionY;
+	float playerPositionZ;
 @end
 
 @piece( custom_ps_preLights )
@@ -26,11 +29,11 @@
 	//For debug purposes
 	//outPs_colour0.xyz = float3(inPs.diffuse.xyz);
 
-	float3 fogColour = float3(0.5, 0.89, 1);
-	//outPs_colour0.xyz = mix(fogColour, outPs_colour0.xyz, inPs.fog);
-
 	@property(windStreaks)
 		outPs_colour0.xyz = float3(1, 1, 1);
+	@else
+		float3 fogColour = float3(0.5, 0.89, 1);
+		outPs_colour0.xyz = mix(fogColour, outPs_colour0.xyz, inPs.fog);
 	@end
 @end
 
@@ -42,11 +45,33 @@
 @piece( custom_vs_posExecution )
 
 	@property( !hlms_shadowcaster || !hlms_shadow_uses_depth_texture || alpha_test || exponential_shadow_maps )
-		float4 positionRelativeToCam = mul(worldPos, passBuf.viewProj);
-		float distance = length(positionRelativeToCam.xyz);
+		float3 playerPosition = float3(passBuf.playerPositionX, passBuf.playerPositionY, passBuf.playerPositionZ);
+		//float4 positionRelativeToCam = mul(worldPos, passBuf.viewProj);
+		//float dist = length(positionRelativeToCam.xyz);
+		float4 worldDistance = float4(playerPosition, 1.0) - worldPos;
+		float dist = length(worldDistance.xyz);
+		//float4 playerFinalPos = mul(float4(passBuf.playerPosition, 1.0), passBuf.viewProj);
+		//float dist = distance(playerFinalPos.xyz, outVs_Position.xyz);
+		//float dist = distance(passBuf.playerPosition, worldPos.xyz);
+
+		//Expnential fog
+		/*
 		float density = 0.003;
-		float gradient = 3.5;
-		float visibility = exp(-pow(distance * density, gradient));
+		float gradient = 1.5;
+		float visibility = exp(-pow(dist * density, gradient));
+		*/
+
+		/*
+		//Explonential Squared
+		float density = 0.002;
+		float visibility = exp(-pow(dist * density, 2.0));
+		*/
+
+		//Sigmoid fog
+		float fogStart = 200.0;
+		float fogEnd = 600.0;
+		float visibility = smoothstep(fogEnd, fogStart, dist);
+
 		visibility = clamp(visibility, 0.0, 1.0);
 		outVs.fog = visibility;
 	@end

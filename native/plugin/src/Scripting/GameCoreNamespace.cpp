@@ -698,6 +698,10 @@ namespace ProceduralExplorationGamePlugin{
         //TODO make this accurate to delta times.
         GameCorePBSHlmsListener::mTimeValue += 0.03;
 
+        Ogre::Vector3 offset = Ogre::Vector3::ZERO;
+        SCRIPT_CHECK_RESULT(AV::Vector3UserData::readVector3FromUserData(vm, 2, &offset));
+        GameCorePBSHlmsListener::mPlayerPosition = offset;
+
         return 0;
     }
 
@@ -723,7 +727,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, getTotalMapGenStages, "getTotalMapGenStages");
         AV::ScriptUtils::addFunction(vm, setHlmsFlagForDatablock, "setHlmsFlagForDatablock", 3, ".ui");
 
-        AV::ScriptUtils::addFunction(vm, update, "update");
+        AV::ScriptUtils::addFunction(vm, update, "update", 2, ".u");
 
         AV::ScriptUtils::addFunction(vm, createVoxMeshItem, "createVoxMeshItem", -2, ".si");
 
