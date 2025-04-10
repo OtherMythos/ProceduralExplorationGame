@@ -12,6 +12,9 @@ compositor_node renderTextureBGEffectNode
         {
             rq_first 60
             rq_last 61
+
+            //Disable fog for these passes
+            identifier 10
         }
     }
 }
@@ -28,6 +31,8 @@ compositor_node renderTextureFGEffectNode
         {
             rq_first 65
             rq_last 66
+
+            identifier 10
         }
     }
 }
@@ -45,6 +50,8 @@ compositor_node renderTextureInventoryNode
         {
             rq_first 50
             rq_last 51
+
+            identifier 10
         }
     }
 }

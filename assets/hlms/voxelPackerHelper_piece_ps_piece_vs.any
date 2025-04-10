@@ -32,8 +32,10 @@
 	@property(windStreaks)
 		outPs_colour0.xyz = float3(1, 1, 1);
 	@else
-		float3 fogColour = float3(0.5, 0.89, 1);
-		outPs_colour0.xyz = mix(fogColour, outPs_colour0.xyz, inPs.fog);
+		@property( !disableFog )
+			float3 fogColour = float3(0.5, 0.89, 1);
+			outPs_colour0.xyz = mix(fogColour, outPs_colour0.xyz, inPs.fog);
+		@end
 	@end
 @end
 
@@ -45,6 +47,7 @@
 @piece( custom_vs_posExecution )
 
 	@property( !hlms_shadowcaster || !hlms_shadow_uses_depth_texture || alpha_test || exponential_shadow_maps )
+	@property( !disableFog )
 		float3 playerPosition = float3(passBuf.playerPositionX, passBuf.playerPositionY, passBuf.playerPositionZ);
 		//float4 positionRelativeToCam = mul(worldPos, passBuf.viewProj);
 		//float dist = length(positionRelativeToCam.xyz);
@@ -74,6 +77,7 @@
 
 		visibility = clamp(visibility, 0.0, 1.0);
 		outVs.fog = visibility;
+	@end
 	@end
 
 @end
