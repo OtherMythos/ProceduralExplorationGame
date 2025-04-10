@@ -97,8 +97,6 @@ compositor_node renderMainGameplayNode
 
     texture rt0                target_width target_height PFG_RGBA8_UNORM_SRGB
     texture depthTextureDecorations    target_width target_height PFG_D32_FLOAT
-
-    texture rt1                target_width target_height PFG_RGBA8_UNORM_SRGB
     texture depthTextureGround    target_width target_height PFG_D32_FLOAT
 
     texture sceneRender     target_width target_height PFG_RGBA32_FLOAT
@@ -135,6 +133,10 @@ compositor_node renderMainGameplayNode
             rq_first 15
             rq_last 20
         }
+        pass render_scene
+        {
+            rq_first 60
+        }
     }
 
     target sceneRender
@@ -155,6 +157,11 @@ compositor_node renderMainGameplayNode
             rq_last 30
 
             shadows default_simpleShadowNode
+        }
+        //Ensure particles are rendered
+        pass render_scene
+        {
+            rq_first 80
         }
     }
 
