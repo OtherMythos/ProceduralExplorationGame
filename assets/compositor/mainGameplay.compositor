@@ -3,41 +3,41 @@
 /*
 compositor_node_shadow SR3_Shadows
 {
-	technique pssm
+    technique pssm
 
-	//**  shadows par
-	// texture atlas 3072 2048 PFG_D32_FLOAT  // medium 2k
-	// texture atlas 6144 4096 PFG_D32_FLOAT  // high 4k
-	texture atlas 12288 8192 PFG_D32_FLOAT  // ultra high 8k
+    //**  shadows par
+    // texture atlas 3072 2048 PFG_D32_FLOAT  // medium 2k
+    // texture atlas 6144 4096 PFG_D32_FLOAT  // high 4k
+    texture atlas 12288 8192 PFG_D32_FLOAT  // ultra high 8k
 
-	num_splits		3
-	pssm_lambda		0.95
-	shadow_map 0 atlas uv 0.000000000000000 0.0 0.666666666666667 1.0 light 0 split 0
-	shadow_map 1 atlas uv 0.666666666666667 0.0 0.333333333333333 0.5 light 0 split 1
-	shadow_map 2 atlas uv 0.666666666666667 0.5 0.333333333333333 0.5 light 0 split 2
+    num_splits        3
+    pssm_lambda        0.95
+    shadow_map 0 atlas uv 0.000000000000000 0.0 0.666666666666667 1.0 light 0 split 0
+    shadow_map 1 atlas uv 0.666666666666667 0.0 0.333333333333333 0.5 light 0 split 1
+    shadow_map 2 atlas uv 0.666666666666667 0.5 0.333333333333333 0.5 light 0 split 2
 
-	target atlas
-	{
-		pass clear
-		{
-			colour_value 1 1 1 1
-			identifier	77000
-		}
-	}
+    target atlas
+    {
+        pass clear
+        {
+            colour_value 1 1 1 1
+            identifier    77000
+        }
+    }
 
-	shadow_map_target_type directional
-	{
-		shadow_map 0 1 2
-		{
-			pass render_scene
-			{
-				profiling_id "Shadows ed prv"
-				identifier	77077
+    shadow_map_target_type directional
+    {
+        shadow_map 0 1 2
+        {
+            pass render_scene
+            {
+                profiling_id "Shadows ed prv"
+                identifier    77077
 
-				rq_last		219
-			}
-		}
-	}
+                rq_last        219
+            }
+        }
+    }
 }
 
 compositor_node_shadow default_simpleShadowNode
@@ -95,47 +95,47 @@ compositor_node renderMainGameplayNode
 {
     in 0 renderTexture
 
-	texture rt0				target_width target_height PFG_RGBA8_UNORM_SRGB
-	texture depthTextureDecorations	target_width target_height PFG_D32_FLOAT
+    texture rt0                target_width target_height PFG_RGBA8_UNORM_SRGB
+    texture depthTextureDecorations    target_width target_height PFG_D32_FLOAT
 
-	texture rt1				target_width target_height PFG_RGBA8_UNORM_SRGB
-	texture depthTextureGround	target_width target_height PFG_D32_FLOAT
+    texture rt1                target_width target_height PFG_RGBA8_UNORM_SRGB
+    texture depthTextureGround    target_width target_height PFG_D32_FLOAT
 
     texture sceneRender     target_width target_height PFG_RGBA32_FLOAT
-	texture finalDepth	target_width target_height PFG_RGBA32_FLOAT
+    texture finalDepth    target_width target_height PFG_RGBA32_FLOAT
 
     texture windTexture     target_width_scaled 0.5 target_height_scaled 0.5 PFG_RGBA32_FLOAT
-	texture depthWind	target_width_scaled 0.5 target_height_scaled 0.5 PFG_D32_FLOAT
+    texture depthWind    target_width_scaled 0.5 target_height_scaled 0.5 PFG_D32_FLOAT
     texture finalWindTexture     target_width_scaled 0.5 target_height_scaled 0.5 PFG_RGBA32_FLOAT
 
-	rtv rt0
-	{
-		depth_stencil depthTextureDecorations
-	}
-	rtv sceneRender
-	{
-		depth_stencil depthTextureGround
-	}
-	rtv windTexture
-	{
-		depth_stencil depthWind
-	}
+    rtv rt0
+    {
+        depth_stencil depthTextureDecorations
+    }
+    rtv sceneRender
+    {
+        depth_stencil depthTextureGround
+    }
+    rtv windTexture
+    {
+        depth_stencil depthWind
+    }
 
     target rt0
-	{
-		pass render_scene
-		{
-			load
-			{
-				all				clear
-				clear_colour	0.2 0.4 0.6 1
-			}
-			overlays	off
+    {
+        pass render_scene
+        {
+            load
+            {
+                all                clear
+                clear_colour    0.2 0.4 0.6 1
+            }
+            overlays    off
 
             rq_first 15
             rq_last 20
-		}
-	}
+        }
+    }
 
     target sceneRender
     {
