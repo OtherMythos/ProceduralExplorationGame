@@ -57,6 +57,11 @@ material Postprocess/MergeDepth
 				tex_address_mode clamp
 				filtering trilinear
 			}
+			texture_unit third
+			{
+				tex_address_mode clamp
+				filtering trilinear
+			}
 		}
 	}
 }

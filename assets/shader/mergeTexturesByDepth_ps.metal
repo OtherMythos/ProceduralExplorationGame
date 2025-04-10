@@ -29,28 +29,26 @@ fragment float4 main_metal
     PS_INPUT inPs [[stage_in]],
     texture2d<float> First [[texture(0)]],
     texture2d<float> Second [[texture(1)]],
-    texture2d<float> Third [[texture(2)]],
+    texture2d<float> FirstDepth [[texture(2)]],
+    texture2d<float> SecondDepth [[texture(3)]],
     sampler firstSampler [[sampler(0)]],
     sampler secondSampler [[sampler(1)]],
-    sampler thirdSampler [[sampler(2)]],
+    sampler firstDepthSampler [[sampler(2)]],
+    sampler secondDepthSampler [[sampler(3)]],
 
     constant Params &p [[buffer(PARAMETER_SLOT)]]
 )
 {
-    float f = OGRE_Sample(First, firstSampler, inPs.uv0).x;
-    float s = OGRE_Sample(Second, secondSampler, inPs.uv0).x;
-    float t = OGRE_Sample(Third, thirdSampler, inPs.uv0).x;
+    float4 f = OGRE_Sample(First, firstSampler, inPs.uv0);
+    float4 s = OGRE_Sample(Second, secondSampler, inPs.uv0);
 
-    float v = 0;
-    if(t >= f){
-        v = t;
+    float fd = OGRE_Sample(FirstDepth, firstDepthSampler, inPs.uv0).x;
+    float sd = OGRE_Sample(SecondDepth, secondDepthSampler, inPs.uv0).x;
+
+    if(fd >= sd){
+        returnFinalColour(f);
     }else{
-        v = f;
+        returnFinalColour(s);
     }
 
-    if(s > 0 && s >= v){
-        returnFinalColour(float4(1, 0, 0, 1));
-    }else{
-        returnFinalColour(float4(0, 0, 0, 1));
-    }
 }

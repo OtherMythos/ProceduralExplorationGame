@@ -59,28 +59,25 @@ in block
 
 vulkan_layout( ogre_t0 ) uniform texture2D First;
 vulkan_layout( ogre_t1 ) uniform texture2D Second;
-vulkan_layout( ogre_t2 ) uniform texture2D Third;
+vulkan_layout( ogre_t2 ) uniform texture2D FirstDepth;
+vulkan_layout( ogre_t3 ) uniform texture2D SecondDepth;
 
 vulkan( layout( ogre_s0 ) uniform sampler firstSampler; )
 vulkan( layout( ogre_s1 ) uniform sampler secondSampler; )
-vulkan( layout( ogre_s2 ) uniform sampler thirdSampler; )
+vulkan( layout( ogre_s2 ) uniform sampler firstDepthSampler; )
+vulkan( layout( ogre_s3 ) uniform sampler secondDepthSampler; )
 
 void main()
 {
-    float f = OGRE_Sample(First, firstSampler, inPs.uv0).x;
-    float s = OGRE_Sample(Second, secondSampler, inPs.uv0).x;
-    float t = OGRE_Sample(Third, thirdSampler, inPs.uv0).x;
+    float4 f = OGRE_Sample(First, firstSampler, inPs.uv0);
+    float4 s = OGRE_Sample(Second, secondSampler, inPs.uv0);
 
-    float v = 0;
-    if(t >= f){
-        v = t;
-    }else{
-        v = f;
-    }
+    float fd = OGRE_Sample(FirstDepth, firstDepthSampler, inPs.uv0).x;
+    float sd = OGRE_Sample(SecondDepth, secondDepthSampler, inPs.uv0).x;
 
-    if(s > 0 && s >= v){
-        returnFinalColour(float4(1, 0, 0, 1));
+    if(fd >= sd){
+        returnFinalColour(f);
     }else{
-        returnFinalColour(float4(0, 0, 0, 1));
+        returnFinalColour(s);
     }
 }

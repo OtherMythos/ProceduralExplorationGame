@@ -123,7 +123,7 @@
         if(meshObj == null) return null;
 
         local item = _scene.createItem(meshObj);
-        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_TERRRAIN);
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_TERRRAIN_DISCOVERED);
         item.setCastsShadows(false);
         _gameCore.writeFlagsToItem(item, HLMS_PACKED_VOXELS);
         return item;

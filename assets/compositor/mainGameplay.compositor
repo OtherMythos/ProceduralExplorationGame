@@ -98,8 +98,11 @@ compositor_node renderMainGameplayNode
     texture rt0                target_width target_height PFG_RGBA8_UNORM_SRGB
     texture depthTextureDecorations    target_width target_height PFG_D32_FLOAT
     texture depthTextureGround    target_width target_height PFG_D32_FLOAT
+    texture depthTextureHiddenTerrain    target_width target_height PFG_D32_FLOAT
 
     texture sceneRender     target_width target_height PFG_RGBA32_FLOAT
+    texture finalSceneRender     target_width target_height PFG_RGBA32_FLOAT
+    texture sceneHiddenTerrain     target_width target_height PFG_RGBA32_FLOAT
     texture finalDepth    target_width target_height PFG_RGBA32_FLOAT
 
     texture windTexture     target_width_scaled 0.5 target_height_scaled 0.5 PFG_RGBA32_FLOAT
@@ -117,6 +120,10 @@ compositor_node renderMainGameplayNode
     rtv windTexture
     {
         depth_stencil depthWind
+    }
+    rtv sceneHiddenTerrain
+    {
+        depth_stencil depthTextureHiddenTerrain
     }
 
     target rt0
@@ -164,6 +171,28 @@ compositor_node renderMainGameplayNode
             rq_first 80
         }
     }
+    target sceneHiddenTerrain
+    {
+        pass clear{
+            colour_value 0.1 0.1 1 1
+        }
+        pass render_scene
+        {
+            rq_first 41
+            rq_last 42
+        }
+    }
+
+    target finalSceneRender{
+        pass render_quad
+        {
+            material Postprocess/MergeTexturesByDepth
+            input 0 sceneRender
+            input 1 sceneHiddenTerrain
+            input 2 depthTextureGround
+            input 3 depthTextureHiddenTerrain
+        }
+    }
 
     //Determine the final depth
     target finalDepth
@@ -177,6 +206,7 @@ compositor_node renderMainGameplayNode
             material Postprocess/MergeDepth
             input 0 depthTextureGround
             input 1 depthTextureDecorations
+            input 2 depthTextureHiddenTerrain
         }
     }
 
@@ -189,7 +219,7 @@ compositor_node renderMainGameplayNode
         pass render_scene
         {
             rq_first 40
-            rq_last 50
+            rq_last 41
         }
     }
 
@@ -198,16 +228,16 @@ compositor_node renderMainGameplayNode
         pass render_quad
         {
             material Postprocess/MergeDepthComplete
-            input 0 depthTextureGround
+            input 0 finalDepth
             input 1 depthWind
         }
     }
 
-    target sceneRender{
+    target finalSceneRender{
         pass render_quad
         {
             material Postprocess/lowResCopy
-            input 0 sceneRender
+            input 0 finalSceneRender
             input 1 finalWindTexture
         }
     }
@@ -221,7 +251,7 @@ compositor_node renderMainGameplayNode
         pass render_quad
         {
             material Postprocess/OutlineDraw
-            input 0 sceneRender
+            input 0 finalSceneRender
             input 1 finalDepth
         }
     }

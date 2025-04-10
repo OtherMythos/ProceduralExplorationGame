@@ -73,6 +73,10 @@
             local vis = mWorldActive_ && mVisible_;
             if(mLandNode_){
                 mLandItem_.setDatablock(vis ? "baseVoxelMaterial" : "MaskedWorld");
+                mLandItem_.setRenderQueueGroup(vis ?
+                    RENDER_QUEUE_EXPLORATION_TERRRAIN_DISCOVERED :
+                    RENDER_QUEUE_EXPLORATION_TERRRAIN_UNDISCOVERED
+                );
             }
 
             if(vis){
@@ -587,7 +591,7 @@
 
             local item = _scene.createItem(i);
             _gameCore.writeFlagsToItem(item, HLMS_PACKED_VOXELS | HLMS_TERRAIN);
-            item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_TERRRAIN);
+            item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_TERRRAIN_UNDISCOVERED);
             item.setCastsShadows(false);
             local landNode = regionNode.createChildSceneNode();
             landNode.attachObject(item);
