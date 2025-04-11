@@ -36,5 +36,8 @@ namespace ProceduralExplorationGamePlugin
         if(p->getDefinition()->mIdentifier == 10){
             hlms->_setProperty("disableFog", true);
         }
+        else if(p->getDefinition()->mIdentifier == 11){
+            hlms->_setProperty("animateTerrain", true);
+        }
     }
 }

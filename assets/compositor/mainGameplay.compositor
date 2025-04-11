@@ -180,6 +180,8 @@ compositor_node renderMainGameplayNode
         {
             rq_first 41
             rq_last 42
+
+            identifier 11
         }
     }
 

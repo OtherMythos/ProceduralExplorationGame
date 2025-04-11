@@ -136,6 +136,10 @@
 			inValues.x += sin(inValues.x*600 + passBuf.time) * 0.05 * mod;
 		@end
 
+		@property(animateTerrain)
+			inVs_vertex.z += abs(sin(inVs_vertex.y* 0.1 + passBuf.time*0.5) * 0.3);
+		@end
+
 		normVal = FACES_NORMALS[norm];
 
 		//If the renderable does not require pixel shading because it is a shadow caster for instance, these settings won't always be available.
