@@ -79,8 +79,8 @@ void main()
     }
 
     if(s > 0 && s >= v){
-        returnFinalColour(float4(s, s, s, 1));
+        returnFinalColour(float4(1, 0, 0, 1));
     }else{
-        returnFinalColour(float4(v, v, v, 1));
+        returnFinalColour(float4(0, 0, 0, 1));
     }
 }
