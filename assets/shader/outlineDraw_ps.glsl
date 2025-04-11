@@ -69,6 +69,55 @@ vulkan( layout( ogre_P0 ) uniform params { )
     uniform float edgeThreshold;
 vulkan( }; )
 
+float calculateLineStrengthForDistance(float4 Center, float4 Left, float4 Right, float4 Top, float4 Bottom){
+    float yCenter = Center.y;
+    float yLeft      = Left.y;
+    float yRight     = Right.y;
+    float yTop       = Top.y;
+    float yBottom    = Bottom.y;
+
+    const int count = 5;
+    float values[5];
+    values[0] = yCenter;
+    values[1] = yLeft;
+    values[2] = yRight;
+    values[3] = yTop;
+    values[4] = yBottom;
+    float maxVal = values[0];
+    for (int i = 1; i < count; ++i) {
+        maxVal = max(maxVal, values[i]);
+    }
+
+    maxVal *= 1000;
+    maxVal = clamp(maxVal, 0.0, 1.0);
+    maxVal = pow(maxVal, 4);
+    float colVal = maxVal;
+
+    colVal = clamp(colVal, 0.4, 1.0);
+
+    return colVal;
+}
+
+float calculateEdgeFactor(float4 Center, float4 Left, float4 Right, float4 Top, float4 Bottom){
+    float xCenter = Center.x;
+    float xLeft = Left.x;
+    float xRight = Right.x;
+    float xTop = Top.x;
+    float xBottom = Bottom.x;
+
+    const float epsilon = 1e-4; // Small bias to prevent artifacts
+    float edge = 0.0;
+    edge += abs(xCenter - xLeft) > epsilon ? abs(xCenter - xLeft) : 0.0;
+    edge += abs(xCenter - xRight) > epsilon ? abs(xCenter - xRight) : 0.0;
+    edge += abs(xCenter - xTop) > epsilon ? abs(xCenter - xTop) : 0.0;
+    edge += abs(xCenter - xBottom) > epsilon ? abs(xCenter - xBottom) : 0.0;
+    edge *= 50;
+
+    float edgeThreshold = 0.005;
+    float edgeFactor = step(edgeThreshold, edge);
+    return edgeFactor;
+}
+
 void main()
 {
     float2 texelSize = sizeForTexture(Depth);
@@ -76,21 +125,14 @@ void main()
     float stepY = 1.0 / texelSize.y;
 
     // Sample depth values
-    float dCenter = OGRE_Sample( Depth, DepthSampler, inPs.uv0).x;
-    float dLeft      = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(-stepX, 0)).x;
-    float dRight     = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(stepX, 0)).x;
-    float dTop       = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(0, -stepY)).x;
-    float dBottom    = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(0, stepY)).x;
+    float4 Center = OGRE_Sample( Depth, DepthSampler, inPs.uv0);
+    float4 Left      = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(-stepX, 0));
+    float4 Right     = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(stepX, 0));
+    float4 Top       = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(0, -stepY));
+    float4 Bottom    = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(0, stepY));
 
-    const float epsilon = 1e-4; // Small bias to prevent artifacts
-    float edge = 0.0;
-    edge += abs(dCenter - dLeft) > epsilon ? abs(dCenter - dLeft) : 0.0;
-    edge += abs(dCenter - dRight) > epsilon ? abs(dCenter - dRight) : 0.0;
-    edge += abs(dCenter - dTop) > epsilon ? abs(dCenter - dTop) : 0.0;
-    edge += abs(dCenter - dBottom) > epsilon ? abs(dCenter - dBottom) : 0.0;
-    edge *= 50;
+    float edgeStrength = calculateLineStrengthForDistance(Center, Left, Right, Top, Bottom);
+    float edgeFactor = calculateEdgeFactor(Center, Left, Right, Top, Bottom);
 
-    float edgeFactor = step(readUniform(edgeThreshold), edge);
-
-    returnFinalColour(mix(OGRE_Sample( Image, samplerState, inPs.uv0 ) , float4(0, 0, 0, 1.0), edgeFactor));
+    returnFinalColour(mix(OGRE_Sample( Image, samplerState, inPs.uv0 ) , float4(0, 0, 0, 1), edgeFactor * edgeStrength));
 }
