@@ -48,7 +48,7 @@
 	//TODO reduce this down to a single float
 	float3 diffuse;
 	float fog;
-	unsigned int drawId;
+	NO_INTERPOLATION_PREFIX int drawId;
 @end
 
 @piece( custom_vs_posExecution )
