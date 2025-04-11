@@ -319,8 +319,6 @@
             mAnimIncrement_ = 0.0;
         }
 
-        _gameCore.update(mPlayerEntry_.getPosition());
-
         mCloudManager_.update();
         mWindStreakManager_.update();
 

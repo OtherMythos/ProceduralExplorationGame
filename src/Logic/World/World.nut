@@ -538,6 +538,8 @@ enum WorldMousePressContexts{
         }
         updateWorldActions();
 
+        _gameCore.update(mPlayerEntry_.getPosition());
+
         ::DebugOverlayManager.appendText(DebugOverlayId.COMBAT, getTotalTargetedEnemies());
         if(mPlayerTargetRadius_.len() > 0){
             ::DebugOverlayManager.appendText(DebugOverlayId.COMBAT, "====");

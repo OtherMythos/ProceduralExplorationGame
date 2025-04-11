@@ -88,8 +88,6 @@
     function update(){
         base.update();
 
-        _gameCore.update(mPlayerEntry_.getPosition());
-
         mWindStreakManager_.update();
     }
 
