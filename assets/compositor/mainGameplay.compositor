@@ -95,14 +95,14 @@ compositor_node renderMainGameplayNode
 {
     in 0 renderTexture
 
-    texture rt0                target_width target_height PFG_RGBA8_UNORM_SRGB
     texture depthTextureDecorations    target_width target_height PFG_D32_FLOAT
     texture depthTextureGround    target_width target_height PFG_D32_FLOAT
     texture depthTextureHiddenTerrain    target_width target_height PFG_D32_FLOAT
+    texture finalSceneDepth     target_width target_height PFG_D32_FLOAT
 
+    texture sceneRenderDecorations    target_width target_height PFG_RGBA32_FLOAT
     texture sceneRender     target_width target_height PFG_RGBA32_FLOAT
     texture finalSceneRender     target_width target_height PFG_RGBA32_FLOAT
-    texture finalSceneDepth     target_width target_height PFG_D32_FLOAT
     texture sceneHiddenTerrain     target_width target_height PFG_RGBA32_FLOAT
     texture finalMask    target_width target_height PFG_RGBA32_FLOAT
 
@@ -110,7 +110,7 @@ compositor_node renderMainGameplayNode
     texture depthWind    target_width_scaled 0.5 target_height_scaled 0.5 PFG_D32_FLOAT
     texture finalWindTexture     target_width_scaled 0.5 target_height_scaled 0.5 PFG_RGBA32_FLOAT
 
-    rtv rt0
+    rtv sceneRenderDecorations
     {
         depth_stencil depthTextureDecorations
     }
@@ -127,7 +127,7 @@ compositor_node renderMainGameplayNode
         depth_stencil depthTextureHiddenTerrain
     }
 
-    target rt0
+    target sceneRenderDecorations
     {
         pass render_scene
         {

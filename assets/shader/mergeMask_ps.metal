@@ -49,7 +49,7 @@ fragment float4 main_metal
     }
 
     if(s > 0 && s >= v){
-        returnFinalColour(float4(1, 0, 0, 1));
+        returnFinalColour(float4(1, s, 0, 1));
     }else{
         returnFinalColour(float4(0, 0, 0, 1));
     }
