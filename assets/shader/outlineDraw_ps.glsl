@@ -59,9 +59,11 @@ in block
 
 vulkan_layout( ogre_t0 ) uniform texture2D Image;
 vulkan_layout( ogre_t1 ) uniform texture2D Depth;
+vulkan_layout( ogre_t2 ) uniform texture2D SecondaryImage;
 
 vulkan( layout( ogre_s0 ) uniform sampler samplerState; )
 vulkan( layout( ogre_s1 ) uniform sampler DepthSampler; )
+vulkan( layout( ogre_s2 ) uniform sampler SecondaryImageSampler; )
 
 vulkan( layout( ogre_P0 ) uniform params { )
     uniform float near;
@@ -118,21 +120,33 @@ float calculateEdgeFactor(float4 Center, float4 Left, float4 Right, float4 Top, 
     return edgeFactor;
 }
 
-void main()
-{
-    float2 texelSize = sizeForTexture(Depth);
+float2 computeLineForImage(float2 uv0, texture2d image, sampler imageSampler){
+    float2 texelSize = sizeForTexture(image);
     float stepX = 1.0 / texelSize.x;
     float stepY = 1.0 / texelSize.y;
 
-    // Sample depth values
-    float4 Center = OGRE_Sample( Depth, DepthSampler, inPs.uv0);
-    float4 Left      = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(-stepX, 0));
-    float4 Right     = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(stepX, 0));
-    float4 Top       = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(0, -stepY));
-    float4 Bottom    = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(0, stepY));
+    float4 Center = OGRE_Sample( image, imageSampler, uv0);
+    float4 Left      = OGRE_Sample( image, imageSampler, uv0 + float2(-stepX, 0));
+    float4 Right     = OGRE_Sample( image, imageSampler, uv0 + float2(stepX, 0));
+    float4 Top       = OGRE_Sample( image, imageSampler, uv0 + float2(0, -stepY));
+    float4 Bottom    = OGRE_Sample( image, imageSampler, uv0 + float2(0, stepY));
 
-    float edgeStrength = calculateLineStrengthForDistance(Center, Left, Right, Top, Bottom);
     float edgeFactor = calculateEdgeFactor(Center, Left, Right, Top, Bottom);
+    float edgeStrength = 0.0;
+    if(edgeFactor != 0.0){
+        edgeStrength = calculateLineStrengthForDistance(Center, Left, Right, Top, Bottom);
+    }
 
-    returnFinalColour(mix(OGRE_Sample( Image, samplerState, inPs.uv0 ) , float4(0, 0, 0, 1), edgeFactor * edgeStrength));
+    return float2(edgeFactor, edgeStrength);
+}
+
+void main()
+{
+    float2 mainOutline = computeLineForImage(inPs.uv0, Depth, DepthSampler);
+    float2 innerOutline = computeLineForImage(inPs.uv0, SecondaryImage, SecondaryImageSampler);
+
+    float4 startValue = OGRE_Sample( Image, samplerState, inPs.uv0 );
+    startValue = mix(startValue, float4(0.25, 0.25, 0.25, 1), innerOutline.x * innerOutline.y * 0.3);
+    startValue = mix(startValue, float4(0, 0, 0, 1), mainOutline.x * mainOutline.y);
+    returnFinalColour(startValue);
 }

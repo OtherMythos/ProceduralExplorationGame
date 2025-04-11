@@ -39,5 +39,8 @@ namespace ProceduralExplorationGamePlugin
         else if(p->getDefinition()->mIdentifier == 11){
             hlms->_setProperty("animateTerrain", true);
         }
+        else if(p->getDefinition()->mIdentifier == 12){
+            hlms->_setProperty("renderSceneDecorations", true);
+        }
     }
 }

@@ -1,0 +1,62 @@
+
+fragment_program Postprocess/applyMask_ps_GLSL glsl
+{
+	source applyMask_ps.glsl
+	default_params
+	{
+		param_named First int 0
+		param_named Second int 1
+	}
+}
+
+fragment_program Postprocess/applyMask_ps_VK glslvk
+{
+	source applyMask_ps.glsl
+}
+
+fragment_program Postprocess/applyMask_ps_Metal metal
+{
+	source applyMask_ps.metal
+	shader_reflection_pair_hint Ogre/Compositor/Quad_vs
+}
+
+fragment_program Postprocess/applyMask_ps unified
+{
+	delegate Postprocess/applyMask_ps_GLSL
+	delegate Postprocess/applyMask_ps_VK
+	delegate Postprocess/applyMask_ps_Metal
+}
+
+material Postprocess/applyMask
+{
+    technique
+    {
+
+		pass
+		{
+			depth_check off
+			depth_write off
+
+			cull_hardware none
+
+			vertex_program_ref Ogre/Compositor/Quad_vs
+			{
+			}
+
+			fragment_program_ref Postprocess/applyMask_ps
+			{
+			}
+
+			texture_unit first
+			{
+				tex_address_mode clamp
+				filtering trilinear
+			}
+			texture_unit second
+			{
+				tex_address_mode clamp
+				filtering trilinear
+			}
+		}
+	}
+}

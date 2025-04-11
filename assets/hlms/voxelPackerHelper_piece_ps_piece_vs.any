@@ -37,11 +37,18 @@
 			outPs_colour0.xyz = mix(fogColour, outPs_colour0.xyz, inPs.fog);
 		@end
 	@end
+
+	@property( renderSceneDecorations )
+		float colVal = float(inPs.drawId % 100) / 100;
+		outPs_colour0.xyz = float3(colVal, colVal, colVal);
+	@end
 @end
 
 @piece( custom_VStoPS )
+	//TODO reduce this down to a single float
 	float3 diffuse;
 	float fog;
+	unsigned int drawId;
 @end
 
 @piece( custom_vs_posExecution )
@@ -167,6 +174,10 @@
 			inVs_vertex.y += sin(inVs_vertex.z*10 + passBuf.time) * 0.75;
 			inVs_vertex.x += sin(inVs_vertex.z*3 + passBuf.time * 4) * 2.75;
 		@end
+	@end
+
+	@property( renderSceneDecorations )
+		outVs.drawId = finalDrawId;
 	@end
 
 

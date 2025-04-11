@@ -6,6 +6,7 @@ fragment_program Postprocess/outlineDraw_ps_GLSL glsl
 	{
 		param_named Image int 0
 		param_named Depth int 1
+		param_named SecondaryImage int 2
 	}
 }
 
@@ -56,6 +57,11 @@ material Postprocess/OutlineDraw
 				filtering trilinear
 			}
 			texture_unit Depth
+			{
+				tex_address_mode clamp
+				filtering trilinear
+			}
+			texture_unit SecondaryImage
 			{
 				tex_address_mode clamp
 				filtering trilinear

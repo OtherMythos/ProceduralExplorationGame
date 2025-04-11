@@ -68,30 +68,45 @@ float calculateEdgeFactor(float4 Center, float4 Left, float4 Right, float4 Top, 
     return edgeFactor;
 }
 
+float2 computeLineForImage(float2 uv0, texture2d<float> image, sampler imageSampler){
+    float2 texelSize = sizeForTexture(image);
+    float stepX = 1.0 / texelSize.x;
+    float stepY = 1.0 / texelSize.y;
+
+    float4 Center = OGRE_Sample( image, imageSampler, uv0);
+    float4 Left      = OGRE_Sample( image, imageSampler, uv0 + float2(-stepX, 0));
+    float4 Right     = OGRE_Sample( image, imageSampler, uv0 + float2(stepX, 0));
+    float4 Top       = OGRE_Sample( image, imageSampler, uv0 + float2(0, -stepY));
+    float4 Bottom    = OGRE_Sample( image, imageSampler, uv0 + float2(0, stepY));
+
+    float edgeFactor = calculateEdgeFactor(Center, Left, Right, Top, Bottom);
+    float edgeStrength = 0.0;
+    if(edgeFactor != 0.0){
+        edgeStrength = calculateLineStrengthForDistance(Center, Left, Right, Top, Bottom);
+    }
+
+    return float2(edgeFactor, edgeStrength);
+}
+
 fragment float4 main_metal
 (
     PS_INPUT inPs [[stage_in]],
     texture2d<float> Image [[texture(0)]],
     texture2d<float> Depth [[texture(1)]],
+    texture2d<float> SecondaryImage [[texture(2)]],
     sampler samplerState [[sampler(0)]],
     sampler DepthSampler [[sampler(1)]],
+    sampler SecondaryImageSampler [[sampler(2)]],
 
     constant Params &p [[buffer(PARAMETER_SLOT)]]
 )
 {
-    float2 texelSize = sizeForTexture(Depth);
-    float stepX = 1.0 / texelSize.x;
-    float stepY = 1.0 / texelSize.y;
 
-    // Sample depth values
-    float4 Center = OGRE_Sample( Depth, DepthSampler, inPs.uv0);
-    float4 Left      = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(-stepX, 0));
-    float4 Right     = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(stepX, 0));
-    float4 Top       = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(0, -stepY));
-    float4 Bottom    = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(0, stepY));
+    float2 mainOutline = computeLineForImage(inPs.uv0, Depth, DepthSampler);
+    float2 innerOutline = computeLineForImage(inPs.uv0, SecondaryImage, SecondaryImageSampler);
 
-    float edgeStrength = calculateLineStrengthForDistance(Center, Left, Right, Top, Bottom);
-    float edgeFactor = calculateEdgeFactor(Center, Left, Right, Top, Bottom);
-
-    returnFinalColour(mix(OGRE_Sample( Image, samplerState, inPs.uv0 ) , float4(0, 0, 0, 1), edgeFactor * edgeStrength));
+    float4 startValue = OGRE_Sample( Image, samplerState, inPs.uv0 );
+    startValue = mix(startValue, float4(0.25, 0.25, 0.25, 1), innerOutline.x * innerOutline.y * 0.3);
+    startValue = mix(startValue, float4(0, 0, 0, 1), mainOutline.x * mainOutline.y);
+    returnFinalColour(startValue);
 }

@@ -134,9 +134,11 @@ compositor_node renderMainGameplayNode
             load
             {
                 all                clear
-                clear_colour    0.2 0.4 0.6 1
+                clear_colour    0 0 0 0
             }
             overlays    off
+
+            identifier 12
 
             rq_first 15
             rq_last 20
@@ -260,6 +262,15 @@ compositor_node renderMainGameplayNode
         }
     }
 
+    target sceneRenderDecorations{
+        pass render_quad
+        {
+            material Postprocess/applyMask
+            input 0 sceneRenderDecorations
+            input 1 finalMask
+        }
+    }
+
     target renderTexture
     {
         pass clear
@@ -271,6 +282,7 @@ compositor_node renderMainGameplayNode
             material Postprocess/OutlineDraw
             input 0 finalSceneRender
             input 1 finalMask
+            input 2 sceneRenderDecorations
         }
     }
 }
