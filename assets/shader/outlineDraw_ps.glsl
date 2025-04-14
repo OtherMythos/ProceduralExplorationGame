@@ -120,7 +120,7 @@ float calculateEdgeFactor(float4 Center, float4 Left, float4 Right, float4 Top, 
     return edgeFactor;
 }
 
-float2 computeLineForImage(float2 uv0, sampler2D image vulkan(, sampler imageSampler) ){
+float2 computeLineForImage(float2 uv0, texture2D image vk_comma vulkan(sampler imageSampler) ){
     float2 texelSize = sizeForTexture(image);
     float stepX = 1.0 / texelSize.x;
     float stepY = 1.0 / texelSize.y;
@@ -142,8 +142,8 @@ float2 computeLineForImage(float2 uv0, sampler2D image vulkan(, sampler imageSam
 
 void main()
 {
-    float2 mainOutline = computeLineForImage(inPs.uv0, Depth vulkan(, DepthSampler));
-    float2 innerOutline = computeLineForImage(inPs.uv0, SecondaryImage vulkan(, SecondaryImageSampler));
+    float2 mainOutline = computeLineForImage(inPs.uv0, Depth vk_comma vulkan(DepthSampler));
+    float2 innerOutline = computeLineForImage(inPs.uv0, SecondaryImage vk_comma vulkan(SecondaryImageSampler));
 
     float4 startValue = OGRE_Sample( Image, samplerState, inPs.uv0 );
     startValue = mix(startValue, float4(0.25, 0.25, 0.25, 1), innerOutline.x * innerOutline.y * 0.3);

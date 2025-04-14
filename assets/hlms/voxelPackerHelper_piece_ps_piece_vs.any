@@ -39,7 +39,7 @@
 	@end
 
 	@property( renderSceneDecorations )
-		float colVal = float(inPs.drawId % 100) / 100;
+		float colVal = float(inPs.drawId % uint(100)) / 100.0;
 		outPs_colour0.xyz = float3(colVal, colVal, colVal);
 	@end
 @end
@@ -111,7 +111,7 @@
 		#undef inVs_vertex
 		#define inVs_vertex inValues
 
-		uint voxValue = originalSecond & 0xFF;
+		uint voxValue = originalSecond & uint(0xFF);
 		float2 testVal = VOXEL_TEX_COORDS[voxValue];
 		#undef inVs_uv0
 		#define inVs_uv0 testVal
@@ -136,7 +136,7 @@
 		uint ambient = uint((original >> 30) & uint(0x3));
 
 		@property(treeVertices)
-			uint voxel = ((originalSecond >> 8) & 0x3);
+			uint voxel = ((originalSecond >> 8) & uint(0x3));
 			float mod = float(voxel) / 3;
 			inValues.y += sin(inValues.y*600 + passBuf.time) * 0.05 * mod;
 			inValues.z += cos(inValues.z*600 + passBuf.time) * 0.10 * mod;
