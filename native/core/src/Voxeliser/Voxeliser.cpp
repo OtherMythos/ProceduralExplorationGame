@@ -428,10 +428,11 @@ namespace ProceduralExplorationGameCore{
                 if(testAltitude < altitude){
                     //The altidue is lower so need to draw some triangles.
                     AV::uint32 altitudeDelta = altitude - testAltitude;
-                    //For the faces about to hit the ocean, extend it slightly so more complex water animations can be used.
-                    bool lengthen = (testAltitude == 0);
                     for(AV::uint32 zAlt = 0; zAlt < altitudeDelta; zAlt++){
                         //Loop down and draw the triangles.
+
+                        //For the faces about to hit the ocean, extend it slightly so more complex water animations can be used.
+                        bool lengthen = (testAltitude == 0 && zAlt == (altitudeDelta - 1));
 
                         AV::uint32 faceAltitude = (altitude-zAlt);
                         AV::uint32 ambientMask = getVerticeBorderTerrain(faceAltitude, altitudes, f, x, y, width);
