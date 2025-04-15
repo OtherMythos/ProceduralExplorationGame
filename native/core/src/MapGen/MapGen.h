@@ -40,6 +40,10 @@ namespace ProceduralExplorationGameCore{
 
         void beginMapGen_(const ExplorationMapInputData* input, const std::vector<MapGenStep*>& steps);
         void collectMapGenSteps_(std::vector<MapGenStep*>& steps);
+
+        void notifyClientsBegan_(const ExplorationMapInputData* input);
+        void notifyClientsEnded_(ExplorationMapData* data);
+        void notifyClientsClaimed_(ExplorationMapData* data);
     };
 
 };

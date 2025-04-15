@@ -13,5 +13,7 @@ namespace ProceduralExplorationGameCore{
         ~MapGenBaseClient();
 
         virtual void populateSteps(std::vector<MapGenStep*>& steps) override;
+
+        virtual void notifyClaimed(ExplorationMapData* mapData) override;
     };
 }
