@@ -73,7 +73,7 @@ function start(){
 function update(){
     ::Base.update();
 
-    //F4
+    //F5
     if(_input.getRawKeyScancodeInput(62)){
         if(!::wireframeToggleDown){
             ::wireframeToggleDown = true;
