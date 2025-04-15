@@ -9,7 +9,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    DetermineEarlyRegionsMapGenStep::DetermineEarlyRegionsMapGenStep(){
+    DetermineEarlyRegionsMapGenStep::DetermineEarlyRegionsMapGenStep() : MapGenStep("Determine Early Regions"){
 
     }
 

@@ -445,7 +445,10 @@ namespace ProceduralExplorationGamePlugin{
     }
 
     SQInteger GameCoreNamespace::getTotalMapGenStages(HSQUIRRELVM vm){
-        sq_pushinteger(vm, ProceduralExplorationGameCore::MapGen::getNumTotalStages());
+        if(!GameCoreNamespace::currentMapGen){
+            return sq_throwerror(vm, "Map gen is not active.");
+        }
+        sq_pushinteger(vm, GameCoreNamespace::currentMapGen->getNumTotalStages());
 
         return 1;
     }
@@ -487,9 +490,13 @@ namespace ProceduralExplorationGamePlugin{
     }
 
     SQInteger GameCoreNamespace::getNameForMapGenStage(HSQUIRRELVM vm){
+        if(!GameCoreNamespace::currentMapGen){
+            return sq_throwerror(vm, "Map gen is not active.");
+        }
+
         SQInteger idx;
         sq_getinteger(vm, -1, &idx);
-        const std::string& stageName = ProceduralExplorationGameCore::MapGen::getNameForStage(idx);
+        const std::string& stageName = GameCoreNamespace::currentMapGen->getNameForStage(idx);
         sq_pushstring(vm, stageName.c_str(), -1);
 
         return 1;

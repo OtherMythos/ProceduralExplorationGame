@@ -8,7 +8,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    MergeExpandableRegionsMapGenStep::MergeExpandableRegionsMapGenStep(){
+    MergeExpandableRegionsMapGenStep::MergeExpandableRegionsMapGenStep() : MapGenStep("Merge Expandable Regions"){
 
     }
 

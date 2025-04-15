@@ -7,7 +7,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    PlaceItemsForBiomesMapGenStep::PlaceItemsForBiomesMapGenStep(){
+    PlaceItemsForBiomesMapGenStep::PlaceItemsForBiomesMapGenStep() : MapGenStep("Place Items For Biomes"){
 
     }
 

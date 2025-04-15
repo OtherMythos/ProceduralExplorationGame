@@ -122,7 +122,7 @@ namespace ProceduralExplorationGameCore{
         }
     }
 
-    GenerateAdditionLayerMapGenStep::GenerateAdditionLayerMapGenStep(){
+    GenerateAdditionLayerMapGenStep::GenerateAdditionLayerMapGenStep() : MapGenStep("Generate Addition Layer"){
 
     }
 

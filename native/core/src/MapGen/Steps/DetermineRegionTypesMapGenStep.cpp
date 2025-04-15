@@ -7,7 +7,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    DetermineRegionTypesMapGenStep::DetermineRegionTypesMapGenStep(){
+    DetermineRegionTypesMapGenStep::DetermineRegionTypesMapGenStep() : MapGenStep("Determine Region Types"){
 
     }
 

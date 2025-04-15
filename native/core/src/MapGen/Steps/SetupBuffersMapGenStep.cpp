@@ -4,7 +4,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    SetupBuffersMapGenStep::SetupBuffersMapGenStep(){
+    SetupBuffersMapGenStep::SetupBuffersMapGenStep() : MapGenStep("Setup Buffers"){
 
     }
 

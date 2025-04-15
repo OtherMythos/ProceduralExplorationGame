@@ -8,7 +8,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    DetermineEdgesMapGenStep::DetermineEdgesMapGenStep(){
+    DetermineEdgesMapGenStep::DetermineEdgesMapGenStep() : MapGenStep("Determine Edges"){
 
     }
 

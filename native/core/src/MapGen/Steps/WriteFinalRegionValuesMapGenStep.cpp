@@ -10,7 +10,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    WriteFinalRegionValuesMapGenStep::WriteFinalRegionValuesMapGenStep(){
+    WriteFinalRegionValuesMapGenStep::WriteFinalRegionValuesMapGenStep() : MapGenStep("Write Final Region Values"){
 
     }
 

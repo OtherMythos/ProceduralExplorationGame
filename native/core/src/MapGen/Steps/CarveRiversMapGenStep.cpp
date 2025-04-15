@@ -10,7 +10,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    CarveRiversMapGenStep::CarveRiversMapGenStep(){
+    CarveRiversMapGenStep::CarveRiversMapGenStep() : MapGenStep("Carve Rivers"){
 
     }
 

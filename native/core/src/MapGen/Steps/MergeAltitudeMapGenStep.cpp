@@ -8,7 +8,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    MergeAltitudeMapGenStep::MergeAltitudeMapGenStep(){
+    MergeAltitudeMapGenStep::MergeAltitudeMapGenStep() : MapGenStep("Merge Altitude"){
 
     }
 

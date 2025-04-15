@@ -8,7 +8,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    MergeSmallRegionsMapGenStep::MergeSmallRegionsMapGenStep(){
+    MergeSmallRegionsMapGenStep::MergeSmallRegionsMapGenStep() : MapGenStep("Merge Small Regions"){
 
     }
 

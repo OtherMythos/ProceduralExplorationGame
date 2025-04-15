@@ -10,7 +10,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    IsolateRegionsMapGenStep::IsolateRegionsMapGenStep(){
+    IsolateRegionsMapGenStep::IsolateRegionsMapGenStep() : MapGenStep("Isolate Regions"){
 
     }
 

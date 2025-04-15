@@ -8,7 +8,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    ReduceNoiseMapGenStep::ReduceNoiseMapGenStep(){
+    ReduceNoiseMapGenStep::ReduceNoiseMapGenStep() : MapGenStep("Reduce Noise"){
 
     }
 

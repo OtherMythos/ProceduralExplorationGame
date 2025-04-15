@@ -6,7 +6,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    PerformFinalFloodFillMapGenStep::PerformFinalFloodFillMapGenStep(){
+    PerformFinalFloodFillMapGenStep::PerformFinalFloodFillMapGenStep() : MapGenStep("Perform Final Flood Fill"){
 
     }
 

@@ -4,7 +4,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    RemoveRedundantWaterMapGenStep::RemoveRedundantWaterMapGenStep(){
+    RemoveRedundantWaterMapGenStep::RemoveRedundantWaterMapGenStep() : MapGenStep("Remove Redundant Water"){
 
     }
 

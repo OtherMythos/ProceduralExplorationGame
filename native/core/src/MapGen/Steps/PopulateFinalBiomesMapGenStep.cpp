@@ -7,7 +7,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    PopulateFinalBiomesMapGenStep::PopulateFinalBiomesMapGenStep(){
+    PopulateFinalBiomesMapGenStep::PopulateFinalBiomesMapGenStep() : MapGenStep("Populate Final Biomes"){
 
     }
 

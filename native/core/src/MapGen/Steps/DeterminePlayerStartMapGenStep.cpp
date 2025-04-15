@@ -4,7 +4,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    DeterminePlayerStartMapGenStep::DeterminePlayerStartMapGenStep(){
+    DeterminePlayerStartMapGenStep::DeterminePlayerStartMapGenStep() : MapGenStep("Determine Player Start"){
 
     }
 

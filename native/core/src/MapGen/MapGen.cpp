@@ -4,37 +4,12 @@
 #include <cassert>
 
 #include "MapGen/ExplorationMapDataPrerequisites.h"
+#include "MapGen/MapGenClient.h"
+//TODO move the base out of the steps class.
+#include "MapGen/Steps/MapGenStep.h"
+#include "MapGen/BaseClient/MapGenBaseClient.h"
 #include "GameCoreLogger.h"
 
-#include "MapGen/Steps/MapGenStep.h"
-#include "MapGen/Steps/GenerateMetaMapGenStep.h"
-#include "MapGen/Steps/SetupBuffersMapGenStep.h"
-#include "MapGen/Steps/GenerateNoiseMapGenStep.h"
-#include "MapGen/Steps/GenerateAdditionLayerMapGenStep.h"
-#include "MapGen/Steps/MergeAltitudeMapGenStep.h"
-#include "MapGen/Steps/ReduceNoiseMapGenStep.h"
-#include "MapGen/Steps/PerformFinalFloodFillMapGenStep.h"
-#include "MapGen/Steps/PerformPreFloodFillMapGenStep.h"
-#include "MapGen/Steps/RemoveRedundantIslandsMapGenStep.h"
-#include "MapGen/Steps/RemoveRedundantWaterMapGenStep.h"
-#include "MapGen/Steps/IsolateRegionsMapGenStep.h"
-#include "MapGen/Steps/WeightAndSortLandmassesMapGenStep.h"
-#include "MapGen/Steps/DetermineEarlyRegionsMapGenStep.h"
-#include "MapGen/Steps/DetermineEdgesMapGenStep.h"
-#include "MapGen/Steps/DetermineRiversMapGenStep.h"
-#include "MapGen/Steps/CarveRiversMapGenStep.h"
-#include "MapGen/Steps/DeterminePlayerStartMapGenStep.h"
-#include "MapGen/Steps/DetermineGatewayPositionMapGenStep.h"
-#include "MapGen/Steps/DetermineRegionsMapGenStep.h"
-#include "MapGen/Steps/DetermineRegionTypesMapGenStep.h"
-#include "MapGen/Steps/MergeExpandableRegionsMapGenStep.h"
-#include "MapGen/Steps/PopulateFinalBiomesMapGenStep.h"
-#include "MapGen/Steps/WriteFinalRegionValuesMapGenStep.h"
-#include "MapGen/Steps/PlaceItemsForBiomesMapGenStep.h"
-//#include "MapGen/Steps/DeterminePlacesMapGenStep.h"
-#include "MapGen/Steps/MergeSmallRegionsMapGenStep.h"
-#include "MapGen/Steps/MergeIsolatedRegionsMapGenStep.h"
-#include "MapGen/Steps/GenerateWaterTextureMapGenStep.h"
 
 //TODO move somewhere else
 #include "Ogre.h"
@@ -46,72 +21,56 @@
 
 namespace ProceduralExplorationGameCore{
 
-    static const std::vector<std::pair<std::string, MapGenStep*>> MAP_GEN_STEPS = {
-        {"Generate Meta", new GenerateMetaMapGenStep()},
-        {"Setup Buffers", new SetupBuffersMapGenStep()},
-        {"Generate Noise", new GenerateNoiseMapGenStep()},
-        {"Generate Addition Layer", new GenerateAdditionLayerMapGenStep()},
-        {"Merge Altitude", new MergeAltitudeMapGenStep()},
-        {"Reduce Noise", new ReduceNoiseMapGenStep()},
-        {"Perform Pre Flood Fill", new PerformPreFloodFillMapGenStep()},
-        {"Remove Redundant Islands", new RemoveRedundantIslandsMapGenStep()},
-        {"Remove Redundant Water", new RemoveRedundantWaterMapGenStep()},
-        {"Determine Early Regions", new DetermineEarlyRegionsMapGenStep()},
-        {"Isolate Regions", new IsolateRegionsMapGenStep()},
-        {"Write Final Region", new WriteFinalRegionValuesMapGenStep()},
-        {"Merge Small Regions", new MergeSmallRegionsMapGenStep()},
-        {"Merge Isolated Regions", new MergeIsolatedRegionsMapGenStep()},
-        {"Determine Region Types", new DetermineRegionTypesMapGenStep()},
-        {"Merge Expandable Regions", new MergeExpandableRegionsMapGenStep()},
-        {"Populate Final Biomes", new PopulateFinalBiomesMapGenStep()},
-        {"Perform Final Flood Fill", new PerformFinalFloodFillMapGenStep()},
-        {"Weight And Sort Landmasses", new WeightAndSortLandmassesMapGenStep()},
-        {"Determine Edges", new DetermineEdgesMapGenStep()},
-        {"Determine Rivers", new DetermineRiversMapGenStep()},
-        {"Carve Rivers", new CarveRiversMapGenStep()},
-        {"Determine Player Start", new DeterminePlayerStartMapGenStep()},
-        {"Determine Gateway Position", new DetermineGatewayPositionMapGenStep()},
-        {"Place Items For Biomes", new PlaceItemsForBiomesMapGenStep()},
-        {"Generate Water Texture", new GenerateWaterTextureMapGenStep()},
-        //{"Determine Regions", new DetermineRegionsMapGenStep()},
-        //{"Determine Places", new DeterminePlacesMapGenStep()},
-    };
-
     MapGen::MapGen()
         : mCurrentStage(0),
         mMapData(0) {
 
+        //TODO move this elsewhere so it doesn't have to be used.
+        registerMapGenClient("Base Client", new MapGenBaseClient());
+
+        mMapGenSteps.clear();
+        collectMapGenSteps_(mMapGenSteps);
+
     }
 
     MapGen::~MapGen(){
-
+        for(MapGenClient* c : mActiveClients){
+            delete c;
+        }
     }
 
     int MapGen::getCurrentStage() const{
         return mCurrentStage;
     }
 
-    const std::string& MapGen::getNameForStage(int stage){
-        return MAP_GEN_STEPS[stage].first;
+    std::string MapGen::getNameForStage(int stage){
+        return mMapGenSteps[stage]->getName();
+    }
+
+    void MapGen::collectMapGenSteps_(std::vector<MapGenStep*>& steps){
+        for(MapGenClient* c : mActiveClients){
+            c->populateSteps(steps);
+        }
     }
 
     void MapGen::beginMapGen(const ExplorationMapInputData* input){
         assert(!mMapData);
+
         mMapData = new ExplorationMapData();
         mMapInputData = input;
-        mParentThread = new std::thread(&MapGen::beginMapGen_, this, input);
+        mParentThread = new std::thread(&MapGen::beginMapGen_, this, input, mMapGenSteps);
     }
 
-    void MapGen::beginMapGen_(const ExplorationMapInputData* input){
+    void MapGen::beginMapGen_(const ExplorationMapInputData* input, const std::vector<MapGenStep*>& steps){
         AV::Timer tt;
         tt.start();
         ExplorationMapGenWorkspace workspace;
-        for(int i = 0; i < MAP_GEN_STEPS.size(); i++){
+        for(int i = 0; i < steps.size(); i++){
             AV::Timer t;
             t.start();
-            MAP_GEN_STEPS[i].second->processStep(input, mMapData, &workspace);
+            steps[i]->processStep(input, mMapData, &workspace);
             t.stop();
-            GAME_CORE_INFO("Time taken for stage '{}' was {}", MAP_GEN_STEPS[i].first.c_str(), t.getTimeTotal());
+            GAME_CORE_INFO("Time taken for stage '{}' was {}", steps[i]->getName(), t.getTimeTotal());
             mCurrentStage++;
         }
         tt.stop();
@@ -119,12 +78,16 @@ namespace ProceduralExplorationGameCore{
     }
 
     int MapGen::getNumTotalStages(){
-        return static_cast<int>(MAP_GEN_STEPS.size());
+        return static_cast<int>(mMapGenSteps.size());
     }
 
     bool MapGen::isFinished() const{
-        return mCurrentStage >= MAP_GEN_STEPS.size();
+        return mCurrentStage >= mMapGenSteps.size();
     };
+
+    void MapGen::registerMapGenClient(const std::string& clientName, MapGenClient* client){
+        mActiveClients.push_back(client);
+    }
 
     ExplorationMapData* MapGen::claimMapData(){
         if(!isFinished()) return 0;

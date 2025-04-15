@@ -10,7 +10,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    DetermineRiversMapGenStep::DetermineRiversMapGenStep(){
+    DetermineRiversMapGenStep::DetermineRiversMapGenStep() : MapGenStep("Determine Rivers"){
 
     }
 

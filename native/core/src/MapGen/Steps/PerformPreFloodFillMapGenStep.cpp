@@ -6,7 +6,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    PerformPreFloodFillMapGenStep::PerformPreFloodFillMapGenStep(){
+    PerformPreFloodFillMapGenStep::PerformPreFloodFillMapGenStep() : MapGenStep("Perform Pre Flood Fill"){
 
     }
 

@@ -8,7 +8,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    MergeIsolatedRegionsMapGenStep::MergeIsolatedRegionsMapGenStep(){
+    MergeIsolatedRegionsMapGenStep::MergeIsolatedRegionsMapGenStep() : MapGenStep("Merge Isolated Regions"){
 
     }
 

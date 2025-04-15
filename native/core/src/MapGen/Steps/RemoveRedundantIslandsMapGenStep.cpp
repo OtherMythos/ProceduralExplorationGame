@@ -4,7 +4,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    RemoveRedundantIslandsMapGenStep::RemoveRedundantIslandsMapGenStep(){
+    RemoveRedundantIslandsMapGenStep::RemoveRedundantIslandsMapGenStep() : MapGenStep("Remove Redundant Islands"){
 
     }
 

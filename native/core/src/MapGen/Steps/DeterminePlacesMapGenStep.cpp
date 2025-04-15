@@ -9,7 +9,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    DeterminePlacesMapGenStep::DeterminePlacesMapGenStep(){
+    DeterminePlacesMapGenStep::DeterminePlacesMapGenStep() : MapGenStep("Determine Places"){
 
     }
 

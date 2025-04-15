@@ -6,7 +6,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    DetermineGatewayPositionMapGenStep::DetermineGatewayPositionMapGenStep(){
+    DetermineGatewayPositionMapGenStep::DetermineGatewayPositionMapGenStep() : MapGenStep("Determine Gateway Position"){
 
     }
 

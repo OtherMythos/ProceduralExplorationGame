@@ -8,7 +8,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    GenerateWaterTextureMapGenStep::GenerateWaterTextureMapGenStep(){
+    GenerateWaterTextureMapGenStep::GenerateWaterTextureMapGenStep() : MapGenStep("Generate Water Texture"){
 
     }
 

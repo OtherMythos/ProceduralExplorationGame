@@ -7,7 +7,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    WeightAndSortLandmassesMapGenStep::WeightAndSortLandmassesMapGenStep(){
+    WeightAndSortLandmassesMapGenStep::WeightAndSortLandmassesMapGenStep() : MapGenStep("Weight And Sort Landmasses"){
 
     }
 

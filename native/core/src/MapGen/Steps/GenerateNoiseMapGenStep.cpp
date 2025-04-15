@@ -8,7 +8,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    GenerateNoiseMapGenStep::GenerateNoiseMapGenStep(){
+    GenerateNoiseMapGenStep::GenerateNoiseMapGenStep() : MapGenStep("Generate Noise"){
 
     }
 

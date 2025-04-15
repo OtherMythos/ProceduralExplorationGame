@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 namespace ProceduralExplorationGameCore{
 
     struct ExplorationMapInputData;
@@ -8,10 +10,15 @@ namespace ProceduralExplorationGameCore{
 
     class MapGenStep{
     public:
-        MapGenStep();
+        MapGenStep(const std::string& name);
         ~MapGenStep();
 
         virtual void processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace);
+
+        std::string getName() const;
+
+    private:
+        std::string mName;
     };
 
 }

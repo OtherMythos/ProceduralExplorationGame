@@ -6,7 +6,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    GenerateMetaMapGenStep::GenerateMetaMapGenStep(){
+    GenerateMetaMapGenStep::GenerateMetaMapGenStep() : MapGenStep("Generate Meta"){
 
     }
 
