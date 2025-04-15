@@ -74,15 +74,18 @@ function update(){
     ::Base.update();
 
     //F4
-    if(_input.getRawKeyScancodeInput(61)){
+    if(_input.getRawKeyScancodeInput(62)){
         if(!::wireframeToggleDown){
             ::wireframeToggleDown = true;
             ::drawWireframe = !::drawWireframe;
 
-            local datablock = _hlms.getDatablock("baseVoxelMaterial");
-            datablock.setMacroblock(_hlms.getMacroblock({
-                "polygonMode": ::drawWireframe ? _PM_WIREFRAME : _PM_SOLID
-            }));
+            foreach(i in ["baseVoxelMaterial", "MaskedWorld", "waterBlock", "outsideWaterBlock"]){
+                local datablock = _hlms.getDatablock(i);
+                if(datablock == null) continue;
+                datablock.setMacroblock(_hlms.getMacroblock({
+                    "polygonMode": ::drawWireframe ? _PM_WIREFRAME : _PM_SOLID
+                }));
+            }
         }
     }else{
         ::wireframeToggleDown = false;
