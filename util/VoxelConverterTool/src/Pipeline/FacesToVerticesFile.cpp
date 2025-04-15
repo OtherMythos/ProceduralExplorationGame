@@ -41,7 +41,9 @@ namespace VoxelConverterTool{
         uint16 val = HEADER_STREAM_ID;
         writeShorts(&val, 1);
 
-        std::string mVersion = "[VoxMeshSerializer_v0.6.0]";
+        //NOTE: This should not be updated with the Versions.h.nut file.
+        //When the contents of a .voxMesh file change, bump this version to the release that changed it.
+        std::string mVersion = "[VoxMeshSerializer_v0.9.0]";
 
         writeString(mVersion);
     }
