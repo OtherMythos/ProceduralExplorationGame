@@ -9,6 +9,7 @@
 #include "OgreRenderSystem.h"
 #include "OgreSubMesh2.h"
 #include "Vao/OgreVaoManager.h"
+#include "TerrainFaceMerger.h"
 
 namespace ProceduralExplorationGameCore{
 
@@ -310,6 +311,8 @@ namespace ProceduralExplorationGameCore{
             regionEntries[i].mId = i;
         }
 
+        OutputFaces outFaces;
+
         int maxAltitude = 1;
         std::vector<float> altitudes;
         altitudes.resize(width * height);
@@ -349,8 +352,84 @@ namespace ProceduralExplorationGameCore{
             }
         }
 
+        //Determine the final number of faces.
+        voxPtr = static_cast<AV::uint32*>(mapData->voxelBuffer);
+        secondaryVoxPtr = static_cast<AV::uint32*>(mapData->secondaryVoxelBuffer);
+        for(AV::uint32 y = 0; y < height; y++){
+            for(AV::uint32 x = 0; x < width; x++){
+                AV::uint32 voxSecondary = static_cast<AV::uint32>(*secondaryVoxPtr);
+                AV::uint8 regionId = static_cast<AV::uint8>((voxSecondary >> 8) & 0xFF);
+                voxPtr++;
+                secondaryVoxPtr++;
+                float vox = altitudes[x+y*width];
+                if(vox == -1.0f) continue;
+                RegionBufferEntry& bufEntry = regionEntries[regionId];
+                //If the voxel altitude isn't 0 then there must be active voxels.
+                assert(bufEntry.mNumActiveVox > 0);
+                //TODO optimistion try and make this loop only consider the secondary voxel, for the sake of cache efficiency.
+                AV::uint32 altitude = *reinterpret_cast<AV::uint32*>(&vox) & 0xFFFF;
+                AV::uint8 v = (*reinterpret_cast<AV::uint32*>(&vox) >> 16) & 0xFF;
+
+                AV::uint32 yInverse = y;
+
+                //TODO shift this logic off somewhere else in memory.
+                //float texCoordX = (static_cast<float>(v % COLS_WIDTH) / COLS_WIDTH) + TILE_WIDTH;
+                //float texCoordY = (static_cast<float>((static_cast<AV::uint32>(static_cast<float>(v) / COLS_WIDTH))) / COLS_HEIGHT) + TILE_HEIGHT;
+
+                //write the upwards face
+                {
+                    AV::uint32 f = 3;
+                    AV::uint32 ambientMask = getVerticeBorderTerrain(altitude, altitudes, f, x, y, width);
+
+                    WrappedFaceContainer faceContainer;
+                    faceContainer.ambientMask = ambientMask;
+                    faceContainer.sizeX = 1;
+                    faceContainer.sizeY = 1;
+                    faceContainer.sizeZ = 1;
+                    faceContainer.vox = v;
+                    faceContainer.anim = 0;
+                    faceContainer.x = x;
+                    faceContainer.y = y;
+                    faceContainer.z = altitude;
+                    faceContainer.faceMask = f;
+                    faceContainer.regionId = regionId;
+
+                    outFaces.outFaces.push_back(faceContainer);
+                }
+            }
+        }
+
         for(size_t i = 0; i < numRegions; i++){
             regionEntries[i].prepareVertBuffer();
+            //mergeTerrainFaces(regionEntries[i]);
+        }
+
+        TerrainFaceMerger faceMerger;
+        OutputFaces mergedFaces = faceMerger.mergeFaces(outFaces);
+
+        for(const WrappedFaceContainer& w : mergedFaces.outFaces){
+            AV::uint32 f = 3;
+            RegionBufferEntry& bufEntry = regionEntries[w.regionId];
+            for(AV::uint32 i = 0; i < 4; i++){
+                AV::uint32 fv = FACES_VERTICES[f * 4 + i]*3;
+                AV::uint32 xx = (VERTICES_POSITIONS[fv] * w.sizeX + w.x);
+                AV::uint32 yy = (VERTICES_POSITIONS[fv + 1] * w.sizeY + w.y);
+                AV::uint32 zz = (VERTICES_POSITIONS[fv + 2] * w.sizeZ + w.z + OCEAN_EDGE_LENGTH);
+
+                AV::uint8 ambient = (w.ambientMask >> 8 * i) & 0xFF;
+                assert(ambient >= 0 && ambient <= 3);
+
+                AV::uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
+                (*bufEntry.mVertsWritePtr++) = val;
+                val = f << 29 | w.vox;
+                (*bufEntry.mVertsWritePtr++) = val;
+                (*bufEntry.mVertsWritePtr++) = 0x0;
+                //(*bufEntry.mVertsWritePtr++) = 0x0;
+                //*reinterpret_cast<float*>(bufEntry.mVertsWritePtr++) = texCoordX;
+                //*reinterpret_cast<float*>(bufEntry.mVertsWritePtr++) = texCoordY;
+            }
+            bufEntry.mNumTris += 2;
+            bufEntry.mNumVerts += 4;
         }
 
         voxPtr = static_cast<AV::uint32*>(mapData->voxelBuffer);
@@ -377,6 +456,7 @@ namespace ProceduralExplorationGameCore{
                 //float texCoordY = (static_cast<float>((static_cast<AV::uint32>(static_cast<float>(v) / COLS_WIDTH))) / COLS_HEIGHT) + TILE_HEIGHT;
 
                 //write the upwards face
+                /*
                 {
                     AV::uint32 f = 3;
                     AV::uint32 ambientMask = getVerticeBorderTerrain(altitude, altitudes, f, x, y, width);
@@ -401,6 +481,7 @@ namespace ProceduralExplorationGameCore{
                     bufEntry.mNumTris += 2;
                     bufEntry.mNumVerts += 4;
                 }
+                 */
                 //Calculate the remaining altitude faces
                 writeFaceToMesh(x, (int)y-1, x, yInverse, 0, altitude, altitudes, width, height, v, bufEntry);
                 writeFaceToMesh(x, (int)y+1, x, yInverse, 1, altitude, altitudes, width, height, v, bufEntry);

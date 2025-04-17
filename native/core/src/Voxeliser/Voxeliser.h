@@ -111,6 +111,34 @@ namespace ProceduralExplorationGameCore{
 
         void createTerrainFromVisitedPlaceMapData(const std::string& meshName, VisitedPlaceMapData* mapData, Ogre::MeshPtr* outMeshes, AV::uint32 x, AV::uint32 y, AV::uint32 width, AV::uint32 height);
 
+
+
+
+
+        // Define structures for the algorithm
+        struct TerrainFace {
+            AV::uint32 x, y, z;
+            AV::uint32 direction;
+            AV::uint8 voxelType;
+            AV::uint8 ambientMask;
+        };
+
+        struct MergedFace {
+            AV::uint32 x, y, z;
+            AV::uint32 width, height;
+            AV::uint32 direction;
+            AV::uint8 voxelType;
+            AV::uint8 ambientMask;
+        };
+        size_t calculateFaceIndex(AV::uint32 faceDir, AV::uint32 x, AV::uint32 y, AV::uint32 z,
+                                            AV::uint32 width, AV::uint32 height) const;
+        AV::uint64 getFaceKey(AV::uint32 x, AV::uint32 y, AV::uint32 z) const;
+        void writeMergedFacesToBuffer(const std::vector<MergedFace>& mergedFaces, RegionBufferEntry& bufEntry);
+        void setupFaceCorners(const MergedFace& face, AV::uint32 corners[4][3]) const;
+        void mergeTerrainFaces(RegionBufferEntry& bufEntry);
+
+
+
     private:
         void prepareVertBuffer();
 
