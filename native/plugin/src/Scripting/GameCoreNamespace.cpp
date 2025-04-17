@@ -8,6 +8,9 @@
 #include "GamePrerequisites.h"
 #include "Voxeliser/Voxeliser.h"
 #include "Voxeliser/VoxSceneDumper.h"
+#include "MapGen/Script/MapGenScriptManager.h"
+#include "MapGen/MapGenScriptClient.h"
+#include "PluginBaseSingleton.h"
 
 #include "System/Util/PathUtils.h"
 
@@ -47,7 +50,6 @@
 
 namespace ProceduralExplorationGamePlugin{
 
-    ProceduralExplorationGameCore::MapGen* GameCoreNamespace::currentMapGen = 0;
     ProceduralExplorationGameCore::VisitedPlacesParser* GameCoreNamespace::currentVisitedPlacesParser = 0;
 
     SQInteger GameCoreNamespace::getGameCoreVersion(HSQUIRRELVM vm){
@@ -378,10 +380,11 @@ namespace ProceduralExplorationGamePlugin{
     }
 
     SQInteger GameCoreNamespace::beginMapGen(HSQUIRRELVM vm){
-        if(GameCoreNamespace::currentMapGen != 0){
-            return sq_throwerror(vm, "Map gen is already in progress");
+        ProceduralExplorationGameCore::MapGen* mapGen = PluginBaseSingleton::getMapGen();
+        assert(mapGen);
+        if(!mapGen->isFinished()){
+            return sq_throwerror(vm, "Map gen is already processing a map generation");
         }
-        GameCoreNamespace::currentMapGen = new ProceduralExplorationGameCore::MapGen();
 
         ProceduralExplorationGameCore::ExplorationMapInputData* inputData = new ProceduralExplorationGameCore::ExplorationMapInputData();
         SQInteger result = tableToExplorationMapInputData(vm, inputData);
@@ -389,7 +392,7 @@ namespace ProceduralExplorationGamePlugin{
             return result;
         }
 
-        currentMapGen->beginMapGen(inputData);
+        mapGen->beginMapGen(inputData);
 
         return 0;
     }
@@ -436,21 +439,48 @@ namespace ProceduralExplorationGamePlugin{
     }
 
     SQInteger GameCoreNamespace::getMapGenStage(HSQUIRRELVM vm){
-        if(!GameCoreNamespace::currentMapGen){
-            return sq_throwerror(vm, "Map gen is not active.");
-        }
-        sq_pushinteger(vm, GameCoreNamespace::currentMapGen->getCurrentStage());
+        ProceduralExplorationGameCore::MapGen* mapGen = PluginBaseSingleton::getMapGen();
+        assert(mapGen);
+        sq_pushinteger(vm, mapGen->getCurrentStage());
 
         return 1;
     }
 
     SQInteger GameCoreNamespace::getTotalMapGenStages(HSQUIRRELVM vm){
-        if(!GameCoreNamespace::currentMapGen){
-            return sq_throwerror(vm, "Map gen is not active.");
-        }
-        sq_pushinteger(vm, GameCoreNamespace::currentMapGen->getNumTotalStages());
+        ProceduralExplorationGameCore::MapGen* mapGen = PluginBaseSingleton::getMapGen();
+        assert(mapGen);
+        sq_pushinteger(vm, mapGen->getNumTotalStages());
 
         return 1;
+    }
+
+    SQInteger GameCoreNamespace::registerMapGenClient(HSQUIRRELVM vm){
+        const SQChar *clientName;
+        sq_getstring(vm, 2, &clientName);
+        const SQChar *scriptPath;
+        sq_getstring(vm, 3, &scriptPath);
+
+        std::string outPath;
+        AV::formatResToPath(scriptPath, outPath);
+
+        ProceduralExplorationGameCore::MapGenScriptManager* manager = PluginBaseSingleton::getScriptManager();
+        ProceduralExplorationGameCore::CallbackScript* script = manager->loadScript(outPath);
+        if(!script){
+            std::string e = std::string("Error parsing script at path ") + outPath;
+            return sq_throwerror(vm, e.c_str());
+        }
+
+        ProceduralExplorationGameCore::MapGen* mapGen = PluginBaseSingleton::getMapGen();
+        assert(mapGen);
+        if(!mapGen->isFinished()){
+            return sq_throwerror(vm, "MapGen is active");
+        }
+
+        ProceduralExplorationGameCore::MapGenScriptClient* scriptClient = new ProceduralExplorationGameCore::MapGenScriptClient(script);
+
+        mapGen->registerMapGenClient(clientName, scriptClient);
+
+        return 0;
     }
 
     SQInteger GameCoreNamespace::setHlmsFlagForDatablock(HSQUIRRELVM vm){
@@ -473,15 +503,12 @@ namespace ProceduralExplorationGamePlugin{
     }
 
     SQInteger GameCoreNamespace::checkClaimMapGen(HSQUIRRELVM vm){
-        if(!GameCoreNamespace::currentMapGen){
-            return sq_throwerror(vm, "Map gen is not active.");
-        }
+        ProceduralExplorationGameCore::MapGen* mapGen = PluginBaseSingleton::getMapGen();
+        assert(mapGen);
 
-        if(currentMapGen->isFinished()){
-            ProceduralExplorationGameCore::ExplorationMapData* mapData = GameCoreNamespace::currentMapGen->claimMapData();
+        if(mapGen->isFinished()){
+            ProceduralExplorationGameCore::ExplorationMapData* mapData = mapGen->claimMapData();
             ExplorationMapDataUserData::ExplorationMapDataToUserData(vm, mapData);
-            delete GameCoreNamespace::currentMapGen;
-            GameCoreNamespace::currentMapGen = 0;
         }else{
             sq_pushnull(vm);
         }
@@ -490,13 +517,12 @@ namespace ProceduralExplorationGamePlugin{
     }
 
     SQInteger GameCoreNamespace::getNameForMapGenStage(HSQUIRRELVM vm){
-        if(!GameCoreNamespace::currentMapGen){
-            return sq_throwerror(vm, "Map gen is not active.");
-        }
+        ProceduralExplorationGameCore::MapGen* mapGen = PluginBaseSingleton::getMapGen();
+        assert(mapGen);
 
         SQInteger idx;
         sq_getinteger(vm, -1, &idx);
-        const std::string& stageName = GameCoreNamespace::currentMapGen->getNameForStage(idx);
+        const std::string& stageName = mapGen->getNameForStage(idx);
         sq_pushstring(vm, stageName.c_str(), -1);
 
         return 1;
@@ -733,6 +759,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, checkClaimMapGen, "checkClaimMapGen");
         AV::ScriptUtils::addFunction(vm, getTotalMapGenStages, "getTotalMapGenStages");
         AV::ScriptUtils::addFunction(vm, setHlmsFlagForDatablock, "setHlmsFlagForDatablock", 3, ".ui");
+        AV::ScriptUtils::addFunction(vm, registerMapGenClient, "registerMapGenClient", 3, ".ss");
 
         AV::ScriptUtils::addFunction(vm, update, "update", 2, ".u");
 

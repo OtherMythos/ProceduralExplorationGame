@@ -313,6 +313,8 @@
 
         mExplorationLogic = ExplorationLogic();
 
+        _gameCore.registerMapGenClient("testClient", "res://src/MapGen/NativeClient/MapGenNativeClient.nut");
+
         setupDeveloperWorkaroundsPost_();
     }
     function setupFullscreen(){

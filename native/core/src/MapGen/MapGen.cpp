@@ -44,6 +44,7 @@ namespace ProceduralExplorationGameCore{
         for(MapGenClient* c : mActiveClients){
             c->populateSteps(steps);
         }
+        mCurrentStage = mMapGenSteps.size();
     }
 
     void MapGen::beginMapGen(const ExplorationMapInputData* input){
@@ -51,7 +52,11 @@ namespace ProceduralExplorationGameCore{
 
         mMapData = new ExplorationMapData();
         mMapInputData = input;
-        mParentThread = new std::thread(&MapGen::beginMapGen_, this, input, mMapGenSteps);
+        ThreadInput i;
+        i.input = input;
+        i.steps = &mMapGenSteps;
+        mCurrentStage = 0;
+        mParentThread = new std::thread(&MapGen::beginMapGen_, this, i);
     }
 
     void MapGen::notifyClientsBegan_(const ExplorationMapInputData* input){
@@ -72,15 +77,16 @@ namespace ProceduralExplorationGameCore{
         }
     }
 
-    void MapGen::beginMapGen_(const ExplorationMapInputData* input, const std::vector<MapGenStep*>& steps){
+    void MapGen::beginMapGen_(const ThreadInput& input){
         AV::Timer tt;
         tt.start();
-        notifyClientsBegan_(input);
+        notifyClientsBegan_(input.input);
         ExplorationMapGenWorkspace workspace;
+        const std::vector<MapGenStep*>& steps = *(input.steps);
         for(int i = 0; i < steps.size(); i++){
             AV::Timer t;
             t.start();
-            steps[i]->processStep(input, mMapData, &workspace);
+            steps[i]->processStep(input.input, mMapData, &workspace);
             t.stop();
             GAME_CORE_INFO("Time taken for stage '{}' was {}", steps[i]->getName(), t.getTimeTotal());
             mCurrentStage++;

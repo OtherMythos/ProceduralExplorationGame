@@ -38,7 +38,11 @@ namespace ProceduralExplorationGameCore{
         ExplorationMapData* mMapData;
         const ExplorationMapInputData* mMapInputData;
 
-        void beginMapGen_(const ExplorationMapInputData* input, const std::vector<MapGenStep*>& steps);
+        struct ThreadInput{
+            const ExplorationMapInputData* input;
+            const std::vector<MapGenStep*>* steps;
+        };
+        void beginMapGen_(const ThreadInput& input);
         void collectMapGenSteps_(std::vector<MapGenStep*>& steps);
 
         void notifyClientsBegan_(const ExplorationMapInputData* input);

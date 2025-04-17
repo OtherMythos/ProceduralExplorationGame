@@ -14,6 +14,9 @@
 #include "OgreHlmsPbs.h"
 #include "OgreHlmsPbsDatablock.h"
 #include "System/OgreSetup/CustomHLMS/OgreHlmsPbsAVCustom.h"
+#include "MapGen/MapGen.h"
+#include "MapGen/Script/MapGenScriptManager.h"
+#include "PluginBaseSingleton.h"
 
 #include "GameplayConstants.h"
 #include "GameCoreLogger.h"
@@ -121,6 +124,9 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptVM::setupDelegateTable(ExplorationMapDataUserData::setupDelegateTable);
         AV::ScriptVM::setupDelegateTable(VisitedPlaceMapDataUserData::setupDelegateTable);
         AV::ScriptVM::setupDelegateTable(DataPointFileParserUserData::setupDelegateTable);
+
+        ProceduralExplorationGameCore::MapGen* mapGen = new ProceduralExplorationGameCore::MapGen();
+        PluginBaseSingleton::initialise(mapGen, 0, new ProceduralExplorationGameCore::MapGenScriptManager());
 
         Ogre::VoxMeshManager* meshManager = OGRE_NEW Ogre::VoxMeshManager();
         meshManager->_initialise();
