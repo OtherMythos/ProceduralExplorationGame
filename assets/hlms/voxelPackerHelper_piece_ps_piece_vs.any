@@ -112,7 +112,16 @@
 		#define inVs_vertex inValues
 
 		uint voxValue = originalSecond & uint(0xFF);
-		float2 testVal = VOXEL_TEX_COORDS[voxValue];
+
+		const uint COLS_WIDTH = 16;
+		const uint COLS_HEIGHT = 16;
+		const float TILE_WIDTH = (1.0 / COLS_WIDTH) / 2.0;
+		const float TILE_HEIGHT = (1.0 / COLS_HEIGHT) / 2.0;
+		const float texCoordX = (float(voxValue % COLS_WIDTH) / COLS_WIDTH) + TILE_WIDTH;
+		const float texCoordY = (float((uint(float(voxValue) / COLS_WIDTH))) / COLS_HEIGHT) + TILE_HEIGHT;
+		const float2 testVal = float2(texCoordX, texCoordY);
+
+		//float2 testVal = VOXEL_TEX_COORDS[voxValue];
 		#undef inVs_uv0
 		#define inVs_uv0 testVal
 
