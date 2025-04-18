@@ -33,6 +33,8 @@ namespace ProceduralExplorationGamePlugin
 
     void GameCorePBSHlmsListener::preparePassHash(const Ogre::CompositorShadowNode *shadowNode, bool casterPass, bool dualParaboloid, Ogre::SceneManager *sceneManager, Ogre::Hlms *hlms){
         const Ogre::CompositorPass* p = sceneManager->getCurrentCompositorPass();
+        if(!p) return;
+        assert(p);
         if(p->getDefinition()->mIdentifier == 10){
             hlms->_setProperty("disableFog", true);
         }
