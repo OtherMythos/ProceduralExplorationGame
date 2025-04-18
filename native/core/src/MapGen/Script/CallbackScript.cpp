@@ -2,7 +2,7 @@
 
 #include <sqstdio.h>
 
-#include "Logger/Log.h"
+#include "GameCoreLogger.h"
 #include "System/Util/PathUtils.h"
 #include "Scripting/ScriptVM.h"
 
@@ -39,7 +39,8 @@ namespace ProceduralExplorationGameCore{
 
     bool CallbackScript::prepareRaw(const std::string& path){
         if(!mInitialised) {
-            AV_ERROR("Please initialise your CallbackScript with a VM before preparing it.");
+            //TODO shift this code back to the engine so it doesn't have to be included in game core.
+            GAME_CORE_ERROR("Please initialise your CallbackScript with a VM before preparing it.");
             return false;
         }
 
