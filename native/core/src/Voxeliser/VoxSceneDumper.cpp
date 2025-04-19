@@ -7,6 +7,8 @@
 #include "Vao/OgreVaoManager.h"
 #include "Vao/OgreAsyncTicket.h"
 
+#include "MapGen/ExplorationMapDataPrerequisites.h"
+
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -296,20 +298,6 @@ namespace ProceduralExplorationGameCore{
         std::vector<FaceEntry> faces;
     };
 
-    Ogre::uint32 convertUVToVoxelID(float texCoordX, float texCoordY){
-
-        static const Ogre::uint32 COLS_WIDTH = 16;
-        static const Ogre::uint32 COLS_HEIGHT = 16;
-        static const float TILE_WIDTH = (1.0 / COLS_WIDTH) / 2.0;
-        static const float TILE_HEIGHT = (1.0 / COLS_HEIGHT) / 2.0;
-
-        int column = static_cast<int>((texCoordX - TILE_WIDTH) * COLS_WIDTH);
-        int row = static_cast<int>((texCoordY - TILE_HEIGHT) * COLS_HEIGHT);
-
-        return (row * COLS_WIDTH) + column;
-    }
-
-
     void processObject(Ogre::MovableObject* obj, const Ogre::Matrix4& worldTransform, VoxData& out, std::ofstream* mStream){
         static const Ogre::Vector3 FACES_NORMALS[6] = {
             Ogre::Vector3(0, -1,  0),
@@ -325,6 +313,15 @@ namespace ProceduralExplorationGameCore{
             Ogre::Item* item = dynamic_cast<Ogre::Item*>(obj);
             for(size_t i = 0; i < item->getMesh()->getNumSubMeshes(); i++){
                 Ogre::SubMesh* subMesh = item->getMesh()->getSubMesh(i);
+
+                Ogre::Renderable* renderable = item->mRenderables[0];
+                if(!renderable->hasCustomParameter(0)) return;
+                const Ogre::Vector4& params = renderable->getCustomParameter(0);
+                Ogre::uint32 v = *(reinterpret_cast<const Ogre::uint32*>(&params.x));
+
+                const bool packedVoxels = (v & ProceduralExplorationGameCore::HLMS_PACKED_VOXELS);
+                const bool terrain = (v & ProceduralExplorationGameCore::HLMS_TERRAIN);
+                const bool offlineVoxels = (v & ProceduralExplorationGameCore::HLMS_PACKED_OFFLINE_VOXELS);
 
                 Ogre::VertexArrayObjectArray vaos = subMesh->mVao[Ogre::VpNormal];
 
@@ -344,16 +341,15 @@ namespace ProceduralExplorationGameCore{
 
                     size_t cc = 0;
                     for (size_t v = 0; v < vertexCount; ++v) {
-                        const float* ptr = vertexData + (cc * 6);
+                        const float* ptr = vertexData + (cc * 3);
 
                         Ogre::uint32 original = *(reinterpret_cast<const Ogre::uint32*>(ptr));
                         Ogre::uint32 originalSecond = *(reinterpret_cast<const Ogre::uint32*>(ptr) + 1);
 
-                        Ogre::uint32 magicNumber = originalSecond & Ogre::uint32(0x1FFFFFFF);
-                        if(magicNumber != 0x15FBF7DB && magicNumber != 0x15FBB7DB) continue;
+                        if(!packedVoxels) continue;
 
                         int offset = 0;
-                        if(magicNumber == 0x15FBB7DB){
+                        if(offlineVoxels){
                             offset = 128;
                         }
 
@@ -361,10 +357,14 @@ namespace ProceduralExplorationGameCore{
                         int pos_y = int((original >> 10) & Ogre::uint32(0x3FF)) - offset;
                         int pos_z = int((original >> 20) & Ogre::uint32(0x3FF)) - offset;
 
+                        if(terrain){
+                            pos_z -= 4;
+                        }
+
                         float texX = *(ptr + 4);
                         float texY = *(ptr + 5);
 
-                        Ogre::uint32 voxelId = convertUVToVoxelID(texX, texY);
+                        Ogre::uint32 voxelId = originalSecond & 0xFF;
 
                         Ogre::uint32 norm = Ogre::uint32((originalSecond >> 29) & Ogre::uint32(0x3));
                         Ogre::uint32 ambient = Ogre::uint32((original >> 30) & Ogre::uint32(0x3));
