@@ -419,6 +419,16 @@
     function setupBaseMaterials(){
         local datablock = _hlms.getDatablock("baseVoxelMaterial");
         //datablock.setUserValue(0, 0.5, 0, 0, 0);
+        forceTextureMaterialLoad(datablock);
+    }
+
+    function forceTextureMaterialLoad(datablock){
+        local c = _gameCore.createVoxMeshItem("playerHead.voxMesh");
+        c.setDatablock(datablock);
+        local tempNode = _scene.getRootSceneNode().createChildSceneNode();
+        tempNode.attachObject(c);
+        _graphics.waitForStreamingCompletion();
+        tempNode.destroyNodeAndChildren();
     }
 
     function setFullscreenState(fullscreen){
