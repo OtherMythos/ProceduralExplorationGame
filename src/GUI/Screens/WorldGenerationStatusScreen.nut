@@ -12,6 +12,7 @@
         mWindow_.setSkinPack("WindowSkinNoBorder");
         mWindow_.setZOrder(61);
         mWindow_.setDatablock("unlitBlack");
+        mWindow_.setBreadthFirst(true);
 
         createBackgroundScreen_();
         mBackgroundWindow_.setDatablock("unlitBlack");

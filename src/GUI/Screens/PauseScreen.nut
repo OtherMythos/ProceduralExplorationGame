@@ -26,6 +26,7 @@
         mWindow_.setSize(::drawable);
         mWindow_.setVisualsEnabled(false);
         mWindow_.setSkinPack("WindowSkinNoBorder");
+        mWindow_.setBreadthFirst(true);
 
         createBackgroundScreen_();
 

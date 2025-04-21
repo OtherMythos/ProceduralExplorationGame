@@ -184,6 +184,7 @@ enum InventoryBusEvents{
         mWindow_.setSize(::drawable.x, ::drawable.y);
         mWindow_.setVisualsEnabled(false);
         mWindow_.setSkinPack("WindowSkinNoBorder");
+        mWindow_.setBreadthFirst(true);
 
         local inventoryButton = mWindow_.createButton();
         {

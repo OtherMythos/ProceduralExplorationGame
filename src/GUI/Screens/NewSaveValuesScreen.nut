@@ -14,6 +14,7 @@
         mWindow_.setSize(winWidth, winHeight);
         //mWindow_.setPosition(_window.getWidth() * 0.1, _window.getHeight() * 0.1);
         mWindow_.setClipBorders(10, 10, 10, 10);
+        mWindow_.setBreadthFirst(true);
         //mWindow_.setZOrder(61);
 
         local layoutLine = _gui.createLayoutLine();

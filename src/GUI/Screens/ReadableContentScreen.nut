@@ -22,6 +22,7 @@
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setSkinPack("WindowSkinNoBorder");
         mWindow_.setSize(::drawable * 0.8);
+        mWindow_.setBreadthFirst(true);
 
         local layoutLine = _gui.createLayoutLine();
 

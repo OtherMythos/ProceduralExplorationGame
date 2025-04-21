@@ -173,6 +173,7 @@ enum ExplorationScreenWidgetType{
         mWindow_.setSize(_window.getWidth(), _window.getHeight());
         mWindow_.setVisualsEnabled(false);
         mWindow_.setSkinPack("WindowSkinNoBorder");
+        mWindow_.setBreadthFirst(true);
 
         local layoutLine = _gui.createLayoutLine();
 

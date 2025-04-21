@@ -17,6 +17,7 @@
             mWindow_.setExpandVertical(true);
             mWindow_.setExpandHorizontal(true);
             mWindow_.setProportionVertical(2);
+            mWindow_.setBreadthFirst(true);
 
             local layoutLine = _gui.createLayoutLine();
 

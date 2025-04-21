@@ -74,6 +74,7 @@
     function initialise(parentWin, gridSize, overlayWin, inventoryWidth, inventoryHeight){
         mWindow_ = parentWin.createWindow("InventoryGrid");
         mWindow_.setSkinPack("WindowSkinNoBorder");
+        mWindow_.setBreadthFirst(true);
 
         if(mInventoryType_ == InventoryGridType.INVENTORY_GRID || mInventoryType_ == InventoryGridType.INVENTORY_GRID_SECONDARY){
             mItemIcons_ = array(inventoryWidth * inventoryHeight);

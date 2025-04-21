@@ -74,6 +74,7 @@
         mWindow_.setSize(::drawable);
         mWindow_.setVisualsEnabled(false);
         mWindow_.setSkinPack("WindowSkinNoBorder");
+        mWindow_.setBreadthFirst(true);
 
         local layoutLine = _gui.createLayoutLine();
 
