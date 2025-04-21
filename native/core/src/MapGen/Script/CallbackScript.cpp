@@ -93,8 +93,7 @@ namespace ProceduralExplorationGameCore{
         HSQOBJECT closure = mClosures[closureId].first;
 
 
-        //return ScriptVM::callClosure(closure, &mMainTable, func, retFunc);
-        mVMObject->callClosure(closure, &mMainTable, func, retFunc);
+        return mVMObject->callClosure(closure, &mMainTable, func, retFunc);
     }
 
     bool CallbackScript::call(int closureId, PopulateFunction func, ReturnFunction retFunc){
