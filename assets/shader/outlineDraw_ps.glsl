@@ -144,13 +144,13 @@ void main()
         returnFinalColour(startValue);
     }
 
-    float2 mainOutline = computeLineForImage(inPs.uv0, Depth, DepthSampler);
+    float2 mainOutline = computeLineForImage(inPs.uv0, Depth vk_comma vulkan(DepthSampler));
     if(mainOutline.x != 0.0 && mainOutline.y != 0.0){
         startValue = mix(startValue, float4(0, 0, 0, 1), mainOutline.x * mainOutline.y);
         returnFinalColour(startValue);
     }
 
-    float2 innerOutline = computeLineForImage(inPs.uv0, SecondaryImage, SecondaryImageSampler);
+    float2 innerOutline = computeLineForImage(inPs.uv0, SecondaryImage vk_comma vulkan(SecondaryImageSampler));
     startValue = mix(startValue, float4(0.25, 0.25, 0.25, 1), innerOutline.x * innerOutline.y * 0.3);
     returnFinalColour(startValue);
 }
