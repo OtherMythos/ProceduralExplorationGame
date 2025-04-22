@@ -141,7 +141,7 @@ compositor_node renderMainGameplayNode
             identifier 12
 
             rq_first 15
-            rq_last 20
+            rq_last 16
         }
         pass render_scene
         {
