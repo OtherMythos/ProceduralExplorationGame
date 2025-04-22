@@ -1,0 +1,48 @@
+
+fragment_program Postprocess/fillColour_ps_GLSL glsl
+{
+	source fillColour_ps.glsl
+}
+
+fragment_program Postprocess/fillColour_ps_VK glslvk
+{
+	source fillColour_ps.glsl
+}
+
+fragment_program Postprocess/fillColour_ps_Metal metal
+{
+	source fillColour_ps.metal
+	shader_reflection_pair_hint Ogre/Compositor/QuadCameraDirNoUV_vs
+}
+
+fragment_program Postprocess/fillColour_ps unified
+{
+	delegate Postprocess/fillColour_ps_GLSL
+	delegate Postprocess/fillColour_ps_VK
+	delegate Postprocess/fillColour_ps_Metal
+}
+
+material Postprocess/FillColour
+{
+    technique
+    {
+
+		pass
+		{
+			depth_write off
+			depth_check on
+
+			cull_hardware none
+
+			vertex_program_ref Ogre/Compositor/QuadCameraDirNoUV_vs
+			{
+			}
+
+			fragment_program_ref Postprocess/fillColour_ps
+			{
+				param_named colour float4 0.5 0.89 1 1
+			}
+
+		}
+	}
+}

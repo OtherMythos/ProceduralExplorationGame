@@ -100,9 +100,9 @@ compositor_node renderMainGameplayNode
     texture depthTextureHiddenTerrain    target_width target_height PFG_D32_FLOAT
     texture finalSceneDepth     target_width target_height PFG_D32_FLOAT
 
-    texture sceneRenderDecorations    target_width target_height PFG_RGBA32_FLOAT
-    texture sceneRender     target_width target_height PFG_RGBA32_FLOAT
-    texture finalSceneRender     target_width target_height PFG_RGBA32_FLOAT
+    texture sceneRenderDecorations    target_width target_height PFG_RGBA32_FLOAT depth_pool 2
+    texture sceneRender     target_width target_height PFG_RGBA32_FLOAT depth_pool 2
+    texture finalSceneRender     target_width target_height PFG_RGBA32_FLOAT depth_pool 2
     texture sceneHiddenTerrain     target_width target_height PFG_RGBA32_FLOAT
     texture finalMask    target_width target_height PFG_RGBA32_FLOAT
 
@@ -110,6 +110,7 @@ compositor_node renderMainGameplayNode
     texture depthWind    target_width_scaled 0.5 target_height_scaled 0.5 PFG_D32_FLOAT
     texture finalWindTexture     target_width_scaled 0.5 target_height_scaled 0.5 PFG_RGBA32_FLOAT
 
+    /*
     rtv sceneRenderDecorations
     {
         depth_stencil depthTextureDecorations
@@ -126,16 +127,53 @@ compositor_node renderMainGameplayNode
     {
         depth_stencil depthTextureHiddenTerrain
     }
+    */
+
+    target finalSceneRender
+    {
+        pass clear{
+            colour_value 0.1 0.1 1 1
+        }
+        pass render_scene
+        {
+            rq_first 41
+            rq_last 42
+
+            identifier 11
+        }
+    }
+    target finalSceneRender
+    {
+        pass render_scene
+        {
+
+			load { all dont_care }
+			store
+			{
+				colour	dont_care
+				depth	store
+				stencil	dont_care
+			}
+
+            rq_first 10
+            rq_last 15
+        }
+    }
 
     target sceneRenderDecorations
     {
         pass render_scene
         {
-            load
-            {
-                all                clear
-                clear_colour    0 0 0 0
+			load {
+                colour clear
             }
+			store
+			{
+				colour	store
+				depth	dont_care
+				stencil	dont_care
+			}
+
             overlays    off
 
             identifier 12
@@ -149,56 +187,39 @@ compositor_node renderMainGameplayNode
         }
     }
 
-    target sceneRender
+    target finalSceneRender
     {
         pass render_scene
         {
-            load
-            {
-                all clear
-                clear_colour 0.5 0.89 1 1
-            }
-            store
-            {
-                all store_or_resolve
-            }
-
-            rq_first 10
+            rq_first 15
             rq_last 30
-
-            shadows default_simpleShadowNode
         }
         //Ensure particles are rendered
         pass render_scene
         {
             rq_first 80
         }
-    }
-    target sceneHiddenTerrain
-    {
-        pass clear{
-            colour_value 0.1 0.1 1 1
-        }
-        pass render_scene
+        //Render the sky
+        pass render_quad
         {
-            rq_first 41
-            rq_last 42
-
-            identifier 11
+            material Postprocess/FillColour
         }
     }
 
+
+/*
     target finalSceneRender{
         pass render_quad
         {
             material Postprocess/MergeTexturesByDepth
             input 0 sceneRender
-            input 1 sceneHiddenTerrain
+            input 1 depthTextureGround
             input 2 depthTextureGround
-            input 3 depthTextureHiddenTerrain
+            input 3 depthTextureDecorations
         }
     }
-
+*/
+/*
     //Determine the final mask
     target finalMask
     {
@@ -211,7 +232,7 @@ compositor_node renderMainGameplayNode
             material Postprocess/MergeMask
             input 0 depthTextureGround
             input 1 depthTextureDecorations
-            input 2 depthTextureHiddenTerrain
+            input 2 depthTextureDecorations
         }
     }
 
@@ -226,9 +247,10 @@ compositor_node renderMainGameplayNode
             material Postprocess/MergeDepth
             input 0 depthTextureGround
             input 1 depthTextureDecorations
-            input 2 depthTextureHiddenTerrain
+            input 2 depthTextureDecorations
         }
     }
+*/
 
     target windTexture
     {
@@ -243,6 +265,7 @@ compositor_node renderMainGameplayNode
         }
     }
 
+/*
     target finalWindTexture
     {
         pass render_quad
@@ -252,24 +275,27 @@ compositor_node renderMainGameplayNode
             input 1 depthWind
         }
     }
+    */
 
     target finalSceneRender{
         pass render_quad
         {
             material Postprocess/lowResCopy
             input 0 finalSceneRender
-            input 1 finalWindTexture
+            input 1 windTexture
         }
     }
 
+/*
     target sceneRenderDecorations{
         pass render_quad
         {
             material Postprocess/applyMask
             input 0 sceneRenderDecorations
-            input 1 finalMask
+            input 1 sceneRenderDecorations
         }
     }
+*/
 
     target renderTexture
     {
@@ -281,7 +307,7 @@ compositor_node renderMainGameplayNode
         {
             material Postprocess/OutlineDraw
             input 0 finalSceneRender
-            input 1 finalMask
+            input 1 sceneRenderDecorations
             input 2 sceneRenderDecorations
         }
     }
