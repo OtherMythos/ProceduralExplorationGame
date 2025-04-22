@@ -14,7 +14,7 @@ using namespace metal;
 
 struct PS_INPUT
 {
-    float2 uv0;
+    float3 cameraDir;
 };
 
 struct Params

@@ -58,7 +58,7 @@ vulkan( }; )
 vulkan_layout( location = 0 )
 in block
 {
-    vec2 uv0;
+    vec3 cameraDir;
 } inPs;
 
 void main()
