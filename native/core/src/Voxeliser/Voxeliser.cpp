@@ -416,6 +416,13 @@ namespace ProceduralExplorationGameCore{
                 AV::uint32 yy = (VERTICES_POSITIONS[fv + 1] * w.sizeY + w.y);
                 AV::uint32 zz = (VERTICES_POSITIONS[fv + 2] * w.sizeZ + w.z + OCEAN_EDGE_LENGTH);
 
+                if(xx > bufEntry.mMaxX){
+                    bufEntry.mMaxX = xx;
+                }
+                if(yy > bufEntry.mMaxY){
+                    bufEntry.mMaxY = yy;
+                }
+
                 AV::uint8 ambient = (w.ambientMask >> 8 * i) & 0xFF;
                 assert(ambient >= 0 && ambient <= 3);
 
@@ -428,6 +435,14 @@ namespace ProceduralExplorationGameCore{
                 //*reinterpret_cast<float*>(bufEntry.mVertsWritePtr++) = texCoordX;
                 //*reinterpret_cast<float*>(bufEntry.mVertsWritePtr++) = texCoordY;
             }
+
+            if(w.x < bufEntry.mMinX){
+                bufEntry.mMinX = w.x;
+            }
+            if(w.y < bufEntry.mMinY){
+                bufEntry.mMinY = w.y;
+            }
+
             bufEntry.mNumTris += 2;
             bufEntry.mNumVerts += 4;
         }
@@ -611,6 +626,9 @@ namespace ProceduralExplorationGameCore{
         //TODO might be able to switch this to an std::vector to manage the correct sizing.
         mVerts = OGRE_MALLOC_SIMD( (size_t)(mNumActiveVox * (((NUM_VERTS * 4) * 5) * 4) * 2.5) , Ogre::MEMCATEGORY_GEOMETRY);
         mVertsWritePtr = static_cast<AV::uint32*>(mVerts);
+
+        mMaxX = mMaxY = 0;
+        mMinX = mMinY = 100000;
     }
 
     Ogre::MeshPtr RegionBufferEntry::generateMesh(const std::string& meshName, AV::uint32 width, AV::uint32 height, int maxAltitude){
@@ -660,7 +678,7 @@ namespace ProceduralExplorationGameCore{
         subMesh->mVao[Ogre::VpNormal].push_back(arrayObj);
         subMesh->mVao[Ogre::VpShadow].push_back(arrayObj);
 
-        const Ogre::Vector3 halfBounds(width/2, height/2, maxAltitude/2);
+        const Ogre::Vector3 halfBounds((mMaxX - mMinX) / 2, -(mMaxY - mMinY) / 2, maxAltitude/2);
         const Ogre::Aabb bounds(halfBounds, halfBounds);
         mesh->_setBounds(bounds);
         mesh->_setBoundingSphereRadius(bounds.getRadius());

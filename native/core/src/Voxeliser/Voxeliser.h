@@ -96,6 +96,8 @@ namespace ProceduralExplorationGameCore{
         size_t mNumVerts = 0;
         size_t mNumTris = 0;
 
+        AV::uint32 mMinX, mMinY, mMaxX, mMaxY;
+
         void* mVerts = 0;
         AV::uint32* mVertsWritePtr = 0;
     };
