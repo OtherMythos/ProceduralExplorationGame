@@ -17,29 +17,15 @@ struct PS_INPUT
     float2 uv0;
 };
 
-float calculateLineStrengthForDistance(float4 Center, float4 Left, float4 Right, float4 Top, float4 Bottom){
-    float yCenter = Center.y;
-    float yLeft      = Left.y;
-    float yRight     = Right.y;
-    float yTop       = Top.y;
-    float yBottom    = Bottom.y;
+float calculateLineStrengthForDistance(float distance){
 
-    float maxVal =
-        max(yCenter,
-        max(yLeft,
-        max(yRight,
-        max(yTop,
-        yBottom
-    ))));
+    float out = distance / 1000.0;
+    out = clamp(out, 0.0, 1.0);
+    out = 1.0 - out;
+    out = pow(out, 4);
+    out = clamp(out, 0.4, 1.0);
 
-    maxVal *= 1000;
-    maxVal = clamp(maxVal, 0.0, 1.0);
-    maxVal = pow(maxVal, 4);
-    float colVal = maxVal;
-
-    colVal = clamp(colVal, 0.4, 1.0);
-
-    return colVal;
+    return out;
 }
 
 bool allEqual(float a, float b, float c, float d, float e) {
@@ -53,7 +39,7 @@ bool allEqual(float a, float b, float c, float d, float e) {
     return all(cmp) && (a == e);
 }
 
-float2 computeLineForImage(float center, float left, float right, float top, float bottom, bool inner){
+float2 computeLineForImage(float center, float left, float right, float top, float bottom, float distance, bool inner){
 
     bool edgeFactor = false;
     if(inner){
@@ -63,8 +49,7 @@ float2 computeLineForImage(float center, float left, float right, float top, flo
     }
     float edgeStrength = 0.0;
     if(edgeFactor){
-        //edgeStrength = calculateLineStrengthForDistance(center, left, right, top, bottom);
-        edgeStrength = 1.0;
+        edgeStrength = calculateLineStrengthForDistance(distance);
     }
 
     return float2(float(edgeFactor), edgeStrength);
@@ -96,13 +81,13 @@ fragment float4 main_metal
     float4 Top       = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(0, -stepY));
     float4 Bottom    = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(0, stepY));
 
-    float2 mainOutline = computeLineForImage(Center.x, Left.x, Right.x, Top.x, Bottom.x, false);
+    float2 mainOutline = computeLineForImage(Center.x, Left.x, Right.x, Top.x, Bottom.x, Center.y, false);
     if(mainOutline.x != 0.0 && mainOutline.y != 0.0){
         startValue = mix(startValue, float4(0, 0, 0, 1), mainOutline.x * mainOutline.y);
         returnFinalColour(startValue);
     }
 
-    float2 innerOutline = computeLineForImage(Center.z, Left.z, Right.z, Top.z, Bottom.z, true);
+    float2 innerOutline = computeLineForImage(Center.z, Left.z, Right.z, Top.z, Bottom.z, Center.y, true);
     startValue = mix(startValue, float4(0.25, 0.25, 0.25, 1), innerOutline.x * innerOutline.y * 0.3);
     returnFinalColour(startValue);
 }
