@@ -59,17 +59,9 @@ in block
 
 vulkan_layout( ogre_t0 ) uniform texture2D Image;
 vulkan_layout( ogre_t1 ) uniform texture2D Depth;
-vulkan_layout( ogre_t2 ) uniform texture2D SecondaryImage;
 
 vulkan( layout( ogre_s0 ) uniform sampler samplerState; )
 vulkan( layout( ogre_s1 ) uniform sampler DepthSampler; )
-vulkan( layout( ogre_s2 ) uniform sampler SecondaryImageSampler; )
-
-vulkan( layout( ogre_P0 ) uniform params { )
-    uniform float near;
-    uniform float far;
-    uniform float edgeThreshold;
-vulkan( }; )
 
 float calculateLineStrengthForDistance(float4 Center, float4 Left, float4 Right, float4 Top, float4 Bottom){
     float yCenter = Center.y;
@@ -96,61 +88,59 @@ float calculateLineStrengthForDistance(float4 Center, float4 Left, float4 Right,
     return colVal;
 }
 
-float calculateEdgeFactor(float4 Center, float4 Left, float4 Right, float4 Top, float4 Bottom){
-    float xCenter = Center.x;
-    float xLeft = Left.x;
-    float xRight = Right.x;
-    float xTop = Top.x;
-    float xBottom = Bottom.x;
+bool allEqual(float a, float b, float c, float d, float e) {
+    vec4 v1 = vec4(a, b, c, d);
+    vec4 v2 = vec4(e); // All components = e
 
-    float edge = 0.0;
-    edge += abs(xCenter - xLeft);
-    edge += abs(xCenter - xRight);
-    edge += abs(xCenter - xTop);
-    edge += abs(xCenter - xBottom);
-    edge *= 50;
+    // Compare v1 == v2, returns a bvec4
+    bvec4 cmp = equal(v1, v2);
 
-    float edgeThreshold = 0.005;
-    float edgeFactor = step(edgeThreshold, edge);
-    return edgeFactor;
+    // Reduce to a single bool
+    return all(cmp) && (a == e);
 }
 
-float2 computeLineForImage(float2 uv0, texture2D image vk_comma vulkan(sampler imageSampler) ){
-    float2 texelSize = sizeForTexture(image);
-    float stepX = 1.0 / texelSize.x;
-    float stepY = 1.0 / texelSize.y;
+float2 computeLineForImage(float center, float left, float right, float top, float bottom, bool inner){
 
-    float4 Center = OGRE_Sample( image, imageSampler, uv0);
-    float4 Left      = OGRE_Sample( image, imageSampler, uv0 + float2(-stepX, 0));
-    float4 Right     = OGRE_Sample( image, imageSampler, uv0 + float2(stepX, 0));
-    float4 Top       = OGRE_Sample( image, imageSampler, uv0 + float2(0, -stepY));
-    float4 Bottom    = OGRE_Sample( image, imageSampler, uv0 + float2(0, stepY));
-
-    float edgeFactor = calculateEdgeFactor(Center, Left, Right, Top, Bottom);
+    bool edgeFactor = false;
+    if(inner){
+        edgeFactor = !allEqual(left, right, top, bottom, center);
+    }else{
+        edgeFactor = (center + left + right + top + bottom) < 5;
+    }
     float edgeStrength = 0.0;
-    if(edgeFactor != 0.0){
-        edgeStrength = calculateLineStrengthForDistance(Center, Left, Right, Top, Bottom);
+    if(edgeFactor){
+        //edgeStrength = calculateLineStrengthForDistance(center, left, right, top, bottom);
+        edgeStrength = 1.0;
     }
 
-    return float2(edgeFactor, edgeStrength);
+    return float2(float(edgeFactor), edgeStrength);
 }
 
 void main()
 {
     float4 startValue = OGRE_Sample( Image, samplerState, inPs.uv0 );
-
     float4 Center = OGRE_Sample( Depth, DepthSampler, inPs.uv0);
+
     if(Center.x == 0){
         returnFinalColour(startValue);
     }
 
-    float2 mainOutline = computeLineForImage(inPs.uv0, Depth vk_comma vulkan(DepthSampler));
+    float2 texelSize = sizeForTexture(Depth);
+    float stepX = 1.0 / texelSize.x;
+    float stepY = 1.0 / texelSize.y;
+
+    float4 Left      = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(-stepX, 0));
+    float4 Right     = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(stepX, 0));
+    float4 Top       = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(0, -stepY));
+    float4 Bottom    = OGRE_Sample( Depth, DepthSampler, inPs.uv0 + float2(0, stepY));
+
+    float2 mainOutline = computeLineForImage(Center.x, Left.x, Right.x, Top.x, Bottom.x, false);
     if(mainOutline.x != 0.0 && mainOutline.y != 0.0){
         startValue = mix(startValue, float4(0, 0, 0, 1), mainOutline.x * mainOutline.y);
         returnFinalColour(startValue);
     }
 
-    float2 innerOutline = computeLineForImage(inPs.uv0, SecondaryImage vk_comma vulkan(SecondaryImageSampler));
+    float2 innerOutline = computeLineForImage(Center.z, Left.z, Right.z, Top.z, Bottom.z, true);
     startValue = mix(startValue, float4(0.25, 0.25, 0.25, 1), innerOutline.x * innerOutline.y * 0.3);
     returnFinalColour(startValue);
 }

@@ -17,13 +17,6 @@ struct PS_INPUT
     float2 uv0;
 };
 
-struct Params
-{
-    float near;
-    float far;
-    float edgeThreshold;
-};
-
 float calculateLineStrengthForDistance(float4 Center, float4 Left, float4 Right, float4 Top, float4 Bottom){
     float yCenter = Center.y;
     float yLeft      = Left.y;
