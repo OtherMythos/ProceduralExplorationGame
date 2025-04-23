@@ -141,7 +141,9 @@ fragment @insertpiece( output_type ) main_metal
 {
 	PS_OUTPUT outPs;
 	@insertpiece( custom_ps_preExecution )
+	@property( !disableDefaultPSBody )
 	@insertpiece( DefaultBodyPS )
+	@end
 	@insertpiece( custom_ps_posExecution )
 
 @property( !hlms_render_depth_only )

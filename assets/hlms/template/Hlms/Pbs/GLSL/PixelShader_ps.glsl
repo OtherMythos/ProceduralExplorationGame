@@ -131,7 +131,9 @@ vulkan_layout( location = 0 ) in block
 void main()
 {
     @insertpiece( custom_ps_preExecution )
+	@property( !disableDefaultPSBody )
 	@insertpiece( DefaultBodyPS )
+	@end
 	@insertpiece( custom_ps_posExecution )
 }
 @else ///!hlms_shadowcaster

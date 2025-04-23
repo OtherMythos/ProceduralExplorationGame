@@ -43,6 +43,8 @@ namespace ProceduralExplorationGamePlugin
         }
         else if(p->getDefinition()->mIdentifier == 12){
             hlms->_setProperty("renderSceneDecorations", true);
+            hlms->_setProperty("disableDefaultPSBody", true);
+            hlms->_setProperty("disableFog", true);
         }
     }
 }
