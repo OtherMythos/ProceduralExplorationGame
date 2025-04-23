@@ -5,4 +5,4 @@ export FILE_BASE=buildLinux-Debug
 export REPO_NAME=ProceduralExplorationGame
 
 ./script/downloadArtifactLatest.sh
-./script/executeArtifact.sh
+./script/executeArtifact.sh $*

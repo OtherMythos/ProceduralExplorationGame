@@ -5,4 +5,4 @@ export FILE_BASE=totalBuildLinux-Release
 export REPO_NAME=GameCore
 
 ./script/downloadArtifactLatest.sh
-./script/executeArtifact.sh
+./script/executeArtifact.sh $*
