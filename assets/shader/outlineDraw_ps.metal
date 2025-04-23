@@ -76,9 +76,7 @@ fragment float4 main_metal
     texture2d<float> Image [[texture(0)]],
     texture2d<float> Depth [[texture(1)]],
     sampler samplerState [[sampler(0)]],
-    sampler DepthSampler [[sampler(1)]],
-
-    constant Params &p [[buffer(PARAMETER_SLOT)]]
+    sampler DepthSampler [[sampler(1)]]
 )
 {
 
