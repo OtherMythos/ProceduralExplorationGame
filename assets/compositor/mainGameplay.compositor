@@ -142,6 +142,16 @@ compositor_node renderMainGameplayNode
 
             identifier 11
         }
+        pass render_scene
+        {
+            rq_first 15
+            rq_last 16
+        }
+        //Ensure particles are rendered
+        pass render_scene
+        {
+            rq_first 80
+        }
         //Render discovered terrain
         pass render_scene
         {
@@ -156,6 +166,18 @@ compositor_node renderMainGameplayNode
 
             rq_first 10
             rq_last 15
+        }
+        //Render water
+        pass render_scene
+        {
+            rq_first 16
+            rq_last 17
+        }
+
+        //Render the sky
+        pass render_quad
+        {
+            material Postprocess/FillColour
         }
     }
 
@@ -187,26 +209,6 @@ compositor_node renderMainGameplayNode
             rq_first 80
 
             identifier 12
-        }
-    }
-
-    //Render decorations again to the final scene, after the previous to prevent depth issues.
-    target finalSceneRender
-    {
-        pass render_scene
-        {
-            rq_first 15
-            rq_last 30
-        }
-        //Ensure particles are rendered
-        pass render_scene
-        {
-            rq_first 80
-        }
-        //Render the sky
-        pass render_quad
-        {
-            material Postprocess/FillColour
         }
     }
 
