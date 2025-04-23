@@ -61,11 +61,6 @@ material Postprocess/OutlineDraw
 				tex_address_mode clamp
 				filtering trilinear
 			}
-			texture_unit SecondaryImage
-			{
-				tex_address_mode clamp
-				filtering trilinear
-			}
 		}
 	}
 }

@@ -39,8 +39,9 @@
 	@end
 
 	@property( renderSceneDecorations )
-		float colVal = float(inPs.passDrawId % uint(100)) / 100.0;
-		outPs_colour0.xyz = float3(colVal, colVal, colVal);
+		//float colVal = float(inPs.passDrawId % uint(100)) / 100.0;
+		outPs_colour0.xyz = inPs.decorationColour;
+		outPs_colour0.z = inPs.passDrawColour;
 	@end
 @end
 
@@ -48,12 +49,15 @@
 	//TODO reduce this down to a single float
 	float3 diffuse;
 	float fog;
-	NO_INTERPOLATION_PREFIX uint passDrawId;
+	@property( renderSceneDecorations )
+		NO_INTERPOLATION_PREFIX float passDrawColour;
+		float3 decorationColour;
+	@end
 @end
 
 @piece( custom_vs_posExecution )
 
-	@property( !hlms_shadowcaster || !hlms_shadow_uses_depth_texture || alpha_test || exponential_shadow_maps )
+	@property( !hlms_shadowcaster || !hlms_shadow_uses_depth_texture || alpha_test || exponential_shadow_maps && !renderSceneDecorations)
 	@property( !disableFog )
 		float3 playerPosition = float3(passBuf.playerPositionX, passBuf.playerPositionY, passBuf.playerPositionZ);
 		//float4 positionRelativeToCam = mul(worldPos, passBuf.viewProj);
@@ -85,6 +89,14 @@
 		visibility = clamp(visibility, 0.0, 1.0);
 		outVs.fog = visibility;
 	@end
+	@end
+
+	@property( renderSceneDecorations )
+		float colVal = float(finalDrawId % uint(100)) / 100.0;
+		float4 positionRelativeToCam = mul(worldPos, passBuf.viewProj);
+		float dist = length(positionRelativeToCam.xyz);
+		outVs.decorationColour = float3(1, dist, 0);
+		outVs.passDrawColour = colVal;
 	@end
 
 @end
@@ -183,10 +195,6 @@
 			inVs_vertex.y += sin(inVs_vertex.z*10 + passBuf.time) * 0.75;
 			inVs_vertex.x += sin(inVs_vertex.z*3 + passBuf.time * 4) * 2.75;
 		@end
-	@end
-
-	@property( renderSceneDecorations )
-		outVs.passDrawId = finalDrawId;
 	@end
 
 
