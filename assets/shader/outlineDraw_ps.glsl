@@ -65,13 +65,13 @@ vulkan( layout( ogre_s1 ) uniform sampler DepthSampler; )
 
 float calculateLineStrengthForDistance(float distance){
 
-    float out = distance / 1000.0;
-    out = clamp(out, 0.0, 1.0);
-    out = 1.0 - out;
-    out = pow(out, 4);
-    out = clamp(out, 0.4, 1.0);
+    float outDistance = distance / 1000.0;
+    outDistance = clamp(outDistance, 0.0, 1.0);
+    outDistance = 1.0 - outDistance;
+    outDistance = pow(outDistance, 4);
+    outDistance = clamp(outDistance, 0.4, 1.0);
 
-    return out;
+    return outDistance;
 }
 
 bool allEqual(float a, float b, float c, float d, float e) {
