@@ -8,3 +8,11 @@ function notifyBegan(){
 function notifyEnded(){
     print("Script map gen ended");
 }
+
+function populateSteps(){
+    _mapGen.registerStep(0, "test step");
+}
+
+function notifyClaimed(){
+
+}

@@ -2,6 +2,8 @@
 
 #include "GameCoreLogger.h"
 
+#include "MapGen/Script/MapGenNamespace.h"
+
 namespace ProceduralExplorationGameCore{
     MapGenScriptVM::MapGenScriptVM(){
 
@@ -25,6 +27,20 @@ namespace ProceduralExplorationGameCore{
         mVM = sq_open(1024);
 
         sq_setprintfunc(mVM, printfunc, NULL);
+
+
+        sq_pushroottable(mVM);
+        setupNamespace("_mapGen", MapGenNamespace::setupNamespace);
+
+    }
+
+    void MapGenScriptVM::setupNamespace(const char* namespaceName, NamespaceSetupFunction setupFunc){
+        sq_pushstring(mVM, _SC(namespaceName), -1);
+        sq_newtable(mVM);
+
+        setupFunc(mVM);
+
+        sq_newslot(mVM, -3 , false);
     }
 
     HSQUIRRELVM MapGenScriptVM::getVM(){

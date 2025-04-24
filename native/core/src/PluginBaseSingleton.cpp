@@ -1,6 +1,6 @@
 #include "PluginBaseSingleton.h"
 
-namespace ProceduralExplorationGamePlugin {
+namespace ProceduralExplorationGameCore {
 
 ProceduralExplorationGameCore::MapGen* PluginBaseSingleton::mCurrentMapGen = nullptr;
 ProceduralExplorationGameCore::VisitedPlacesParser* PluginBaseSingleton::mCurrentVisitedPlacesParser = nullptr;
@@ -28,4 +28,4 @@ ProceduralExplorationGameCore::MapGenScriptManager* PluginBaseSingleton::getScri
     return mScriptManager;
 }
 
-} // namespace ProceduralExplorationGamePlugin
+} // namespace ProceduralExplorationGameCore

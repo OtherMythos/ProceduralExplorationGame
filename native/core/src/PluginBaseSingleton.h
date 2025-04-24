@@ -6,10 +6,9 @@ namespace ProceduralExplorationGameCore {
     class MapGenScriptManager;
 }
 
-namespace ProceduralExplorationGamePlugin {
+namespace ProceduralExplorationGameCore {
 
     class PluginBaseSingleton {
-        friend class SomeInitializer; // Replace with the appropriate initializing class
 
     public:
         static ProceduralExplorationGameCore::MapGen* getMapGen();
@@ -29,4 +28,4 @@ namespace ProceduralExplorationGamePlugin {
         static ProceduralExplorationGameCore::MapGenScriptManager* mScriptManager;
     };
 
-} // namespace ProceduralExplorationGamePlugin
+} // namespace ProceduralExplorationGameCore

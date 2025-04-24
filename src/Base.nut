@@ -314,6 +314,7 @@
         mExplorationLogic = ExplorationLogic();
 
         _gameCore.registerMapGenClient("testClient", "res://src/MapGen/NativeClient/MapGenNativeClient.nut");
+        _gameCore.recollectMapGenSteps();
 
         setupDeveloperWorkaroundsPost_();
     }

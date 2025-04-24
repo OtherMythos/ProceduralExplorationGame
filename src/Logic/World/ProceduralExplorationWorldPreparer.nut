@@ -54,7 +54,6 @@
             local mapGenStage = _gameCore.getMapGenStage();
             if(mCurrentStage_ != mapGenStage){
                 while(mCurrentStage_ != mapGenStage){
-                    mCurrentStage_++;
                     mCurrentPercent_ = mCurrentStage_.tofloat() / _gameCore.getTotalMapGenStages().tofloat();
                     local stageName = _gameCore.getNameForMapGenStage(mCurrentStage_);
                     print("PROCEDURAL WORLD GENERATION: " + (mCurrentPercent_ * 100).tointeger() + "% stage: " + stageName);
@@ -63,6 +62,7 @@
                         "percentage": mCurrentPercent_,
                         "name": stageName
                     });
+                    mCurrentStage_++;
                 }
             }
         }

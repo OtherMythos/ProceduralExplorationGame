@@ -380,7 +380,7 @@ namespace ProceduralExplorationGamePlugin{
     }
 
     SQInteger GameCoreNamespace::beginMapGen(HSQUIRRELVM vm){
-        ProceduralExplorationGameCore::MapGen* mapGen = PluginBaseSingleton::getMapGen();
+        ProceduralExplorationGameCore::MapGen* mapGen = ProceduralExplorationGameCore::PluginBaseSingleton::getMapGen();
         assert(mapGen);
         if(!mapGen->isFinished()){
             return sq_throwerror(vm, "Map gen is already processing a map generation");
@@ -393,6 +393,18 @@ namespace ProceduralExplorationGamePlugin{
         }
 
         mapGen->beginMapGen(inputData);
+
+        return 0;
+    }
+
+    SQInteger GameCoreNamespace::recollectMapGenSteps(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::MapGen* mapGen = ProceduralExplorationGameCore::PluginBaseSingleton::getMapGen();
+        assert(mapGen);
+        if(!mapGen->isFinished()){
+            return sq_throwerror(vm, "Map gen is already processing a map generation");
+        }
+
+        mapGen->recollectMapGenSteps();
 
         return 0;
     }
@@ -439,7 +451,7 @@ namespace ProceduralExplorationGamePlugin{
     }
 
     SQInteger GameCoreNamespace::getMapGenStage(HSQUIRRELVM vm){
-        ProceduralExplorationGameCore::MapGen* mapGen = PluginBaseSingleton::getMapGen();
+        ProceduralExplorationGameCore::MapGen* mapGen = ProceduralExplorationGameCore::PluginBaseSingleton::getMapGen();
         assert(mapGen);
         sq_pushinteger(vm, mapGen->getCurrentStage());
 
@@ -447,7 +459,7 @@ namespace ProceduralExplorationGamePlugin{
     }
 
     SQInteger GameCoreNamespace::getTotalMapGenStages(HSQUIRRELVM vm){
-        ProceduralExplorationGameCore::MapGen* mapGen = PluginBaseSingleton::getMapGen();
+        ProceduralExplorationGameCore::MapGen* mapGen = ProceduralExplorationGameCore::PluginBaseSingleton::getMapGen();
         assert(mapGen);
         sq_pushinteger(vm, mapGen->getNumTotalStages());
 
@@ -463,14 +475,14 @@ namespace ProceduralExplorationGamePlugin{
         std::string outPath;
         AV::formatResToPath(scriptPath, outPath);
 
-        ProceduralExplorationGameCore::MapGenScriptManager* manager = PluginBaseSingleton::getScriptManager();
+        ProceduralExplorationGameCore::MapGenScriptManager* manager = ProceduralExplorationGameCore::PluginBaseSingleton::getScriptManager();
         ProceduralExplorationGameCore::CallbackScript* script = manager->loadScript(outPath);
         if(!script){
             std::string e = std::string("Error parsing script at path ") + outPath;
             return sq_throwerror(vm, e.c_str());
         }
 
-        ProceduralExplorationGameCore::MapGen* mapGen = PluginBaseSingleton::getMapGen();
+        ProceduralExplorationGameCore::MapGen* mapGen = ProceduralExplorationGameCore::PluginBaseSingleton::getMapGen();
         assert(mapGen);
         if(!mapGen->isFinished()){
             return sq_throwerror(vm, "MapGen is active");
@@ -503,7 +515,7 @@ namespace ProceduralExplorationGamePlugin{
     }
 
     SQInteger GameCoreNamespace::checkClaimMapGen(HSQUIRRELVM vm){
-        ProceduralExplorationGameCore::MapGen* mapGen = PluginBaseSingleton::getMapGen();
+        ProceduralExplorationGameCore::MapGen* mapGen = ProceduralExplorationGameCore::PluginBaseSingleton::getMapGen();
         assert(mapGen);
 
         if(mapGen->isFinished()){
@@ -517,7 +529,7 @@ namespace ProceduralExplorationGamePlugin{
     }
 
     SQInteger GameCoreNamespace::getNameForMapGenStage(HSQUIRRELVM vm){
-        ProceduralExplorationGameCore::MapGen* mapGen = PluginBaseSingleton::getMapGen();
+        ProceduralExplorationGameCore::MapGen* mapGen = ProceduralExplorationGameCore::PluginBaseSingleton::getMapGen();
         assert(mapGen);
 
         SQInteger idx;
@@ -760,6 +772,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, getTotalMapGenStages, "getTotalMapGenStages");
         AV::ScriptUtils::addFunction(vm, setHlmsFlagForDatablock, "setHlmsFlagForDatablock", 3, ".ui");
         AV::ScriptUtils::addFunction(vm, registerMapGenClient, "registerMapGenClient", 3, ".ss");
+        AV::ScriptUtils::addFunction(vm, recollectMapGenSteps, "recollectMapGenSteps");
 
         AV::ScriptUtils::addFunction(vm, update, "update", 2, ".u");
 

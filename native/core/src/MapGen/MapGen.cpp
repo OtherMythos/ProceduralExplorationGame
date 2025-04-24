@@ -20,9 +20,7 @@ namespace ProceduralExplorationGameCore{
         //TODO move this elsewhere so it doesn't have to be used.
         registerMapGenClient("Base Client", new MapGenBaseClient());
 
-        mMapGenSteps.clear();
-        collectMapGenSteps_(mMapGenSteps);
-
+        recollectMapGenSteps();
     }
 
     MapGen::~MapGen(){
@@ -31,12 +29,21 @@ namespace ProceduralExplorationGameCore{
         }
     }
 
+    void MapGen::recollectMapGenSteps(){
+        mMapGenSteps.clear();
+        collectMapGenSteps_(mMapGenSteps);
+    }
+
     int MapGen::getCurrentStage() const{
         return mCurrentStage;
     }
 
     std::string MapGen::getNameForStage(int stage){
         return mMapGenSteps[stage]->getName();
+    }
+
+    void MapGen::registerStep(int id, MapGenStep* mapGenStep){
+        mMapGenSteps.insert(mMapGenSteps.begin() + id, mapGenStep);
     }
 
     void MapGen::collectMapGenSteps_(std::vector<MapGenStep*>& steps){

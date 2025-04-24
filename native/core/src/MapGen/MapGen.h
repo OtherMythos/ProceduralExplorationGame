@@ -22,6 +22,8 @@ namespace ProceduralExplorationGameCore{
         bool isFinished() const;
         void beginMapGen(const ExplorationMapInputData* input);
         int getNumTotalStages();
+        void recollectMapGenSteps();
+        void registerStep(int id, MapGenStep* mapGenStep);
         std::string getNameForStage(int stage);
 
         void registerMapGenClient(const std::string& clientName, MapGenClient* client);

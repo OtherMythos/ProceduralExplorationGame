@@ -1,7 +1,5 @@
 #include "MapGenScriptClient.h"
 
-#include "Scripting/Script/CallbackScript.h"
-
 #include "Script/CallbackScript.h"
 
 namespace ProceduralExplorationGameCore{
@@ -15,7 +13,7 @@ namespace ProceduralExplorationGameCore{
     }
 
     void MapGenScriptClient::populateSteps(std::vector<MapGenStep*>& steps){
-
+        mScript->call("populateSteps");
     }
 
     void MapGenScriptClient::notifyBegan(const ExplorationMapInputData* input){
@@ -27,6 +25,6 @@ namespace ProceduralExplorationGameCore{
     }
 
     void MapGenScriptClient::notifyClaimed(ExplorationMapData* mapData){
-
+        mScript->call("notifyClaimed");
     }
 }

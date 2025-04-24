@@ -17,6 +17,9 @@ namespace ProceduralExplorationGameCore{
 
         void setup();
 
+        typedef void(*NamespaceSetupFunction)(HSQUIRRELVM vm);
+        void setupNamespace(const char* namespaceName, NamespaceSetupFunction setupFunc);
+
         HSQUIRRELVM getVM();
         bool callClosure(HSQOBJECT closure, const HSQOBJECT* context = 0, PopulateFunction populateFunc = 0, ReturnFunction retFunc = 0);
 
