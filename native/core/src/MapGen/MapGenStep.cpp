@@ -1,4 +1,4 @@
-#include "MapGenStep.h"
+#include "MapGen/MapGenStep.h"
 
 #include <thread>
 

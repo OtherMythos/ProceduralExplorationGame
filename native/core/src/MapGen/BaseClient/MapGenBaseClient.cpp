@@ -1,6 +1,6 @@
 #include "MapGenBaseClient.h"
 
-#include "MapGen/Steps/MapGenStep.h"
+#include "MapGen/MapGenStep.h"
 #include "MapGen/Steps/GenerateMetaMapGenStep.h"
 #include "MapGen/Steps/SetupBuffersMapGenStep.h"
 #include "MapGen/Steps/GenerateNoiseMapGenStep.h"

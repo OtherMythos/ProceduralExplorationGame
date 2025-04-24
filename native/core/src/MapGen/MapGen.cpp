@@ -5,8 +5,7 @@
 
 #include "MapGen/ExplorationMapDataPrerequisites.h"
 #include "MapGen/MapGenClient.h"
-//TODO move the base out of the steps class.
-#include "MapGen/Steps/MapGenStep.h"
+#include "MapGen/MapGenStep.h"
 #include "MapGen/BaseClient/MapGenBaseClient.h"
 #include "GameCoreLogger.h"
 

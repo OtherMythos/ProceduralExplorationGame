@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MapGenStep.h"
+#include "MapGen/MapGenStep.h"
 
 #include "GamePrerequisites.h"
 #include "System/EnginePrerequisites.h"
