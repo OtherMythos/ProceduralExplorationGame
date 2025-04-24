@@ -27,6 +27,7 @@
 
         mBackground_ = parentWin.createPanel();
         mBackground_.setSkin("internal/WindowSkin");
+        mBackground_.setZOrder(80);
 
         mLayoutLine_ = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
         mSizerPanels_ = array(mNumSlots_);

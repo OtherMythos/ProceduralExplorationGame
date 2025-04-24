@@ -23,6 +23,7 @@
         button.setHidden(false);
         button.setUserId(buttonId);
         button.attachListenerForEvent(buttonPressed, _GUI_ACTION_PRESSED, this);
+        button.setZOrder(80);
         //button.setKeyboardNavigable(false);
         mButton_ = button;
 
