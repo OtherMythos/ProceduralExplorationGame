@@ -116,6 +116,8 @@ compositor_node renderMainGameplayNode
         {
             rq_first 15
             rq_last 16
+
+            shadows default_simpleShadowNode
         }
         //Ensure particles are rendered
         pass render_scene
@@ -133,6 +135,8 @@ compositor_node renderMainGameplayNode
 				depth	store
 				stencil	dont_care
 			}
+
+            shadows default_simpleShadowNode
 
             rq_first 10
             rq_last 15
