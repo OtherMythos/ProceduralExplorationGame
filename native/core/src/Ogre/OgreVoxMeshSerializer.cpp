@@ -13,7 +13,7 @@ namespace Ogre{
     VoxMeshSerializer::VoxMeshSerializer( VaoManager *vaoManager )
         : mVaoManager(vaoManager)
     {
-        mVersion = "[VoxMeshSerializer_v0.6.0]";
+        mVersion = "[VoxMeshSerializer_v0.9.0]";
     }
 
     VoxMeshSerializer::~VoxMeshSerializer(){
