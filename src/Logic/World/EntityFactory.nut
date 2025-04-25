@@ -462,12 +462,12 @@
 
         //local entry = ActiveEnemyEntry(mConstructorWorld_, itemData.type, targetPos, en);
 
-        local placeNode = parentNode.createChildSceneNode();
+        local placeNode = parentNode.createChildSceneNode(_SCENE_STATIC);
         //local meshTarget = itemData.type == PlacedItemId.CHERRY_BLOSSOM_TREE ? "treeCherryBlossom.voxMesh" : "tree.voxMesh";
         local meshTarget = getMeshForPlacedItemType_(itemType);
         placeNode.setPosition(targetPos);
         //TODO make some of these scene static
-        local item = _gameCore.createVoxMeshItem(meshTarget);
+        local item = _gameCore.createVoxMeshItem(meshTarget, _SCENE_STATIC);
         item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         _gameCore.writeFlagsToItem(item, HLMS_PACKED_VOXELS | HLMS_PACKED_OFFLINE_VOXELS | HLMS_TREE_VERTICES);
         placeNode.attachObject(item);

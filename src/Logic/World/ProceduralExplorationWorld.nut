@@ -55,6 +55,8 @@
             local animPos = mAnimCount_ * -0.10;
             mLandNode_.setPosition(0, animPos, 0);
             mDecoratioNode_.setPosition(0, animPos, 0);
+            _scene.notifyStaticDirty(mLandNode_);
+            _scene.notifyStaticDirty(mDecoratioNode_);
         }
         function performArrival(){
             setVisible(true);
@@ -546,8 +548,8 @@
         for(local y = 0; y < 3; y++)
         for(local x = 0; x < 3; x++){
             //Create the ocean plane
-            local oceanNode = mParentNode_.createChildSceneNode();
-            local oceanItem = _scene.createItem("WaterPlane.mesh");
+            local oceanNode = mParentNode_.createChildSceneNode(_SCENE_STATIC);
+            local oceanItem = _scene.createItem("WaterPlane.mesh", _SCENE_STATIC);
             oceanItem.setCastsShadows(false);
             _gameCore.writeFlagsToItem(oceanItem, HLMS_OCEAN_VERTICES);
             oceanItem.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_WATER);
@@ -585,13 +587,13 @@
         //print("Time taken to generate voxel map " + vox.getStats().totalSeconds);
         foreach(c,i in meshes){
             if(i == null) continue;
-            local decorationNode = regionNode.createChildSceneNode();
+            local decorationNode = regionNode.createChildSceneNode(_SCENE_STATIC);
 
-            local item = _scene.createItem(i);
+            local item = _scene.createItem(i, _SCENE_STATIC);
             _gameCore.writeFlagsToItem(item, HLMS_PACKED_VOXELS | HLMS_TERRAIN);
             item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_TERRRAIN_UNDISCOVERED);
             item.setCastsShadows(false);
-            local landNode = regionNode.createChildSceneNode();
+            local landNode = regionNode.createChildSceneNode(_SCENE_STATIC);
             landNode.attachObject(item);
             landNode.setScale(1, 1, PROCEDURAL_WORLD_UNIT_MULTIPLIER);
             landNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
