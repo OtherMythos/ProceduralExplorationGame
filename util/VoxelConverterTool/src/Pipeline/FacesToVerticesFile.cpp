@@ -191,9 +191,9 @@ namespace VoxelConverterTool{
         float centreY = (maxY + minY) * 0.5;
         float centreZ = (maxZ + minZ) * 0.5;
 
-        float halfX = (maxX - minX) * 0.5;
-        float halfY = (maxY - minY) * 0.5;
-        float halfZ = (maxZ - minZ) * 0.5;
+        float halfX = (maxX - minX) * 0.5 + 0.5;
+        float halfY = (maxY - minY) * 0.5 + 0.5;
+        float halfZ = (maxZ - minZ) * 0.5 + 0.5;
 
         //Values taken from OgreMesh2SerializerImpl
         const long MSTREAM_OVERHEAD_SIZE = sizeof(uint16) + sizeof(uint32);
