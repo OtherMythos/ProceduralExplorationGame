@@ -18,7 +18,8 @@
         local floodRooms = _determineTotalRooms(outVals, data.width, data.height);
         local roomWeighted = _weightAndSortRooms(floodRooms);
 
-        local playerStart = _determinePlayerStart(floodRooms);
+        //_debugPrintData(outVals, data.width, data.height);
+        local playerStart = _determinePlayerStart(floodRooms, outVals, data.width, data.height);
 
         _determineEdges(outVals, data.width, data.height);
 
@@ -40,7 +41,17 @@
         return outData;
     }
 
-    function _determinePlayerStart(floodRooms){
+    function _debugPrintData(outVals, width, height){
+        for(local y = 0; y < height; y++){
+            local vals = "";
+            for(local x = 0; x < width; x++){
+                vals += (outVals[x + y * width]).tostring();
+            }
+            print(vals);
+        }
+    }
+
+    function _determinePlayerStart(floodRooms, valData, width, height){
         local biggestRoom = -1;
         local biggestRoomIdx = -1;
         foreach(c,i in floodRooms){
@@ -51,10 +62,37 @@
         }
         if(biggestRoomIdx == -1) return;
 
-        local d = floodRooms[biggestRoomIdx].foundPoints;
-        local targetPos = d[_random.randIndex(d)];
+        //Check a few times to ensure the player has a big enough radius of tiles around them.
+        local targetPos = null;
+        for(local i = 0; i < 200; i++){
+            local d = floodRooms[biggestRoomIdx].foundPoints;
+            local testPos = d[_random.randIndex(d)];
+            local result = _determineSizeAroundPosition(testPos, valData, width, height);
+            if(result){
+                targetPos = testPos;
+                break;
+            }
+        }
+
+        //TODO proper check incase this fails.
+        assert(targetPos != null);
 
         return targetPos;
+    }
+
+    function _determineSizeAroundPosition(pos, valData, width, height){
+        local x = pos & 0xFFFF
+        local y = ((pos >> 16) & 0xFFFF);
+
+        local radius = 1;
+        for(local yy = y - radius; yy <= y + radius; yy++){
+            for(local xx = x - radius; xx <= x + radius; xx++){
+                if(xx < 0 || yy < 0 || xx >= width || yy >= height) return false;
+                if(valData[xx + yy * width] == false) return false;
+            }
+        }
+
+        return true;
     }
 
     function _setupCoridoors(d, w, h){

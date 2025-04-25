@@ -2,7 +2,7 @@ _tIntegration("MainMenuToExplorationDungeon", "Begin an exploration, start pushi
     "start": function(){
         ::_testHelper.clearAllSaves();
         ::_testHelper.setDefaultWaitFrames(10);
-        ::count <- 0;
+        ::seedCount <- 0;
     },
 
     "steps": [
@@ -18,11 +18,12 @@ _tIntegration("MainMenuToExplorationDungeon", "Begin an exploration, start pushi
                 function(){
                     local data = {
                         "worldType": WorldTypes.PROCEDURAL_DUNGEON_WORLD,
-                        "dungeonType": ProceduralDungeonTypes.DUST_MITE_NEST,
+                        "dungeonType": (::seedCount % 2 == 0) ? ProceduralDungeonTypes.DUST_MITE_NEST : ProceduralDungeonTypes.CATACOMB,
                         "width": 50,
                         "height": 50,
-                        "seed": 10
+                        "seed": ::seedCount
                     };
+                    seedCount++;
                     local worldInstance = ::Base.mExplorationLogic.createWorldInstance(WorldTypes.PROCEDURAL_DUNGEON_WORLD, data);
                     ::Base.mExplorationLogic.pushWorld(worldInstance);
                 },

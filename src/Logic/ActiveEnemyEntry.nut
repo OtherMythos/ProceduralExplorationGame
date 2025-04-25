@@ -293,6 +293,13 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
 
         return true;
     }
+    function checkPositionCollides(pos){
+        if(mEntity_ == null) return false;
+
+        local w = mCreatorWorld_.getCollisionDetectionWorld();
+        local result = w.checkCollisionPoint(pos.x, pos.z, 1);
+        return result;
+    }
     function move(amount){
         local intended = mPos_ + amount;
         return move_(intended, amount);

@@ -40,6 +40,9 @@
         local pos = Vec3(targetPos & 0xFFFF, 0, (targetPos >> 16) & 0xFFFF);
         pos *= mWorldScaleSize_;
         pos.y = getZForPos(pos);
+        if(mPlayerEntry_.checkPositionCollides(pos)){
+            throw "Player trapped in dungeon wall.";
+        }
         mPlayerEntry_.setPosition(pos);
         notifyPlayerMoved();
     }
