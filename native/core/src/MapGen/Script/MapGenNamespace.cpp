@@ -4,8 +4,10 @@
 
 #include "PluginBaseSingleton.h"
 #include "MapGen/MapGen.h"
+#include "System/Util/PathUtils.h"
 
 #include "MapGen/MapGenScriptStep.h"
+#include "MapGen/Script/MapGenScriptManager.h"
 
 #include "GameCoreLogger.h"
 
@@ -18,6 +20,11 @@ namespace ProceduralExplorationGameCore{
         const SQChar *stepName;
         sq_getstring(vm, 3, &stepName);
 
+        std::string outPath;
+        const SQChar *scriptPath;
+        sq_getstring(vm, 4, &scriptPath);
+        AV::formatResToPath(scriptPath, outPath);
+
         GAME_CORE_INFO("Registering MapGen step '{}' at idx {}", stepName, idx);
 
         MapGen* mapGen = PluginBaseSingleton::getMapGen();
@@ -26,14 +33,22 @@ namespace ProceduralExplorationGameCore{
             return sq_throwerror(vm, "Map gen is already processing a map generation");
         }
 
-        MapGenScriptStep* step = new MapGenScriptStep(stepName);
+        ProceduralExplorationGameCore::MapGenScriptManager* manager = ProceduralExplorationGameCore::PluginBaseSingleton::getScriptManager();
+        ProceduralExplorationGameCore::CallbackScript* script = manager->loadScript(outPath);
+        if(!script){
+            std::string e = std::string("Error parsing script at path ") + outPath;
+            return sq_throwerror(vm, e.c_str());
+        }
+
+
+        MapGenScriptStep* step = new MapGenScriptStep(stepName, script);
         mapGen->registerStep(idx, step);
 
         return 0;
     }
 
     void MapGenNamespace::setupNamespace(HSQUIRRELVM vm){
-        AV::ScriptUtils::addFunction(vm, registerStep, "registerStep", 3, ".is");
+        AV::ScriptUtils::addFunction(vm, registerStep, "registerStep", 4, ".iss");
     }
 
 }
