@@ -6,6 +6,7 @@
 #include "System/Util/PathUtils.h"
 #include "Scripting/ScriptVM.h"
 
+#include "System/Util/SquirrelFileSystemHelper.h"
 
 namespace ProceduralExplorationGameCore{
     CallbackScript::CallbackScript(HSQUIRRELVM vm)
@@ -117,7 +118,7 @@ namespace ProceduralExplorationGameCore{
     }
 
     bool CallbackScript::_compileMainClosure(const std::string& path){
-        if(SQ_FAILED(sqstd_loadfile(mVm, path.c_str(), SQTrue))){
+        if(SQ_FAILED(AV::SquirrelFileSystemHelper::sqstd_loadfile(mVm, path.c_str(), SQTrue))){
             return false;
         }
 

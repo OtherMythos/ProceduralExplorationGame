@@ -22,7 +22,8 @@
 
     function checkUserParams(){
         //TODO work around the fact that I can't use multiple avSetup files to override this yet.
-        if(_settings.getPlatform() == _PLATFORM_IOS){
+        local platform = _settings.getPlatform();
+        if(platform == _PLATFORM_IOS || platform == _PLATFORM_ANDROID){
             mTargetInterface_ = TargetInterface.MOBILE;
         }
     }

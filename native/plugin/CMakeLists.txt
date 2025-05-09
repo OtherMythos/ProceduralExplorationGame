@@ -2,7 +2,7 @@ project(ProceduralExplorationGamePlugin)
 
 file(GLOB_RECURSE srcs "src/*.cpp")
 
-if(STATIC_ONLY)
+if(NOT STATIC_ONLY)
     add_library(${PROJECT_NAME} SHARED MODULE
         ${srcs}
     )

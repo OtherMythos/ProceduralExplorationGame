@@ -51,7 +51,7 @@ namespace ProceduralExplorationGameCore{
         -1,  0,  0,
     };
 
-    static const char VERTICE_BORDERS[] = {
+    static const int8_t VERTICE_BORDERS[] = {
         //F0
         -1, -1,  0, /**/ 0, -1, -1, /**/ -1, -1, -1,
          0, -1, -1, /**/ 1, -1,  0, /**/  1, -1, -1,
