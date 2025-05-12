@@ -2,7 +2,7 @@ name: Build and Test
 
 on:
   push:
-    branches: 'master'
+    branches: 'android'
 
 jobs:
   buildNativeLinux:
@@ -42,6 +42,45 @@ jobs:
         with:
           name: libProceduralExplorationGamePlugin_${{ matrix.buildType }}-linux-x86_64.so
           path: "native/build/plugin/libProceduralExplorationGamePlugin_${{ matrix.buildType }}-linux-x86_64.so"
+
+  buildNativeAndroid:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        buildType: [Debug, Release]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download prebuilt Android dependencies
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          name: avBuiltAndroid-${{ matrix.buildType }}.tar.gz
+          repo: OtherMythos/avBuild
+          workflow: android.yml
+      - name: Extract dependencies
+        run: |
+          mkdir deps
+          tar -xvf android-avBuilt-${{ matrix.buildType }}.tar.gz -C deps
+          echo "Extracted to deps"
+      - name: Set up Java and Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Download Android NDK r25
+        run: |
+          curl -L -o ndk.zip https://dl.google.com/android/repository/android-ndk-r25-linux.zip
+          unzip -q ndk.zip
+          mv android-ndk-r25 ~/ndk
+      - name: Build
+        run: |
+          git clone https://github.com/OtherMythos/avEngine.git /tmp/avEngine
+          mkdir build
+          cd build
+          CMAKE_BUILD_TYPE="${{ matrix.buildType }}"
+          ANDROID_ABI="arm64-v8a"
+          NDK_LOCATION="/home/runner/ndk"
+          ROOT_PATH="/home/runner/deps/avBuilt/${CMAKE_BUILD_TYPE}"
+          ENGINE_SOURCE="/tmp/avEngine"
+          cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DANDROID_ABI=${ANDROID_ABI} -DANDROID_NATIVE_API_LEVEL=24 -DCMAKE_TOOLCHAIN_FILE="${NDK_LOCATION}/build/cmake/android.toolchain.cmake" -DENGINE_SOURCE_PATH="${ENGINE_SOURCE}" -DAV_LIBS_DIR="/" -DCMAKE_FIND_ROOT_PATH="${ROOT_PATH}" -DCMAKE_FIND_DEBUG_MODE=OFF -DPLATFORM=android ..
 
   buildNativeWindows:
     runs-on: windows-2019
