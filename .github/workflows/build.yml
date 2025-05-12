@@ -52,6 +52,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: android
       - name: Download prebuilt Android dependencies
         uses: dawidd6/action-download-artifact@v3
         with:
@@ -60,8 +62,8 @@ jobs:
           workflow: android.yml
       - name: Extract dependencies
         run: |
-          mkdir deps
-          tar -xvf android-avBuilt-${{ matrix.buildType }}.tar.gz -C deps
+          mkdir /home/runner/deps
+          tar -xvf android-avBuilt-${{ matrix.buildType }}.tar.gz -C /home/runner/deps
           echo "Extracted to deps"
       - name: Set up Java and Android SDK
         uses: android-actions/setup-android@v3
@@ -70,17 +72,33 @@ jobs:
           curl -L -o ndk.zip https://dl.google.com/android/repository/android-ndk-r25-linux.zip
           unzip -q ndk.zip
           mv android-ndk-r25 ~/ndk
-      - name: Build
+      - name: Setup CMake
         run: |
-          git clone https://github.com/OtherMythos/avEngine.git /tmp/avEngine
+          git clone https://github.com/OtherMythos/avEngine.git /tmp/avEngine --branch android
+          cd native
           mkdir build
           cd build
-          CMAKE_BUILD_TYPE="${{ matrix.buildType }}"
-          ANDROID_ABI="arm64-v8a"
-          NDK_LOCATION="/home/runner/ndk"
-          ROOT_PATH="/home/runner/deps/avBuilt/${CMAKE_BUILD_TYPE}"
-          ENGINE_SOURCE="/tmp/avEngine"
-          cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DANDROID_ABI=${ANDROID_ABI} -DANDROID_NATIVE_API_LEVEL=24 -DCMAKE_TOOLCHAIN_FILE="${NDK_LOCATION}/build/cmake/android.toolchain.cmake" -DENGINE_SOURCE_PATH="${ENGINE_SOURCE}" -DAV_LIBS_DIR="/" -DCMAKE_FIND_ROOT_PATH="${ROOT_PATH}" -DCMAKE_FIND_DEBUG_MODE=OFF -DPLATFORM=android ..
+          cmake \
+            -DCMAKE_BUILD_TYPE=${{ matrix.buildType }} \
+            -DANDROID_ABI=arm64-v8a \
+            -DANDROID_NATIVE_API_LEVEL=24 \
+            -DCMAKE_TOOLCHAIN_FILE="/home/runner/ndk/build/cmake/android.toolchain.cmake" \
+            -DENGINE_SOURCE_PATH="/tmp/avEngine" \
+            -DAV_LIBS_DIR="/home/runner/deps/${{ matrix.buildType }}" \
+            -DCMAKE_FIND_ROOT_PATH="/home/runner/deps/${{ matrix.buildType }}" \
+            -DCMAKE_FIND_DEBUG_MODE=OFF \
+            -DPLATFORM=android \
+            ..
+      - name: Build
+        run: |
+          cd native/build
+          cmake --build .
+          cp plugin/libProceduralExplorationGamePlugin_static.a /home/runner/libProceduralExplorationGamePlugin_android_static_${{ matrix.buildType }}.a
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: libProceduralExplorationGamePlugin_android_static_${{ matrix.buildType }}.a
+          path: "/home/runner/libProceduralExplorationGamePlugin_android_static_${{ matrix.buildType }}.a"
 
   buildNativeWindows:
     runs-on: windows-2019

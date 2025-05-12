@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.5)
 project(ProceduralExplorationGamePlugin)
 
 file(GLOB_RECURSE srcs "src/*.cpp")
