@@ -2,7 +2,7 @@ name: Build and Test
 
 on:
   push:
-    branches: 'android'
+    branches: 'master'
 
 jobs:
   buildNativeLinux:
@@ -74,7 +74,7 @@ jobs:
           mv android-ndk-r25 ~/ndk
       - name: Setup CMake
         run: |
-          git clone https://github.com/OtherMythos/avEngine.git /tmp/avEngine --branch android
+          git clone https://github.com/OtherMythos/avEngine.git /tmp/avEngine
           cd native
           mkdir build
           cd build
