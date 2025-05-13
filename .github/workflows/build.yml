@@ -186,6 +186,16 @@ jobs:
         with:
           name: libProceduralExplorationGamePlugin_Release-linux-x86_64.so
           path: plugins/
+      - name: Download Android Debug native plugin
+        uses: actions/download-artifact@v4
+        with:
+          name: libProceduralExplorationGamePlugin_android_static_Debug.a
+          path: plugins/
+      - name: Download Android Release native plugin
+        uses: actions/download-artifact@v4
+        with:
+          name: libProceduralExplorationGamePlugin_android_static_Release.a
+          path: plugins/
       - name: Build
         run: |
           mkdir /tmp/distribution
