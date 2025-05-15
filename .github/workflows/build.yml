@@ -94,7 +94,7 @@ jobs:
           cd native/build
           cmake --build .
           cp plugin/libProceduralExplorationGamePlugin_static.a /home/runner/libProceduralExplorationGamePlugin_android_static_${{ matrix.buildType }}.a
-          cp core/libProceduralExplorationGameNativeCore_static.a /home/runner/libProceduralExplorationGameNativeCore_android_static_${{ matrix.buildType }}.a
+          cp core/libProceduralExplorationGameNativeCore.a /home/runner/libProceduralExplorationGameNativeCore_android_static_${{ matrix.buildType }}.a
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
