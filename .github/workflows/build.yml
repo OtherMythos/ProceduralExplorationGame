@@ -225,8 +225,9 @@ jobs:
           cp -r build /tmp/distribution
       - name: Copy plugin includes
         run: |
-          mkdir -p /tmp/native/plugin/src
-          cp src/native/plugin/src/ /tmp/native/plugin/src/ProceduralExplorationGameCorePlugin.h
+          mkdir -p /tmp/distribution/plugins/include/native/plugin/src/
+          cp native/plugin/src/ProceduralExplorationGameCorePlugin.h /tmp/distribution/plugins/include/native/plugin/src/ProceduralExplorationGameCorePlugin.h
+          cp CMakeLists.txt StaticPlugins.h /tmp/distribution
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
