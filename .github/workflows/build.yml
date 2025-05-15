@@ -94,11 +94,17 @@ jobs:
           cd native/build
           cmake --build .
           cp plugin/libProceduralExplorationGamePlugin_static.a /home/runner/libProceduralExplorationGamePlugin_android_static_${{ matrix.buildType }}.a
+          cp core/libProceduralExplorationGameNativeCore_static.a /home/runner/libProceduralExplorationGameNativeCore_android_static_${{ matrix.buildType }}.a
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: libProceduralExplorationGamePlugin_android_static_${{ matrix.buildType }}.a
           path: "/home/runner/libProceduralExplorationGamePlugin_android_static_${{ matrix.buildType }}.a"
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: libProceduralExplorationGameNativeCore_android_static_${{ matrix.buildType }}.a
+          path: "/home/runner/libProceduralExplorationGameNativeCore_android_static_${{ matrix.buildType }}.a"
 
   buildNativeWindows:
     runs-on: windows-2019
@@ -196,6 +202,16 @@ jobs:
         with:
           name: libProceduralExplorationGamePlugin_android_static_Release.a
           path: plugins/
+      - name: Download Android Debug native core
+        uses: actions/download-artifact@v4
+        with:
+          name: libProceduralExplorationGameNativeCore_android_static_Debug.a
+          path: plugins/
+      - name: Download Android Release native core
+        uses: actions/download-artifact@v4
+        with:
+          name: libProceduralExplorationGameNativeCore_android_static_Release.a
+          path: plugins/
       - name: Build
         run: |
           mkdir /tmp/distribution
@@ -207,6 +223,10 @@ jobs:
           echo "const GIT_HASH = \"${{ steps.vars.outputs.sha_short }}\"" >> /tmp/distribution/src/Versions.h.nut
           ./resBuild.sh --clean
           cp -r build /tmp/distribution
+      - name: Copy plugin includes
+        run: |
+          mkdir -p /tmp/native/plugin/src
+          cp src/native/plugin/src/ /tmp/native/plugin/src/ProceduralExplorationGameCorePlugin.h
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
