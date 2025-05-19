@@ -373,11 +373,6 @@ jobs:
       - name: Set JAVA_HOME explicitly (needed for some gradle builds)
         run: echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
 
-      - name: Run setup.py
-        working-directory: avEngine-android
-        run: |
-          python3 setup.py ${{ github.workspace }}/deps/${{ matrix.buildType }}/
-
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
@@ -386,6 +381,11 @@ jobs:
         run: |
           cp plugins/libProceduralExplorationGamePlugin_android_static_${{ matrix.buildType }}.a ${{ github.workspace }}/
           rm -rf plugins
+
+      - name: Run setup.py
+        working-directory: avEngine-android
+        run: |
+          python3 setup.py ${{ github.workspace }}/deps/${{ matrix.buildType }}/ --extra-args="-DUSE_STATIC_PLUGINS=True" --extra-args="-DAV_PROJECT_DIR=${{ github.workspace }}"
 
       - name: Build APK
         working-directory: avEngine-android
