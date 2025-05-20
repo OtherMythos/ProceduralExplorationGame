@@ -214,6 +214,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         mInWater_ = inWater;
 
         mCreatorWorld_.mTargetManager_.notifyEntityPositionChange(this);
+        mCreatorWorld_.mProjectileTargetManager_.notifyEntityPositionChange(this);
         if(mEntity_ != null){
             //if(typeof mEntity_ == "integer"){
                 mCreatorWorld_.getEntityManager().setEntityPosition(mEntity_, pos);
@@ -353,6 +354,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
             mCreatorWorld_.getTriggerWorld().removeCollisionPoint(mCollisionPoint_);
         }
         mCreatorWorld_.mTargetManager_.notifyEntityDestroyed(this);
+        mCreatorWorld_.mProjectileTargetManager_.notifyEntityDestroyed(this);
     }
     function notifyNewHealth(newHealth, newPercentage){
         local entityManager = mCreatorWorld_.getEntityManager();

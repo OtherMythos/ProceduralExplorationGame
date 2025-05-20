@@ -7,6 +7,7 @@ enum EntityComponents{
     COLLISION_POINT,
     COLLISION_POINT_TWO,
     COLLISION_POINT_THREE,
+    COLLISION_POINT_FOUR,
     LIFETIME,
     ANIMATION,
     BILLBOARD,
@@ -20,6 +21,7 @@ enum EntityComponents{
     INVENTORY_ITEMS,
     SCENE_NODE,
     DATABLOCK,
+    MOVEMENT,
 
     MAX
 
@@ -141,6 +143,10 @@ EntityManager.EntityManager <- class{
             if(i == null) continue;
             i.mScript.update(i.eid);
         }
+        foreach(i in mComponents_[EntityComponents.MOVEMENT].mComps_){
+            if(i == null) continue;
+            moveEntity(i.eid, i.mDirection);
+        }
         processProximityComponent_();
     }
 
@@ -173,7 +179,10 @@ EntityManager.EntityManager <- class{
         }
         assert(entityIdx != -1);
 
-        return (mId << 60) | (entityVersion << 30) | entityIdx;
+        local outId = (mId << 60) | (entityVersion << 30) | entityIdx;
+
+        print("Created entity with id " + outId);
+        return outId;
     }
 
     function destroyEntity(eid, destroyReason=EntityDestroyReason.NONE){
@@ -308,6 +317,18 @@ EntityManager.EntityManager <- class{
         processPositionChange_(eid, idx, pos);
     }
 
+    function moveEntity(eid, direction){
+        //
+        local world = (eid >> 60) & 0xF;
+        if(world != mId) throw "Entity does not belong to this world.";
+        local version = (eid >> 30) & 0x3FFFFFFF;
+        local idx = eid & 0x3FFFFFFF;
+        if(mVersions_[idx] != version) throw "Entity is invalid";
+        //
+        mEntityPositions_[idx] += direction;
+        processPositionChange_(eid, idx, mEntityPositions_[idx]);
+    }
+
     function processEntityPositionPotential_(eid, idx, newPos, oldPos){
         local targetPos = newPos;
         if(mEntityComponentHashes_[idx] & (1<<EntityComponents.TRAVERSABLE_TERRAIN)){
@@ -351,6 +372,13 @@ EntityManager.EntityManager <- class{
             comp.mCreatorSecond.mCollisionWorld_.setPositionForPoint(comp.mPointSecond, newPos.x, newPos.z);
             comp.mCreatorThird.mCollisionWorld_.setPositionForPoint(comp.mPointThird, newPos.x, newPos.z);
         }
+        if(mEntityComponentHashes_[idx] & (1<<EntityComponents.COLLISION_POINT_FOUR)){
+            local comp = mComponents_[EntityComponents.COLLISION_POINT_FOUR].getCompForEid(eid);
+            comp.mCreatorFirst.mCollisionWorld_.setPositionForPoint(comp.mPointFirst, newPos.x, newPos.z);
+            comp.mCreatorSecond.mCollisionWorld_.setPositionForPoint(comp.mPointSecond, newPos.x, newPos.z);
+            comp.mCreatorThird.mCollisionWorld_.setPositionForPoint(comp.mPointThird, newPos.x, newPos.z);
+            comp.mCreatorFourth.mCollisionWorld_.setPositionForPoint(comp.mPointFourth, newPos.x, newPos.z);
+        }
     }
 
     function processEntityDestruction_(eid, idx, reason){
@@ -378,6 +406,12 @@ EntityManager.EntityManager <- class{
                     component.mCreatorFirst.removeCollisionPoint(component.mPointFirst);
                     component.mCreatorSecond.removeCollisionPoint(component.mPointSecond);
                     component.mCreatorThird.removeCollisionPoint(component.mPointThird);
+                }
+                else if(i == EntityComponents.COLLISION_POINT_FOUR){
+                    component.mCreatorFirst.removeCollisionPoint(component.mPointFirst);
+                    component.mCreatorSecond.removeCollisionPoint(component.mPointSecond);
+                    component.mCreatorThird.removeCollisionPoint(component.mPointThird);
+                    component.mCreatorFourth.removeCollisionPoint(component.mPointFourth);
                 }
                 else if(i == EntityComponents.SCRIPT){
                     if("destroyed" in component.mScript){

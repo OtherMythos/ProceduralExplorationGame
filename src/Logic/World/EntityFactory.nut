@@ -76,14 +76,15 @@
 
             local combatTargetWorld = mConstructorWorld_.getCombatTargetWorld();
             local combatTargetPoint = combatTargetWorld.addCollisionSender(CollisionWorldTriggerResponses.BASIC_ENEMY_PLAYER_TARGET_RADIUS, en, targetPos.x, targetPos.z, 6, _COLLISION_ENEMY);
+            local combatTargetProjectilePoint = combatTargetWorld.addCollisionSender(CollisionWorldTriggerResponses.BASIC_ENEMY_PLAYER_TARGET_RADIUS_PROJECTILE, en, targetPos.x, targetPos.z, 20, _COLLISION_ENEMY);
 
             local damageWorld = mConstructorWorld_.getDamageWorld();
             local damagePoint = damageWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
 
-            manager.assignComponent(en, EntityComponents.COLLISION_POINT_THREE,
-                ::EntityManager.Components[EntityComponents.COLLISION_POINT_THREE](
-                    collisionPoint, damagePoint, combatTargetPoint,
-                    triggerWorld, damageWorld, combatTargetWorld
+            manager.assignComponent(en, EntityComponents.COLLISION_POINT_FOUR,
+                ::EntityManager.Components[EntityComponents.COLLISION_POINT_FOUR](
+                    collisionPoint, damagePoint, combatTargetPoint, combatTargetProjectilePoint
+                    triggerWorld, damageWorld, combatTargetWorld, combatTargetWorld
                 )
             );
 
@@ -907,6 +908,37 @@
 
         return en;
 
+    }
+
+    function constructProjectile(pos, dir, collisionType=_COLLISION_ENEMY){
+        local manager = mConstructorWorld_.getEntityManager();
+        local targetPos = pos.copy();
+        targetPos.y = getZForPos(targetPos);
+
+        local en = manager.createEntity(targetPos);
+
+        print("Projectile en " + en);
+
+        local damageWorld = mConstructorWorld_.getDamageWorld();
+        local collisionPoint = damageWorld.addCollisionSender(CollisionWorldTriggerResponses.PROJECTILE_DAMAGE, en, targetPos.x, targetPos.z, 2, collisionType);
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](
+            collisionPoint,
+            damageWorld
+        ));
+
+        local enemyNode = mBaseSceneNode_.createChildSceneNode();
+        local mesh = _scene.createItem("cube");
+        mesh.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
+        enemyNode.attachObject(mesh);
+        enemyNode.setScale(0.5, 0.5, 0.5);
+        enemyNode.setPosition(targetPos);
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](enemyNode, true));
+
+        manager.assignComponent(en, EntityComponents.MOVEMENT, ::EntityManager.Components[EntityComponents.MOVEMENT](dir));
+
+        manager.assignComponent(en, EntityComponents.LIFETIME, ::EntityManager.Components[EntityComponents.LIFETIME](200));
+
+        return en;
     }
 
 };

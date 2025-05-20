@@ -54,6 +54,30 @@
 
 };
 
+::EntityManager.Components[EntityComponents.COLLISION_POINT_FOUR] = class extends ::EntityManager.Component{
+
+    mPointFirst = null;
+    mPointSecond = null;
+    mPointThird = null;
+    mPointFourth = null;
+    mCreatorFirst = null;
+    mCreatorSecond = null;
+    mCreatorThird = null;
+    mCreatorFourth = null;
+
+    constructor(first, second, third, fourth, creatorFirst, creatorSecond, creatorThird, creatorFourth){
+        mPointFirst = first;
+        mPointSecond = second;
+        mPointThird = third;
+        mPointFourth = fourth;
+        mCreatorFirst = creatorFirst;
+        mCreatorSecond = creatorSecond;
+        mCreatorThird = creatorThird;
+        mCreatorFourth = creatorFourth;
+    }
+
+};
+
 ::EntityManager.Components[EntityComponents.SCENE_NODE] = class extends ::EntityManager.Component{
 
     mNode = null;
@@ -210,3 +234,12 @@
 
 };
 
+::EntityManager.Components[EntityComponents.MOVEMENT] = class extends ::EntityManager.Component{
+
+    mDirection = null;
+
+    constructor(dir){
+        mDirection = dir;
+    }
+
+};

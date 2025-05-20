@@ -6,6 +6,8 @@ function regularSwordBaseAttack(p, entry, pos){
         local attackValue = stats == null ? 1 : stats.getStatType(StatType.ATTACK);
 
         ::Base.mExplorationLogic.mCurrentWorld_.performLocalMove(entry, ::Combat.CombatMove(attackValue));
+
+        ::Base.mExplorationLogic.mCurrentWorld_.performProjectileMove(entry);
     }
 }
 
@@ -27,6 +29,7 @@ enum EquippableId{
     REGULAR_SWORD,
     REGULAR_SHIELD,
     REGULAR_TWO_HANDED_SWORD,
+    REGULAR_STAFF,
 
     MAX
 };
@@ -94,4 +97,5 @@ enum EquippableCharacteristics{
 ::Equippables[EquippableId.REGULAR_SWORD] = EquippableDef(EquippedSlotTypes.HAND, EquippableCharacteristics.NONE, regularSwordBaseAttack, 20, CharacterModelAnimId.REGULAR_SWORD_SWING);
 ::Equippables[EquippableId.REGULAR_SHIELD] = EquippableDef(EquippedSlotTypes.HAND, EquippableCharacteristics.NONE, regularSwordBaseAttack, 20, CharacterModelAnimId.REGULAR_SWORD_SWING);
 ::Equippables[EquippableId.REGULAR_TWO_HANDED_SWORD] = EquippableDef(EquippedSlotTypes.HAND, EquippableCharacteristics.TWO_HANDED, regularTwoHandedBaseAttack, 80, CharacterModelAnimId.REGULAR_TWO_HANDED_SWORD_SWING);
+::Equippables[EquippableId.REGULAR_STAFF] = EquippableDef(EquippedSlotTypes.HAND, EquippableCharacteristics.NONE, regularSwordBaseAttack, 1, CharacterModelAnimId.REGULAR_SWORD_SWING);
 //-------------------------------

@@ -16,6 +16,7 @@ enum ItemEquipTransformType{
     BASIC_SWORD,
     BASIC_SHIELD,
     BASIC_TWO_HANDED_SWORD,
+    BASIC_STAFF,
 
     MAX
 };
@@ -150,21 +151,25 @@ local commonScale = Vec3(1.4, 1.4, 1.0);
 ::ItemTransforms_WieldActive_RIGHT[ItemEquipTransformType.BASIC_SWORD] = ::ItemEquipTransform(Vec3(0, 8, 0), Quat(2, ::Vec3_UNIT_Y));
 ::ItemTransforms_WieldActive_RIGHT[ItemEquipTransformType.BASIC_SHIELD] = ::ItemEquipTransform(Vec3(-4, 0, 0), Quat(-PI*0.5, ::Vec3_UNIT_Y), commonScale);
 ::ItemTransforms_WieldActive_RIGHT[ItemEquipTransformType.BASIC_TWO_HANDED_SWORD] = ::ItemEquipTransform(Vec3(0, 14, 0), Quat(PI*0.6, ::Vec3_UNIT_Y), commonScale);
+::ItemTransforms_WieldActive_RIGHT[ItemEquipTransformType.BASIC_STAFF] = ::ItemEquipTransform(Vec3(0, 0, 0), Quat(0, ::Vec3_UNIT_Y), commonScale);
 
 //---Wield active left---
 ::ItemTransforms_WieldActive_LEFT[ItemEquipTransformType.BASIC_SWORD] = ::ItemTransforms_WieldActive_RIGHT[ItemEquipTransformType.BASIC_SWORD].copy(null, Quat(-2, ::Vec3_UNIT_Y), null);
 ::ItemTransforms_WieldActive_LEFT[ItemEquipTransformType.BASIC_SHIELD] = ::ItemTransforms_WieldActive_RIGHT[ItemEquipTransformType.BASIC_SHIELD].copy(Vec3(4, 0, 0), Quat(PI*0.5, ::Vec3_UNIT_Y), null);
 ::ItemTransforms_WieldActive_LEFT[ItemEquipTransformType.BASIC_TWO_HANDED_SWORD] = ::ItemTransforms_WieldActive_RIGHT[ItemEquipTransformType.BASIC_TWO_HANDED_SWORD].copy(null, Quat(-PI*0.6, ::Vec3_UNIT_Y), null);
+::ItemTransforms_WieldActive_LEFT[ItemEquipTransformType.BASIC_STAFF] = ::ItemTransforms_WieldActive_RIGHT[ItemEquipTransformType.BASIC_STAFF].copy(null, Quat(0, ::Vec3_UNIT_Y), null);
 
 //--Transforms for wield inactive right--
 ::ItemTransforms_WieldInactive_RIGHT[ItemEquipTransformType.BASIC_SWORD] = ::ItemEquipTransform(Vec3(0, 8, -3.5), Quat(PI, ::Vec3_UNIT_Y) * Quat(PI+PI/6, ::Vec3_UNIT_Z));
 ::ItemTransforms_WieldInactive_RIGHT[ItemEquipTransformType.BASIC_SHIELD] = ::ItemEquipTransform(Vec3(-4, 3, -5), Quat(PI, ::Vec3_UNIT_Y) * Quat(PI/6, ::Vec3_UNIT_Z), commonScale);
 ::ItemTransforms_WieldInactive_RIGHT[ItemEquipTransformType.BASIC_TWO_HANDED_SWORD] = ::ItemEquipTransform(Vec3(0, 8, -3.5), Quat(0, ::Vec3_UNIT_Y) * Quat(PI/6, ::Vec3_UNIT_Z), commonScale);
+::ItemTransforms_WieldInactive_RIGHT[ItemEquipTransformType.BASIC_STAFF] = ::ItemEquipTransform(Vec3(0, 8, -3.5), Quat(PI, ::Vec3_UNIT_Y) * Quat(PI+PI/6, ::Vec3_UNIT_Z), commonScale);
 
 //---Wield inactive left---
 ::ItemTransforms_WieldInactive_LEFT[ItemEquipTransformType.BASIC_SWORD] = ::ItemTransforms_WieldInactive_RIGHT[ItemEquipTransformType.BASIC_SWORD].copy(null, Quat(PI, ::Vec3_UNIT_Y) * Quat(PI-PI/6, ::Vec3_UNIT_Z));
 ::ItemTransforms_WieldInactive_LEFT[ItemEquipTransformType.BASIC_SHIELD] = ::ItemTransforms_WieldInactive_RIGHT[ItemEquipTransformType.BASIC_SHIELD].copy(null, Quat(PI, ::Vec3_UNIT_Y) * Quat(PI/6, ::Vec3_UNIT_Z));
 ::ItemTransforms_WieldInactive_LEFT[ItemEquipTransformType.BASIC_TWO_HANDED_SWORD] = ::ItemTransforms_WieldInactive_RIGHT[ItemEquipTransformType.BASIC_TWO_HANDED_SWORD].copy(null, Quat(PI, ::Vec3_UNIT_Y) * Quat(PI/6, ::Vec3_UNIT_Z));
+::ItemTransforms_WieldInactive_LEFT[ItemEquipTransformType.BASIC_STAFF] = ::ItemTransforms_WieldInactive_RIGHT[ItemEquipTransformType.BASIC_STAFF].copy(null, Quat(PI, ::Vec3_UNIT_Y) * Quat(PI-PI/6, ::Vec3_UNIT_Z));
 
 
 ::ItemHelper <- {

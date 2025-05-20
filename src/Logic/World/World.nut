@@ -1,7 +1,7 @@
 ::ExplorationGizmo <- class{
     mSceneNode_ = null;
-    constructor(parent, pos){
-        setup(parent);
+    constructor(parent, pos, data){
+        setup(parent, data);
         setPosition(pos);
     }
     function setPosition(pos){
@@ -16,11 +16,13 @@
 
 ::ExplorationGizmos[ExplorationGizmos.TARGET_ENEMY] = class extends ::ExplorationGizmo{
     mAnim_ = null;
-    function setup(parent){
+    mProjectile = false;
+    function setup(parent, projectile){
+        mProjectile = projectile;
         mSceneNode_ = parent.createChildSceneNode();
         local animNode = mSceneNode_.createChildSceneNode();
 
-        local targetItem = _gameCore.createVoxMeshItem("enemyTargetMarker.voxMesh");
+        local targetItem = _gameCore.createVoxMeshItem(mProjectile ? "enemyTargetMarkerProjectiles.voxMesh" : "enemyTargetMarker.voxMesh");
         targetItem.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         animNode.attachObject(targetItem);
         animNode.setScale(0.5, 0.5, 0.5);
@@ -274,6 +276,7 @@ enum WorldMousePressContexts{
     mActiveWorldActions_ = null;
     mGui_ = null;
     mTargetManager_ = null;
+    mProjectileTargetManager_ = null;
 
     mPinchToZoomActive_ = false;
     mPinchToZoomWarmDown_ = 5;
@@ -318,6 +321,7 @@ enum WorldMousePressContexts{
     mMouseContext_ = null;
 
     mPlayerTargetRadius_ = null;
+    mPlayerTargetRadiusProjectiles_ = null;
 
     mInputs_ = null;
 
@@ -331,6 +335,7 @@ enum WorldMousePressContexts{
         mActiveGizmos_ = {};
         mActiveWorldActions_ = [];
         mPlayerTargetRadius_ = {};
+        mPlayerTargetRadiusProjectiles_ = {};
 
         mAppearDistractionLogic_ = FoundObjectLogic([
             {
@@ -354,6 +359,7 @@ enum WorldMousePressContexts{
         mPosition_ = Vec3();
 
         mTargetManager_ = EntityTargetManager();
+        mProjectileTargetManager_ = EntityTargetManager();
 
         mQueuedFlags_ = array(NUM_PLAYER_QUEUED_FLAGS, null);
 
@@ -548,6 +554,14 @@ enum WorldMousePressContexts{
             }
             ::DebugOverlayManager.appendText(DebugOverlayId.COMBAT, "====");
         }
+        ::DebugOverlayManager.appendText(DebugOverlayId.COMBAT, getTotalTargetedProjectileEnemies());
+        if(mPlayerTargetRadiusProjectiles_.len() > 0){
+            ::DebugOverlayManager.appendText(DebugOverlayId.COMBAT, "====");
+            foreach(c,i in mPlayerTargetRadiusProjectiles_){
+                ::DebugOverlayManager.appendText(DebugOverlayId.COMBAT, "id " + c);
+            }
+            ::DebugOverlayManager.appendText(DebugOverlayId.COMBAT, "====");
+        }
 
         mDamageCollisionWorld_.processCollision();
         mTriggerCollisionWorld_.processCollision();
@@ -580,7 +594,7 @@ enum WorldMousePressContexts{
         _event.transmit(Event.PLAYER_HEALTH_CHANGED, data);
 
         if(mProjectileManager_ != null) mProjectileManager_.shutdown();
-        mProjectileManager_ = ExplorationProjectileManager(mDamageCollisionWorld_);
+        mProjectileManager_ = ExplorationProjectileManager(this, mDamageCollisionWorld_);
 
     }
 
@@ -723,6 +737,8 @@ enum WorldMousePressContexts{
     }
 
     function setTargetEnemy(target){
+        //TODO remove at some point.
+        assert(false);
         if(mActiveEnemies_.rawin(mPrevTargetEnemy_)){
             mActiveEnemies_[mPrevTargetEnemy_].setGizmo(null);
         }
@@ -850,6 +866,7 @@ enum WorldMousePressContexts{
         local targetIdx = -1;
         local targetPos = null;
         if(mCurrentTargetEnemy_ != null){
+            assert(false);
             local targetEntity = mTargetManager_.getTargetForEntity(mPlayerEntry_);
             local enemyPos = targetEntity.getPosition();
             local playerPos = mPlayerEntry_.getPosition();
@@ -1140,6 +1157,35 @@ enum WorldMousePressContexts{
         _applyDamageOther(mEntityManager_, targetEnemy, combatDamage);
     }
 
+    function performProjectileMove(attackingEnemy){
+        if(!::Base.mPlayerStats.getWieldActive()) return;
+
+        local targetEnemy = null;
+        if(attackingEnemy.getId() == -1){
+            local targetRadiusLen = mPlayerTargetRadiusProjectiles_.len();
+            if(targetRadiusLen > 0){
+                //The player is attacking, so find an enemy within the attack radius and perform the attack.
+
+                //TODO it would be much better to maintain this list separately.
+                local targetArray = array(targetRadiusLen);
+                local count = 0;
+                foreach(c,i in mPlayerTargetRadiusProjectiles_){
+                    targetArray[count] = c;
+                    count++;
+                }
+                targetEnemy = targetArray[_random.randIndex(targetArray)];
+            }
+        }else{
+            targetEnemy = mPlayerEntry_.getEID();
+        }
+        if(targetEnemy == null) return;
+        if(!mEntityManager_.entityValid(targetEnemy)) return;
+
+        local dir = (getPlayerPosition() - mEntityManager_.getPosition(targetEnemy)).normalisedCopy();
+
+        mProjectileManager_.spawnProjectile(ProjectileId.FIREBALL, getPlayerPosition(), -dir, ::Combat.CombatMove(5));
+    }
+
     function checkPlayerInputs(){
         if(mBlockAllInputs_) return;
         foreach(c,i in mInputs_.playerMoves){
@@ -1216,8 +1262,8 @@ enum WorldMousePressContexts{
         }
     }
     //TODO the flags can be converted to use the gizmos as well.
-    function createGizmo(pos, gizmoType){
-        local newGizmo = ::ExplorationGizmos[gizmoType](mParentNode_, pos);
+    function createGizmo(pos, gizmoType, data=null){
+        local newGizmo = ::ExplorationGizmos[gizmoType](mParentNode_, pos, data);
         return newGizmo;
     }
 
@@ -1250,25 +1296,29 @@ enum WorldMousePressContexts{
     function getTotalTargetedEnemies(){
         return mPlayerTargetRadius_.len();
     }
-    function processEntityCombatTarget(en, entered){
+    function getTotalTargetedProjectileEnemies(){
+        return mPlayerTargetRadiusProjectiles_.len();
+    }
+    function processEntityCombatTarget(en, entered, projectile){
+        local targetData = projectile ? mPlayerTargetRadiusProjectiles_ : mPlayerTargetRadius_;
         if(entered){
-            if(mPlayerTargetRadius_.rawin(en)){
+            if(targetData.rawin(en)){
                 print("ERROR! Attempting to target an enemy which is already targeted!");
                 return;
             }
-            mPlayerTargetRadius_.rawset(en, true);
+            targetData.rawset(en, true);
 
             if(mActiveEnemies_.rawin(en)){
                 local activeEnemy = mActiveEnemies_[en];
-                local gizmo = createGizmo(activeEnemy.getPosition(), ExplorationGizmos.TARGET_ENEMY);
+                local gizmo = createGizmo(activeEnemy.getPosition(), ExplorationGizmos.TARGET_ENEMY, projectile);
                 activeEnemy.setGizmo(gizmo);
             }
         }else{
-            if(!mPlayerTargetRadius_.rawin(en)){
+            if(!targetData.rawin(en)){
                 print("ERROR! Attempting to untarget an enemy which is not targeted");
                 return;
             }
-            mPlayerTargetRadius_.rawdelete(en);
+            targetData.rawdelete(en);
             if(mActiveEnemies_.rawin(en)){
                 mActiveEnemies_[en].setGizmo(null);
             }

@@ -1,6 +1,6 @@
 ::TestingWorld <- class extends ::World{
 
-    mWindStreakManager_ = null;
+    //mWindStreakManager_ = null;
 
     constructor(worldId, preparer){
         base.constructor(worldId, preparer);
@@ -9,7 +9,7 @@
     function resetSession(){
         base.resetSession();
 
-        mWindStreakManager_ = WindStreakManager(mParentNode_, 100, 100);
+        //mWindStreakManager_ = WindStreakManager(mParentNode_, 100, 100);
 
         callLogicScript();
 
@@ -88,7 +88,7 @@
     function update(){
         base.update();
 
-        mWindStreakManager_.update();
+        //mWindStreakManager_.update();
     }
 
     #Override

@@ -19,8 +19,10 @@
     mActiveProjectiles_ = null;
     mQueuedDestructionProjectiles_ = null;
     mDamageWorld_ = null;
+    mCreatorWorld_ = null;
 
-    constructor(damageWorld){
+    constructor(creatorWorld, damageWorld){
+        mCreatorWorld_ = creatorWorld;
         mActiveProjectiles_ = {};
         mQueuedDestructionProjectiles_ = [];
         mDamageWorld_ = damageWorld;
@@ -53,6 +55,11 @@
     function spawnProjectile(projId, pos, dir, combatMove, collisionType=_COLLISION_ENEMY){
         local projData = ::Projectiles[projId];
 
+        local en = mCreatorWorld_.mEntityFactory_.constructProjectile(pos, dir, collisionType);
+
+        return en;
+        /*
+
         //local senderInfo = {
         //    "func" : "baseDamage",
         //    "path" : "res://src/Logic/Scene/ExplorationDamageCallback.nut"
@@ -67,9 +74,13 @@
 
         local collisionPoint = mDamageWorld_.addCollisionSender(CollisionWorldTriggerResponses.PROJECTILE_DAMAGE, mCurrentProjectileId_, pos.x, pos.z, projData.mSize.x, collisionType);
 
-        local proj = Projectile(pos, dir, collisionPoint, combatMove, 6);
+        local sceneNode = mCreatorWorld_.mParentNode_.createChildSceneNode();
+        //sceneNode.set
+
+        local proj = Projectile(pos, dir, collisionPoint, combatMove, 6, sceneNode);
 
         mActiveProjectiles_.rawset(mCurrentProjectileId_, proj);
         mCurrentProjectileId_++;
+        */
     }
 };

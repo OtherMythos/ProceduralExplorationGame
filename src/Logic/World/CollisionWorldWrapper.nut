@@ -101,19 +101,29 @@
     function addCollisionSender(triggerId, triggerData, x, y, rad, mask=0xFF){
         local pointId = mCollisionWorld_.addCollisionPoint(x, y, rad, mask, _COLLISION_WORLD_ENTRY_SENDER);
         assert(triggerId < CollisionWorldTriggerResponses.MAX);
+        //assert(!mPoints_.rawin(pointId));
+        if(mPointsQueuedDestruction_.rawin(pointId)){
+            mPointsQueuedDestruction_.rawdelete(pointId);
+        }
+        assert(!mPointsQueuedDestruction_.rawin(pointId));
 
         printf("Registering sender with id %i for mask %i for world %i", pointId, mask, mId_);
         mPoints_.rawset(pointId, triggerId);
-        assert(!mTriggerData_.rawin(pointId));
+        //assert(!mTriggerData_.rawin(pointId));
         mTriggerData_.rawset(pointId, triggerData);
         return pointId;
     }
 
     function addCollisionReceiver(triggerData, x, y, rad, mask=0xFF){
         local pointId = mCollisionWorld_.addCollisionPoint(x, y, rad, mask, _COLLISION_WORLD_ENTRY_RECEIVER);
+        //assert(!mPoints_.rawin(pointId));
+        if(mPointsQueuedDestruction_.rawin(pointId)){
+            mPointsQueuedDestruction_.rawdelete(pointId);
+        }
+        assert(!mPointsQueuedDestruction_.rawin(pointId));
 
         printf("Registering receiver with id %i for mask %i for world %i", pointId, mask, mId_);
-        assert(!mTriggerData_.rawin(pointId));
+        //assert(!mTriggerData_.rawin(pointId));
         mTriggerData_.rawset(pointId, triggerData);
 
         return pointId;
@@ -157,13 +167,21 @@
         ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.PROJECTILE_DAMAGE] <- TriggerResponse(function(world, projectileId, entityId, collisionStatus){
             if(collisionStatus != 0x1) return;
 
+            local entityManager = world.getEntityManager();
+            assert(entityManager.hasComponent(projectileId, EntityComponents.LIFETIME));
+
+            /*
             local active = world.mProjectileManager_.mActiveProjectiles_;
             //TODO can this be removed with the new collision system?
             //if(!active.rawin(projectileId)) return;
             local projData = active[projectileId];
             local damage = projData.mCombatMove_.getDamage();
+            */
+            local damage = 1;
 
             _applyDamageOther(world.getEntityManager(), entityId, damage);
+
+            //entityManager.destroyEntity(projectileId);
         });
         ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.PASSIVE_DAMAGE] <- TriggerResponse(function(world, damage, entityId, collisionStatus){
             if(collisionStatus != 0x1) return;
@@ -181,7 +199,7 @@
         });
         ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.BASIC_ENEMY_PLAYER_TARGET_RADIUS] <- TriggerResponse(function(world, entityId, second, collisionStatus){
             if(collisionStatus == 0x0) return;
-            world.processEntityCombatTarget(second, collisionStatus == 0x1);
+            world.processEntityCombatTarget(second, collisionStatus == 0x1, false);
             /*
             local manager = world.getEntityManager();
             assert(manager.hasComponent(entityId, EntityComponents.SCRIPT));
@@ -189,6 +207,10 @@
             if(collisionStatus == 0x1) comp.mScript.receivePlayerSpotted(true);
             else if(collisionStatus == 0x2) comp.mScript.receivePlayerSpotted(false);
             */
+        });
+        ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.BASIC_ENEMY_PLAYER_TARGET_RADIUS_PROJECTILE] <- TriggerResponse(function(world, entityId, second, collisionStatus){
+            if(collisionStatus == 0x0) return;
+            world.processEntityCombatTarget(second, collisionStatus == 0x1, true);
         });
         ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.DIE] <- TriggerResponse(function(world, entityId, second, collisionStatus){
             if(collisionStatus != 0x1) return;

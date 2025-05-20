@@ -43,11 +43,25 @@
 		outPs_colour0.xyz = inPs.decorationColour;
 		outPs_colour0.z = inPs.passDrawColour;
 	@end
+
+	@property(voxelTerrain || oceanVertices)
+		float dist = distance(float2(passBuf.playerPositionX, passBuf.playerPositionZ), float2(inPs.worldPos.x, inPs.worldPos.z));
+		float checkVal = 7;
+		if(dist <= 20){
+			if(dist <= checkVal){
+				outPs_colour0.xyz = mix(outPs_colour0.xyz, float3(0, 0, 0), 0.3);
+			}
+			if(dist <= 20 && dist >= 20 - 0.5){
+				outPs_colour0.xyz = mix(outPs_colour0.xyz, float3(1, 1, 1), 0.3);
+			}
+		}
+	@end
 @end
 
 @piece( custom_VStoPS )
 	//TODO reduce this down to a single float
 	float3 diffuse;
+	float3 worldPos;
 	float fog;
 	@property( renderSceneDecorations )
 		NO_INTERPOLATION_PREFIX float passDrawColour;
@@ -90,6 +104,8 @@
 		outVs.fog = visibility;
 	@end
 	@end
+
+	outVs.worldPos = worldPos.xyz;
 
 	@property( renderSceneDecorations )
 		float colVal = float(finalDrawId % uint(100)) / 100.0;
