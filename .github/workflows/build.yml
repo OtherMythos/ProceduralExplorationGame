@@ -385,7 +385,7 @@ jobs:
       - name: Run setup.py
         working-directory: avEngine-android
         run: |
-          python3 setup.py ${{ github.workspace }}/deps/${{ matrix.buildType }}/ --extra-args="-DUSE_STATIC_PLUGINS=True" --extra-args="-DAV_PROJECT_DIR=${{ github.workspace }}"
+          python3 setup.py ${{ github.workspace }}/deps/${{ matrix.buildType }}/ --extra-args="-DCMAKE_FIND_DEBUG_MODE=ON" --extra-args="-DUSE_STATIC_PLUGINS=True" --extra-args="-DAV_PROJECT_DIR=${{ github.workspace }}"
 
       - name: Build APK
         working-directory: avEngine-android
