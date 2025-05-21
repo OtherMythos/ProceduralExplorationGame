@@ -377,10 +377,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: distribution-${{ needs.build.outputs.sha_short }}
-      - name: Remove unecessary files
-        run: |
-          cp plugins/libProceduralExplorationGamePlugin_android_static_${{ matrix.buildType }}.a ${{ github.workspace }}/
-          rm -rf plugins
 
       - name: Run setup.py
         working-directory: avEngine-android

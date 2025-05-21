@@ -30,6 +30,8 @@ FIND_LIBRARY(PROCEDURAL_EXPLORATION_GAME_PLUGIN NAMES ProceduralExplorationGameP
     PATH_SUFFIXES a lib
     )
 
+message(STATUS "Possible static libs: ${POSSIBLE_LIBS}")
+
 if(NATIVE_CORE_LIBRARY AND PROCEDURAL_EXPLORATION_GAME_PLUGIN)
     set(StaticPluginLibraries "${NATIVE_CORE_LIBRARY};${PROCEDURAL_EXPLORATION_GAME_PLUGIN}")
     set(StaticPluginLibraries "${StaticPluginLibraries}" PARENT_SCOPE)
