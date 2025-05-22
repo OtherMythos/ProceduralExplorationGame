@@ -103,9 +103,8 @@
 		visibility = clamp(visibility, 0.0, 1.0);
 		outVs.fog = visibility;
 	@end
+		outVs.worldPos = worldPos.xyz;
 	@end
-
-	outVs.worldPos = worldPos.xyz;
 
 	@property( renderSceneDecorations )
 		float colVal = float(finalDrawId % uint(100)) / 100.0;
