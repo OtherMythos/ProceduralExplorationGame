@@ -24,6 +24,7 @@
 #include "Scripting/ScriptNamespace/Classes/Animation/AnimationInfoUserData.h"
 #include "Collision/CollisionDetectionWorld.h"
 #include "Scripting/ScriptNamespace/Classes/CollisionWorldClass.h"
+#include "Scripting/ScriptNamespace/ScriptGetterUtils.h"
 
 #include "Scripting/DataPointFileUserData.h"
 
@@ -409,6 +410,16 @@ namespace ProceduralExplorationGamePlugin{
         return 0;
     }
 
+    SQInteger GameCoreNamespace::setCustomPassBufferValue(HSQUIRRELVM vm){
+        Ogre::Vector3 val;
+        SQInteger result = AV::ScriptGetterUtils::vector3Read(vm, &val);
+        if(result != 0) return result;
+
+        GameCorePBSHlmsListener::mCustomValues = val;
+
+        return 0;
+    }
+
     SQInteger GameCoreNamespace::beginParseVisitedLocation(HSQUIRRELVM vm){
         if(GameCoreNamespace::currentVisitedPlacesParser != 0){
             return sq_throwerror(vm, "Visited places parse is already active.");
@@ -773,6 +784,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, setHlmsFlagForDatablock, "setHlmsFlagForDatablock", 3, ".ui");
         AV::ScriptUtils::addFunction(vm, registerMapGenClient, "registerMapGenClient", 3, ".ss");
         AV::ScriptUtils::addFunction(vm, recollectMapGenSteps, "recollectMapGenSteps");
+        AV::ScriptUtils::addFunction(vm, setCustomPassBufferValue, "setCustomPassBufferValue", -2, ".n|unn");
 
         AV::ScriptUtils::addFunction(vm, update, "update", 2, ".u");
 

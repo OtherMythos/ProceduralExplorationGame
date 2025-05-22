@@ -465,6 +465,8 @@ enum WorldMousePressContexts{
         mCollisionDetectionWorld_ = _gameCore.createCollisionDetectionWorld(3);
 
         mEntityManager_ = EntityManager.createEntityManager(this);
+
+        _gameCore.setCustomPassBufferValue(::Base.mPlayerStats.getWieldActive() ? 1.0 : 0.0, 0, 0);
     }
 
     function playerHealthChanged(data){
@@ -480,6 +482,8 @@ enum WorldMousePressContexts{
     }
     function playerWieldChanged(active){
         mPlayerEntry_.setWieldActive(active);
+
+        _gameCore.setCustomPassBufferValue(active ? 1.0 : 0.0, 0, 0);
     }
 
     function processEXPOrb(entityId){

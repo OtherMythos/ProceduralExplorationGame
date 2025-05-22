@@ -30,6 +30,7 @@ namespace ProceduralExplorationGamePlugin{
         static SQInteger createCollisionDetectionWorld(HSQUIRRELVM vm);
         static SQInteger setHlmsFlagForDatablock(HSQUIRRELVM vm);
         static SQInteger writeFlagsToItem(HSQUIRRELVM vm);
+        static SQInteger setCustomPassBufferValue(HSQUIRRELVM vm);
 
         static SQInteger createDataPointFileParser(HSQUIRRELVM vm);
 
