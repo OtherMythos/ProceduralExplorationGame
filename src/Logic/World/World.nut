@@ -602,6 +602,21 @@ enum WorldMousePressContexts{
 
     }
 
+    function processStatusAfflictionChange_(entity){
+        local block = mEntityManager_.getComponent(entity, EntityComponents.DATABLOCK).mDatablock;
+        if(mEntityManager_.hasComponent(entity, EntityComponents.STATUS_AFFLICTION)){
+            block.setDiffuse(1, 0.2, 0.2);
+        }else{
+            block.setDiffuse(1, 1, 1);
+        }
+    }
+    function applyStatusAffliction(entity, afflictionType, lifetime){
+        mEntityManager_.assignComponent(entity, EntityComponents.STATUS_AFFLICTION,
+            ::EntityManager.Components[EntityComponents.STATUS_AFFLICTION](afflictionType, lifetime)
+        );
+        processStatusAfflictionChange_(entity);
+    }
+
     function setGuiObject(guiObject){
         mGui_ = guiObject;
         mMouseContext_.setGuiObject(guiObject);

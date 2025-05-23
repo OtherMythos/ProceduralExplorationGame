@@ -5,7 +5,7 @@
     constructor(){
     }
 
-    function createCharacterModel(parentNode, constructionData, renderQueue=0, queryFlag=0){
+    function createCharacterModel(parentNode, constructionData, renderQueue=0, queryFlag=0, datablock=null){
         local modelType = constructionData.type;
         local modelDef = ::ModelTypes[modelType];
 
@@ -13,7 +13,7 @@
         _animation.loadAnimationFile(modelDef.mAnimFile);
 
         local modelNode = parentNode.createChildSceneNode();
-        local nodes = populateSceneNodeWithModel_(modelNode, modelDef, renderQueue, queryFlag);
+        local nodes = populateSceneNodeWithModel_(modelNode, modelDef, renderQueue, queryFlag, datablock);
 
         local model = CharacterModel(modelType, modelNode, nodes[0], nodes[1], renderQueue, queryFlag);
         modelNode.setScale(0.3, 0.3, 0.3);
@@ -24,7 +24,7 @@
         return model;
     }
 
-    function populateSceneNodeWithModel_(parentNode, modelDef, renderQueue, queryFlag){
+    function populateSceneNodeWithModel_(parentNode, modelDef, renderQueue, queryFlag, datablock){
         local model = modelDef.mNodes;
         local outNodes = array(model.len(), null);
         local equipNodes = {};
@@ -34,6 +34,9 @@
                 local item = _gameCore.createVoxMeshItem(i.mMesh);
                 item.setRenderQueueGroup(renderQueue);
                 item.setQueryFlags(queryFlag);
+                if(datablock != null){
+                    item.setDatablock(datablock);
+                }
                 modelNode.attachObject(item);
             }
             if(i.mPos) modelNode.setPosition(i.mPos);

@@ -170,10 +170,13 @@
         local en = manager.createEntity(targetPos);
         local entry = ActiveEnemyEntry(mConstructorWorld_, enemyType, targetPos, en);
 
+        local clonedBlock = ::DatablockManager.quickCloneDatablock("baseVoxelMaterial");
+        manager.assignComponent(en, EntityComponents.DATABLOCK, ::EntityManager.Components[EntityComponents.DATABLOCK](clonedBlock));
+
         local enemyNode = mBaseSceneNode_.createChildSceneNode();
 
         local modelType = enemyDef.getModelType();
-        local characterModel = mCharacterGenerator_.createCharacterModel(enemyNode, {"type": modelType}, RENDER_QUEUE_EXPLORATION, 1 << 4);
+        local characterModel = mCharacterGenerator_.createCharacterModel(enemyNode, {"type": modelType}, RENDER_QUEUE_EXPLORATION, 1 << 4, clonedBlock);
 
         entry.setTargetCollisionWorld(_COLLISION_PLAYER);
 

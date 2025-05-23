@@ -162,6 +162,7 @@ EntityManager.EntityManager <- class{
             if(i.mTime >= i.mLifetime){
                 printf("Status condition for entity %i ended", i.eid);
                 removeComponent(i.eid, EntityComponents.STATUS_AFFLICTION);
+                mCreatorWorld_.processStatusAfflictionChange_(i.eid);
             }
         }
         processProximityComponent_();
