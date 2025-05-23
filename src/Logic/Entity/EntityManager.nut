@@ -22,6 +22,7 @@ enum EntityComponents{
     SCENE_NODE,
     DATABLOCK,
     MOVEMENT,
+    STATUS_AFFLICTION,
 
     MAX
 
@@ -33,6 +34,10 @@ enum EntityDestroyReason{
     NO_HEALTH,
     DESTROY_ALL,
     CONSUMED
+};
+
+enum StatusAfflictionType{
+    ON_FIRE
 };
 
 enum SpoilsComponentType{
@@ -146,6 +151,18 @@ EntityManager.EntityManager <- class{
         foreach(i in mComponents_[EntityComponents.MOVEMENT].mComps_){
             if(i == null) continue;
             moveEntity(i.eid, i.mDirection);
+        }
+        foreach(i in mComponents_[EntityComponents.STATUS_AFFLICTION].mComps_){
+            if(i == null) continue;
+
+            if(i.mTime % 10 == 0){
+                ::_applyDamageOther(this, i.eid, 1);
+            }
+            i.mTime++;
+            if(i.mTime >= i.mLifetime){
+                printf("Status condition for entity %i ended", i.eid);
+                removeComponent(i.eid, EntityComponents.STATUS_AFFLICTION);
+            }
         }
         processProximityComponent_();
     }

@@ -243,3 +243,17 @@
     }
 
 };
+
+::EntityManager.Components[EntityComponents.STATUS_AFFLICTION] = class extends ::EntityManager.Component{
+
+    mAffliction = null;
+    mTime = 0;
+    mLifetime = 100;
+
+    constructor(affliction, lifetime){
+        mAffliction = affliction;
+        mTime = 0;
+        mLifetime = lifetime;
+    }
+
+};
