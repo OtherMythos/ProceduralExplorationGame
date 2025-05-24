@@ -159,7 +159,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
     mModel_ = null;
     mStateMachineModel_ = null;
     mMoving_ = 0;
-    mGizmo_ = null;
+    //mGizmo_ = null;
     mCombatData_ = null;
     mTargetCollisionWorld_ = 0;
     mCollisionPoint_ = null;
@@ -222,7 +222,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
             //    mEntity_.setPosition(SlotPosition(pos));
             //}
         }
-        if(mGizmo_) mGizmo_.setPosition(pos);
+        //if(mGizmo_) mGizmo_.setPosition(pos);
         if(mCollisionPoint_ != null) mCreatorWorld_.getTriggerWorld().mCollisionWorld_.setPositionForPoint(mCollisionPoint_, pos.x, pos.z);
     }
     function getSceneNode(){
@@ -342,10 +342,10 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         return mId_;
     }
     function notifyDestroyed(){
-        if(mGizmo_){
-            mGizmo_.destroy();
-            mGizmo_ = null;
-        }
+        //if(mGizmo_){
+        //    mGizmo_.destroy();
+        //    mGizmo_ = null;
+        //}
         if(mModel_){
             mModel_.destroy();
             mModel_ = null;
@@ -373,13 +373,13 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         }
     }
     function setGizmo(gizmo){
-        if(mGizmo_ != null){
-            mGizmo_.destroy();
-        }
-        mGizmo_ = gizmo;
+        //if(mGizmo_ != null){
+        //    mGizmo_.destroy();
+        //}
+        //mGizmo_ = gizmo;
     }
     function getGizmo(){
-        return mGizmo_;
+        //return mGizmo_;
     }
 
     function valid(){
@@ -432,9 +432,9 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
             mStateMachineModel_.update();
         }
 
-        if(mGizmo_){
-            mGizmo_.update();
-        }
+        //if(mGizmo_){
+        //    mGizmo_.update();
+        //}
     }
     function performAttack(){
         if(mPerformingEquippable_ != null) return;

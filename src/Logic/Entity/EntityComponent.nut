@@ -257,3 +257,13 @@
     }
 
 };
+
+::EntityManager.Components[EntityComponents.GIZMO] = class extends ::EntityManager.Component{
+
+    mGizmo = null;
+
+    constructor(){
+        mGizmo = array(ExplorationGizmos.MAX, null);
+    }
+
+};

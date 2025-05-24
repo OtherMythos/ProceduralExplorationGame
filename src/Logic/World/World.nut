@@ -644,20 +644,64 @@ enum WorldMousePressContexts{
         }
         local block = mEntityManager_.getComponent(entity, EntityComponents.DATABLOCK).mDatablock;
         if(mEntityManager_.hasComponent(entity, EntityComponents.STATUS_AFFLICTION)){
+            /*
             local e = mActiveEnemies_[entity];
             local gizmo = createGizmo(e.getPosition(), ExplorationGizmos.STATUS_EFFECT_FIRE, e);
             e.setGizmo(gizmo);
+            */
+            assignGizmoToEntity(entity, ExplorationGizmos.STATUS_EFFECT_FIRE);
 
             block.setDiffuse(1, 0.2, 0.2);
         }else{
+            removeGizmoFromEntity(entity, ExplorationGizmos.STATUS_EFFECT_FIRE);
+
             block.setDiffuse(1, 1, 1);
         }
     }
     function applyStatusAffliction(entity, afflictionType, lifetime){
+        if(mEntityManager_.hasComponent(entity, EntityComponents.STATUS_AFFLICTION)){
+            return;
+        }
         mEntityManager_.assignComponent(entity, EntityComponents.STATUS_AFFLICTION,
             ::EntityManager.Components[EntityComponents.STATUS_AFFLICTION](afflictionType, lifetime)
         );
         processStatusAfflictionChange_(entity);
+    }
+
+    function removeGizmoFromEntity(entity, gizmoType){
+        if(!mEntityManager_.hasComponent(entity, EntityComponents.GIZMO)) return;
+        local c = mEntityManager_.getComponent(entity, EntityComponents.GIZMO);
+
+        if(c.mGizmo[gizmoType] != null){
+            c.mGizmo[gizmoType].destroy();
+            c.mGizmo[gizmoType] = null;
+        }
+    }
+
+    function assignGizmoToEntity(entity, gizmoType, data=null, replace=false){
+        if(!mEntityManager_.hasComponent(entity, EntityComponents.GIZMO)){
+            mEntityManager_.assignComponent(entity, EntityComponents.GIZMO,
+                ::EntityManager.Components[EntityComponents.GIZMO]()
+            );
+        }
+
+        local c = mEntityManager_.getComponent(entity, EntityComponents.GIZMO);
+        if(c.mGizmo[gizmoType] != null){
+            if(replace){
+                c.mGizmo[gizmoType].destroy();
+            }else{
+                return;
+            }
+        }
+
+        local d = data;
+        local e = mActiveEnemies_[entity];
+        if(gizmoType == ExplorationGizmos.STATUS_EFFECT_FIRE){
+            d = e;
+        }
+
+        local gizmo = createGizmo(e.getPosition(), gizmoType, d);
+        c.mGizmo[gizmoType] = gizmo;
     }
 
     function setGuiObject(guiObject){
@@ -1371,7 +1415,8 @@ enum WorldMousePressContexts{
             targetData.rawset(en, true);
 
             if(mActiveEnemies_.rawin(en)){
-                local activeEnemy = mActiveEnemies_[en];
+                assignGizmoToEntity(en, ExplorationGizmos.TARGET_ENEMY, projectile);
+                //local activeEnemy = mActiveEnemies_[en];
                 //local gizmo = createGizmo(activeEnemy.getPosition(), ExplorationGizmos.TARGET_ENEMY, projectile);
                 //activeEnemy.setGizmo(gizmo);
             }
@@ -1382,7 +1427,8 @@ enum WorldMousePressContexts{
             }
             targetData.rawdelete(en);
             if(mActiveEnemies_.rawin(en)){
-                mActiveEnemies_[en].setGizmo(null);
+                //mActiveEnemies_[en].setGizmo(null);
+                removeGizmoFromEntity(en, ExplorationGizmos.TARGET_ENEMY);
             }
         }
     }

@@ -23,6 +23,7 @@ enum EntityComponents{
     DATABLOCK,
     MOVEMENT,
     STATUS_AFFLICTION,
+    GIZMO,
 
     MAX
 
@@ -155,6 +156,7 @@ EntityManager.EntityManager <- class{
         foreach(i in mComponents_[EntityComponents.STATUS_AFFLICTION].mComps_){
             if(i == null) continue;
 
+            assert(entityValid(i.eid));
             if(i.mTime % 10 == 0){
                 ::_applyDamageOther(this, i.eid, 1);
             }
@@ -167,6 +169,14 @@ EntityManager.EntityManager <- class{
                 mCreatorWorld_.processStatusAfflictionChange_(i.eid);
             }
         }
+        foreach(i in mComponents_[EntityComponents.GIZMO].mComps_){
+            if(i == null) continue;
+            foreach(y in i.mGizmo){
+                if(y == null) continue;
+                y.update();
+            }
+        }
+
         processProximityComponent_();
     }
 
@@ -244,6 +254,7 @@ EntityManager.EntityManager <- class{
         if(mVersions_[idx] != version) throw "Entity is invalid";
         //
 
+        assert(!hasComponent(eid, compType));
         assignComponent_(idx, eid, compType, component);
     }
 
@@ -399,6 +410,13 @@ EntityManager.EntityManager <- class{
             comp.mCreatorThird.mCollisionWorld_.setPositionForPoint(comp.mPointThird, newPos.x, newPos.z);
             comp.mCreatorFourth.mCollisionWorld_.setPositionForPoint(comp.mPointFourth, newPos.x, newPos.z);
         }
+        if(mEntityComponentHashes_[idx] & (1<<EntityComponents.GIZMO)){
+            local gizmos = mComponents_[EntityComponents.GIZMO].getCompForEid(eid).mGizmo;
+            foreach(g in gizmos){
+                if(g == null) continue;
+                g.setPosition(newPos)
+            }
+        }
     }
 
     function processEntityDestruction_(eid, idx, reason){
@@ -448,6 +466,13 @@ EntityManager.EntityManager <- class{
                     if(reason != EntityDestroyReason.LIFETIME && reason != EntityDestroyReason.DESTROY_ALL){
                         mCreatorWorld_.actuateSpoils(eid, component, mEntityPositions_[idx]);
                     }
+                }
+                else if(i == EntityComponents.GIZMO){
+                    foreach(g in component.mGizmo){
+                        if(g == null) continue;
+                        g.destroy();
+                    }
+                    component.mGizmo = null;
                 }
             }
         }
