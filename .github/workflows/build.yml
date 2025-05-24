@@ -291,6 +291,7 @@ jobs:
       - name: Reduce distribution
         run: |
           rm squashfs-root/usr/bin/plugins/*.dll
+          rm squashfs-root/usr/bin/plugins/*.a
           if [ "${{ matrix.buildType }}" == "Debug" ]; then
             rm squashfs-root/usr/bin/plugins/*Release*
           else
