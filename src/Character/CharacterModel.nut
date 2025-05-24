@@ -155,21 +155,30 @@
         attachNode.attachObject(model);
     }
 
+    function determineWorldAABB(){
+        return determineAABB_(true);
+    }
+
     function determineAABB(){
-        local startAABB = getAABBForNode_(mNodes_, 0);
+        return determineAABB_(false);
+    }
+
+    function determineAABB_(world){
+        local startAABB = getAABBForNode_(mNodes_, 0, world);
         for(local i = 1; i < mNodes_.len(); i++){
-            local mergeAABB = getAABBForNode_(mNodes_, i);
+            local mergeAABB = getAABBForNode_(mNodes_, i, world);
             if(mergeAABB != null){
                 startAABB.merge(mergeAABB);
             }
         }
         return startAABB;
     }
-    function getAABBForNode_(nodes, idx){
+
+    function getAABBForNode_(nodes, idx, world){
         local node = nodes[idx];
         local attached = node.getNumAttachedObjects();
         if(attached <= 0) return null;
         local obj = node.getAttachedObject(0);
-        return obj.getLocalAabb();
+        return world ? obj.getWorldAabbUpdated() : obj.getLocalAabb();
     }
 };

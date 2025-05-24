@@ -115,7 +115,7 @@ compositor_node renderMainGameplayNode
         pass render_scene
         {
             rq_first 15
-            rq_last 16
+            rq_last 17
 
             shadows default_simpleShadowNode
         }
@@ -142,6 +142,12 @@ compositor_node renderMainGameplayNode
             rq_last 15
         }
         //Render water
+        pass render_scene
+        {
+            rq_first 17
+            rq_last 18
+        }
+        //Render effects without lines
         pass render_scene
         {
             rq_first 16

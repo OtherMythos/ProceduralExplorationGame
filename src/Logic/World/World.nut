@@ -50,16 +50,18 @@
 
         //local gizmoScale = Vec3();
         local characterModel = entity.getModel();
-        local aabb = characterModel.determineAABB();
+        local aabb = characterModel.determineWorldAABB();
         local centre = aabb.getCentre();
-        local half = aabb.getHalfSize();
+        local radius = aabb.getRadius() * 0.7;
 
         local targetItem = _scene.createItem("gizmoEffectBox.mesh");
         mAnimDB_ = ::DatablockManager.quickCloneDatablock("statusEffectFlame");
+        targetItem.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_EFFECTS);
         targetItem.setDatablock(mAnimDB_);
         targetItem.setCastsShadows(false);
         mSceneNode_.attachObject(targetItem);
-        mSceneNode_.setScale(half * 0.5);
+        mSceneNode_.setScale(radius, radius, radius);
+        centre.y = radius;
         mSceneNode_.setPosition(centre);
     }
 
@@ -1370,8 +1372,8 @@ enum WorldMousePressContexts{
 
             if(mActiveEnemies_.rawin(en)){
                 local activeEnemy = mActiveEnemies_[en];
-                local gizmo = createGizmo(activeEnemy.getPosition(), ExplorationGizmos.TARGET_ENEMY, projectile);
-                activeEnemy.setGizmo(gizmo);
+                //local gizmo = createGizmo(activeEnemy.getPosition(), ExplorationGizmos.TARGET_ENEMY, projectile);
+                //activeEnemy.setGizmo(gizmo);
             }
         }else{
             if(!targetData.rawin(en)){
