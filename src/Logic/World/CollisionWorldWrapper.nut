@@ -179,7 +179,11 @@
             */
             local damage = 1;
 
-            _applyDamageOther(world.getEntityManager(), entityId, damage);
+            //TODO this check should not be necessary and is a result of issues with the collision world.
+            if(entityManager.entityValid(entityId)){
+                world.applyStatusAffliction(entityId, StatusAfflictionType.ON_FIRE, 500);
+                _applyDamageOther(world.getEntityManager(), entityId, damage);
+            }
 
             //entityManager.destroyEntity(projectileId);
         });

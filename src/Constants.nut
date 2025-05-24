@@ -239,6 +239,7 @@ enum CombatOpponentAnims{
 
 enum ExplorationGizmos{
     TARGET_ENEMY,
+    STATUS_EFFECT_FIRE,
 
     MAX
 };

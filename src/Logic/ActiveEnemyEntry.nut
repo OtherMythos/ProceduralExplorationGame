@@ -431,6 +431,10 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         if(mStateMachineModel_ != null){
             mStateMachineModel_.update();
         }
+
+        if(mGizmo_){
+            mGizmo_.update();
+        }
     }
     function performAttack(){
         if(mPerformingEquippable_ != null) return;

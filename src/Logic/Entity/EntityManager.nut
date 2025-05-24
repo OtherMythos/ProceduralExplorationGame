@@ -158,6 +158,8 @@ EntityManager.EntityManager <- class{
             if(i.mTime % 10 == 0){
                 ::_applyDamageOther(this, i.eid, 1);
             }
+            //Now damage has been applied there's a chance the entity is now invalid.
+            if(!entityValid(i.eid)) return;
             i.mTime++;
             if(i.mTime >= i.mLifetime){
                 printf("Status condition for entity %i ended", i.eid);

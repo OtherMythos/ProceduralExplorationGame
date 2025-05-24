@@ -3,6 +3,17 @@
     "macroblocks":{
         "polyBlock":{
             "polygon_mode" : "wireframe"
+        },
+        "noCullBlock":{
+            "cull_mode" : "none",
+            "depth_write" : false
+        }
+    },
+
+    "samplers" : {
+        "spriteScale" :
+        {
+            "mag": "point"
         }
     },
 
@@ -12,6 +23,11 @@
         {
             "dst_blend_factor" : "one",
             "src_blend_factor" : "one"
+        },
+        "blend" :
+        {
+            "src_blend_factor" : "one",
+            "dst_blend_factor" : "one_minus_src_alpha"
         }
     },
 
@@ -33,6 +49,25 @@
             "metallness" :
             {
                 "value" : 0
+            }
+        },
+
+        "statusEffectFlame" :
+        {
+            "workflow": "specular_fresnel",
+            "macroblock": "noCullBlock",
+            "blendblock": "blend",
+
+            "diffuse" :
+            {
+                "value" : [1, 1, 1],
+                "texture" : "frame01.webp",
+                "sampler": "spriteScale"
+            },
+
+            "specular" :
+            {
+                "value" : [0, 0, 0]
             }
         },
 

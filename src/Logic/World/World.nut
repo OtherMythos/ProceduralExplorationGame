@@ -10,6 +10,9 @@
     function destroy(){
         mSceneNode_.destroyNodeAndChildren();
     }
+    function update(){
+
+    }
     function setup(parent){}
 };
 ::ExplorationGizmos <- array(ExplorationGizmos.MAX, null);
@@ -36,6 +39,37 @@
         mAnim_ = null;
     }
 };
+::ExplorationGizmos[ExplorationGizmos.STATUS_EFFECT_FIRE] = class extends ::ExplorationGizmo{
+
+    mAnimDB_ = null;
+    mCount_ = 0;
+
+    function setup(parent, entity){
+        mSceneNode_ = parent.createChildSceneNode();
+        //local animNode = mSceneNode_.createChildSceneNode();
+
+        //local gizmoScale = Vec3();
+        local characterModel = entity.getModel();
+        local aabb = characterModel.determineAABB();
+        local centre = aabb.getCentre();
+        local half = aabb.getHalfSize();
+
+        local targetItem = _scene.createItem("gizmoEffectBox.mesh");
+        mAnimDB_ = ::DatablockManager.quickCloneDatablock("statusEffectFlame");
+        targetItem.setDatablock(mAnimDB_);
+        targetItem.setCastsShadows(false);
+        mSceneNode_.attachObject(targetItem);
+        mSceneNode_.setScale(half * 0.5);
+        mSceneNode_.setPosition(centre);
+    }
+
+    function update(){
+        mCount_++;
+        local val = (floor(mCount_ / 10) % 32) + 1;
+        mAnimDB_.setTexture(_PBSM_DIFFUSE, format("frame%02d.webp", val));
+    }
+
+}
 
 enum WorldMousePressContexts{
     TARGET_ENEMY,
@@ -603,8 +637,15 @@ enum WorldMousePressContexts{
     }
 
     function processStatusAfflictionChange_(entity){
+        if(!mEntityManager_.hasComponent(entity, EntityComponents.DATABLOCK)){
+            return;
+        }
         local block = mEntityManager_.getComponent(entity, EntityComponents.DATABLOCK).mDatablock;
         if(mEntityManager_.hasComponent(entity, EntityComponents.STATUS_AFFLICTION)){
+            local e = mActiveEnemies_[entity];
+            local gizmo = createGizmo(e.getPosition(), ExplorationGizmos.STATUS_EFFECT_FIRE, e);
+            e.setGizmo(gizmo);
+
             block.setDiffuse(1, 0.2, 0.2);
         }else{
             block.setDiffuse(1, 1, 1);
