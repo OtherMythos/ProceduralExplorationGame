@@ -18,3 +18,4 @@ extra/
 util/buildHelper/buildPaths
 .dirTimestamps.json
 resBuildFlags.sh
+.dumpedCharacterModels
