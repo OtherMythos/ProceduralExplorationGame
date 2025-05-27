@@ -544,7 +544,7 @@
             manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, damageWorld));
         }
 
-        local totalHealth = 1;
+        local totalHealth = 100;
         manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](totalHealth));
 
         //entry.setPosition(targetPos);

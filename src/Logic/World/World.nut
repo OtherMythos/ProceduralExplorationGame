@@ -44,13 +44,11 @@
     mAnimDB_ = null;
     mCount_ = 0;
 
-    function setup(parent, entity){
+    function setup(parent, aabb){
         mSceneNode_ = parent.createChildSceneNode();
         //local animNode = mSceneNode_.createChildSceneNode();
 
         //local gizmoScale = Vec3();
-        local characterModel = entity.getModel();
-        local aabb = characterModel.determineWorldAABB();
         local centre = aabb.getCentre();
         local radius = aabb.getRadius() * 0.7;
 
@@ -639,10 +637,11 @@ enum WorldMousePressContexts{
     }
 
     function processStatusAfflictionChange_(entity){
-        if(!mEntityManager_.hasComponent(entity, EntityComponents.DATABLOCK)){
-            return;
+        local block = null;
+        if(mEntityManager_.hasComponent(entity, EntityComponents.DATABLOCK)){
+            block = mEntityManager_.getComponent(entity, EntityComponents.DATABLOCK).mDatablock;
         }
-        local block = mEntityManager_.getComponent(entity, EntityComponents.DATABLOCK).mDatablock;
+
         if(mEntityManager_.hasComponent(entity, EntityComponents.STATUS_AFFLICTION)){
             /*
             local e = mActiveEnemies_[entity];
@@ -651,11 +650,11 @@ enum WorldMousePressContexts{
             */
             assignGizmoToEntity(entity, ExplorationGizmos.STATUS_EFFECT_FIRE);
 
-            block.setDiffuse(1, 0.2, 0.2);
+            if(block != null) block.setDiffuse(1, 0.2, 0.2);
         }else{
             removeGizmoFromEntity(entity, ExplorationGizmos.STATUS_EFFECT_FIRE);
 
-            block.setDiffuse(1, 1, 1);
+            if(block != null) block.setDiffuse(1, 1, 1);
         }
     }
     function applyStatusAffliction(entity, afflictionType, lifetime){
@@ -695,12 +694,19 @@ enum WorldMousePressContexts{
         }
 
         local d = data;
-        local e = mActiveEnemies_[entity];
         if(gizmoType == ExplorationGizmos.STATUS_EFFECT_FIRE){
-            d = e;
+            if(mActiveEnemies_.rawin(entity)){
+                local e = mActiveEnemies_[entity];
+                local characterModel = e.getModel();
+                d = characterModel.determineWorldAABB();
+            }else{
+                local sceneNode = mEntityManager_.getComponent(entity, EntityComponents.SCENE_NODE).mNode;
+                assert(sceneNode.getNumAttachedObjects() > 0);
+                d = sceneNode.getAttachedObject(0).getWorldAabbUpdated();
+            }
         }
 
-        local gizmo = createGizmo(e.getPosition(), gizmoType, d);
+        local gizmo = createGizmo(mEntityManager_.getPosition(entity), gizmoType, d);
         c.mGizmo[gizmoType] = gizmo;
     }
 
