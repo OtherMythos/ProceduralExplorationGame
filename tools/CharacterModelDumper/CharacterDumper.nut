@@ -1,6 +1,10 @@
 ::CharacterDumper <- {
 
     function dump(directory){
+        if(!_system.exists(directory)){
+            _system.mkdir(directory);
+        }
+
         for(local i = 0; i < CharacterModelType.MAX; i++){
             dumpCharacterModel(directory, i);
         }
@@ -42,6 +46,7 @@
                 "name": filename,
                 "pos": vecArray(n.mPos, true),
                 "scale": vecArray(n.mScale, false),
+                "animId": n.mPart
             });
         }
 
@@ -49,4 +54,40 @@
 
         printf("Exported character model '%s' to %s", modelName, modelFile);
     }
+};
+
+::AnimationDumper <- {
+
+    function dump(directory){
+        if(!_system.exists(directory)){
+            _system.mkdir(directory);
+        }
+
+        for(local i = 0; i < CharacterModelAnimId.MAX; i++){
+            dumpAnimation(directory, i);
+        }
+    }
+
+    function dumpAnimation(directory, animType){
+        local animData = {};
+
+        local anim = ::CharacterModelAnims[animType];
+        local animName = anim.mName;
+        if(animName == null) return;
+
+        local animFile = directory + "/" + animName + ".json";
+
+        local animParts = [];
+        foreach(i in anim.mUsedNodes){
+            animParts.append(i);
+        }
+
+        animData.name <- animName;
+        animData.animIds <- animParts;
+
+        _system.writeJsonAsFile(animFile, animData, true);
+
+        printf("Exported character animation '%s' to %s", animName, animFile);
+    }
+
 };

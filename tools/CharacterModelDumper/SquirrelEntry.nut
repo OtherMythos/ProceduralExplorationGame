@@ -10,6 +10,7 @@ function start(){
     _doFile("res://CharacterDumper.nut");
 
     ::CharacterDumper.dump("res://../../.dumpedCharacterModels");
+    ::AnimationDumper.dump("res://../../.dumpedCharacterAnimations");
 
     _shutdownEngine();
 }
