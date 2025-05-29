@@ -937,7 +937,9 @@
         enemyNode.setPosition(targetPos);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](enemyNode, true));
 
-        manager.assignComponent(en, EntityComponents.MOVEMENT, ::EntityManager.Components[EntityComponents.MOVEMENT](dir));
+        if(dir != null){
+            manager.assignComponent(en, EntityComponents.MOVEMENT, ::EntityManager.Components[EntityComponents.MOVEMENT](dir));
+        }
 
         manager.assignComponent(en, EntityComponents.LIFETIME, ::EntityManager.Components[EntityComponents.LIFETIME](200));
 

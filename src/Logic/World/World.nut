@@ -715,19 +715,6 @@ enum WorldMousePressContexts{
         mMouseContext_.setGuiObject(guiObject);
     }
 
-    function performPlayerMove(moveId){
-        local playerPos = mPlayerEntry_.mPos_.copy();
-        performMove(moveId, playerPos, null, _COLLISION_ENEMY);
-    }
-
-    function performMove(moveId, pos, dir, collisionType){
-        local moveDef = ::Moves[moveId];
-        local targetProjectile = moveDef.getProjectile();
-        if(targetProjectile != null){
-            mProjectileManager_.spawnProjectile(targetProjectile, pos, dir, ::Combat.CombatMove(5), collisionType);
-        }
-    }
-
     function triggerPlayerMove(moveId){
         if(!isActive()) return;
         assert(moveId >= 0 && moveId < mPlayerMoves.len());
