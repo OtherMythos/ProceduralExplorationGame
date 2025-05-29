@@ -701,7 +701,7 @@ enum WorldMousePressContexts{
                 d = characterModel.determineWorldAABB();
             }else{
                 local sceneNode = mEntityManager_.getComponent(entity, EntityComponents.SCENE_NODE).mNode;
-                assert(sceneNode.getNumAttachedObjects() > 0);
+                if(sceneNode.getNumAttachedObjects() <= 0) return;
                 d = sceneNode.getAttachedObject(0).getWorldAabbUpdated();
             }
         }
