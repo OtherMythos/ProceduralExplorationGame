@@ -913,35 +913,37 @@
 
     }
 
-    function constructProjectile(pos, dir, collisionType=_COLLISION_ENEMY){
+    function constructProjectile(projectileId, pos, dir, collisionType=_COLLISION_ENEMY){
+        local projData = ::Projectiles[projectileId];
+
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = pos.copy();
         targetPos.y = getZForPos(targetPos);
 
         local en = manager.createEntity(targetPos);
 
-        print("Projectile en " + en);
-
         local damageWorld = mConstructorWorld_.getDamageWorld();
-        local collisionPoint = damageWorld.addCollisionSender(CollisionWorldTriggerResponses.PROJECTILE_DAMAGE, en, targetPos.x, targetPos.z, 2, collisionType);
+        local collisionPoint = damageWorld.addCollisionSender(CollisionWorldTriggerResponses.PROJECTILE_DAMAGE, en, targetPos.x, targetPos.z, projData.mSize.x, collisionType);
         manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](
             collisionPoint,
             damageWorld
         ));
 
-        local enemyNode = mBaseSceneNode_.createChildSceneNode();
-        local mesh = _scene.createItem("cube");
-        mesh.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
-        enemyNode.attachObject(mesh);
-        enemyNode.setScale(0.5, 0.5, 0.5);
-        enemyNode.setPosition(targetPos);
-        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](enemyNode, true));
+        if(projData.mMesh != null){
+            local enemyNode = mBaseSceneNode_.createChildSceneNode();
+            local mesh = _scene.createItem(projData.mMesh);
+            mesh.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
+            enemyNode.attachObject(mesh);
+            enemyNode.setScale(projData.mSize);
+            enemyNode.setPosition(targetPos);
+            manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](enemyNode, true));
+        }
 
         if(dir != null){
             manager.assignComponent(en, EntityComponents.MOVEMENT, ::EntityManager.Components[EntityComponents.MOVEMENT](dir));
         }
 
-        manager.assignComponent(en, EntityComponents.LIFETIME, ::EntityManager.Components[EntityComponents.LIFETIME](200));
+        manager.assignComponent(en, EntityComponents.LIFETIME, ::EntityManager.Components[EntityComponents.LIFETIME](projData.mLifetime));
 
         return en;
     }

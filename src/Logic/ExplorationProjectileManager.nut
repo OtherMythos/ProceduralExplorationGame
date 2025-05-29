@@ -53,9 +53,7 @@
     }
 
     function spawnProjectile(projId, pos, dir, combatMove, collisionType=_COLLISION_ENEMY){
-        local projData = ::Projectiles[projId];
-
-        local en = mCreatorWorld_.mEntityFactory_.constructProjectile(pos, dir, collisionType);
+        local en = mCreatorWorld_.mEntityFactory_.constructProjectile(projId, pos, dir, collisionType);
 
         return en;
         /*

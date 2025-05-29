@@ -83,10 +83,10 @@ enum WorldMousePressContexts{
 
     //TODO remove this at some point.
     mPlayerMoves = [
-        MoveId.AREA,
-        MoveId.FIREBALL,
-        MoveId.AREA,
-        MoveId.AREA
+        MoveId.FIRE_AREA,
+        MoveId.FIRE_AREA,
+        MoveId.FIRE_AREA,
+        MoveId.FIRE_AREA,
     ];
 
     FoundObjectLogic = class{
@@ -312,6 +312,8 @@ enum WorldMousePressContexts{
     mTargetManager_ = null;
     mProjectileTargetManager_ = null;
 
+    mPerformingMoves_ = null;
+
     mPinchToZoomActive_ = false;
     mPinchToZoomWarmDown_ = 5;
 
@@ -370,6 +372,7 @@ enum WorldMousePressContexts{
         mActiveWorldActions_ = [];
         mPlayerTargetRadius_ = {};
         mPlayerTargetRadiusProjectiles_ = {};
+        mPerformingMoves_ = [];
 
         mAppearDistractionLogic_ = FoundObjectLogic([
             {
@@ -558,6 +561,8 @@ enum WorldMousePressContexts{
         if(!isActive()) return;
         checkPlayerCombatLogic();
 
+        updatePerformingMoves();
+
         if(::Base.isProfileActive(GameProfile.ENABLE_RIGHT_CLICK_WORKAROUNDS)){
             if(_input.getMousePressed(_MB_RIGHT)){
                 if(getroottable().rawin("developerTools_")){
@@ -665,6 +670,24 @@ enum WorldMousePressContexts{
             ::EntityManager.Components[EntityComponents.STATUS_AFFLICTION](afflictionType, lifetime)
         );
         processStatusAfflictionChange_(entity);
+    }
+
+    function updatePerformingMoves(){
+        local removed = false;
+        foreach(c,i in mPerformingMoves_){
+            local result = i.update();
+            if(result){
+                mPerformingMoves_[c] = null;
+                removed = true;
+            }
+        }
+        if(removed){
+            while(true){
+                local i = mPerformingMoves_.find(null);
+                if(i == null) break;
+                mPerformingMoves_.remove(i);
+            }
+        }
     }
 
     function removeGizmoFromEntity(entity, gizmoType){
@@ -1224,9 +1247,15 @@ enum WorldMousePressContexts{
     function performMove(moveId, pos, dir, collisionType){
         local moveDef = ::Moves[moveId];
         local targetProjectile = moveDef.getProjectile();
+
+        local performance = ::MovePerformance(moveDef);
+        mPerformingMoves_.append(performance);
+
+        /*
         if(targetProjectile != null){
             mProjectileManager_.spawnProjectile(targetProjectile, pos, dir, ::Combat.CombatMove(5), collisionType);
         }
+        */
     }
 
     //Perform a move targeting local enemies, i.e not an area attack.
