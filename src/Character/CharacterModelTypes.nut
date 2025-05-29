@@ -41,7 +41,7 @@ local ModelType = class{
 ::ModelTypes <- array(CharacterModelType.MAX, null);
 
 //TODO make it possible to assign orientation to nodes.
-::ModelTypes[CharacterModelType.HUMANOID] = ModelType("build/assets/characterAnimations/baseAnimation.xml",
+::ModelTypes[CharacterModelType.HUMANOID] = ModelType("build/assets/characterAnimations/baseCharacterAnimation.xml",
     [
         Entry(
             "playerHead.voxMesh", CharacterModelPartType.HEAD, null, Vec3(0, 10, 0), ::Vec3_UNIT_SCALE
@@ -72,7 +72,7 @@ local ModelType = class{
     ],
     [CharacterModelAnimId.BASE_ARMS_WALK, CharacterModelAnimId.BASE_LEGS_WALK, CharacterModelAnimId.BASE_ARMS_SWIM]
 );
-::ModelTypes[CharacterModelType.GOBLIN] = ModelType("build/assets/characterAnimations/baseAnimation.xml",
+::ModelTypes[CharacterModelType.GOBLIN] = ModelType("build/assets/characterAnimations/baseCharacterAnimation.xml",
     [
         Entry(
             "goblinBody.voxMesh", CharacterModelPartType.BODY,
@@ -137,7 +137,7 @@ local ModelType = class{
     ],
     [CharacterModelAnimId.NONE, CharacterModelAnimId.CRAB_WALK, CharacterModelAnimId.CRAB_WALK]
 );
-::ModelTypes[CharacterModelType.SKELETON] = ModelType("build/assets/characterAnimations/baseAnimation.xml",
+::ModelTypes[CharacterModelType.SKELETON] = ModelType("build/assets/characterAnimations/baseCharacterAnimation.xml",
     [
         Entry(
             "skeletonHead.voxMesh", CharacterModelPartType.HEAD, null, Vec3(0, 10, 0), ::Vec3_UNIT_SCALE

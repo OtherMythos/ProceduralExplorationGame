@@ -83,6 +83,7 @@
         }
 
         animData.name <- animName;
+        animData.filePath <- anim.mFilePath;
         animData.animIds <- animParts;
 
         _system.writeJsonAsFile(animFile, animData, true);
