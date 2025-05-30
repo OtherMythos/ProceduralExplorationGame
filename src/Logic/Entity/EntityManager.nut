@@ -72,20 +72,26 @@ enum ProximityComponentType{
 EntityManager.ComponentPool <- class{
     mComps_ = null;
     mFreeList_ = null;
+    mCompLookup_ = null;
     constructor(){
         mComps_ = [];
         mFreeList_ = [];
+        mCompLookup_ = {};
     }
 
     function accomodateComponent(eid, component){
         component.eid = eid;
+        local idx = 0;
         if(mFreeList_.len() <= 0){
+            idx = mComps_.len();
             mComps_.append(component);
         }else{
-            local idx = mFreeList_.top();
+            idx = mFreeList_.top();
             mFreeList_.pop();
             mComps_[idx] = component;
         }
+
+        mCompLookup_.rawset(eid, idx);
     }
 
     function removeComponent(eid){
@@ -95,15 +101,21 @@ EntityManager.ComponentPool <- class{
         mComps_[compIdx] = null;
         mFreeList_.append(compIdx);
 
+        mCompLookup_.rawdelete(eid);
+
         return outComp;
     }
 
     function findCompForEid(eid){
+        /*
         foreach(c,i in mComps_){
             if(i == null) continue;
             if(i.eid == eid) return c;
         }
         return null;
+        */
+       local idx = mCompLookup_.rawget(eid);
+       return idx;
     }
     function getCompForEid(eid){
         return mComps_[findCompForEid(eid)];
