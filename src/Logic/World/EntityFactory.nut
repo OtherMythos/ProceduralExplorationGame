@@ -942,9 +942,11 @@
             animNode.setPosition(0, 2, 0);
             animNode.attachObject(mesh);
 
-            local radian = atan2(-dir.x, -dir.z);
-            local quat = Quat(radian, ::Vec3_UNIT_Y);
-            parentNode.setOrientation(quat);
+            if(dir != null){
+                local radian = atan2(-dir.x, -dir.z);
+                local quat = Quat(radian, ::Vec3_UNIT_Y);
+                parentNode.setOrientation(quat);
+            }
 
             manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](parentNode, true));
         }
