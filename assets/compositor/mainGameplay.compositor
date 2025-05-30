@@ -181,7 +181,7 @@ compositor_node renderMainGameplayNode
             identifier 12
 
             rq_first 15
-            rq_last 16
+            rq_last 15
         }
         //Render particles
         pass render_scene

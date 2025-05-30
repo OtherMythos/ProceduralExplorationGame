@@ -930,13 +930,23 @@
         ));
 
         if(projData.mMesh != null){
-            local enemyNode = mBaseSceneNode_.createChildSceneNode();
+            local parentNode = mBaseSceneNode_.createChildSceneNode();
             local mesh = _scene.createItem(projData.mMesh);
-            mesh.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
-            enemyNode.attachObject(mesh);
-            enemyNode.setScale(projData.mSize);
-            enemyNode.setPosition(targetPos);
-            manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](enemyNode, true));
+            mesh.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_EFFECTS);
+            mesh.setCastsShadows(false);
+            local animNode = parentNode.createChildSceneNode();
+            if(projData.mModelScale != null){
+                animNode.setScale(projData.mModelScale);
+            }
+            parentNode.setPosition(targetPos);
+            animNode.setPosition(0, 2, 0);
+            animNode.attachObject(mesh);
+
+            local radian = atan2(-dir.x, -dir.z);
+            local quat = Quat(radian, ::Vec3_UNIT_Y);
+            parentNode.setOrientation(quat);
+
+            manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](parentNode, true));
         }
 
         if(dir != null){

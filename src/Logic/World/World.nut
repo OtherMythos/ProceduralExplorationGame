@@ -721,6 +721,7 @@ enum WorldMousePressContexts{
             if(mActiveEnemies_.rawin(entity)){
                 local e = mActiveEnemies_[entity];
                 local characterModel = e.getModel();
+                if(characterModel == null) return;
                 d = characterModel.determineWorldAABB();
             }else{
                 local sceneNode = mEntityManager_.getComponent(entity, EntityComponents.SCENE_NODE).mNode;
@@ -1309,9 +1310,11 @@ enum WorldMousePressContexts{
         if(targetEnemy == null) return;
         if(!mEntityManager_.entityValid(targetEnemy)) return;
 
-        local dir = (getPlayerPosition() - mEntityManager_.getPosition(targetEnemy)).normalisedCopy();
+        local playerPos = getPlayerPosition().copy();
+        local dir = (playerPos - mEntityManager_.getPosition(targetEnemy)).normalisedCopy();
 
-        mProjectileManager_.spawnProjectile(ProjectileId.FIREBALL, getPlayerPosition(), -dir, ::Combat.CombatMove(5));
+        local startPos = playerPos - (dir * 5);
+        mProjectileManager_.spawnProjectile(ProjectileId.FIREBALL, startPos, -dir, ::Combat.CombatMove(5));
     }
 
     function checkPlayerInputs(){

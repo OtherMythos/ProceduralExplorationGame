@@ -4,9 +4,12 @@
         "polyBlock":{
             "polygon_mode" : "wireframe"
         },
-        "noCullBlock":{
+        "noCullNoDepth":{
             "cull_mode" : "none",
             "depth_write" : false
+        },
+        "noCull":{
+            "cull_mode" : "none"
         }
     },
 
@@ -55,7 +58,26 @@
         "statusEffectFlame" :
         {
             "workflow": "specular_fresnel",
-            "macroblock": "noCullBlock",
+            "macroblock": "noCullNoDepth",
+            "blendblock": "blend",
+
+            "diffuse" :
+            {
+                "value" : [1, 1, 1],
+                "texture" : "frame01.webp",
+                "sampler": "spriteScale"
+            },
+
+            "specular" :
+            {
+                "value" : [0, 0, 0]
+            }
+        },
+
+        "FireBallProjectileMaterial" :
+        {
+            "workflow": "specular_fresnel",
+            "macroblock": "noCullNoDepth",
             "blendblock": "blend",
 
             "diffuse" :
