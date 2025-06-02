@@ -2,6 +2,8 @@ import bpy
 import json
 import os
 import sys
+import math
+from mathutils import Vector
 import xml.etree.ElementTree as ET
 from mathutils import Quaternion, Matrix
 
@@ -68,10 +70,15 @@ def ogre_quaternion_to_blender(q):
 
 def parse_anim_xml(model_base_path, anim_name, file_name):
     xml_path = find_file_by_name(model_base_path, file_name)
+    global found_xml_path
+    found_xml_path = xml_path
     print(f"Found path {xml_path}")
 
     tree = ET.parse(xml_path)
     root = tree.getroot()
+
+    global xml_doc
+    xml_doc = tree
 
     outData = {}
 
@@ -90,7 +97,7 @@ def parse_anim_xml(model_base_path, anim_name, file_name):
             for k in t.findall("k"):
                 frame = int(k.attrib["t"])
 
-                frameData = {}
+                frameData = {"node": t}
                 if "position" in k.attrib:
                     x, y, z = map(float, k.attrib["position"].split(','))
                     frameData["position"] = [x, -z, y]
@@ -137,6 +144,9 @@ def build_model_from_json(model_json_path, anim_json_path, model_base_path, anim
     nodes = model_data.get("nodes", [])
     animNodes = anim_data.get("animIds", [])
 
+    global anim_pairs
+    anim_pairs = {}
+
     for node in nodes:
         obj_filename = node["name"]
         obj_path = find_file_by_name(model_base_path, obj_filename)
@@ -154,10 +164,15 @@ def build_model_from_json(model_json_path, anim_json_path, model_base_path, anim
         animId = node["animId"]
         animTarget = link_anim_to_target(animId, anim_data)
         if animTarget in parsed_anim:
+            target_anim_data = {
+                "object": obj,
+                "node": None
+            }
             d = parsed_anim[animTarget]
             for k in d:
                 keyframeData = d[k]
                 print(keyframeData)
+                target_anim_data["node"] = keyframeData["node"]
 
                 if "position" in keyframeData:
                     vec = keyframeData["position"]
@@ -175,6 +190,8 @@ def build_model_from_json(model_json_path, anim_json_path, model_base_path, anim
                     #blender_q = ogre_quaternion_to_blender((vec[0], vec[1], vec[2], vec[3]))
                     obj.rotation_quaternion = (vec[0], -vec[1], -vec[2], vec[3])
                     obj.keyframe_insert(data_path="rotation_quaternion", frame=k)
+
+            anim_pairs[animTarget] = target_anim_data
 
 def import_obj(filepath):
     # Record objects before import
@@ -222,4 +239,63 @@ def clear_scene():
 
     set_viewport_to_material_preview()
 
-clear_scene()
+def draw_export_button(self, context):
+    layout = self.layout
+    layout.separator()
+    layout.operator("export.custom_xml_animation", text="Export Animation", icon='EXPORT')
+
+class EXPORT_OT_custom_xml_animation(bpy.types.Operator):
+    bl_idname = "export.custom_xml_animation"
+    bl_label = "Export Custom XML Animation"
+
+    def vec3ToOgre(self, vec):
+        v = Vector((vec[0], vec[1], vec[2]))
+        y_val = v.y
+        v.y = v.z
+        v.z = -y_val
+        return v
+
+    def quatToOgre(self, quat):
+        v = Vector((quat[0], -quat[1], -quat[2], quat[3]))
+        return v
+
+    def execute(self, context):
+        for i in anim_pairs:
+            obj = anim_pairs[i]["object"]
+            node = anim_pairs[i]["node"]
+            fcurves = obj.animation_data.action.fcurves
+            keyframes = sorted(set(p.co.x for fc in fcurves for p in fc.keyframe_points))
+
+            tail = None
+            for child in list(node):
+                if tail is None:
+                    tail = child.tail
+                node.remove(child)
+
+            for frame in keyframes:
+                bpy.context.scene.frame_set(int(frame))
+                pos = ", ".join(map(str, self.vec3ToOgre(obj.location)))
+                #rot = ",".join(str(math.degrees(a)) for a in obj.rotation_euler)
+                rot = ", ".join(str(a) for a in self.quatToOgre(obj.rotation_quaternion))
+                elem = ET.SubElement(node, "k", {"t": str(int(frame)), "position": pos, "quat": rot})
+                elem.tail = tail
+                print(pos)
+                print(rot)
+
+        xml_doc.write(found_xml_path, encoding="utf-8", xml_declaration=True)
+
+        self.report({'INFO'}, f"Animation exported to {found_xml_path}")
+        return {'FINISHED'}
+
+def register():
+    bpy.utils.register_class(EXPORT_OT_custom_xml_animation)
+    bpy.types.VIEW3D_HT_header.append(draw_export_button)
+
+def unregister():
+    bpy.types.VIEW3D_HT_header.remove(draw_export_button)
+    bpy.utils.unregister_class(EXPORT_OT_custom_xml_animation)
+
+
+if __name__ == "__main__":
+    clear_scene()
+    register()
