@@ -66,7 +66,7 @@
         local newPercent = mMoveCooldown_.tofloat() / mTotalCooldown_.tofloat()
         local newSize = Vec2(mSize_.x, mSize_.y * newPercent);
         mMoveCover_.setSize(newSize);
-        mMoveCover_.setHidden(newPercent <= 0);
+        mMoveCover_.setVisible(newPercent > 0 && !::Base.isProfileActive(GameProfile.SCREENSHOT_MODE));
         mButton_.setDisabled(newPercent > 0);
     }
 
