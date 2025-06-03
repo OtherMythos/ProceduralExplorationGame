@@ -80,7 +80,10 @@ def parse_anim_xml(model_base_path, anim_name, file_name):
     global xml_doc
     xml_doc = tree
 
-    outData = {}
+    outData = {
+        "endFrame": 40,
+        "keyframes": {}
+    }
 
     for anim in root.find("animations"):
         print(anim.tag)
@@ -88,6 +91,7 @@ def parse_anim_xml(model_base_path, anim_name, file_name):
             continue
         for t in anim.findall("t"):
             print("found transform")
+            outData["endFrame"] = int(anim.attrib["end"])
 
             if(t.attrib["type"] != "transform"):
                 continue
@@ -106,7 +110,7 @@ def parse_anim_xml(model_base_path, anim_name, file_name):
 
                 if "rot" in k.attrib:
                     rx, ry, rz = map(float, k.attrib["rot"].split(','))
-                    frameData["rot"] = [rx, ry, rz]
+                    frameData["rot"] = [rx, -rz, ry]
                     #obj.rotation_euler = tuple(math.radians(a) for a in (rx, ry, rz))
                     #obj.keyframe_insert(data_path="rotation_euler", frame=frame)
 
@@ -118,7 +122,7 @@ def parse_anim_xml(model_base_path, anim_name, file_name):
 
                 transformData[frame] = frameData
 
-            outData[targetId] = transformData
+            outData["keyframes"][targetId] = transformData
 
     print(outData)
 
@@ -163,12 +167,13 @@ def build_model_from_json(model_json_path, anim_json_path, model_base_path, anim
         #Match the anim id with the model def
         animId = node["animId"]
         animTarget = link_anim_to_target(animId, anim_data)
-        if animTarget in parsed_anim:
+        keyframe_data = parsed_anim["keyframes"]
+        if animTarget in keyframe_data:
             target_anim_data = {
                 "object": obj,
                 "node": None
             }
-            d = parsed_anim[animTarget]
+            d = keyframe_data[animTarget]
             for k in d:
                 keyframeData = d[k]
                 print(keyframeData)
@@ -181,17 +186,19 @@ def build_model_from_json(model_json_path, anim_json_path, model_base_path, anim
 
                 if "rot" in keyframeData:
                     vec = keyframeData["rot"]
-                    #obj.rotation_euler = tuple(math.radians(a) for a in (rx, ry, rz))
-                    #obj.keyframe_insert(data_path="rotation_euler", frame=frame)
+                    obj.rotation_euler = tuple(math.radians(a) for a in (vec[0], vec[1], vec[2]))
+                    obj.keyframe_insert(data_path="rotation_euler", frame=k)
 
                 if "quat" in keyframeData:
                     obj.rotation_mode = 'QUATERNION'
                     vec = keyframeData["quat"]
                     #blender_q = ogre_quaternion_to_blender((vec[0], vec[1], vec[2], vec[3]))
-                    obj.rotation_quaternion = (vec[0], -vec[1], -vec[2], vec[3])
-                    obj.keyframe_insert(data_path="rotation_quaternion", frame=k)
+                    #obj.rotation_quaternion = (vec[0], -vec[1], -vec[2], vec[3])
+                    #obj.keyframe_insert(data_path="rotation_quaternion", frame=k)
 
             anim_pairs[animTarget] = target_anim_data
+
+    return parsed_anim
 
 def import_obj(filepath):
     # Record objects before import
@@ -232,12 +239,17 @@ def clear_scene():
     buildModels = sys.argv[sys.argv.index("--") + 3]
     animName = sys.argv[sys.argv.index("--") + 4]
 
-    build_model_from_json(modelJson, animJson, buildModels, animName)
+    anim_data = build_model_from_json(modelJson, animJson, buildModels, animName)
 
     material = create_color_attribute_material()
     assign_material_to_objects(material)
 
     set_viewport_to_material_preview()
+
+    #TODO properly define this somewhere
+    bpy.context.scene.frame_start = 0
+    bpy.context.scene.frame_end = anim_data["endFrame"]
+    bpy.context.scene.frame_current = 0
 
 def draw_export_button(self, context):
     layout = self.layout
@@ -275,14 +287,15 @@ class EXPORT_OT_custom_xml_animation(bpy.types.Operator):
             for frame in keyframes:
                 bpy.context.scene.frame_set(int(frame))
                 pos = ", ".join(map(str, self.vec3ToOgre(obj.location)))
-                #rot = ",".join(str(math.degrees(a)) for a in obj.rotation_euler)
-                rot = ", ".join(str(a) for a in self.quatToOgre(obj.rotation_quaternion))
-                elem = ET.SubElement(node, "k", {"t": str(int(frame)), "position": pos, "quat": rot})
+                rot = ",".join(str(math.degrees(a)) for a in obj.rotation_euler)
+                #rot = ", ".join(str(a) for a in self.quatToOgre(obj.rotation_quaternion))
+                #elem = ET.SubElement(node, "k", {"t": str(int(frame)), "position": pos, "quat": rot})
+                elem = ET.SubElement(node, "k", {"t": str(int(frame)), "position": pos, "rot": rot})
                 elem.tail = tail
                 print(pos)
                 print(rot)
 
-        xml_doc.write(found_xml_path, encoding="utf-8", xml_declaration=True)
+        xml_doc.write(found_xml_path)
 
         self.report({'INFO'}, f"Animation exported to {found_xml_path}")
         return {'FINISHED'}
