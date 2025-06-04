@@ -246,14 +246,16 @@
 
 ::EntityManager.Components[EntityComponents.STATUS_AFFLICTION] = class extends ::EntityManager.Component{
 
-    mAffliction = null;
-    mTime = 0;
-    mLifetime = 100;
-
-    constructor(affliction, lifetime){
-        mAffliction = affliction;
+    StatusAffliction = class{
+        mAffliction = null;
         mTime = 0;
-        mLifetime = lifetime;
+        mLifetime = 100;
+    }
+
+    mAfflictions = null;
+
+    constructor(){
+        mAfflictions = [];
     }
 
 };

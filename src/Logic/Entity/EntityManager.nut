@@ -37,10 +37,6 @@ enum EntityDestroyReason{
     CONSUMED
 };
 
-enum StatusAfflictionType{
-    ON_FIRE
-};
-
 enum SpoilsComponentType{
     SPOILS_DATA,
     PERCENTAGE,
@@ -107,15 +103,8 @@ EntityManager.ComponentPool <- class{
     }
 
     function findCompForEid(eid){
-        /*
-        foreach(c,i in mComps_){
-            if(i == null) continue;
-            if(i.eid == eid) return c;
-        }
-        return null;
-        */
-       local idx = mCompLookup_.rawget(eid);
-       return idx;
+        local idx = mCompLookup_.rawget(eid);
+        return idx;
     }
     function getCompForEid(eid){
         return mComps_[findCompForEid(eid)];
@@ -168,17 +157,37 @@ EntityManager.EntityManager <- class{
         foreach(i in mComponents_[EntityComponents.STATUS_AFFLICTION].mComps_){
             if(i == null) continue;
 
-            assert(entityValid(i.eid));
-            if(i.mTime % 10 == 0){
-                ::_applyDamageOther(this, i.eid, 1);
+            local removed = false;
+            foreach(ac,a in i.mAfflictions){
+                assert(entityValid(i.eid));
+                if(a == null) continue;
+                if(a.mTime % 10 == 0){
+                    ::_applyDamageOther(this, i.eid, 1);
+                }
+                //Now damage has been applied there's a chance the entity is now invalid.
+                if(!entityValid(i.eid)) return;
+
+                a.mTime++;
+                if(a.mTime >= a.mLifetime){
+                    i.mAfflictions[ac] = null;
+                    printf("Status condition for entity %i ended", i.eid);
+                    mCreatorWorld_.processStatusAfflictionChange_(i.eid);
+                    removed = true;
+                }
             }
-            //Now damage has been applied there's a chance the entity is now invalid.
-            if(!entityValid(i.eid)) return;
-            i.mTime++;
-            if(i.mTime >= i.mLifetime){
-                printf("Status condition for entity %i ended", i.eid);
-                removeComponent(i.eid, EntityComponents.STATUS_AFFLICTION);
-                mCreatorWorld_.processStatusAfflictionChange_(i.eid);
+            //Check if the component needs to be removed
+            if(removed){
+                local found = false;
+                foreach(a in i.mAfflictions){
+                    if(a != null){
+                        found = true;
+                        break;
+                    }
+                }
+                if(!found){
+                    removeComponent(i.eid, EntityComponents.STATUS_AFFLICTION);
+                    //mCreatorWorld_.processStatusAfflictionChange_(i.eid);
+                }
             }
         }
         foreach(i in mComponents_[EntityComponents.GIZMO].mComps_){

@@ -71,6 +71,53 @@
 
 }
 
+::ExplorationGizmos[ExplorationGizmos.STATUS_EFFECT_FROZEN] = class extends ::ExplorationGizmo{
+
+    mAnimDB_ = null;
+    mCount_ = 0;
+
+    mMeshes_ = null;
+    mOffsets_ = null;
+
+    function setup(parent, aabb){
+        local NUM_CUBES = 10;
+
+        mMeshes_ = array(NUM_CUBES, null);
+        mOffsets_ = array(NUM_CUBES, null);
+        mSceneNode_ = parent.createChildSceneNode();
+        //local animNode = mSceneNode_.createChildSceneNode();
+
+        //local gizmoScale = Vec3();
+        local centre = aabb.getCentre();
+        //local radius = aabb.getRadius() * 0.7;
+
+        for(local i = 0; i < NUM_CUBES; i++){
+            local animNode = mSceneNode_.createChildSceneNode();
+            local targetItem = _scene.createItem("cube");
+            targetItem.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_EFFECTS);
+            targetItem.setCastsShadows(false);
+            targetItem.setDatablock("oceanPBS");
+            animNode.attachObject(targetItem);
+            animNode.setScale(0.2, 0.2, 0.2);
+            local pos = _random.randAABB(aabb);
+            pos.y += centre.y;
+            animNode.setPosition(pos);
+            mMeshes_[i] = animNode;
+            mOffsets_[i] = _random.randInt(100);
+        }
+    }
+
+    function update(){
+        local COUNT_FRAMES = 50;
+        mCount_++;
+        foreach(c,i in mMeshes_){
+            local val = (((mCount_ + mOffsets_[c]) % COUNT_FRAMES).tofloat() / COUNT_FRAMES) * 0.1 + 0.1;
+            i.setScale(val, val, val);
+        }
+    }
+
+}
+
 enum WorldMousePressContexts{
     TARGET_ENEMY,
     PLACING_FLAG,
@@ -646,29 +693,61 @@ enum WorldMousePressContexts{
         if(mEntityManager_.hasComponent(entity, EntityComponents.DATABLOCK)){
             block = mEntityManager_.getComponent(entity, EntityComponents.DATABLOCK).mDatablock;
         }
-
-        if(mEntityManager_.hasComponent(entity, EntityComponents.STATUS_AFFLICTION)){
-            /*
-            local e = mActiveEnemies_[entity];
-            local gizmo = createGizmo(e.getPosition(), ExplorationGizmos.STATUS_EFFECT_FIRE, e);
-            e.setGizmo(gizmo);
-            */
-            assignGizmoToEntity(entity, ExplorationGizmos.STATUS_EFFECT_FIRE);
-
-            if(block != null) block.setDiffuse(1, 0.2, 0.2);
-        }else{
-            removeGizmoFromEntity(entity, ExplorationGizmos.STATUS_EFFECT_FIRE);
-
+        //In this case just reset everything back to what it was.
+        if(!mEntityManager_.hasComponent(entity, EntityComponents.STATUS_AFFLICTION)){
+            for(local afflictionId = 0; afflictionId < StatusAfflictionType.MAX; afflictionId++){
+                removeGizmoFromEntity(entity, afflictionId);
+            }
             if(block != null) block.setDiffuse(1, 1, 1);
+            return;
+        }
+
+        local c = mEntityManager_.getComponent(entity, EntityComponents.STATUS_AFFLICTION);
+        local finalDiffuse = Vec3(0, 0, 0);
+        local totalDiffuseUsed = 0;
+        for(local afflictionId = 0; afflictionId < StatusAfflictionType.MAX; afflictionId++){
+            local present = false;
+            foreach(a in c.mAfflictions){
+                if(a == null) continue;
+                if(a.mAffliction == afflictionId){
+                    present = true;
+                    break;
+                }
+            }
+
+            local afflictionType = ::StatusAfflictions[afflictionId];
+            if(present){
+                assignGizmoToEntity(entity, afflictionType.mGizmo);
+                finalDiffuse += afflictionType.mDiffuse;
+                totalDiffuseUsed++;
+            }else{
+                removeGizmoFromEntity(entity, afflictionType.mGizmo);
+            }
+        }
+
+        if(block != null){
+            if(totalDiffuseUsed){
+                local d = finalDiffuse / totalDiffuseUsed;
+                block.setDiffuse(d.x, d.y, d.z);
+            }else{
+                block.setDiffuse(1, 1, 1);
+            }
         }
     }
     function applyStatusAffliction(entity, afflictionType, lifetime){
-        if(mEntityManager_.hasComponent(entity, EntityComponents.STATUS_AFFLICTION)){
-            return;
+        local c = ::EntityManager.Components[EntityComponents.STATUS_AFFLICTION];
+        local comp = null;
+        if(!mEntityManager_.hasComponent(entity, EntityComponents.STATUS_AFFLICTION)){
+            comp = c();
+            mEntityManager_.assignComponent(entity, EntityComponents.STATUS_AFFLICTION, comp);
+        }else{
+            comp = mEntityManager_.getComponent(entity, EntityComponents.STATUS_AFFLICTION);
         }
-        mEntityManager_.assignComponent(entity, EntityComponents.STATUS_AFFLICTION,
-            ::EntityManager.Components[EntityComponents.STATUS_AFFLICTION](afflictionType, lifetime)
-        );
+
+        local affliction = c.StatusAffliction();
+        affliction.mAffliction = afflictionType;
+        affliction.mLifetime = lifetime;
+        comp.mAfflictions.append(affliction);
         processStatusAfflictionChange_(entity);
     }
 
@@ -717,7 +796,7 @@ enum WorldMousePressContexts{
         }
 
         local d = data;
-        if(gizmoType == ExplorationGizmos.STATUS_EFFECT_FIRE){
+        if(gizmoType == ExplorationGizmos.STATUS_EFFECT_FIRE || gizmoType == ExplorationGizmos.STATUS_EFFECT_FROZEN){
             if(mActiveEnemies_.rawin(entity)){
                 local e = mActiveEnemies_[entity];
                 local characterModel = e.getModel();

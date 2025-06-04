@@ -13,11 +13,13 @@
         _doFile("script://EnemyEnums.nut");
         _doFile("script://PlaceEnums.nut");
         _doFile("script://ScreenEnums.nut");
+        _doFile("script://StatusAfflictionEnums.nut");
     }
 
     function loadContentFiles(){
         _doFile("res://src/Content/ItemDefs.nut");
         _doFile("res://src/Content/EnemyDefs.nut");
+        _doFile("res://src/Content/StatusAfflictionDefs.nut");
         _doFile("res://src/Content/PlaceDefs.h.nut");
     }
 

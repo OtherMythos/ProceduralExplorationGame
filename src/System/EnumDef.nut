@@ -8,9 +8,13 @@ This class merges enum definition into a string and then compiles that as a Squi
 
     mEnums_ = {}
 
-    function addToEnum(name, content){
+    function addToEnum(name, content, includeNone=true){
         if(!mEnums_.rawin(name)){
-            local root = format("enum %s {\nNONE,", name);
+            local val = "enum %s {\nNONE,";
+            if(!includeNone){
+                val = "enum %s {\n";
+            }
+            local root = format(val, name);
             mEnums_.rawset(name, root);
         }
         //print(mEnums_[name])
@@ -23,9 +27,11 @@ This class merges enum definition into a string and then compiles that as a Squi
      * enum Screen { MAIN_MENU, SECOND_MENU }
      * ::ScreenStrings <- ["mainMenu", "secondMenu"]
      */
-    function addToString(name, content){
+    function addToString(name, content, includeNone=true){
         if(!getroottable().rawin(name)){
-            content.insert(0, "none");
+            if(includeNone){
+                content.insert(0, "none");
+            }
             getroottable().rawset(name, content);
         }else{
             getroottable().rawget(name).extend(content);
