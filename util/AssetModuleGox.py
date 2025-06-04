@@ -64,11 +64,45 @@ class AssetModuleGox(AssetModule):
             voxMeshTarget = self.prepareOutputDirectoryForFile(retPath, True)
             self.exportToVoxMesh(goxelTxtTarget, voxMeshTarget, extraFlags)
 
+    def flip_yz(self, v_line):
+        parts = v_line.strip().split()
+        if len(parts) < 4:
+            return v_line.rstrip()  # malformed line, return as-is
+
+        x = float(parts[1])
+        y = float(parts[2])
+        z = float(parts[3])
+
+        # Swap y and z, negate the new z
+        new_y = -z
+        new_z = y
+
+        # Preserve any extra components (e.g. vertex color)
+        extra = parts[4:]
+        return f"v {x} {new_y} {new_z}" + (" " + " ".join(extra) if extra else "")
+
+    def process_obj_in_place(self, file_path):
+        with open(file_path, 'r') as f:
+            lines = f.readlines()
+
+        new_lines = []
+        for line in lines:
+            if line.startswith("v "):
+                new_lines.append(self.flip_yz(line) + "\n")
+            else:
+                new_lines.append(line)
+
+        with open(file_path, 'w') as f:
+            f.writelines(new_lines)
+
     def goxelExportToObj(self, inPath, outPath):
         devnull = open(os.devnull, 'w')
         process = subprocess.Popen(["goxel", str(inPath), "-e", str(outPath)], stdout=devnull, stderr=devnull)
         process.wait()
         devnull.close()
+
+        #Flip the coordinates to match Ogre
+        self.process_obj_in_place(outPath)
 
     def convertObjToOgre(self, outputTarget, actualMeshPath):
         devnull = open(os.devnull, 'w')

@@ -163,6 +163,7 @@ def build_model_from_json(model_json_path, anim_json_path, model_base_path, anim
         #for obj in imported_objs:
         obj.location = node["pos"]
         obj.scale = node["scale"]
+        obj.rotation_euler = (0, 0, 0)
 
         #Match the anim id with the model def
         animId = node["animId"]
@@ -287,7 +288,7 @@ class EXPORT_OT_custom_xml_animation(bpy.types.Operator):
             for frame in keyframes:
                 bpy.context.scene.frame_set(int(frame))
                 pos = ", ".join(map(str, self.vec3ToOgre(obj.location)))
-                rot = ",".join(str(math.degrees(a)) for a in obj.rotation_euler)
+                rot = ", ".join(str(math.degrees(a)) for a in obj.rotation_euler)
                 #rot = ", ".join(str(a) for a in self.quatToOgre(obj.rotation_quaternion))
                 #elem = ET.SubElement(node, "k", {"t": str(int(frame)), "position": pos, "quat": rot})
                 elem = ET.SubElement(node, "k", {"t": str(int(frame)), "position": pos, "rot": rot})
