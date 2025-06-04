@@ -18,10 +18,11 @@
 #endif
 
 //10-19 - Rendered and included in the shadow map.
-const RENDER_QUEUE_EXPLORATION_WATER = 17; //Render water last to prevent overdraw.
+const RENDER_QUEUE_EXPLORATION_WATER = 18; //Render water last to prevent overdraw.
 const RENDER_QUEUE_EXPLORATION_TERRRAIN_DISCOVERED = 12;
 const RENDER_QUEUE_EXPLORATION = 15;
 const RENDER_QUEUE_EXPLORATION_EFFECTS = 16;
+const RENDER_QUEUE_EXPLORATION_NO_LINES = 17;
 //20 - 29 - Rendered and not included in the shadow map
 //30 - 39 - Not rendered but included in the shadow map
 const RENDER_QUEUE_EXPLORATION_CLOUD = 30;
