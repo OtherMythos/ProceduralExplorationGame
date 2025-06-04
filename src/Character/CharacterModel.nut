@@ -86,9 +86,24 @@
         mCurrentAnimations_.rawdelete(animId);
     }
     function resetAnimTimes_(){
+        setTimeForAllAnims(0);
+    }
+    function setTimeForAllAnims(time){
         foreach(c,i in mCurrentAnimations_){
-            i.setTime(0);
+            i.setTime(time, true);
         }
+    }
+    function setAllAnimsRunning(running){
+        foreach(c,i in mCurrentAnimations_){
+            i.setRunning(running);
+        }
+    }
+    function setAnimRunning(animId, running){
+        if(!mCurrentAnimations_.rawin(animId)){
+            throw format("No animation for id '%i'", animId);
+        }
+        local a = mCurrentAnimations_.rawget(animId);
+        a.setRunning(running);
     }
 
     function createAnimation(animId){

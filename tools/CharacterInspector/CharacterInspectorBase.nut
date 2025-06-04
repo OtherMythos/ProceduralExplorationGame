@@ -1,4 +1,5 @@
 enum CharacterInspectorWidgetTypes{
+    USE_FRAME,
     MODEL_TYPE,
 
     EQUIP_LEFT_HAND,
@@ -167,6 +168,15 @@ enum CharacterInspectorWidgetTypes{
         }
     }
 
+    function useFrameCheckboxCallback(widget, action){
+        if(widget.getValue()){
+            mInspectedModel_.setAllAnimsRunning(false)
+            mInspectedModel_.setTimeForAllAnims(0);
+        }else{
+            mInspectedModel_.setAllAnimsRunning(true)
+        }
+    }
+
     function toggleWieldActive(widget, action){
         mCurrentData_.wieldActive = widget.getValue();
         printf("Setting wield active to %s", mCurrentData_.wieldActive ? "true" : "false");
@@ -188,6 +198,15 @@ enum CharacterInspectorWidgetTypes{
         local entityTypeButton = ::CharacterInspectorMultiChoicePopupButton(notifyEntityTypeChange.bindenv(this), 0, mCurrentData_.type, ::containerWin, "Model Type", ::ConstHelper.CharacterModelTypeToString, CharacterModelType.NONE, CharacterModelType.MAX);
         entityTypeButton.addToLayout(layout);
         ::CharacterInspectorWidgets[CharacterInspectorWidgetTypes.MODEL_TYPE] <- entityTypeButton;
+
+        guiCreateTitle("Frame", layout);
+        {
+            local checkbox = ::containerWin.createCheckbox();
+            checkbox.attachListenerForEvent(useFrameCheckboxCallback, _GUI_ACTION_RELEASED, this);
+            checkbox.setText("Use frame");
+            layout.addCell(checkbox);
+            ::CharacterInspectorWidgets[CharacterInspectorWidgetTypes.USE_FRAME] <- checkbox;
+        }
 
         guiCreateTitle("Animation", layout);
         for(local i = 1; i < CharacterModelAnimId.MAX; i++){
