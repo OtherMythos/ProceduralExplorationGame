@@ -243,7 +243,7 @@ enum WorldMousePressContexts{
 
     CloudManager = class{
         mParentNode_ = null;
-        NUM_CLOUDS = 100;
+        NUM_CLOUDS = 16;
         mActiveClouds_ = null;
         mSize_ = null;
 
@@ -269,7 +269,7 @@ enum WorldMousePressContexts{
         function update(){
             foreach(i in mActiveClouds_){
                 local cloudPosition = i.getPositionVec3();
-                cloudPosition.z -= 1.5;
+                cloudPosition.z -= 0.1;
                 if(cloudPosition.z <= mEnd_.z){
                     cloudPosition.z = mStart_.z + 100;
                 }
