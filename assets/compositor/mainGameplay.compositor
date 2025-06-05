@@ -36,6 +36,8 @@ compositor_node renderMainGameplayNode
             rq_first 41
             rq_last 42
 
+            shadows default_simpleShadowNode
+
             identifier 11
         }
         pass render_scene

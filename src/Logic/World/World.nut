@@ -243,11 +243,21 @@ enum WorldMousePressContexts{
 
     CloudManager = class{
         mParentNode_ = null;
-        NUM_CLOUDS = 9;
+        NUM_CLOUDS = 100;
         mActiveClouds_ = null;
         mSize_ = null;
-        constructor(parent, width, height){
+
+        mStart_ = null;
+        mEnd_ = null;
+        mTotalSize_ = null;
+
+        constructor(parent, width, height, offsetX, offsetY){
             mSize_ = Vec3(width, 0, -height);
+
+            mStart_ = Vec3(offsetX, 0, -offsetY);
+            mEnd_ = mStart_ + mSize_;
+            mTotalSize_ = this.mEnd_ - this.mStart_;
+
             mParentNode_ = parent;
             mActiveClouds_ = [];
             for(local i = 0; i < NUM_CLOUDS; i++){
@@ -259,9 +269,9 @@ enum WorldMousePressContexts{
         function update(){
             foreach(i in mActiveClouds_){
                 local cloudPosition = i.getPositionVec3();
-                cloudPosition.z -= 0.1;
-                if(cloudPosition.z <= mSize_.z){
-                    cloudPosition.z = 100;
+                cloudPosition.z -= 1.5;
+                if(cloudPosition.z <= mEnd_.z){
+                    cloudPosition.z = mStart_.z + 100;
                 }
                 i.setPosition(cloudPosition);
             }
@@ -272,7 +282,7 @@ enum WorldMousePressContexts{
             local item = _gameCore.createVoxMeshItem("cloud.voxMesh");
             item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_CLOUD);
             newNode.attachObject(item);
-            local outPos = _random.randVec3() * mSize_;
+            local outPos = (_random.randVec3() * mTotalSize_) + mStart_;
             outPos.y = 50;
             newNode.setPosition(outPos);
             newNode.setScale(2, 2, 2);

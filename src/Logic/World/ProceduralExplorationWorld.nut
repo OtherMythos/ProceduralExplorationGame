@@ -248,7 +248,7 @@
 
         voxeliseMap();
 
-        mCloudManager_ = CloudManager(mParentNode_, mMapData_.width, mMapData_.height);
+        mCloudManager_ = CloudManager(mParentNode_, mMapData_.width * 3, mMapData_.height * 3, -mMapData_.width, -mMapData_.height);
         mWindStreakManager_ = WindStreakManager(mParentNode_, mMapData_.width, mMapData_.height);
 
         setupPlaces();
