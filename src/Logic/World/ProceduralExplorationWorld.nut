@@ -418,9 +418,12 @@
         if(_input.getButtonAction(::InputManager.zoomOut)){
             mCurrentZoomLevel_ += 0.5;
         }
-        ::Base.mPlayerStats.setExplorationCurrentZoom(mCurrentZoomLevel_);
 
         if(mCurrentZoomLevel_ < MIN_ZOOM) mCurrentZoomLevel_ = MIN_ZOOM;
+
+        ::Base.mPlayerStats.setExplorationCurrentZoom(mCurrentZoomLevel_);
+
+        ::Base.mGlobalDirectionLight.setShadowFarDistance(30 + mCurrentZoomLevel_ * 2);
 
         updateCameraPosition();
     }

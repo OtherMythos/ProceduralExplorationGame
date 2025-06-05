@@ -16,6 +16,8 @@
     mSystemSettings = null
     mLottieManager = null
 
+    mGlobalDirectionLight = null
+
     mTargetInterface_ = TargetInterface.DESKTOP
     mFullscreenMode_ = FullscreenMode.WINDOWED
     mForceSmallWorld = false
@@ -398,6 +400,8 @@
         local light = _scene.createLight();
         local lightNode = _scene.getRootSceneNode().createChildSceneNode();
         lightNode.attachObject(light);
+
+        mGlobalDirectionLight = light;
 
         light.setType(_LIGHT_DIRECTIONAL);
         light.setDirection(0, -1, -1);
