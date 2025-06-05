@@ -195,7 +195,7 @@
             drawClouds = mMapData_.meta.clouds;
         }
         if(drawClouds){
-            mCloudManager_ = CloudManager(mParentNode_, mMapData_.width, mMapData_.height);
+            mCloudManager_ = CloudManager(mParentNode_, mMapData_.width, mMapData_.height, 0, 0);
         }
 
         //mTerrainChunkManager_.setup(targetNode, mMapData_.mapData, 4);
@@ -209,7 +209,7 @@
             local oceanNode = mParentNode_.createChildSceneNode();
             local oceanItem = _scene.createItem("plane");
             oceanItem.setCastsShadows(false);
-            oceanItem.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
+            oceanItem.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_NO_LINES);
             oceanItem.setDatablock("oceanUnlit");
             oceanNode.attachObject(oceanItem);
             oceanNode.setScale(500, 500, 500)
