@@ -619,9 +619,17 @@ namespace ProceduralExplorationGamePlugin{
     SQInteger GameCoreNamespace::createVoxMeshItem(HSQUIRRELVM vm){
         SQInteger size = sq_gettop(vm);
         Ogre::SceneMemoryMgrTypes targetType = Ogre::SCENE_DYNAMIC;
-        if(size == 3){
+        Ogre::uint32 meshFlags = 0;
+        bool meshFlagsWritten = false;
+        if(size >= 3){
+            SQInteger flags = 0;
+            sq_getinteger(vm, 3, &flags);
+            meshFlags = static_cast<Ogre::uint32>(flags);
+            meshFlagsWritten = true;
+        }
+        if(size >= 4){
             SQInteger sceneNodeType = 0;
-            sq_getinteger(vm, 3, &sceneNodeType);
+            sq_getinteger(vm, 4, &sceneNodeType);
             targetType = static_cast<Ogre::SceneMemoryMgrTypes>(sceneNodeType);
         }
 
@@ -632,6 +640,9 @@ namespace ProceduralExplorationGamePlugin{
             Ogre::NameValuePairList params;
             params["mesh"] = meshPath;
             params["resourceGroup"] = Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME;
+            if(meshFlagsWritten){
+                params["flags"] = Ogre::StringConverter::toString(meshFlags);
+            }
             Ogre::MovableObject *obj;
             Ogre::SceneManager* sceneManager = AV::BaseSingleton::getSceneManager();
 
@@ -783,7 +794,7 @@ namespace ProceduralExplorationGamePlugin{
 
         AV::ScriptUtils::addFunction(vm, update, "update", 2, ".u");
 
-        AV::ScriptUtils::addFunction(vm, createVoxMeshItem, "createVoxMeshItem", -2, ".si");
+        AV::ScriptUtils::addFunction(vm, createVoxMeshItem, "createVoxMeshItem", -2, ".sii");
 
         AV::ScriptUtils::addFunction(vm, beginParseVisitedLocation, "beginParseVisitedLocation");
         AV::ScriptUtils::addFunction(vm, checkClaimParsedVisitedLocation, "checkClaimParsedVisitedLocation");

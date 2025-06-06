@@ -471,9 +471,9 @@
         local meshTarget = getMeshForPlacedItemType_(itemType);
         placeNode.setPosition(targetPos);
         //TODO make some of these scene static
-        local item = _gameCore.createVoxMeshItem(meshTarget, _SCENE_STATIC);
+        local item = _gameCore.createVoxMeshItem(meshTarget, HLMS_PACKED_VOXELS | HLMS_PACKED_OFFLINE_VOXELS | HLMS_TREE_VERTICES, _SCENE_STATIC);
         item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
-        _gameCore.writeFlagsToItem(item, HLMS_PACKED_VOXELS | HLMS_PACKED_OFFLINE_VOXELS | HLMS_TREE_VERTICES);
+        //_gameCore.writeFlagsToItem(item, HLMS_PACKED_VOXELS | HLMS_PACKED_OFFLINE_VOXELS | HLMS_TREE_VERTICES);
         placeNode.attachObject(item);
         local scale = getScaleForPlacedItemType_(itemType);
         placeNode.setScale(scale, scale, scale);
