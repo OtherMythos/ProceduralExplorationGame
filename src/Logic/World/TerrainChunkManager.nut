@@ -125,7 +125,8 @@
         local item = _scene.createItem(meshObj);
         item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_TERRRAIN_DISCOVERED);
         item.setCastsShadows(false);
-        _gameCore.writeFlagsToItem(item, HLMS_PACKED_VOXELS);
+        _gameCore.writeFlagsToItem(item, HLMS_PACKED_VOXELS | HLMS_TERRAIN);
+        item.setDatablock("baseVoxelMaterial");
         return item;
     }
 

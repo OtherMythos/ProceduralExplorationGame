@@ -553,7 +553,7 @@ namespace ProceduralExplorationGamePlugin{
 
     SQInteger GameCoreNamespace::writeFlagsToItem(HSQUIRRELVM vm){
         Ogre::MovableObject* outObject = 0;
-        SCRIPT_ASSERT_RESULT(AV::MovableObjectUserData::readMovableObjectFromUserData(vm, 2, &outObject, AV::MovableObjectType::Item));
+        SCRIPT_CHECK_RESULT(AV::MovableObjectUserData::readMovableObjectFromUserData(vm, 2, &outObject, AV::MovableObjectType::Item));
 
         SQInteger flags = 0;
         sq_getinteger(vm, 3, &flags);
@@ -563,11 +563,6 @@ namespace ProceduralExplorationGamePlugin{
         Ogre::Vector4 vals = Ogre::Vector4::ZERO;
         vals.x = *reinterpret_cast<Ogre::Real*>(&flags);
         for(Ogre::Renderable* r : item->mRenderables){
-            if(r->hasCustomParameter(0)){
-                Ogre::Vector4 param = r->getCustomParameter(0);
-                AV::uint32 v = *(reinterpret_cast<const AV::uint32*>(&param.x));
-                //assert(!r->hasCustomParameter(0));
-            }
             r->setCustomParameter(0, vals);
             const Ogre::Vector4 currentParam = r->getCustomParameter(0);
             assert(currentParam == vals);

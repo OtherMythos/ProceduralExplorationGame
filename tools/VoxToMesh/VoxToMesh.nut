@@ -92,6 +92,8 @@ function setupGui(){
         ::registerTimeTaken(t.getSeconds());
 
         local item = _scene.createItem(mMesh_);
+        _gameCore.writeFlagsToItem(item, 0x1);
+        item.setDatablock("baseVoxelMaterial");
         local newNode = _scene.getRootSceneNode().createChildSceneNode();
         newNode.attachObject(item);
 
