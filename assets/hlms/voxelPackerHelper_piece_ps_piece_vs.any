@@ -48,7 +48,7 @@
 		outPs_colour0.z = inPs.passDrawColour;
 	@end
 
-	@property(voxelTerrain || oceanVertices)
+	@property(floorDecals)
 		if(passBuf.customX > 0){
 			float dist = distance(float2(passBuf.playerPositionX, passBuf.playerPositionZ), float2(inPs.worldPos.x, inPs.worldPos.z));
 			float checkVal = 7;

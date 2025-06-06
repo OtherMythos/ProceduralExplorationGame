@@ -71,6 +71,7 @@ const HLMS_PACKED_OFFLINE_VOXELS = 0x4;
 const HLMS_OCEAN_VERTICES = 0x8;
 const HLMS_TREE_VERTICES = 0x10;
 const HLMS_WIND_STREAKS = 0x20;
+const HLMS_FLOOR_DECALS = 0x40;
 
 enum RegionType{
     NONE,

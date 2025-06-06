@@ -47,6 +47,7 @@
         local floorItem = _scene.createItem("Plane.mesh");
         floorItem.setCastsShadows(false);
         floorItem.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_NO_LINES);
+        _gameCore.writeFlagsToItem(floorItem, HLMS_FLOOR_DECALS);
         floorItem.setDatablock("testingFloor");
         floorNode.attachObject(floorItem);
         floorNode.setScale(150, 500, 150);
