@@ -505,6 +505,9 @@ enum WorldMousePressContexts{
     function getPlayerPosition(){
         return mPlayerEntry_.getPosition();
     }
+    function getPlayerEID(){
+        return mPlayerEntry_.getEID();
+    }
     function setPlayerPosition(x, y){
         local target = Vec3(x, 0, y);
         target.y = getZForPos(target);
@@ -809,6 +812,11 @@ enum WorldMousePressContexts{
         if(gizmoType == ExplorationGizmos.STATUS_EFFECT_FIRE || gizmoType == ExplorationGizmos.STATUS_EFFECT_FROZEN){
             if(mActiveEnemies_.rawin(entity)){
                 local e = mActiveEnemies_[entity];
+                local characterModel = e.getModel();
+                if(characterModel == null) return;
+                d = characterModel.determineWorldAABB();
+            }else if(entity == getPlayerEID()){
+                local e = mPlayerEntry_;
                 local characterModel = e.getModel();
                 if(characterModel == null) return;
                 d = characterModel.determineWorldAABB();
