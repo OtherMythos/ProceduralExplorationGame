@@ -122,7 +122,6 @@
         _doFile("res://src/Content/Places.nut");
         _doFile("res://src/Content/FoundObject.nut");
         _doFile("res://src/Content/CombatData.nut");
-        _doFile("res://src/Content/Moves.nut");
         _doFile("res://src/Content/StatsEntry.nut");
 
         defineBaseEnums();
@@ -130,6 +129,8 @@
         ::EnumDef.commitEnums();
         _doFile("res://src/System/PlayerStats.nut");
         loadContentFiles();
+
+        _doFile("res://src/Content/Moves.nut");
 
         //TODO shift this off somewhere else.
         _doFile("res://src/Content/Enemies/BasicEnemyScript.nut");

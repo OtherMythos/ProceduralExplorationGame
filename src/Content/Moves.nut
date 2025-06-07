@@ -9,7 +9,10 @@ enum MoveId{
 
 function fireAreaAttack(frame){
     local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
-    currentWorld.mProjectileManager_.spawnProjectile(ProjectileId.FIRE_AREA, currentWorld.getPlayerPosition(), null, ::Combat.CombatMove(10), _COLLISION_ENEMY);
+    local fireArea = ::Combat.CombatMove(10);
+    fireArea.mStatusAffliction = StatusAfflictionType.ON_FIRE;
+    fireArea.mStatusAfflictionLifetime = 100;
+    currentWorld.mProjectileManager_.spawnProjectile(ProjectileId.FIRE_AREA, currentWorld.getPlayerPosition(), null, fireArea, _COLLISION_ENEMY);
     return true;
 }
 

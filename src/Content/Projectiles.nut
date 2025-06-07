@@ -28,4 +28,4 @@ enum ProjectileId{
 ::Projectiles[ProjectileId.NONE] = ProjectileDef(10);
 ::Projectiles[ProjectileId.FIREBALL] = ProjectileDef(10, Vec3(1, 1, 1), "fireballProjectile.mesh", 1000, Vec3(0.25, 0.25, 1));
 ::Projectiles[ProjectileId.AREA] = ProjectileDef(10, Vec3(5, 5, 5));
-::Projectiles[ProjectileId.FIRE_AREA] = ProjectileDef(10, Vec3(10, 10, 10), "Cylinder.mesh", 2);
+::Projectiles[ProjectileId.FIRE_AREA] = ProjectileDef(10, Vec3(10, 10, 10));
