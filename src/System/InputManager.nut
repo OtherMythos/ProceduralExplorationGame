@@ -120,6 +120,7 @@
         _input.mapKeyboardInput(_K_Z, this.interact);
         _input.mapKeyboardInput(_K_E, this.showInventory);
         _input.mapKeyboardInput(_K_R, this.toggleWieldActive);
+        _input.mapKeyboardInput(_K_G, this.toggleWorldView);
         _input.mapKeyboardInput(_K_ESCAPE, this.pauseGame);
 
         _input.mapKeyboardInput(_K_Z, this.dialogNext);

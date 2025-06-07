@@ -389,6 +389,7 @@
         local parentNode = camera.getParentNode();
 
         local zoom = mWorldViewActive_ ? 300 : mCurrentZoomLevel_
+        setShadowFarDistance(30 + zoom * 2);
 
         local xPos = cos(mRotation_.x)*zoom;
         local yPos = sin(mRotation_.x)*zoom;
@@ -423,7 +424,7 @@
 
         ::Base.mPlayerStats.setExplorationCurrentZoom(mCurrentZoomLevel_);
 
-        ::Base.mGlobalDirectionLight.setShadowFarDistance(30 + mCurrentZoomLevel_ * 2);
+        setShadowFarDistance(30 + mCurrentZoomLevel_ * 2);
 
         updateCameraPosition();
     }

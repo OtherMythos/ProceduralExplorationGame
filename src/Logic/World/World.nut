@@ -1547,6 +1547,10 @@ enum WorldMousePressContexts{
         }
     }
 
+    function setShadowFarDistance(distance){
+        ::Base.mGlobalDirectionLight.setShadowFarDistance(distance);
+    }
+
     function actuateSpoils(en, data, position){
         if(data.mType == SpoilsComponentType.SPOILS_DATA){
             foreach(i in data.mFirst){
