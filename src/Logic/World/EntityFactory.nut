@@ -913,7 +913,7 @@
 
     }
 
-    function constructProjectile(projectileId, pos, dir, collisionType=_COLLISION_ENEMY){
+    function constructProjectile(projectileId, pos, dir, combatMove, collisionType=_COLLISION_ENEMY){
         local projData = ::Projectiles[projectileId];
 
         local manager = mConstructorWorld_.getEntityManager();
@@ -923,7 +923,7 @@
         local en = manager.createEntity(targetPos);
 
         local damageWorld = mConstructorWorld_.getDamageWorld();
-        local collisionPoint = damageWorld.addCollisionSender(CollisionWorldTriggerResponses.PROJECTILE_DAMAGE, en, targetPos.x, targetPos.z, projData.mSize.x, collisionType);
+        local collisionPoint = damageWorld.addCollisionSender(CollisionWorldTriggerResponses.PROJECTILE_DAMAGE, combatMove, targetPos.x, targetPos.z, projData.mSize.x, collisionType);
         manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](
             collisionPoint,
             damageWorld

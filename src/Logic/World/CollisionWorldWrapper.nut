@@ -164,11 +164,11 @@
                 ::Base.mActionManager.unsetAction(0, receiver);
             }
         });
-        ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.PROJECTILE_DAMAGE] <- TriggerResponse(function(world, projectileId, entityId, collisionStatus){
+        ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.PROJECTILE_DAMAGE] <- TriggerResponse(function(world, combatMove, entityId, collisionStatus){
             if(collisionStatus != 0x1) return;
 
             local entityManager = world.getEntityManager();
-            assert(entityManager.hasComponent(projectileId, EntityComponents.LIFETIME));
+            //assert(entityManager.hasComponent(projectileId, EntityComponents.LIFETIME));
 
             /*
             local active = world.mProjectileManager_.mActiveProjectiles_;
@@ -177,12 +177,10 @@
             local projData = active[projectileId];
             local damage = projData.mCombatMove_.getDamage();
             */
-            local damage = 1;
 
             //TODO this check should not be necessary and is a result of issues with the collision world.
             if(entityManager.entityValid(entityId)){
-                world.applyStatusAffliction(entityId, StatusAfflictionType.ON_FIRE, 500);
-                _applyDamageOther(world.getEntityManager(), entityId, damage);
+                combatMove.performOnEntity(entityId, world);
             }
 
             //entityManager.destroyEntity(projectileId);

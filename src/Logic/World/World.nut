@@ -1411,7 +1411,12 @@ enum WorldMousePressContexts{
         local dir = (playerPos - mEntityManager_.getPosition(targetEnemy)).normalisedCopy();
 
         local startPos = playerPos - (dir * 5);
-        mProjectileManager_.spawnProjectile(ProjectileId.FIREBALL, startPos, -dir, ::Combat.CombatMove(5));
+        local combatMove = ::Combat.CombatMove(5);
+        if(_random.randInt(3) == 0){
+            combatMove.mStatusAffliction = StatusAfflictionType.ON_FIRE;
+            combatMove.mStatusAfflictionLifetime = 100;
+        }
+        mProjectileManager_.spawnProjectile(ProjectileId.FIREBALL, startPos, -dir, combatMove);
     }
 
     function checkPlayerInputs(){

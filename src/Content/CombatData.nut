@@ -127,13 +127,27 @@
      */
     "CombatMove": class{
         mDamage = 0;
+        mStatusAffliction = null;
+        mStatusAfflictionLifetime = null;
 
-        constructor(damage){
+        constructor(damage, statusAffliction=null, statusAfflictionLifetime=null){
             mDamage = damage;
+            mStatusAffliction = statusAffliction;
+            mStatusAfflictionLifetime = statusAfflictionLifetime;
         }
 
         function getDamage(){
             return mDamage;
+        }
+
+        function performOnEntity(entityId, world){
+            //Do this first incase damage invalidates the entity.
+            if(mStatusAffliction != null){
+                world.applyStatusAffliction(entityId, mStatusAffliction, mStatusAfflictionLifetime);
+            }
+            if(mDamage != null){
+                _applyDamageOther(world.getEntityManager(), entityId, mDamage);
+            }
         }
     }
 };
