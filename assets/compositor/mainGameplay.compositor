@@ -23,7 +23,7 @@ compositor_node renderMainGameplayNode
 
     texture sceneRenderDecorations    target_width target_height PFG_RGBA32_FLOAT depth_pool 2
     texture finalSceneRender     target_width target_height PFG_RGBA32_FLOAT depth_pool 2
-    texture windTexture     target_width_scaled 0.5 target_height_scaled 0.5 PFG_RGBA32_FLOAT
+    texture windTexture     target_width_scaled 0.5 target_height_scaled 0.5 PFG_R32_FLOAT
 
     target finalSceneRender
     {
@@ -132,6 +132,8 @@ compositor_node renderMainGameplayNode
         {
             rq_first 40
             rq_last 41
+
+            identifier 13
         }
     }
 
