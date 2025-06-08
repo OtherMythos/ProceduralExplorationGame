@@ -41,6 +41,8 @@
             "workflow": "metallic",
             "#macroblock": "polyBlock",
 
+            "shadow_const_bias": 0.0075,
+
             "diffuse" :
             {
                 "texture" : "voxelPalette.png"
