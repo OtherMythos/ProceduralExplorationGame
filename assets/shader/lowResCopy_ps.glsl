@@ -68,5 +68,5 @@ void main()
     float4 f = OGRE_Sample(First, firstSampler, inPs.uv0);
     float4 s = OGRE_Sample(Second, secondSampler, inPs.uv0);
 
-    returnFinalColour(mix(f, float4(1, 1, 1, 1), s.x));
+    returnFinalColour(mix(f, float4(1, 1, 1, 1), 0.5 * s.x));
 }
