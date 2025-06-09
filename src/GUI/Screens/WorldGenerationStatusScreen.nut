@@ -83,7 +83,7 @@
             local newY = pos.y + offset;
             i.setPosition(pos.x, newY);
 
-            local animVal = newY / ::drawable.y;
+            local animVal = (newY + i.getSize().y) / _window.getHeight();
             i.setTextColour(1, 1, 1, tan(animVal)/2);
         }
 
