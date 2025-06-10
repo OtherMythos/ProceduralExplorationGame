@@ -190,7 +190,7 @@
 			inValues.z -= 4.0;
 		@end
 
-		uint norm = uint((originalSecond >> 29) & uint(0x3));
+		uint norm = uint((originalSecond >> 29) & uint(0x7));
 		uint ambient = uint((original >> 30) & uint(0x3));
 
 		@property(treeVertices)
