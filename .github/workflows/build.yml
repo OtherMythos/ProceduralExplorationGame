@@ -52,8 +52,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: android
       - name: Download prebuilt Android dependencies
         uses: dawidd6/action-download-artifact@v3
         with:
