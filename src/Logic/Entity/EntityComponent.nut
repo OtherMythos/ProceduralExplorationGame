@@ -155,12 +155,14 @@
     mFirst = null;
     mSecond = null;
     mThird = null;
+    mActuateReason = null;
 
-    constructor(spoilsType, first, second=null, third=null){
+    constructor(spoilsType, first, second=null, third=null, actuateReason=null){
         mType = spoilsType;
         mFirst = first;
         mSecond = second;
         mThird = third;
+        mActuateReason = actuateReason;
     }
 
 };

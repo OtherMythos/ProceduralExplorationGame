@@ -484,7 +484,14 @@ EntityManager.EntityManager <- class{
                     ::DatablockManager.removeDatablock(component.mDatablock);
                 }
                 else if(i == EntityComponents.SPOILS){
-                    if(reason != EntityDestroyReason.LIFETIME && reason != EntityDestroyReason.DESTROY_ALL){
+                    local actuate = false;
+                    if(component.mActuateReason == null){
+                        actuate = (reason != EntityDestroyReason.LIFETIME && reason != EntityDestroyReason.DESTROY_ALL);
+                    }else{
+                        actuate = (reason == component.mActuateReason);
+                    }
+
+                    if(actuate){
                         mCreatorWorld_.actuateSpoils(eid, component, mEntityPositions_[idx]);
                     }
                 }
