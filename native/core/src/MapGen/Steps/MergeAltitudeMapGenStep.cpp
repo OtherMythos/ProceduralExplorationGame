@@ -61,14 +61,17 @@ namespace ProceduralExplorationGameCore{
 
 
     void MergeAltitudeMapGenJob::processJob(ExplorationMapData* mapData, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb, const std::vector<float>& additionVals){
-        float* voxPtr = static_cast<float*>(mapData->voxelBuffer);
-        for(AV::uint32 y = ya; y < yb; y++){
-            float yVal = (float)y / (float)mapData->height;
-            for(AV::uint32 x = xa; x < xb; x++){
-                float xVal = (float)x / (float)mapData->width;
-                float* target = (voxPtr + (x+y*mapData->width));
+        const AV::uint32 width = mapData->uint32("width");
+        const AV::uint32 height = mapData->uint32("height");
 
-                float heightForPoint = getHeightForPoint(*target, xVal, yVal, x, y, mapData->width, additionVals);
+        float* voxPtr = static_cast<float*>(mapData->voidPtr("voxelBuffer"));
+        for(AV::uint32 y = ya; y < yb; y++){
+            float yVal = (float)y / (float)height;
+            for(AV::uint32 x = xa; x < xb; x++){
+                float xVal = (float)x / (float)width;
+                float* target = (voxPtr + (x+y*width));
+
+                float heightForPoint = getHeightForPoint(*target, xVal, yVal, x, y, width, additionVals);
                 *target = heightForPoint;
             }
         }

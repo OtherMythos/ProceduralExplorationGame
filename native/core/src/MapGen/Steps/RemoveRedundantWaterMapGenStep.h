@@ -7,7 +7,7 @@
 namespace ProceduralExplorationGameCore{
 
     struct ExplorationMapInputData;
-    struct ExplorationMapData;
+    class ExplorationMapData;
 
     class RemoveRedundantWaterMapGenStep : public MapGenStep{
     public:

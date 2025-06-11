@@ -17,16 +17,18 @@ namespace ProceduralExplorationGameCore{
     }
 
     void GenerateWaterTextureMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+        const AV::uint32 width = mapData->uint32("width");
+        const AV::uint32 height = mapData->uint32("height");
 
-        size_t bufSize = input->width * input->height * sizeof(float) * 4;
+        size_t bufSize = width * height * sizeof(float) * 4;
         float* buffer = static_cast<float*>(malloc(bufSize));
         memset(buffer, 0, bufSize);
         float* bufferMask = static_cast<float*>(malloc(bufSize));
         memset(bufferMask, 0, bufSize);
 
         int div = 4;
-        int divWidth = input->width / div;
-        int divHeight = input->height / div;
+        int divWidth = width / div;
+        int divHeight = height / div;
         for(int y = 0; y < div; y++){
             for(int x = 0; x < div; x++){
                 GenerateWaterTextureMapGenJob job;
@@ -57,10 +59,14 @@ namespace ProceduralExplorationGameCore{
     }
 
     void GenerateWaterTextureMapGenJob::processJob(ExplorationMapData* mapData, float* buffer, float* bufferMask, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb){
+        const AV::uint32 width = mapData->uint32("width");
+        const AV::uint32 height = mapData->uint32("height");
+        const AV::uint32 seaLevel = mapData->uint32("seaLevel");
+
         for(int y = ya; y < yb; y++){
             for(int x = xa; x < xb; x++){
                 int yy = y + 1;
-                if(yy >= mapData->width) yy = mapData->width-1;
+                if(yy >= width) yy = width-1;
                 const WorldPoint altitudePoint = WRAP_WORLD_POINT(x, yy);
                 const AV::uint8* altitude = VOX_PTR_FOR_COORD_CONST(mapData, altitudePoint);
                 const AV::uint8* waterGroup = WATER_GROUP_PTR_FOR_COORD_CONST(mapData, altitudePoint);
@@ -71,19 +77,19 @@ namespace ProceduralExplorationGameCore{
                 }
                  */
 
-                int reverseWidth = mapData->width - y - 1;
-                if(reverseWidth >= mapData->width) continue;
-                float* b = ((buffer) + ((x + reverseWidth * mapData->width) * 4));
-                float* bMask = ((bufferMask) + ((x + reverseWidth * mapData->width) * 4));
+                int reverseWidth = width - y - 1;
+                if(reverseWidth >= width) continue;
+                float* b = ((buffer) + ((x + reverseWidth * width) * 4));
+                float* bMask = ((bufferMask) + ((x + reverseWidth * width) * 4));
 
                 int seaLevelCutoff = 40;
                 int seaLevelCutoffSecond = 8;
 
                 if(*waterGroup == 0){
-                    if(*altitude >= mapData->seaLevel - seaLevelCutoff && *altitude <  mapData->seaLevel - seaLevelCutoffSecond){
+                    if(*altitude >= seaLevel - seaLevelCutoff && *altitude <  seaLevel - seaLevelCutoffSecond){
                         _writeToBuffer(&b, 113, 159, 177);
                     }
-                    else if(*altitude >= mapData->seaLevel - seaLevelCutoffSecond && *altitude < mapData->seaLevel){
+                    else if(*altitude >= seaLevel - seaLevelCutoffSecond && *altitude < seaLevel){
                         _writeToBuffer(&b, 143, 189, 207);
                     }
                     else{
@@ -96,10 +102,10 @@ namespace ProceduralExplorationGameCore{
                 }
 
                 if(*waterGroup == 0 || *waterGroup == INVALID_WATER_ID){
-                    if(*altitude < mapData->seaLevel - seaLevelCutoff){
+                    if(*altitude < seaLevel - seaLevelCutoff){
                         _writeToBuffer(&bMask, 255, 0, 0, 0);
                     }
-                    else if(*altitude > mapData->seaLevel - seaLevelCutoff && *altitude < mapData->seaLevel - seaLevelCutoffSecond){
+                    else if(*altitude > seaLevel - seaLevelCutoff && *altitude < seaLevel - seaLevelCutoffSecond){
                         _writeToBuffer(&bMask, 20, 0, 0, 0);
                     }
                     else{
@@ -122,8 +128,8 @@ namespace ProceduralExplorationGameCore{
                     for(int xa = -1; xa < 2; xa++){
                         int xxa = int(xx) + xa;
                         int yya = int(yy) + ya;
-                        int reverseWidth = mapData->width - yya - 1;
-                        float* b = ((buffer) + ((xxa + reverseWidth * mapData->width) * 4));
+                        int reverseWidth = width - yya - 1;
+                        float* b = ((buffer) + ((xxa + reverseWidth * width) * 4));
 
                         _writeToBuffer(&b, 0, 0, 150);
                     }

@@ -7,7 +7,7 @@
 namespace ProceduralExplorationGameCore{
 
     struct ExplorationMapInputData;
-    struct ExplorationMapData;
+    class ExplorationMapData;
 
     class DetermineRiversMapGenStep : public MapGenStep{
     public:

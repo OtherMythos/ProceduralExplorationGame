@@ -56,7 +56,15 @@ namespace ProceduralExplorationGameCore{
         mapData->seed = input->seed;
         mapData->variationSeed = input->variationSeed;
 
-        RandomWrapper::singleton.seed(mapData->variationSeed);
+        mapData->setEntry("width", {MapDataEntryType::UINT32, input->width});
+        mapData->setEntry("height", {MapDataEntryType::UINT32, input->height});
+        mapData->setEntry("seaLevel", {MapDataEntryType::UINT32, input->seaLevel});
+
+        mapData->setEntry("moistureSeed", {MapDataEntryType::UINT32, input->moistureSeed});
+        mapData->setEntry("seed", {MapDataEntryType::UINT32, input->seed});
+        mapData->setEntry("variationSeed", {MapDataEntryType::UINT32, input->variationSeed});
+
+        RandomWrapper::singleton.seed(input->variationSeed);
 
         for(int i = 0; i < 3; i++){
             WorldPoint p = determinePositionForBlob_(mapData, workspace->blobSeeds, i);

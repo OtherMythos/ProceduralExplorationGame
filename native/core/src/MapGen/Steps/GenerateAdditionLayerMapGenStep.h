@@ -8,7 +8,7 @@
 namespace ProceduralExplorationGameCore{
 
     struct ExplorationMapInputData;
-    struct ExplorationMapData;
+    class ExplorationMapData;
 
     class GenerateAdditionLayerMapGenStep : public MapGenStep{
     public:

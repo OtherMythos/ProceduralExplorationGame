@@ -7,7 +7,7 @@
 namespace ProceduralExplorationGameCore{
 
     struct ExplorationMapInputData;
-    struct ExplorationMapData;
+    class ExplorationMapData;
 
     class WeightAndSortLandmassesMapGenStep : public MapGenStep{
     public:

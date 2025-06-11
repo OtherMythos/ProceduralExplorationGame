@@ -35,7 +35,7 @@ namespace ProceduralExplorationGameCore{
                 //Iterate and set to be -1 sea level for all the coords.
                 for(WorldPoint p : e->coords){
                     AV::uint8* vox = VOX_PTR_FOR_COORD(mapData, p);
-                    *vox = static_cast<AV::uint8>(mapData->seaLevel);
+                    *vox = static_cast<AV::uint8>(mapData->uint32("seaLevel"));
                 }
                 delete workspace->waterData[i];
                 workspace->waterData[i] = 0;

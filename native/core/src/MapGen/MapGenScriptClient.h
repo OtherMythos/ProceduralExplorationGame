@@ -11,7 +11,7 @@ namespace ProceduralExplorationGameCore{
     class MapGenStep;
     class CallbackScript;
     struct ExplorationMapInputData;
-    struct ExplorationMapData;
+    class ExplorationMapData;
 
     class MapGenScriptClient : public MapGenClient{
     public:

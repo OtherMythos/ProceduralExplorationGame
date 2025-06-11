@@ -21,6 +21,7 @@ namespace ProceduralExplorationGameCore{
     typedef AV::uint32 WrappedAltitudeRegion;
 
     RegionId checkRegion = INVALID_REGION_ID;
+    AV::uint32 checkSeaLevel = 0;
     inline bool comparisonValues(ExplorationMapData* mapData, WrappedAltitudeRegion val){
         AV::uint8 altitude = (val >> 16) & 0xFFFF;
         RegionId region = val & 0xFFFF;
@@ -47,7 +48,7 @@ namespace ProceduralExplorationGameCore{
         AV::uint32 currentIdx = 0;
         _floodFillForPos
             <bool(ExplorationMapData*, WrappedAltitudeRegion),WrappedAltitudeRegion(ExplorationMapData*, AV::uint32, AV::uint32), AV::uint32, 2>
-            (comparisonValues, readValues, xp, yp, mapData, currentIdx, vals, regionResult, false);
+            (comparisonValues, readValues, xp, yp, mapData, currentIdx, vals, regionResult, mapData->uint32("width"), mapData->uint32("height"), false);
         //mapData->waterData = std::move(waterResult);
 
         assert(regionResult.size() == 1);
@@ -100,8 +101,11 @@ namespace ProceduralExplorationGameCore{
         //Update the old region coords to match the new ones and write to the buffer
         //Repeat the process until the coords list is empty
 
+        //Save the sea level to prevent the lookup happening regularly.
+        checkSeaLevel = mapData->uint32("seaLevel");
+
         std::vector<RegionId> vals;
-        vals.resize(mapData->width * mapData->height, INVALID_REGION_ID);
+        vals.resize(mapData->uint32("width") * mapData->uint32("height"), INVALID_REGION_ID);
         int len = mapData->regionData.size();
         for(int i = 0; i < len; i++){
         //auto it = mapData->regionData.begin();

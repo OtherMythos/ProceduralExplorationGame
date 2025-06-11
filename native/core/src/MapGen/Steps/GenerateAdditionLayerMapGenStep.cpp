@@ -59,6 +59,9 @@ namespace ProceduralExplorationGameCore{
     }
 
     void calculateBlobs_(std::vector<float>& additionalVals, ExplorationMapData* mapData, const std::vector<WorldPoint>& blobPositions){
+        const AV::uint32 width = mapData->uint32("width");
+        const AV::uint32 height = mapData->uint32("height");
+
         for(int i = 0; i < 3; i++){
             WorldCoord px, py;
             READ_WORLD_POINT(blobPositions[i], px, py);
@@ -68,11 +71,11 @@ namespace ProceduralExplorationGameCore{
                     int xx = (x + px - BLOB_SIZE/2);
                     int yy = (y + py - BLOB_SIZE/2);
 
-                    if(xx < 0 || yy < 0 || xx >= mapData->width || yy >= mapData->height) continue;
+                    if(xx < 0 || yy < 0 || xx >= width || yy >= mapData->height) continue;
 
-                    size_t valIdx = xx + yy * mapData->width;
+                    size_t valIdx = xx + yy * width;
                     float regionOffset = distance(xx, yy, px, py);
-                    float val = float(BLOB_SIZE/2 - regionOffset)/mapData->width;
+                    float val = float(BLOB_SIZE/2 - regionOffset)/width;
                     val *= 2;
                     if(val > additionalVals[valIdx]){
                         additionalVals[valIdx] = val;
@@ -83,6 +86,8 @@ namespace ProceduralExplorationGameCore{
     }
 
     void calculateLines_(int idx, std::vector<float>& additionVals, ExplorationMapData* mapData, const std::vector<WorldPoint>& blobPositions){
+        const AV::uint32 width = mapData->uint32("width");
+
         WorldCoord x1, y1, x2, y2;
         READ_WORLD_POINT(blobPositions[idx], x1, y1);
         READ_WORLD_POINT(blobPositions[idx+1], x2, y2);
@@ -114,8 +119,8 @@ namespace ProceduralExplorationGameCore{
             float distance = maxDistance - lineDistance;
             assert(distance >= 0.0f);
             //distance = tan(distance) * 2;
-            size_t valIdx = xx + yy * mapData->width;
-            float writeDistance = distance / mapData->width;
+            size_t valIdx = xx + yy * width;
+            float writeDistance = distance / width;
             if(writeDistance > additionVals[valIdx]){
                 additionVals[valIdx] = writeDistance;
             }
@@ -132,7 +137,7 @@ namespace ProceduralExplorationGameCore{
 
     void GenerateAdditionLayerMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         std::vector<float> additionVals;
-        additionVals.resize(mapData->width * mapData->height);
+        additionVals.resize(mapData->uint32("width") * mapData->uint32("height"));
 
         for(int i = 0; i < workspace->blobSeeds.size()-1; i++){
             calculateLines_(i, additionVals, mapData, workspace->blobSeeds);

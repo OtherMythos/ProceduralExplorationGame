@@ -36,7 +36,7 @@ namespace ProceduralExplorationGameCore{
                 for(WorldPoint p : e->coords){
                     //TODO set the water group to be something other than invalid.
                     AV::uint8* vox = VOX_PTR_FOR_COORD(mapData, p);
-                    *vox = static_cast<AV::uint8>(mapData->seaLevel) - 1;
+                    *vox = static_cast<AV::uint8>(mapData->uint32("seaLevel")) - 1;
                 }
                 delete workspace->landData[i];
                 workspace->landData[i] = 0;

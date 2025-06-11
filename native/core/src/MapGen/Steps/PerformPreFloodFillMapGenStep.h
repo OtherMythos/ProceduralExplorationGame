@@ -7,7 +7,7 @@
 namespace ProceduralExplorationGameCore{
 
     struct ExplorationMapInputData;
-    struct ExplorationMapData;
+    class ExplorationMapData;
 
     class PerformPreFloodFillMapGenStep : public MapGenStep{
     public:
@@ -23,6 +23,11 @@ namespace ProceduralExplorationGameCore{
         ~PerformPreFloodFillMapGenJob();
 
         void processJob(ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace);
+
+        static bool comparisonFuncLand(ExplorationMapData* mapData, AV::uint8 val);
+        static AV::uint8 readFuncAltitude(ExplorationMapData* mapData, AV::uint32 x, AV::uint32 y);
+        static bool comparisonFuncWater(ExplorationMapData* mapData, AV::uint8 val);
+
 
     };
 

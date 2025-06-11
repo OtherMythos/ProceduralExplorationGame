@@ -50,10 +50,13 @@ namespace ProceduralExplorationGameCore{
     }
 
     void _determinePoints(const ExplorationMapData* mapData, std::vector<RegionSeedData>& points, std::vector<RegionData>& regionData, AV::CollisionWorldObject* collisionWorld){
+        const AV::uint32 width = mapData->uint32("width");
+        const AV::uint32 height = mapData->uint32("height");
+
         int padWidth = 30;
         int padHeight = 30;
-        for(int y = 0; y < mapData->height; y += padWidth){
-            for(int x = 0; x < mapData->width; x += padHeight){
+        for(int y = 0; y < height; y += padWidth){
+            for(int x = 0; x < width; x += padHeight){
                 const AV::uint8* land = LAND_GROUP_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y));
                 if(*land == INVALID_LAND_ID) continue;
 
@@ -195,6 +198,8 @@ namespace ProceduralExplorationGameCore{
     }
 
     void DetermineEarlyRegionsMapGenJob::processJob(ExplorationMapData* mapData, const std::vector<RegionSeedData>& points, std::vector<RegionData>& regionData, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb){
+        const AV::uint32 seaLevel = mapData->uint32("seaLevel");
+
         AV::uint8* regionPtr = REGION_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(xa, ya));
         for(int y = ya; y < yb; y++){
             for(int x = xa; x < xb; x++){
@@ -210,7 +215,7 @@ namespace ProceduralExplorationGameCore{
 
                 WorldPoint currentPoint = WRAP_WORLD_POINT(x, y);
                 AV::uint8 altitude = *(VOX_PTR_FOR_COORD_CONST(mapData, currentPoint));
-                if(altitude < mapData->seaLevel) continue;
+                if(altitude < seaLevel) continue;
 
                 float closest = 10000.0;
                 int closestIdx = -1;

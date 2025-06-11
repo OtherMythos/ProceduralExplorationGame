@@ -20,7 +20,7 @@ namespace ProceduralExplorationGameCore{
 
     void WriteFinalRegionValuesMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         AV::uint8* regionPtr = REGION_PTR_FOR_COORD(mapData, 0);
-        for(int i = 0; i < input->width * input->height; i++){
+        for(int i = 0; i < mapData->uint32("width") * mapData->uint32("height"); i++){
             *regionPtr = 100;
             regionPtr += 4;
         }

@@ -21,7 +21,7 @@ namespace ProceduralExplorationGameCore{
             return true;
         }
 
-        if(x == 0 || y == 0 || x == mapData->width-1 || y == mapData->height-1){
+        if(x == 0 || y == 0 || x == width-1 || y == height-1){
             floodData->nextToWorldEdge = true;
         }
 
@@ -39,11 +39,11 @@ namespace ProceduralExplorationGameCore{
         return false;
     }
     template<typename T, typename C, typename TT, int S>
-    void inline _floodFillForPos(T comparisonFunction, C readFunction, int x, int y, ExplorationMapData* mapData, AV::uint32& currentIdx, std::vector<RegionId>& vals, std::vector<FloodFillEntry*>& outData, bool writeToBlob=true){
+    void inline _floodFillForPos(T comparisonFunction, C readFunction, int x, int y, ExplorationMapData* mapData, AV::uint32& currentIdx, std::vector<RegionId>& vals, std::vector<FloodFillEntry*>& outData, AV::uint32 width, AV::uint32 height, bool writeToBlob=true){
         TT altitude = readFunction(mapData, x, y);
 
         if(comparisonFunction(mapData, altitude)){
-            if(vals[x+y*mapData->width] == INVALID_REGION_ID){
+            if(vals[x+y*width] == INVALID_REGION_ID){
                 std::stack<FloodFillPoint> points;
                 points.push({WRAP_WORLD_POINT(x, y), WRAP_WORLD_POINT(x, y)});
                 //TODO prevent pointers.
@@ -61,7 +61,7 @@ namespace ProceduralExplorationGameCore{
                     WorldCoord xx, yy;
                     READ_WORLD_POINT(p, xx, yy);
                     bool nextToEdge = floodFill_<T, TT, C>
-                        (points, xx, yy, mapData->width, mapData->height, comparisonFunction, readFunction, &vals, mapData, currentIdx, floodData);
+                        (points, xx, yy, width, height, comparisonFunction, readFunction, &vals, mapData, currentIdx, floodData);
                     if(nextToEdge){
                         edgeCoords.insert(pointData.second);
                     }
@@ -82,21 +82,24 @@ namespace ProceduralExplorationGameCore{
     }
     template<typename T, typename C, int S>
     void inline floodFill(T comparisonFunction, C readFunction, ExplorationMapData* mapData, std::vector<FloodFillEntry*>& outData, bool writeToBlob=true){
+        const AV::uint32 width = mapData->uint32("width");
+        const AV::uint32 height = mapData->uint32("height");
+
         std::vector<RegionId> vals;
-        vals.resize(mapData->width * mapData->height, INVALID_REGION_ID);
+        vals.resize(width * height, INVALID_REGION_ID);
         AV::uint32 currentIdx = 0;
 
-        for(int y = 0; y < mapData->height; y++){
-            for(int x = 0; x < mapData->width; x++){
+        for(int y = 0; y < height; y++){
+            for(int x = 0; x < width; x++){
                 _floodFillForPos<T, C, AV::uint8, S>
-                    (comparisonFunction, readFunction, x, y, mapData, currentIdx, vals, outData, writeToBlob);
+                    (comparisonFunction, readFunction, x, y, mapData, currentIdx, vals, outData, width, height, writeToBlob);
                 //currentIdx++;
             }
         }
 
         if(writeToBlob){
-            assert(mapData->voxelBufferSize / 4 == vals.size());
-            AV::uint32* voxPtr = reinterpret_cast<AV::uint32*>(mapData->voxelBuffer);
+            assert(mapData->sizeType("voxelBufferSize") / 4 == vals.size());
+            AV::uint32* voxPtr = reinterpret_cast<AV::uint32*>(mapData->voidPtr("voxelBuffer"));
             for(size_t i = 0; i < vals.size(); i++){
                 AV::uint8* subPtr = reinterpret_cast<AV::uint8*>(voxPtr);
                 *(subPtr+S) = (vals[i] & 0xFF);

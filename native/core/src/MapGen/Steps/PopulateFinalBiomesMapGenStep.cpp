@@ -33,6 +33,8 @@ namespace ProceduralExplorationGameCore{
     }
 
     void PopulateFinalBiomesMapGenJob::processJob(ExplorationMapData* mapData, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb){
+        const AV::uint32 seaLevel = mapData->uint32("seaLevel");
+
         const WorldPoint wrappedStartPoint = WRAP_WORLD_POINT(xa, ya);
         AV::uint32* fullSecondaryVoxPtr = FULL_PTR_FOR_COORD_SECONDARY(mapData, wrappedStartPoint);
         AV::uint32* fullVoxPtr = FULL_PTR_FOR_COORD(mapData, wrappedStartPoint);
@@ -44,7 +46,7 @@ namespace ProceduralExplorationGameCore{
                 fullSecondaryVoxPtr++;
                 fullVoxPtr++;
                 AV::uint8 altitude = fullVox & 0xFF;
-                if(altitude < mapData->seaLevel){
+                if(altitude < seaLevel){
                     continue;
                 }
 

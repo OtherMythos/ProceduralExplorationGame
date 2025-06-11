@@ -8,7 +8,7 @@ namespace Ogre{
 
 namespace ProceduralExplorationGameCore{
 
-    struct ExplorationMapData;
+    class ExplorationMapData;
 
     class ExplorationMapViewer{
     public:

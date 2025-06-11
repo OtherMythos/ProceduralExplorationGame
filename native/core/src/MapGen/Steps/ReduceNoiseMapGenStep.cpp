@@ -35,11 +35,13 @@ namespace ProceduralExplorationGameCore{
 
 
     void ReduceNoiseMapGenJob::processJob(ExplorationMapData* mapData, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb, const std::vector<float>& additionVals){
+        const AV::uint32 width = mapData->uint32("width");
+
         {
-            float* voxPtr = static_cast<float*>(mapData->voxelBuffer);
+            float* voxPtr = static_cast<float*>(mapData->voidPtr("voxelBuffer"));
             for(AV::uint32 y = ya; y < yb; y++){
                 for(AV::uint32 x = xa; x < xb; x++){
-                    float* target = (voxPtr + (x+y*mapData->width));
+                    float* target = (voxPtr + (x+y*width));
 
                     *(reinterpret_cast<AV::uint32*>(target)) = static_cast<AV::uint32>(*target * (float)0xFF);
                 }
@@ -47,10 +49,10 @@ namespace ProceduralExplorationGameCore{
         }
 
         {
-            float* voxPtr = static_cast<float*>(mapData->secondaryVoxelBuffer);
+            float* voxPtr = static_cast<float*>(mapData->voidPtr("secondaryVoxelBuffer"));
             for(AV::uint32 y = ya; y < yb; y++){
                 for(AV::uint32 x = xa; x < xb; x++){
-                    float* target = (voxPtr + (x+y*mapData->width));
+                    float* target = (voxPtr + (x+y*width));
                     float val = (*target * (float)0xFF);
                     assert(val <= (float)0xFF);
                     *(reinterpret_cast<AV::uint32*>(target)) = static_cast<AV::uint32>(val);
