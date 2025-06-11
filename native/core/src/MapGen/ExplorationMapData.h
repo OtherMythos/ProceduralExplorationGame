@@ -119,9 +119,9 @@ struct RiverData{
         AV::uint32 width;
         AV::uint32 height;
 
-        AV::uint32 seed;
-        AV::uint32 moistureSeed;
-        AV::uint32 variationSeed;
+        //AV::uint32 seed;
+        //AV::uint32 moistureSeed;
+        //AV::uint32 variationSeed;
 
         AV::uint32 seaLevel;
 

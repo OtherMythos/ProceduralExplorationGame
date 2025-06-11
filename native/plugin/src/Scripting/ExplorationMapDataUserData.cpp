@@ -179,9 +179,9 @@ namespace ProceduralExplorationGamePlugin{
 
         sq_newtable(vm);
 
-        pushInteger(vm, "seed", mapData->seed);
-        pushInteger(vm, "moistureSeed", mapData->moistureSeed);
-        pushInteger(vm, "variationSeed", mapData->variationSeed);
+        //pushInteger(vm, "seed", mapData->seed);
+        //pushInteger(vm, "moistureSeed", mapData->moistureSeed);
+        //pushInteger(vm, "variationSeed", mapData->variationSeed);
         pushInteger(vm, "width", mapData->width);
         pushInteger(vm, "height", mapData->height);
         pushInteger(vm, "seaLevel", mapData->seaLevel);

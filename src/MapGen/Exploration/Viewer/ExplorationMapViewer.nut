@@ -294,7 +294,6 @@ enum MapViewerColours{
 
 
             //fillBufferWithMapLean_(textureBox);
-            //local nativeMapData = _gameCore.tableToExplorationMapData(mMapData_);
             //_gameCore.fillBufferWithMapLean(textureBox, nativeMapData);
         }else{
             //fillBufferWithMapComplex_(textureBox);
