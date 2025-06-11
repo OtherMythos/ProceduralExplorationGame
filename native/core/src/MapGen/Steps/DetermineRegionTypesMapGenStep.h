@@ -9,7 +9,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    struct ExplorationMapInputData;
+    class ExplorationMapInputData;
     class ExplorationMapData;
 
     class DetermineRegionTypesMapGenStep : public MapGenStep{

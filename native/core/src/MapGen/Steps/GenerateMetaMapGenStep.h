@@ -4,7 +4,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    struct ExplorationMapInputData;
+    class ExplorationMapInputData;
     class ExplorationMapData;
 
     class GenerateMetaMapGenStep : public MapGenStep{

@@ -87,7 +87,7 @@ namespace ProceduralExplorationGameCore{
 
     void DetermineEarlyRegionsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
 
-        int totalRegions = input->numRegions;
+        int totalRegions = input->uint32("numRegions");
         //For the special regions.
         totalRegions += 20;
 
@@ -157,10 +157,10 @@ namespace ProceduralExplorationGameCore{
         //TODO separate this into jobs for threads.
 
         int div = 4;
-        int divHeight = input->height / div;
+        int divHeight = input->uint32("height") / div;
         for(int i = 0; i < 4; i++){
             DetermineEarlyRegionsMapGenJob job;
-            job.processJob(mapData, points, mapData->regionData, 0, i * divHeight, input->width, i * divHeight + divHeight);
+            job.processJob(mapData, points, mapData->regionData, 0, i * divHeight, input->uint32("width"), i * divHeight + divHeight);
         }
 
         //Go through the produced list and remove any regions with no coordinates

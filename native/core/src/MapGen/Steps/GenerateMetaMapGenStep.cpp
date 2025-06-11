@@ -48,23 +48,23 @@ namespace ProceduralExplorationGameCore{
     }
 
     void GenerateMetaMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
-        mapData->width = input->width;
-        mapData->height = input->height;
-        mapData->seaLevel = input->seaLevel;
+        mapData->width = input->uint32("width");
+        mapData->height = input->uint32("height");
+        mapData->seaLevel = input->uint32("seaLevel");
 
-        mapData->moistureSeed = input->moistureSeed;
-        mapData->seed = input->seed;
-        mapData->variationSeed = input->variationSeed;
+        mapData->moistureSeed = input->uint32("moistureSeed");
+        mapData->seed = input->uint32("seed");
+        mapData->variationSeed = input->uint32("variationSeed");
 
-        mapData->setEntry("width", {MapDataEntryType::UINT32, input->width});
-        mapData->setEntry("height", {MapDataEntryType::UINT32, input->height});
-        mapData->setEntry("seaLevel", {MapDataEntryType::UINT32, input->seaLevel});
+        mapData->uint32("width", input->uint32("width"));
+        mapData->uint32("height", input->uint32("height"));
+        mapData->uint32("seaLevel", input->uint32("seaLevel"));
 
-        mapData->setEntry("moistureSeed", {MapDataEntryType::UINT32, input->moistureSeed});
-        mapData->setEntry("seed", {MapDataEntryType::UINT32, input->seed});
-        mapData->setEntry("variationSeed", {MapDataEntryType::UINT32, input->variationSeed});
+        mapData->uint32("moistureSeed", input->uint32("moistureSeed"));
+        mapData->uint32("seed", input->uint32("seed"));
+        mapData->uint32("variationSeed", input->uint32("variationSeed"));
 
-        RandomWrapper::singleton.seed(input->variationSeed);
+        RandomWrapper::singleton.seed(mapData->uint32("variationSeed"));
 
         for(int i = 0; i < 3; i++){
             WorldPoint p = determinePositionForBlob_(mapData, workspace->blobSeeds, i);

@@ -51,7 +51,8 @@ namespace ProceduralExplorationGameCore{
         }
     };
 
-    struct ExplorationMapInputData{
+    class ExplorationMapInputData : public ExplorationMapData{
+    public:
         AV::uint32 width;
         AV::uint32 height;
 

@@ -5,7 +5,7 @@
 namespace ProceduralExplorationGameCore{
     class MapGen;
     class VisitedPlacesParser;
-    struct ExplorationMapInputData;
+    class ExplorationMapInputData;
 }
 
 namespace ProceduralExplorationGamePlugin{

@@ -33,10 +33,12 @@ namespace ProceduralExplorationGameCore{
     }
 
     void DetermineRegionsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+        const AV::uint32 width = input->uint32("width");
+        const AV::uint32 height = input->uint32("height");
 
         std::vector<WorldPoint> points;
-        points.reserve(input->numRegions);
-        for(RegionId i = 0; i < input->numRegions; i++){
+        points.reserve(input->uint32("numRegions"));
+        for(RegionId i = 0; i < input->uint32("numRegions"); i++){
             WorldPoint p = _determineRegionPoint(mapData->landData, workspace->landWeighted, mapData);
             if(p == INVALID_WORLD_POINT) continue;
 
@@ -55,10 +57,10 @@ namespace ProceduralExplorationGameCore{
         //TODO separate this into jobs for threads.
 
         int div = 4;
-        int divHeight = input->height / div;
+        int divHeight = height / div;
         for(int i = 0; i < 4; i++){
             DetermineRegionsMapGenJob job;
-            job.processJob(mapData, points, mapData->regionData, 0, i * divHeight, input->width, i * divHeight + divHeight);
+            job.processJob(mapData, points, mapData->regionData, 0, i * divHeight, width, i * divHeight + divHeight);
         }
     }
 

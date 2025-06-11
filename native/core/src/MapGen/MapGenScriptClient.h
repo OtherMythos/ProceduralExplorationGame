@@ -10,7 +10,7 @@ namespace AV{
 namespace ProceduralExplorationGameCore{
     class MapGenStep;
     class CallbackScript;
-    struct ExplorationMapInputData;
+    class ExplorationMapInputData;
     class ExplorationMapData;
 
     class MapGenScriptClient : public MapGenClient{

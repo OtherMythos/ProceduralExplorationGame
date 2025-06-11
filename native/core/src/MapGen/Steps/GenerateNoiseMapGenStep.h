@@ -7,7 +7,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    struct ExplorationMapInputData;
+    class ExplorationMapInputData;
     class ExplorationMapData;
 
     class GenerateNoiseMapGenStep : public MapGenStep{

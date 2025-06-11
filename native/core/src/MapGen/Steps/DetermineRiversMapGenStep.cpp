@@ -26,9 +26,9 @@ namespace ProceduralExplorationGameCore{
     }
 
     void _determineRiverOrigins(std::vector<WorldPoint>& out, const ExplorationMapInputData* input, const std::vector<FloodFillEntry*>& landData, const std::vector<LandId>& landWeighted, ExplorationMapData* data){
-        out.reserve(input->numRivers);
+        out.reserve(input->uint32("numRivers"));
         //local origins = array(data.numRivers);
-        for(int i = 0; i < input->numRivers; i++){
+        for(int i = 0; i < input->uint32("numRivers"); i++){
             LandId landId = findRandomLandmassForSize(landData, landWeighted, 20);
             if(landId == INVALID_LAND_ID) continue;
             WorldPoint landPoint = _findPointOnCoast(landData, landId);
