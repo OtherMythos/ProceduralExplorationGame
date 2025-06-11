@@ -71,7 +71,7 @@ namespace ProceduralExplorationGameCore{
                     int xx = (x + px - BLOB_SIZE/2);
                     int yy = (y + py - BLOB_SIZE/2);
 
-                    if(xx < 0 || yy < 0 || xx >= width || yy >= mapData->height) continue;
+                    if(xx < 0 || yy < 0 || xx >= width || yy >= height) continue;
 
                     size_t valIdx = xx + yy * width;
                     float regionOffset = distance(xx, yy, px, py);

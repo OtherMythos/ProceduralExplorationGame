@@ -4,6 +4,7 @@
 #include <vector>
 #include "GamePrerequisites.h"
 #include "MapGen/ExplorationMapDataPrerequisites.h"
+#include "Util/FloodFill.h"
 
 #include "System/EnginePrerequisites.h"
 
@@ -18,6 +19,15 @@ namespace ProceduralExplorationGameCore{
         ~IsolateRegionsMapGenStep();
 
         void processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace) override;
+
+    private:
+        typedef AV::uint32 WrappedAltitudeRegion;
+
+        static inline bool comparisonValues(ExplorationMapData* mapData, WrappedAltitudeRegion val);
+        static inline WrappedAltitudeRegion readValues(ExplorationMapData* mapData, AV::uint32 x, AV::uint32 y);
+
+        void isolateRegion(ExplorationMapData* mapData, RegionData& region, std::vector<RegionId>& vals);
+
     };
 
     class IsolateRegionsMapGenJob{

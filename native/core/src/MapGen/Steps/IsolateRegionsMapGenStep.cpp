@@ -1,9 +1,5 @@
 #include "IsolateRegionsMapGenStep.h"
 
-#include "MapGen/ExplorationMapDataPrerequisites.h"
-
-#include "Util/FloodFill.h"
-
 #include <cassert>
 #include <cmath>
 #include <algorithm>
@@ -18,21 +14,19 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    typedef AV::uint32 WrappedAltitudeRegion;
-
     RegionId checkRegion = INVALID_REGION_ID;
     AV::uint32 checkSeaLevel = 0;
-    inline bool comparisonValues(ExplorationMapData* mapData, WrappedAltitudeRegion val){
+    inline bool IsolateRegionsMapGenStep::comparisonValues(ExplorationMapData* mapData, WrappedAltitudeRegion val){
         AV::uint8 altitude = (val >> 16) & 0xFFFF;
         RegionId region = val & 0xFFFF;
-        return altitude >= mapData->seaLevel && region == checkRegion;
+        return altitude >= checkSeaLevel && region == checkRegion;
     }
-    inline WrappedAltitudeRegion readValues(ExplorationMapData* mapData, AV::uint32 x, AV::uint32 y){
+    inline IsolateRegionsMapGenStep::WrappedAltitudeRegion IsolateRegionsMapGenStep::readValues(ExplorationMapData* mapData, AV::uint32 x, AV::uint32 y){
         AV::uint8 altitude = *(VOX_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y)));
         RegionId region = *(REGION_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y)));
         return static_cast<AV::uint32>(altitude) << 16 | region;
     }
-    void isolateRegion(ExplorationMapData* mapData, RegionData& region, std::vector<RegionId>& vals){
+    void IsolateRegionsMapGenStep::isolateRegion(ExplorationMapData* mapData, RegionData& region, std::vector<RegionId>& vals){
         //checkRegion = region.id;
 
         //TODO don't place inline.

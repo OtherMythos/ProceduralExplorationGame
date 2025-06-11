@@ -19,11 +19,14 @@ namespace ProceduralExplorationGameCore{
     }
 
     WorldPoint determinePositionForBlob_(const ExplorationMapData* mapData, const std::vector<WorldPoint>& seeds, int idx){
+        const AV::uint32 width = mapData->uint32("width");
+        const AV::uint32 height = mapData->uint32("height");
+
         WorldCoord xx, yy;
         xx = yy = 0;
         for(int i = 0; i < 50; i++){
-            xx = mapGenRandomIntMinMax(HALF_BLOB_SIZE, mapData->width - HALF_BLOB_SIZE);
-            yy = mapGenRandomIntMinMax(HALF_BLOB_SIZE, mapData->height - HALF_BLOB_SIZE);
+            xx = mapGenRandomIntMinMax(HALF_BLOB_SIZE, width - HALF_BLOB_SIZE);
+            yy = mapGenRandomIntMinMax(HALF_BLOB_SIZE, height - HALF_BLOB_SIZE);
             if(idx == 0){
                 break;
             }
@@ -48,13 +51,14 @@ namespace ProceduralExplorationGameCore{
     }
 
     void GenerateMetaMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+        //Some universal values are kept for quick lookup.
         mapData->width = input->uint32("width");
         mapData->height = input->uint32("height");
         mapData->seaLevel = input->uint32("seaLevel");
 
-        mapData->moistureSeed = input->uint32("moistureSeed");
-        mapData->seed = input->uint32("seed");
-        mapData->variationSeed = input->uint32("variationSeed");
+        //mapData->moistureSeed = input->uint32("moistureSeed");
+        //mapData->seed = input->uint32("seed");
+        //mapData->variationSeed = input->uint32("variationSeed");
 
         mapData->uint32("width", input->uint32("width"));
         mapData->uint32("height", input->uint32("height"));

@@ -51,20 +51,7 @@ namespace ProceduralExplorationGameCore{
         }
     };
 
-    class ExplorationMapInputData : public ExplorationMapData{
-    public:
-        AV::uint32 width;
-        AV::uint32 height;
-
-        AV::uint32 seed;
-        AV::uint32 moistureSeed;
-        AV::uint32 variationSeed;
-
-        AV::uint32 numRivers;
-        AV::uint32 numRegions;
-        AV::uint8 seaLevel;
-
-        //AV::uint16 placeFrequency[(size_t)PlaceType::MAX];
+    class ExplorationMapInputData : public ExplorationMapDataBase{
     };
 
 

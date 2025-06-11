@@ -90,7 +90,7 @@ struct RiverData{
         MapDataReadResult __mapError = XX; \
         assert(__mapError == MapDataReadResult::SUCCESS);
 
-    class ExplorationMapData{
+    class ExplorationMapDataBase{
     private:
         std::map<std::string, MapDataEntry> mEntries;
     public:
@@ -107,6 +107,9 @@ struct RiverData{
 
         void* voidPtr(std::string name) const;
         void voidPtr(std::string name, void* val);
+    };
+
+    class ExplorationMapData : public ExplorationMapDataBase{
 
     public:
 
