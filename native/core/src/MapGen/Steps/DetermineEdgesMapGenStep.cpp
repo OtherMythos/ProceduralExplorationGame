@@ -16,10 +16,10 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void _outlineEdge(std::vector<FloodFillEntry*>& entries, const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    void _outlineEdge(const std::vector<FloodFillEntry*>& entries, const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         const AV::uint32 width = mapData->width;
 
-        for(FloodFillEntry* d : entries){
+        for(const FloodFillEntry* d : entries){
             for(WorldPoint i : d->edges){
                 WorldCoord x, y;
                 READ_WORLD_POINT(i, x, y);
@@ -32,8 +32,9 @@ namespace ProceduralExplorationGameCore{
     }
 
     void DetermineEdgesMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+        const std::vector<FloodFillEntry*>& waterData = (*mapData->ptr<std::vector<FloodFillEntry*>>("waterData"));
         _outlineEdge(mapData->landData, input, mapData, workspace);
-        _outlineEdge(mapData->waterData, input, mapData, workspace);
+        _outlineEdge(waterData, input, mapData, workspace);
     }
 
 }

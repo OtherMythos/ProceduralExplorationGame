@@ -75,7 +75,7 @@ namespace ProceduralExplorationGameCore{
             if(waterGroup == INVALID_WATER_ID){
                 drawVal = valueColours[(size_t)MapViewerColours::COLOUR_BLACK];
             }else{
-                float valGroup = static_cast<float>(waterGroup) / static_cast<float>(mapData->waterData.size());
+                float valGroup = static_cast<float>(waterGroup) / static_cast<float>(mapData->ptr<std::vector<FloodFillEntry*>>("waterData")->size());
                 drawVal = Ogre::ColourValue(valGroup, valGroup, valGroup, OPACITY).getAsABGR();
             }
         }

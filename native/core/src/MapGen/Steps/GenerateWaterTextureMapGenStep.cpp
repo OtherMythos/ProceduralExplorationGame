@@ -115,10 +115,12 @@ namespace ProceduralExplorationGameCore{
             }
         }
 
+
+        const std::vector<FloodFillEntry*>& waterData = (*mapData->ptr<std::vector<FloodFillEntry*>>("waterData"));
         //Write some pixels on the sides of fresh water, to help accomodate for vertex animations.
         //Start at 1 to skip the ocean.
-        for(size_t i = 1; i < mapData->waterData.size(); i++){
-            const FloodFillEntry* e = mapData->waterData[i];
+        for(size_t i = 1; i < waterData.size(); i++){
+            const FloodFillEntry* e = waterData[i];
 
             for(WorldPoint p : e->edges){
                 WorldCoord xx, yy;

@@ -47,9 +47,10 @@ namespace ProceduralExplorationGameCore{
         mapWidth = mapData->width;
         voxelBuffer = mapData->voidPtr("voxelBuffer");
 
-        std::vector<FloodFillEntry*> waterResult;
-        floodFill<bool(ExplorationMapData*, AV::uint8),AV::uint8(ExplorationMapData*, AV::uint32, AV::uint32), 2>(comparisonFuncWater, readFuncAltitude, mapData, waterResult);
-        mapData->waterData = std::move(waterResult);
+        std::vector<FloodFillEntry*>* e = new std::vector<FloodFillEntry*>();
+        floodFill<bool(ExplorationMapData*, AV::uint8),AV::uint8(ExplorationMapData*, AV::uint32, AV::uint32), 2>(comparisonFuncWater, readFuncAltitude, mapData, *e);
+        mapData->voidPtr("waterData", e);
+        //mapData->waterData = std::move(waterResult);
 
         std::vector<FloodFillEntry*> landResult;
         floodFill<bool(ExplorationMapData*, AV::uint8),AV::uint8(ExplorationMapData*, AV::uint32, AV::uint32), 3>(comparisonFuncLand, readFuncAltitude, mapData, landResult);
