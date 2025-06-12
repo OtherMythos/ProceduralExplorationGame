@@ -30,7 +30,7 @@ namespace ProceduralExplorationGameCore{
 
             WorldCoord px;
             WorldCoord py;
-            READ_WORLD_POINT(mapData->playerStart, px, py);
+            READ_WORLD_POINT(mapData->worldPoint("playerStart"), px, py);
 
             float distance = sqrt(pow((float)px - (float)xx, 2) + pow((float)py - (float)yy, 2));
             if(distance > 200){
@@ -41,7 +41,7 @@ namespace ProceduralExplorationGameCore{
         if(retPoint == INVALID_WORLD_POINT){
             retPoint = WRAP_WORLD_POINT(mapData->width/2, mapData->height/2);
         }
-        mapData->gatewayPosition = retPoint;
+        mapData->worldPoint("gatewayPosition", retPoint);
     }
 
 }

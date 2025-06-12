@@ -67,4 +67,19 @@ namespace ProceduralExplorationGameCore{
         setEntry(name, d);
     }
 
+
+    WorldPoint ExplorationMapDataBase::worldPoint(std::string name) const{
+        MapDataEntry out;
+        MAP_ASSERT_RESULT(readEntry(name, &out, MapDataEntryType::WORLD_POINT));
+
+        return out.value.worldPoint;
+    }
+
+    void ExplorationMapDataBase::worldPoint(std::string name, WorldPoint val){
+        MapDataEntry d;
+        d.value.worldPoint = val;
+        d.type = MapDataEntryType::WORLD_POINT;
+        setEntry(name, d);
+    }
+
 }

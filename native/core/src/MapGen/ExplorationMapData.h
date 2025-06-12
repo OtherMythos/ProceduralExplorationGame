@@ -107,6 +107,9 @@ struct RiverData{
 
         void* voidPtr(std::string name) const;
         void voidPtr(std::string name, void* val);
+
+        WorldPoint worldPoint(std::string name) const;
+        void worldPoint(std::string name, WorldPoint val);
     };
 
     class ExplorationMapData : public ExplorationMapDataBase{
@@ -125,15 +128,15 @@ struct RiverData{
 
         AV::uint32 seaLevel;
 
-        WorldPoint playerStart;
-        WorldPoint gatewayPosition;
+        //WorldPoint playerStart;
+        //WorldPoint gatewayPosition;
 
         void* voxelBuffer;
         void* secondaryVoxelBuffer;
         void* blueNoiseBuffer;
-        size_t voxelBufferSize;
-        size_t secondaryVoxelBufferSize;
-        size_t blueNoiseBufferSize;
+        //size_t voxelBufferSize;
+        //size_t secondaryVoxelBufferSize;
+        //size_t blueNoiseBufferSize;
         void* riverBuffer;
 
         float* waterTextureBuffer;

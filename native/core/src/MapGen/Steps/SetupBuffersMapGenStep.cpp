@@ -27,9 +27,9 @@ namespace ProceduralExplorationGameCore{
         mapData->secondaryVoxelBuffer = reinterpret_cast<void*>(startPtr + VOX_BUF_SIZE);
         mapData->blueNoiseBuffer = reinterpret_cast<void*>(startPtr + (VOX_BUF_SIZE + SECONDARY_VOX_BUF_SIZE));
 
-        mapData->voxelBufferSize = VOX_BUF_SIZE;
-        mapData->secondaryVoxelBufferSize = SECONDARY_VOX_BUF_SIZE;
-        mapData->blueNoiseBufferSize = BLUE_NOISE_BUF_SIZE;
+        //mapData->voxelBufferSize = VOX_BUF_SIZE;
+        //mapData->secondaryVoxelBufferSize = SECONDARY_VOX_BUF_SIZE;
+        //mapData->blueNoiseBufferSize = BLUE_NOISE_BUF_SIZE;
 
         mapData->voidPtr("voxelBuffer", reinterpret_cast<void*>(startPtr));
         mapData->voidPtr("secondaryVoxelBuffer", reinterpret_cast<void*>(startPtr + VOX_BUF_SIZE));
