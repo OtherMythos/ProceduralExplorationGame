@@ -40,8 +40,8 @@ namespace ProceduralExplorationGameCore{
         return val < mapData->seaLevel;
     }
     void PerformPreFloodFillMapGenJob::processJob(ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
-        const AV::uint32 width = mapData->uint32("width");
-        const AV::uint32 height = mapData->uint32("height");
+        const AV::uint32 width = mapData->width;
+        const AV::uint32 height = mapData->height;
 
         std::vector<FloodFillEntry*> waterResult;
         floodFill<bool(ExplorationMapData*, AV::uint8),AV::uint8(ExplorationMapData*, AV::uint32, AV::uint32), 2>(comparisonFuncWater, readFuncAltitude, mapData, waterResult);

@@ -44,7 +44,7 @@ namespace ProceduralExplorationGameCore{
     }
     void PerformFinalFloodFillMapGenJob::processJob(ExplorationMapData* mapData){
         seaLevel = mapData->uint32("seaLevel");
-        mapWidth = mapData->uint32("width");
+        mapWidth = mapData->width;
         voxelBuffer = mapData->voidPtr("voxelBuffer");
 
         std::vector<FloodFillEntry*> waterResult;
@@ -56,8 +56,8 @@ namespace ProceduralExplorationGameCore{
         mapData->landData = std::move(landResult);
 
         //Sanity checks, should get compiled out in release builds.
-        for(AV::uint32 y = 0; y < mapData->uint32("height"); y++){
-            for(AV::uint32 x = 0; x < mapData->uint32("width"); x++){
+        for(AV::uint32 y = 0; y < mapData->height; y++){
+            for(AV::uint32 x = 0; x < mapData->width; x++){
                 const AV::uint8* waterGroup = WATER_GROUP_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y));
                 const AV::uint8* landGroup = LAND_GROUP_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y));
 

@@ -294,8 +294,8 @@ namespace ProceduralExplorationGameCore{
     }
 
     void Voxeliser::createTerrainFromMapData(const std::string& meshName, ExplorationMapData* mapData, Ogre::MeshPtr* outMeshes, AV::uint32* outNumRegions){
-        AV::uint32 width = mapData->uint32("width");
-        AV::uint32 height = mapData->uint32("height");
+        AV::uint32 width = mapData->width;
+        AV::uint32 height = mapData->height;
         AV::uint32 seaLevel = mapData->uint32("seaLevel");
         AV::uint32* voxPtr = static_cast<AV::uint32*>(mapData->voxelBuffer);
         AV::uint32* secondaryVoxPtr = static_cast<AV::uint32*>(mapData->secondaryVoxelBuffer);

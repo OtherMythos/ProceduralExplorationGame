@@ -182,8 +182,8 @@ namespace ProceduralExplorationGamePlugin{
         //pushInteger(vm, "seed", mapData->seed);
         //pushInteger(vm, "moistureSeed", mapData->moistureSeed);
         //pushInteger(vm, "variationSeed", mapData->variationSeed);
-        pushInteger(vm, "width", mapData->uint32("width"));
-        pushInteger(vm, "height", mapData->uint32("height"));
+        pushInteger(vm, "width", mapData->width);
+        pushInteger(vm, "height", mapData->height);
         pushInteger(vm, "seaLevel", mapData->uint32("seaLevel"));
         pushInteger(vm, "playerStart", mapData->worldPoint("playerStart"));
         pushInteger(vm, "gatewayPosition", mapData->worldPoint("gatewayPosition"));
@@ -193,7 +193,7 @@ namespace ProceduralExplorationGamePlugin{
         //pushPlaceData(vm, "placeData", mapData->placeData);
         pushRegionData(vm, "regionData", *mapData->ptr<std::vector<ProceduralExplorationGameCore::RegionData>>("regionData"));
         pushPlacedItemData(vm, "placedItems", mapData->placedItems);
-        generatePushedItemBuffer(vm, "placedItemsBuffer", mapData->uint32("width"), mapData->uint32("height"), mapData->placedItems);
+        generatePushedItemBuffer(vm, "placedItemsBuffer", mapData->width, mapData->height, mapData->placedItems);
 
         //pushBuffer(vm, "voxelBuffer", mapData->voxelBuffer, mapData->voxelBufferSize);
         //pushBuffer(vm, "secondaryVoxBuffer", mapData->secondaryVoxelBuffer, mapData->secondaryVoxelBufferSize);

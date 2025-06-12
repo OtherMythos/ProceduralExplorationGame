@@ -17,8 +17,8 @@ namespace ProceduralExplorationGameCore{
     }
 
     void GenerateWaterTextureMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
-        const AV::uint32 width = mapData->uint32("width");
-        const AV::uint32 height = mapData->uint32("height");
+        const AV::uint32 width = mapData->width;
+        const AV::uint32 height = mapData->height;
 
         size_t bufSize = width * height * sizeof(float) * 4;
         float* buffer = static_cast<float*>(malloc(bufSize));
@@ -59,8 +59,8 @@ namespace ProceduralExplorationGameCore{
     }
 
     void GenerateWaterTextureMapGenJob::processJob(ExplorationMapData* mapData, float* buffer, float* bufferMask, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb){
-        const AV::uint32 width = mapData->uint32("width");
-        const AV::uint32 height = mapData->uint32("height");
+        const AV::uint32 width = mapData->width;
+        const AV::uint32 height = mapData->height;
         const AV::uint32 seaLevel = mapData->uint32("seaLevel");
 
         for(int y = ya; y < yb; y++){

@@ -17,7 +17,7 @@ namespace ProceduralExplorationGameCore{
     }
 
     void _outlineEdge(std::vector<FloodFillEntry*>& entries, const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
-        const AV::uint32 width = mapData->uint32("width");
+        const AV::uint32 width = mapData->width;
 
         for(FloodFillEntry* d : entries){
             for(WorldPoint i : d->edges){

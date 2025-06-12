@@ -22,7 +22,7 @@ namespace ProceduralExplorationGameCore{
         const std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
 
         AV::uint8* regionPtr = REGION_PTR_FOR_COORD(mapData, 0);
-        for(int i = 0; i < mapData->uint32("width") * mapData->uint32("height"); i++){
+        for(int i = 0; i < mapData->width * mapData->height; i++){
             *regionPtr = 100;
             regionPtr += 4;
         }

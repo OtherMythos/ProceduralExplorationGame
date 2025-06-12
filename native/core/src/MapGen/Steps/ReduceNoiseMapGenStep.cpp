@@ -38,7 +38,7 @@ namespace ProceduralExplorationGameCore{
 
 
     void ReduceNoiseMapGenJob::processJob(ExplorationMapData* mapData, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb, const std::vector<float>& additionVals){
-        const AV::uint32 width = mapData->uint32("width");
+        const AV::uint32 width = mapData->width;
 
         {
             float* voxPtr = static_cast<float*>(mapData->voidPtr("voxelBuffer"));

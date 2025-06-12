@@ -43,7 +43,7 @@ namespace ProceduralExplorationGameCore{
         AV::uint32 currentIdx = 0;
         _floodFillForPos
             <bool(ExplorationMapData*, WrappedAltitudeRegion),WrappedAltitudeRegion(ExplorationMapData*, AV::uint32, AV::uint32), AV::uint32, 2>
-            (comparisonValues, readValues, xp, yp, mapData, currentIdx, vals, regionResult, mapData->uint32("width"), mapData->uint32("height"), false);
+            (comparisonValues, readValues, xp, yp, mapData, currentIdx, vals, regionResult, mapData->width, mapData->height, false);
         //mapData->waterData = std::move(waterResult);
 
         assert(regionResult.size() == 1);
@@ -101,7 +101,7 @@ namespace ProceduralExplorationGameCore{
         std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
 
         std::vector<RegionId> vals;
-        vals.resize(mapData->uint32("width") * mapData->uint32("height"), INVALID_REGION_ID);
+        vals.resize(mapData->width * mapData->height, INVALID_REGION_ID);
         int len = regionData.size();
         for(int i = 0; i < len; i++){
         //auto it = mapData->ptr<std::vector<RegionData>>("regionData")->begin();

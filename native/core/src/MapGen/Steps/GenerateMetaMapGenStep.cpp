@@ -19,8 +19,8 @@ namespace ProceduralExplorationGameCore{
     }
 
     WorldPoint determinePositionForBlob_(const ExplorationMapData* mapData, const std::vector<WorldPoint>& seeds, int idx){
-        const AV::uint32 width = mapData->uint32("width");
-        const AV::uint32 height = mapData->uint32("height");
+        const AV::uint32 width = mapData->width;
+        const AV::uint32 height = mapData->height;
 
         WorldCoord xx, yy;
         xx = yy = 0;
@@ -60,8 +60,8 @@ namespace ProceduralExplorationGameCore{
         //mapData->seed = input->uint32("seed");
         //mapData->variationSeed = input->uint32("variationSeed");
 
-        mapData->uint32("width", input->uint32("width"));
-        mapData->uint32("height", input->uint32("height"));
+        mapData->uint32("width", mapData->width);
+        mapData->uint32("height", mapData->height);
         mapData->uint32("seaLevel", input->uint32("seaLevel"));
 
         mapData->uint32("moistureSeed", input->uint32("moistureSeed"));

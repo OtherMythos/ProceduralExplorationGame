@@ -59,8 +59,8 @@ namespace ProceduralExplorationGameCore{
     }
 
     void calculateBlobs_(std::vector<float>& additionalVals, ExplorationMapData* mapData, const std::vector<WorldPoint>& blobPositions){
-        const AV::uint32 width = mapData->uint32("width");
-        const AV::uint32 height = mapData->uint32("height");
+        const AV::uint32 width = mapData->width;
+        const AV::uint32 height = mapData->height;
 
         for(int i = 0; i < 3; i++){
             WorldCoord px, py;
@@ -86,7 +86,7 @@ namespace ProceduralExplorationGameCore{
     }
 
     void calculateLines_(int idx, std::vector<float>& additionVals, ExplorationMapData* mapData, const std::vector<WorldPoint>& blobPositions){
-        const AV::uint32 width = mapData->uint32("width");
+        const AV::uint32 width = mapData->width;
 
         WorldCoord x1, y1, x2, y2;
         READ_WORLD_POINT(blobPositions[idx], x1, y1);
@@ -137,7 +137,7 @@ namespace ProceduralExplorationGameCore{
 
     void GenerateAdditionLayerMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         std::vector<float> additionVals;
-        additionVals.resize(mapData->uint32("width") * mapData->uint32("height"));
+        additionVals.resize(mapData->width * mapData->height);
 
         for(int i = 0; i < workspace->blobSeeds.size()-1; i++){
             calculateLines_(i, additionVals, mapData, workspace->blobSeeds);

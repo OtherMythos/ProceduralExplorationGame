@@ -33,8 +33,8 @@ namespace ProceduralExplorationGameCore{
     }
 
     void DetermineRegionsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
-        const AV::uint32 width = input->uint32("width");
-        const AV::uint32 height = input->uint32("height");
+        const AV::uint32 width = mapData->width;
+        const AV::uint32 height = mapData->height;
         std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
 
         std::vector<WorldPoint> points;

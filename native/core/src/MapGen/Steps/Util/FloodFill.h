@@ -82,8 +82,8 @@ namespace ProceduralExplorationGameCore{
     }
     template<typename T, typename C, int S>
     void inline floodFill(T comparisonFunction, C readFunction, ExplorationMapData* mapData, std::vector<FloodFillEntry*>& outData, bool writeToBlob=true){
-        const AV::uint32 width = mapData->uint32("width");
-        const AV::uint32 height = mapData->uint32("height");
+        const AV::uint32 width = mapData->width;
+        const AV::uint32 height = mapData->height;
 
         std::vector<RegionId> vals;
         vals.resize(width * height, INVALID_REGION_ID);

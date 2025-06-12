@@ -50,8 +50,8 @@ namespace ProceduralExplorationGameCore{
     }
 
     void _determinePoints(const ExplorationMapData* mapData, std::vector<RegionSeedData>& points, std::vector<RegionData>& regionData, AV::CollisionWorldObject* collisionWorld){
-        const AV::uint32 width = mapData->uint32("width");
-        const AV::uint32 height = mapData->uint32("height");
+        const AV::uint32 width = mapData->width;
+        const AV::uint32 height = mapData->height;
 
         int padWidth = 30;
         int padHeight = 30;
