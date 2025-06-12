@@ -105,7 +105,7 @@ jobs:
           path: "/home/runner/libProceduralExplorationGameNativeCore_android_static_${{ matrix.buildType }}.a"
 
   buildNativeWindows:
-    runs-on: windows-2019
+    runs-on: windows-2022
     strategy:
       matrix:
         buildType: [Debug, Release]
@@ -233,7 +233,7 @@ jobs:
           path: /tmp/distribution
 
   buildWindows:
-    runs-on: windows-2019
+    runs-on: windows-2022
     needs: build
     strategy:
       matrix:
