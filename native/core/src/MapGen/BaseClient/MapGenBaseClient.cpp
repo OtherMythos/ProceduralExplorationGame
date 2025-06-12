@@ -92,7 +92,7 @@ namespace ProceduralExplorationGameCore{
             Ogre::TextureBox texBox = stagingTexture->mapRegion(mapData->width, mapData->height, tex->getDepth(), tex->getNumSlices(), tex->getPixelFormat());
 
             float* pDest = static_cast<float*>(texBox.at(0, 0, 0));
-            memcpy(pDest, mapData->waterTextureBuffer, mapData->width * mapData->height * sizeof(float) * 4);
+            memcpy(pDest, mapData->ptr<float>("waterTextureBuffer"), mapData->width * mapData->height * sizeof(float) * 4);
 
             stagingTexture->stopMapRegion();
             stagingTexture->upload(texBox, tex, 0, 0, 0, false);
@@ -117,7 +117,7 @@ namespace ProceduralExplorationGameCore{
             Ogre::TextureBox texBox = stagingTexture->mapRegion(mapData->width, mapData->height, tex->getDepth(), tex->getNumSlices(), tex->getPixelFormat());
 
             float* pDest = static_cast<float*>(texBox.at(0, 0, 0));
-            memcpy(pDest, mapData->waterTextureBufferMask, mapData->width * mapData->height * sizeof(float) * 4);
+            memcpy(pDest, mapData->ptr<float>("waterTextureBufferMask"), mapData->width * mapData->height * sizeof(float) * 4);
 
             stagingTexture->stopMapRegion();
             stagingTexture->upload(texBox, tex, 0, 0, 0, false);

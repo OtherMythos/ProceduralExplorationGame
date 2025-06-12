@@ -146,10 +146,10 @@ struct RiverData{
         //size_t voxelBufferSize;
         //size_t secondaryVoxelBufferSize;
         //size_t blueNoiseBufferSize;
-        void* riverBuffer;
+        //void* riverBuffer;
 
-        float* waterTextureBuffer;
-        float* waterTextureBufferMask;
+        //float* waterTextureBuffer;
+        //float* waterTextureBufferMask;
 
         //std::vector<RegionData> regionData;
         std::vector<PlacedItemData> placedItems;

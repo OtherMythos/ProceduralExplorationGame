@@ -36,8 +36,8 @@ namespace ProceduralExplorationGameCore{
             }
         }
 
-        mapData->waterTextureBuffer = buffer;
-        mapData->waterTextureBufferMask = bufferMask;
+        mapData->voidPtr("waterTextureBuffer", buffer);
+        mapData->voidPtr("waterTextureBufferMask", bufferMask);
     }
 
     GenerateWaterTextureMapGenJob::GenerateWaterTextureMapGenJob(){
