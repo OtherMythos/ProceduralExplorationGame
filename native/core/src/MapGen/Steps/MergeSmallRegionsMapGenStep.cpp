@@ -17,7 +17,9 @@ namespace ProceduralExplorationGameCore{
     }
 
     void MergeSmallRegionsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
-        for(RegionData& d : mapData->regionData){
+        std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
+
+        for(RegionData& d : regionData){
             if(d.total >= 200) continue;
 
             //Don't attempt to merge small main regions, so the session can guarantee having the correct number.
@@ -32,7 +34,7 @@ namespace ProceduralExplorationGameCore{
             for(RegionId r : foundRegions){
                 //TODO do I need this?
                 if(r == 0x0 || r == REGION_ID_WATER) continue;
-                RegionData& sd = mapData->regionData[r];
+                RegionData& sd = regionData[r];
                 if(d.id == sd.id) continue;
                 mergeRegionData(mapData, d, sd);
 

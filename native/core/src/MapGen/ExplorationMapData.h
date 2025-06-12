@@ -95,6 +95,7 @@ struct RiverData{
         std::map<std::string, MapDataEntry> mEntries;
     public:
 
+        //TODO switch all the strings to references.
         MapDataReadResult readEntry(std::string name, MapDataEntry* outEntry, MapDataEntryType expectedType = MapDataEntryType::ANY) const;
 
         void setEntry(std::string name, MapDataEntry entry);
@@ -107,6 +108,14 @@ struct RiverData{
 
         void* voidPtr(std::string name) const;
         void voidPtr(std::string name, void* val);
+
+        template <typename T>
+        T* ptr(std::string name){
+            MapDataEntry out;
+            MAP_ASSERT_RESULT(readEntry(name, &out, MapDataEntryType::VOID_PTR));
+
+            return reinterpret_cast<T*>(out.value.ptr);
+        }
 
         WorldPoint worldPoint(std::string name) const;
         void worldPoint(std::string name, WorldPoint val);
@@ -142,28 +151,12 @@ struct RiverData{
         float* waterTextureBuffer;
         float* waterTextureBufferMask;
 
-        std::vector<RegionData> regionData;
+        //std::vector<RegionData> regionData;
         std::vector<PlacedItemData> placedItems;
         //TODO switch these to not be pointers.
         std::vector<FloodFillEntry*> waterData;
         std::vector<FloodFillEntry*> landData;
         //std::vector<PlaceData> placeData;
         std::vector<RiverData> riverData;
-
-        struct BufferData{
-            size_t size;
-            size_t voxel;
-            size_t secondaryVoxel;
-            size_t blueNoise;
-            size_t river;
-        };
-        void calculateBuffer(BufferData* buf){
-            size_t voxTotal = width * height;
-            buf->voxel = 0;
-            buf->size += voxTotal * sizeof(AV::uint32);
-            buf->secondaryVoxel = buf->size;
-            buf->size += voxTotal * sizeof(AV::uint32);
-            buf->blueNoise = buf->size;
-        }
     };
 }

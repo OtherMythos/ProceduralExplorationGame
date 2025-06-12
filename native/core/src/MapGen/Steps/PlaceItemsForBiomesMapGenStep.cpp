@@ -37,6 +37,7 @@ namespace ProceduralExplorationGameCore{
 
     void PlaceItemsForBiomesMapGenJob::processJob(ExplorationMapData* mapData, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb){
         const AV::uint32 seaLevel = mapData->uint32("seaLevel");
+        const std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
 
         const WorldPoint wrappedStartPoint = WRAP_WORLD_POINT(xa, ya);
         AV::uint32* fullSecondaryVoxPtr = FULL_PTR_FOR_COORD_SECONDARY(mapData, wrappedStartPoint);
@@ -57,7 +58,7 @@ namespace ProceduralExplorationGameCore{
                 AV::uint8 flags = (fullVox >> 8) & ~MAP_VOXEL_MASK;
                 RegionId regionId = (fullSecondaryVox >> 8) & 0xFF;
 
-                const Biome& b = Biome::getBiomeForId(mapData->regionData[regionId].type);
+                const Biome& b = Biome::getBiomeForId(regionData[regionId].type);
 
                 Biome::PlaceObjectFunction placeFunc = b.getPlacementFunction();
                 assert(placeFunc != 0);

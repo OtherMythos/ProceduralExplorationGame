@@ -27,6 +27,7 @@ namespace ProceduralExplorationGameCore{
         return static_cast<AV::uint32>(altitude) << 16 | region;
     }
     void IsolateRegionsMapGenStep::isolateRegion(ExplorationMapData* mapData, RegionData& region, std::vector<RegionId>& vals){
+        std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
         //checkRegion = region.id;
 
         //TODO don't place inline.
@@ -71,8 +72,8 @@ namespace ProceduralExplorationGameCore{
         assert(newCoords.size() > 0);
         WorldCoord xnp, ynp;
         READ_WORLD_POINT(newCoords[0], xnp, ynp);
-        mapData->regionData.push_back({
-            static_cast<RegionId>(mapData->regionData.size()),
+        regionData.push_back({
+            static_cast<RegionId>(regionData.size()),
             0,
             xnp,
             ynp,
@@ -80,7 +81,7 @@ namespace ProceduralExplorationGameCore{
             0
         });
 
-        RegionData& newRegion = mapData->regionData[mapData->regionData.size()-1];
+        RegionData& newRegion = regionData[regionData.size()-1];
         newRegion.coords = std::move(newCoords);
         newRegion.total = newRegion.coords.size();
 
@@ -97,14 +98,15 @@ namespace ProceduralExplorationGameCore{
 
         //Save the sea level to prevent the lookup happening regularly.
         checkSeaLevel = mapData->uint32("seaLevel");
+        std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
 
         std::vector<RegionId> vals;
         vals.resize(mapData->uint32("width") * mapData->uint32("height"), INVALID_REGION_ID);
-        int len = mapData->regionData.size();
+        int len = regionData.size();
         for(int i = 0; i < len; i++){
-        //auto it = mapData->regionData.begin();
-        //while(it != mapData->regionData.end()){
-            RegionData& r = mapData->regionData[i];
+        //auto it = mapData->ptr<std::vector<RegionData>>("regionData")->begin();
+        //while(it != mapData->ptr<std::vector<RegionData>>("regionData")->end()){
+            RegionData& r = regionData[i];
             checkRegion = r.id;
             isolateRegion(mapData, r, vals);
             //it++;

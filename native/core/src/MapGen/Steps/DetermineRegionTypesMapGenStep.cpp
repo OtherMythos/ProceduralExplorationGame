@@ -16,11 +16,13 @@ namespace ProceduralExplorationGameCore{
     }
 
     void DetermineRegionTypesMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+        std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
+
         std::vector<RegionId> freeRegions;
-        freeRegions.reserve(mapData->regionData.size());
+        freeRegions.reserve(regionData.size());
         /*
-        for(RegionId i = 0; i < static_cast<RegionId>(mapData->regionData.size()); i++){
-            const RegionData& r = mapData->regionData[i];
+        for(RegionId i = 0; i < static_cast<RegionId>(mapData->ptr<std::vector<RegionData>>("regionData")->size()); i++){
+            const RegionData& r = mapData->ptr<std::vector<RegionData>>("regionData")[i];
             if(r.type != RegionType::NONE) continue;
 
             freeRegions.push_back(i);
@@ -34,13 +36,13 @@ namespace ProceduralExplorationGameCore{
         for(RegionType r : regionsToAdd){
             size_t targetIdx = mapGenRandomIndex(freeRegions);
             if(targetIdx >= freeRegions.size()) continue;
-            RegionData& rd = mapData->regionData[freeRegions[targetIdx]];
+            RegionData& rd = regionData[freeRegions[targetIdx]];
             rd.type = r;
             if(r == RegionType::DESERT){
                 rd.meta |= static_cast<AV::uint8>(RegionMeta::EXPANDABLE);
             }
 
-            mapData->regionData[freeRegions[targetIdx]].type = r;
+            regionData[freeRegions[targetIdx]].type = r;
             freeRegions.erase(freeRegions.begin() + targetIdx);
         }
 

@@ -27,11 +27,12 @@ namespace ProceduralExplorationGameCore{
     }
 
     void MergeIsolatedRegionsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+        std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
 
-        auto it = mapData->regionData.begin();
-        //for(RegionData& d : mapData->regionData){
-        for(int i = 0; i < mapData->regionData.size(); i++){
-            RegionData& d = mapData->regionData[i];
+        auto it = regionData.begin();
+        //for(RegionData& d : regionData){
+        for(int i = 0; i < regionData.size(); i++){
+            RegionData& d = regionData[i];
             //if(d.total >= 400 || d.total == 0) continue;
             if(d.total == 0) continue;
 
@@ -50,7 +51,7 @@ namespace ProceduralExplorationGameCore{
 
             it = foundRegions.begin();
             while(it != foundRegions.end()){
-                if(mapData->regionData[*it].total == 0){
+                if(regionData[*it].total == 0){
                     foundRegions.erase(it);
                     it = foundRegions.begin();
                 }
@@ -62,7 +63,7 @@ namespace ProceduralExplorationGameCore{
 
             RegionData* biggest;
             RegionData* smallest;
-            _orderSmallest(d, mapData->regionData[*(foundRegions.begin())], &biggest, &smallest);
+            _orderSmallest(d, regionData[*(foundRegions.begin())], &biggest, &smallest);
             //Incase it stumbles upon coordinates which have already been merged
             if(smallest->total == 0 || biggest->total == 0) continue;
             assert(biggest->total >= smallest->total);

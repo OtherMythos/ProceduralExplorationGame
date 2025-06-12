@@ -88,6 +88,7 @@ namespace ProceduralExplorationGameCore{
     void DetermineEarlyRegionsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
 
         int totalRegions = input->uint32("numRegions");
+        std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
         //For the special regions.
         totalRegions += 20;
 
@@ -104,7 +105,7 @@ namespace ProceduralExplorationGameCore{
                 points.push_back({blobSeed, 100});
                 bruteForceCollision->addCollisionPoint(xp, yp, 80);
 
-                mapData->regionData.push_back({
+                regionData.push_back({
                     i,
                     0,
                     xp,
@@ -114,7 +115,7 @@ namespace ProceduralExplorationGameCore{
                 });
         }
 
-        _determinePoints(mapData, points, mapData->regionData, bruteForceCollision);
+        _determinePoints(mapData, points, regionData, bruteForceCollision);
 
         /*
         LandId biggestLand = findBiggestFloodEntry(workspace->landData);
@@ -128,7 +129,7 @@ namespace ProceduralExplorationGameCore{
                 READ_WORLD_POINT(p, xx, yy);
                 //points[i].p = p;
                 points.push_back({p, pointSize});
-                mapData->regionData.push_back({
+                mapData->ptr<std::vector<RegionData>>("regionData")->push_back({
                     i,
                     0,
                     xx,
@@ -141,7 +142,7 @@ namespace ProceduralExplorationGameCore{
         else{
             //Incase there were no landmasses, push a single point.
             //points.push_back({0, pointSize});
-            mapData->regionData.push_back({
+            mapData->ptr<std::vector<RegionData>>("regionData")->push_back({
                 0,
                 0,
                 0,
@@ -160,28 +161,28 @@ namespace ProceduralExplorationGameCore{
         int divHeight = input->uint32("height") / div;
         for(int i = 0; i < 4; i++){
             DetermineEarlyRegionsMapGenJob job;
-            job.processJob(mapData, points, mapData->regionData, 0, i * divHeight, input->uint32("width"), i * divHeight + divHeight);
+            job.processJob(mapData, points, regionData, 0, i * divHeight, input->uint32("width"), i * divHeight + divHeight);
         }
 
         //Go through the produced list and remove any regions with no coordinates
-        auto it = mapData->regionData.begin();
-        while(it != mapData->regionData.end()){
+        auto it = regionData.begin();
+        while(it != regionData.end()){
             if(it->total == 0){
                 assert(it->coords.size() == 0);
-                it = mapData->regionData.erase(it);
+                it = regionData.erase(it);
             }else{
                 it++;
             }
         }
-        for(RegionData r : mapData->regionData){
+        for(RegionData r : regionData){
             assert(r.coords.size() != 0);
         }
 
         //Write those values to the buffer
-        for(RegionId r = 0; r < mapData->regionData.size(); r++){
-            RegionData& d = mapData->regionData[r];
+        for(RegionId r = 0; r < regionData.size(); r++){
+            RegionData& d = regionData[r];
             d.id = r;
-        //for(const RegionData& r : mapData->regionData){
+        //for(const RegionData& r : mapData->ptr<std::vector<RegionData>>("regionData")){
             for(WorldPoint p : d.coords){
                 RegionId* regionPtr = REGION_PTR_FOR_COORD(mapData, p);
                 *regionPtr = r;

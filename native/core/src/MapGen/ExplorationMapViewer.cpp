@@ -84,7 +84,7 @@ namespace ProceduralExplorationGameCore{
             drawVal = Ogre::ColourValue(valGroup, valGroup, valGroup, OPACITY).getAsABGR();
         }
         if(drawOptions & (1 << (size_t)MapViewerDrawOptions::REGIONS)){
-            float valGroup = static_cast<float>((secondaryVox >> 8) & 0xFF) / static_cast<float>(mapData->regionData.size());
+            float valGroup = static_cast<float>((secondaryVox >> 8) & 0xFF) / static_cast<float>(mapData->ptr<std::vector<RegionData>>("regionData")->size());
             drawVal = Ogre::ColourValue(valGroup, valGroup, valGroup, OPACITY).getAsABGR();
         }
         if(drawOptions & (1 << (size_t)MapViewerDrawOptions::BLUE_NOISE)){
@@ -113,6 +113,7 @@ namespace ProceduralExplorationGameCore{
         AV::uint32* voxPtr = static_cast<AV::uint32*>(mapData->voxelBuffer);
         AV::uint32* voxSecondaryPtr = static_cast<AV::uint32*>(mapData->secondaryVoxelBuffer);
         float* blueNoisePtr = static_cast<float*>(mapData->blueNoiseBuffer);
+        const std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
         for(Ogre::uint32 y = 0; y < tex->height; y++){
             for(Ogre::uint32 x = 0; x < tex->width; x++){
 
@@ -127,7 +128,7 @@ namespace ProceduralExplorationGameCore{
 
         texPtr = static_cast<AV::uint32*>(tex->data);
         if(drawOptions & (1 << (size_t)MapViewerDrawOptions::REGION_SEEDS)){
-            for(const RegionData& d : mapData->regionData){
+            for(const RegionData& d : regionData){
                 *(texPtr + ((int)d.seedX + (int)d.seedY * mapData->width)) =
                     d.meta == 0 ? valueColours[(size_t)MapViewerColours::COLOUR_BLACK] : valueColours[(size_t)MapViewerColours::COLOUR_ORANGE];
             }
