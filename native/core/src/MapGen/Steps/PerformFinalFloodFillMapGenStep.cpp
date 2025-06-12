@@ -53,8 +53,9 @@ namespace ProceduralExplorationGameCore{
         //mapData->waterData = std::move(waterResult);
 
         std::vector<FloodFillEntry*> landResult;
-        floodFill<bool(ExplorationMapData*, AV::uint8),AV::uint8(ExplorationMapData*, AV::uint32, AV::uint32), 3>(comparisonFuncLand, readFuncAltitude, mapData, landResult);
-        mapData->landData = std::move(landResult);
+        e = new std::vector<FloodFillEntry*>();
+        floodFill<bool(ExplorationMapData*, AV::uint8),AV::uint8(ExplorationMapData*, AV::uint32, AV::uint32), 3>(comparisonFuncLand, readFuncAltitude, mapData, *e);
+        mapData->voidPtr("landData", e);
 
         //Sanity checks, should get compiled out in release builds.
         for(AV::uint32 y = 0; y < mapData->height; y++){

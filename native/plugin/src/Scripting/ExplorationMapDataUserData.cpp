@@ -189,7 +189,7 @@ namespace ProceduralExplorationGamePlugin{
         pushInteger(vm, "gatewayPosition", mapData->worldPoint("gatewayPosition"));
 
         pushFloodData(vm, "waterData", *mapData->ptr<std::vector<ProceduralExplorationGameCore::FloodFillEntry*>>("waterData"));
-        pushFloodData(vm, "landData", mapData->landData);
+        pushFloodData(vm, "landData", *mapData->ptr<std::vector<ProceduralExplorationGameCore::FloodFillEntry*>>("landData"));
         //pushPlaceData(vm, "placeData", mapData->placeData);
         pushRegionData(vm, "regionData", *mapData->ptr<std::vector<ProceduralExplorationGameCore::RegionData>>("regionData"));
         pushPlacedItemData(vm, "placedItems", mapData->placedItems);

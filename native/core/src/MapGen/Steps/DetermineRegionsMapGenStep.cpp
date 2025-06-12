@@ -36,11 +36,12 @@ namespace ProceduralExplorationGameCore{
         const AV::uint32 width = mapData->width;
         const AV::uint32 height = mapData->height;
         std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
+        const std::vector<FloodFillEntry*>& landData = (*mapData->ptr<std::vector<FloodFillEntry*>>("landData"));
 
         std::vector<WorldPoint> points;
         points.reserve(input->uint32("numRegions"));
         for(RegionId i = 0; i < input->uint32("numRegions"); i++){
-            WorldPoint p = _determineRegionPoint(mapData->landData, workspace->landWeighted, mapData);
+            WorldPoint p = _determineRegionPoint(landData, workspace->landWeighted, mapData);
             if(p == INVALID_WORLD_POINT) continue;
 
             WorldCoord xx, yy;

@@ -15,14 +15,15 @@ namespace ProceduralExplorationGameCore{
     }
 
     void DetermineGatewayPositionMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+        const std::vector<FloodFillEntry*>& landData = (*mapData->ptr<std::vector<FloodFillEntry*>>("landData"));
         WorldPoint retPoint = INVALID_WORLD_POINT;
 
         for(int i = 0; i < 5; i++){
-            LandId landId = findRandomLandmassForSize(mapData->landData, workspace->landWeighted, 40);
+            LandId landId = findRandomLandmassForSize(landData, workspace->landWeighted, 40);
             if(landId == INVALID_LAND_ID){
                 continue;
             }
-            retPoint = findRandomPointInLandmass(mapData->landData[landId]);
+            retPoint = findRandomPointInLandmass(landData[landId]);
 
             WorldCoord xx;
             WorldCoord yy;

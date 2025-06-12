@@ -101,7 +101,7 @@ namespace ProceduralExplorationGameCore{
             if(landGroup == INVALID_LAND_ID){
                 drawVal = valueColours[(size_t)MapViewerColours::COLOUR_BLACK];
             }else{
-                float valGroup = static_cast<float>(landGroup) / static_cast<float>(mapData->landData.size());
+                float valGroup = static_cast<float>(landGroup) / static_cast<float>(mapData->ptr<std::vector<FloodFillEntry*>>("landData")->size());
                 drawVal = Ogre::ColourValue(valGroup, valGroup, valGroup, OPACITY).getAsABGR();
             }
         }

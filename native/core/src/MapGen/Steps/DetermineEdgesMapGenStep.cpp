@@ -33,7 +33,8 @@ namespace ProceduralExplorationGameCore{
 
     void DetermineEdgesMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         const std::vector<FloodFillEntry*>& waterData = (*mapData->ptr<std::vector<FloodFillEntry*>>("waterData"));
-        _outlineEdge(mapData->landData, input, mapData, workspace);
+        const std::vector<FloodFillEntry*>& landData = (*mapData->ptr<std::vector<FloodFillEntry*>>("landData"));
+        _outlineEdge(landData, input, mapData, workspace);
         _outlineEdge(waterData, input, mapData, workspace);
     }
 

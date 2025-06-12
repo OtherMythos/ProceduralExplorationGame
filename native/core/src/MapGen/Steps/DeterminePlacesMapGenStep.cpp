@@ -17,21 +17,21 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    LandId determinePlaces_determineLandmassForPlace(ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace, PlaceId placeId){
+    LandId determinePlaces_determineLandmassForPlace(const std::vector<FloodFillEntry*>& landData, ExplorationMapGenWorkspace* workspace, PlaceId placeId){
         const PlaceDef& place = GameplayConstants::getPlaces()[(size_t)placeId];
         PlaceType placeType = place.t;
         if(placeType == PlaceType::CITY || placeType == PlaceType::GATEWAY){
             //This being the largest landmass, place the city there.
             return 0;
         }
-        LandId retLandmass = findRandomLandmassForSize(mapData->landData, workspace->landWeighted, place.minLandmass);
+        LandId retLandmass = findRandomLandmassForSize(landData, workspace->landWeighted, place.minLandmass);
 
         return retLandmass;
     }
-    WorldPoint determinePlaces_determinePointForPlace(ExplorationMapData* mapData, LandId landmass){
+    WorldPoint determinePlaces_determinePointForPlace(const std::vector<FloodFillEntry*>& landData, LandId landmass){
         static const float RADIUS = 10;
         for(int i = 0; i < 100; i++){
-            WorldPoint intended = findRandomPointInLandmass(mapData->landData[landmass]);
+            WorldPoint intended = findRandomPointInLandmass(landData[landmass]);
             WorldCoord intendedX, intendedY;
             READ_WORLD_POINT(intended, intendedX, intendedY);
             //Try another point if it collides with the pre-existing points.
@@ -43,22 +43,24 @@ namespace ProceduralExplorationGameCore{
         return INVALID_WORLD_POINT;
     }
     bool determinePlaces_place(ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace, PlaceId id, PlaceData* outData){
+        const std::vector<FloodFillEntry*>& landData = (*mapData->ptr<std::vector<FloodFillEntry*>>("landData"));
+
         LandId landmassId = determinePlaces_determineLandmassForPlace(mapData, workspace, id);
         if(landmassId == INVALID_LAND_ID) return false;
-        if(landmassId > mapData->landData.size()) return false;
-        const FloodFillEntry* landmass = mapData->landData[landmassId];
+        if(landmassId > landData.size()) return false;
+        const FloodFillEntry* landmass = landData[landmassId];
 
         WorldPoint point = INVALID_WORLD_POINT;
         if(id == PlaceId::GATEWAY){
             point = mapData->gatewayPosition;
         }else{
-            point = determinePlaces_determinePointForPlace(mapData, landmassId);
+            point = determinePlaces_determinePointForPlace(landData, landmassId);
         }
 
         if(point == INVALID_WORLD_POINT) return false;
 
         //Determine the region.
-        const AV::uint8* regionPtr = REGION_PTR_FOR_COORD_CONST(mapData, point);
+        const AV::uint8* regionPtr = REGION_PTR_FOR_COORD_CONST(landData, point);
         RegionId region = *(regionPtr);
 
         WorldCoord xx, yy;
