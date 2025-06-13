@@ -1,8 +1,8 @@
-#include "ExplorationMapData.h"
+#include "MapGenDataContainer.h"
 
 namespace ProceduralExplorationGameCore{
 
-    MapDataReadResult ExplorationMapDataBase::readEntry(const std::string& name, MapDataEntry *outEntry, MapDataEntryType expectedType) const{
+    MapDataReadResult MapGenDataContainer::readEntry(const std::string& name, MapDataEntry *outEntry, MapDataEntryType expectedType) const{
 
         auto it = mEntries.find(name);
         if(it == mEntries.end()){
@@ -22,30 +22,30 @@ namespace ProceduralExplorationGameCore{
         return MapDataReadResult::SUCCESS;
     }
 
-    void ExplorationMapDataBase::setEntry(const std::string& name, MapDataEntry entry){
+    void MapGenDataContainer::setEntry(const std::string& name, MapDataEntry entry){
         mEntries[name] = entry;
     }
 
-    AV::uint32 ExplorationMapDataBase::uint32(const std::string& name) const{
+    AV::uint32 MapGenDataContainer::uint32(const std::string& name) const{
         MapDataEntry out;
         MAP_ASSERT_RESULT(readEntry(name, &out, MapDataEntryType::UINT32));
 
         return out.value.uint32;
     }
 
-    void ExplorationMapDataBase::uint32(const std::string& name, AV::uint32 val){
+    void MapGenDataContainer::uint32(const std::string& name, AV::uint32 val){
         setEntry(name, {MapDataEntryType::UINT32, val});
     }
 
 
-    size_t ExplorationMapDataBase::sizeType(const std::string& name) const{
+    size_t MapGenDataContainer::sizeType(const std::string& name) const{
         MapDataEntry out;
         MAP_ASSERT_RESULT(readEntry(name, &out, MapDataEntryType::SIZE_TYPE));
 
         return out.value.size;
     }
 
-    void ExplorationMapDataBase::sizeType(const std::string& name, size_t val){
+    void MapGenDataContainer::sizeType(const std::string& name, size_t val){
         MapDataEntry d;
         d.value.size = val;
         d.type = MapDataEntryType::SIZE_TYPE;
@@ -53,14 +53,14 @@ namespace ProceduralExplorationGameCore{
     }
 
 
-    void* ExplorationMapDataBase::voidPtr(const std::string& name) const{
+    void* MapGenDataContainer::voidPtr(const std::string& name) const{
         MapDataEntry out;
         MAP_ASSERT_RESULT(readEntry(name, &out, MapDataEntryType::VOID_PTR));
 
         return out.value.ptr;
     }
 
-    void ExplorationMapDataBase::voidPtr(const std::string& name, void* val){
+    void MapGenDataContainer::voidPtr(const std::string& name, void* val){
         MapDataEntry d;
         d.value.ptr = val;
         d.type = MapDataEntryType::VOID_PTR;
@@ -68,14 +68,14 @@ namespace ProceduralExplorationGameCore{
     }
 
 
-    WorldPoint ExplorationMapDataBase::worldPoint(const std::string& name) const{
+    WorldPoint MapGenDataContainer::worldPoint(const std::string& name) const{
         MapDataEntry out;
         MAP_ASSERT_RESULT(readEntry(name, &out, MapDataEntryType::WORLD_POINT));
 
         return out.value.worldPoint;
     }
 
-    void ExplorationMapDataBase::worldPoint(const std::string& name, WorldPoint val){
+    void MapGenDataContainer::worldPoint(const std::string& name, WorldPoint val){
         MapDataEntry d;
         d.value.worldPoint = val;
         d.type = MapDataEntryType::WORLD_POINT;

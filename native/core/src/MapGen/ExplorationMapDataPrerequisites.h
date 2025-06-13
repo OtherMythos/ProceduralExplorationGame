@@ -2,7 +2,7 @@
 
 #include "System/EnginePrerequisites.h"
 #include "GamePrerequisites.h"
-#include "ExplorationMapData.h"
+#include "MapGenDataContainer.h"
 
 #include "RandomWrapper.h"
 
@@ -12,6 +12,17 @@
 #include <cassert>
 
 namespace ProceduralExplorationGameCore{
+
+    class ExplorationMapData : public MapGenDataContainer{
+    public:
+        AV::uint32 width;
+        AV::uint32 height;
+        AV::uint32 seaLevel;
+
+        void* voxelBuffer;
+        void* secondaryVoxelBuffer;
+        void* blueNoiseBuffer;
+    };
 
     static inline WorldPoint WRAP_WORLD_POINT(WorldCoord x, WorldCoord y){
         return (static_cast<WorldPoint>(x) << 16) | y;

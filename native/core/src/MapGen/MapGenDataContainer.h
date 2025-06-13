@@ -37,7 +37,12 @@ namespace ProceduralExplorationGameCore{
         MapDataReadResult __mapError = XX; \
         assert(__mapError == MapDataReadResult::SUCCESS);
 
-    class ExplorationMapDataBase{
+    /**
+    A class to store map gen values that can be read easily from both c++ and Squirrel scripts.
+    Entires are separated into data types and id'd with a key, similar to how scripts work.
+    This also improves extendability for mods.
+    */
+    class MapGenDataContainer{
     private:
         std::map<std::string, MapDataEntry> mEntries;
     public:
@@ -65,16 +70,5 @@ namespace ProceduralExplorationGameCore{
 
         WorldPoint worldPoint(const std::string& name) const;
         void worldPoint(const std::string& name, WorldPoint val);
-    };
-
-    class ExplorationMapData : public ExplorationMapDataBase{
-    public:
-        AV::uint32 width;
-        AV::uint32 height;
-        AV::uint32 seaLevel;
-
-        void* voxelBuffer;
-        void* secondaryVoxelBuffer;
-        void* blueNoiseBuffer;
     };
 }

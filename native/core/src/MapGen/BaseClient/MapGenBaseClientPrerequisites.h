@@ -16,7 +16,7 @@ namespace ProceduralExplorationGameCore{
 
     static const RegionId REGION_ID_WATER = 100;
 
-    class ExplorationMapInputData : public ExplorationMapDataBase{
+    class ExplorationMapInputData : public MapGenDataContainer{
     };
 
     struct FloodFillEntry;
