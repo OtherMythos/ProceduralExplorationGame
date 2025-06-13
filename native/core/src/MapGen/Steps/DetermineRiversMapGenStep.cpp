@@ -108,9 +108,9 @@ namespace ProceduralExplorationGameCore{
         std::vector<WorldPoint> origins;
         //workspace.noise
         _determineRiverOrigins(origins, input, landData, workspace->landWeighted, mapData);
-        std::vector<RiverData> outData;
-        _calculateRivers(origins, mapData->voxelBuffer, mapData, outData);
-        mapData->riverData = std::move(outData);
+        std::vector<RiverData>* outData = new std::vector<RiverData>();
+        _calculateRivers(origins, mapData->voxelBuffer, mapData, *outData);
+        mapData->voidPtr("riverData", outData);
     }
 
 }

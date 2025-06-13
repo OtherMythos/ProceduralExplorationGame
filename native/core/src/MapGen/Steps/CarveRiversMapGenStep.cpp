@@ -20,8 +20,9 @@ namespace ProceduralExplorationGameCore{
 
     void CarveRiversMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         std::set<WorldPoint> writePoints;
+        const std::vector<RiverData>* riverData = mapData->ptr<std::vector<RiverData>>("riverData");
 
-        for(const RiverData& r : mapData->riverData){
+        for(const RiverData& r : *riverData){
             writePoints.insert(r.origin);
             for(WorldPoint w : r.points){
                 writePoints.insert(w);
