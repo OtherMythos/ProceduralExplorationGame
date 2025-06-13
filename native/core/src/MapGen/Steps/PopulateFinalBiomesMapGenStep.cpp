@@ -60,12 +60,6 @@ namespace ProceduralExplorationGameCore{
 
                 const Biome& b = Biome::getBiomeForId(regionData[regionId].type);
 
-/*
-                Biome::PlaceObjectFunction placeFunc = b.getPlacementFunction();
-                assert(placeFunc != 0);
-                (*placeFunc)(mapData->placedItems, mapData, x, y, altitude, regionId, flags, moisture);
-                */
-
                 Biome::DetermineVoxFunction voxFunc = b.getVoxFunction();
                 assert(voxFunc != 0);
                 MapVoxelTypes finalVox = (*voxFunc)(altitude, moisture, mapData);

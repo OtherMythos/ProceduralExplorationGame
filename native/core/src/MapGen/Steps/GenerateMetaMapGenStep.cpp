@@ -69,6 +69,7 @@ namespace ProceduralExplorationGameCore{
         mapData->uint32("variationSeed", input->uint32("variationSeed"));
 
         mapData->voidPtr("regionData", new std::vector<RegionData>());
+        mapData->voidPtr("placedItems", new std::vector<PlacedItemData>());
 
         RandomWrapper::singleton.seed(mapData->uint32("variationSeed"));
 

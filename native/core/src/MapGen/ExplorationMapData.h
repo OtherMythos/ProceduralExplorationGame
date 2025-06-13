@@ -152,11 +152,11 @@ struct RiverData{
         //float* waterTextureBufferMask;
 
         //std::vector<RegionData> regionData;
-        std::vector<PlacedItemData> placedItems;
+        //std::vector<PlacedItemData> placedItems;
         //TODO switch these to not be pointers.
         //std::vector<FloodFillEntry*> waterData;
         //std::vector<FloodFillEntry*> landData;
         //std::vector<PlaceData> placeData;
-        std::vector<RiverData> riverData;
+        //std::vector<RiverData> riverData;
     };
 }

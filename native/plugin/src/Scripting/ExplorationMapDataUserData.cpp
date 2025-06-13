@@ -192,8 +192,8 @@ namespace ProceduralExplorationGamePlugin{
         pushFloodData(vm, "landData", *mapData->ptr<std::vector<ProceduralExplorationGameCore::FloodFillEntry*>>("landData"));
         //pushPlaceData(vm, "placeData", mapData->placeData);
         pushRegionData(vm, "regionData", *mapData->ptr<std::vector<ProceduralExplorationGameCore::RegionData>>("regionData"));
-        pushPlacedItemData(vm, "placedItems", mapData->placedItems);
-        generatePushedItemBuffer(vm, "placedItemsBuffer", mapData->width, mapData->height, mapData->placedItems);
+        pushPlacedItemData(vm, "placedItems", *mapData->ptr<std::vector<ProceduralExplorationGameCore::PlacedItemData>>("placedItems"));
+        generatePushedItemBuffer(vm, "placedItemsBuffer", mapData->width, mapData->height, *mapData->ptr<std::vector<ProceduralExplorationGameCore::PlacedItemData>>("placedItems"));
 
         //pushBuffer(vm, "voxelBuffer", mapData->voxelBuffer, mapData->voxelBufferSize);
         //pushBuffer(vm, "secondaryVoxBuffer", mapData->secondaryVoxelBuffer, mapData->secondaryVoxelBufferSize);
