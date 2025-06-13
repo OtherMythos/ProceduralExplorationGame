@@ -3,6 +3,7 @@
 #include "GameCoreLogger.h"
 
 #include "MapGen/Script/MapGenNamespace.h"
+#include "MapGen/Script/MapGenDataContainerUserData.h"
 
 namespace ProceduralExplorationGameCore{
     MapGenScriptVM::MapGenScriptVM(){
@@ -31,6 +32,8 @@ namespace ProceduralExplorationGameCore{
 
         sq_pushroottable(mVM);
         setupNamespace("_mapGen", MapGenNamespace::setupNamespace);
+
+        MapGenDataContainerUserData::setupDelegateTable(mVM);
 
     }
 
