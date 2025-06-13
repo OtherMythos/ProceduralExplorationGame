@@ -1,5 +1,6 @@
 #include "Voxeliser.h"
 
+#include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 #include "MapGen/ExplorationMapDataPrerequisites.h"
 
 #include <cassert>

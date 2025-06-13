@@ -1,6 +1,6 @@
 #include "GameplayConstants.h"
 
-#include "MapGen/ExplorationMapDataPrerequisites.h"
+#include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 
 namespace ProceduralExplorationGameCore{
 

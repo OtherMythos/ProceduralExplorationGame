@@ -3,7 +3,7 @@
 #include "MapGen/MapGenStep.h"
 #include <vector>
 #include "GamePrerequisites.h"
-#include "MapGen/ExplorationMapDataPrerequisites.h"
+#include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 
 #include "System/EnginePrerequisites.h"
 

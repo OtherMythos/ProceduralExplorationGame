@@ -2,6 +2,7 @@
 
 #include "OgreTextureBox.h"
 
+#include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 #include "ExplorationMapDataPrerequisites.h"
 #include "GameplayState.h"
 

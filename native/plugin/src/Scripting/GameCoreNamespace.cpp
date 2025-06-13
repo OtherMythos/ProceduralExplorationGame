@@ -29,7 +29,7 @@
 #include "Scripting/DataPointFileUserData.h"
 
 #include "MapGen/ExplorationMapViewer.h"
-#include "MapGen/ExplorationMapDataPrerequisites.h"
+#include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 #include "MapGen/MapGen.h"
 
 #include "VisitedPlaces/VisitedPlacesParser.h"

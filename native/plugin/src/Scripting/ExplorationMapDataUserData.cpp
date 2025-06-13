@@ -7,7 +7,7 @@
 
 #include "Scripting/ScriptNamespace/Classes/Vector3UserData.h"
 
-#include "MapGen/ExplorationMapDataPrerequisites.h"
+#include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 
 namespace ProceduralExplorationGamePlugin{
 

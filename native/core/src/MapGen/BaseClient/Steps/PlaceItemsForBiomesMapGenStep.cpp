@@ -1,6 +1,7 @@
 #include "PlaceItemsForBiomesMapGenStep.h"
 
 #include "MapGen/ExplorationMapDataPrerequisites.h"
+#include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 #include "MapGen/Biomes.h"
 
 #include <cassert>

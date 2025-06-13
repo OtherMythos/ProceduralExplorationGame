@@ -1,5 +1,7 @@
 #include "IsolateRegionsMapGenStep.h"
 
+#include "MapGen/ExplorationMapDataPrerequisites.h"
+
 #include <cassert>
 #include <cmath>
 #include <algorithm>

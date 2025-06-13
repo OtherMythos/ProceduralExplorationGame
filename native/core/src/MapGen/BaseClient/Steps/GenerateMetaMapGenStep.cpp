@@ -1,6 +1,7 @@
 #include "GenerateMetaMapGenStep.h"
 
 #include "MapGen/ExplorationMapDataPrerequisites.h"
+#include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 
 #include <cmath>
 

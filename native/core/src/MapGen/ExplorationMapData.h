@@ -8,59 +8,6 @@
 
 namespace ProceduralExplorationGameCore{
 
-
-
-//TODO move this out when I can
-
-#include "../../../../src/MapGen/Exploration/Generator/MapConstants.h.nut"
-
-//#include "../../../../src/Content/PlaceConstants.h.nut"
-
-static const AV::uint8 MapVoxelColour[] = {
-    VOXEL_VALUES
-};
-#undef VOXEL_VALUES
-
-static const RegionId REGION_ID_WATER = 100;
-
-struct RegionData{
-    RegionId id;
-    AV::uint32 total;
-    WorldCoord seedX;
-    WorldCoord seedY;
-    RegionType type;
-    AV::uint8 meta;
-    std::vector<WorldPoint> coords;
-    std::vector<WorldPoint> edges;
-};
-
-struct FloodFillEntry{
-    AV::uint32 id;
-    AV::uint32 total;
-    WorldCoord seedX;
-    WorldCoord seedY;
-    //AV::uint32 startingVal; //TODO figure out
-    bool nextToWorldEdge = false;
-    std::vector<WorldPoint> edges;
-    std::vector<WorldPoint> coords;
-};
-
-struct PlacedItemData{
-    WorldCoord originX;
-    WorldCoord originY;
-    RegionId region;
-    PlacedItemId type;
-};
-
-struct RiverData{
-    WorldPoint origin;
-    std::vector<WorldPoint> points;
-};
-//
-
-
-
-
     enum class MapDataEntryType{
         ANY,
 

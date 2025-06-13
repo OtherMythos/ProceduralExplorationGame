@@ -4,6 +4,8 @@
 #include <cassert>
 #include <set>
 
+#include "MapGen/ExplorationMapDataPrerequisites.h"
+
 namespace ProceduralExplorationGameCore{
 
     typedef std::pair<WorldPoint, WorldPoint> FloodFillPoint;

@@ -1,6 +1,7 @@
 #include "GenerateNoiseMapGenStep.h"
 
 #include "MapGen/ExplorationMapDataPrerequisites.h"
+#include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 
 #include "System/Util/Random/PatternHelper.h"
 //#include "System/Util/Random/PerlinNoise.h"

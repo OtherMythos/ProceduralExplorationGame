@@ -1,6 +1,7 @@
 #include "DetermineEdgesMapGenStep.h"
 
 #include "MapGen/ExplorationMapDataPrerequisites.h"
+#include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 
 #include "GameplayConstants.h"
 

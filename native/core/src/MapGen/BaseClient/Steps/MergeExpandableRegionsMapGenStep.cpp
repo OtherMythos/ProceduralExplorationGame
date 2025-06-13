@@ -1,6 +1,7 @@
 #include "MergeExpandableRegionsMapGenStep.h"
 
 #include "MapGen/ExplorationMapDataPrerequisites.h"
+#include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 
 #include <cassert>
 #include <cmath>
