@@ -20,6 +20,7 @@ namespace ProceduralExplorationGameCore{
         static SQObject MapGenDataContainerDelegateTableObject;
 
         static SQInteger getValue(HSQUIRRELVM vm);
+        static SQInteger setValue(HSQUIRRELVM vm);
 
         static SQInteger MapGenDataContainerObjectReleaseHook(SQUserPointer p, SQInteger size);
     };

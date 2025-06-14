@@ -6,4 +6,6 @@ function processStep(mapData){
     print(width);
     print(height);
 
+    mapData.test = 10;
+
 }

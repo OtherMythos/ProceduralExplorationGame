@@ -179,14 +179,27 @@ namespace ProceduralExplorationGamePlugin{
 
         sq_newtable(vm);
 
+        const std::map<std::string, ProceduralExplorationGameCore::MapDataEntry>& data = mapData->getEntries();
+
+        for(const std::pair<std::string, ProceduralExplorationGameCore::MapDataEntry>& entry : data){
+            if(entry.second.type == ProceduralExplorationGameCore::MapDataEntryType::UINT32){
+                pushInteger(vm, entry.first.c_str(), entry.second.value.uint32);
+            }
+            else if(entry.second.type == ProceduralExplorationGameCore::MapDataEntryType::WORLD_POINT){
+                pushInteger(vm, entry.first.c_str(), entry.second.value.worldPoint);
+            }
+        }
+
         //pushInteger(vm, "seed", mapData->seed);
         //pushInteger(vm, "moistureSeed", mapData->moistureSeed);
         //pushInteger(vm, "variationSeed", mapData->variationSeed);
+        /*
         pushInteger(vm, "width", mapData->width);
         pushInteger(vm, "height", mapData->height);
         pushInteger(vm, "seaLevel", mapData->uint32("seaLevel"));
         pushInteger(vm, "playerStart", mapData->worldPoint("playerStart"));
         pushInteger(vm, "gatewayPosition", mapData->worldPoint("gatewayPosition"));
+        */
 
         pushFloodData(vm, "waterData", *mapData->ptr<std::vector<ProceduralExplorationGameCore::FloodFillEntry*>>("waterData"));
         pushFloodData(vm, "landData", *mapData->ptr<std::vector<ProceduralExplorationGameCore::FloodFillEntry*>>("landData"));

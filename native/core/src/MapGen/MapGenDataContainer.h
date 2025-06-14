@@ -47,6 +47,8 @@ namespace ProceduralExplorationGameCore{
         std::map<std::string, MapDataEntry> mEntries;
     public:
 
+        const std::map<std::string, MapDataEntry>& getEntries() const { return mEntries; }
+
         MapDataReadResult readEntry(const std::string& name, MapDataEntry* outEntry, MapDataEntryType expectedType = MapDataEntryType::ANY) const;
 
         void setEntry(const std::string& name, MapDataEntry entry);

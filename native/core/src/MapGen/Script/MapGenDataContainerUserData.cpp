@@ -32,6 +32,31 @@ namespace ProceduralExplorationGameCore{
         return AV::USER_DATA_GET_SUCCESS;
     }
 
+    SQInteger MapGenDataContainerUserData::setValue(HSQUIRRELVM vm){
+        MapGenDataContainer* outMapData;
+        SCRIPT_ASSERT_RESULT(readMapGenDataContainerFromUserData(vm, 1, &outMapData));
+
+        const SQChar *key;
+        sq_getstring(vm, 2, &key);
+
+        MapDataEntry entry;
+
+        SQObjectType t = sq_gettype(vm, 3);
+        if(t == OT_INTEGER){
+            SQInteger val;
+            sq_getinteger(vm, 3, &val);
+            AV::uint32 v = static_cast<AV::uint32>(val);
+            entry.value.uint32 = v;
+            entry.type = MapDataEntryType::UINT32;
+
+            outMapData->setEntry(key, entry);
+        }else{
+            assert(false);
+        }
+
+        return 0;
+    }
+
     SQInteger MapGenDataContainerUserData::getValue(HSQUIRRELVM vm){
         MapGenDataContainer* outMapData;
         SCRIPT_ASSERT_RESULT(readMapGenDataContainerFromUserData(vm, 1, &outMapData));
@@ -70,6 +95,7 @@ namespace ProceduralExplorationGameCore{
         sq_newtable(vm);
 
         AV::ScriptUtils::addFunction(vm, getValue, "_get");
+        AV::ScriptUtils::addFunction(vm, setValue, "_set");
 
         sq_resetobject(&MapGenDataContainerDelegateTableObject);
         sq_getstackobj(vm, -1, &MapGenDataContainerDelegateTableObject);
