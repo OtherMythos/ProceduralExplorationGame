@@ -24,11 +24,38 @@ namespace ProceduralExplorationGameCore{
         GAME_CORE_INFO("{}", buffer);
     }
 
+    SQInteger errorHandler(HSQUIRRELVM vm){
+        const SQChar* sqErr;
+        sq_getlasterror(vm);
+        sq_tostring(vm, -1);
+        sq_getstring(vm, -1, &sqErr);
+        sq_pop(vm, 1);
+
+        SQStackInfos si;
+        sq_stackinfos(vm, 1, &si);
+
+        static const std::string separator(10, '=');
+
+        AV_ERROR(separator);
+
+        AV_ERROR("Error during script execution.");
+        AV_ERROR(sqErr);
+        AV_ERROR("In file {}", si.source);
+        AV_ERROR("    on line {}", si.line);
+        AV_ERROR("of function {}", si.funcname);
+
+        AV_ERROR(separator);
+
+        return 0;
+    }
+
     void MapGenScriptVM::setup(){
         mVM = sq_open(1024);
 
         sq_setprintfunc(mVM, printfunc, NULL);
 
+        sq_newclosure(mVM, errorHandler, 0);
+        sq_seterrorhandler(mVM);
 
         sq_pushroottable(mVM);
         setupNamespace("_mapGen", MapGenNamespace::setupNamespace);

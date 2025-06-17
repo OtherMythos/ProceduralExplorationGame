@@ -2,6 +2,8 @@
 
 #include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 
+#include "MapGen/ExplorationMapDataPrerequisites.h"
+
 namespace ProceduralExplorationGameCore{
 
     SQObject MapGenDataContainerUserData::MapGenDataContainerDelegateTableObject;
@@ -91,11 +93,50 @@ namespace ProceduralExplorationGameCore{
         return 1;
     }
 
+    SQInteger MapGenDataContainerUserData::voxValueForCoord(HSQUIRRELVM vm){
+        MapGenDataContainer* outMapData;
+        SCRIPT_ASSERT_RESULT(readMapGenDataContainerFromUserData(vm, 1, &outMapData));
+
+        ExplorationMapData* mapData = static_cast<ExplorationMapData*>(outMapData);
+
+        SQInteger x, y;
+        sq_getinteger(vm, 2, &x);
+        sq_getinteger(vm, 3, &y);
+
+        const AV::uint8* val = VOX_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y));
+
+        AV::uint32 outVal = *(reinterpret_cast<const AV::uint32*>(val));
+        sq_pushinteger(vm, static_cast<SQInteger>(outVal));
+
+        return 1;
+    }
+
+    SQInteger MapGenDataContainerUserData::writeVoxValueForCoord(HSQUIRRELVM vm){
+        MapGenDataContainer* outMapData;
+        SCRIPT_ASSERT_RESULT(readMapGenDataContainerFromUserData(vm, 1, &outMapData));
+
+        ExplorationMapData* mapData = static_cast<ExplorationMapData*>(outMapData);
+
+        SQInteger x, y, val;
+        sq_getinteger(vm, 2, &x);
+        sq_getinteger(vm, 3, &y);
+        sq_getinteger(vm, 4, &val);
+
+        AV::uint8* ptr = VOX_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y));
+
+        AV::uint32 writeVal = static_cast<AV::uint32>(val);
+        *ptr = static_cast<AV::uint32>(writeVal);
+
+        return 1;
+    }
+
     void MapGenDataContainerUserData::setupDelegateTable(HSQUIRRELVM vm){
         sq_newtable(vm);
 
         AV::ScriptUtils::addFunction(vm, getValue, "_get");
         AV::ScriptUtils::addFunction(vm, setValue, "_set");
+        AV::ScriptUtils::addFunction(vm, voxValueForCoord, "voxValueForCoord", 3, ".ii");
+        AV::ScriptUtils::addFunction(vm, writeVoxValueForCoord, "writeVoxValueForCoord", 4, ".iii");
 
         sq_resetobject(&MapGenDataContainerDelegateTableObject);
         sq_getstackobj(vm, -1, &MapGenDataContainerDelegateTableObject);

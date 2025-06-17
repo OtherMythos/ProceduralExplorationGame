@@ -10,7 +10,7 @@ function notifyEnded(){
 }
 
 function populateSteps(){
-    _mapGen.registerStep(1, "test step", "res://src/MapGen/NativeClient/TestStepMapGen.nut");
+    _mapGen.registerStep(8, "test step", "res://src/MapGen/NativeClient/TestStepMapGen.nut");
 }
 
 function notifyClaimed(){

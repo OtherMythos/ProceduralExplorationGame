@@ -25,8 +25,6 @@ namespace ProceduralExplorationGameCore{
         sq_getstring(vm, 4, &scriptPath);
         AV::formatResToPath(scriptPath, outPath);
 
-        GAME_CORE_INFO("Registering MapGen step '{}' at idx {}", stepName, idx);
-
         MapGen* mapGen = PluginBaseSingleton::getMapGen();
         assert(mapGen);
         if(!mapGen->isFinished()){
@@ -43,6 +41,8 @@ namespace ProceduralExplorationGameCore{
 
         MapGenScriptStep* step = new MapGenScriptStep(stepName, script);
         mapGen->registerStep(idx, step);
+
+        GAME_CORE_INFO("Succesfully registered MapGen step '{}' at idx {}", stepName, idx);
 
         return 0;
     }

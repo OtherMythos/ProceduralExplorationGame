@@ -22,6 +22,9 @@ namespace ProceduralExplorationGameCore{
         static SQInteger getValue(HSQUIRRELVM vm);
         static SQInteger setValue(HSQUIRRELVM vm);
 
+        static SQInteger voxValueForCoord(HSQUIRRELVM vm);
+        static SQInteger writeVoxValueForCoord(HSQUIRRELVM vm);
+
         static SQInteger MapGenDataContainerObjectReleaseHook(SQUserPointer p, SQInteger size);
     };
 }
