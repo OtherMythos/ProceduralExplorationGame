@@ -36,15 +36,15 @@ namespace ProceduralExplorationGameCore{
 
         static const std::string separator(10, '=');
 
-        AV_ERROR(separator);
+        GAME_CORE_ERROR(separator);
 
-        AV_ERROR("Error during script execution.");
-        AV_ERROR(sqErr);
-        AV_ERROR("In file {}", si.source);
-        AV_ERROR("    on line {}", si.line);
-        AV_ERROR("of function {}", si.funcname);
+        GAME_CORE_ERROR("Error during script execution.");
+        GAME_CORE_ERROR(sqErr);
+        GAME_CORE_ERROR("In file {}", si.source);
+        GAME_CORE_ERROR("    on line {}", si.line);
+        GAME_CORE_ERROR("of function {}", si.funcname);
 
-        AV_ERROR(separator);
+        GAME_CORE_ERROR(separator);
 
         return 0;
     }

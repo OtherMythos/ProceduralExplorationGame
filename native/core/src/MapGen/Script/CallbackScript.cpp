@@ -198,7 +198,7 @@ namespace ProceduralExplorationGameCore{
         sq_pushobject(mVm, mMainTable);
 
         if(SQ_FAILED(sq_call(mVm, 1, false, true))){
-            //AV_ERROR("Failed to call the main closure in the callback script {}", mFilePath);
+            GAME_CORE_ERROR("Failed to call the main closure in the callback script {}", mFilePath);
             return false;
         }
 
