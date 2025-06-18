@@ -7,7 +7,7 @@
 #include "Vao/OgreVaoManager.h"
 #include "Vao/OgreAsyncTicket.h"
 
-#include "MapGen/ExplorationMapDataPrerequisites.h"
+#include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 
 #include <cstring>
 #include <fstream>

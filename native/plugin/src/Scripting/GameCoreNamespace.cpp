@@ -29,7 +29,7 @@
 #include "Scripting/DataPointFileUserData.h"
 
 #include "MapGen/ExplorationMapViewer.h"
-#include "MapGen/ExplorationMapDataPrerequisites.h"
+#include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 #include "MapGen/MapGen.h"
 
 #include "VisitedPlaces/VisitedPlacesParser.h"
@@ -111,146 +111,6 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
-    SQInteger _processRegionTable(HSQUIRRELVM vm, ProceduralExplorationGameCore::RegionData& region){
-        sq_pushnull(vm);
-        while(SQ_SUCCEEDED(sq_next(vm,-2))){
-            const SQChar *k;
-            sq_getstring(vm, -2, &k);
-
-            SQObjectType t = sq_gettype(vm, -1);
-            if(t == OT_INTEGER){
-                SQInteger val;
-                sq_getinteger(vm, -1, &val);
-                if(strcmp(k, "id") == 0){
-                    region.id = val;
-                }
-                else if(strcmp(k, "total") == 0){
-                    region.total = static_cast<AV::uint32>(val);
-                }
-                else if(strcmp(k, "seedX") == 0){
-                    region.seedX = static_cast<AV::uint32>(val);
-                }
-                else if(strcmp(k, "seedY") == 0){
-                    region.seedY = static_cast<AV::uint32>(val);
-                }
-                else if(strcmp(k, "type") == 0){
-                    region.type = static_cast<ProceduralExplorationGameCore::RegionType>(val);
-                }
-            }
-            else if(t == OT_ARRAY){
-                if(strcmp(k, "coords") == 0){
-                    SQInteger arraySize = sq_getsize(vm, -1);
-                    region.coords.resize(arraySize);
-                    for(SQInteger i = 0; i < arraySize; i++){
-                        sq_pushinteger(vm, i);
-                        sq_get(vm, -2);
-
-                        SQInteger worldPoint;
-                        sq_getinteger(vm, -1, &worldPoint);
-                        region.coords[i] = static_cast<ProceduralExplorationGameCore::WorldPoint>(worldPoint);
-
-                        sq_pop(vm,1);
-                    }
-
-                }
-            }
-
-            sq_pop(vm,2); //pop the key and value
-        }
-        sq_pop(vm,1); //pops the null iterator
-
-        return 0;
-    }
-    SQInteger _processRegionData(HSQUIRRELVM vm, ProceduralExplorationGameCore::ExplorationMapData* data){
-        SQInteger arraySize = sq_getsize(vm, -1);
-        for(SQInteger i = 0; i < arraySize; i++){
-            sq_pushinteger(vm, i);
-            sq_get(vm, -2);
-
-            SQObjectType t = sq_gettype(vm, -1);
-            assert(t == OT_TABLE);
-
-            ProceduralExplorationGameCore::RegionData region;
-            _processRegionTable(vm, region);
-            data->regionData.push_back(region);
-
-            sq_pop(vm, 1);
-        }
-
-        return 0;
-    }
-    SQInteger GameCoreNamespace::tableToExplorationMapData(HSQUIRRELVM vm){
-        ProceduralExplorationGameCore::ExplorationMapData* data = new ProceduralExplorationGameCore::ExplorationMapData();
-
-        sq_pushnull(vm);
-        while(SQ_SUCCEEDED(sq_next(vm,-2))){
-            //here -1 is the value and -2 is the key
-            const SQChar *k;
-            sq_getstring(vm, -2, &k);
-
-            SQObjectType t = sq_gettype(vm, -1);
-            if(t == OT_INTEGER){
-                SQInteger val;
-                sq_getinteger(vm, -1, &val);
-                if(strcmp(k, "width") == 0){
-                    data->width = static_cast<AV::uint32>(val);
-                }
-                else if(strcmp(k, "height") == 0){
-                    data->height = static_cast<AV::uint32>(val);
-                }
-                else if(strcmp(k, "seed") == 0){
-                    data->seed = static_cast<AV::uint32>(val);
-                }
-                else if(strcmp(k, "moistureSeed") == 0){
-                    data->moistureSeed = static_cast<AV::uint32>(val);
-                }
-                else if(strcmp(k, "variationSeed") == 0){
-                    data->variationSeed = static_cast<AV::uint32>(val);
-                }
-                else if(strcmp(k, "seaLevel") == 0){
-                    data->seaLevel = static_cast<AV::uint32>(val);
-                }
-            }
-            sq_pop(vm,2); //pop the key and value
-        }
-        sq_pop(vm,1); //pops the null iterator
-
-        sq_pushnull(vm);
-        while(SQ_SUCCEEDED(sq_next(vm,-2))){
-            //here -1 is the value and -2 is the key
-            const SQChar *k;
-            sq_getstring(vm, -2, &k);
-
-            SQObjectType t = sq_gettype(vm, -1);
-            if(strcmp(k, "voxelBuffer") == 0){
-                SQUserPointer buffer = 0;
-                sqstd_getblob(vm, -1, &buffer);
-                data->voxelBuffer = static_cast<void*>(buffer);
-            }
-            else if(strcmp(k, "secondaryVoxBuffer") == 0){
-                SQUserPointer buffer = 0;
-                sqstd_getblob(vm, -1, &buffer);
-                data->secondaryVoxelBuffer = static_cast<void*>(buffer);
-            }
-            else if(strcmp(k, "blueNoiseBuffer") == 0){
-                SQUserPointer buffer = 0;
-                sqstd_getblob(vm, -1, &buffer);
-                data->blueNoiseBuffer = static_cast<void*>(buffer);
-            }
-            else if(strcmp(k, "regionData") == 0){
-                _processRegionData(vm, data);
-            }
-            sq_pop(vm,2); //pop the key and value
-        }
-        sq_pop(vm,1); //pops the null iterator
-
-
-
-        ExplorationMapDataUserData::ExplorationMapDataToUserData(vm, data);
-
-        return 1;
-    }
-
     SQInteger GameCoreNamespace::tableToExplorationMapInputData(HSQUIRRELVM vm, ProceduralExplorationGameCore::ExplorationMapInputData* data){
         sq_pushnull(vm);
         while(SQ_SUCCEEDED(sq_next(vm,-2))){
@@ -263,28 +123,36 @@ namespace ProceduralExplorationGamePlugin{
                 SQInteger val;
                 sq_getinteger(vm, -1, &val);
                 if(strcmp(k, "width") == 0){
-                    data->width = static_cast<AV::uint32>(val);
+                    //data->width = static_cast<AV::uint32>(val);
+                    data->uint32("width", static_cast<AV::uint32>(val));
                 }
                 else if(strcmp(k, "height") == 0){
-                    data->height = static_cast<AV::uint32>(val);
+                    //data->height = static_cast<AV::uint32>(val);
+                    data->uint32("height", static_cast<AV::uint32>(val));
                 }
                 else if(strcmp(k, "seed") == 0){
-                    data->seed = static_cast<AV::uint32>(val);
+                    //data->seed = static_cast<AV::uint32>(val);
+                    data->uint32("seed", static_cast<AV::uint32>(val));
                 }
                 else if(strcmp(k, "moistureSeed") == 0){
-                    data->moistureSeed = static_cast<AV::uint32>(val);
+                    //data->moistureSeed = static_cast<AV::uint32>(val);
+                    data->uint32("moistureSeed", static_cast<AV::uint32>(val));
                 }
                 else if(strcmp(k, "variationSeed") == 0){
-                    data->variationSeed = static_cast<AV::uint32>(val);
+                    //data->variationSeed = static_cast<AV::uint32>(val);
+                    data->uint32("variationSeed", static_cast<AV::uint32>(val));
                 }
                 else if(strcmp(k, "seaLevel") == 0){
-                    data->seaLevel = static_cast<AV::uint32>(val);
+                    //data->seaLevel = static_cast<AV::uint32>(val);
+                    data->uint32("seaLevel", static_cast<AV::uint32>(val));
                 }
                 else if(strcmp(k, "numRivers") == 0){
-                    data->numRivers = static_cast<AV::uint32>(val);
+                    //data->numRivers = static_cast<AV::uint32>(val);
+                    data->uint32("numRivers", static_cast<AV::uint32>(val));
                 }
                 else if(strcmp(k, "numRegions") == 0){
-                    data->numRegions = static_cast<AV::uint32>(val);
+                    //data->numRegions = static_cast<AV::uint32>(val);
+                    data->uint32("numRegions", static_cast<AV::uint32>(val));
                 }
             }
             else if(t == OT_ARRAY){
@@ -772,7 +640,6 @@ namespace ProceduralExplorationGamePlugin{
 
         AV::ScriptUtils::addFunction(vm, fillBufferWithMapLean, "fillBufferWithMapLean", 3, ".uu");
         AV::ScriptUtils::addFunction(vm, fillBufferWithMapComplex, "fillBufferWithMapComplex", 4, ".uui");
-        AV::ScriptUtils::addFunction(vm, tableToExplorationMapData, "tableToExplorationMapData", 2, ".t");
         AV::ScriptUtils::addFunction(vm, getRegionFound, "getRegionFound", 2, ".i");
         AV::ScriptUtils::addFunction(vm, setRegionFound, "setRegionFound", 3, ".ib");
         AV::ScriptUtils::addFunction(vm, setNewMapData, "setNewMapData", 2, ".u");

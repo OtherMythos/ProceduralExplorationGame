@@ -3,6 +3,7 @@
 #include <thread>
 #include <cassert>
 
+#include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 #include "MapGen/ExplorationMapDataPrerequisites.h"
 #include "MapGen/MapGenClient.h"
 #include "MapGen/MapGenStep.h"

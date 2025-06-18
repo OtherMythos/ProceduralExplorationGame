@@ -26,7 +26,7 @@
             mInputData_ = {
                 "seed": _random.randInt(1000),
                 "moistureSeed": _random.randInt(1000),
-                "variation": _random.randInt(1000),
+                "variationSeed": _random.randInt(1000),
                 "width": smallWorld ? 200 : 600,
                 "height": smallWorld ? 200 : 600,
                 "numRivers": 24,

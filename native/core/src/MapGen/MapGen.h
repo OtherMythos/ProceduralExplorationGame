@@ -7,8 +7,8 @@
 
 namespace ProceduralExplorationGameCore{
 
-    struct ExplorationMapData;
-    struct ExplorationMapInputData;
+    class ExplorationMapData;
+    class ExplorationMapInputData;
 
     class MapGenClient;
     class MapGenStep;

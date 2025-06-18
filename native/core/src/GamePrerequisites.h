@@ -4,7 +4,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    struct ExplorationMapData;
+    class ExplorationMapData;
 
     typedef AV::uint16 VoxelId;
     static const VoxelId EMPTY_VOXEL = 0x8000;

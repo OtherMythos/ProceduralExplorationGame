@@ -3,7 +3,7 @@
 #include "Scripting/ScriptNamespace/ScriptUtils.h"
 
 namespace ProceduralExplorationGameCore{
-    struct ExplorationMapData;
+    class ExplorationMapData;
 }
 
 namespace ProceduralExplorationGamePlugin{

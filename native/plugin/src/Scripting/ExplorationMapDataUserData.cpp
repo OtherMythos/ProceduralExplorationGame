@@ -7,7 +7,7 @@
 
 #include "Scripting/ScriptNamespace/Classes/Vector3UserData.h"
 
-#include "MapGen/ExplorationMapDataPrerequisites.h"
+#include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 
 namespace ProceduralExplorationGamePlugin{
 
@@ -179,21 +179,34 @@ namespace ProceduralExplorationGamePlugin{
 
         sq_newtable(vm);
 
-        pushInteger(vm, "seed", mapData->seed);
-        pushInteger(vm, "moistureSeed", mapData->moistureSeed);
-        pushInteger(vm, "variationSeed", mapData->variationSeed);
+        const std::map<std::string, ProceduralExplorationGameCore::MapDataEntry>& data = mapData->getEntries();
+
+        for(const std::pair<std::string, ProceduralExplorationGameCore::MapDataEntry>& entry : data){
+            if(entry.second.type == ProceduralExplorationGameCore::MapDataEntryType::UINT32){
+                pushInteger(vm, entry.first.c_str(), entry.second.value.uint32);
+            }
+            else if(entry.second.type == ProceduralExplorationGameCore::MapDataEntryType::WORLD_POINT){
+                pushInteger(vm, entry.first.c_str(), entry.second.value.worldPoint);
+            }
+        }
+
+        //pushInteger(vm, "seed", mapData->seed);
+        //pushInteger(vm, "moistureSeed", mapData->moistureSeed);
+        //pushInteger(vm, "variationSeed", mapData->variationSeed);
+        /*
         pushInteger(vm, "width", mapData->width);
         pushInteger(vm, "height", mapData->height);
-        pushInteger(vm, "seaLevel", mapData->seaLevel);
-        pushInteger(vm, "playerStart", mapData->playerStart);
-        pushInteger(vm, "gatewayPosition", mapData->gatewayPosition);
+        pushInteger(vm, "seaLevel", mapData->uint32("seaLevel"));
+        pushInteger(vm, "playerStart", mapData->worldPoint("playerStart"));
+        pushInteger(vm, "gatewayPosition", mapData->worldPoint("gatewayPosition"));
+        */
 
-        pushFloodData(vm, "waterData", mapData->waterData);
-        pushFloodData(vm, "landData", mapData->landData);
+        pushFloodData(vm, "waterData", *mapData->ptr<std::vector<ProceduralExplorationGameCore::FloodFillEntry*>>("waterData"));
+        pushFloodData(vm, "landData", *mapData->ptr<std::vector<ProceduralExplorationGameCore::FloodFillEntry*>>("landData"));
         //pushPlaceData(vm, "placeData", mapData->placeData);
-        pushRegionData(vm, "regionData", mapData->regionData);
-        pushPlacedItemData(vm, "placedItems", mapData->placedItems);
-        generatePushedItemBuffer(vm, "placedItemsBuffer", mapData->width, mapData->height, mapData->placedItems);
+        pushRegionData(vm, "regionData", *mapData->ptr<std::vector<ProceduralExplorationGameCore::RegionData>>("regionData"));
+        pushPlacedItemData(vm, "placedItems", *mapData->ptr<std::vector<ProceduralExplorationGameCore::PlacedItemData>>("placedItems"));
+        generatePushedItemBuffer(vm, "placedItemsBuffer", mapData->width, mapData->height, *mapData->ptr<std::vector<ProceduralExplorationGameCore::PlacedItemData>>("placedItems"));
 
         //pushBuffer(vm, "voxelBuffer", mapData->voxelBuffer, mapData->voxelBufferSize);
         //pushBuffer(vm, "secondaryVoxBuffer", mapData->secondaryVoxelBuffer, mapData->secondaryVoxelBufferSize);

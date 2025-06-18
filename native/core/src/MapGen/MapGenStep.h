@@ -4,8 +4,8 @@
 
 namespace ProceduralExplorationGameCore{
 
-    struct ExplorationMapInputData;
-    struct ExplorationMapData;
+    class ExplorationMapInputData;
+    class ExplorationMapData;
     struct ExplorationMapGenWorkspace;
 
     class MapGenStep{

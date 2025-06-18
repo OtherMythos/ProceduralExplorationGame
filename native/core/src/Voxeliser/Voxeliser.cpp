@@ -1,5 +1,6 @@
 #include "Voxeliser.h"
 
+#include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 #include "MapGen/ExplorationMapDataPrerequisites.h"
 
 #include <cassert>
@@ -296,14 +297,14 @@ namespace ProceduralExplorationGameCore{
     void Voxeliser::createTerrainFromMapData(const std::string& meshName, ExplorationMapData* mapData, Ogre::MeshPtr* outMeshes, AV::uint32* outNumRegions){
         AV::uint32 width = mapData->width;
         AV::uint32 height = mapData->height;
-        AV::uint32 seaLevel = mapData->seaLevel;
+        AV::uint32 seaLevel = mapData->uint32("seaLevel");
         AV::uint32* voxPtr = static_cast<AV::uint32*>(mapData->voxelBuffer);
         AV::uint32* secondaryVoxPtr = static_cast<AV::uint32*>(mapData->secondaryVoxelBuffer);
 
         static const AV::uint32 WORLD_DEPTH = 20;
         static const AV::uint32 ABOVE_GROUND = 0xFF - seaLevel;
 
-        size_t numRegions = mapData->regionData.size();
+        size_t numRegions = mapData->ptr<std::vector<RegionData>>("regionData")->size();
         if(numRegions == 0) numRegions = 1;
         std::vector<RegionBufferEntry> regionEntries;
         regionEntries.resize(numRegions);

@@ -3,6 +3,7 @@
 #include "System/EnginePrerequisites.h"
 #include "GamePrerequisites.h"
 #include "ExplorationMapDataPrerequisites.h"
+#include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 
 namespace ProceduralExplorationGameCore{
 

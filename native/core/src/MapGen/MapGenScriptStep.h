@@ -12,8 +12,8 @@ namespace AV{
 namespace ProceduralExplorationGameCore{
     class MapGenStep;
     class CallbackScript;
-    struct ExplorationMapInputData;
-    struct ExplorationMapData;
+    class ExplorationMapInputData;
+    class ExplorationMapData;
 
     class MapGenScriptStep : public MapGenStep{
     public:

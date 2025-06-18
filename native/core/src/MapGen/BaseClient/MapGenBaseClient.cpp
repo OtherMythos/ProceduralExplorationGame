@@ -1,34 +1,33 @@
 #include "MapGenBaseClient.h"
 
 #include "MapGen/MapGenStep.h"
-#include "MapGen/Steps/GenerateMetaMapGenStep.h"
-#include "MapGen/Steps/SetupBuffersMapGenStep.h"
-#include "MapGen/Steps/GenerateNoiseMapGenStep.h"
-#include "MapGen/Steps/GenerateAdditionLayerMapGenStep.h"
-#include "MapGen/Steps/MergeAltitudeMapGenStep.h"
-#include "MapGen/Steps/ReduceNoiseMapGenStep.h"
-#include "MapGen/Steps/PerformFinalFloodFillMapGenStep.h"
-#include "MapGen/Steps/PerformPreFloodFillMapGenStep.h"
-#include "MapGen/Steps/RemoveRedundantIslandsMapGenStep.h"
-#include "MapGen/Steps/RemoveRedundantWaterMapGenStep.h"
-#include "MapGen/Steps/IsolateRegionsMapGenStep.h"
-#include "MapGen/Steps/WeightAndSortLandmassesMapGenStep.h"
-#include "MapGen/Steps/DetermineEarlyRegionsMapGenStep.h"
-#include "MapGen/Steps/DetermineEdgesMapGenStep.h"
-#include "MapGen/Steps/DetermineRiversMapGenStep.h"
-#include "MapGen/Steps/CarveRiversMapGenStep.h"
-#include "MapGen/Steps/DeterminePlayerStartMapGenStep.h"
-#include "MapGen/Steps/DetermineGatewayPositionMapGenStep.h"
-#include "MapGen/Steps/DetermineRegionsMapGenStep.h"
-#include "MapGen/Steps/DetermineRegionTypesMapGenStep.h"
-#include "MapGen/Steps/MergeExpandableRegionsMapGenStep.h"
-#include "MapGen/Steps/PopulateFinalBiomesMapGenStep.h"
-#include "MapGen/Steps/WriteFinalRegionValuesMapGenStep.h"
-#include "MapGen/Steps/PlaceItemsForBiomesMapGenStep.h"
-//#include "MapGen/Steps/DeterminePlacesMapGenStep.h"
-#include "MapGen/Steps/MergeSmallRegionsMapGenStep.h"
-#include "MapGen/Steps/MergeIsolatedRegionsMapGenStep.h"
-#include "MapGen/Steps/GenerateWaterTextureMapGenStep.h"
+#include "Steps/GenerateMetaMapGenStep.h"
+#include "Steps/SetupBuffersMapGenStep.h"
+#include "Steps/GenerateNoiseMapGenStep.h"
+#include "Steps/GenerateAdditionLayerMapGenStep.h"
+#include "Steps/MergeAltitudeMapGenStep.h"
+#include "Steps/ReduceNoiseMapGenStep.h"
+#include "Steps/PerformFinalFloodFillMapGenStep.h"
+#include "Steps/PerformPreFloodFillMapGenStep.h"
+#include "Steps/RemoveRedundantIslandsMapGenStep.h"
+#include "Steps/RemoveRedundantWaterMapGenStep.h"
+#include "Steps/IsolateRegionsMapGenStep.h"
+#include "Steps/WeightAndSortLandmassesMapGenStep.h"
+#include "Steps/DetermineEarlyRegionsMapGenStep.h"
+#include "Steps/DetermineEdgesMapGenStep.h"
+#include "Steps/DetermineRiversMapGenStep.h"
+#include "Steps/CarveRiversMapGenStep.h"
+#include "Steps/DeterminePlayerStartMapGenStep.h"
+#include "Steps/DetermineGatewayPositionMapGenStep.h"
+#include "Steps/DetermineRegionsMapGenStep.h"
+#include "Steps/DetermineRegionTypesMapGenStep.h"
+#include "Steps/MergeExpandableRegionsMapGenStep.h"
+#include "Steps/PopulateFinalBiomesMapGenStep.h"
+#include "Steps/WriteFinalRegionValuesMapGenStep.h"
+#include "Steps/PlaceItemsForBiomesMapGenStep.h"
+#include "Steps/MergeSmallRegionsMapGenStep.h"
+#include "Steps/MergeIsolatedRegionsMapGenStep.h"
+#include "Steps/GenerateWaterTextureMapGenStep.h"
 
 #include "Ogre.h"
 #include "OgreStagingTexture.h"
@@ -92,7 +91,7 @@ namespace ProceduralExplorationGameCore{
             Ogre::TextureBox texBox = stagingTexture->mapRegion(mapData->width, mapData->height, tex->getDepth(), tex->getNumSlices(), tex->getPixelFormat());
 
             float* pDest = static_cast<float*>(texBox.at(0, 0, 0));
-            memcpy(pDest, mapData->waterTextureBuffer, mapData->width * mapData->height * sizeof(float) * 4);
+            memcpy(pDest, mapData->ptr<float>("waterTextureBuffer"), mapData->width * mapData->height * sizeof(float) * 4);
 
             stagingTexture->stopMapRegion();
             stagingTexture->upload(texBox, tex, 0, 0, 0, false);
@@ -117,7 +116,7 @@ namespace ProceduralExplorationGameCore{
             Ogre::TextureBox texBox = stagingTexture->mapRegion(mapData->width, mapData->height, tex->getDepth(), tex->getNumSlices(), tex->getPixelFormat());
 
             float* pDest = static_cast<float*>(texBox.at(0, 0, 0));
-            memcpy(pDest, mapData->waterTextureBufferMask, mapData->width * mapData->height * sizeof(float) * 4);
+            memcpy(pDest, mapData->ptr<float>("waterTextureBufferMask"), mapData->width * mapData->height * sizeof(float) * 4);
 
             stagingTexture->stopMapRegion();
             stagingTexture->upload(texBox, tex, 0, 0, 0, false);
