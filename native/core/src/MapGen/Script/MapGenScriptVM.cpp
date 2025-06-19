@@ -60,7 +60,8 @@ namespace ProceduralExplorationGameCore{
         sq_pushroottable(mVM);
         setupNamespace("_mapGen", MapGenNamespace::setupNamespace);
 
-        MapGenDataContainerUserData::setupDelegateTable(mVM);
+        MapGenDataContainerUserData::setupDelegateTable<const MapGenDataContainer*, true>(mVM);
+        MapGenDataContainerUserData::setupDelegateTable<MapGenDataContainer*, false>(mVM);
 
     }
 

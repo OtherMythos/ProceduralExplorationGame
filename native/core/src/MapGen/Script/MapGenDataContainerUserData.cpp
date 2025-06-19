@@ -6,37 +6,57 @@
 
 namespace ProceduralExplorationGameCore{
 
+    template void ProceduralExplorationGameCore::MapGenDataContainerUserData::setupDelegateTable<ProceduralExplorationGameCore::MapGenDataContainer const*, true>(HSQUIRRELVM);
+    template void ProceduralExplorationGameCore::MapGenDataContainerUserData::setupDelegateTable<ProceduralExplorationGameCore::MapGenDataContainer*, false>(HSQUIRRELVM);
+
+    template void MapGenDataContainerUserData::MapGenDataContainerToUserData<const MapGenDataContainer*, true>(SQVM*, const MapGenDataContainer*);
+    template void MapGenDataContainerUserData::MapGenDataContainerToUserData<MapGenDataContainer*, false>(SQVM*, MapGenDataContainer*);
+
     SQObject MapGenDataContainerUserData::MapGenDataContainerDelegateTableObject;
+    SQObject MapGenDataContainerUserData::MapGenDataContainerConstDelegateTableObject;
 
     //TODO properly define this somewhere else.
     static void* MapGenDataContainerUserDataTypeTag = reinterpret_cast<void*>(0xFF);
+    static void* MapGenDataContainerConstUserDataTypeTag = reinterpret_cast<void*>(0xFF + 1);
 
-    void MapGenDataContainerUserData::MapGenDataContainerToUserData(HSQUIRRELVM vm, MapGenDataContainer* mapData){
-        MapGenDataContainer** pointer = (MapGenDataContainer**)sq_newuserdata(vm, sizeof(MapGenDataContainer*));
+    template <typename T, bool B>
+    void MapGenDataContainerUserData::MapGenDataContainerToUserData(HSQUIRRELVM vm, T mapData){
+        T* pointer = (T*)sq_newuserdata(vm, sizeof(T));
         *pointer = mapData;
 
-        sq_pushobject(vm, MapGenDataContainerDelegateTableObject);
-        sq_setdelegate(vm, -2); //This pops the pushed table
-        sq_settypetag(vm, -1, MapGenDataContainerUserDataTypeTag);
+        if(B){
+            sq_pushobject(vm, MapGenDataContainerConstDelegateTableObject);
+            sq_setdelegate(vm, -2);
+            sq_settypetag(vm, -1, MapGenDataContainerConstUserDataTypeTag);
+        }else{
+            sq_pushobject(vm, MapGenDataContainerDelegateTableObject);
+            sq_setdelegate(vm, -2);
+            sq_settypetag(vm, -1, MapGenDataContainerUserDataTypeTag);
+        }
     }
 
-    AV::UserDataGetResult MapGenDataContainerUserData::readMapGenDataContainerFromUserData(HSQUIRRELVM vm, SQInteger stackInx, MapGenDataContainer** outMapData){
+    template <typename T>
+    AV::UserDataGetResult MapGenDataContainerUserData::readMapGenDataContainerFromUserData(HSQUIRRELVM vm, SQInteger stackInx, T* outMapData){
         SQUserPointer pointer, typeTag;
         if(SQ_FAILED(sq_getuserdata(vm, stackInx, &pointer, &typeTag))) return AV::USER_DATA_GET_INCORRECT_TYPE;
-        if(typeTag != MapGenDataContainerUserDataTypeTag){
+        if(typeTag != MapGenDataContainerUserDataTypeTag && typeTag != MapGenDataContainerConstUserDataTypeTag){
             *outMapData = 0;
             return AV::USER_DATA_GET_TYPE_MISMATCH;
         }
 
-        MapGenDataContainer** p = (MapGenDataContainer**)pointer;
+        T* p = (T*)pointer;
         *outMapData = *p;
 
         return AV::USER_DATA_GET_SUCCESS;
     }
 
+    SQInteger MapGenDataContainerUserData::setValueConst(HSQUIRRELVM vm){
+        return sq_throwerror(vm, "This object is const and cannot be written to.");
+    }
+
     SQInteger MapGenDataContainerUserData::setValue(HSQUIRRELVM vm){
         MapGenDataContainer* outMapData;
-        SCRIPT_ASSERT_RESULT(readMapGenDataContainerFromUserData(vm, 1, &outMapData));
+        SCRIPT_ASSERT_RESULT(readMapGenDataContainerFromUserData<MapGenDataContainer*>(vm, 1, &outMapData));
 
         const SQChar *key;
         sq_getstring(vm, 2, &key);
@@ -59,9 +79,10 @@ namespace ProceduralExplorationGameCore{
         return 0;
     }
 
+    template <typename T>
     SQInteger MapGenDataContainerUserData::getValue(HSQUIRRELVM vm){
-        MapGenDataContainer* outMapData;
-        SCRIPT_ASSERT_RESULT(readMapGenDataContainerFromUserData(vm, 1, &outMapData));
+        T outMapData;
+        SCRIPT_ASSERT_RESULT(readMapGenDataContainerFromUserData<T>(vm, 1, &outMapData));
 
         const SQChar *key;
         sq_getstring(vm, 2, &key);
@@ -69,7 +90,7 @@ namespace ProceduralExplorationGameCore{
         MapDataEntry outEntry;
         MapDataReadResult result = outMapData->readEntry(key, &outEntry);
         if(result == MapDataReadResult::NOT_FOUND){
-            std::string val = std::string("The requested value '") + key + "' was not found.'";
+            std::string val = std::string("The requested value '") + key + "' was not found.";
             return sq_throwerror(vm, val.c_str());
         }
 
@@ -93,9 +114,10 @@ namespace ProceduralExplorationGameCore{
         return 1;
     }
 
+    template <typename T>
     SQInteger MapGenDataContainerUserData::voxValueForCoord(HSQUIRRELVM vm){
         MapGenDataContainer* outMapData;
-        SCRIPT_ASSERT_RESULT(readMapGenDataContainerFromUserData(vm, 1, &outMapData));
+        SCRIPT_ASSERT_RESULT(readMapGenDataContainerFromUserData<MapGenDataContainer*>(vm, 1, &outMapData));
 
         ExplorationMapData* mapData = static_cast<ExplorationMapData*>(outMapData);
 
@@ -113,7 +135,7 @@ namespace ProceduralExplorationGameCore{
 
     SQInteger MapGenDataContainerUserData::writeVoxValueForCoord(HSQUIRRELVM vm){
         MapGenDataContainer* outMapData;
-        SCRIPT_ASSERT_RESULT(readMapGenDataContainerFromUserData(vm, 1, &outMapData));
+        SCRIPT_ASSERT_RESULT(readMapGenDataContainerFromUserData<MapGenDataContainer*>(vm, 1, &outMapData));
 
         ExplorationMapData* mapData = static_cast<ExplorationMapData*>(outMapData);
 
@@ -125,22 +147,39 @@ namespace ProceduralExplorationGameCore{
         AV::uint8* ptr = VOX_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y));
 
         AV::uint32 writeVal = static_cast<AV::uint32>(val);
-        *ptr = static_cast<AV::uint32>(writeVal);
+        *(reinterpret_cast<AV::uint32*>(ptr)) = writeVal;
 
-        return 1;
+        return 0;
     }
 
+    template <typename T>
+    void MapGenDataContainerUserData::_defineBaseFunctions(HSQUIRRELVM vm){
+        AV::ScriptUtils::addFunction(vm, getValue<T>, "_get");
+        AV::ScriptUtils::addFunction(vm, voxValueForCoord<T>, "voxValueForCoord", 3, ".ii");
+    }
+
+    template <typename T, bool B>
     void MapGenDataContainerUserData::setupDelegateTable(HSQUIRRELVM vm){
         sq_newtable(vm);
 
-        AV::ScriptUtils::addFunction(vm, getValue, "_get");
-        AV::ScriptUtils::addFunction(vm, setValue, "_set");
-        AV::ScriptUtils::addFunction(vm, voxValueForCoord, "voxValueForCoord", 3, ".ii");
-        AV::ScriptUtils::addFunction(vm, writeVoxValueForCoord, "writeVoxValueForCoord", 4, ".iii");
+        SQObject* targetTable = 0;
 
-        sq_resetobject(&MapGenDataContainerDelegateTableObject);
-        sq_getstackobj(vm, -1, &MapGenDataContainerDelegateTableObject);
-        sq_addref(vm, &MapGenDataContainerDelegateTableObject);
+        if(B){
+            targetTable = &MapGenDataContainerConstDelegateTableObject;
+
+            _defineBaseFunctions<T>(vm);
+            AV::ScriptUtils::addFunction(vm, setValueConst, "_set");
+        }else{
+            targetTable = &MapGenDataContainerDelegateTableObject;
+
+            _defineBaseFunctions<T>(vm);
+            AV::ScriptUtils::addFunction(vm, setValue, "_set");
+            AV::ScriptUtils::addFunction(vm, writeVoxValueForCoord, "writeVoxValueForCoord", 4, ".iii");
+        }
+
+        sq_resetobject(targetTable);
+        sq_getstackobj(vm, -1, targetTable);
+        sq_addref(vm, targetTable);
         sq_pop(vm, 1);
     }
 }

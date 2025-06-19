@@ -155,6 +155,9 @@ enum VoxPickerType{
     function setup(){
         checkForGameCorePlugin();
 
+        _gameCore.registerMapGenClient("testClient", "res://../../src/MapGen/NativeClient/MapGenNativeClient.nut");
+        _gameCore.recollectMapGenSteps();
+
         setupGui();
 
         setRandomSeed();
@@ -511,6 +514,8 @@ enum VoxPickerType{
             "numRivers": 24,
             "numRegions": 16,
             "seaLevel": 100,
+            "boxWidth": 50,
+            "boxHeight": 50,
             "altitudeBiomes": [10, 100],
             "placeFrequency": [0, 1, 1, 4, 4, 30]
         };

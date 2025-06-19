@@ -122,6 +122,7 @@ namespace ProceduralExplorationGamePlugin{
             if(t == OT_INTEGER){
                 SQInteger val;
                 sq_getinteger(vm, -1, &val);
+                /*
                 if(strcmp(k, "width") == 0){
                     //data->width = static_cast<AV::uint32>(val);
                     data->uint32("width", static_cast<AV::uint32>(val));
@@ -154,6 +155,11 @@ namespace ProceduralExplorationGamePlugin{
                     //data->numRegions = static_cast<AV::uint32>(val);
                     data->uint32("numRegions", static_cast<AV::uint32>(val));
                 }
+                 */
+                ProceduralExplorationGameCore::MapDataEntry e;
+                e.value.uint32 = static_cast<AV::uint32>(val);
+                e.type = ProceduralExplorationGameCore::MapDataEntryType::UINT32;
+                data->setEntry(k, e);
             }
             else if(t == OT_ARRAY){
                 /*
