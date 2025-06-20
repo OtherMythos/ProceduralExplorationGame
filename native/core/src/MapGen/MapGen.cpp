@@ -7,6 +7,7 @@
 #include "MapGen/ExplorationMapDataPrerequisites.h"
 #include "MapGen/MapGenClient.h"
 #include "MapGen/MapGenStep.h"
+#include "MapGen/Script/ExplorationMapDataUserData.h"
 #include "MapGen/BaseClient/MapGenBaseClient.h"
 #include "GameCoreLogger.h"
 
@@ -82,10 +83,25 @@ namespace ProceduralExplorationGameCore{
         }
     }
 
-    void MapGen::notifyClientsClaimed_(ExplorationMapData* data){
+    void MapGen::notifyClientsClaimed_(HSQUIRRELVM vm, ExplorationMapData* data){
         for(MapGenClient* client : mActiveClients){
-            client->notifyClaimed(data);
+            const std::string& clientName = client->getName();
+
+            sq_pushstring(vm, clientName.c_str(), -1);
+            //sq_newtable(vm);
+            bool objectPushed = client->notifyClaimed(vm, data);
+            if(!objectPushed){
+                //Remove the string object if we're not going to add to the table.
+                sq_pop(vm, 1);
+                continue;
+            }
+            sq_newslot(vm,-3,SQFalse);
         }
+
+        //Push the map data
+        sq_pushstring(vm, "data", -1);
+        ExplorationMapDataUserData::ExplorationMapDataToUserData(vm, data);
+        sq_newslot(vm, -3, SQFalse);
     }
 
     void MapGen::beginMapGen_(const ThreadInput& input){
@@ -119,16 +135,17 @@ namespace ProceduralExplorationGameCore{
         mActiveClients.push_back(client);
     }
 
-    ExplorationMapData* MapGen::claimMapData(){
-        if(!isFinished()) return 0;
+    bool MapGen::claimMapData(HSQUIRRELVM vm){
+        if(!isFinished()) return false;
         delete mMapInputData;
         mParentThread->join();
         delete mParentThread;
         ExplorationMapData* out = mMapData;
         mMapData = 0;
 
-        notifyClientsClaimed_(out);
+        sq_newtable(vm);
+        notifyClientsClaimed_(vm, out);
 
-        return out;
+        return true;
     }
 };

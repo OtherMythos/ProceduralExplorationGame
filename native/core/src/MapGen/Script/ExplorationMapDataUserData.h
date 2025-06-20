@@ -4,9 +4,7 @@
 
 namespace ProceduralExplorationGameCore{
     class ExplorationMapData;
-}
 
-namespace ProceduralExplorationGamePlugin{
     class ExplorationMapDataUserData{
     public:
         ExplorationMapDataUserData() = delete;
@@ -14,9 +12,9 @@ namespace ProceduralExplorationGamePlugin{
 
         static void setupDelegateTable(HSQUIRRELVM vm);
 
-        static void ExplorationMapDataToUserData(HSQUIRRELVM vm, ProceduralExplorationGameCore::ExplorationMapData* mapData);
+        static void ExplorationMapDataToUserData(HSQUIRRELVM vm, ExplorationMapData* mapData);
 
-        static AV::UserDataGetResult readExplorationMapDataFromUserData(HSQUIRRELVM vm, SQInteger stackInx, ProceduralExplorationGameCore::ExplorationMapData** outMapData);
+        static AV::UserDataGetResult readExplorationMapDataFromUserData(HSQUIRRELVM vm, SQInteger stackInx, ExplorationMapData** outMapData);
 
     private:
         static SQObject ExplorationMapDataDelegateTableObject;

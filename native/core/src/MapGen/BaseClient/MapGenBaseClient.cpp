@@ -35,7 +35,7 @@
 #include "OgreTextureGpuManager.h"
 
 namespace ProceduralExplorationGameCore{
-    MapGenBaseClient::MapGenBaseClient(){
+    MapGenBaseClient::MapGenBaseClient() : MapGenClient("Base Client") {
 
     }
 
@@ -74,7 +74,7 @@ namespace ProceduralExplorationGameCore{
         });
     }
 
-    void MapGenBaseClient::notifyClaimed(ExplorationMapData* mapData){
+    bool MapGenBaseClient::notifyClaimed(HSQUIRRELVM vm, ExplorationMapData* mapData){
         {
             Ogre::TextureGpu* tex = 0;
             Ogre::TextureGpuManager* manager = Ogre::Root::getSingletonPtr()->getRenderSystem()->getTextureGpuManager();
@@ -159,5 +159,6 @@ namespace ProceduralExplorationGameCore{
             stagingTexture = 0;
         }
 
+        return false;
     }
 }

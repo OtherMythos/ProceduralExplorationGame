@@ -5,6 +5,8 @@
 #include <thread>
 #include <vector>
 
+#include "squirrel.h"
+
 namespace ProceduralExplorationGameCore{
 
     class ExplorationMapData;
@@ -28,7 +30,7 @@ namespace ProceduralExplorationGameCore{
 
         void registerMapGenClient(const std::string& clientName, MapGenClient* client);
 
-        ExplorationMapData* claimMapData();
+        bool claimMapData(HSQUIRRELVM vm);
 
     private:
         std::atomic<int> mCurrentStage;
@@ -51,7 +53,7 @@ namespace ProceduralExplorationGameCore{
 
         void notifyClientsBegan_(const ExplorationMapInputData* input);
         void notifyClientsEnded_(ExplorationMapData* data);
-        void notifyClientsClaimed_(ExplorationMapData* data);
+        void notifyClientsClaimed_(HSQUIRRELVM vm, ExplorationMapData* data);
 
     public:
         MapGenClient* getCurrentCollectingMapGenClient() { return mCurrentCollectingMapGenClient; }

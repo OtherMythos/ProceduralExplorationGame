@@ -1,6 +1,6 @@
 #include "ExplorationMapDataUserData.h"
 
-#include "ProceduralExplorationGameCorePluginScriptTypeTags.h"
+#include "ProceduralExplorationGameCoreScriptTypeTags.h"
 
 #include <sqstdblob.h>
 #include <vector>
@@ -9,12 +9,12 @@
 
 #include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 
-namespace ProceduralExplorationGamePlugin{
+namespace ProceduralExplorationGameCore{
 
     SQObject ExplorationMapDataUserData::ExplorationMapDataDelegateTableObject;
 
-    void ExplorationMapDataUserData::ExplorationMapDataToUserData(HSQUIRRELVM vm, ProceduralExplorationGameCore::ExplorationMapData* data){
-        ProceduralExplorationGameCore::ExplorationMapData** pointer = (ProceduralExplorationGameCore::ExplorationMapData**)sq_newuserdata(vm, sizeof(ProceduralExplorationGameCore::ExplorationMapData*));
+    void ExplorationMapDataUserData::ExplorationMapDataToUserData(HSQUIRRELVM vm, ExplorationMapData* data){
+        ExplorationMapData** pointer = (ExplorationMapData**)sq_newuserdata(vm, sizeof(ExplorationMapData*));
         *pointer = data;
 
         sq_pushobject(vm, ExplorationMapDataDelegateTableObject);
@@ -23,7 +23,7 @@ namespace ProceduralExplorationGamePlugin{
         sq_setreleasehook(vm, -1, ExplorationMapDataObjectReleaseHook);
     }
 
-    AV::UserDataGetResult ExplorationMapDataUserData::readExplorationMapDataFromUserData(HSQUIRRELVM vm, SQInteger stackInx, ProceduralExplorationGameCore::ExplorationMapData** outData){
+    AV::UserDataGetResult ExplorationMapDataUserData::readExplorationMapDataFromUserData(HSQUIRRELVM vm, SQInteger stackInx, ExplorationMapData** outData){
         SQUserPointer pointer, typeTag;
         if(SQ_FAILED(sq_getuserdata(vm, stackInx, &pointer, &typeTag))) return AV::USER_DATA_GET_INCORRECT_TYPE;
         if(typeTag != ExplorationMapDataTypeTag){
@@ -31,14 +31,14 @@ namespace ProceduralExplorationGamePlugin{
             return AV::USER_DATA_GET_TYPE_MISMATCH;
         }
 
-        ProceduralExplorationGameCore::ExplorationMapData** p = (ProceduralExplorationGameCore::ExplorationMapData**)pointer;
+        ExplorationMapData** p = (ExplorationMapData**)pointer;
         *outData = *p;
 
         return AV::USER_DATA_GET_SUCCESS;
     }
 
     SQInteger ExplorationMapDataUserData::ExplorationMapDataObjectReleaseHook(SQUserPointer p, SQInteger size){
-        ProceduralExplorationGameCore::ExplorationMapData** ptr = static_cast<ProceduralExplorationGameCore::ExplorationMapData**>(p);
+        ExplorationMapData** ptr = static_cast<ExplorationMapData**>(p);
         delete *ptr;
 
         return 0;
@@ -70,13 +70,13 @@ namespace ProceduralExplorationGamePlugin{
         }
         sq_rawset(vm, -3);
     }
-    inline void pushFloodData(HSQUIRRELVM vm, const char* key, std::vector<ProceduralExplorationGameCore::FloodFillEntry*>& waterData){
+    inline void pushFloodData(HSQUIRRELVM vm, const char* key, std::vector<FloodFillEntry*>& waterData){
         sq_pushstring(vm, key, -1);
         sq_newarray(vm, waterData.size());
         for(size_t i = 0; i < waterData.size(); i++){
             sq_pushinteger(vm, i);
 
-            const ProceduralExplorationGameCore::FloodFillEntry& e = *waterData[i];
+            const FloodFillEntry& e = *waterData[i];
             sq_newtable(vm);
 
             pushInteger(vm, "id", e.id);
@@ -84,20 +84,20 @@ namespace ProceduralExplorationGamePlugin{
             pushInteger(vm, "seedX", e.seedX);
             pushInteger(vm, "seedY", e.seedY);
             pushBool(vm, "nextToWorldEdge", e.nextToWorldEdge);
-            pushArray<ProceduralExplorationGameCore::WorldPoint>(vm, "coords", e.coords);
-            pushArray<ProceduralExplorationGameCore::WorldPoint>(vm, "edges", e.edges);
+            pushArray<WorldPoint>(vm, "coords", e.coords);
+            pushArray<WorldPoint>(vm, "edges", e.edges);
 
             sq_rawset(vm, -3);
         }
         sq_rawset(vm, -3);
     }
-    inline void pushRegionData(HSQUIRRELVM vm, const char* key, std::vector<ProceduralExplorationGameCore::RegionData>& regionData){
+    inline void pushRegionData(HSQUIRRELVM vm, const char* key, std::vector<RegionData>& regionData){
         sq_pushstring(vm, key, -1);
         sq_newarray(vm, regionData.size());
         for(size_t i = 0; i < regionData.size(); i++){
             sq_pushinteger(vm, i);
 
-            const ProceduralExplorationGameCore::RegionData& e = regionData[i];
+            const RegionData& e = regionData[i];
             sq_newtable(vm);
 
             pushInteger(vm, "id", e.id);
@@ -105,21 +105,21 @@ namespace ProceduralExplorationGamePlugin{
             pushInteger(vm, "seedX", e.seedX);
             pushInteger(vm, "seedY", e.seedY);
             pushInteger(vm, "type", static_cast<SQInteger>(e.type));
-            pushArray<ProceduralExplorationGameCore::WorldPoint>(vm, "coords", e.coords);
-            //pushArray<ProceduralExplorationGameCore::WorldPoint>(vm, "edges", e.edges);
+            pushArray<WorldPoint>(vm, "coords", e.coords);
+            //pushArray<WorldPoint>(vm, "edges", e.edges);
 
             sq_rawset(vm, -3);
         }
         sq_rawset(vm, -3);
     }
 /*
-    inline void pushPlaceData(HSQUIRRELVM vm, const char* key, std::vector<ProceduralExplorationGameCore::PlaceData>& placeData){
+    inline void pushPlaceData(HSQUIRRELVM vm, const char* key, std::vector<PlaceData>& placeData){
         sq_pushstring(vm, key, -1);
         sq_newarray(vm, placeData.size());
         for(size_t i = 0; i < placeData.size(); i++){
             sq_pushinteger(vm, i);
 
-            const ProceduralExplorationGameCore::PlaceData& e = placeData[i];
+            const PlaceData& e = placeData[i];
             sq_newtable(vm);
 
             pushInteger(vm, "placeId", static_cast<SQInteger>(e.type));
@@ -132,13 +132,13 @@ namespace ProceduralExplorationGamePlugin{
         sq_rawset(vm, -3);
     }
  */
-    inline void pushPlacedItemData(HSQUIRRELVM vm, const char* key, std::vector<ProceduralExplorationGameCore::PlacedItemData>& itemData){
+    inline void pushPlacedItemData(HSQUIRRELVM vm, const char* key, std::vector<PlacedItemData>& itemData){
         sq_pushstring(vm, key, -1);
         sq_newarray(vm, itemData.size());
         for(size_t i = 0; i < itemData.size(); i++){
             sq_pushinteger(vm, i);
 
-            const ProceduralExplorationGameCore::PlacedItemData& e = itemData[i];
+            const PlacedItemData& e = itemData[i];
             sq_newtable(vm);
 
             pushInteger(vm, "type", static_cast<SQInteger>(e.type));
@@ -150,7 +150,7 @@ namespace ProceduralExplorationGamePlugin{
         }
         sq_rawset(vm, -3);
     }
-    inline void generatePushedItemBuffer(HSQUIRRELVM vm, const char* key, AV::uint32 width, AV::uint32 height, std::vector<ProceduralExplorationGameCore::PlacedItemData>& itemData){
+    inline void generatePushedItemBuffer(HSQUIRRELVM vm, const char* key, AV::uint32 width, AV::uint32 height, std::vector<PlacedItemData>& itemData){
         size_t len = width * height * sizeof(AV::uint16);
         sq_pushstring(vm, key, -1);
         void* b = sqstd_createblob(vm, len);
@@ -158,7 +158,7 @@ namespace ProceduralExplorationGamePlugin{
         memset(buf, 0xFFFF, len);
 
         AV::uint16 c = 0;
-        for(const ProceduralExplorationGameCore::PlacedItemData& d : itemData){
+        for(const PlacedItemData& d : itemData){
             *(buf + (d.originX + d.originY * width)) = c;
             c++;
         }
@@ -174,18 +174,18 @@ namespace ProceduralExplorationGamePlugin{
         sq_rawset(vm, 2);
     }
     SQInteger ExplorationMapDataUserData::explorationMapDataToTable(HSQUIRRELVM vm){
-        ProceduralExplorationGameCore::ExplorationMapData* mapData;
+        ExplorationMapData* mapData;
         SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
 
         sq_newtable(vm);
 
-        const std::map<std::string, ProceduralExplorationGameCore::MapDataEntry>& data = mapData->getEntries();
+        const std::map<std::string, MapDataEntry>& data = mapData->getEntries();
 
-        for(const std::pair<std::string, ProceduralExplorationGameCore::MapDataEntry>& entry : data){
-            if(entry.second.type == ProceduralExplorationGameCore::MapDataEntryType::UINT32){
+        for(const std::pair<std::string, MapDataEntry>& entry : data){
+            if(entry.second.type == MapDataEntryType::UINT32){
                 pushInteger(vm, entry.first.c_str(), entry.second.value.uint32);
             }
-            else if(entry.second.type == ProceduralExplorationGameCore::MapDataEntryType::WORLD_POINT){
+            else if(entry.second.type == MapDataEntryType::WORLD_POINT){
                 pushInteger(vm, entry.first.c_str(), entry.second.value.worldPoint);
             }
         }
@@ -201,12 +201,12 @@ namespace ProceduralExplorationGamePlugin{
         pushInteger(vm, "gatewayPosition", mapData->worldPoint("gatewayPosition"));
         */
 
-        pushFloodData(vm, "waterData", *mapData->ptr<std::vector<ProceduralExplorationGameCore::FloodFillEntry*>>("waterData"));
-        pushFloodData(vm, "landData", *mapData->ptr<std::vector<ProceduralExplorationGameCore::FloodFillEntry*>>("landData"));
+        pushFloodData(vm, "waterData", *mapData->ptr<std::vector<FloodFillEntry*>>("waterData"));
+        pushFloodData(vm, "landData", *mapData->ptr<std::vector<FloodFillEntry*>>("landData"));
         //pushPlaceData(vm, "placeData", mapData->placeData);
-        pushRegionData(vm, "regionData", *mapData->ptr<std::vector<ProceduralExplorationGameCore::RegionData>>("regionData"));
-        pushPlacedItemData(vm, "placedItems", *mapData->ptr<std::vector<ProceduralExplorationGameCore::PlacedItemData>>("placedItems"));
-        generatePushedItemBuffer(vm, "placedItemsBuffer", mapData->width, mapData->height, *mapData->ptr<std::vector<ProceduralExplorationGameCore::PlacedItemData>>("placedItems"));
+        pushRegionData(vm, "regionData", *mapData->ptr<std::vector<RegionData>>("regionData"));
+        pushPlacedItemData(vm, "placedItems", *mapData->ptr<std::vector<PlacedItemData>>("placedItems"));
+        generatePushedItemBuffer(vm, "placedItemsBuffer", mapData->width, mapData->height, *mapData->ptr<std::vector<PlacedItemData>>("placedItems"));
 
         //pushBuffer(vm, "voxelBuffer", mapData->voxelBuffer, mapData->voxelBufferSize);
         //pushBuffer(vm, "secondaryVoxBuffer", mapData->secondaryVoxelBuffer, mapData->secondaryVoxelBufferSize);
@@ -216,7 +216,7 @@ namespace ProceduralExplorationGamePlugin{
     }
 
     SQInteger ExplorationMapDataUserData::getAltitudeForPos(HSQUIRRELVM vm){
-        ProceduralExplorationGameCore::ExplorationMapData* mapData;
+        ExplorationMapData* mapData;
         SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
 
         Ogre::Vector3 outVec;
@@ -228,11 +228,11 @@ namespace ProceduralExplorationGamePlugin{
             return 1;
         }
 
-        ProceduralExplorationGameCore::WorldCoord x, y;
-        x = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.x);
-        y = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.z);
+        WorldCoord x, y;
+        x = static_cast<WorldCoord>(outVec.x);
+        y = static_cast<WorldCoord>(outVec.z);
 
-        const AV::uint8* voxPtr = ProceduralExplorationGameCore::VOX_PTR_FOR_COORD_CONST(mapData, ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y));
+        const AV::uint8* voxPtr = VOX_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y));
 
         sq_pushinteger(vm, static_cast<SQInteger>(*voxPtr));
 
@@ -240,25 +240,25 @@ namespace ProceduralExplorationGamePlugin{
     }
 
     SQInteger ExplorationMapDataUserData::getLandmassForPos(HSQUIRRELVM vm){
-        ProceduralExplorationGameCore::ExplorationMapData* mapData;
+        ExplorationMapData* mapData;
         SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
 
         Ogre::Vector3 outVec;
         SCRIPT_CHECK_RESULT(AV::Vector3UserData::readVector3FromUserData(vm, -1, &outVec));
         outVec.z = -outVec.z;
 
-        ProceduralExplorationGameCore::LandId outLandmass = ProceduralExplorationGameCore::INVALID_LAND_ID;
+        LandId outLandmass = INVALID_LAND_ID;
 
         if(outVec.x < 0 || outVec.z < 0 || outVec.x >= mapData->width || outVec.z >= mapData->height){
             sq_pushinteger(vm, static_cast<SQInteger>(outLandmass));
             return 1;
         }
 
-        ProceduralExplorationGameCore::WorldCoord x, y;
-        x = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.x);
-        y = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.z);
+        WorldCoord x, y;
+        x = static_cast<WorldCoord>(outVec.x);
+        y = static_cast<WorldCoord>(outVec.z);
 
-        const AV::uint8* landPtr = ProceduralExplorationGameCore::LAND_GROUP_PTR_FOR_COORD_CONST(mapData, ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y));
+        const AV::uint8* landPtr = LAND_GROUP_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y));
         outLandmass = *landPtr;
 
         sq_pushinteger(vm, static_cast<SQInteger>(outLandmass));
@@ -267,25 +267,25 @@ namespace ProceduralExplorationGamePlugin{
     }
 
     SQInteger ExplorationMapDataUserData::getWaterGroupForPos(HSQUIRRELVM vm){
-        ProceduralExplorationGameCore::ExplorationMapData* mapData;
+        ExplorationMapData* mapData;
         SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
 
         Ogre::Vector3 outVec;
         SCRIPT_CHECK_RESULT(AV::Vector3UserData::readVector3FromUserData(vm, -1, &outVec));
         outVec.z = -outVec.z;
 
-        ProceduralExplorationGameCore::WaterId outWater = ProceduralExplorationGameCore::INVALID_WATER_ID;
+        WaterId outWater = INVALID_WATER_ID;
 
         if(outVec.x < 0 || outVec.z < 0 || outVec.x >= mapData->width || outVec.z >= mapData->height){
             sq_pushinteger(vm, static_cast<SQInteger>(outWater));
             return 1;
         }
 
-        ProceduralExplorationGameCore::WorldCoord x, y;
-        x = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.x);
-        y = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.z);
+        WorldCoord x, y;
+        x = static_cast<WorldCoord>(outVec.x);
+        y = static_cast<WorldCoord>(outVec.z);
 
-        const ProceduralExplorationGameCore::WaterId* waterPtr = ProceduralExplorationGameCore::WATER_GROUP_PTR_FOR_COORD_CONST(mapData, ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y));
+        const WaterId* waterPtr = WATER_GROUP_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y));
         outWater = *waterPtr;
 
         sq_pushinteger(vm, static_cast<SQInteger>(outWater));
@@ -294,34 +294,34 @@ namespace ProceduralExplorationGamePlugin{
     }
 
     SQInteger ExplorationMapDataUserData::getIsWaterForPos(HSQUIRRELVM vm){
-        ProceduralExplorationGameCore::ExplorationMapData* mapData;
+        ExplorationMapData* mapData;
         SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
 
         Ogre::Vector3 outVec;
         SCRIPT_CHECK_RESULT(AV::Vector3UserData::readVector3FromUserData(vm, -1, &outVec));
         outVec.z = -outVec.z;
 
-        ProceduralExplorationGameCore::WaterId outWater = ProceduralExplorationGameCore::INVALID_WATER_ID;
+        WaterId outWater = INVALID_WATER_ID;
 
         if(outVec.x < 0 || outVec.z < 0 || outVec.x >= mapData->width || outVec.z >= mapData->height){
             sq_pushbool(vm, true);
             return 1;
         }
 
-        ProceduralExplorationGameCore::WorldCoord x, y;
-        x = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.x);
-        y = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.z);
+        WorldCoord x, y;
+        x = static_cast<WorldCoord>(outVec.x);
+        y = static_cast<WorldCoord>(outVec.z);
 
-        ProceduralExplorationGameCore::WorldPoint p = ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y);
+        WorldPoint p = WRAP_WORLD_POINT(x, y);
 
         AV::uint32* worldPtr = FULL_PTR_FOR_COORD(mapData, p);
-        if(*worldPtr & (static_cast<AV::uint32>(ProceduralExplorationGameCore::MapVoxelTypes::RIVER) << 8)){
+        if(*worldPtr & (static_cast<AV::uint32>(MapVoxelTypes::RIVER) << 8)){
             sq_pushbool(vm, true);
             return 1;
         }
 
-        const AV::uint8* waterPtr = ProceduralExplorationGameCore::WATER_GROUP_PTR_FOR_COORD_CONST(mapData, p);
-        if(*waterPtr == ProceduralExplorationGameCore::INVALID_WATER_ID){
+        const AV::uint8* waterPtr = WATER_GROUP_PTR_FOR_COORD_CONST(mapData, p);
+        if(*waterPtr == INVALID_WATER_ID){
             sq_pushbool(vm, false);
             return 1;
         }
@@ -332,25 +332,25 @@ namespace ProceduralExplorationGamePlugin{
     }
 
     SQInteger ExplorationMapDataUserData::getRegionForPos(HSQUIRRELVM vm){
-        ProceduralExplorationGameCore::ExplorationMapData* mapData;
+        ExplorationMapData* mapData;
         SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
 
         Ogre::Vector3 outVec;
         SCRIPT_CHECK_RESULT(AV::Vector3UserData::readVector3FromUserData(vm, -1, &outVec));
         outVec.z = -outVec.z;
 
-        ProceduralExplorationGameCore::RegionId outRegion = ProceduralExplorationGameCore::INVALID_REGION_ID;
+        RegionId outRegion = INVALID_REGION_ID;
 
         if(outVec.x < 0 || outVec.z < 0 || outVec.x >= mapData->width || outVec.z >= mapData->height){
             sq_pushinteger(vm, static_cast<SQInteger>(outRegion));
             return 1;
         }
 
-        ProceduralExplorationGameCore::WorldCoord x, y;
-        x = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.x);
-        y = static_cast<ProceduralExplorationGameCore::WorldCoord>(outVec.z);
+        WorldCoord x, y;
+        x = static_cast<WorldCoord>(outVec.x);
+        y = static_cast<WorldCoord>(outVec.z);
 
-        const AV::uint8* regionPtr = ProceduralExplorationGameCore::REGION_PTR_FOR_COORD_CONST(mapData, ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y));
+        const AV::uint8* regionPtr = REGION_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y));
         outRegion = *regionPtr;
 
         sq_pushinteger(vm, static_cast<SQInteger>(outRegion));
@@ -362,7 +362,7 @@ namespace ProceduralExplorationGamePlugin{
         SQInteger min, max;
         sq_getinteger(vm, 2, &min);
         sq_getinteger(vm, 3, &max);
-        size_t result = ProceduralExplorationGameCore::mapGenRandomIntMinMax(min, max);
+        size_t result = mapGenRandomIntMinMax(min, max);
 
         sq_pushinteger(vm, static_cast<SQInteger>(result));
         return 1;

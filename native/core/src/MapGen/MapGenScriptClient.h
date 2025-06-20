@@ -12,14 +12,14 @@ namespace ProceduralExplorationGameCore{
 
     class MapGenScriptClient : public MapGenClient{
     public:
-        MapGenScriptClient(CallbackScript* script);
+        MapGenScriptClient(CallbackScript* script, const std::string& name);
         ~MapGenScriptClient();
 
         virtual void populateSteps(std::vector<MapGenStep*>& steps);
 
         virtual void notifyBegan(const ExplorationMapInputData* input);
         virtual void notifyEnded(ExplorationMapData* mapData);
-        virtual void notifyClaimed(ExplorationMapData* mapData);
+        virtual bool notifyClaimed(HSQUIRRELVM vm, ExplorationMapData* mapData);
 
     private:
         CallbackScript* mScript;

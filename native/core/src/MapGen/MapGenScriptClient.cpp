@@ -5,9 +5,11 @@
 #include "MapGen/Script/MapGenScriptManager.h"
 #include "PluginBaseSingleton.h"
 
+#include "SquirrelDeepCopy.h"
+
 namespace ProceduralExplorationGameCore{
-    MapGenScriptClient::MapGenScriptClient(CallbackScript* script)
-        : mScript(script){
+    MapGenScriptClient::MapGenScriptClient(CallbackScript* script, const std::string& name)
+        : MapGenClient(name), mScript(script){
 
     }
 
@@ -48,9 +50,21 @@ namespace ProceduralExplorationGameCore{
         mScript->call("notifyEnded", &populateNotifyBegan);
     }
 
-    void MapGenScriptClient::notifyClaimed(ExplorationMapData* mapData){
+    bool MapGenScriptClient::notifyClaimed(HSQUIRRELVM vm, ExplorationMapData* mapData){
         populateMapTable = mClientTableObj;
         mScript->call("notifyClaimed", &populateNotifyBegan);
+
+        ProceduralExplorationGameCore::MapGenScriptManager* manager = ProceduralExplorationGameCore::PluginBaseSingleton::getScriptManager();
+        MapGenScriptVM* scriptVM = manager->getScriptVM();
+        HSQUIRRELVM squirrelVM = scriptVM->getVM();
+
+        sq_pushobject(squirrelVM, mClientTableObj);
+
+        DeepCopy::deepCopyTable(squirrelVM, vm, -2);
+        //sq_move(vm, squirrelVM, -1);
+        sq_pop(squirrelVM, 1);
+
+        return true;
     }
 }
 

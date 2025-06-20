@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <string>
+#include "squirrel.h"
 
 namespace ProceduralExplorationGameCore{
     class MapGenStep;
@@ -9,7 +11,7 @@ namespace ProceduralExplorationGameCore{
 
     class MapGenClient{
     public:
-        MapGenClient();
+        MapGenClient(const std::string& name);
         ~MapGenClient();
 
         virtual void populateSteps(std::vector<MapGenStep*>& steps);
@@ -17,6 +19,12 @@ namespace ProceduralExplorationGameCore{
         //Called at the very beginning of map gen, on the worker thread
         virtual void notifyBegan(const ExplorationMapInputData* input);
         virtual void notifyEnded(ExplorationMapData* mapData);
-        virtual void notifyClaimed(ExplorationMapData* mapData);
+        virtual bool notifyClaimed(HSQUIRRELVM vm, ExplorationMapData* mapData);
+
+    private:
+        std::string mName;
+
+    public:
+        const std::string& getName() const { return mName; }
     };
 }

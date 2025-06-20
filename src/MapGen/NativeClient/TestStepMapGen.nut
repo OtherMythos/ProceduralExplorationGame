@@ -5,6 +5,10 @@ function processStep(inputData, mapData, data){
     mapData.test = 10;
     print(mapData.test);
 
+    data.stepVal <- "Written from a step";
+    data.valData <- [10, 20];
+    //data.other <- thing();
+
     local width = inputData.boxWidth;
     local height = inputData.boxHeight;
 

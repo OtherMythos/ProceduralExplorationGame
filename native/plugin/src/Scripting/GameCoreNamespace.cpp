@@ -2,7 +2,7 @@
 
 #include "Scripting/ScriptNamespace/ScriptUtils.h"
 #include "Scripting/ScriptNamespace/Classes/Ogre/Hlms/DatablockUserData.h"
-#include "ExplorationMapDataUserData.h"
+#include "MapGen/Script/ExplorationMapDataUserData.h"
 #include "VisitedPlaceMapDataUserData.h"
 #include "GameplayState.h"
 #include "GamePrerequisites.h"
@@ -87,7 +87,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::TextureBoxUserData::readTextureBoxFromUserData(vm, 2, &outTexture);
 
         ProceduralExplorationGameCore::ExplorationMapData* data;
-        SCRIPT_CHECK_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 3, &data));
+        SCRIPT_CHECK_RESULT(ProceduralExplorationGameCore::ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 3, &data));
 
         ProceduralExplorationGameCore::ExplorationMapViewer viewer;
         viewer.fillStagingTexture(outTexture, data);
@@ -100,7 +100,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::TextureBoxUserData::readTextureBoxFromUserData(vm, 2, &outTexture);
 
         ProceduralExplorationGameCore::ExplorationMapData* data;
-        SCRIPT_CHECK_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 3, &data));
+        SCRIPT_CHECK_RESULT(ProceduralExplorationGameCore::ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 3, &data));
 
         SQInteger drawOptionsHash;
         sq_getinteger(vm, 4, &drawOptionsHash);
@@ -222,7 +222,7 @@ namespace ProceduralExplorationGamePlugin{
 
     SQInteger GameCoreNamespace::setNewMapData(HSQUIRRELVM vm){
         ProceduralExplorationGameCore::ExplorationMapData* mapData;
-        SCRIPT_CHECK_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, -1, &mapData));
+        SCRIPT_CHECK_RESULT(ProceduralExplorationGameCore::ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, -1, &mapData));
 
         ProceduralExplorationGameCore::GameplayState::setNewMapData(mapData);
 
@@ -231,7 +231,7 @@ namespace ProceduralExplorationGamePlugin{
 
     SQInteger GameCoreNamespace::createTerrainFromMapData(HSQUIRRELVM vm){
         ProceduralExplorationGameCore::ExplorationMapData* mapData;
-        SCRIPT_CHECK_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, -1, &mapData));
+        SCRIPT_CHECK_RESULT(ProceduralExplorationGameCore::ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, -1, &mapData));
 
         ProceduralExplorationGameCore::Voxeliser vox;
         //TOOD constant for max number of regions.
@@ -373,7 +373,7 @@ namespace ProceduralExplorationGamePlugin{
             return sq_throwerror(vm, "MapGen is active");
         }
 
-        ProceduralExplorationGameCore::MapGenScriptClient* scriptClient = new ProceduralExplorationGameCore::MapGenScriptClient(script);
+        ProceduralExplorationGameCore::MapGenScriptClient* scriptClient = new ProceduralExplorationGameCore::MapGenScriptClient(script, clientName);
 
         mapGen->registerMapGenClient(clientName, scriptClient);
 
@@ -404,8 +404,10 @@ namespace ProceduralExplorationGamePlugin{
         assert(mapGen);
 
         if(mapGen->isFinished()){
-            ProceduralExplorationGameCore::ExplorationMapData* mapData = mapGen->claimMapData();
-            ExplorationMapDataUserData::ExplorationMapDataToUserData(vm, mapData);
+            //ProceduralExplorationGameCore::ExplorationMapData* mapData = mapGen->claimMapData(vm);
+            //ExplorationMapDataUserData::ExplorationMapDataToUserData(vm, mapData);
+            bool finished = mapGen->claimMapData(vm);
+            assert(finished);
         }else{
             sq_pushnull(vm);
         }

@@ -14,6 +14,6 @@ namespace ProceduralExplorationGameCore{
 
         virtual void populateSteps(std::vector<MapGenStep*>& steps) override;
 
-        virtual void notifyClaimed(ExplorationMapData* mapData) override;
+        virtual bool notifyClaimed(HSQUIRRELVM vm, ExplorationMapData* mapData) override;
     };
 }

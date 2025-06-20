@@ -1,7 +1,7 @@
 #include "MapGenClient.h"
 
 namespace ProceduralExplorationGameCore{
-    MapGenClient::MapGenClient(){
+    MapGenClient::MapGenClient(const std::string& name) : mName(name) {
 
     }
 
@@ -21,7 +21,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void MapGenClient::notifyClaimed(ExplorationMapData* mapData){
-
+    bool MapGenClient::notifyClaimed(HSQUIRRELVM vm, ExplorationMapData* mapData){
+        return false;
     }
 }
