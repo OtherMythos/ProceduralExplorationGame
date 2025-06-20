@@ -37,6 +37,8 @@ namespace ProceduralExplorationGameCore{
         std::vector<MapGenClient*> mActiveClients;
         std::vector<MapGenStep*> mMapGenSteps;
 
+        MapGenClient* mCurrentCollectingMapGenClient;
+
         ExplorationMapData* mMapData;
         const ExplorationMapInputData* mMapInputData;
 
@@ -50,6 +52,9 @@ namespace ProceduralExplorationGameCore{
         void notifyClientsBegan_(const ExplorationMapInputData* input);
         void notifyClientsEnded_(ExplorationMapData* data);
         void notifyClientsClaimed_(ExplorationMapData* data);
+
+    public:
+        MapGenClient* getCurrentCollectingMapGenClient() { return mCurrentCollectingMapGenClient; }
     };
 
 };

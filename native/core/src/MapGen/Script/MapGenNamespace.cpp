@@ -7,6 +7,7 @@
 #include "System/Util/PathUtils.h"
 
 #include "MapGen/MapGenScriptStep.h"
+#include "MapGen/MapGenScriptClient.h"
 #include "MapGen/Script/MapGenScriptManager.h"
 
 #include "GameCoreLogger.h"
@@ -38,8 +39,9 @@ namespace ProceduralExplorationGameCore{
             return sq_throwerror(vm, e.c_str());
         }
 
-
-        MapGenScriptStep* step = new MapGenScriptStep(stepName, script);
+        MapGenClient* client = mapGen->getCurrentCollectingMapGenClient();
+        MapGenScriptClient* scriptClient = dynamic_cast<MapGenScriptClient*>(client);
+        MapGenScriptStep* step = new MapGenScriptStep(stepName, scriptClient, script);
         mapGen->registerStep(idx, step);
 
         GAME_CORE_INFO("Succesfully registered MapGen step '{}' at idx {}", stepName, idx);

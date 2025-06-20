@@ -1,5 +1,6 @@
-function processStep(inputData, mapData){
+function processStep(inputData, mapData, data){
     print("hello from the script step");
+    print(data.test);
 
     mapData.test = 10;
     print(mapData.test);

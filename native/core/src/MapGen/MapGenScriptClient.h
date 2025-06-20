@@ -1,11 +1,8 @@
 #pragma once
 
 #include "MapGenClient.h"
+#include <squirrel.h>
 #include <vector>
-
-namespace AV{
-    class CallbackScript;
-}
 
 namespace ProceduralExplorationGameCore{
     class MapGenStep;
@@ -26,5 +23,9 @@ namespace ProceduralExplorationGameCore{
 
     private:
         CallbackScript* mScript;
+        SQObject mClientTableObj;
+
+    public:
+        SQObject getClientTable() { return mClientTableObj; }
     };
 }

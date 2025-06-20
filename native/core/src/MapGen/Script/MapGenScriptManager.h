@@ -22,6 +22,9 @@ namespace ProceduralExplorationGameCore{
 
     private:
         MapGenScriptVM* mVM;
+
+    public:
+        MapGenScriptVM* getScriptVM() { return mVM; }
     };
 
 }

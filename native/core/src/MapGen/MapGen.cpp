@@ -16,7 +16,8 @@ namespace ProceduralExplorationGameCore{
 
     MapGen::MapGen()
         : mCurrentStage(0),
-        mMapData(0) {
+        mMapData(0),
+        mCurrentCollectingMapGenClient(0) {
 
         //TODO move this elsewhere so it doesn't have to be used.
         registerMapGenClient("Base Client", new MapGenBaseClient());
@@ -49,9 +50,12 @@ namespace ProceduralExplorationGameCore{
 
     void MapGen::collectMapGenSteps_(std::vector<MapGenStep*>& steps){
         for(MapGenClient* c : mActiveClients){
+            mCurrentCollectingMapGenClient = c;
             c->populateSteps(steps);
         }
         mCurrentStage = mMapGenSteps.size();
+
+        mCurrentCollectingMapGenClient = 0;
     }
 
     void MapGen::beginMapGen(const ExplorationMapInputData* input){
