@@ -1,7 +1,5 @@
 #include "SquirrelDeepCopy.h"
 
-#include "Scripting/ScriptNamespace/ScriptUtils.h"
-
 namespace ProceduralExplorationGameCore{
 
     bool DeepCopy::deepCopyValue(HSQUIRRELVM srcvm, HSQUIRRELVM dstvm, SQInteger srcidx) {
@@ -92,8 +90,6 @@ namespace ProceduralExplorationGameCore{
             // Stack now has: key, value
             // We need to copy both key and value to destination VM
 
-            AV::ScriptUtils::_debugStack(srcvm);
-
             // Copy the key (at -2 relative to top)
             if (!deepCopyValue(srcvm, dstvm, -2)) {
                 sq_pop(srcvm, 2); // pop key and value
@@ -108,7 +104,6 @@ namespace ProceduralExplorationGameCore{
                 return false;
             }
 
-            AV::ScriptUtils::_debugStack(dstvm);
             // Set the key-value pair in destination table
             // Stack on dest VM: table, key, value
             if (SQ_FAILED(sq_newslot(dstvm, -3, false))) {

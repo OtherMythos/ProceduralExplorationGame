@@ -32,6 +32,8 @@
                 "numRivers": 24,
                 "seaLevel": 100,
                 "numRegions": 14,
+                "boxWidth": 20,
+                "boxHeight": 20,
                 "placeFrequency": [0, 1, 1, 4, 4, 30]
             };
             _gameCore.beginMapGen(mInputData_);
@@ -40,11 +42,13 @@
 
         local mapClaim = _gameCore.checkClaimMapGen();
         if(mapClaim != null){
-            mOutNativeData_ = mapClaim;
+            mOutNativeData_ = mapClaim.data;
             //TODO work towards being able to get rid of this.
-            mOutData_ = mapClaim.explorationMapDataToTable();
+            mOutData_ = mOutNativeData_.explorationMapDataToTable();
             local scriptMapGen = ::ScriptedMapGen(mOutData_, mOutNativeData_);
             mOutData_.rawset("placeData", scriptMapGen.determinePlaces());
+            //print(_prettyPrint(mapClaim.testClient));
+            //mOutData_.rawset("placeData", mapClaim.testClient.placeData);
             mCurrentPercent_ = 1.0;
             _event.transmit(Event.WORLD_PREPARATION_GENERATION_PROGRESS, {
                 "percentage": mCurrentPercent_,
