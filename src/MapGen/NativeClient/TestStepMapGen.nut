@@ -1,16 +1,16 @@
 function processStep(inputData, mapData, data){
-    print("hello from the script step");
-    print(data.test);
-
-    mapData.test = 10;
-    print(mapData.test);
-
-    data.stepVal <- "Written from a step";
-    data.valData <- [10, 20];
-    //data.other <- thing();
-
     local width = inputData.boxWidth;
     local height = inputData.boxHeight;
+
+    data.placeData <- [
+        {
+            "originX": 100,
+            "originY": 100,
+            "originWrapped": (100 << 16) | 100,
+            "placeId": 2,
+            "region": 0
+        }
+    ];
 
     for(local y = 50; y < 50 + width; y++){
         for(local x = 50; x < 50 + height; x++){

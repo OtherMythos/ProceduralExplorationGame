@@ -375,7 +375,7 @@ namespace ProceduralExplorationGamePlugin{
 
         ProceduralExplorationGameCore::MapGenScriptClient* scriptClient = new ProceduralExplorationGameCore::MapGenScriptClient(script, clientName);
 
-        mapGen->registerMapGenClient(clientName, scriptClient);
+        mapGen->registerMapGenClient(clientName, scriptClient, vm);
 
         return 0;
     }
@@ -663,7 +663,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, checkClaimMapGen, "checkClaimMapGen");
         AV::ScriptUtils::addFunction(vm, getTotalMapGenStages, "getTotalMapGenStages");
         AV::ScriptUtils::addFunction(vm, setHlmsFlagForDatablock, "setHlmsFlagForDatablock", 3, ".ui");
-        AV::ScriptUtils::addFunction(vm, registerMapGenClient, "registerMapGenClient", 3, ".ss");
+        AV::ScriptUtils::addFunction(vm, registerMapGenClient, "registerMapGenClient", 4, ".sst|o");
         AV::ScriptUtils::addFunction(vm, recollectMapGenSteps, "recollectMapGenSteps");
         AV::ScriptUtils::addFunction(vm, setCustomPassBufferValue, "setCustomPassBufferValue", -2, ".n|unn");
 

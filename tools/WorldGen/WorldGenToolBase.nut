@@ -155,7 +155,7 @@ enum VoxPickerType{
     function setup(){
         checkForGameCorePlugin();
 
-        _gameCore.registerMapGenClient("testClient", "res://../../src/MapGen/NativeClient/MapGenNativeClient.nut");
+        _gameCore.registerMapGenClient("testClient", "res://../../src/MapGen/NativeClient/MapGenNativeClient.nut", {"basePath": "res://../../"});
         _gameCore.recollectMapGenSteps();
 
         setupGui();

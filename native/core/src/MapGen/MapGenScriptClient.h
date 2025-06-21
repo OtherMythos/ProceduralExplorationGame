@@ -20,6 +20,7 @@ namespace ProceduralExplorationGameCore{
         virtual void notifyBegan(const ExplorationMapInputData* input);
         virtual void notifyEnded(ExplorationMapData* mapData);
         virtual bool notifyClaimed(HSQUIRRELVM vm, ExplorationMapData* mapData);
+        virtual void notifyRegistered(HSQUIRRELVM vm);
 
     private:
         CallbackScript* mScript;

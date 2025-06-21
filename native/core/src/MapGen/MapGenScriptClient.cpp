@@ -5,6 +5,8 @@
 #include "MapGen/Script/MapGenScriptManager.h"
 #include "PluginBaseSingleton.h"
 
+#include "Scripting/ScriptNamespace/ScriptUtils.h"
+
 #include "SquirrelDeepCopy.h"
 
 namespace ProceduralExplorationGameCore{
@@ -21,6 +23,15 @@ namespace ProceduralExplorationGameCore{
     SQInteger populateNotifyBegan(HSQUIRRELVM vm){
 
         sq_pushobject(vm, populateMapTable);
+
+        return 2;
+    }
+
+    static SQObject notifyRegisteredTable;
+    SQInteger populateNotifyRegistered(HSQUIRRELVM vm){
+
+        sq_pushobject(vm, notifyRegisteredTable);
+        sq_resetobject(&notifyRegisteredTable);
 
         return 2;
     }
@@ -65,6 +76,22 @@ namespace ProceduralExplorationGameCore{
         sq_pop(squirrelVM, 1);
 
         return true;
+    }
+
+    void MapGenScriptClient::notifyRegistered(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::MapGenScriptManager* manager = ProceduralExplorationGameCore::PluginBaseSingleton::getScriptManager();
+        MapGenScriptVM* scriptVM = manager->getScriptVM();
+        HSQUIRRELVM squirrelVM = scriptVM->getVM();
+
+        DeepCopy::deepCopyValue(vm, squirrelVM, -1);
+
+        //I need to grab hold of a reference to the object so I can move it in the stack.
+        sq_resetobject(&notifyRegisteredTable);
+        sq_getstackobj(squirrelVM, -1, &notifyRegisteredTable);
+        sq_addref(squirrelVM, &notifyRegisteredTable);
+        sq_pop(squirrelVM, 1);
+
+        mScript->call("notifyRegistered", &populateNotifyRegistered);
     }
 }
 

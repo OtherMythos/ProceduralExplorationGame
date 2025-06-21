@@ -131,8 +131,10 @@ namespace ProceduralExplorationGameCore{
         return mCurrentStage >= mMapGenSteps.size();
     };
 
-    void MapGen::registerMapGenClient(const std::string& clientName, MapGenClient* client){
+    void MapGen::registerMapGenClient(const std::string& clientName, MapGenClient* client, HSQUIRRELVM vm){
         mActiveClients.push_back(client);
+
+        client->notifyRegistered(vm);
     }
 
     bool MapGen::claimMapData(HSQUIRRELVM vm){

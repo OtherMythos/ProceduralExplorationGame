@@ -13,6 +13,10 @@ namespace ProceduralExplorationGameCore{
 
     }
 
+    void MapGenClient::notifyRegistered(HSQUIRRELVM vm){
+
+    }
+
     void MapGenClient::notifyBegan(const ExplorationMapInputData* input){
 
     }
