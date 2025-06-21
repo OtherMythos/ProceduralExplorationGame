@@ -10,14 +10,17 @@ namespace ProceduralExplorationGameCore{
         ExplorationMapDataUserData() = delete;
         ~ExplorationMapDataUserData() = delete;
 
+        template <bool B>
         static void setupDelegateTable(HSQUIRRELVM vm);
 
+        template <bool B>
         static void ExplorationMapDataToUserData(HSQUIRRELVM vm, ExplorationMapData* mapData);
 
         static AV::UserDataGetResult readExplorationMapDataFromUserData(HSQUIRRELVM vm, SQInteger stackInx, ExplorationMapData** outMapData);
 
     private:
         static SQObject ExplorationMapDataDelegateTableObject;
+        static SQObject ExplorationMapDataDelegateTableObjectMapGenVM;
 
         static SQInteger explorationMapDataToTable(HSQUIRRELVM vm);
         static SQInteger getAltitudeForPos(HSQUIRRELVM vm);
@@ -26,6 +29,13 @@ namespace ProceduralExplorationGameCore{
         static SQInteger getRegionForPos(HSQUIRRELVM vm);
         static SQInteger getWaterGroupForPos(HSQUIRRELVM vm);
         static SQInteger randomIntMinMax(HSQUIRRELVM vm);
+
+        static SQInteger getValue(HSQUIRRELVM vm);
+        static SQInteger setValue(HSQUIRRELVM vm);
+
+        static SQInteger getNumRegions(HSQUIRRELVM vm);
+        static SQInteger getRegionTotal(HSQUIRRELVM vm);
+        static SQInteger getRegionType(HSQUIRRELVM vm);
 
         static SQInteger ExplorationMapDataObjectReleaseHook(SQUserPointer p, SQInteger size);
     };

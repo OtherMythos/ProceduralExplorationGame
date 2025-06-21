@@ -100,7 +100,7 @@ namespace ProceduralExplorationGameCore{
 
         //Push the map data
         sq_pushstring(vm, "data", -1);
-        ExplorationMapDataUserData::ExplorationMapDataToUserData(vm, data);
+        ExplorationMapDataUserData::ExplorationMapDataToUserData<false>(vm, data);
         sq_newslot(vm, -3, SQFalse);
     }
 

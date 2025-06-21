@@ -12,15 +12,29 @@
 namespace ProceduralExplorationGameCore{
 
     SQObject ExplorationMapDataUserData::ExplorationMapDataDelegateTableObject;
+    SQObject ExplorationMapDataUserData::ExplorationMapDataDelegateTableObjectMapGenVM;
 
+    template void ExplorationMapDataUserData::ExplorationMapDataToUserData<true>(HSQUIRRELVM vm, ExplorationMapData* data);
+    template void ExplorationMapDataUserData::ExplorationMapDataToUserData<false>(HSQUIRRELVM vm, ExplorationMapData* data);
+    template void ExplorationMapDataUserData::setupDelegateTable<true>(HSQUIRRELVM vm);
+    template void ExplorationMapDataUserData::setupDelegateTable<false>(HSQUIRRELVM vm);
+
+    template <bool B>
     void ExplorationMapDataUserData::ExplorationMapDataToUserData(HSQUIRRELVM vm, ExplorationMapData* data){
         ExplorationMapData** pointer = (ExplorationMapData**)sq_newuserdata(vm, sizeof(ExplorationMapData*));
         *pointer = data;
 
-        sq_pushobject(vm, ExplorationMapDataDelegateTableObject);
+        SQObject* tableObj = 0;
+        if(B){
+            tableObj = &ExplorationMapDataDelegateTableObjectMapGenVM;
+        }else{
+            tableObj = &ExplorationMapDataDelegateTableObject;
+        }
+
+        sq_pushobject(vm, *tableObj);
         sq_setdelegate(vm, -2); //This pops the pushed table
         sq_settypetag(vm, -1, ExplorationMapDataTypeTag);
-        sq_setreleasehook(vm, -1, ExplorationMapDataObjectReleaseHook);
+        //sq_setreleasehook(vm, -1, ExplorationMapDataObjectReleaseHook);
     }
 
     AV::UserDataGetResult ExplorationMapDataUserData::readExplorationMapDataFromUserData(HSQUIRRELVM vm, SQInteger stackInx, ExplorationMapData** outData){
@@ -368,6 +382,102 @@ namespace ProceduralExplorationGameCore{
         return 1;
     }
 
+    SQInteger ExplorationMapDataUserData::setValue(HSQUIRRELVM vm){
+        ExplorationMapData* outMapData;
+        SCRIPT_ASSERT_RESULT(readExplorationMapDataFromUserData(vm, 1, &outMapData));
+
+        const SQChar *key;
+        sq_getstring(vm, 2, &key);
+
+        MapDataEntry entry;
+
+        SQObjectType t = sq_gettype(vm, 3);
+        if(t == OT_INTEGER){
+            SQInteger val;
+            sq_getinteger(vm, 3, &val);
+            AV::uint32 v = static_cast<AV::uint32>(val);
+            entry.value.uint32 = v;
+            entry.type = MapDataEntryType::UINT32;
+
+            outMapData->setEntry(key, entry);
+        }else{
+            assert(false);
+        }
+
+        return 0;
+    }
+
+    SQInteger ExplorationMapDataUserData::getValue(HSQUIRRELVM vm){
+        ExplorationMapData* outMapData;
+        SCRIPT_ASSERT_RESULT(readExplorationMapDataFromUserData(vm, 1, &outMapData));
+
+        const SQChar *key;
+        sq_getstring(vm, 2, &key);
+
+        MapDataEntry outEntry;
+        MapDataReadResult result = outMapData->readEntry(key, &outEntry);
+        if(result == MapDataReadResult::NOT_FOUND){
+            std::string val = std::string("The requested value '") + key + "' was not found.";
+            return sq_throwerror(vm, val.c_str());
+        }
+
+
+        if(outEntry.type == MapDataEntryType::UINT32){
+            sq_pushinteger(vm, outEntry.value.uint32);
+        }
+        else if(outEntry.type == MapDataEntryType::WORLD_POINT){
+            sq_pushinteger(vm, outEntry.value.worldPoint);
+        }
+        else if(outEntry.type == MapDataEntryType::VOID_PTR){
+            assert(false);
+        }
+        else if(outEntry.type == MapDataEntryType::SIZE_TYPE){
+            sq_pushinteger(vm, outEntry.value.size);
+        }
+        else{
+            assert(false);
+        }
+
+        return 1;
+    }
+
+    SQInteger ExplorationMapDataUserData::getNumRegions(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        size_t numRegions = mapData->ptr<std::vector<RegionData>>("regionData")->size();
+        sq_pushinteger(vm, static_cast<SQInteger>(numRegions));
+
+        return 1;
+    }
+
+    SQInteger ExplorationMapDataUserData::getRegionTotal(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger idx;
+        sq_getinteger(vm, 2, &idx);
+
+        const std::vector<RegionData>* numRegions = mapData->ptr<const std::vector<RegionData>>("regionData");
+        sq_pushinteger(vm, static_cast<SQInteger>((*numRegions)[idx].total));
+
+        return 1;
+    }
+
+    SQInteger ExplorationMapDataUserData::getRegionType(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger idx;
+        sq_getinteger(vm, 2, &idx);
+
+        const std::vector<RegionData>* numRegions = mapData->ptr<const std::vector<RegionData>>("regionData");
+        sq_pushinteger(vm, static_cast<SQInteger>((*numRegions)[idx].type));
+
+        return 1;
+    }
+
+    template <bool B>
     void ExplorationMapDataUserData::setupDelegateTable(HSQUIRRELVM vm){
         sq_newtable(vm);
 
@@ -379,9 +489,22 @@ namespace ProceduralExplorationGameCore{
         AV::ScriptUtils::addFunction(vm, getRegionForPos, "getRegionForPos", 2, ".u");
         AV::ScriptUtils::addFunction(vm, randomIntMinMax, "randomIntMinMax", 3, ".ii");
 
-        sq_resetobject(&ExplorationMapDataDelegateTableObject);
-        sq_getstackobj(vm, -1, &ExplorationMapDataDelegateTableObject);
-        sq_addref(vm, &ExplorationMapDataDelegateTableObject);
+        AV::ScriptUtils::addFunction(vm, setValue, "_set");
+        AV::ScriptUtils::addFunction(vm, getValue, "_get");
+
+        AV::ScriptUtils::addFunction(vm, getNumRegions, "getNumRegions");
+        AV::ScriptUtils::addFunction(vm, getRegionTotal, "getRegionTotal", 2, ".i");
+        AV::ScriptUtils::addFunction(vm, getRegionType, "getRegionType", 2, ".i");
+
+        SQObject* tableObj = 0;
+        if(B){
+            tableObj = &ExplorationMapDataDelegateTableObjectMapGenVM;
+        }else{
+            tableObj = &ExplorationMapDataDelegateTableObject;
+        }
+        sq_resetobject(tableObj);
+        sq_getstackobj(vm, -1, tableObj);
+        sq_addref(vm, tableObj);
         sq_pop(vm, 1);
     }
 }

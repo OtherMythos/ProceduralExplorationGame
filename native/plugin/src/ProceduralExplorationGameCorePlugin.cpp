@@ -124,7 +124,7 @@ namespace ProceduralExplorationGamePlugin{
 
         AV::ScriptVM::setupNamespace("_gameCore", GameCoreNamespace::setupNamespace);
 
-        AV::ScriptVM::setupDelegateTable(ProceduralExplorationGameCore::ExplorationMapDataUserData::setupDelegateTable);
+        AV::ScriptVM::setupDelegateTable(ProceduralExplorationGameCore::ExplorationMapDataUserData::setupDelegateTable<false>);
         AV::ScriptVM::setupDelegateTable(VisitedPlaceMapDataUserData::setupDelegateTable);
         AV::ScriptVM::setupDelegateTable(DataPointFileParserUserData::setupDelegateTable);
 

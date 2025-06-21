@@ -4,6 +4,10 @@
 
 #include "MapGen/Script/MapGenNamespace.h"
 #include "MapGen/Script/MapGenDataContainerUserData.h"
+#include "MapGen/Script/ExplorationMapDataUserData.h"
+
+#include "Scripting/ScriptNamespace/Classes/CollisionWorldClass.h"
+#include "MapGen/Script/CollisionWorldClass.h"
 
 namespace ProceduralExplorationGameCore{
     MapGenScriptVM::MapGenScriptVM(){
@@ -62,6 +66,11 @@ namespace ProceduralExplorationGameCore{
 
         MapGenDataContainerUserData::setupDelegateTable<const MapGenDataContainer*, true>(mVM);
         MapGenDataContainerUserData::setupDelegateTable<MapGenDataContainer*, false>(mVM);
+        ExplorationMapDataUserData::setupDelegateTable<true>(mVM);
+
+        CollisionWorldClass::setupDelegateTable(mVM);
+
+        CollisionWorldClass::setupConstants(mVM);
 
     }
 

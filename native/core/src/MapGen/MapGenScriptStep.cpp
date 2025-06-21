@@ -3,6 +3,7 @@
 #include "Script/CallbackScript.h"
 
 #include "MapGen/Script/MapGenDataContainerUserData.h"
+#include "MapGen/Script/ExplorationMapDataUserData.h"
 #include "MapGen/MapGenScriptClient.h"
 #include "MapGen/MapGenDataContainer.h"
 #include "MapGen/ExplorationMapDataPrerequisites.h"
@@ -30,8 +31,7 @@ namespace ProceduralExplorationGameCore{
         MapGenDataContainerUserData::MapGenDataContainerToUserData<const MapGenDataContainer*, true>(vm, inputContainer);
 
         //sq_pushinteger(vm, 1);
-        MapGenDataContainer* container = dynamic_cast<MapGenDataContainer*>(populateMapData);
-        MapGenDataContainerUserData::MapGenDataContainerToUserData<MapGenDataContainer*, false>(vm, container);
+        ExplorationMapDataUserData::ExplorationMapDataToUserData<true>(vm, populateMapData);
 
         sq_pushobject(vm, clientTable);
 
