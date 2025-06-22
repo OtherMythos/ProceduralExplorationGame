@@ -3,6 +3,18 @@
 
 function notifyRegistered(data){
     ::basePath <- data.basePath;
+
+    print("Registering");
+    _doFile(::basePath + "src/Constants.nut");
+    _doFile(::basePath + "src/System/EnumDef.nut");
+    _doFile(::basePath + "src/MapGen/Exploration/Generator/MapConstants.h.nut");
+
+    _doFile(::basePath + "src/Content/PlaceEnums.nut");
+
+    ::EnumDef.commitEnums();
+
+    _doFile(::basePath + "src/Content/Places.nut");
+    _doFile(::basePath + "src/Content/PlaceDefs.h.nut");
 }
 
 function notifyBegan(data){
@@ -16,7 +28,7 @@ function notifyEnded(data){
 }
 
 function populateSteps(){
-    _mapGen.registerStep(11, "Determine Places", ::basePath + "src/MapGen/NativeClient/TestStepMapGen.nut");
+    _mapGen.registerStep(25, "Determine Places", ::basePath + "src/MapGen/NativeClient/TestStepMapGen.nut");
 }
 
 function notifyClaimed(data){

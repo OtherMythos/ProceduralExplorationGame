@@ -307,6 +307,32 @@ namespace ProceduralExplorationGameCore{
         return 1;
     }
 
+    SQInteger ExplorationMapDataUserData::getIsWaterForCoord(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger x, y;
+        sq_getinteger(vm, 2, &x);
+        sq_getinteger(vm, 3, &y);
+
+        WaterId outWater = INVALID_WATER_ID;
+
+        if(x < 0 || y < 0 || x >= mapData->width || y >= mapData->height){
+            sq_pushinteger(vm, static_cast<SQInteger>(outWater));
+            return 1;
+        }
+
+        const WaterId* waterPtr = WATER_GROUP_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y));
+        if(*waterPtr == INVALID_WATER_ID){
+            sq_pushbool(vm, false);
+            return 1;
+        }
+
+        sq_pushbool(vm, true);
+
+        return 1;
+    }
+
     SQInteger ExplorationMapDataUserData::getIsWaterForPos(HSQUIRRELVM vm){
         ExplorationMapData* mapData;
         SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
@@ -477,6 +503,48 @@ namespace ProceduralExplorationGameCore{
         return 1;
     }
 
+    SQInteger ExplorationMapDataUserData::getRegionTotalCoords(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger idx;
+        sq_getinteger(vm, 2, &idx);
+
+        const std::vector<RegionData>* regions = mapData->ptr<const std::vector<RegionData>>("regionData");
+        sq_pushinteger(vm, static_cast<SQInteger>((*regions)[idx].coords.size()));
+
+        return 1;
+    }
+
+    SQInteger ExplorationMapDataUserData::getRegionCoordForIdx(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger idx;
+        sq_getinteger(vm, 2, &idx);
+
+        SQInteger coordIdx;
+        sq_getinteger(vm, 3, &coordIdx);
+
+        const std::vector<RegionData>* regions = mapData->ptr<const std::vector<RegionData>>("regionData");
+        sq_pushinteger(vm, static_cast<SQInteger>((*regions)[idx].coords[coordIdx]));
+
+        return 1;
+    }
+
+    SQInteger ExplorationMapDataUserData::getRegionId(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger idx;
+        sq_getinteger(vm, 2, &idx);
+
+        const std::vector<RegionData>* regions = mapData->ptr<const std::vector<RegionData>>("regionData");
+        sq_pushinteger(vm, static_cast<SQInteger>((*regions)[idx].id));
+
+        return 1;
+    }
+
     template <bool B>
     void ExplorationMapDataUserData::setupDelegateTable(HSQUIRRELVM vm){
         sq_newtable(vm);
@@ -489,12 +557,17 @@ namespace ProceduralExplorationGameCore{
         AV::ScriptUtils::addFunction(vm, getRegionForPos, "getRegionForPos", 2, ".u");
         AV::ScriptUtils::addFunction(vm, randomIntMinMax, "randomIntMinMax", 3, ".ii");
 
+        AV::ScriptUtils::addFunction(vm, getIsWaterForCoord, "getIsWaterForCoord", 3, ".ii");
+
         AV::ScriptUtils::addFunction(vm, setValue, "_set");
         AV::ScriptUtils::addFunction(vm, getValue, "_get");
 
         AV::ScriptUtils::addFunction(vm, getNumRegions, "getNumRegions");
         AV::ScriptUtils::addFunction(vm, getRegionTotal, "getRegionTotal", 2, ".i");
         AV::ScriptUtils::addFunction(vm, getRegionType, "getRegionType", 2, ".i");
+        AV::ScriptUtils::addFunction(vm, getRegionTotalCoords, "getRegionTotalCoords", 2, ".i");
+        AV::ScriptUtils::addFunction(vm, getRegionCoordForIdx, "getRegionCoordForIdx", 3, ".ii");
+        AV::ScriptUtils::addFunction(vm, getRegionId, "getRegionId", 2, ".i");
 
         SQObject* tableObj = 0;
         if(B){

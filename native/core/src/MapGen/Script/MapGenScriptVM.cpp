@@ -5,6 +5,10 @@
 #include "MapGen/Script/MapGenNamespace.h"
 #include "MapGen/Script/MapGenDataContainerUserData.h"
 #include "MapGen/Script/ExplorationMapDataUserData.h"
+#include "Scripting/ScriptNamespace/MiscFunctions.h"
+
+#include <sqstdstring.h>
+#include <sqstdmath.h>
 
 #include "Scripting/ScriptNamespace/Classes/CollisionWorldClass.h"
 #include "MapGen/Script/CollisionWorldClass.h"
@@ -62,6 +66,10 @@ namespace ProceduralExplorationGameCore{
         sq_seterrorhandler(mVM);
 
         sq_pushroottable(mVM);
+
+        sqstd_register_stringlib(mVM);
+        sqstd_register_mathlib(mVM);
+
         setupNamespace("_mapGen", MapGenNamespace::setupNamespace);
 
         MapGenDataContainerUserData::setupDelegateTable<const MapGenDataContainer*, true>(mVM);
@@ -69,6 +77,8 @@ namespace ProceduralExplorationGameCore{
         ExplorationMapDataUserData::setupDelegateTable<true>(mVM);
 
         CollisionWorldClass::setupDelegateTable(mVM);
+
+        AV::MiscFunctions::setupFunctions(mVM);
 
         CollisionWorldClass::setupConstants(mVM);
 
