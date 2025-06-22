@@ -40,6 +40,9 @@ namespace ProceduralExplorationGameCore{
         static SQInteger getRegionCoordForIdx(HSQUIRRELVM vm);
         static SQInteger getRegionId(HSQUIRRELVM vm);
 
+        static SQInteger voxValueForCoord(HSQUIRRELVM vm);
+        static SQInteger writeVoxValueForCoord(HSQUIRRELVM vm);
+
         static SQInteger getIsWaterForCoord(HSQUIRRELVM vm);
 
         static SQInteger ExplorationMapDataObjectReleaseHook(SQUserPointer p, SQInteger size);

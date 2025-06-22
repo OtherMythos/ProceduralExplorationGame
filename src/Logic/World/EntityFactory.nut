@@ -352,10 +352,14 @@
                 return 0.6;
         }
     }
-    function constructSimpleTeleportItem(parentNode, meshPath, pos, scale, teleData, collisionRadius=null){
+    function constructSimpleTeleportItem(parentNode, meshPath, pos, scale, teleData, collisionRadius=null, forceZ=null){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = pos.copy();
-        targetPos.y = getZForPos(targetPos);
+        if(forceZ != null){
+            targetPos.y = forceZ;
+        }else{
+            targetPos.y = getZForPos(targetPos);
+        }
         local en = manager.createEntity(targetPos);
 
         local placeNode = parentNode.createChildSceneNode();
@@ -389,10 +393,14 @@
 
         return en;
     }
-    function constructSimpleItem(parentNode, meshPath, pos, scale, collisionRadius=null, spoilData=null, totalHealth=null, orientation=null, posOffset=null){
+    function constructSimpleItem(parentNode, meshPath, pos, scale, collisionRadius=null, spoilData=null, totalHealth=null, orientation=null, posOffset=null, forceZ=null){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = pos.copy();
-        targetPos.y = getZForPos(targetPos);
+        if(forceZ != null){
+            targetPos.y = forceZ;
+        }else{
+            targetPos.y = getZForPos(targetPos);
+        }
         local en = manager.createEntity(targetPos);
 
         //local entry = ActiveEnemyEntry(mConstructorWorld_, itemData.type, targetPos, en);

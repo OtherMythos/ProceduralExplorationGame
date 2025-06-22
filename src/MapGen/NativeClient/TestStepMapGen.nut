@@ -26,6 +26,18 @@
         return targetRegions;
     }
 
+    function _determineRegionByType(){
+        local targetRegions = [];
+        local r = mData_.region;
+        for(local i = 0; i < mMapData_.getNumRegions(); i++){
+            local regionType = mMapData_.getRegionType(i);
+            if(regionType == r){
+                targetRegions.append(i);
+            }
+        }
+        return targetRegions;
+    }
+
     function _checkPlacementVoxelsAreLand(x, y){
         local halfX = mData_.halfX;
         local halfY = mData_.halfY;
@@ -51,6 +63,19 @@
         if(total == 0) return INVALID_WORLD_POINT;
         local randomIdx = mMapData_.randomIntMinMax(0, total - 1);
         return mMapData_.getRegionCoordForIdx(regionId, randomIdx);
+    }
+
+    function altitudeToZPos(altitude){
+        local voxFloat = altitude.tofloat();
+        local seaLevel = 100;
+        local ABOVE_GROUND = 0xFF - seaLevel;
+        local WORLD_DEPTH = 20;
+        local PROCEDURAL_WORLD_UNIT_MULTIPLIER = 0.4;
+
+        local altitude = (((voxFloat - seaLevel) / ABOVE_GROUND) * WORLD_DEPTH).tointeger() + 1;
+        local clampedAltitude = altitude < 0 ? 0 : altitude;
+
+        return 0.5 + clampedAltitude * PROCEDURAL_WORLD_UNIT_MULTIPLIER;
     }
 
     function placeLocation(placeId, determineRegionFunction, checkPlacement){
@@ -92,9 +117,30 @@
                 "originY": originY,
                 "originWrapped": point,
                 "placeId": placeId,
-                //"region": 0
                 "region": mMapData_.getRegionId(region)
             };
+
+            if(placeId == PlaceId.DUSTMITE_NEST){
+                local radius = 5;
+                for(local y = originY - radius; y < originY + radius; y++){
+                    for(local x = originX - radius; x < originX + radius; x++){
+                        local dx = x - originX;
+                        local dy = y - originY;
+                        if(dx * dx + dy * dy > radius * radius) continue;
+
+                        local val = mMapData_.voxValueForCoord(x, y);
+                        local voxValue = val & 0xFF;
+
+                        if(x == originX && y == originY){
+                            placeData.forceZ <- altitudeToZPos(voxValue);
+                        }
+
+                        local writeVal = val & (0xFFFFFF00);
+                        writeVal = writeVal | 0;
+                        mMapData_.writeVoxValueForCoord(x, y, writeVal);
+                    }
+                }
+            }
 
             mReturnPlaces_.append(placeData);
             return;
@@ -122,6 +168,9 @@
         placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize, _checkPlacementVoxelsAreLand)
         placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize, _checkPlacementVoxelsAreLand)
         placeLocation(PlaceId.GARRITON, _determineRegionBySize, _checkPlacementVoxelsAreLand);
+        placeLocation(PlaceId.TEMPLE, _determineRegionBySize, _checkPlacementVoxelsAreLand);
+        placeLocation(PlaceId.GRAVEYARD, _determineRegionBySize, _checkPlacementVoxelsAreLand);
+        placeLocation(PlaceId.DUSTMITE_NEST, _determineRegionByType, _checkPlacementVoxelsAreLand);
 
         return mReturnPlaces_;
     }

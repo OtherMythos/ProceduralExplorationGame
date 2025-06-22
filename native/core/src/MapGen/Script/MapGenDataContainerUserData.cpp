@@ -155,7 +155,7 @@ namespace ProceduralExplorationGameCore{
     template <typename T>
     void MapGenDataContainerUserData::_defineBaseFunctions(HSQUIRRELVM vm){
         AV::ScriptUtils::addFunction(vm, getValue<T>, "_get");
-        AV::ScriptUtils::addFunction(vm, voxValueForCoord<T>, "voxValueForCoord", 3, ".ii");
+        //AV::ScriptUtils::addFunction(vm, voxValueForCoord<T>, "voxValueForCoord", 3, ".ii");
     }
 
     template <typename T, bool B>
@@ -174,7 +174,7 @@ namespace ProceduralExplorationGameCore{
 
             _defineBaseFunctions<T>(vm);
             AV::ScriptUtils::addFunction(vm, setValue, "_set");
-            AV::ScriptUtils::addFunction(vm, writeVoxValueForCoord, "writeVoxValueForCoord", 4, ".iii");
+            //AV::ScriptUtils::addFunction(vm, writeVoxValueForCoord, "writeVoxValueForCoord", 4, ".iii");
         }
 
         sq_resetobject(targetTable);

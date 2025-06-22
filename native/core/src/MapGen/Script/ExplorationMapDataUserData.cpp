@@ -545,6 +545,39 @@ namespace ProceduralExplorationGameCore{
         return 1;
     }
 
+    SQInteger ExplorationMapDataUserData::voxValueForCoord(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger x, y;
+        sq_getinteger(vm, 2, &x);
+        sq_getinteger(vm, 3, &y);
+
+        const AV::uint8* val = VOX_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y));
+
+        AV::uint32 outVal = *(reinterpret_cast<const AV::uint32*>(val));
+        sq_pushinteger(vm, static_cast<SQInteger>(outVal));
+
+        return 1;
+    }
+
+    SQInteger ExplorationMapDataUserData::writeVoxValueForCoord(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger x, y, val;
+        sq_getinteger(vm, 2, &x);
+        sq_getinteger(vm, 3, &y);
+        sq_getinteger(vm, 4, &val);
+
+        AV::uint8* ptr = VOX_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y));
+
+        AV::uint32 writeVal = static_cast<AV::uint32>(val);
+        *(reinterpret_cast<AV::uint32*>(ptr)) = writeVal;
+
+        return 0;
+    }
+
     template <bool B>
     void ExplorationMapDataUserData::setupDelegateTable(HSQUIRRELVM vm){
         sq_newtable(vm);
@@ -561,6 +594,9 @@ namespace ProceduralExplorationGameCore{
 
         AV::ScriptUtils::addFunction(vm, setValue, "_set");
         AV::ScriptUtils::addFunction(vm, getValue, "_get");
+
+        AV::ScriptUtils::addFunction(vm, voxValueForCoord, "voxValueForCoord", 3, ".ii");
+        AV::ScriptUtils::addFunction(vm, writeVoxValueForCoord, "writeVoxValueForCoord", 4, ".iii");
 
         AV::ScriptUtils::addFunction(vm, getNumRegions, "getNumRegions");
         AV::ScriptUtils::addFunction(vm, getRegionTotal, "getRegionTotal", 2, ".i");
