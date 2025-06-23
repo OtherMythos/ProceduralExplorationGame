@@ -78,14 +78,31 @@
         return 0.5 + clampedAltitude * PROCEDURAL_WORLD_UNIT_MULTIPLIER;
     }
 
+    function _markRemovePlacedItems(originX, originY, halfX, halfY){
+        for(local y = originY - halfY; y < originY + halfY; y++){
+            for(local x = originX - halfX; x < originX + halfX; x++){
+                local val = mMapData_.secondaryValueForCoord(x, y);
+
+                val = val | DO_NOT_PLACE_ITEMS_VOXEL_FLAG;
+                mMapData_.writeSecondaryValueForCoord(x, y, val);
+            }
+        }
+    }
+
     function placeLocation(placeId, determineRegionFunction, checkPlacement){
         local placeData = ::Places[placeId];
         local targetRegions = determineRegionFunction();
         if(targetRegions.len() == 0) return;
 
+        local halfX = 10;
+        local halfY = 10;
+
         if(placeData.mHalf != null){
-            mData_.halfX = roundAwayFromZero(placeData.mHalf.x);
-            mData_.halfY = roundAwayFromZero(placeData.mHalf.z);
+            halfX = roundAwayFromZero(placeData.mHalf.x);
+            halfY = roundAwayFromZero(placeData.mHalf.z);
+
+            mData_.halfX = halfX;
+            mData_.halfY = halfY;
         }
         local radius = placeData.mRadius;
 
@@ -108,7 +125,7 @@
                 }
             }
 
-            //_removePlacedItems(originX, originY);
+            _markRemovePlacedItems(originX, originY, halfX, halfY);
 
             mPlacesCollisionWorld_.addCollisionPoint(originX, originY, radius);
 

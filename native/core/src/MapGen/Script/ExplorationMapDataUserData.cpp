@@ -220,7 +220,7 @@ namespace ProceduralExplorationGameCore{
         //pushPlaceData(vm, "placeData", mapData->placeData);
         pushRegionData(vm, "regionData", *mapData->ptr<std::vector<RegionData>>("regionData"));
         pushPlacedItemData(vm, "placedItems", *mapData->ptr<std::vector<PlacedItemData>>("placedItems"));
-        generatePushedItemBuffer(vm, "placedItemsBuffer", mapData->width, mapData->height, *mapData->ptr<std::vector<PlacedItemData>>("placedItems"));
+        //generatePushedItemBuffer(vm, "placedItemsBuffer", mapData->width, mapData->height, *mapData->ptr<std::vector<PlacedItemData>>("placedItems"));
 
         //pushBuffer(vm, "voxelBuffer", mapData->voxelBuffer, mapData->voxelBufferSize);
         //pushBuffer(vm, "secondaryVoxBuffer", mapData->secondaryVoxelBuffer, mapData->secondaryVoxelBufferSize);
@@ -578,6 +578,37 @@ namespace ProceduralExplorationGameCore{
         return 0;
     }
 
+    SQInteger ExplorationMapDataUserData::secondaryValueForCoord(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger x, y;
+        sq_getinteger(vm, 2, &x);
+        sq_getinteger(vm, 3, &y);
+
+        const AV::uint32* val = FULL_PTR_FOR_COORD_SECONDARY(mapData, WRAP_WORLD_POINT(x, y));
+
+        sq_pushinteger(vm, static_cast<SQInteger>(*val));
+
+        return 1;
+    }
+
+    SQInteger ExplorationMapDataUserData::writeSecondaryValueForCoord(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger x, y, val;
+        sq_getinteger(vm, 2, &x);
+        sq_getinteger(vm, 3, &y);
+        sq_getinteger(vm, 4, &val);
+
+        AV::uint32* ptr = FULL_PTR_FOR_COORD_SECONDARY(mapData, WRAP_WORLD_POINT(x, y));
+
+        *ptr = static_cast<AV::uint32>(val);
+
+        return 0;
+    }
+
     template <bool B>
     void ExplorationMapDataUserData::setupDelegateTable(HSQUIRRELVM vm){
         sq_newtable(vm);
@@ -597,6 +628,8 @@ namespace ProceduralExplorationGameCore{
 
         AV::ScriptUtils::addFunction(vm, voxValueForCoord, "voxValueForCoord", 3, ".ii");
         AV::ScriptUtils::addFunction(vm, writeVoxValueForCoord, "writeVoxValueForCoord", 4, ".iii");
+        AV::ScriptUtils::addFunction(vm, secondaryValueForCoord, "secondaryValueForCoord", 3, ".ii");
+        AV::ScriptUtils::addFunction(vm, writeSecondaryValueForCoord, "writeSecondaryValueForCoord", 4, ".iii");
 
         AV::ScriptUtils::addFunction(vm, getNumRegions, "getNumRegions");
         AV::ScriptUtils::addFunction(vm, getRegionTotal, "getRegionTotal", 2, ".i");

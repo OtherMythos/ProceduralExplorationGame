@@ -55,6 +55,9 @@ namespace ProceduralExplorationGameCore{
                 if(altitude < seaLevel){
                     continue;
                 }
+                if(fullSecondaryVox & DO_NOT_PLACE_ITEMS_VOXEL_FLAG){
+                    continue;
+                }
 
                 AV::uint8 moisture = fullSecondaryVox & 0xFF;
                 AV::uint8 flags = (fullVox >> 8) & ~MAP_VOXEL_MASK;

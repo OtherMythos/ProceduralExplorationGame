@@ -89,6 +89,8 @@ enum RegionMeta{
     EXPANDABLE = 0x2
 };
 
+const DO_NOT_PLACE_ITEMS_VOXEL_FLAG = 0x1000000;
+
 /**
  * Generally aestetic things like trees, rocks, etc.
  */

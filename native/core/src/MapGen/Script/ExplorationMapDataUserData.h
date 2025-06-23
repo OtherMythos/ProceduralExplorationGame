@@ -42,6 +42,8 @@ namespace ProceduralExplorationGameCore{
 
         static SQInteger voxValueForCoord(HSQUIRRELVM vm);
         static SQInteger writeVoxValueForCoord(HSQUIRRELVM vm);
+        static SQInteger secondaryValueForCoord(HSQUIRRELVM vm);
+        static SQInteger writeSecondaryValueForCoord(HSQUIRRELVM vm);
 
         static SQInteger getIsWaterForCoord(HSQUIRRELVM vm);
 
