@@ -87,7 +87,7 @@
         }
 
         function styleLabelForPlaceType(label, type){
-            label.setDefaultFontSize(mTypeSizes_[type]);
+            label.setDefaultFontSize(mTypeSizes_[type] * ::resolutionMult.x);
             label.setTextColour(mTypeColours_[type]);
             label.setShadowOutline(true, ColourValue(0, 0, 0), Vec2(2, 2));
         }

@@ -1,6 +1,8 @@
 function start(){
     _gui.setScrollSpeed(5.0);
 
+    ::resolutionMult <- _window.getActualSize() / _window.getSize();
+
     _doFile("res://../../src/System/EnumDef.nut");
     _doFile("res://../../src/Helpers.nut");
     _doFile("res://../../src/Util/VoxToMesh.nut");
