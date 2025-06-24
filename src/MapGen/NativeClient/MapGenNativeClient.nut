@@ -15,6 +15,8 @@ function notifyRegistered(data){
 
     _doFile(::basePath + "src/Content/Places.nut");
     _doFile(::basePath + "src/Content/PlaceDefs.h.nut");
+
+    processPlacesData();
 }
 
 function notifyBegan(data){
@@ -33,4 +35,28 @@ function populateSteps(){
 
 function notifyClaimed(data){
     print(data);
+}
+
+function processPlacesData(){
+
+    local p = ::placeData;
+
+    local count = 0;
+    foreach(c,i in ::Places){
+
+        local centreX = p[count];
+        local centreY = p[count + 1];
+        local centreZ = p[count + 2];
+        local halfX = p[count + 3];
+        local halfY = p[count + 4];
+        local halfZ = p[count + 5];
+        local radius = p[count + 6];
+
+        i.mCentre = [centreX, centreY, centreZ];
+        i.mHalf = [halfX, halfY, halfZ];
+        i.mRadius = radius;
+
+        count += 7;
+    }
+    getroottable().rawdelete("placeData");
 }

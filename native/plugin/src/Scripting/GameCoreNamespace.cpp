@@ -10,6 +10,7 @@
 #include "Voxeliser/VoxSceneDumper.h"
 #include "MapGen/Script/MapGenScriptManager.h"
 #include "MapGen/MapGenScriptClient.h"
+#include "MapGen/Script/MapGenScriptVM.h"
 #include "PluginBaseSingleton.h"
 
 #include "System/Util/PathUtils.h"
@@ -25,6 +26,7 @@
 #include "Collision/CollisionDetectionWorld.h"
 #include "Scripting/ScriptNamespace/Classes/CollisionWorldClass.h"
 #include "Scripting/ScriptNamespace/ScriptGetterUtils.h"
+#include "Scripting/SquirrelDeepCopy.h"
 
 #include "Scripting/DataPointFileUserData.h"
 
@@ -620,6 +622,27 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger GameCoreNamespace::deepCopyToMapGenVM(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::MapGenScriptManager* manager = ProceduralExplorationGameCore::PluginBaseSingleton::getScriptManager();
+        ProceduralExplorationGameCore::MapGenScriptVM* scriptVM = manager->getScriptVM();
+        HSQUIRRELVM squirrelVM = scriptVM->getVM();
+
+        const SQChar *key;
+        sq_getstring(vm, -2, &key);
+
+        sq_pushroottable(squirrelVM);
+        sq_pushstring(squirrelVM, key, -1);
+
+        AV::SquirrelDeepCopy copy;
+        copy.deepCopyValue(vm, squirrelVM, -1);
+
+        sq_newslot(squirrelVM, -3, false);
+
+        sq_pop(squirrelVM, 1);
+
+        return 0;
+    }
+
     SQInteger GameCoreNamespace::dumpSceneToObj(HSQUIRRELVM vm){
         std::string outPath;
         AV::formatResToPath("user://dumpedScene.obj", outPath);
@@ -666,6 +689,8 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, registerMapGenClient, "registerMapGenClient", 4, ".sst|o");
         AV::ScriptUtils::addFunction(vm, recollectMapGenSteps, "recollectMapGenSteps");
         AV::ScriptUtils::addFunction(vm, setCustomPassBufferValue, "setCustomPassBufferValue", -2, ".n|unn");
+
+        AV::ScriptUtils::addFunction(vm, deepCopyToMapGenVM, "deepCopyToMapGenVM", 3, ".s.");
 
         AV::ScriptUtils::addFunction(vm, update, "update", 2, ".u");
 

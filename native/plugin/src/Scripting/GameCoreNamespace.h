@@ -48,6 +48,8 @@ namespace ProceduralExplorationGamePlugin{
         static SQInteger registerMapGenClient(HSQUIRRELVM vm);
         static SQInteger recollectMapGenSteps(HSQUIRRELVM vm);
 
+        static SQInteger deepCopyToMapGenVM(HSQUIRRELVM vm);
+
         static SQInteger voxeliseMeshForVoxelData(HSQUIRRELVM vm);
 
         static SQInteger insertParsedSceneFileVoxMeshGetAnimInfo(HSQUIRRELVM vm);

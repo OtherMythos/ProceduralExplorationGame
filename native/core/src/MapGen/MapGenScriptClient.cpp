@@ -7,7 +7,7 @@
 
 #include "Scripting/ScriptNamespace/ScriptUtils.h"
 
-#include "SquirrelDeepCopy.h"
+#include "Scripting/SquirrelDeepCopy.h"
 
 namespace ProceduralExplorationGameCore{
     MapGenScriptClient::MapGenScriptClient(CallbackScript* script, const std::string& name)
@@ -71,7 +71,8 @@ namespace ProceduralExplorationGameCore{
 
         sq_pushobject(squirrelVM, mClientTableObj);
 
-        DeepCopy::deepCopyTable(squirrelVM, vm, -2);
+        AV::SquirrelDeepCopy copy;
+        copy.deepCopyTable(squirrelVM, vm, -2);
         //sq_move(vm, squirrelVM, -1);
         sq_pop(squirrelVM, 1);
 
@@ -83,7 +84,8 @@ namespace ProceduralExplorationGameCore{
         MapGenScriptVM* scriptVM = manager->getScriptVM();
         HSQUIRRELVM squirrelVM = scriptVM->getVM();
 
-        DeepCopy::deepCopyValue(vm, squirrelVM, -1);
+        AV::SquirrelDeepCopy copy;
+        copy.deepCopyValue(vm, squirrelVM, -1);
 
         //I need to grab hold of a reference to the object so I can move it in the stack.
         sq_resetobject(&notifyRegisteredTable);

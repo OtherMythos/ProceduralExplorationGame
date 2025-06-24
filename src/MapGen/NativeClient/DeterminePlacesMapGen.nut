@@ -94,17 +94,15 @@
         local targetRegions = determineRegionFunction();
         if(targetRegions.len() == 0) return;
 
-        local halfX = 10;
-        local halfY = 10;
-
         if(placeData.mHalf != null){
-            halfX = roundAwayFromZero(placeData.mHalf.x);
-            halfY = roundAwayFromZero(placeData.mHalf.z);
-
-            mData_.halfX = halfX;
-            mData_.halfY = halfY;
+            local halfX = placeData.mHalf[0];
+            local halfY = placeData.mHalf[2];
+            if(halfX != null && halfY != null){
+                mData_.halfX = roundAwayFromZero(halfX);
+                mData_.halfY = roundAwayFromZero(halfY);
+            }
         }
-        local radius = placeData.mRadius;
+        local radius = placeData.mRadius == null ? 1 : placeData.mRadius;
 
         for(local i = 0; i < 100; i++){
             local targetIdx = mMapData_.randomIntMinMax(0, targetRegions.len()-1);
@@ -125,7 +123,7 @@
                 }
             }
 
-            _markRemovePlacedItems(originX, originY, halfX, halfY);
+            _markRemovePlacedItems(originX, originY, mData_.halfX, mData_.halfY);
 
             mPlacesCollisionWorld_.addCollisionPoint(originX, originY, radius);
 

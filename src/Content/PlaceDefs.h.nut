@@ -170,6 +170,15 @@ function initialisePlacesLists(){
 }
 
 function initialisePlaceEditorMeta(){
+    if(!getroottable().rawin("_system")){
+        //Determine which environment this is being executed in.
+        //Don't process this if we're in the map gen vm.
+        return;
+    }
+
+    //Write the values to the array
+    local placeData = array(::Places.len() * 7);
+    local count = 0;
     foreach(c,i in ::Places){
         local placeFile = i.getPlaceFileName();
         if(placeFile == null) continue;
@@ -178,10 +187,32 @@ function initialisePlaceEditorMeta(){
             continue;
         }
         local jsonTable = _system.readJSONAsTable(path);
-        i.mCentre = Vec3(jsonTable.centreX, jsonTable.centreY, jsonTable.centreZ);
-        i.mHalf = Vec3(jsonTable.halfX, jsonTable.halfY, jsonTable.halfZ);
-        i.mRadius = jsonTable.radius;
+
+        local centreX = jsonTable.centreX
+        local centreY = jsonTable.centreY;
+        local centreZ = jsonTable.centreZ;
+
+        local halfX = jsonTable.halfX
+        local halfY = jsonTable.halfY;
+        local halfZ = jsonTable.halfZ;
+
+        local radius = jsonTable.radius;
+
+        i.mCentre = Vec3(centreX, centreY, centreZ);
+        i.mHalf = Vec3(halfX, halfY, halfZ);
+        i.mRadius = radius;
+
+        local count = c * 7;
+        placeData[count] = centreX;
+        placeData[count + 1] = centreY;
+        placeData[count + 2] = centreZ;
+        placeData[count + 3] = halfX;
+        placeData[count + 4] = halfY;
+        placeData[count + 5] = halfZ;
+        placeData[count + 6] = radius;
     }
+
+    _gameCore.deepCopyToMapGenVM("placeData", placeData);
 }
 };
 
