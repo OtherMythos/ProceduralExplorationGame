@@ -63,6 +63,7 @@ namespace ProceduralExplorationGameCore{
                 AV::uint8 flags = (fullVox >> 8) & ~MAP_VOXEL_MASK;
                 RegionId regionId = (fullSecondaryVox >> 8) & 0xFF;
 
+                if(regionId >= regionData.size()) continue;
                 const Biome& b = Biome::getBiomeForId(regionData[regionId].type);
 
                 Biome::PlaceObjectFunction placeFunc = b.getPlacementFunction();

@@ -609,6 +609,94 @@ namespace ProceduralExplorationGameCore{
         return 0;
     }
 
+    SQInteger ExplorationMapDataUserData::averageOutAltitude(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger oX, oY, hX, hY, ditherDist;
+        SQInteger rId;
+        sq_getinteger(vm, 2, &oX);
+        sq_getinteger(vm, 3, &oY);
+        sq_getinteger(vm, 4, &hX);
+        sq_getinteger(vm, 5, &hY);
+        sq_getinteger(vm, 6, &ditherDist); // New dither distance parameter
+        sq_getinteger(vm, 7, &rId); // New dither distance parameter
+
+        AV::uint32 originX, originY, halfX, halfY, ditherDistance;
+        RegionId regionId = static_cast<RegionId>(rId);
+        originX = static_cast<AV::uint32>(oX);
+        originY = static_cast<AV::uint32>(oY);
+        halfX = static_cast<AV::uint32>(hX);
+        halfY = static_cast<AV::uint32>(hY);
+        ditherDistance = static_cast<AV::uint32>(ditherDist);
+
+        // First pass: Calculate the average altitude for the core region
+        size_t count = 0;
+        size_t altitudeTotal = 0;
+        for(AV::uint32 y = originY - halfY; y < originY + halfY; y++){
+            for(AV::uint32 x = originX - halfX; x < originX + halfX; x++){
+                const AV::uint8* voxPtr = VOX_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y));
+                altitudeTotal += *voxPtr;
+                count++;
+            }
+        }
+
+        size_t averageAlt = altitudeTotal / count;
+
+        // Second pass: Apply the averaged altitude with dithering
+        AV::uint32 totalHalfX = halfX + ditherDistance;
+        AV::uint32 totalHalfY = halfY + ditherDistance;
+
+        for(AV::uint32 y = originY - totalHalfY; y < originY + totalHalfY; y++){
+            for(AV::uint32 x = originX - totalHalfX; x < originX + totalHalfX; x++){
+                // Calculate distance from the core region boundary
+                int distX = 0, distY = 0;
+
+                // Distance to core region in X direction
+                if(x < originX - halfX) {
+                    distX = (originX - halfX) - x;
+                } else if(x >= originX + halfX) {
+                    distX = x - (originX + halfX - 1);
+                }
+
+                // Distance to core region in Y direction
+                if(y < originY - halfY) {
+                    distY = (originY - halfY) - y;
+                } else if(y >= originY + halfY) {
+                    distY = y - (originY + halfY - 1);
+                }
+
+                // Use maximum distance for rectangular regions
+                AV::uint32 distanceFromCore = static_cast<AV::uint32>(std::max(distX, distY));
+
+                AV::uint8* voxPtr = VOX_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y));
+                AV::uint8* regionPtr = REGION_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y));
+                AV::uint8 originalAltitude = *voxPtr;
+
+                *regionPtr = regionId;
+
+                if(distanceFromCore == 0) {
+                    // Inside core region - apply full average
+                    *voxPtr = static_cast<AV::uint8>(averageAlt);
+                } else if(distanceFromCore <= ditherDistance) {
+                    // In dither zone - blend between average and original
+                    float blendFactor = static_cast<float>(distanceFromCore) / static_cast<float>(ditherDistance);
+
+                    // Apply smooth interpolation (you can use linear or smoothstep)
+                    // Linear interpolation:
+                    AV::uint8 blendedAltitude = static_cast<AV::uint8>(
+                        averageAlt * (1.0f - blendFactor) + originalAltitude * blendFactor
+                    );
+
+                    *voxPtr = blendedAltitude;
+                }
+                // Points beyond dither distance remain unchanged
+            }
+        }
+
+        return 0;
+    }
+
     template <bool B>
     void ExplorationMapDataUserData::setupDelegateTable(HSQUIRRELVM vm){
         sq_newtable(vm);
@@ -637,6 +725,8 @@ namespace ProceduralExplorationGameCore{
         AV::ScriptUtils::addFunction(vm, getRegionTotalCoords, "getRegionTotalCoords", 2, ".i");
         AV::ScriptUtils::addFunction(vm, getRegionCoordForIdx, "getRegionCoordForIdx", 3, ".ii");
         AV::ScriptUtils::addFunction(vm, getRegionId, "getRegionId", 2, ".i");
+
+        AV::ScriptUtils::addFunction(vm, averageOutAltitude, "averageOutAltitude", 7, ".iiiiii");
 
         SQObject* tableObj = 0;
         if(B){

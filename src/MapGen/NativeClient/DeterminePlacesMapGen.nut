@@ -89,6 +89,10 @@
         }
     }
 
+    function _averageOutGround(originX, originY, halfX, halfY, region){
+        mMapData_.averageOutAltitude(originX, originY, halfX, halfY, 5, region);
+    }
+
     function placeLocation(placeId, determineRegionFunction, checkPlacement){
         local placeData = ::Places[placeId];
         local targetRegions = determineRegionFunction();
@@ -102,7 +106,7 @@
                 mData_.halfY = roundAwayFromZero(halfY);
             }
         }
-        local radius = placeData.mRadius == null ? 1 : placeData.mRadius;
+        local radius = placeData.mRadius == null ? 20 : placeData.mRadius;
 
         for(local i = 0; i < 100; i++){
             local targetIdx = mMapData_.randomIntMinMax(0, targetRegions.len()-1);
@@ -124,6 +128,7 @@
             }
 
             _markRemovePlacedItems(originX, originY, mData_.halfX, mData_.halfY);
+            _averageOutGround(originX, originY, mData_.halfX, mData_.halfY, region);
 
             mPlacesCollisionWorld_.addCollisionPoint(originX, originY, radius);
 
