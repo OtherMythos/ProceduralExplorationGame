@@ -8,6 +8,7 @@ enum MapViewerDrawOptions{
     MOISTURE_MAP,
     REGIONS,
     REGION_DISTANCE,
+    REGION_EDGES,
     BLUE_NOISE,
     RIVER_DATA,
     LAND_GROUPS,

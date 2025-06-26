@@ -187,6 +187,33 @@ namespace ProceduralExplorationGameCore{
         d.edges.clear();
     }
 
+    static void removePointFromCoords(){
+
+    }
+
+    static void setRegionForPoint(ExplorationMapData* mapData, WorldPoint point, RegionId newRegion){
+        RegionId* regionPtr = REGION_PTR_FOR_COORD(mapData, point);
+
+        RegionId oldRegion = *regionPtr;
+        if(oldRegion == newRegion){
+            return;
+        }
+        *regionPtr = newRegion;
+        if(oldRegion == INVALID_REGION_ID){
+            return;
+        }
+
+        std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
+        if(oldRegion < regionData.size()){
+            std::vector<WorldPoint>& coords = regionData[oldRegion].coords;
+            auto it = std::find(coords.begin(), coords.end(), point);
+            assert(it != coords.end());
+            coords.erase(it);
+        }
+
+        regionData[newRegion].coords.push_back(point);
+    }
+
     static const float BLOB_SIZE = 200;
     static const float HALF_BLOB_SIZE = BLOB_SIZE/2;
     static const float LINE_BOX_SIZE = 50;

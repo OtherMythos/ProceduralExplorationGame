@@ -139,6 +139,15 @@ namespace ProceduralExplorationGameCore{
                     d.meta == 0 ? valueColours[(size_t)MapViewerColours::COLOUR_BLACK] : valueColours[(size_t)MapViewerColours::COLOUR_ORANGE];
             }
         }
+        if(drawOptions & (1 << (size_t)MapViewerDrawOptions::REGION_EDGES)){
+            for(const RegionData& d : regionData){
+                for(const WorldPoint& p : d.edges){
+                    WorldCoord x, y;
+                    READ_WORLD_POINT(p, x, y);
+                    *(texPtr + (x + y * mapData->width)) = valueColours[(size_t)MapViewerColours::COLOUR_BLACK];
+                }
+            }
+        }
     }
 
     void ExplorationMapViewer::fillStagingTexture(Ogre::TextureBox* tex, ExplorationMapData* mapData){

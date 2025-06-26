@@ -670,10 +670,11 @@ namespace ProceduralExplorationGameCore{
                 AV::uint32 distanceFromCore = static_cast<AV::uint32>(std::max(distX, distY));
 
                 AV::uint8* voxPtr = VOX_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y));
-                AV::uint8* regionPtr = REGION_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y));
+                //AV::uint8* regionPtr = REGION_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y));
                 AV::uint8 originalAltitude = *voxPtr;
 
-                *regionPtr = regionId;
+                //*regionPtr = regionId;
+                setRegionForPoint(mapData, WRAP_WORLD_POINT(x, y), regionId);
 
                 if(distanceFromCore == 0) {
                     // Inside core region - apply full average

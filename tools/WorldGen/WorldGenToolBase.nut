@@ -294,6 +294,7 @@ enum VoxPickerType{
             "Show moisture map",
             "Show regions",
             "Show region distance",
+            "Show region edges",
             "Show blue noise",
             "Show river data",
             "Show land group",
