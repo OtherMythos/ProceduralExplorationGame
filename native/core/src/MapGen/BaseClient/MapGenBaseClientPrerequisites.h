@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <algorithm>
 #include "MapGen/ExplorationMapDataPrerequisites.h"
 
 namespace ProceduralExplorationGameCore{
