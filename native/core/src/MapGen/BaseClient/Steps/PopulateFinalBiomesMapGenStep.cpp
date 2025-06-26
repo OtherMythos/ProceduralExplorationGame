@@ -58,6 +58,7 @@ namespace ProceduralExplorationGameCore{
                 AV::uint8 moisture = fullSecondaryVox & 0xFF;
                 AV::uint8 flags = (fullVox >> 8) & ~MAP_VOXEL_MASK;
                 RegionId regionId = (fullSecondaryVox >> 8) & 0xFF;
+                AV::uint8 regionDistance = (fullSecondaryVox >> 16) & 0xFF;
 
                 const Biome& b = Biome::getBiomeForId(regionData[regionId].type);
 
@@ -68,7 +69,7 @@ namespace ProceduralExplorationGameCore{
 
                 Biome::DetermineAltitudeFunction altFunc = b.getAltitudeFunction();
                 assert(altFunc != 0);
-                AV::uint8 finalAltitude = (*altFunc)(altitude, moisture, x, y, mapData);
+                AV::uint8 finalAltitude = (*altFunc)(altitude, moisture, regionDistance, x, y, mapData);
                 *(reinterpret_cast<AV::uint8*>(fullVoxPtrWrite)) = finalAltitude;
             }
         }

@@ -126,16 +126,17 @@ namespace ProceduralExplorationGameCore{
     }
     #undef PLACE_ITEM
 
-    AV::uint8 NONE_DetermineAltitudeFunction(AV::uint8 altitude, AV::uint8 moisture, AV::uint16 x, AV::uint16 y, const ExplorationMapData* mapData){
+    AV::uint8 NONE_DetermineAltitudeFunction(AV::uint8 altitude, AV::uint8 moisture, AV::uint8 altitudeDistance, AV::uint16 x, AV::uint16 y, const ExplorationMapData* mapData){
         return altitude;
     }
 
-    AV::uint8 DESERT_DetermineAltitudeFunction(AV::uint8 altitude, AV::uint8 moisture, AV::uint16 x, AV::uint16 y, const ExplorationMapData* mapData){
+    AV::uint8 DESERT_DetermineAltitudeFunction(AV::uint8 altitude, AV::uint8 moisture, AV::uint8 altitudeDistance, AV::uint16 x, AV::uint16 y, const ExplorationMapData* mapData){
         //float thing = abs(sin(float(x) * 0.1)) * 60 - 20;
         float t = (sin(float(x) * 0.1));
         if(t < 0) t = -t;
         float thing = t * 60 - 20;
-        float other = float(altitude) + thing;
+        float modifier = (altitudeDistance > 12 ? 12.0 : static_cast<float>(altitudeDistance)) / 12.0;
+        float other = float(altitude) + thing * modifier;
         if(other < mapData->seaLevel){
             other = mapData->seaLevel;
         }
