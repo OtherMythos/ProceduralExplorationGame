@@ -148,7 +148,6 @@ namespace ProceduralExplorationGameCore{
     static void mergeRegionData(ExplorationMapData* mapData, RegionData& d, RegionData& sd){
         assert(d.id != sd.id);
         sd.coords.insert(sd.coords.end(), d.coords.begin(), d.coords.end());
-        //As much as it might include the seam, it's still more efficient than re-scanning.
         sd.edges.insert(sd.edges.end(), d.edges.begin(), d.edges.end());
 
         for(WorldPoint wp : d.coords){
@@ -156,6 +155,33 @@ namespace ProceduralExplorationGameCore{
             *writeRegion = sd.id;
         }
 
+        //Determine the new edges
+        //Write the temporary values into d and move them over when done.
+        d.edges.clear();
+        for(WorldPoint wp : sd.edges){
+            WorldCoord x, y;
+            READ_WORLD_POINT(wp, x, y);
+            std::vector<WorldPoint> neighbors = {
+                WRAP_WORLD_POINT(x + 1, y),
+                WRAP_WORLD_POINT(x - 1, y),
+                WRAP_WORLD_POINT(x, y + 1),
+                WRAP_WORLD_POINT(x, y - 1)
+            };
+
+            bool same = true;
+            for(WorldPoint checkPoint : neighbors){
+                const RegionId* region = REGION_PTR_FOR_COORD_CONST(mapData, checkPoint);
+                if(*region != sd.id){
+                    same = false;
+                    break;
+                }
+            }
+            if(!same){
+                d.edges.push_back(wp);
+            }
+        }
+
+        sd.edges = std::move(d.edges);
         d.total = 0;
         d.coords.clear();
         d.edges.clear();

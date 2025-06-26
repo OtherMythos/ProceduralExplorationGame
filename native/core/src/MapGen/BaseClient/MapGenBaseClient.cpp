@@ -28,6 +28,7 @@
 #include "Steps/MergeSmallRegionsMapGenStep.h"
 #include "Steps/MergeIsolatedRegionsMapGenStep.h"
 #include "Steps/GenerateWaterTextureMapGenStep.h"
+#include "Steps/CalculateRegionEdgesMapGenStep.h"
 
 #include "Ogre.h"
 #include "OgreStagingTexture.h"
@@ -64,6 +65,7 @@ namespace ProceduralExplorationGameCore{
             new PopulateFinalBiomesMapGenStep(),
             new PerformFinalFloodFillMapGenStep(),
             new WeightAndSortLandmassesMapGenStep(),
+            new CalculateRegionEdgesMapGenStep(),
             new DetermineEdgesMapGenStep(),
             new DetermineRiversMapGenStep(),
             new CarveRiversMapGenStep(),

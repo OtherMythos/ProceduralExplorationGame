@@ -291,8 +291,9 @@ enum VoxPickerType{
             "Draw water",
             "Draw ground voxels",
             "Show water group",
-            "Show moisture map"
-            "Show regions"
+            "Show moisture map",
+            "Show regions",
+            "Show region distance",
             "Show blue noise",
             "Show river data",
             "Show land group",

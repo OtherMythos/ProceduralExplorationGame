@@ -4,6 +4,7 @@ enum DrawOptions{
     WATER_GROUPS,
     MOISTURE_MAP,
     REGIONS,
+    REGION_DISTANCE,
     BLUE_NOISE,
     RIVER_DATA,
     LAND_GROUPS,
@@ -346,6 +347,13 @@ enum MapViewerColours{
             drawVal = ColourValue(val, val, val, 1).getAsABGR();
         }
         if(mDrawOptions_[MapViewerDrawOptions.REGIONS]){
+            mMapData_.secondaryVoxBuffer.seek((xVox + yVox * mMapData_.width) * 4);
+            local regionVal = (mMapData_.secondaryVoxBuffer.readn('i') >> 8) & 0xFF;
+
+            local val = regionVal.tofloat() / mMapData_.regionData.len();
+            drawVal = ColourValue(val, val, val, 1).getAsABGR();
+        }
+        if(mDrawOptions_[MapViewerDrawOptions.REGION_DISTANCE]){
             mMapData_.secondaryVoxBuffer.seek((xVox + yVox * mMapData_.width) * 4);
             local regionVal = (mMapData_.secondaryVoxBuffer.readn('i') >> 8) & 0xFF;
 

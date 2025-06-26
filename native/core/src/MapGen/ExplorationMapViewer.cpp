@@ -44,6 +44,7 @@ namespace ProceduralExplorationGameCore{
     AV::uint32 ExplorationMapViewer::getColourForVox(AV::uint32 x, AV::uint32 y, AV::uint32 vox, AV::uint32 secondaryVox, float blueNoise, ExplorationMapData* mapData, AV::uint32 drawOptions){
         AV::uint8 altitude = static_cast<AV::uint8>(vox & 0xFF);
         RegionId regionId = static_cast<AV::uint8>((secondaryVox >> 8) & 0xFF);
+        AV::uint8 regionDistance = static_cast<AV::uint8>((secondaryVox >> 16) & 0xFF);
         AV::uint8 voxelMeta = static_cast<AV::uint8>((vox >> 8) & MAP_VOXEL_MASK);
         WaterId waterGroup = static_cast<AV::uint8>((vox >> 16) & 0xFF);
 
@@ -87,6 +88,10 @@ namespace ProceduralExplorationGameCore{
         if(drawOptions & (1 << (size_t)MapViewerDrawOptions::REGIONS)){
             float valGroup = static_cast<float>((secondaryVox >> 8) & 0xFF) / static_cast<float>(mapData->ptr<std::vector<RegionData>>("regionData")->size());
             drawVal = Ogre::ColourValue(valGroup, valGroup, valGroup, OPACITY).getAsABGR();
+        }
+        if(drawOptions & (1 << (size_t)MapViewerDrawOptions::REGION_DISTANCE)){
+            float dist = static_cast<float>(regionDistance) / 254;
+            drawVal = Ogre::ColourValue(dist, dist, dist, OPACITY).getAsABGR();
         }
         if(drawOptions & (1 << (size_t)MapViewerDrawOptions::BLUE_NOISE)){
             drawVal = Ogre::ColourValue(blueNoise, blueNoise, blueNoise, OPACITY).getAsABGR();
