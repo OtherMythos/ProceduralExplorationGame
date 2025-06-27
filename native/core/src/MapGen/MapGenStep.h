@@ -19,6 +19,12 @@ namespace ProceduralExplorationGameCore{
 
     private:
         std::string mName;
+
+    protected:
+        bool mMarkerStep;
+
+    public:
+        bool isMarkerStep() const { return mMarkerStep; }
     };
 
 }

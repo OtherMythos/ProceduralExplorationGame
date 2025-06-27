@@ -5,7 +5,8 @@
 namespace ProceduralExplorationGameCore{
 
     MapGenStep::MapGenStep(const std::string& name)
-        : mName(name) {
+        : mName(name),
+        mMarkerStep(false) {
 
     }
 

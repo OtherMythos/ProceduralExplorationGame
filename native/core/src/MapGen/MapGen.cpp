@@ -55,11 +55,33 @@ namespace ProceduralExplorationGameCore{
         return step;
     }
 
+    bool MapGen::_removeMarkerStep(){
+        auto it = mMapGenSteps.begin();
+        while(it != mMapGenSteps.end()){
+            if((*it)->isMarkerStep()){
+                mMapGenSteps.erase(it);
+                return false;
+            }
+            it++;
+        }
+        return true;
+    }
+
     void MapGen::collectMapGenSteps_(std::vector<MapGenStep*>& steps){
         for(MapGenClient* c : mActiveClients){
             mCurrentCollectingMapGenClient = c;
             c->populateSteps(steps);
+
+            mCurrentStage = mMapGenSteps.size();
         }
+
+        //Remove all the markers from the steps.
+        while(true){
+            if(_removeMarkerStep()){
+                break;
+            }
+        }
+
         mCurrentStage = mMapGenSteps.size();
 
         mCurrentCollectingMapGenClient = 0;
