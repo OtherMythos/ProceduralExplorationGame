@@ -12,6 +12,7 @@ namespace ProceduralExplorationGameCore{
     typedef AV::uint64 WrappedFace;
     typedef AV::uint8 FaceId;
     typedef AV::uint8 RegionId;
+    typedef AV::uint8 AmbientMask;
     typedef AV::uint8 VoxelAnimValue;
     static const FaceId MAX_FACES = 6;
 
@@ -19,7 +20,7 @@ namespace ProceduralExplorationGameCore{
         AV::uint16 x, y, z;
         AV::uint8 sizeX, sizeY, sizeZ;
         VoxelId vox;
-        AV::uint32 ambientMask;
+        AmbientMask ambientMask;
         AV::uint8 faceMask;
         VoxelAnimValue anim;
         AV::uint8 regionId;

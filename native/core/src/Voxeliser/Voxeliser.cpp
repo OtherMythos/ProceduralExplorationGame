@@ -10,7 +10,6 @@
 #include "OgreRenderSystem.h"
 #include "OgreSubMesh2.h"
 #include "Vao/OgreVaoManager.h"
-#include "TerrainFaceMerger.h"
 
 namespace ProceduralExplorationGameCore{
 
@@ -380,7 +379,7 @@ namespace ProceduralExplorationGameCore{
                 //write the upwards face
                 {
                     AV::uint32 f = 3;
-                    AV::uint32 ambientMask = getVerticeBorderTerrain(altitude, altitudes, f, x, y, width);
+                    AmbientMask ambientMask = getVerticeBorderTerrain(altitude, altitudes, f, x, y, width);
 
                     WrappedFaceContainer faceContainer;
                     faceContainer.ambientMask = ambientMask;
@@ -424,7 +423,7 @@ namespace ProceduralExplorationGameCore{
                     bufEntry.mMaxY = yy;
                 }
 
-                AV::uint8 ambient = (w.ambientMask >> 8 * i) & 0xFF;
+                AV::uint8 ambient = (w.ambientMask >> 2 * i) & 0x3;
                 assert(ambient >= 0 && ambient <= 3);
 
                 AV::uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
@@ -532,14 +531,14 @@ namespace ProceduralExplorationGameCore{
                         bool lengthen = (testAltitude == 0 && zAlt == (altitudeDelta - 1));
 
                         AV::uint32 faceAltitude = (altitude-zAlt);
-                        AV::uint32 ambientMask = getVerticeBorderTerrain(faceAltitude, altitudes, f, x, y, width);
+                        AmbientMask ambientMask = getVerticeBorderTerrain(faceAltitude, altitudes, f, x, y, width);
                         for(AV::uint32 i = 0; i < 4; i++){
                             AV::uint32 fv = FACES_VERTICES[f * 4 + i]*3;
                             AV::uint32 xx = VERTICES_POSITIONS[fv] + x;
                             AV::uint32 yy = VERTICES_POSITIONS[fv + 1] + y;
                             AV::uint32 zz = VERTICES_POSITIONS[fv + 2] * (lengthen ? OCEAN_EDGE_LENGTH : 1) + faceAltitude + OCEAN_EDGE_LENGTH + (lengthen ? -(OCEAN_EDGE_LENGTH-1) : 0);
 
-                            AV::uint8 ambient = (ambientMask >> 8 * i) & 0xFF;
+                            AV::uint8 ambient = (ambientMask >> 8 * i) & 0x3;
                             assert(ambient >= 0 && ambient <= 3);
 
                             AV::uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
@@ -560,9 +559,9 @@ namespace ProceduralExplorationGameCore{
         //}
     }
 
-    AV::uint32 Voxeliser::getVerticeBorderTerrain(AV::uint32 altitude, const std::vector<float>& altitudes, AV::uint32 f, AV::uint32 x, AV::uint32 y, AV::uint32 width) const{
+    AmbientMask Voxeliser::getVerticeBorderTerrain(AV::uint32 altitude, const std::vector<float>& altitudes, AV::uint32 f, AV::uint32 x, AV::uint32 y, AV::uint32 width) const{
         AV::uint32 faceVal = f * 9 * 4;
-        AV::uint32 ret = 0;
+        AmbientMask ret = 0;
         for(AV::uint32 v = 0; v < 4; v++){
             AV::uint32 faceBase = faceVal + v * 9;
             AV::uint8 foundValsTemp[3] = {0x0, 0x0, 0x0};
@@ -585,7 +584,7 @@ namespace ProceduralExplorationGameCore{
                 val = 3 - (foundValsTemp[0] + foundValsTemp[1] + foundValsTemp[2]);
             }
             assert(val >= 0 && val <= 3);
-            ret = ret | val << (v * 8);
+            ret = ret | val << (v * 2);
         }
         return ret;
     }
