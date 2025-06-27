@@ -15,9 +15,6 @@
 namespace ProceduralExplorationGameCore{
 
     SQInteger MapGenNamespace::registerStep(HSQUIRRELVM vm){
-        SQInteger idx;
-        sq_getinteger(vm, 2, &idx);
-
         const SQChar *stepName;
         sq_getstring(vm, 3, &stepName);
 
@@ -42,15 +39,26 @@ namespace ProceduralExplorationGameCore{
         MapGenClient* client = mapGen->getCurrentCollectingMapGenClient();
         MapGenScriptClient* scriptClient = dynamic_cast<MapGenScriptClient*>(client);
         MapGenScriptStep* step = new MapGenScriptStep(stepName, scriptClient, script);
-        mapGen->registerStep(idx, step);
 
-        GAME_CORE_INFO("Succesfully registered MapGen step '{}' at idx {}", stepName, idx);
+        int finalIdx = 0;
+        if(sq_gettype(vm, 2) == OT_STRING){
+            const SQChar *markerName;
+            sq_getstring(vm, 2, &markerName);
+            finalIdx = mapGen->registerStep(markerName, step);
+        }else{
+            SQInteger idx;
+            sq_getinteger(vm, 2, &idx);
+            finalIdx = static_cast<int>(idx);
+            mapGen->registerStep(finalIdx, step);
+        }
+
+        GAME_CORE_INFO("Succesfully registered MapGen step '{}' at idx {}", stepName, finalIdx);
 
         return 0;
     }
 
     void MapGenNamespace::setupNamespace(HSQUIRRELVM vm){
-        AV::ScriptUtils::addFunction(vm, registerStep, "registerStep", 4, ".iss");
+        AV::ScriptUtils::addFunction(vm, registerStep, "registerStep", 4, ".i|sss");
     }
 
 }

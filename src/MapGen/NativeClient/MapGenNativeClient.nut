@@ -30,7 +30,7 @@ function notifyEnded(data){
 }
 
 function populateSteps(){
-    _mapGen.registerStep(16, "Determine Places", ::basePath + "src/MapGen/NativeClient/DeterminePlacesMapGen.nut");
+    _mapGen.registerStep("DeterminePlaces", "Determine Places", ::basePath + "src/MapGen/NativeClient/DeterminePlacesMapGen.nut");
 }
 
 function notifyClaimed(data){

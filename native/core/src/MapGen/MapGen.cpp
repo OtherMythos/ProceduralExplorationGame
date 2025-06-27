@@ -49,6 +49,12 @@ namespace ProceduralExplorationGameCore{
         mMapGenSteps.insert(mMapGenSteps.begin() + id, mapGenStep);
     }
 
+    int MapGen::registerStep(const std::string& markerName, MapGenStep* mapGenStep){
+        int step = getIndexForMarker(markerName);
+        registerStep(step, mapGenStep);
+        return step;
+    }
+
     void MapGen::collectMapGenSteps_(std::vector<MapGenStep*>& steps){
         for(MapGenClient* c : mActiveClients){
             mCurrentCollectingMapGenClient = c;
@@ -81,6 +87,18 @@ namespace ProceduralExplorationGameCore{
         for(MapGenClient* client : mActiveClients){
             client->notifyEnded(data);
         }
+    }
+
+    int MapGen::getIndexForMarker(const std::string& markerName){
+        const std::string checkName = "Marker-" + markerName;
+        int idx = 0;
+        for(MapGenStep* s : mMapGenSteps){
+            if(s->getName() == checkName){
+                return idx;
+            }
+            idx++;
+        }
+        return idx;
     }
 
     void MapGen::notifyClientsClaimed_(HSQUIRRELVM vm, ExplorationMapData* data){

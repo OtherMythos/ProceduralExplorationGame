@@ -1,6 +1,7 @@
 #include "MapGenBaseClient.h"
 
 #include "MapGen/MapGenStep.h"
+#include "MapGen/MapGenStepMarker.h"
 #include "Steps/GenerateMetaMapGenStep.h"
 #include "Steps/SetupBuffersMapGenStep.h"
 #include "Steps/GenerateNoiseMapGenStep.h"
@@ -63,6 +64,7 @@ namespace ProceduralExplorationGameCore{
             new MergeIsolatedRegionsMapGenStep(),
             new DetermineRegionTypesMapGenStep(),
             new MergeExpandableRegionsMapGenStep(),
+            new MapGenStepMarker("DeterminePlaces"),
             new RecalculateRegionEdgesMapGenStep(),
             new CalculateRegionEdgesMapGenStep(),
             new PopulateFinalBiomesMapGenStep(),

@@ -26,6 +26,7 @@ namespace ProceduralExplorationGameCore{
         int getNumTotalStages();
         void recollectMapGenSteps();
         void registerStep(int id, MapGenStep* mapGenStep);
+        int registerStep(const std::string& markerName, MapGenStep* mapGenStep);
         std::string getNameForStage(int stage);
 
         void registerMapGenClient(const std::string& clientName, MapGenClient* client, HSQUIRRELVM vm=0);
@@ -43,6 +44,7 @@ namespace ProceduralExplorationGameCore{
 
         ExplorationMapData* mMapData;
         const ExplorationMapInputData* mMapInputData;
+        int getIndexForMarker(const std::string& markerName);
 
         struct ThreadInput{
             const ExplorationMapInputData* input;
