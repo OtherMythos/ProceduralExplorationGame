@@ -31,6 +31,7 @@
 #include "Steps/GenerateWaterTextureMapGenStep.h"
 #include "Steps/CalculateRegionEdgesMapGenStep.h"
 #include "Steps/RecalculateRegionEdgesMapGenStep.h"
+#include "Steps/BiomeAltitudeMapGenStep.h"
 
 #include "Ogre.h"
 #include "OgreStagingTexture.h"
@@ -64,9 +65,15 @@ namespace ProceduralExplorationGameCore{
             new MergeIsolatedRegionsMapGenStep(),
             new DetermineRegionTypesMapGenStep(),
             new MergeExpandableRegionsMapGenStep(),
+            //Apply the biome altitude first so places modify the correct altitude.
+            new RecalculateRegionEdgesMapGenStep(),
+            new CalculateRegionEdgesMapGenStep(),
+            new BiomeAltitudeMapGenStep(),
+
             new MapGenStepMarker("DeterminePlaces"),
             new RecalculateRegionEdgesMapGenStep(),
             new CalculateRegionEdgesMapGenStep(),
+
             new PopulateFinalBiomesMapGenStep(),
             new PerformFinalFloodFillMapGenStep(),
             new WeightAndSortLandmassesMapGenStep(),
