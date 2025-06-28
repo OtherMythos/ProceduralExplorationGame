@@ -23,8 +23,19 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    template <typename T>
-    bool TileDataParser::parseFileToData_(VisitedPlaceMapData* outData, const std::string& filePath, std::vector<T>& destination) const{
+    bool TileDataParser::readData(OutDataContainer* outData, const std::string& mapName, const std::string& fileName) const{
+        std::string outPath;
+        AV::formatResToPath(mMapsDir, outPath);
+
+        outData->tileValues.clear();
+
+        if(!readMapDataFile_<OutDataContainer*, AV::uint8>(outData, outPath, fileName, outData->tileValues, mapName)) return false;
+
+        return true;
+    }
+
+    template <typename D, typename T>
+    bool TileDataParser::parseFileToData_(D outData, const std::string& filePath, std::vector<T>& destination) const{
         size_t activeWidth = 0;
         size_t height = 0;
 
@@ -68,15 +79,15 @@ namespace ProceduralExplorationGameCore{
         return true;
     }
 
-    template <typename T>
-    bool TileDataParser::readMapDataFile_(VisitedPlaceMapData* outData, const std::string& resolvedMapsDir, const char* fileName, std::vector<T>& destination, const std::string& mapName) const{
+    template <typename D, typename T>
+    bool TileDataParser::readMapDataFile_(D outData, const std::string& resolvedMapsDir, const std::string& fileName, std::vector<T>& destination, const std::string& mapName) const{
         std::filesystem::path p(resolvedMapsDir);
         p = p / mapName / fileName;
         if(!std::filesystem::exists(p)){
             GAME_CORE_ERROR("File at path '{}' does not exist.", p.string());
         }
 
-        bool result = parseFileToData_<T>(outData, p.string(), destination);
+        bool result = parseFileToData_<D, T>(outData, p.string(), destination);
         if(!result){
             GAME_CORE_ERROR("Unable to parse file '{}' for map '{}'", fileName, mapName);
             return false;
@@ -90,7 +101,7 @@ namespace ProceduralExplorationGameCore{
 
         outData->tileValues.clear();
 
-        if(!readMapDataFile_<TilePoint>(outData, outPath, "tileData.txt", outData->tileValues, mapName)) return false;
+        if(!readMapDataFile_<VisitedPlaceMapData*, TilePoint>(outData, outPath, "tileData.txt", outData->tileValues, mapName)) return false;
 
         return true;
     }

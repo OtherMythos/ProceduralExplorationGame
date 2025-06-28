@@ -45,6 +45,7 @@ namespace ProceduralExplorationGameCore{
         static SQInteger secondaryValueForCoord(HSQUIRRELVM vm);
         static SQInteger writeSecondaryValueForCoord(HSQUIRRELVM vm);
         static SQInteger averageOutAltitude(HSQUIRRELVM vm);
+        static SQInteger applyTerrainVoxelsForPlace(HSQUIRRELVM vm);
 
         static SQInteger getIsWaterForCoord(HSQUIRRELVM vm);
 

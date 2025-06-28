@@ -163,6 +163,9 @@
                     }
                 }
             }
+            if(placeId == PlaceId.GRAVEYARD){
+                mMapData_.applyTerrainVoxelsForPlace("graveyard", originX - mData_.halfX, originY - mData_.halfY);
+            }
 
             mReturnPlaces_.append(placeData);
             return;

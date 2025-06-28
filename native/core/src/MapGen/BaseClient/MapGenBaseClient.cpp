@@ -70,11 +70,13 @@ namespace ProceduralExplorationGameCore{
             new CalculateRegionEdgesMapGenStep(),
             new BiomeAltitudeMapGenStep(),
 
+            //This has to happen before voxel values are set.
+            //Really I should separate place determining, altitude set and voxel set, otherwise some voxel values get overriden.
+            new PopulateFinalBiomesMapGenStep(),
             new MapGenStepMarker("DeterminePlaces"),
             new RecalculateRegionEdgesMapGenStep(),
             new CalculateRegionEdgesMapGenStep(),
 
-            new PopulateFinalBiomesMapGenStep(),
             new PerformFinalFloodFillMapGenStep(),
             new WeightAndSortLandmassesMapGenStep(),
             new DetermineEdgesMapGenStep(),

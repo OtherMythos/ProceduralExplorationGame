@@ -60,6 +60,9 @@ namespace ProceduralExplorationGameCore{
     static inline AV::uint8* VOX_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
         return UINT8_PTR_FOR_COORD<AV::uint8*, ExplorationMapData*, 0>(mapData, p);
     }
+    static inline AV::uint8* VOX_VALUE_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
+        return UINT8_PTR_FOR_COORD<AV::uint8*, ExplorationMapData*, 1>(mapData, p);
+    }
     static inline AV::uint8* WATER_GROUP_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
         return UINT8_PTR_FOR_COORD<AV::uint8*, ExplorationMapData*, 2>(mapData, p);
     }
@@ -69,6 +72,9 @@ namespace ProceduralExplorationGameCore{
     //Const
     static inline const AV::uint8* VOX_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
         return UINT8_PTR_FOR_COORD<const AV::uint8*, const ExplorationMapData*, 0>(mapData, p);
+    }
+    static inline const AV::uint8* VOX_VALUE_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
+        return UINT8_PTR_FOR_COORD<const AV::uint8*, const ExplorationMapData*, 1>(mapData, p);
     }
     static inline const AV::uint8* WATER_GROUP_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
         return UINT8_PTR_FOR_COORD<const AV::uint8*, const ExplorationMapData*, 2>(mapData, p);

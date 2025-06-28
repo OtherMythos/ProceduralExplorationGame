@@ -2,6 +2,9 @@
 
 #include "ProceduralExplorationGameCoreScriptTypeTags.h"
 
+//TODO think about making this generic.
+#include "VisitedPlaces/TileDataParser.h"
+
 #include <sqstdblob.h>
 #include <vector>
 
@@ -698,6 +701,33 @@ namespace ProceduralExplorationGameCore{
         return 0;
     }
 
+    SQInteger ExplorationMapDataUserData::applyTerrainVoxelsForPlace(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        const SQChar *mapName;
+        SQInteger xx, yy;
+        sq_getstring(vm, 2, &mapName);
+        sq_getinteger(vm, 3, &xx);
+        sq_getinteger(vm, 4, &yy);
+
+        TileDataParser tileData("res://build/assets/places/");
+        TileDataParser::OutDataContainer out;
+        bool result = tileData.readData(&out, mapName, "terrainBlend.txt");
+        if(!result) return sq_throwerror(vm, "Unable to find terrainBlend.txt file");
+
+        for(AV::uint32 y = 0; y < out.tilesHeight; y++){
+            for(AV::uint32 x = 0; x < out.tilesWidth; x++){
+                AV::uint32 xxx = x + static_cast<AV::uint32>(xx);
+                AV::uint32 yyy = y + static_cast<AV::uint32>(yy);
+                AV::uint8* voxPtr = VOX_VALUE_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(xxx, yyy));
+                *voxPtr = out.tileValues[x + y * out.tilesWidth];
+            }
+        }
+
+        return 0;
+    }
+
     template <bool B>
     void ExplorationMapDataUserData::setupDelegateTable(HSQUIRRELVM vm){
         sq_newtable(vm);
@@ -728,6 +758,7 @@ namespace ProceduralExplorationGameCore{
         AV::ScriptUtils::addFunction(vm, getRegionId, "getRegionId", 2, ".i");
 
         AV::ScriptUtils::addFunction(vm, averageOutAltitude, "averageOutAltitude", 7, ".iiiiii");
+        AV::ScriptUtils::addFunction(vm, applyTerrainVoxelsForPlace, "applyTerrainVoxelsForPlace", 4, ".sii");
 
         SQObject* tableObj = 0;
         if(B){
