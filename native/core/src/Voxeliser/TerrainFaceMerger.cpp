@@ -148,6 +148,7 @@ namespace ProceduralExplorationGameCore{
         container.regionId = fc.r;
         assert(container.sizeX >= 0 && container.sizeY >= 0 && container.sizeZ >= 0);
         container.faceMask = f;
+        container.flags = fc.f;
         FaceNormalType ft = FACE_NORMAL_TYPES[f];
         //WrappedFace wf = _wrapFace(container);
         faces.outFaces.push_back(container);
@@ -295,7 +296,7 @@ namespace ProceduralExplorationGameCore{
                 int zz = fc.z;
 
                 if(fc.faceMask != f) continue;
-                FaceIntermediateContainer fic = {fc.vox, fc.ambientMask, fc.regionId};
+                FaceIntermediateContainer fic = {fc.vox, fc.ambientMask, fc.regionId, fc.flags};
                 FaceIntermediateWrapped fi = _wrapFaceIntermediate(fic);
                 size_t idx = xx + (yy * width) + (zz * width * height);
                 assert(idx < faceBuffer.size());

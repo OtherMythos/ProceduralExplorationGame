@@ -3,6 +3,7 @@
 #include <string>
 #include "GamePrerequisites.h"
 #include "VisitedPlaces/VisitedPlacesPrerequisites.h"
+#include "TerrainFaceMerger.h"
 #include "OgrePrerequisites.h"
 
 namespace ProceduralExplorationGameCore{

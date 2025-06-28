@@ -161,6 +161,7 @@
 		#define inVs_vertex inValues
 
 		uint voxValue = originalSecond & uint(0xFF);
+		uint voxFlags = (originalSecond >> 16) & uint(0xFF);
 
 		const uint COLS_WIDTH = uint(16);
 		const uint COLS_HEIGHT = uint(16);
@@ -201,8 +202,11 @@
 			inValues.x += sin(inValues.x*600 + passBuf.time) * 0.05 * mod;
 		@end
 
-		@property(animateTerrain)
-			inVs_vertex.z += abs(sin(inVs_vertex.y* 0.1 + passBuf.time*0.5) * 0.3);
+		@property(!invisibleTerrain)
+			//Hide voxels only if the terrain is not in the invisible state.
+			if(voxFlags & 0x1){
+				inValues.y = -100000;
+			}
 		@end
 
 		normVal = FACES_NORMALS[norm];

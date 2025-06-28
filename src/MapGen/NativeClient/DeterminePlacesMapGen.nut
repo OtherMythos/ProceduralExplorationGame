@@ -148,16 +148,18 @@
                         local dy = y - originY;
                         if(dx * dx + dy * dy > radius * radius) continue;
 
+                        /*
                         local val = mMapData_.voxValueForCoord(x, y);
                         local voxValue = val & 0xFF;
 
                         if(x == originX && y == originY){
                             placeData.forceZ <- altitudeToZPos(voxValue);
                         }
+                        */
 
-                        local writeVal = val & (0xFFFFFF00);
-                        writeVal = writeVal | 0;
-                        mMapData_.writeVoxValueForCoord(x, y, writeVal);
+                        local val = mMapData_.secondaryValueForCoord(x, y);
+                        val = val | SKIP_DRAW_TERRAIN_VOXEL_FLAG;
+                        mMapData_.writeSecondaryValueForCoord(x, y, val);
                     }
                 }
             }

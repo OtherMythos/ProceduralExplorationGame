@@ -370,6 +370,13 @@ namespace ProceduralExplorationGameCore{
                 AV::uint32 altitude = *reinterpret_cast<AV::uint32*>(&vox) & 0xFFFF;
                 AV::uint8 v = (*reinterpret_cast<AV::uint32*>(&vox) >> 16) & 0xFF;
 
+                AV::uint8 flags = 0x0;
+                if(voxSecondary & SKIP_DRAW_TERRAIN_VOXEL_FLAG){
+                    flags = 0x1;
+                    //Ensure the face merger doesn't get to it, although if 0 already this might not work....
+                    v = 0;
+                }
+
                 AV::uint32 yInverse = y;
 
                 //TODO shift this logic off somewhere else in memory.
@@ -393,6 +400,7 @@ namespace ProceduralExplorationGameCore{
                     faceContainer.z = altitude;
                     faceContainer.faceMask = f;
                     faceContainer.regionId = regionId;
+                    faceContainer.flags = flags;
 
                     outFaces.outFaces.push_back(faceContainer);
                 }
@@ -428,7 +436,7 @@ namespace ProceduralExplorationGameCore{
 
                 AV::uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
                 (*bufEntry.mVertsWritePtr++) = val;
-                val = f << 29 | w.vox;
+                val = f << 29 | w.vox | static_cast<AV::uint32>(w.flags) << 16;
                 (*bufEntry.mVertsWritePtr++) = val;
                 (*bufEntry.mVertsWritePtr++) = 0x0;
                 //(*bufEntry.mVertsWritePtr++) = 0x0;

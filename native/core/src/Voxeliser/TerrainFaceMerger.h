@@ -24,6 +24,8 @@ namespace ProceduralExplorationGameCore{
         AV::uint8 faceMask;
         VoxelAnimValue anim;
         AV::uint8 regionId;
+        //Generic flags object
+        AV::uint8 flags;
     };
     struct OutputFaces{
         std::vector<WrappedFaceContainer> outFaces;
@@ -41,8 +43,9 @@ namespace ProceduralExplorationGameCore{
             static_cast<AV::uint64>(c.y) << 8 |
             static_cast<AV::uint64>(c.z) << 16 |
             static_cast<AV::uint64>(c.vox) << 24 |
-            static_cast<AV::uint64>(c.faceMask) << 32 |
-            static_cast<AV::uint64>(c.ambientMask) << 35;
+            static_cast<AV::uint64>(c.ambientMask) << 32;
+            static_cast<AV::uint64>(c.flags) << 40 |
+            static_cast<AV::uint64>(c.faceMask) << 48;
     }
 
     static void _unwrapFace(WrappedFace f, WrappedFaceContainer& o){
@@ -50,8 +53,9 @@ namespace ProceduralExplorationGameCore{
         o.y = (f >> 8) & 0xFF;
         o.z = (f >> 16) & 0xFF;
         o.vox = (f >> 24) & 0xFF;
-        o.faceMask = (f >> 32) & 0x7;
-        o.ambientMask = (f >> 35) & 0xFFFF;
+        o.ambientMask = (f >> 32) & 0xFF;
+        o.flags = (f >> 40) & 0xFF;
+        o.faceMask = (f >> 48) & 0x7;
     }
 
     typedef AV::uint8 FaceId;
@@ -67,20 +71,23 @@ namespace ProceduralExplorationGameCore{
         static const FaceIntermediateWrapped INVALID_FACE_INTERMEDIATE;
         struct FaceIntermediateContainer{
             VoxelId v;
-            AV::uint32 a;
+            AmbientMask a;
             RegionId r;
+            AV::uint8 f;
         };
         static FaceIntermediateWrapped _wrapFaceIntermediate(const FaceIntermediateContainer& c){
             return
                 static_cast<AV::uint64>(c.v) |
                 static_cast<AV::uint64>(c.r) << 8 |
-                static_cast<AV::uint64>(c.a) << 32;
+                static_cast<AV::uint64>(c.a) << 16 |
+                static_cast<AV::uint64>(c.f) << 24;
         }
 
         static void _unwrapFaceIntermediate(FaceIntermediateWrapped f, FaceIntermediateContainer& o){
             o.v = f & 0xFF;
             o.r = (f >> 8) & 0xFF;
-            o.a = (f >> 32) & 0xFFFFFFFF;
+            o.a = (f >> 16) & 0xFF;
+            o.f = (f >> 24) & 0xFF;
         }
 
         struct FaceVec3{
