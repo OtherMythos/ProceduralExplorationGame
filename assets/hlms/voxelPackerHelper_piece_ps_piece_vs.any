@@ -204,8 +204,9 @@
 
 		@property(!invisibleTerrain)
 			//Hide voxels only if the terrain is not in the invisible state.
-			if(voxFlags & 0x1){
-				inValues.y = -100000;
+			uint test = voxFlags & uint(0x1);
+			if(test > 0){
+				inValues.y = -100000.0;
 			}
 		@end
 
