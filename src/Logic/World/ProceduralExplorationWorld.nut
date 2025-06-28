@@ -478,7 +478,12 @@
     function getWaterDatablock_(name, outside=false){
         local waterBlock = _hlms.getDatablock(name);
         if(waterBlock == null){
-            waterBlock = _hlms.pbs.createDatablock(name);
+            local blend = _hlms.getBlendblock({
+                "src_blend_factor": _HLMS_SBF_SOURCE_ALPHA,
+                "dst_blend_factor": _HLMS_SBF_ONE_MINUS_SOURCE_ALPHA
+            });
+
+            waterBlock = _hlms.pbs.createDatablock(name, blend);
             //waterBlock.setMacroblock(_hlms.getMacroblock( { "polygonMode": _PM_WIREFRAME } ));
             waterBlock.setMacroblock(_hlms.getMacroblock( { "polygonMode": _PM_SOLID } ));
         }

@@ -89,5 +89,11 @@ namespace ProceduralExplorationGameCore{
     static inline const AV::uint8* REGION_DISTANCE_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
         return UINT8_PTR_FOR_COORD_SECONDARY<const AV::uint8*, const ExplorationMapData*, 2>(mapData, p);
     }
+    static inline AV::uint8* VOXEL_FLAGS_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
+        return UINT8_PTR_FOR_COORD_SECONDARY<AV::uint8*, ExplorationMapData*, 3>(mapData, p);
+    }
+    static inline const AV::uint8* VOXEL_FLAGS_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
+        return UINT8_PTR_FOR_COORD_SECONDARY<const AV::uint8*, const ExplorationMapData*, 3>(mapData, p);
+    }
 
 }

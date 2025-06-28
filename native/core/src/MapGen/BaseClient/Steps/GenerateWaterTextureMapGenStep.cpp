@@ -113,6 +113,12 @@ namespace ProceduralExplorationGameCore{
                         _writeToBuffer(&bMask, 0, 0, 0, 0);
                     }
                 }
+
+                const AV::uint8* flags = VOXEL_FLAGS_PTR_FOR_COORD_CONST(mapData, altitudePoint);
+                if(*flags & 0x1){
+                    b -= 4;
+                    _writeToBuffer(&b, 0, 0, 0, 0);
+                }
             }
         }
 
