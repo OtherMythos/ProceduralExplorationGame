@@ -22,11 +22,23 @@
             _event.transmit(Event.WORLD_PREPARATION_STATE_CHANGE, {"began": true, "ended": false});
             mCurrentStage_ = 0;
 
+            local seed = _random.randInt(1000);
+            local moistureSeed = _random.randInt(1000);
+            local variationSeed = _random.randInt(1000);
+
+            local values = [
+                "PROCEDURAL EXPLORATION SEEDS",
+                "SEED   " + seed,
+                "MOISTURE   " + moistureSeed,
+                "VARIATION   " + variationSeed,
+            ];
+            ::printTextBox(values);
+
             local smallWorld = ::Base.isProfileActive(GameProfile.FORCE_SMALL_WORLD);
             mInputData_ = {
-                "seed": _random.randInt(1000),
-                "moistureSeed": _random.randInt(1000),
-                "variationSeed": _random.randInt(1000),
+                "seed": seed,
+                "moistureSeed": moistureSeed,
+                "variationSeed": variationSeed,
                 "width": smallWorld ? 200 : 600,
                 "height": smallWorld ? 200 : 600,
                 "numRivers": 24,

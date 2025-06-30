@@ -50,13 +50,7 @@
     };
 }
 
-::printVersionInfos <- function(){
-    local infos = getVersionInfo();
-    local strings = [];
-    strings.append(GAME_TITLE.toupper());
-    strings.append(infos.info);
-    strings.append(infos.engineInfo);
-
+::printTextBox <- function(strings){
     local max = 0;
     foreach(i in strings){
         local len = i.len();
@@ -84,6 +78,17 @@
         print(starting + spaces + paddingRight);
     }
     print(decorator);
+}
+
+::printVersionInfos <- function(){
+    local infos = getVersionInfo();
+    local strings = [];
+    strings.append(GAME_TITLE.toupper());
+    strings.append(infos.info);
+    strings.append(infos.engineInfo);
+
+    ::printTextBox(strings);
+
 }
 
 ::randDistanceFromPoint <- function(pos, radius, minRadius=0.0){
