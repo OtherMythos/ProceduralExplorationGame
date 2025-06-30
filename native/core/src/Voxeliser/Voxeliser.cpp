@@ -546,7 +546,7 @@ namespace ProceduralExplorationGameCore{
                             AV::uint32 yy = VERTICES_POSITIONS[fv + 1] + y;
                             AV::uint32 zz = VERTICES_POSITIONS[fv + 2] * (lengthen ? OCEAN_EDGE_LENGTH : 1) + faceAltitude + OCEAN_EDGE_LENGTH + (lengthen ? -(OCEAN_EDGE_LENGTH-1) : 0);
 
-                            AV::uint8 ambient = (ambientMask >> 8 * i) & 0x3;
+                            AV::uint8 ambient = (ambientMask >> 2 * i) & 0x3;
                             assert(ambient >= 0 && ambient <= 3);
 
                             AV::uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
