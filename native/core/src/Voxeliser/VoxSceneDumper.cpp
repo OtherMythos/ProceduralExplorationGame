@@ -366,7 +366,7 @@ namespace ProceduralExplorationGameCore{
 
                         Ogre::uint32 voxelId = originalSecond & 0xFF;
 
-                        Ogre::uint32 norm = Ogre::uint32((originalSecond >> 29) & Ogre::uint32(0x3));
+                        Ogre::uint32 norm = Ogre::uint32((originalSecond >> 29) & Ogre::uint32(0x7));
                         Ogre::uint32 ambient = Ogre::uint32((original >> 30) & Ogre::uint32(0x3));
 
                         Ogre::Vector3 pos = worldTransform * Ogre::Vector3(pos_x, pos_y, pos_z);
