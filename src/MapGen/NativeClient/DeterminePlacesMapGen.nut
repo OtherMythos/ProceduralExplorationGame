@@ -164,7 +164,7 @@
                 }
             }
             if(placeId == PlaceId.GRAVEYARD){
-                mMapData_.applyTerrainVoxelsForPlace("graveyard", originX - mData_.halfX, originY - mData_.halfY);
+                mMapData_.applyTerrainVoxelsForPlace("graveyard", ::basePlacesPath, originX - mData_.halfX, originY - mData_.halfY);
             }
 
             mReturnPlaces_.append(placeData);

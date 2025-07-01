@@ -706,12 +706,14 @@ namespace ProceduralExplorationGameCore{
         SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
 
         const SQChar *mapName;
+        const SQChar *basePath;
         SQInteger xx, yy;
         sq_getstring(vm, 2, &mapName);
-        sq_getinteger(vm, 3, &xx);
-        sq_getinteger(vm, 4, &yy);
+        sq_getstring(vm, 3, &basePath);
+        sq_getinteger(vm, 4, &xx);
+        sq_getinteger(vm, 5, &yy);
 
-        TileDataParser tileData("res://build/assets/places/");
+        TileDataParser tileData(basePath);
         TileDataParser::OutDataContainer out;
         bool result = tileData.readData(&out, mapName, "terrainBlend.txt");
         if(!result) return sq_throwerror(vm, "Unable to find terrainBlend.txt file");
@@ -758,7 +760,7 @@ namespace ProceduralExplorationGameCore{
         AV::ScriptUtils::addFunction(vm, getRegionId, "getRegionId", 2, ".i");
 
         AV::ScriptUtils::addFunction(vm, averageOutAltitude, "averageOutAltitude", 7, ".iiiiii");
-        AV::ScriptUtils::addFunction(vm, applyTerrainVoxelsForPlace, "applyTerrainVoxelsForPlace", 4, ".sii");
+        AV::ScriptUtils::addFunction(vm, applyTerrainVoxelsForPlace, "applyTerrainVoxelsForPlace", 5, ".ssii");
 
         SQObject* tableObj = 0;
         if(B){

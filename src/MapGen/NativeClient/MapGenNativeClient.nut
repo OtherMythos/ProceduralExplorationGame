@@ -3,6 +3,7 @@
 
 function notifyRegistered(data){
     ::basePath <- data.basePath;
+    ::basePlacesPath <- data.basePath + "build/assets/places";
 
     print("Registering");
     _doFile(::basePath + "src/Constants.nut");
