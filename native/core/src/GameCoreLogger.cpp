@@ -6,6 +6,8 @@
     #else
         #include "spdlog/sinks/stdout_color_sinks.h"
     #endif
+#elif defined(TARGET_ANDROID)
+    #include "spdlog/sinks/android_sink.h"
 #else
     #include "spdlog/sinks/stdout_color_sinks.h"
 #endif
@@ -23,6 +25,8 @@ namespace ProceduralExplorationGameCore{
                 _logger = spdlog::stdout_color_mt(loggerName);
             #endif
 
+        #elif defined(TARGET_ANDROID)
+            _logger = spdlog::android_logger_mt(loggerName);
         #else
             _logger = spdlog::stdout_color_mt(loggerName);
         #endif
