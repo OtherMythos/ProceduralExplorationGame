@@ -24,7 +24,7 @@ namespace ProceduralExplorationGameCore{
 
         AV::uint8* regionPtr = REGION_PTR_FOR_COORD(mapData, 0);
         for(int i = 0; i < mapData->width * mapData->height; i++){
-            *regionPtr = 100;
+            *regionPtr = REGION_ID_WATER;
             regionPtr += 4;
         }
 
