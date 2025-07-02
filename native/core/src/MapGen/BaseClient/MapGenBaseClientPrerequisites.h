@@ -15,8 +15,6 @@ namespace ProceduralExplorationGameCore{
     };
     #undef VOXEL_VALUES
 
-    static const RegionId REGION_ID_WATER = 100;
-
     class ExplorationMapInputData : public MapGenDataContainer{
     };
 
@@ -199,20 +197,19 @@ namespace ProceduralExplorationGameCore{
         if(oldRegion == newRegion){
             return;
         }
+
+        std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
         *regionPtr = newRegion;
-        if(oldRegion == INVALID_REGION_ID){
+        regionData[newRegion].coords.push_back(point);
+
+        if(oldRegion == INVALID_REGION_ID || oldRegion == REGION_ID_WATER){
             return;
         }
 
-        std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
-        if(oldRegion < regionData.size()){
-            std::vector<WorldPoint>& coords = regionData[oldRegion].coords;
-            auto it = std::find(coords.begin(), coords.end(), point);
-            assert(it != coords.end());
-            coords.erase(it);
-        }
-
-        regionData[newRegion].coords.push_back(point);
+        std::vector<WorldPoint>& coords = regionData[oldRegion].coords;
+        auto it = std::find(coords.begin(), coords.end(), point);
+        assert(it != coords.end());
+        coords.erase(it);
     }
 
     static const float BLOB_SIZE = 200;

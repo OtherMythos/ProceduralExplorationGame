@@ -19,6 +19,7 @@ namespace ProceduralExplorationGameCore{
     static const LandId INVALID_LAND_ID = 0xFF;
     static const WaterId INVALID_WATER_ID = 0xFF;
     static const WorldPoint INVALID_WORLD_POINT = 0xFFFFFFFF;
+    static const RegionId REGION_ID_WATER = 253;
 
     typedef AV::uint32 DataPointWrapped;
     struct DataPointData{
