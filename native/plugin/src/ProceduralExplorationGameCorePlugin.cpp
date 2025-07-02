@@ -136,6 +136,7 @@ namespace ProceduralExplorationGamePlugin{
         meshManager->_setVaoManager(Ogre::Root::getSingleton().getRenderSystem()->getVaoManager());
         Ogre::VoxMeshItemFactory* factory = OGRE_NEW Ogre::VoxMeshItemFactory();
         Ogre::Root::getSingletonPtr()->addMovableObjectFactory(factory);
+        mMovableFactory = factory;
 
         GameCorePBSHlmsListener* pbsListener = new GameCorePBSHlmsListener();
         Ogre::Hlms *hlmsPbs = Ogre::Root::getSingleton().getHlmsManager()->getHlms( Ogre::HLMS_PBS );
@@ -147,6 +148,17 @@ namespace ProceduralExplorationGamePlugin{
         Ogre::HlmsPbsAVCustom* customPbs = dynamic_cast<Ogre::HlmsPbsAVCustom*>(hlmsPbs);
         assert(customPbs);
         customPbs->registerCustomListener(new HlmsGameCoreCustomHlmsListener());
+    }
+
+    void ProceduralExplorationGameCorePlugin::shutdown(){
+        GAME_CORE_INFO("Shutting down game core plugin");
+
+        Ogre::Root::getSingletonPtr()->removeMovableObjectFactory(mMovableFactory);
+        OGRE_DELETE mMovableFactory;
+        mMovableFactory = 0;
+
+        ProceduralExplorationGameCore::MapGen* mapGen = ProceduralExplorationGameCore::PluginBaseSingleton::getMapGen();
+        delete mapGen;
     }
 
 }

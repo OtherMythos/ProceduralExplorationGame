@@ -32,7 +32,7 @@ namespace Ogre{
                                                    const NameValuePairList* params = 0 );
     public:
         VoxMeshItemFactory() {}
-        ~VoxMeshItemFactory() {}
+        virtual ~VoxMeshItemFactory();
 
         static String FACTORY_TYPE_NAME;
 

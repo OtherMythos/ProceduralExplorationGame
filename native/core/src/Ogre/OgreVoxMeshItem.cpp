@@ -131,6 +131,10 @@ namespace Ogre{
         return FACTORY_TYPE_NAME;
     }
 
+    VoxMeshItemFactory::~VoxMeshItemFactory(){
+        ResourceGroupManager::getSingleton()._unregisterResourceManager("VoxMesh");
+    }
+
     MovableObject* VoxMeshItemFactory::createInstanceImpl( IdType id,
                                                     ObjectMemoryManager *objectMemoryManager,
                                                     SceneManager *manager,
