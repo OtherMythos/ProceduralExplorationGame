@@ -28,4 +28,8 @@ namespace ProceduralExplorationGameCore{
     bool MapGenClient::notifyClaimed(HSQUIRRELVM vm, ExplorationMapData* mapData){
         return false;
     }
+
+    void MapGenClient::destroyMapData(ExplorationMapData* mapData){
+
+    }
 }

@@ -235,6 +235,7 @@
         //local nativeMapData = _gameCore.tableToExplorationMapData(mapData);
         //::currentNativeMapData <- nativeMapData;
         //_gameCore.setNewMapData(nativeMapData);
+        ::currentNativeMapData = null;
         ::currentNativeMapData <- nativeMapData;
         _gameCore.setNewMapData(nativeMapData);
         //TODO would prefer to have the base call further up.
@@ -284,6 +285,9 @@
             i.destroy();
         }
         mRegionEntries_.clear();
+
+        _gameCore.destroyMapData(::currentNativeMapData);
+        ::currentNativeMapData = null;
 
         base.shutdown();
     }

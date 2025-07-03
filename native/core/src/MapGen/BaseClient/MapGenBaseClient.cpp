@@ -89,6 +89,36 @@ namespace ProceduralExplorationGameCore{
         });
     }
 
+    void MapGenBaseClient::destroyMapData(ExplorationMapData* mapData){
+        delete static_cast<AV::uint8*>(mapData->voxelBuffer);
+
+        std::vector<RegionData>* regionData = (mapData->ptr<std::vector<RegionData>>("regionData"));
+        regionData->clear();
+        delete regionData;
+
+        std::vector<PlacedItemData>* placedItemData = (mapData->ptr<std::vector<PlacedItemData>>("placedItems"));
+        placedItemData->clear();
+        delete placedItemData;
+
+        std::vector<RiverData>* riverData = (mapData->ptr<std::vector<RiverData>>("riverData"));
+        riverData->clear();
+        delete riverData;
+
+        std::vector<FloodFillEntry*>* waterData = (mapData->ptr<std::vector<FloodFillEntry*>>("waterData"));
+        for(FloodFillEntry* e : *waterData){
+            delete e;
+        }
+        waterData->clear();
+        delete waterData;
+
+        std::vector<FloodFillEntry*>* landData = (mapData->ptr<std::vector<FloodFillEntry*>>("landData"));
+        for(FloodFillEntry* e : *landData){
+            delete e;
+        }
+        landData->clear();
+        delete landData;
+    }
+
     bool MapGenBaseClient::notifyClaimed(HSQUIRRELVM vm, ExplorationMapData* mapData){
         {
             Ogre::TextureGpu* tex = 0;
@@ -173,6 +203,12 @@ namespace ProceduralExplorationGameCore{
             manager->removeStagingTexture( stagingTexture );
             stagingTexture = 0;
         }
+
+        //Destroy the buffers here as they're not needed anymore
+        float* waterTextureBuffer = (mapData->ptr<float>("waterTextureBuffer"));
+        delete waterTextureBuffer;
+        float* waterTextureBufferMask = (mapData->ptr<float>("waterTextureBufferMask"));
+        delete waterTextureBufferMask;
 
         return false;
     }

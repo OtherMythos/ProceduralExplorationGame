@@ -123,6 +123,14 @@ namespace ProceduralExplorationGameCore{
         return idx;
     }
 
+    void MapGen::destroyMapData(ExplorationMapData* data){
+        for(MapGenClient* c : mActiveClients){
+            c->destroyMapData(data);
+        }
+
+        delete data;
+    }
+
     void MapGen::notifyClientsClaimed_(HSQUIRRELVM vm, ExplorationMapData* data){
         for(MapGenClient* client : mActiveClients){
             const std::string& clientName = client->getName();

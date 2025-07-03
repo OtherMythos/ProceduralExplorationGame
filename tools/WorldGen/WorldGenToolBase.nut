@@ -502,6 +502,11 @@ enum VoxPickerType{
         return outData;
     }
     function generate(){
+        if(mCurrentNativeMapData_ != null){
+            _gameCore.destroyMapData(mCurrentNativeMapData_);
+            mCurrentNativeMapData_ = null;
+        }
+
         local targetSeed = _settings.getUserSetting("seed");
         local targetVariationSeed = _settings.getUserSetting("variationSeed");
         local targetMoistureSeed = _settings.getUserSetting("moistureSeed");

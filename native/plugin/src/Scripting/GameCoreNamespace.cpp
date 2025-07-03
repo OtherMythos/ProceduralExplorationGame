@@ -286,6 +286,21 @@ namespace ProceduralExplorationGamePlugin{
         return 0;
     }
 
+    SQInteger GameCoreNamespace::destroyMapData(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::ExplorationMapData* data;
+        SCRIPT_CHECK_RESULT(ProceduralExplorationGameCore::ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 2, &data));
+
+        ProceduralExplorationGameCore::MapGen* mapGen = ProceduralExplorationGameCore::PluginBaseSingleton::getMapGen();
+        assert(mapGen);
+        if(!mapGen->isFinished()){
+            return sq_throwerror(vm, "Map gen is already processing a map generation");
+        }
+
+        mapGen->destroyMapData(data);
+
+        return 0;
+    }
+
     SQInteger GameCoreNamespace::setCustomPassBufferValue(HSQUIRRELVM vm){
         Ogre::Vector3 val;
         SQInteger result = AV::ScriptGetterUtils::vector3Read(vm, &val);
@@ -689,6 +704,8 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, registerMapGenClient, "registerMapGenClient", 4, ".sst|o");
         AV::ScriptUtils::addFunction(vm, recollectMapGenSteps, "recollectMapGenSteps");
         AV::ScriptUtils::addFunction(vm, setCustomPassBufferValue, "setCustomPassBufferValue", -2, ".n|unn");
+
+        AV::ScriptUtils::addFunction(vm, destroyMapData, "destroyMapData", 2, ".u");
 
         AV::ScriptUtils::addFunction(vm, deepCopyToMapGenVM, "deepCopyToMapGenVM", 3, ".s.");
 

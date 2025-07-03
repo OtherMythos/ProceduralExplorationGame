@@ -21,6 +21,7 @@ namespace ProceduralExplorationGameCore{
         virtual void notifyEnded(ExplorationMapData* mapData);
         virtual bool notifyClaimed(HSQUIRRELVM vm, ExplorationMapData* mapData);
         virtual void notifyRegistered(HSQUIRRELVM vm);
+        virtual void destroyMapData(ExplorationMapData* mapData);
 
     private:
         std::string mName;

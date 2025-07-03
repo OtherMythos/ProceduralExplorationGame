@@ -21,6 +21,9 @@
         local result = _gameCore.checkClaimMapGen();
         if(result != null){
             mMapGenerating_ = false;
+
+            local nativeData = result.data;
+            _gameCore.destroyMapData(nativeData);
         }
     }
 

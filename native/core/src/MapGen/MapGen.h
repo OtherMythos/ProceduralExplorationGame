@@ -29,6 +29,7 @@ namespace ProceduralExplorationGameCore{
         int registerStep(const std::string& markerName, MapGenStep* mapGenStep);
         std::string getNameForStage(int stage);
         bool _removeMarkerStep();
+        void destroyMapData(ExplorationMapData* data);
 
         void registerMapGenClient(const std::string& clientName, MapGenClient* client, HSQUIRRELVM vm=0);
 
