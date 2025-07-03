@@ -386,6 +386,7 @@
         mPlayerStats.shutdown();
         mActionManager.shutdown();
         ::MultiTouchManager.shutdown();
+        mExplorationLogic.shutdown();
     }
 
     function update(){
