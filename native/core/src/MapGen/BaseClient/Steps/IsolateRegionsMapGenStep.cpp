@@ -54,6 +54,10 @@ namespace ProceduralExplorationGameCore{
 
         //Determine if the region is concave.
         if(regionResult[0]->coords.size() == region.coords.size()){
+            //TODO duplication when destroying regionResult.
+            for(FloodFillEntry* e : regionResult){
+                delete e;
+            }
             return;
         }
 
@@ -88,6 +92,10 @@ namespace ProceduralExplorationGameCore{
         newRegion.total = newRegion.coords.size();
 
         isolateRegion(mapData, newRegion, vals);
+
+        for(FloodFillEntry* e : regionResult){
+            delete e;
+        }
     }
 
     void IsolateRegionsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){

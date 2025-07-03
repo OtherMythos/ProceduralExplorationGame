@@ -119,6 +119,15 @@ namespace ProceduralExplorationGameCore{
         delete landData;
     }
 
+    void MapGenBaseClient::notifyEnded(ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+        for(FloodFillEntry* e : workspace->waterData){
+            delete e;
+        }
+        for(FloodFillEntry* e : workspace->landData){
+            delete e;
+        }
+    }
+
     bool MapGenBaseClient::notifyClaimed(HSQUIRRELVM vm, ExplorationMapData* mapData){
         {
             Ogre::TextureGpu* tex = 0;

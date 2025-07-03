@@ -27,13 +27,21 @@ namespace ProceduralExplorationGameCore{
     }
 
     MapGen::~MapGen(){
+        _destroyMapGenSteps();
         for(MapGenClient* c : mActiveClients){
             delete c;
         }
     }
 
-    void MapGen::recollectMapGenSteps(){
+    void MapGen::_destroyMapGenSteps(){
+        for(MapGenStep* s : mMapGenSteps){
+            delete s;
+        }
         mMapGenSteps.clear();
+    }
+
+    void MapGen::recollectMapGenSteps(){
+        _destroyMapGenSteps();
         collectMapGenSteps_(mMapGenSteps);
     }
 
@@ -59,6 +67,7 @@ namespace ProceduralExplorationGameCore{
         auto it = mMapGenSteps.begin();
         while(it != mMapGenSteps.end()){
             if((*it)->isMarkerStep()){
+                delete *it;
                 mMapGenSteps.erase(it);
                 return false;
             }
@@ -105,9 +114,9 @@ namespace ProceduralExplorationGameCore{
         }
     }
 
-    void MapGen::notifyClientsEnded_(ExplorationMapData* data){
+    void MapGen::notifyClientsEnded_(ExplorationMapData* data, ExplorationMapGenWorkspace* workspace){
         for(MapGenClient* client : mActiveClients){
-            client->notifyEnded(data);
+            client->notifyEnded(data, workspace);
         }
     }
 
@@ -166,7 +175,7 @@ namespace ProceduralExplorationGameCore{
             GAME_CORE_INFO("Time taken for stage '{}' was {}", steps[i]->getName(), t.getTimeTotal());
             mCurrentStage++;
         }
-        notifyClientsEnded_(mMapData);
+        notifyClientsEnded_(mMapData, &workspace);
         tt.stop();
         GAME_CORE_INFO("Total time for map gen was {}", tt.getTimeTotal());
     }

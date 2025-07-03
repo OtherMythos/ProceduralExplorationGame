@@ -21,7 +21,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void MapGenClient::notifyEnded(ExplorationMapData* mapData){
+    void MapGenClient::notifyEnded(ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
 
     }
 

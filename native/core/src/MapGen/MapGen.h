@@ -14,6 +14,7 @@ namespace ProceduralExplorationGameCore{
 
     class MapGenClient;
     class MapGenStep;
+    struct ExplorationMapGenWorkspace;
 
     class MapGen{
     public:
@@ -48,6 +49,8 @@ namespace ProceduralExplorationGameCore{
         const ExplorationMapInputData* mMapInputData;
         int getIndexForMarker(const std::string& markerName);
 
+        void _destroyMapGenSteps();
+
         struct ThreadInput{
             const ExplorationMapInputData* input;
             const std::vector<MapGenStep*>* steps;
@@ -56,7 +59,7 @@ namespace ProceduralExplorationGameCore{
         void collectMapGenSteps_(std::vector<MapGenStep*>& steps);
 
         void notifyClientsBegan_(const ExplorationMapInputData* input);
-        void notifyClientsEnded_(ExplorationMapData* data);
+        void notifyClientsEnded_(ExplorationMapData* data, ExplorationMapGenWorkspace* workspace);
         void notifyClientsClaimed_(HSQUIRRELVM vm, ExplorationMapData* data);
 
     public:
