@@ -18,7 +18,7 @@ class AssetModuleGox(AssetModule):
         retPath = filePath.with_suffix(".obj")
         outputTarget = self.prepareOutputDirectoryForFile(retPath, True)
 
-        self.goxelExportToObj(filePath, outputTarget)
+        #self.goxelExportToObj(filePath, outputTarget)
 
         meshPath = filePath.with_suffix(".mesh.xml")
         actualMeshPath = self.prepareOutputDirectoryForFile(meshPath, True)
@@ -55,6 +55,8 @@ class AssetModuleGox(AssetModule):
                 print(retPath)
                 voxMeshTarget = self.prepareOutputDirectoryForFile(retPath, True)
                 self.exportToVoxMesh(goxelTxtTarget, voxMeshTarget, extraFlags)
+
+                goxelTxtTarget.unlink()
         else:
             retPath = filePath.with_suffix(".txt")
             goxelTxtTarget = self.prepareOutputDirectoryForFile(retPath, True)
@@ -63,6 +65,8 @@ class AssetModuleGox(AssetModule):
             retPath = filePath.with_suffix(".voxMesh")
             voxMeshTarget = self.prepareOutputDirectoryForFile(retPath, True)
             self.exportToVoxMesh(goxelTxtTarget, voxMeshTarget, extraFlags)
+
+            goxelTxtTarget.unlink()
 
     def flip_yz(self, v_line):
         parts = v_line.strip().split()
