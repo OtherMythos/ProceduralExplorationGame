@@ -195,11 +195,13 @@
 		uint ambient = uint((original >> 30) & uint(0x3));
 
 		@property(treeVertices)
-			uint voxel = ((originalSecond >> 8) & uint(0x3));
-			float mod = float(voxel) / 3;
-			inValues.y += sin(inValues.y*600 + passBuf.time) * 0.05 * mod;
-			inValues.z += cos(inValues.z*600 + passBuf.time) * 0.10 * mod;
-			inValues.x += sin(inValues.x*600 + passBuf.time) * 0.05 * mod;
+			@property( !hlms_shadowcaster || !hlms_shadow_uses_depth_texture || alpha_test || exponential_shadow_maps )
+				uint voxel = ((originalSecond >> 8) & uint(0x3));
+				float mod = float(voxel) / 3;
+				inValues.y += sin(inValues.y*600 + passBuf.time) * 0.05 * mod;
+				inValues.z += cos(inValues.z*600 + passBuf.time) * 0.10 * mod;
+				inValues.x += sin(inValues.x*600 + passBuf.time) * 0.05 * mod;
+			@end
 		@end
 
 		@property(!invisibleTerrain)
