@@ -44,11 +44,9 @@ enum MapVoxelTypes{
     DIRT_EXP_FIELD,
     SAND_EXP_FIELD,
 
-    EDGE = 0x40,
-    RIVER = 0x20,
+    //EDGE = 0x40,
+    //RIVER = 0x20,
 };
-//The mask is used to include the edge and river flags.
-const MAP_VOXEL_MASK = 0x1F;
 
 enum BiomeId{
     NONE,
@@ -91,6 +89,7 @@ enum RegionMeta{
 
 const DO_NOT_PLACE_ITEMS_VOXEL_FLAG = 0x1000000;
 const SKIP_DRAW_TERRAIN_VOXEL_FLAG = 0x2000000;
+const RIVER_VOXEL_FLAG = 0x4000000;
 
 /**
  * Generally aestetic things like trees, rocks, etc.

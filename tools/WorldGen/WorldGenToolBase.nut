@@ -462,7 +462,7 @@ enum VoxPickerType{
                 local vox = buf.readn('i')
                 local voxFloat = (vox & 0xFF).tofloat();
                 local altitude = ((voxFloat / 0xFF) * depth).tointeger();
-                local voxelMeta = (vox >> 8) & MAP_VOXEL_MASK;
+                local voxelMeta = (vox >> 8);
                 if(voxFloat <= mCurrentMapData_.seaLevel) voxelMeta = 5;
                 for(local i = 0; i < altitude; i++){
                     voxData[x + (y * width) + (i*width*height)] = voxVals[voxelMeta];

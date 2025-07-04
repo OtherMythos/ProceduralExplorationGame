@@ -45,7 +45,7 @@ namespace ProceduralExplorationGameCore{
         AV::uint8 altitude = static_cast<AV::uint8>(vox & 0xFF);
         RegionId regionId = static_cast<AV::uint8>((secondaryVox >> 8) & 0xFF);
         AV::uint8 regionDistance = static_cast<AV::uint8>((secondaryVox >> 16) & 0xFF);
-        AV::uint8 voxelMeta = static_cast<AV::uint8>((vox >> 8) & MAP_VOXEL_MASK);
+        AV::uint8 voxelMeta = static_cast<AV::uint8>((vox >> 8));
         WaterId waterGroup = static_cast<AV::uint8>((vox >> 16) & 0xFF);
 
         static const float OPACITY = 1.0f;
@@ -53,7 +53,7 @@ namespace ProceduralExplorationGameCore{
         AV::uint32 drawVal = Ogre::ColourValue::Black.getAsABGR();
 
         if(drawOptions & (1 << (size_t)MapViewerDrawOptions::GROUND_TYPE)){
-            if((vox >> 8) & (size_t)MapVoxelTypes::RIVER){
+            if(secondaryVox & RIVER_VOXEL_FLAG){
                 drawVal = valueColours[(size_t)MapViewerColours::FRESH_WATER];
             }else{
                 drawVal = valueColours[voxelMeta];
@@ -173,11 +173,11 @@ namespace ProceduralExplorationGameCore{
                     continue;
                 }
 
-                AV::uint8 voxelMeta = ((vox >> 8) & 0xFF);
-                if(voxelMeta & static_cast<AV::uint8>(MapVoxelTypes::RIVER)){
+                if(voxSecondary & RIVER_VOXEL_FLAG){
                     (*texPtr++) = valueColours[(size_t)MapViewerColours::FRESH_WATER];
                 }else{
-                    (*texPtr++) = valueColours[(size_t)voxelMeta & MAP_VOXEL_MASK];
+                    AV::uint8 voxelMeta = ((vox >> 8) & 0xFF);
+                    (*texPtr++) = valueColours[(size_t)voxelMeta];
                 }
 
             }

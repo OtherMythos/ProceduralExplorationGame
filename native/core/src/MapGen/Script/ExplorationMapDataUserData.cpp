@@ -357,8 +357,8 @@ namespace ProceduralExplorationGameCore{
 
         WorldPoint p = WRAP_WORLD_POINT(x, y);
 
-        AV::uint32* worldPtr = FULL_PTR_FOR_COORD(mapData, p);
-        if(*worldPtr & (static_cast<AV::uint32>(MapVoxelTypes::RIVER) << 8)){
+        AV::uint32* worldPtr = FULL_PTR_FOR_COORD_SECONDARY(mapData, p);
+        if(*worldPtr & RIVER_VOXEL_FLAG){
             sq_pushbool(vm, true);
             return 1;
         }

@@ -46,7 +46,7 @@ namespace ProceduralExplorationGameCore{
         }
     }
     void GRASS_LAND_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture){
-        if(flags & static_cast<AV::uint8>(MapVoxelTypes::RIVER)) return;
+        //if(flags & static_cast<AV::uint8>(MapVoxelTypes::RIVER)) return;
         if(altitude >= mapData->seaLevel + 10){
             if(processRValue(mapData, x, y, moisture >= 150 ? 1 : 6)){
                 if(moisture < 150 && mapGenRandomIntMinMax(0, 3) == 0){
@@ -73,7 +73,7 @@ namespace ProceduralExplorationGameCore{
         return MapVoxelTypes::TREES;
     }
     void GRASS_FOREST_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture){
-        if(flags & static_cast<AV::uint8>(MapVoxelTypes::RIVER)) return;
+        //if(flags & static_cast<AV::uint8>(MapVoxelTypes::RIVER)) return;
         //if(altitude >= mapData->seaLevel + 10){
             if(processRValue(mapData, x, y, 1)){
                 PLACE_ITEM(PlacedItemId::TREE);
@@ -87,7 +87,7 @@ namespace ProceduralExplorationGameCore{
         return MapVoxelTypes::TREES_CHERRY_BLOSSOM;
     }
     void CHERRY_BLOSSOM_FOREST_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture){
-        if(flags & static_cast<AV::uint8>(MapVoxelTypes::RIVER)) return;
+        //if(flags & static_cast<AV::uint8>(MapVoxelTypes::RIVER)) return;
         if(altitude < mapData->seaLevel + 10) return;
         if(processRValue(mapData, x, y, 1)){
             PLACE_ITEM(PlacedItemId::CHERRY_BLOSSOM_TREE);
@@ -114,7 +114,7 @@ namespace ProceduralExplorationGameCore{
         return MapVoxelTypes::SAND;
     }
     void DESERT_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture){
-        if(flags & static_cast<AV::uint8>(MapVoxelTypes::RIVER)) return;
+        //if(flags & static_cast<AV::uint8>(MapVoxelTypes::RIVER)) return;
         //if(altitude >= mapData->seaLevel + 10){
             if(processRValue(mapData, x, y, 12)){
                 PLACE_ITEM(PlacedItemId::CACTUS);

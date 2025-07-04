@@ -56,16 +56,14 @@ namespace ProceduralExplorationGameCore{
                 }
 
                 AV::uint8 moisture = fullSecondaryVox & 0xFF;
-                AV::uint8 flags = (fullVox >> 8) & ~MAP_VOXEL_MASK;
                 RegionId regionId = (fullSecondaryVox >> 8) & 0xFF;
-                AV::uint8 regionDistance = (fullSecondaryVox >> 16) & 0xFF;
 
                 const Biome& b = Biome::getBiomeForId(regionData[regionId].type);
 
                 Biome::DetermineVoxFunction voxFunc = b.getVoxFunction();
                 assert(voxFunc != 0);
                 MapVoxelTypes finalVox = (*voxFunc)(altitude, moisture, mapData);
-                *(reinterpret_cast<AV::uint8*>(fullVoxPtrWrite)+1) |= (static_cast<AV::uint8>(finalVox) & static_cast<AV::uint8>(MAP_VOXEL_MASK));
+                *(reinterpret_cast<AV::uint8*>(fullVoxPtrWrite)+1) |= (static_cast<AV::uint8>(finalVox));
             }
         }
     }

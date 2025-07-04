@@ -263,10 +263,11 @@ enum MapViewerColours{
                     }
 
                     local voxelMeta = (voxVal >> 8);
-                    if(voxelMeta & MapVoxelTypes.RIVER){
+                    //if(voxelMeta & MapVoxelTypes.RIVER){
+                    if(false){
                         textureBox.writen(colourFreshWater, 'i');
                     }else{
-                        textureBox.writen(mColours_[voxelMeta & MAP_VOXEL_MASK], 'i');
+                        textureBox.writen(mColours_[voxelMeta], 'i');
                     }
                 }
 
@@ -305,13 +306,14 @@ enum MapViewerColours{
     function _getColourForVox(xVox, yVox){
         local voxVal = mMapData_.voxelBuffer.readn('i');
         local altitude = voxVal & 0xFF;
-        local voxelMeta = (voxVal >> 8) & MAP_VOXEL_MASK;
+        local voxelMeta = (voxVal >> 8);
         local waterGroup = (voxVal >> 16) & 0xFF;
 
         local drawVal = 0x0;
 
         if(mDrawOptions_[MapViewerDrawOptions.GROUND_TYPE]){
-            if((voxVal >> 8) & MapVoxelTypes.RIVER){
+            //if((voxVal >> 8) & MapVoxelTypes.RIVER){
+            if(false){
                 drawVal = mColours_[MapViewerColours.FRESH_WATER];
             }else{
                 drawVal = mColours_[voxelMeta];

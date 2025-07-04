@@ -58,9 +58,13 @@ namespace ProceduralExplorationGameCore{
                 if(fullSecondaryVox & DO_NOT_PLACE_ITEMS_VOXEL_FLAG){
                     continue;
                 }
+                if(fullSecondaryVox & RIVER_VOXEL_FLAG){
+                    continue;
+                }
 
                 AV::uint8 moisture = fullSecondaryVox & 0xFF;
-                AV::uint8 flags = (fullVox >> 8) & ~MAP_VOXEL_MASK;
+                //TODO remove the need for flags
+                AV::uint8 flags = 0;
                 RegionId regionId = (fullSecondaryVox >> 8) & 0xFF;
 
                 if(regionId >= regionData.size()) continue;

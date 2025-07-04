@@ -56,7 +56,6 @@ namespace ProceduralExplorationGameCore{
                 }
 
                 AV::uint8 moisture = fullSecondaryVox & 0xFF;
-                AV::uint8 flags = (fullVox >> 8) & ~MAP_VOXEL_MASK;
                 RegionId regionId = (fullSecondaryVox >> 8) & 0xFF;
                 AV::uint8 regionDistance = (fullSecondaryVox >> 16) & 0xFF;
 
