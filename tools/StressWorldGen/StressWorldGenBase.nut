@@ -34,6 +34,14 @@
 
         mMapNumCount_++;
 
+        local values = [
+            "PROCEDURAL EXPLORATION SEEDS",
+            "SEED   " + targetSeed,
+            "MOISTURE   " + targetMoistureSeed,
+            "VARIATION   " + targetVariationSeed,
+        ];
+        ::printTextBox(values);
+
         return {
             "seed": targetSeed,
             "variationSeed": targetVariationSeed,
