@@ -204,8 +204,8 @@
 
     }
 
-    function writeValueToFile_(mapName, altitude){
-        local filePath = "res://../../assets/maps/" + mapName + "/" + (altitude ? "terrain.txt" : "terrainBlend.txt");
+    function writeValueToFile_(filePath, altitude){
+        printf("Writing %s to file %s", altitude ? "terrain altitude" : "terrain blend", filePath);
         if(_system.exists(filePath)){
             _system.remove(filePath);
             _system.createBlankFile(filePath);
@@ -220,6 +220,14 @@
             }
             outFile.write("\n");
         }
+    }
+
+    function performAltitudeSave(filePath){
+        writeValueToFile_(filePath, true);
+    }
+
+    function performBlendSave(filePath){
+        writeValueToFile_(filePath, false);
     }
 
     function performSave(mapName){

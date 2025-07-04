@@ -91,10 +91,12 @@ namespace ProceduralExplorationGameCore{
         outData->altitudeValues.clear();
         outData->voxelValues.clear();
 
-        if(!readMapDataFile_<AV::uint8>(outData, outPath, "terrain.txt", outData->altitudeValues, mapName)) return false;
-        if(!readMapDataFile_<VoxelId>(outData, outPath, "terrainBlend.txt", outData->voxelValues, mapName)) return false;
+        readMapDataFile_<AV::uint8>(outData, outPath, "terrain.txt", outData->altitudeValues, mapName);
+        readMapDataFile_<VoxelId>(outData, outPath, "terrainBlend.txt", outData->voxelValues, mapName);
 
-        if(outData->altitudeValues.size() != outData->voxelValues.size()) return false;
+        if(outData->altitudeValues.size() != 0 && outData->altitudeValues.size() != 0){
+            if(outData->altitudeValues.size() != outData->voxelValues.size()) return false;
+        }
 
         return true;
     }

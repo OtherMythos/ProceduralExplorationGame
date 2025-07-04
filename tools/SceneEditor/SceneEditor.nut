@@ -270,7 +270,7 @@ enum SceneEditorMapType{
             mSceneTree.debugPrint();
         }
 
-        _gameCore.setMapsDirectory("res://../../assets/maps/");
+        _gameCore.setMapsDirectory(getMapTypeBasePath(mTargetMap));
 
         _gameCore.beginParseVisitedLocation(targetMap.getName());
         local mapClaim = null;
@@ -384,19 +384,25 @@ enum SceneEditorMapType{
         regenerateTileGrid();
     }
 
-    function getFileForMapTarget(targetMap, fileName){
+    function getMapTypeBasePath(targetMap){
         local val = null;
-        if(targetMap.getMapType() == SceneEditorMapType.MAP){
-            val = "res://../../assets/maps/%s/%s"
+        local mapType = targetMap.getMapType();
+        if(mapType == SceneEditorMapType.MAP){
+            val = "res://../../assets/maps/"
         }
-        else if(targetMap.getMapType() == SceneEditorMapType.PLACE){
-            val = "res://../../assets/places/%s/%s"
+        else if(mapType == SceneEditorMapType.PLACE){
+            val = "res://../../assets/places/"
         }
         if(val == null){
-            return null;
+            throw "Map type could not be determined";
         }
+        return val;
+    }
 
-        return format(val, targetMap.getName(), fileName);
+    function getFileForMapTarget(targetMap, fileName){
+        local rootPath = getMapTypeBasePath(targetMap) + "%s/%s";
+
+        return format(rootPath, targetMap.getName(), fileName);
     }
 
     function attemptLoadSceneTree(targetMap){
@@ -539,6 +545,7 @@ enum SceneEditorMapType{
 
     function shutdown(){
         guiFrameworkBase.serialiseWindowStates("user://windowState.json");
+        mEditorBase.shutdown();
     }
 
     function setTileToGrid(x, y, val){
@@ -732,7 +739,9 @@ enum SceneEditorMapType{
     function notifyBusEvent(event, data){
         if(event == SceneEditorFramework_BusEvents.REQUEST_SAVE){
             if(mVisitedPlacesMapData.terrainActive()){
-                mTerrainChunkManager.performSave(mTargetMap.getName());
+                mTerrainChunkManager.performAltitudeSave(getFileForMapTarget(mTargetMap, "terrain.txt"));
+                mTerrainChunkManager.performBlendSave(getFileForMapTarget(mTargetMap, "terrainBlend.txt"));
+                //mTerrainChunkManager.performSave(mTargetMap.getName());
             }
 
             local filePath = getFileForMapTarget(mTargetMap, "dataPoints.txt");

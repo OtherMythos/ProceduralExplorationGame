@@ -26,6 +26,7 @@ function start(){
     _doFile("res://SceneEditorFPSCamera.nut");
     _doFile("res://../../src/Constants.nut");
     _doFile("res://../../src/Helpers.nut");
+    _doFile("res://../../src/MapGen/Exploration/Generator/MapConstants.h.nut");
     _doFile("res://../../src/Logic/World/TerrainChunkManager.nut");
     _doFile("res://../../src/Logic/World/TileGridPlacer.nut");
 
