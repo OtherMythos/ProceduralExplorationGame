@@ -16,7 +16,9 @@
             local targetY = y - (chunkY * mChunkHeight_);
 
             assert(mCurrentAction_ != null);
-            mCurrentAction_.populateForCoord(x, y, chunkX, chunkY, mMapData_.getVoxelForCoord(x, y), values[0]);
+            local voxVal = mMapData_.getVoxelForCoord(x, y);
+            if(voxVal == null) return;
+            mCurrentAction_.populateForCoord(x, y, chunkX, chunkY, voxVal, values[0]);
             mMapData_.setVoxelForCoord(x, y, values[0]);
             recreateChunkItem(chunkX, chunkY);
         }
@@ -34,7 +36,9 @@
             local targetY = y - (chunkY * mChunkHeight_);
 
             assert(mCurrentAction_ != null);
-            mCurrentAction_.populateForCoord(x, y, chunkX, chunkY, mMapData_.getAltitudeForCoord(x, y), values[0]);
+            local altitudeVal = mMapData_.getAltitudeForCoord(x, y);
+            if(altitudeVal == null) return;
+            mCurrentAction_.populateForCoord(x, y, chunkX, chunkY, altitudeVal, values[0]);
             mMapData_.setAltitudeForCoord(x, y, values[0]);
             recreateChunkItem(chunkX, chunkY);
         }
