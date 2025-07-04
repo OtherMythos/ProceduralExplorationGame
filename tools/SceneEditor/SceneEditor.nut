@@ -479,6 +479,9 @@ enum SceneEditorMapType{
                 //local ray = _camera.getCameraToViewportRay(mousePos.x, mousePos.y);
                 //local point = ray.intersects(mTestPlane_);
                 local point = mCurrentHitPosition;
+                if(point == null){
+                    point = mCurrentHitPositionPlane;
+                }
                 if(point != null){
                     //local worldPoint = ray.getPoint(point);
 
