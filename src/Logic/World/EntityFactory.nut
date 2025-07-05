@@ -614,8 +614,10 @@
         local placeNode = mBaseSceneNode_.createChildSceneNode();
         placeNode.setPosition(targetPos);
         placeNode.setScale(0.4, 0.4, 0.4);
-        local item = _scene.createItem("cube");
-        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
+        //local item = _gameCore.createVoxMeshItem("EXPOrbMesh");
+        local item = _scene.createItem(::expOrbMesh);
+        _gameCore.writeFlagsToItem(item, 0x1);
+        item.setDatablock("baseVoxelMaterial");
         local animNode = placeNode.createChildSceneNode();
         animNode.attachObject(item);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](placeNode, true));
@@ -684,8 +686,9 @@
 
         local parentNode = mBaseSceneNode_.createChildSceneNode();
         parentNode.setPosition(targetPos);
-        local item = _scene.createItem("cube");
-        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
+        local item = _scene.createItem(::expOrbMesh);
+        _gameCore.writeFlagsToItem(item, 0x1);
+        item.setDatablock("baseVoxelMaterial");
         parentNode.setScale(1.5, 1.5, 1.5);
         local animNode = parentNode.createChildSceneNode();
         animNode.attachObject(item);

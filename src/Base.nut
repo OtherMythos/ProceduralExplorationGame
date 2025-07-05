@@ -386,6 +386,8 @@
         mActionManager.shutdown();
         ::MultiTouchManager.shutdown();
         mExplorationLogic.shutdown();
+
+        ::expOrbMesh = null;
     }
 
     function update(){
@@ -415,15 +417,11 @@
     }
 
     function setupBaseMeshes(){
-        /*
-        local voxMesh = VoxToMesh();
-
         local voxData = array(1, 205);
 
-        _gameCore.voxeliseMeshForVoxelData("EXPOrbMesh", voxData, 1, 1, 1);
+        ::expOrbMesh <- _gameCore.voxeliseMeshForVoxelData("EXPOrbMesh", voxData, 1, 1, 1);
         voxData[0] = 200;
         _gameCore.voxeliseMeshForVoxelData("HealthOrbMesh", voxData, 1, 1, 1);
-        */
     }
 
     function setupBaseMaterials(){
