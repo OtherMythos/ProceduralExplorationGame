@@ -280,7 +280,7 @@ enum SceneEditorMapType{
         mVisitedPlacesMapData = mapClaim;
 
         mTerrainChunkManager = ::SceneEditorTerrainChunkManager(0);
-        mTerrainChunkManager.setup(mapClaim, 4);
+        mTerrainChunkManager.setup(mapClaim, targetMap.getMapType() == SceneEditorMapType.PLACE ? 1 : 4);
         mTerrainChunkManager.generateInitialItems();
         local targetParent = _scene.getRootSceneNode().createChildSceneNode();
         mTerrainChunkManager.setupParentNode(targetParent);
