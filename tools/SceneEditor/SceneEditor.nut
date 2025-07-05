@@ -284,6 +284,9 @@ enum SceneEditorMapType{
         mTerrainChunkManager.generateInitialItems();
         local targetParent = _scene.getRootSceneNode().createChildSceneNode();
         mTerrainChunkManager.setupParentNode(targetParent);
+        if(targetMap.getMapType() == SceneEditorMapType.PLACE){
+            targetParent.setPosition(-0.75, 0, 0.75);
+        }
 
         mTileGridPlacer = ::TileGridPlacer([
             "InteriorFloor.voxMesh", "InteriorWall.voxMesh", "InteriorWallCorner.voxMesh"
@@ -490,9 +493,13 @@ enum SceneEditorMapType{
                 }
                 if(point != null){
                     //local worldPoint = ray.getPoint(point);
+                    local offset = 0;
+                    if(mTargetMap.getMapType() == SceneEditorMapType.PLACE){
+                        offset = 0.75;
+                    }
 
-                    local chunkX = point.x.tointeger();
-                    local chunkY = -point.z.tointeger();
+                    local chunkX = (point.x + offset).tointeger();
+                    local chunkY = -((point.z - offset).tointeger());
 
                     if(_input.getMouseButton(_MB_LEFT)){
                         if(!mTerrainEditActive_){
@@ -676,6 +683,7 @@ enum SceneEditorMapType{
 
     function setEditTerrainColourValue(value){
         mEditTerrainColourValue = value;
+        if(mWindowTerrainTool_ != null) mWindowTerrainTool_.refreshButtons();
     }
 
     function setEditTerrainHeightValue(height){
