@@ -21,7 +21,6 @@ function start(){
     ::EnumDef.commitEnums();
     _doFile("res://../../src/Content/ItemDefs.nut");
 
-    _doFile("res://../../src/Util/VoxToMesh.nut");
     _doFile("res://../../src/Character/CharacterModel.nut");
     _doFile("res://../../src/Character/CharacterModelAnimations.nut");
     _doFile("res://../../src/Character/CharacterGenerator.nut");

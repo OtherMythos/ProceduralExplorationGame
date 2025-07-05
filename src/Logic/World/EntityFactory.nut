@@ -614,7 +614,7 @@
         local placeNode = mBaseSceneNode_.createChildSceneNode();
         placeNode.setPosition(targetPos);
         placeNode.setScale(0.4, 0.4, 0.4);
-        local item = _scene.createItem("EXPOrbMesh");
+        local item = _scene.createItem("cube");
         item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         local animNode = placeNode.createChildSceneNode();
         animNode.attachObject(item);
@@ -684,7 +684,7 @@
 
         local parentNode = mBaseSceneNode_.createChildSceneNode();
         parentNode.setPosition(targetPos);
-        local item = _scene.createItem("EXPOrbMesh");
+        local item = _scene.createItem("cube");
         item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         parentNode.setScale(1.5, 1.5, 1.5);
         local animNode = parentNode.createChildSceneNode();
@@ -784,7 +784,7 @@
 
         local parentNode = mBaseSceneNode_.createChildSceneNode();
         parentNode.setPosition(targetPos);
-        local item = _scene.createItem("EXPOrbMesh");
+        local item = _scene.createItem("cube");
         item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         local animNode = parentNode.createChildSceneNode();
         animNode.attachObject(item);

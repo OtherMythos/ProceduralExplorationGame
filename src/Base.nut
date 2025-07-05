@@ -102,7 +102,6 @@
     function loadFiles(){
         _doFile("res://src/System/EnumDef.nut");
         _doFile("res://src/System/InputManager.nut");
-        _doFile("res://src/Util/VoxToMesh.nut");
         _doFile("res://src/Util/IdPool.nut");
         _doFile("res://src/Util/VersionPool.nut");
 
@@ -416,6 +415,7 @@
     }
 
     function setupBaseMeshes(){
+        /*
         local voxMesh = VoxToMesh();
 
         local voxData = array(1, 205);
@@ -423,6 +423,7 @@
         _gameCore.voxeliseMeshForVoxelData("EXPOrbMesh", voxData, 1, 1, 1);
         voxData[0] = 200;
         _gameCore.voxeliseMeshForVoxelData("HealthOrbMesh", voxData, 1, 1, 1);
+        */
     }
 
     function setupBaseMaterials(){

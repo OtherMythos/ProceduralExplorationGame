@@ -5,8 +5,6 @@ enum DemoTypes{
     MAX
 };
 
-::USE_NATIVE <- false;
-
 ::setDemoType <- function(id){
     if(::currentDemo != null){
         ::currentDemo.end();
@@ -19,9 +17,6 @@ function widgetCallback(widget, action){
     local idx = widget.getUserId();
     setDemoType(idx);
 }
-function nativeToggleListener(widget, action){
-    USE_NATIVE = widget.getValue();
-};
 function setupGui(){
     ::win <- _gui.createWindow();
     ::win.setPosition(0, 0);
@@ -35,14 +30,6 @@ function setupGui(){
         button.attachListenerForEvent(widgetCallback, _GUI_ACTION_PRESSED);
         button.setUserId(i);
         layout.addCell(button);
-    }
-
-    if(getroottable().rawin("_gameCore")){
-        local nativeToggle = ::win.createCheckbox();
-        nativeToggle.setText("Use native");
-        nativeToggle.attachListenerForEvent(nativeToggleListener, _GUI_ACTION_RELEASED);
-        nativeToggle.setValue(::USE_NATIVE);
-        layout.addCell(nativeToggle);
     }
 
     ::timeTakenLabel <- ::win.createLabel();
@@ -75,17 +62,10 @@ function setupGui(){
     }
 
     function basicMesh(voxData, width, height, depth){
-        local voxMesh = VoxToMesh();
-
-        //If we have access to native voxelisation try that.
         local meshObj = null;
         local t = Timer();
         t.start();
-        if(getroottable().rawin("_gameCore") && USE_NATIVE){
-            meshObj = _gameCore.voxeliseMeshForVoxelData("testVox", voxData, width, height, depth);
-        }else{
-            meshObj = voxMesh.createMeshForVoxelData("testVox", voxData, width, height, depth);
-        }
+        meshObj = _gameCore.voxeliseMeshForVoxelData("testVox", voxData, width, height, depth);
         t.stop();
         mMesh_ = meshObj;
 
@@ -144,7 +124,6 @@ demos[DemoTypes.RANDOM_TO_VOX] = class extends ::VoxDemo{
 }
 
 function start(){
-    _doFile("res://../../src/Util/VoxToMesh.nut");
     _doFile("res://fpsCamera.nut");
 
     fpsCamera.start();
