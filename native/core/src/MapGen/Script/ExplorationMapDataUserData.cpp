@@ -718,12 +718,23 @@ namespace ProceduralExplorationGameCore{
         bool result = tileData.readData(&out, mapName, "terrainBlend.txt");
         if(!result) return sq_throwerror(vm, "Unable to find terrainBlend.txt file");
 
+        TileDataParser::OutDataContainer altitudeOut;
+        result = tileData.readData(&altitudeOut, mapName, "terrain.txt");
+        if(!result) return sq_throwerror(vm, "Unable to find terrain.txt file");
+
         for(AV::uint32 y = 0; y < out.tilesHeight; y++){
             for(AV::uint32 x = 0; x < out.tilesWidth; x++){
+                if(altitudeOut.tileValues[x + y * out.tilesWidth] == 0){
+                    continue;
+                }
+
                 AV::uint32 xxx = x + static_cast<AV::uint32>(xx);
                 AV::uint32 yyy = y + static_cast<AV::uint32>(yy);
                 AV::uint8* voxPtr = VOX_VALUE_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(xxx, yyy));
                 *voxPtr = out.tileValues[x + y * out.tilesWidth];
+
+                AV::uint32* secondaryVoxPtr = FULL_PTR_FOR_COORD_SECONDARY(mapData, WRAP_WORLD_POINT(xxx, yyy));
+                *secondaryVoxPtr |= DRAW_COLOUR_VOXEL_FLAG;
             }
         }
 

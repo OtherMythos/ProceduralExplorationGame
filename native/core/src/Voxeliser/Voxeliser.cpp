@@ -334,7 +334,12 @@ namespace ProceduralExplorationGameCore{
 
                 AV::uint8 altitude = static_cast<AV::uint8>(((voxFloat - (float)seaLevel) / (float)ABOVE_GROUND) * (float)WORLD_DEPTH) + 1;
                 AV::uint8 voxelMeta = (vox >> 8);
-                AV::uint8 v = MapVoxelColour[voxelMeta];
+                AV::uint8 v = 0;
+                if(voxSecondary & DRAW_COLOUR_VOXEL_FLAG){
+                    v = voxelMeta;
+                }else{
+                    v = MapVoxelColour[voxelMeta];
+                }
                 //bool isRiver = (vox >> 8) & static_cast<AV::uint8>(MapVoxelTypes::RIVER);
                 bool isRiver = voxSecondary & RIVER_VOXEL_FLAG;
                 if(isRiver){

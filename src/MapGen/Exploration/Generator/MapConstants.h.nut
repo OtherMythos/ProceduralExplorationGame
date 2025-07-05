@@ -90,6 +90,7 @@ enum RegionMeta{
 const DO_NOT_PLACE_ITEMS_VOXEL_FLAG = 0x1000000;
 const SKIP_DRAW_TERRAIN_VOXEL_FLAG = 0x2000000;
 const RIVER_VOXEL_FLAG = 0x4000000;
+const DRAW_COLOUR_VOXEL_FLAG = 0x8000000;
 
 /**
  * Generally aestetic things like trees, rocks, etc.
