@@ -114,8 +114,8 @@ namespace ProceduralExplorationGameCore{
                     }
                 }
 
-                const AV::uint8* flags = VOXEL_FLAGS_PTR_FOR_COORD_CONST(mapData, altitudePoint);
-                if(*flags & 0x1){
+                const AV::uint32* flags = FULL_PTR_FOR_COORD_SECONDARY(mapData, altitudePoint);
+                if(*flags & SKIP_DRAW_TERRAIN_VOXEL_FLAG){
                     b -= 4;
                     _writeToBuffer(&b, 0, 0, 0, 0);
                 }
