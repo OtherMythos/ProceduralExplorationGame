@@ -17,6 +17,10 @@ if(PLATFORM STREQUAL "OS64" OR PLATFORM STREQUAL "android")
     set(STATIC_ONLY TRUE)
 endif()
 
+if(PLATFORM STREQUAL "android")
+    add_definitions(-DTARGET_ANDROID)
+endif()
+
 include_directories(${ENGINE_SOURCE_PATH}/src)
 list(APPEND CMAKE_MODULE_PATH ${ENGINE_SOURCE_PATH}/CMake)
 add_subdirectory(${ENGINE_SOURCE_PATH}/CMake avEngineSource)
