@@ -43,6 +43,7 @@ include_directories(
 include_directories(${AV_LIBS_DIR}/spdlog/include)
 include_directories(${AV_LIBS_DIR}/filesystem/)
 include_directories(${AV_LIBS_DIR}/tinyxml2/)
+include_directories(${AV_LIBS_DIR}/sds_library/include/sds)
 
 add_subdirectory(core)
 add_subdirectory(plugin)

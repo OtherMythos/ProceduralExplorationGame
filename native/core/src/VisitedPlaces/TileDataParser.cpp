@@ -11,6 +11,9 @@
 #include <vector>
 #include <filesystem>
 
+#include "System/FileSystem/FilePath.h"
+#include "System/Util/SimpleFileParser.h"
+
 namespace ProceduralExplorationGameCore{
 
     TileDataParser::TileDataParser(const std::string& mapsDir) :
@@ -41,13 +44,13 @@ namespace ProceduralExplorationGameCore{
 
         std::stringstream ss;
 
-        std::string line;
-        std::ifstream myfile(filePath);
-        if(!myfile.is_open()){
+        AV::SimpleFileParser fileParser(filePath);
+        if(!fileParser.isOpen()){
             return false;
         }
 
-        while(getline(myfile, line)){
+        std::string line;
+        while(fileParser.getLine(line)){
             size_t width = 0;
             for(size_t i = 0; i < line.size(); i++){
                 const char c = line.at(i);
@@ -81,9 +84,9 @@ namespace ProceduralExplorationGameCore{
 
     template <typename D, typename T>
     bool TileDataParser::readMapDataFile_(D outData, const std::string& resolvedMapsDir, const std::string& fileName, std::vector<T>& destination, const std::string& mapName) const{
-        std::filesystem::path p(resolvedMapsDir);
-        p = p / mapName / fileName;
-        if(!std::filesystem::exists(p)){
+        AV::FilePath p(resolvedMapsDir);
+        p = p / AV::FilePath(mapName) / AV::FilePath(fileName);
+        if(!p.exists()){
             GAME_CORE_ERROR("File at path '{}' does not exist.", p.string());
         }
 
