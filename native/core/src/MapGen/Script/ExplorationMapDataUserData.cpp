@@ -612,7 +612,7 @@ namespace ProceduralExplorationGameCore{
         return 0;
     }
 
-    SQInteger ExplorationMapDataUserData::averageOutAltitude(HSQUIRRELVM vm){
+    SQInteger ExplorationMapDataUserData::averageOutAltitudeRectangle(HSQUIRRELVM vm){
         ExplorationMapData* mapData;
         SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
 
@@ -701,6 +701,87 @@ namespace ProceduralExplorationGameCore{
         return 0;
     }
 
+    SQInteger ExplorationMapDataUserData::averageOutAltitudeRadius(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+        SQInteger oX, oY, radius, ditherDist;
+        SQInteger rId;
+        sq_getinteger(vm, 2, &oX);
+        sq_getinteger(vm, 3, &oY);
+        sq_getinteger(vm, 4, &radius);
+        sq_getinteger(vm, 5, &ditherDist); // Dither distance parameter
+        sq_getinteger(vm, 6, &rId); // Region ID parameter
+
+        AV::uint32 originX, originY, coreRadius, ditherDistance;
+        RegionId regionId = static_cast<RegionId>(rId);
+        originX = static_cast<AV::uint32>(oX);
+        originY = static_cast<AV::uint32>(oY);
+        coreRadius = static_cast<AV::uint32>(radius);
+        ditherDistance = static_cast<AV::uint32>(ditherDist);
+
+        // First pass: Calculate the average altitude for the core circular region
+        size_t count = 0;
+        size_t altitudeTotal = 0;
+
+        // Iterate through the bounding box of the core circle
+        for(AV::uint32 y = originY - coreRadius; y <= originY + coreRadius; y++){
+            for(AV::uint32 x = originX - coreRadius; x <= originX + coreRadius; x++){
+                // Calculate distance from center
+                int dx = static_cast<int>(x) - static_cast<int>(originX);
+                int dy = static_cast<int>(y) - static_cast<int>(originY);
+                float distanceFromCenter = std::sqrt(dx * dx + dy * dy);
+
+                // Only include points within the core circle
+                if(distanceFromCenter <= coreRadius) {
+                    const AV::uint8* voxPtr = VOX_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y));
+                    altitudeTotal += *voxPtr;
+                    count++;
+                }
+            }
+        }
+
+        size_t averageAlt = altitudeTotal / count;
+
+        // Second pass: Apply the averaged altitude with dithering
+        AV::uint32 totalRadius = coreRadius + ditherDistance;
+
+        for(AV::uint32 y = originY - totalRadius; y <= originY + totalRadius; y++){
+            for(AV::uint32 x = originX - totalRadius; x <= originX + totalRadius; x++){
+                // Calculate distance from center
+                int dx = static_cast<int>(x) - static_cast<int>(originX);
+                int dy = static_cast<int>(y) - static_cast<int>(originY);
+                float distanceFromCenter = std::sqrt(dx * dx + dy * dy);
+
+                // Only process points within the total circle (core + dither)
+                if(distanceFromCenter <= totalRadius) {
+                    AV::uint8* voxPtr = VOX_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y));
+                    AV::uint8 originalAltitude = *voxPtr;
+
+                    // Set region for this point
+                    setRegionForPoint(mapData, WRAP_WORLD_POINT(x, y), regionId);
+
+                    if(distanceFromCenter <= coreRadius) {
+                        // Inside core circle - apply full average
+                        *voxPtr = static_cast<AV::uint8>(averageAlt);
+                    } else {
+                        // In dither zone - blend between average and original
+                        float distanceFromCore = distanceFromCenter - coreRadius;
+                        float blendFactor = distanceFromCore / static_cast<float>(ditherDistance);
+
+                        // Apply smooth interpolation (linear)
+                        AV::uint8 blendedAltitude = static_cast<AV::uint8>(
+                            averageAlt * (1.0f - blendFactor) + originalAltitude * blendFactor
+                        );
+                        *voxPtr = blendedAltitude;
+                    }
+                }
+                // Points beyond total radius remain unchanged
+            }
+        }
+
+        return 0;
+    }
+
     SQInteger ExplorationMapDataUserData::applyTerrainVoxelsForPlace(HSQUIRRELVM vm){
         ExplorationMapData* mapData;
         SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
@@ -770,7 +851,8 @@ namespace ProceduralExplorationGameCore{
         AV::ScriptUtils::addFunction(vm, getRegionCoordForIdx, "getRegionCoordForIdx", 3, ".ii");
         AV::ScriptUtils::addFunction(vm, getRegionId, "getRegionId", 2, ".i");
 
-        AV::ScriptUtils::addFunction(vm, averageOutAltitude, "averageOutAltitude", 7, ".iiiiii");
+        AV::ScriptUtils::addFunction(vm, averageOutAltitudeRectangle, "averageOutAltitudeRectangle", 7, ".iiiiii");
+        AV::ScriptUtils::addFunction(vm, averageOutAltitudeRadius, "averageOutAltitudeRadius", 6, ".iiiii");
         AV::ScriptUtils::addFunction(vm, applyTerrainVoxelsForPlace, "applyTerrainVoxelsForPlace", 5, ".ssii");
 
         SQObject* tableObj = 0;

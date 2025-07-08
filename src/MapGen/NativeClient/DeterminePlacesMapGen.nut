@@ -43,7 +43,7 @@
         local halfY = mData_.halfY;
 
         local foundRegion = null;
-        for(local yy = y - halfX; yy < y + halfY; yy++){
+        for(local yy = y - halfY; yy < y + halfY; yy++){
             for(local xx = x - halfX; xx < x + halfX; xx++){
                 //Optimistaion, remove the vec3 wrapper.
                 //local pos = Vec3(xx, 0, -yy);
@@ -90,7 +90,7 @@
     }
 
     function _averageOutGround(originX, originY, halfX, halfY, region){
-        mMapData_.averageOutAltitude(originX, originY, halfX, halfY, 5, region);
+        mMapData_.averageOutAltitudeRectangle(originX, originY, halfX, halfY, 5, region);
     }
 
     function placeLocation(placeId, determineRegionFunction, checkPlacement){
@@ -105,6 +105,9 @@
                 mData_.halfX = roundAwayFromZero(halfX);
                 mData_.halfY = roundAwayFromZero(halfY);
             }
+        }else{
+            mData_.halfX = roundAwayFromZero(5);
+            mData_.halfY = roundAwayFromZero(5);
         }
         local radius = placeData.mRadius == null ? 20 : placeData.mRadius;
 
@@ -128,7 +131,12 @@
             }
 
             _markRemovePlacedItems(originX, originY, mData_.halfX, mData_.halfY);
-            _averageOutGround(originX, originY, mData_.halfX, mData_.halfY, region);
+
+            if(placeId == PlaceId.DUSTMITE_NEST){
+                mMapData_.averageOutAltitudeRadius(originX, originY, 10, 5, region);
+            }else{
+                _averageOutGround(originX, originY, mData_.halfX, mData_.halfY, region);
+            }
 
             mPlacesCollisionWorld_.addCollisionPoint(originX, originY, radius);
 
