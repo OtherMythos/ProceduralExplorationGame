@@ -132,10 +132,12 @@
                 //TODO this will be massively inefficient so improve that
                 i.getSceneNode().setVisible(vis);
             }
+            /*
             foreach(i in mBeacons_){
                 local node = mEntityManager_.getComponent(i, EntityComponents.SCENE_NODE).mNode;
                 node.setVisible(mWorldActive_ && !mVisible_);
             }
+            */
             mDecoratioNode_.setVisible(vis);
         }
         function pushPlace(place, beacon){
@@ -630,9 +632,9 @@
 
             if(placeEntry == null) continue;
 
-            local beaconEntity = mEntityFactory_.constructPlaceIndicatorBeacon(placeEntry.getPosition());
+            //local beaconEntity = mEntityFactory_.constructPlaceIndicatorBeacon(placeEntry.getPosition());
             mActivePlaces_.append(placeEntry);
-            regionEntry.pushPlace(placeEntry, beaconEntity);
+            regionEntry.pushPlace(placeEntry, null);
         }
     }
 

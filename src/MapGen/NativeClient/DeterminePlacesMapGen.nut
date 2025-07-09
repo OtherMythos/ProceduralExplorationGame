@@ -196,6 +196,8 @@
             "halfY": 5,
         };
 
+        //TODO Ensure the gateway is placed at a position using a map gen step rather than just randomly.
+        placeLocation(PlaceId.GATEWAY, _determineRegionBySize, _checkPlacementVoxelsAreLand)
         placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize, _checkPlacementVoxelsAreLand)
         placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize, _checkPlacementVoxelsAreLand)
         placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize, _checkPlacementVoxelsAreLand)
