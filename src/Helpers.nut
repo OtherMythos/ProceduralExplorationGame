@@ -42,7 +42,7 @@
 
     local engine = _settings.getEngineVersion();
     local versionTotal = format("%i.%i.%i-%s-%s", GAME_VERSION_MAJOR, GAME_VERSION_MINOR, GAME_VERSION_PATCH, engine.build, suffix);
-    local engineVersionTotal = format("Engine: %i.%i.%i-%s-%s", engine.major, engine.minor, engine.patch, engine.build, engine.suffix);
+    local engineVersionTotal = format("Engine: %i.%i.%i-%s-%s-%s", engine.major, engine.minor, engine.patch, engine.build, engine.suffix, engine.hash);
 
     return {
         "info": versionTotal,
