@@ -5,7 +5,7 @@ function start(){
     local mModelViewWindow_ = _gui.createWindow();
     mModelViewWindow_.setZOrder(100);
     mModelViewWindow_.setPosition(0, 0);
-    mModelViewWindow_.setSize(1920, 1080);
+    mModelViewWindow_.setSize(_window.getWidth(), _window.getHeight());
     mModelViewWindow_.setClipBorders(0, 0, 0, 0);
 
     local mModelViewPanel_ = mModelViewWindow_.createPanel();
