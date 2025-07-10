@@ -1,22 +1,3 @@
-enum DrawOptions{
-    WATER,
-    GROUND_TYPE,
-    WATER_GROUPS,
-    MOISTURE_MAP,
-    REGIONS,
-    REGION_DISTANCE,
-    BLUE_NOISE,
-    RIVER_DATA,
-    LAND_GROUPS,
-    EDGE_VALS,
-    PLAYER_START_POSITION,
-    VISIBLE_REGIONS, //NOTE: Generally only used during gameplay.
-    REGION_SEEDS,
-    PLACE_LOCATIONS,
-    VISIBLE_PLACES_MASK,
-
-    MAX
-};
 
 ::ExplorationMapViewer <- class extends ::MapViewer{
 
@@ -107,7 +88,6 @@ enum DrawOptions{
                 f = f | (1 << i);
             }
         }
-
 
         foreach(i in mPlaceMarkers_){
             i.updateForLocationFlags(f);

@@ -15,6 +15,20 @@ namespace ProceduralExplorationGameCore{
 
     #include "../../../../src/MapGen/Exploration/Viewer/ExplorationMapViewerConstants.h.nut"
 
+    enum MapViewerColours{
+        OCEAN,
+        FRESH_WATER,
+        WATER_GROUPS,
+
+        COLOUR_BLACK,
+        COLOUR_MAGENTA,
+        COLOUR_ORANGE,
+
+        UNDISCOVRED_REGION,
+
+        MAX
+    };
+
     Ogre::ABGR valueColours[(size_t)MapViewerColours::MAX];
 
     ExplorationMapViewer::ExplorationMapViewer(){
