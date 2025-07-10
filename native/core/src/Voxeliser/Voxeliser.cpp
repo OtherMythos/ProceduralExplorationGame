@@ -3,6 +3,9 @@
 #include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 #include "MapGen/ExplorationMapDataPrerequisites.h"
 
+#include "PluginBaseSingleton.h"
+#include "MapGen/MapGen.h"
+
 #include <cassert>
 #include "Ogre.h"
 #include "OgreMeshManager2.h"
@@ -300,6 +303,10 @@ namespace ProceduralExplorationGameCore{
         AV::uint32* voxPtr = static_cast<AV::uint32*>(mapData->voxelBuffer);
         AV::uint32* secondaryVoxPtr = static_cast<AV::uint32*>(mapData->secondaryVoxelBuffer);
 
+        MapGen* mapGen = PluginBaseSingleton::getMapGen();
+        assert(mapGen);
+        const std::vector<MapGen::VoxelDef>& voxDefs = mapGen->getVoxelDefs();
+
         static const AV::uint32 WORLD_DEPTH = 20;
         static const AV::uint32 ABOVE_GROUND = 0xFF - seaLevel;
 
@@ -338,9 +345,8 @@ namespace ProceduralExplorationGameCore{
                 if(voxSecondary & DRAW_COLOUR_VOXEL_FLAG){
                     v = voxelMeta;
                 }else{
-                    v = MapVoxelColour[voxelMeta];
+                    v = voxDefs[voxelMeta].vId;
                 }
-                //bool isRiver = (vox >> 8) & static_cast<AV::uint8>(MapVoxelTypes::RIVER);
                 bool isRiver = voxSecondary & RIVER_VOXEL_FLAG;
                 if(isRiver){
                     if(altitude <= 3){

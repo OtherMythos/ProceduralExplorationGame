@@ -39,6 +39,7 @@ namespace ProceduralExplorationGamePlugin{
         static SQInteger getTotalMapGenStages(HSQUIRRELVM vm);
         static SQInteger getNameForMapGenStage(HSQUIRRELVM vm);
         static SQInteger setupCollisionDataForWorld(HSQUIRRELVM vm);
+        static SQInteger registerVoxel(HSQUIRRELVM vm);
 
         static SQInteger setMapsDirectory(HSQUIRRELVM vm);
 

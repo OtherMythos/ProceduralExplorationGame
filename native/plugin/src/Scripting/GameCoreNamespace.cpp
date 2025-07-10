@@ -23,6 +23,7 @@
 #include "Scripting/ScriptNamespace/Classes/Ogre/Scene/SceneNodeUserData.h"
 #include "Scripting/ScriptNamespace/Classes/Vector3UserData.h"
 #include "Scripting/ScriptNamespace/Classes/Animation/AnimationInfoUserData.h"
+#include "Scripting/ScriptNamespace/Classes/ColourValueUserData.h"
 #include "Collision/CollisionDetectionWorld.h"
 #include "Scripting/ScriptNamespace/Classes/CollisionWorldClass.h"
 #include "Scripting/ScriptNamespace/ScriptGetterUtils.h"
@@ -307,6 +308,28 @@ namespace ProceduralExplorationGamePlugin{
         if(result != 0) return result;
 
         GameCorePBSHlmsListener::mCustomValues = val;
+
+        return 0;
+    }
+
+    SQInteger GameCoreNamespace::registerVoxel(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::MapGen* mapGen = ProceduralExplorationGameCore::PluginBaseSingleton::getMapGen();
+        assert(mapGen);
+        if(!mapGen->isFinished()){
+            return sq_throwerror(vm, "Map gen is already processing a map generation");
+        }
+
+        SQInteger sVox, sId;
+        Ogre::ColourValue sColour;
+        sq_getinteger(vm, 2, &sVox);
+        sq_getinteger(vm, 3, &sId);
+        AV::ColourValueUserData::readColourValueFromUserData(vm, 4, &sColour);
+
+        ProceduralExplorationGameCore::MapGen::VoxelId vox = static_cast<ProceduralExplorationGameCore::MapGen::VoxelId>(sVox);
+        AV::uint8 colId = static_cast<AV::uint8>(sId);
+        AV::uint32 colourABGR = sColour.getAsABGR();
+
+        mapGen->registerVoxel(vox, colId, colourABGR);
 
         return 0;
     }
@@ -704,6 +727,8 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, registerMapGenClient, "registerMapGenClient", 4, ".sst|o");
         AV::ScriptUtils::addFunction(vm, recollectMapGenSteps, "recollectMapGenSteps");
         AV::ScriptUtils::addFunction(vm, setCustomPassBufferValue, "setCustomPassBufferValue", -2, ".n|unn");
+
+        AV::ScriptUtils::addFunction(vm, registerVoxel, "registerVoxel", 4, ".nnu");
 
         AV::ScriptUtils::addFunction(vm, destroyMapData, "destroyMapData", 2, ".u");
 

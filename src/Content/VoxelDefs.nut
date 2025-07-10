@@ -1,0 +1,9 @@
+_gameCore.registerVoxel(VoxelId.SAND, 2, ColourValue(0.84, 0.87, 0.29, 1));
+_gameCore.registerVoxel(VoxelId.DIRT, 112, ColourValue(0.33, 0.92, 0.27, 1));
+_gameCore.registerVoxel(VoxelId.SNOW, 0, ColourValue(0.84, 0.88, 0.84, 1));
+_gameCore.registerVoxel(VoxelId.TREES, 147, ColourValue(0.33, 0.66, 0.005, 1));
+_gameCore.registerVoxel(VoxelId.TREES_CHERRY_BLOSSOM, 6, ColourValue(0.94, 0.44, 0.91, 1));
+_gameCore.registerVoxel(VoxelId.DIRT_EXP_FIELD, 198, ColourValue(0.33, 0.66, 0.005, 1));
+_gameCore.registerVoxel(VoxelId.SAND_EXP_FIELD 199, ColourValue(0.94, 0.44, 0.91, 1));
+_gameCore.registerVoxel(VoxelId.SWAMP_GRASS, 166, ColourValue(0.22, 0.66, 0.00, 1));
+_gameCore.registerVoxel(VoxelId.SWAMP_FOREST_GRASS, 165, ColourValue(0.1, 0.44, 0.00, 1));

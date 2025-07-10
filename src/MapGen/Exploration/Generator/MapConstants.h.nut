@@ -2,20 +2,7 @@
 #define enum enum class
 #define const static const AV::uint32
 
-/*
-::VoxelValues <- [
-   2, 112, 0, 147, 6, 198, 199
-];
-*/
-
-#if 0
-::VoxelValues <- [
-#endif
-#define VOXEL_VALUES \
-   2, 112, 0, 147, 6, 198, 199, 166, 165
-#if 0
-];
-#endif
+const MAX_VOXELS = 0xFF;
 
 //10-19 - Rendered and included in the shadow map.
 const RENDER_QUEUE_EXPLORATION_WATER = 18; //Render water last to prevent overdraw.
@@ -46,9 +33,6 @@ enum MapVoxelTypes{
 
     SWAMP_GRASS,
     SWAMP_FOREST_GRASS,
-
-    //EDGE = 0x40,
-    //RIVER = 0x20,
 };
 
 enum BiomeId{

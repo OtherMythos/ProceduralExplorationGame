@@ -19,14 +19,6 @@ enum DrawOptions{
 };
 
 enum MapViewerColours{
-    VOXEL_GROUP_GROUND,
-    VOXEL_GROUP_GRASS,
-    VOXEL_GROUP_ICE,
-    VOXEL_GROUP_TREES,
-    VOXEL_GROUP_CHERRY_BLOSSOM_TREE,
-    VOXEL_SWAMP_GRASS,
-    VOXEL_SWAMP_FOREST,
-
     OCEAN,
     FRESH_WATER,
     WATER_GROUPS,
@@ -83,7 +75,7 @@ enum MapViewerColours{
         }
 
         setupBlendblock();
-        setupColours();
+        //setupColours();
     }
 
     function shutdown(){
@@ -153,6 +145,7 @@ enum MapViewerColours{
         return mDrawLocationOptions_[option];
     }
 
+    /*
     function setupColours(){
         local colVals = array(MapViewerColours.MAX);
         local baseVal = ColourValue(0, 0, 0, 1);
@@ -176,7 +169,9 @@ enum MapViewerColours{
         }
         mColours_ = colVals;
     }
+    */
 
+    /*
     function fillBufferWithMapComplex_(textureBox){
         mMapData_.voxelBuffer.seek(0);
         mMapData_.secondaryVoxBuffer.seek(0);
@@ -285,6 +280,7 @@ enum MapViewerColours{
             textureBox.writen(mColours_[MapViewerColours.COLOUR_BLACK], 'i');
         }
     }
+    */
     function fillBufferWithMap(textureBox){
         if(mLeanMap_){
 
@@ -307,6 +303,7 @@ enum MapViewerColours{
             _gameCore.fillBufferWithMapComplex(textureBox, mNativeMapData_, mDrawOptionsHash_);
         }
     }
+    /*
     function _getColourForVox(xVox, yVox){
         local voxVal = mMapData_.voxelBuffer.readn('i');
         local altitude = voxVal & 0xFF;
@@ -420,6 +417,7 @@ enum MapViewerColours{
 
         return drawVal;
     }
+    */
 
     function notifyRegionFound(regionId){
         mFoundRegions_.rawset(regionId, true);

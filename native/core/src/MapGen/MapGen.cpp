@@ -24,6 +24,8 @@ namespace ProceduralExplorationGameCore{
         registerMapGenClient("Base Client", new MapGenBaseClient());
 
         recollectMapGenSteps();
+
+        mVoxelDef.resize(MAX_VOXELS);
     }
 
     MapGen::~MapGen(){
@@ -182,6 +184,10 @@ namespace ProceduralExplorationGameCore{
 
     int MapGen::getNumTotalStages(){
         return static_cast<int>(mMapGenSteps.size());
+    }
+
+    void MapGen::registerVoxel(VoxelId v, AV::uint8 id, AV::uint32 colourABGR){
+        mVoxelDef[v] = {id, colourABGR};
     }
 
     bool MapGen::isFinished() const{

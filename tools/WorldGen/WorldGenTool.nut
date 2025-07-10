@@ -7,9 +7,11 @@ function start(){
     _doFile("res://../../src/Helpers.nut");
     _doFile("res://../../src/Constants.nut");
     _doFile("res://../../src/Content/PlaceEnums.nut");
+    _doFile("res://../../src/Content/VoxelEnums.nut");
     ::EnumDef.commitEnums();
     _doFile("res://../../src/Content/Places.nut");
     _doFile("res://../../src/Content/PlaceDefs.h.nut");
+    _doFile("res://../../src/Content/VoxelDefs.nut");
     _doFile("res://../../src/MapGen/Exploration/Generator/MapConstants.h.nut");
     _doFile("res://../../src/MapGen/Exploration/Generator/MapGenHelpers.nut");
     _doFile("res://../../src/MapGen/Exploration/Generator/MapGen.nut");

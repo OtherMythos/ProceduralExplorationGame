@@ -2,6 +2,9 @@
 
 #include "OgreTextureBox.h"
 
+#include "PluginBaseSingleton.h"
+#include "MapGen/MapGen.h"
+
 #include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 #include "ExplorationMapDataPrerequisites.h"
 #include "GameplayState.h"
@@ -17,28 +20,15 @@ namespace ProceduralExplorationGameCore{
     ExplorationMapViewer::ExplorationMapViewer(){
         const float OPACITY = 0.4;
 
-        Ogre::ColourValue cols[(size_t)MapViewerColours::MAX] = {
-            Ogre::ColourValue(0.84, 0.87, 0.29, 1),
-            Ogre::ColourValue(0.33, 0.92, 0.27, 1),
-            Ogre::ColourValue(0.84, 0.88, 0.84, 1),
-            Ogre::ColourValue(0.33, 0.66, 0.005, 1),
-            Ogre::ColourValue(0.94, 0.44, 0.91, 1),
+        Ogre::ColourValue cols[(size_t)MapViewerColours::MAX];
+        cols[(size_t)MapViewerColours::OCEAN] = Ogre::ColourValue(0, 0, 1.0, OPACITY);
+        cols[(size_t)MapViewerColours::FRESH_WATER] = Ogre::ColourValue(0.15, 0.15, 1.0, OPACITY);
+        cols[(size_t)MapViewerColours::WATER_GROUPS] = Ogre::ColourValue::Black;
+        cols[(size_t)MapViewerColours::COLOUR_BLACK] = Ogre::ColourValue::Black;
+        cols[(size_t)MapViewerColours::COLOUR_MAGENTA] = Ogre::ColourValue(1, 0, 1, 1);
+        cols[(size_t)MapViewerColours::COLOUR_ORANGE] = Ogre::ColourValue(0.85, 0.63, 0.03, 1);
+        cols[(size_t)MapViewerColours::UNDISCOVRED_REGION] = Ogre::ColourValue(0.1, 0.1, 0.1, 1);
 
-            Ogre::ColourValue(0.33, 0.66, 0.005, 1),
-            Ogre::ColourValue(0.94, 0.44, 0.91, 1),
-
-            Ogre::ColourValue(0.22, 0.66, 0.00, 1),
-            Ogre::ColourValue(0.1, 0.44, 0.00, 1),
-
-            Ogre::ColourValue(0, 0, 1.0, OPACITY),
-            Ogre::ColourValue(0.15, 0.15, 1.0, OPACITY),
-            Ogre::ColourValue::Black,
-            Ogre::ColourValue::Black,
-            Ogre::ColourValue(1, 0, 1, 1),
-            Ogre::ColourValue(0.85, 0.63, 0.03, 1),
-            Ogre::ColourValue(0.1, 0.1, 0.1, 1),
-        };
-        //TODO switch this conversion to be performed statically.
         for(int i = 0; i < (size_t)MapViewerColours::MAX; i++){
             valueColours[i] = cols[i].getAsABGR();
         }
@@ -48,7 +38,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    AV::uint32 ExplorationMapViewer::getColourForVox(AV::uint32 x, AV::uint32 y, AV::uint32 vox, AV::uint32 secondaryVox, float blueNoise, ExplorationMapData* mapData, AV::uint32 drawOptions){
+    AV::uint32 getColourForVox(AV::uint32 x, AV::uint32 y, AV::uint32 vox, AV::uint32 secondaryVox, float blueNoise, ExplorationMapData* mapData, AV::uint32 drawOptions, const std::vector<MapGen::VoxelDef>& voxDefs){
         AV::uint8 altitude = static_cast<AV::uint8>(vox & 0xFF);
         RegionId regionId = static_cast<AV::uint8>((secondaryVox >> 8) & 0xFF);
         AV::uint8 regionDistance = static_cast<AV::uint8>((secondaryVox >> 16) & 0xFF);
@@ -63,7 +53,7 @@ namespace ProceduralExplorationGameCore{
             if(secondaryVox & RIVER_VOXEL_FLAG){
                 drawVal = valueColours[(size_t)MapViewerColours::FRESH_WATER];
             }else{
-                drawVal = valueColours[voxelMeta];
+                drawVal = voxDefs[voxelMeta].colourABGR;
             }
         }else{
             //NOTE: Slight optimisation.
@@ -127,10 +117,15 @@ namespace ProceduralExplorationGameCore{
         AV::uint32* voxSecondaryPtr = static_cast<AV::uint32*>(mapData->secondaryVoxelBuffer);
         float* blueNoisePtr = static_cast<float*>(mapData->blueNoiseBuffer);
         const std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
+
+        MapGen* mapGen = PluginBaseSingleton::getMapGen();
+        assert(mapGen);
+        const std::vector<MapGen::VoxelDef>& voxDefs = mapGen->getVoxelDefs();
+
         for(Ogre::uint32 y = 0; y < tex->height; y++){
             for(Ogre::uint32 x = 0; x < tex->width; x++){
 
-                AV::uint32 voxColour = ExplorationMapViewer::getColourForVox(x, y, *voxPtr, *voxSecondaryPtr, *blueNoisePtr, mapData, drawOptions);
+                AV::uint32 voxColour = getColourForVox(x, y, *voxPtr, *voxSecondaryPtr, *blueNoisePtr, mapData, drawOptions, voxDefs);
                 (*texPtr++) = voxColour;
 
                 voxPtr++;
@@ -161,6 +156,11 @@ namespace ProceduralExplorationGameCore{
         AV::uint32* texPtr = static_cast<AV::uint32*>(tex->data);
         AV::uint32* voxPtr = static_cast<AV::uint32*>(mapData->voxelBuffer);
         AV::uint32* voxSecondaryPtr = static_cast<AV::uint32*>(mapData->secondaryVoxelBuffer);
+
+        MapGen* mapGen = PluginBaseSingleton::getMapGen();
+        assert(mapGen);
+        const std::vector<MapGen::VoxelDef>& voxDefs = mapGen->getVoxelDefs();
+
         for(Ogre::uint32 y = 0; y < tex->height; y++){
             for(Ogre::uint32 x = 0; x < tex->width; x++){
                 AV::uint32 vox = static_cast<AV::uint32>(*voxPtr);
@@ -184,7 +184,7 @@ namespace ProceduralExplorationGameCore{
                     (*texPtr++) = valueColours[(size_t)MapViewerColours::FRESH_WATER];
                 }else{
                     AV::uint8 voxelMeta = ((vox >> 8) & 0xFF);
-                    (*texPtr++) = valueColours[(size_t)voxelMeta];
+                    (*texPtr++) = voxDefs[(size_t)voxelMeta].colourABGR;
                 }
 
             }

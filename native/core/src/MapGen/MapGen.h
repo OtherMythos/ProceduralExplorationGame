@@ -1,5 +1,7 @@
 #pragma once
 
+#include "System/EnginePrerequisites.h"
+
 #include <string>
 #include <atomic>
 #include <thread>
@@ -21,6 +23,12 @@ namespace ProceduralExplorationGameCore{
         MapGen();
         ~MapGen();
 
+        typedef AV::uint8 VoxelId;
+        struct VoxelDef{
+            AV::uint8 vId;
+            AV::uint32 colourABGR;
+        };
+
         int getCurrentStage() const;
         bool isFinished() const;
         void beginMapGen(const ExplorationMapInputData* input);
@@ -34,6 +42,8 @@ namespace ProceduralExplorationGameCore{
 
         void registerMapGenClient(const std::string& clientName, MapGenClient* client, HSQUIRRELVM vm=0);
 
+        void registerVoxel(VoxelId v, AV::uint8 id, AV::uint32 colourABGR);
+
         bool claimMapData(HSQUIRRELVM vm);
 
     private:
@@ -42,6 +52,7 @@ namespace ProceduralExplorationGameCore{
 
         std::vector<MapGenClient*> mActiveClients;
         std::vector<MapGenStep*> mMapGenSteps;
+        std::vector<VoxelDef> mVoxelDef;
 
         MapGenClient* mCurrentCollectingMapGenClient;
 
@@ -64,6 +75,8 @@ namespace ProceduralExplorationGameCore{
 
     public:
         MapGenClient* getCurrentCollectingMapGenClient() { return mCurrentCollectingMapGenClient; }
+
+        const std::vector<VoxelDef>& getVoxelDefs() const { return mVoxelDef; }
     };
 
 };
