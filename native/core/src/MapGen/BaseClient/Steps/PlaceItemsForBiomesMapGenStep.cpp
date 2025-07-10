@@ -66,13 +66,14 @@ namespace ProceduralExplorationGameCore{
                 //TODO remove the need for flags
                 AV::uint8 flags = 0;
                 RegionId regionId = (fullSecondaryVox >> 8) & 0xFF;
+                AV::uint8 regionDistance = (fullSecondaryVox >> 16) & 0xFF;
 
                 if(regionId >= regionData.size()) continue;
                 const Biome& b = Biome::getBiomeForId(regionData[regionId].type);
 
                 Biome::PlaceObjectFunction placeFunc = b.getPlacementFunction();
                 assert(placeFunc != 0);
-                (*placeFunc)(placedItems, mapData, x, y, altitude, regionId, flags, moisture);
+                (*placeFunc)(placedItems, mapData, x, y, altitude, regionId, flags, moisture, regionDistance);
             }
         }
     }

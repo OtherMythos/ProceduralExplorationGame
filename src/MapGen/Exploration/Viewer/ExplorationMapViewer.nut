@@ -24,6 +24,8 @@ enum MapViewerColours{
     VOXEL_GROUP_ICE,
     VOXEL_GROUP_TREES,
     VOXEL_GROUP_CHERRY_BLOSSOM_TREE,
+    VOXEL_SWAMP_GRASS,
+    VOXEL_SWAMP_FOREST,
 
     OCEAN,
     FRESH_WATER,
@@ -159,6 +161,8 @@ enum MapViewerColours{
         colVals[MapViewerColours.VOXEL_GROUP_ICE] = ColourValue(0.84, 0.88, 0.84, 1);
         colVals[MapViewerColours.VOXEL_GROUP_TREES] = ColourValue(0.33, 0.66, 0.005, 1);
         colVals[MapViewerColours.VOXEL_GROUP_CHERRY_BLOSSOM_TREE] = ColourValue(0.94, 0.44, 0.91, 1);
+        colVals[MapViewerColours.VOXEL_SWAMP_GRASS] = ColourValue(0.94, 0.44, 0.91, 1);
+        colVals[MapViewerColours.VOXEL_SWAMP_FOREST] = ColourValue(0.94, 0.44, 0.91, 1);
         colVals[MapViewerColours.OCEAN] = ColourValue(0, 0, 1.0, mOpacity_);
         colVals[MapViewerColours.FRESH_WATER] = ColourValue(0.15, 0.15, 1.0, mOpacity_);
         colVals[MapViewerColours.WATER_GROUPS] = baseVal;

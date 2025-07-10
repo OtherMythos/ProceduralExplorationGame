@@ -1,7 +1,8 @@
 {
     "Universal":{
         "swampPlants.gox": {
-            "separateLayers": true
+            "separateLayers": true,
+            "animValues": "88,3"
         }
     }
 }

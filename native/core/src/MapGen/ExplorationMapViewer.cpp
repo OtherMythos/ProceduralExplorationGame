@@ -23,6 +23,13 @@ namespace ProceduralExplorationGameCore{
             Ogre::ColourValue(0.84, 0.88, 0.84, 1),
             Ogre::ColourValue(0.33, 0.66, 0.005, 1),
             Ogre::ColourValue(0.94, 0.44, 0.91, 1),
+
+            Ogre::ColourValue(0.33, 0.66, 0.005, 1),
+            Ogre::ColourValue(0.94, 0.44, 0.91, 1),
+
+            Ogre::ColourValue(0.22, 0.66, 0.00, 1),
+            Ogre::ColourValue(0.1, 0.44, 0.00, 1),
+
             Ogre::ColourValue(0, 0, 1.0, OPACITY),
             Ogre::ColourValue(0.15, 0.15, 1.0, OPACITY),
             Ogre::ColourValue::Black,
