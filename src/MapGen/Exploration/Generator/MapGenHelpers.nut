@@ -114,6 +114,7 @@
             case RegionType.CHERRY_BLOSSOM_FOREST: return BiomeId.CHERRY_BLOSSOM_FOREST;
             case RegionType.EXP_FIELDS: return BiomeId.EXP_FIELD;
             case RegionType.DESERT: return BiomeId.DESERT;
+            case RegionType.SWAMP: return BiomeId.SWAMP;
             default:{
                 return BiomeId.GRASS_LAND;
             }

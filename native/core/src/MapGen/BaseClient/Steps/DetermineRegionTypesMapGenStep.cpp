@@ -33,13 +33,13 @@ namespace ProceduralExplorationGameCore{
         freeRegions.push_back(1);
         freeRegions.push_back(2);
 
-        static const std::array regionsToAdd{RegionType::CHERRY_BLOSSOM_FOREST, RegionType::EXP_FIELDS, RegionType::DESERT};
+        static const std::array regionsToAdd{RegionType::CHERRY_BLOSSOM_FOREST, RegionType::SWAMP, RegionType::DESERT};
         for(RegionType r : regionsToAdd){
             size_t targetIdx = mapGenRandomIndex(freeRegions);
             if(targetIdx >= freeRegions.size()) continue;
             RegionData& rd = regionData[freeRegions[targetIdx]];
             rd.type = r;
-            if(r == RegionType::DESERT){
+            if(r == RegionType::DESERT || r == RegionType::SWAMP){
                 rd.meta |= static_cast<AV::uint8>(RegionMeta::EXPANDABLE);
             }
 

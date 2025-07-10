@@ -2,6 +2,8 @@
 
 #include <array>
 
+#include "BaseClient/Steps/PerlinNoise.h"
+
 namespace ProceduralExplorationGameCore{
 
 
@@ -122,6 +124,45 @@ namespace ProceduralExplorationGameCore{
         //}
     }
 
+    MapVoxelTypes SWAMP_VoxFunction(AV::uint8 altitude, AV::uint8 moisture, const ExplorationMapData* mapData){
+        if(moisture >= mapData->seaLevel + 50){
+            return MapVoxelTypes::SWAMP_FOREST_GRASS;
+        }else{
+            return MapVoxelTypes::SWAMP_GRASS;
+        }
+    }
+
+    void SWAMP_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture){
+        if(processRValue(mapData, x, y, 12)){
+            bool treeType = (mapGenRandomIntMinMax(0, 2) == 0);
+            PLACE_ITEM(treeType ? PlacedItemId::SWAMP_TREE_ONE : PlacedItemId::SWAMP_TREE_TWO);
+            //PLACE_ITEM(PlacedItemId::SWAMP_TREE_TWO);
+        }
+    }
+
+    template <typename T>
+    T mix(const T& a, const T& b, float t) {
+        return a * (1.0f - t) + b * t;
+    }
+
+    AV::uint8 SWAMP_DetermineAltitudeFunction(AV::uint8 altitude, AV::uint8 moisture, AV::uint8 altitudeDistance, AV::uint16 x, AV::uint16 y, const ExplorationMapData* mapData){
+        PerlinNoise p(100);
+        float pv = p.perlin2d(x, y, 0.10, 1);
+
+        static const float DIST = 18.0f;
+        float modifier = (altitudeDistance > DIST ? DIST : static_cast<float>(altitudeDistance)) / DIST;
+        float originalAltitude = float(altitude);
+        float altDifference = originalAltitude - mapData->seaLevel;
+        float startAltDifference = 1;
+        float fa = mapData->seaLevel + startAltDifference * 0.25 + (pv - 0.5) * 8;
+        if(fa > mapData->seaLevel + 1){
+            fa = mapData->seaLevel + altDifference * 0.15;
+        }
+        float a = mix<float>(fa, originalAltitude, 1.0-modifier);
+        AV::uint8 out = static_cast<AV::uint8>(a);
+        return out;
+    }
+
     void NONE_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture){
     }
     #undef PLACE_ITEM
@@ -154,6 +195,7 @@ namespace ProceduralExplorationGameCore{
         Biome(&CHERRY_BLOSSOM_FOREST_VoxFunction, &CHERRY_BLOSSOM_FOREST_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction),
         Biome(&EXP_FIELD_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction),
         Biome(&DESERT_VoxFunction, &DESERT_PlaceObjectsFunction, &DESERT_DetermineAltitudeFunction),
+        Biome(&SWAMP_VoxFunction, &SWAMP_PlaceObjectsFunction, &SWAMP_DetermineAltitudeFunction),
         Biome(&SHALLOW_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction),
         Biome(&DEEP_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction),
     };
@@ -176,6 +218,7 @@ namespace ProceduralExplorationGameCore{
             case RegionType::CHERRY_BLOSSOM_FOREST: targetBiome = BiomeId::CHERRY_BLOSSOM_FOREST; break;
             case RegionType::EXP_FIELDS: targetBiome = BiomeId::EXP_FIELD; break;
             case RegionType::DESERT: targetBiome = BiomeId::DESERT; break;
+            case RegionType::SWAMP: targetBiome = BiomeId::SWAMP; break;
             default:{
                 targetBiome = BiomeId::GRASS_LAND;
             }

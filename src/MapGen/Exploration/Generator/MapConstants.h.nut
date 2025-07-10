@@ -12,7 +12,7 @@
 ::VoxelValues <- [
 #endif
 #define VOXEL_VALUES \
-   2, 112, 0, 147, 6, 198, 199
+   2, 112, 0, 147, 6, 198, 199, 166, 165
 #if 0
 ];
 #endif
@@ -44,6 +44,9 @@ enum MapVoxelTypes{
     DIRT_EXP_FIELD,
     SAND_EXP_FIELD,
 
+    SWAMP_GRASS,
+    SWAMP_FOREST_GRASS,
+
     //EDGE = 0x40,
     //RIVER = 0x20,
 };
@@ -56,6 +59,7 @@ enum BiomeId{
     CHERRY_BLOSSOM_FOREST,
     EXP_FIELD,
     DESERT,
+    SWAMP,
 
     SHALLOW_OCEAN,
     DEEP_OCEAN,
@@ -78,6 +82,7 @@ enum RegionType{
     CHERRY_BLOSSOM_FOREST,
     EXP_FIELDS,
     DESERT,
+    SWAMP,
     GATEWAY_DOMAIN,
     PLAYER_START
 };
@@ -109,6 +114,8 @@ enum PlacedItemId{
     FLOWER_WHITE,
     BERRY_BUSH,
     BERRY_BUSH_BERRIES,
+    SWAMP_TREE_ONE,
+    SWAMP_TREE_TWO,
 
     MAX
 };

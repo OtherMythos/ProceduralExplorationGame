@@ -325,6 +325,12 @@
             case PlacedItemId.BERRY_BUSH_BERRIES:{
                 return "berryBushBerries.voxMesh";
             }
+            case PlacedItemId.SWAMP_TREE_ONE:{
+                return "swampPlants.tree1.voxMesh";
+            }
+            case PlacedItemId.SWAMP_TREE_TWO:{
+                return "swampPlants.tree2.voxMesh";
+            }
             default:{
                 return "tree.voxMesh";
             }
@@ -347,6 +353,10 @@
             case PlacedItemId.BERRY_BUSH:
             case PlacedItemId.BERRY_BUSH_BERRIES:{
                 return 0.2;
+            }
+            case PlacedItemId.SWAMP_TREE_ONE:
+            case PlacedItemId.SWAMP_TREE_TWO:{
+                return 0.4;
             }
             default:
                 return 0.6;
