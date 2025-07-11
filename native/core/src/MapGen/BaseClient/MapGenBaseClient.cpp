@@ -32,6 +32,7 @@
 #include "Steps/CalculateRegionEdgesMapGenStep.h"
 #include "Steps/RecalculateRegionEdgesMapGenStep.h"
 #include "Steps/BiomeAltitudeMapGenStep.h"
+#include "Steps/BiomeFinalChangesMapGenStep.h"
 
 #include "Ogre.h"
 #include "OgreStagingTexture.h"
@@ -75,6 +76,7 @@ namespace ProceduralExplorationGameCore{
             new RecalculateRegionEdgesMapGenStep(),
             new CalculateRegionEdgesMapGenStep(),
             new PopulateFinalBiomesMapGenStep(),
+            new BiomeFinalChangesMapGenStep(),
 
             new PerformFinalFloodFillMapGenStep(),
             new WeightAndSortLandmassesMapGenStep(),
