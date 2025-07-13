@@ -1,45 +1,10 @@
 #include "WaterMeshGenerator.h"
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 namespace ProceduralExplorationGameCore{
-
-    /*
-    struct Ogre::Vector3 {
-        float x, y, z;
-        Ogre::Vector3(float x = 0, float y = 0, float z = 0) : x(x), y(y), z(z) {}
-
-        Ogre::Vector3 operator+(const Ogre::Vector3& other) const {
-            return Ogre::Vector3(x + other.x, y + other.y, z + other.z);
-        }
-
-        Ogre::Vector3 operator*(float scalar) const {
-            return Ogre::Vector3(x * scalar, y * scalar, z * scalar);
-        }
-
-        float length() const {
-            return std::sqrt(x * x + y * y + z * z);
-        }
-
-        Ogre::Vector3 normalized() const {
-            float len = length();
-            return len > 0 ? Ogre::Vector3(x / len, y / len, z / len) : Ogre::Vector3(0, 0, 0);
-        }
-    };
-
-    struct Ogre::Vector2 {
-        float x, y;
-        Ogre::Vector2(float x = 0, float y = 0) : x(x), y(y) {}
-
-        Ogre::Vector2 operator-(const Ogre::Vector2& other) const {
-            return Ogre::Vector2(x - other.x, y - other.y);
-        }
-
-        float length() const {
-            return std::sqrt(x * x + y * y);
-        }
-    };
-    */
-
-
 
     // Helper function to create a unique key for grid coordinates
     uint64_t WaterMeshGenerator::makeKey(int x, int y) const {
