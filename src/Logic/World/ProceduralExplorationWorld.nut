@@ -564,15 +564,15 @@
         for(local x = 0; x < 3; x++){
             //Create the ocean plane
             local oceanNode = mParentNode_.createChildSceneNode(_SCENE_STATIC);
-            local oceanItem = _scene.createItem("WaterPlane.mesh", _SCENE_STATIC);
+            local oceanItem = _scene.createItem("waterPlaneMesh", _SCENE_STATIC);
             oceanItem.setCastsShadows(false);
             _gameCore.writeFlagsToItem(oceanItem, HLMS_OCEAN_VERTICES | HLMS_FLOOR_DECALS);
             oceanItem.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_WATER);
             oceanItem.setDatablock(surroundBlock);
             oceanNode.attachObject(oceanItem);
             //NOTE: As we're re-orientating later 1 must be the scale for z
-            oceanNode.setScale(300, 1, 300);
-            oceanNode.setPosition((x * 600) - 300 - 0.5, 0, (y * 600) + -300 - 0.5 - 600);
+            oceanNode.setScale(300 + (1.0/100.0) * 300, 1, 300 + (1.0/100.0) * 300);
+            oceanNode.setPosition((x * 600) - 300 + ((1.0/100.0) * 300), 0, (y * 600) + -300 + ((1.0/100.0) * 300) - 600);
             //oceanNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
             planes.append(oceanItem);
             //oceanNode.setVisible(false);

@@ -170,6 +170,9 @@
                         mMapData_.writeSecondaryValueForCoord(x, y, val);
                     }
                 }
+
+                mMapData_.holeX = originX;
+                mMapData_.holeY = originY;
             }
             if(placeId == PlaceId.GRAVEYARD){
                 mMapData_.applyTerrainVoxelsForPlace("graveyard", ::basePlacesPath, originX - mData_.halfX, originY - mData_.halfY);

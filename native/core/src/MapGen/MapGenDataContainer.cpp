@@ -22,6 +22,11 @@ namespace ProceduralExplorationGameCore{
         return MapDataReadResult::SUCCESS;
     }
 
+    bool MapGenDataContainer::hasEntry(const std::string& name){
+        MapDataEntry e;
+        return readEntry(name, &e, MapDataEntryType::ANY) == MapDataReadResult::SUCCESS;
+    }
+
     void MapGenDataContainer::setEntry(const std::string& name, MapDataEntry entry){
         mEntries[name] = entry;
     }
