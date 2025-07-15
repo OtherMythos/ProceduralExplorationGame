@@ -6,10 +6,13 @@
 #include <unordered_set>
 #include <unordered_map>
 
+#include "System/EnginePrerequisites.h"
+
 #include "Ogre.h"
 
 namespace ProceduralExplorationGameCore{
 
+    class ExplorationMapData;
 
     class WaterMeshGenerator {
     public:
@@ -37,7 +40,7 @@ namespace ProceduralExplorationGameCore{
             std::vector<Triangle> triangles;
         };
 
-        MeshData generateMesh(int width, int height, const std::vector<Hole>& holes, float cellSize = 1.0f);
+        MeshData generateMesh(int width, int height, const std::vector<Hole>& holes, ExplorationMapData* mapData, float cellSize = 1.0f);
 
     private:
         std::vector<Vertex> vertices;
@@ -51,12 +54,12 @@ namespace ProceduralExplorationGameCore{
         uint64_t makeKey(int x, int y) const;
         uint64_t makeQuadKey(int x, int y) const;
         uint32_t addVertex(const Ogre::Vector3& vertex, const Ogre::Vector2 uv);
-        uint32_t getVertexIndex(int x, int y);
+        uint32_t getVertexIndex(int x, int y, AV::uint8 vertFlag = 0);
         bool isPointInCircle(const Ogre::Vector2& point, const Ogre::Vector2& center, float radius) const;
         bool quadIntersectsCircle(int quadX, int quadY, const Hole& hole) const;
         std::vector<uint32_t> generateCircleVertices(const Hole& hole);
         void triangulateAroundHole(const Hole& hole, const std::vector<uint32_t>& circleIndices);
-        void generateGridTriangles();
+        void generateGridTriangles(ExplorationMapData* mapData);
 
     };
 

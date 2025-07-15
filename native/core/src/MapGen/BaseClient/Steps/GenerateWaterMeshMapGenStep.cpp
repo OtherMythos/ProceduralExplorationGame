@@ -21,10 +21,10 @@ namespace ProceduralExplorationGameCore{
 
         if(mapData->hasEntry("holeX") && mapData->hasEntry("holeY")){
             holes.push_back(
-                WaterMeshGenerator::Hole(Ogre::Vector2(float(mapData->uint32("holeX"))/600 * 100, (float(600-mapData->uint32("holeY"))/600 * 100)), 2)
+                WaterMeshGenerator::Hole(Ogre::Vector2(float(mapData->uint32("holeX"))/600 * 100, (float(600-mapData->uint32("holeY"))/600 * 100)), float(mapData->uint32("holeRadius"))/600 * 100)
             );
         };
-        WaterMeshGenerator::MeshData meshData = gen.generateMesh(100, 100, holes);
+        WaterMeshGenerator::MeshData meshData = gen.generateMesh(100, 100, holes, mapData);
 
         WaterMeshGenerator::MeshData* data = new WaterMeshGenerator::MeshData();
         data->triangles = std::move(meshData.triangles);

@@ -50,11 +50,10 @@ namespace ProceduralExplorationGameCore{
                 fullSecondaryVoxPtr++;
                 fullVoxPtr++;
                 AV::uint8 altitude = *voxPtr & 0xFF;
-                if(altitude < seaLevel){
+                RegionId regionId = ((*secondaryVoxPtr) >> 8) & 0xFF;
+                if(regionId == REGION_ID_WATER){
                     continue;
                 }
-
-                RegionId regionId = ((*secondaryVoxPtr) >> 8) & 0xFF;
 
                 const Biome& b = Biome::getBiomeForId(regionData[regionId].type);
 

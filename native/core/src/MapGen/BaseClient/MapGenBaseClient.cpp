@@ -264,7 +264,7 @@ namespace ProceduralExplorationGameCore{
             float* vertsWritePtr = vertsBufPtr;
             for(const WaterMeshGenerator::Vertex& v : data->vertices){
                 *(vertsWritePtr++) = (v.pos.x - 50.0f) / 50.0;
-                *(vertsWritePtr++) = 0.0f;
+                *(vertsWritePtr++) = v.pos.y;
                 *(vertsWritePtr++) = (v.pos.z - 50.0f) / 50.0;
                 *(vertsWritePtr++) = v.uv.x;
                 *(vertsWritePtr++) = v.uv.y;

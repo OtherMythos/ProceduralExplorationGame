@@ -81,6 +81,7 @@ const SKIP_DRAW_TERRAIN_VOXEL_FLAG = 0x2000000;
 const RIVER_VOXEL_FLAG = 0x4000000;
 const DRAW_COLOUR_VOXEL_FLAG = 0x8000000;
 const DO_NOT_PLACE_RIVERS_VOXEL_FLAG = 0x10000000;
+const TEST_CHANGE_WATER_FLAG = 0x20000000;
 
 /**
  * Generally aestetic things like trees, rocks, etc.

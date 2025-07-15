@@ -169,6 +169,10 @@ namespace ProceduralExplorationGameCore{
 
     void SWAMP_FinalVoxChangeFunction(const ExplorationMapData* mapData, AV::uint32* vox, AV::uint32* secondary, AV::uint16 x, AV::uint16 y){
         *secondary |= DO_NOT_PLACE_RIVERS_VOXEL_FLAG;
+
+        if((*vox & 0xFF) < mapData->seaLevel){
+            *secondary |= TEST_CHANGE_WATER_FLAG;
+        }
     }
 
     void NONE_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture, AV::uint8 regionDistance){

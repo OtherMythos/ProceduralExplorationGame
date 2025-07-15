@@ -1,5 +1,8 @@
 #include "WaterMeshGenerator.h"
 
+#include "MapGen/ExplorationMapDataPrerequisites.h"
+#include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
+
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
@@ -23,14 +26,14 @@ namespace ProceduralExplorationGameCore{
     }
 
     // Get or create vertex at grid position
-    uint32_t WaterMeshGenerator::getVertexIndex(int x, int y) {
+    uint32_t WaterMeshGenerator::getVertexIndex(int x, int y, AV::uint8 vertFlag) {
         uint64_t key = makeKey(x, y);
         auto it = vertexMap.find(key);
         if (it != vertexMap.end()) {
             return it->second;
         }
 
-        Ogre::Vector3 vertex(x * cellSize, 0.0f, y * cellSize);
+        Ogre::Vector3 vertex(x * cellSize, float(vertFlag), y * cellSize);
         uint32_t index = addVertex(vertex, Ogre::Vector2(float(x) / float(gridWidth-1), float(y) / float(gridHeight-1)));
         vertexMap[key] = index;
         return index;
@@ -170,7 +173,29 @@ namespace ProceduralExplorationGameCore{
     }
 
     // Generate the base grid triangles (avoiding removed quads)
-    void WaterMeshGenerator::generateGridTriangles() {
+    void WaterMeshGenerator::generateGridTriangles(ExplorationMapData* mapData) {
+        const AV::uint32 width = mapData->width;
+        const AV::uint32 height = mapData->height;
+        const AV::uint32 seaLevel = mapData->uint32("seaLevel");
+
+        std::vector<AV::uint8> resolvedFlags;
+        resolvedFlags.resize(gridWidth * gridHeight, 0);
+
+        for(int y = 0; y < height; y++){
+            for(int x = 0; x < width; x++){
+                float xFloat = (float(x) / float(width)) * gridWidth;
+                float yFloat = (float(y) / float(height)) * gridHeight;
+                int xa = int(std::floor(xFloat));
+                int ya = int(std::floor(yFloat));
+
+                if(xa < 0 || ya < 0 || xa >= gridWidth || ya >= gridHeight) continue;
+
+                const AV::uint32* fullFlags = FULL_PTR_FOR_COORD_SECONDARY(mapData, WRAP_WORLD_POINT(x, y));
+
+                resolvedFlags[xa + ya * gridWidth] |= (*fullFlags & TEST_CHANGE_WATER_FLAG) ? 1 : 0;
+            }
+        }
+
         for (int y = 0; y < gridHeight - 1; ++y) {
             for (int x = 0; x < gridWidth - 1; ++x) {
                 uint64_t quadKey = makeQuadKey(x, y);
@@ -180,11 +205,18 @@ namespace ProceduralExplorationGameCore{
                     continue;
                 }
 
+                int reverseWidth = x + 1;
+                int reverseHeight = gridHeight - y - 2;
+                AV::uint8 vertFlag = 0;
+                if(reverseWidth >= 0 && reverseWidth < gridWidth && reverseHeight < gridHeight){
+                    vertFlag = resolvedFlags[reverseWidth + reverseHeight * gridWidth];
+                }
+
                 // Create quad vertices
-                uint32_t v0 = getVertexIndex(x, y);
-                uint32_t v1 = getVertexIndex(x + 1, y);
-                uint32_t v2 = getVertexIndex(x + 1, y + 1);
-                uint32_t v3 = getVertexIndex(x, y + 1);
+                uint32_t v0 = getVertexIndex(x, y, vertFlag);
+                uint32_t v1 = getVertexIndex(x + 1, y, vertFlag);
+                uint32_t v2 = getVertexIndex(x + 1, y + 1, vertFlag);
+                uint32_t v3 = getVertexIndex(x, y + 1, vertFlag);
 
                 // Create two triangles for the quad
                 triangles.emplace_back(v0, v1, v2);
@@ -193,7 +225,7 @@ namespace ProceduralExplorationGameCore{
         }
     }
 
-    WaterMeshGenerator::MeshData WaterMeshGenerator::generateMesh(int width, int height, const std::vector<Hole>& holes, float cellSize) {
+    WaterMeshGenerator::MeshData WaterMeshGenerator::generateMesh(int width, int height, const std::vector<Hole>& holes, ExplorationMapData* mapData, float cellSize) {
         // Initialize
         this->gridWidth = width;
         this->gridHeight = height;
@@ -216,12 +248,12 @@ namespace ProceduralExplorationGameCore{
         }
 
         // Generate the main grid triangles
-        generateGridTriangles();
+        generateGridTriangles(mapData);
 
         // Generate holes and triangulate around them
         for (const Hole& hole : holes) {
-            std::vector<uint32_t> circleIndices = generateCircleVertices(hole);
-            triangulateAroundHole(hole, circleIndices);
+            //std::vector<uint32_t> circleIndices = generateCircleVertices(hole);
+            //triangulateAroundHole(hole, circleIndices);
         }
 
         return MeshData{vertices, triangles};

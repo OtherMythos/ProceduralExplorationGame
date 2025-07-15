@@ -173,6 +173,7 @@
 
                 mMapData_.holeX = originX;
                 mMapData_.holeY = originY;
+                mMapData_.holeRadius = radius;
             }
             if(placeId == PlaceId.GRAVEYARD){
                 mMapData_.applyTerrainVoxelsForPlace("graveyard", ::basePlacesPath, originX - mData_.halfX, originY - mData_.halfY);
