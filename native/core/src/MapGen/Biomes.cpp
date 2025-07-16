@@ -200,23 +200,33 @@ namespace ProceduralExplorationGameCore{
         return out;
     }
 
+    Biome::BiomeColour NONE_WaterTextureColourChangeFunction(bool mask, const ExplorationMapData* mapData){
+        return {0, 0, 150, 255};
+    }
+
+    Biome::BiomeColour SWAMP_WaterTextureColourChangeFunction(bool mask, const ExplorationMapData* mapData){
+
+        return {0, 100, 75, 255};
+    }
+
     static const std::array BIOMES{
-        Biome(0, 0, 0, 0),
-        Biome(&GRASS_LAND_VoxFunction, &GRASS_LAND_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction),
-        Biome(&GRASS_FOREST_VoxFunction, &GRASS_FOREST_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction),
-        Biome(&CHERRY_BLOSSOM_FOREST_VoxFunction, &CHERRY_BLOSSOM_FOREST_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction),
-        Biome(&EXP_FIELD_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction),
-        Biome(&DESERT_VoxFunction, &DESERT_PlaceObjectsFunction, &DESERT_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction),
-        Biome(&SWAMP_VoxFunction, &SWAMP_PlaceObjectsFunction, &SWAMP_DetermineAltitudeFunction, &SWAMP_FinalVoxChangeFunction),
-        Biome(&SHALLOW_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction),
-        Biome(&DEEP_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction),
+        Biome(0, 0, 0, 0, 0),
+        Biome(&GRASS_LAND_VoxFunction, &GRASS_LAND_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
+        Biome(&GRASS_FOREST_VoxFunction, &GRASS_FOREST_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
+        Biome(&CHERRY_BLOSSOM_FOREST_VoxFunction, &CHERRY_BLOSSOM_FOREST_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
+        Biome(&EXP_FIELD_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
+        Biome(&DESERT_VoxFunction, &DESERT_PlaceObjectsFunction, &DESERT_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
+        Biome(&SWAMP_VoxFunction, &SWAMP_PlaceObjectsFunction, &SWAMP_DetermineAltitudeFunction, &SWAMP_FinalVoxChangeFunction, &SWAMP_WaterTextureColourChangeFunction),
+        Biome(&SHALLOW_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
+        Biome(&DEEP_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
     };
 
-    Biome::Biome(DetermineVoxFunction voxFunction, PlaceObjectFunction placementFunction, DetermineAltitudeFunction altitudeFunction, FinalVoxChangeFunction finalVoxFunction)
+    Biome::Biome(DetermineVoxFunction voxFunction, PlaceObjectFunction placementFunction, DetermineAltitudeFunction altitudeFunction, FinalVoxChangeFunction finalVoxFunction, WaterTextureColourFunction waterTexFunction)
         : mVoxFunction(voxFunction),
         mPlacementFunction(placementFunction),
         mAltitudeFunction(altitudeFunction),
-        mFinalVoxChangeFunction(finalVoxFunction) {
+        mFinalVoxChangeFunction(finalVoxFunction),
+        mWaterTextureColourFunction(waterTexFunction) {
 
     }
 

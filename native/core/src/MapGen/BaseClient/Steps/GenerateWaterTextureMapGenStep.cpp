@@ -59,6 +59,23 @@ namespace ProceduralExplorationGameCore{
         *((*buf)) = a / 255;
     }
 
+    static void getBufferWriteForRegion(float** buf, RegionId regionId, ExplorationMapData* mapData){
+        if(regionId == REGION_ID_WATER){
+            _writeToBuffer(buf, 0, 0, 150);
+            return;
+        }
+
+        //TODO move this elsewhere.
+        const std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
+        const Biome& b = Biome::getBiomeForId(regionData[regionId].type);
+
+        Biome::WaterTextureColourFunction func = b.getWaterTextureColourFunction();
+        assert(func != 0);
+
+        Biome::BiomeColour texCol = (*func)(false, mapData);
+        _writeToBuffer(buf, texCol.r, texCol.g, texCol.b, texCol.a);
+    }
+
     void GenerateWaterTextureMapGenJob::processJob(ExplorationMapData* mapData, float* buffer, float* bufferMask, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb){
         const AV::uint32 width = mapData->width;
         const AV::uint32 height = mapData->height;
@@ -99,7 +116,8 @@ namespace ProceduralExplorationGameCore{
                 }else if(*waterGroup == INVALID_WATER_ID){
                     _writeToBuffer(&b, 143, 189, 207);
                 }else{
-                    _writeToBuffer(&b, 0, 0, 150);
+                    RegionId regionId = *REGION_PTR_FOR_COORD_CONST(mapData, altitudePoint);
+                    getBufferWriteForRegion(&b, regionId, mapData);
                 }
 
                 if(*waterGroup == 0 || *waterGroup == INVALID_WATER_ID){
@@ -140,7 +158,9 @@ namespace ProceduralExplorationGameCore{
                         int reverseWidth = width - yya - 1;
                         float* b = ((buffer) + ((xxa + reverseWidth * width) * 4));
 
-                        _writeToBuffer(&b, 0, 0, 150);
+                        RegionId regionId = *REGION_PTR_FOR_COORD_CONST(mapData, p);
+                        getBufferWriteForRegion(&b, regionId, mapData);
+                        //_writeToBuffer(&b, 0, 0, 150);
                     }
                 }
             }
