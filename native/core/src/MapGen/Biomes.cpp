@@ -136,11 +136,24 @@ namespace ProceduralExplorationGameCore{
     }
 
     void SWAMP_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture, AV::uint8 regionDistance){
-        if(regionDistance < 12) return;
-        if(processRValue(mapData, x, y, 12)){
-            bool treeType = (mapGenRandomIntMinMax(0, 2) == 0);
-            PLACE_ITEM(treeType ? PlacedItemId::SWAMP_TREE_ONE : PlacedItemId::SWAMP_TREE_TWO);
-            //PLACE_ITEM(PlacedItemId::SWAMP_TREE_TWO);
+        if(altitude < mapData->seaLevel){
+            if(processRValue(mapData, x, y, 5)){
+                bool plantType = (mapGenRandomIntMinMax(0, 3) == 0);
+                PLACE_ITEM(
+                    plantType ?
+                    PlacedItemId::SWAMP_BULLRUSH_1 :
+                    PlacedItemId::SWAMP_BULLRUSH_2
+                );
+            }
+            return;
+        }
+
+        if(regionDistance >= 12){
+            if(processRValue(mapData, x, y, 12)){
+                bool treeType = (mapGenRandomIntMinMax(0, 2) == 0);
+                PLACE_ITEM(treeType ? PlacedItemId::SWAMP_TREE_ONE : PlacedItemId::SWAMP_TREE_TWO);
+                //PLACE_ITEM(PlacedItemId::SWAMP_TREE_TWO);
+            }
         }
     }
 

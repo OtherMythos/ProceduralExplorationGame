@@ -102,6 +102,8 @@ enum PlacedItemId{
     BERRY_BUSH_BERRIES,
     SWAMP_TREE_ONE,
     SWAMP_TREE_TWO,
+    SWAMP_BULLRUSH_1,
+    SWAMP_BULLRUSH_2,
 
     MAX
 };

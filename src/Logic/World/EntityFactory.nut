@@ -331,6 +331,12 @@
             case PlacedItemId.SWAMP_TREE_TWO:{
                 return "swampPlants.tree2.voxMesh";
             }
+            case PlacedItemId.SWAMP_BULLRUSH_1:{
+                return "swampPlants.bullrush1.voxMesh";
+            }
+            case PlacedItemId.SWAMP_BULLRUSH_2:{
+                return "swampPlants.bullrush2.voxMesh";
+            }
             default:{
                 return "tree.voxMesh";
             }
@@ -357,6 +363,10 @@
             case PlacedItemId.SWAMP_TREE_ONE:
             case PlacedItemId.SWAMP_TREE_TWO:{
                 return 0.4;
+            }
+            case PlacedItemId.SWAMP_BULLRUSH_1:
+            case PlacedItemId.SWAMP_BULLRUSH_2:{
+                return 0.2;
             }
             default:
                 return 0.6;

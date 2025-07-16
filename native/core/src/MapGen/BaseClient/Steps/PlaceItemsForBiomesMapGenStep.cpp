@@ -53,7 +53,7 @@ namespace ProceduralExplorationGameCore{
                 fullVoxPtr++;
                 AV::uint8 altitude = fullVox & 0xFF;
                 if(altitude < seaLevel){
-                    continue;
+                    //continue;
                 }
                 if(fullSecondaryVox & DO_NOT_PLACE_ITEMS_VOXEL_FLAG){
                     continue;
