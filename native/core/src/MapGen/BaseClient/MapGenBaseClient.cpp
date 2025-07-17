@@ -33,6 +33,7 @@
 #include "Steps/RecalculateRegionEdgesMapGenStep.h"
 #include "Steps/BiomeAltitudeMapGenStep.h"
 #include "Steps/BiomeFinalChangesMapGenStep.h"
+#include "Steps/CalculateWaterDistanceMapGenStep.h"
 #include "Steps/GenerateWaterMeshMapGenStep.h"
 
 #include "MapGen/Mesh/WaterMeshGenerator.h"
@@ -93,6 +94,7 @@ namespace ProceduralExplorationGameCore{
             new CarveRiversMapGenStep(),
             new DeterminePlayerStartMapGenStep(),
             new DetermineGatewayPositionMapGenStep(),
+            new CalculateWaterDistanceMapGenStep(),
             new PlaceItemsForBiomesMapGenStep(),
             new GenerateWaterTextureMapGenStep(),
             new GenerateWaterMeshMapGenStep(),
