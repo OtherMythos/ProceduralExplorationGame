@@ -1,4 +1,4 @@
-#include "CalculateRegionEdgesMapGenStep.h"
+#include "CalculateRegionDistanceMapGenStep.h"
 
 #include "MapGen/ExplorationMapDataPrerequisites.h"
 #include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
@@ -7,30 +7,30 @@
 
 namespace ProceduralExplorationGameCore{
 
-    CalculateRegionEdgesMapGenStep::CalculateRegionEdgesMapGenStep() : MapGenStep("Calculate Region Edges"){
+    CalculateRegionDistanceMapGenStep::CalculateRegionDistanceMapGenStep() : MapGenStep("Calculate Region Edges"){
 
     }
 
-    CalculateRegionEdgesMapGenStep::~CalculateRegionEdgesMapGenStep(){
+    CalculateRegionDistanceMapGenStep::~CalculateRegionDistanceMapGenStep(){
 
     }
 
-    void CalculateRegionEdgesMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
-        CalculateRegionEdgesMapGenJob job;
+    void CalculateRegionDistanceMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+        CalculateRegionDistanceMapGenJob job;
         job.processJob(mapData, workspace);
     }
 
 
 
-    CalculateRegionEdgesMapGenJob::CalculateRegionEdgesMapGenJob(){
+    CalculateRegionDistanceMapGenJob::CalculateRegionDistanceMapGenJob(){
 
     }
 
-    CalculateRegionEdgesMapGenJob::~CalculateRegionEdgesMapGenJob(){
+    CalculateRegionDistanceMapGenJob::~CalculateRegionDistanceMapGenJob(){
 
     }
 
-    void CalculateRegionEdgesMapGenJob::processJob(ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    void CalculateRegionDistanceMapGenJob::processJob(ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         std::vector<AV::uint8> distances;
         distances.resize(mapData->width * mapData->height, 255); // 255 = max distance/unvisited
         std::queue<std::pair<WorldPoint, int>> queue; // pair of coordinate and distance

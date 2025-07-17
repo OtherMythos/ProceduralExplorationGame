@@ -9,18 +9,18 @@ namespace ProceduralExplorationGameCore{
     class ExplorationMapInputData;
     class ExplorationMapData;
 
-    class CalculateRegionEdgesMapGenStep : public MapGenStep{
+    class CalculateRegionDistanceMapGenStep : public MapGenStep{
     public:
-        CalculateRegionEdgesMapGenStep();
-        ~CalculateRegionEdgesMapGenStep();
+        CalculateRegionDistanceMapGenStep();
+        ~CalculateRegionDistanceMapGenStep();
 
         void processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace) override;
     };
 
-    class CalculateRegionEdgesMapGenJob{
+    class CalculateRegionDistanceMapGenJob{
     public:
-        CalculateRegionEdgesMapGenJob();
-        ~CalculateRegionEdgesMapGenJob();
+        CalculateRegionDistanceMapGenJob();
+        ~CalculateRegionDistanceMapGenJob();
 
         void processJob(ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace);
 

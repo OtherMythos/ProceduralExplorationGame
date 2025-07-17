@@ -29,7 +29,7 @@
 #include "Steps/MergeSmallRegionsMapGenStep.h"
 #include "Steps/MergeIsolatedRegionsMapGenStep.h"
 #include "Steps/GenerateWaterTextureMapGenStep.h"
-#include "Steps/CalculateRegionEdgesMapGenStep.h"
+#include "Steps/CalculateRegionDistanceMapGenStep.h"
 #include "Steps/RecalculateRegionEdgesMapGenStep.h"
 #include "Steps/BiomeAltitudeMapGenStep.h"
 #include "Steps/BiomeFinalChangesMapGenStep.h"
@@ -76,13 +76,13 @@ namespace ProceduralExplorationGameCore{
             new MergeExpandableRegionsMapGenStep(),
             //Apply the biome altitude first so places modify the correct altitude.
             new RecalculateRegionEdgesMapGenStep(),
-            new CalculateRegionEdgesMapGenStep(),
+            new CalculateRegionDistanceMapGenStep(),
 
             //Perform logic to determine altitude
             new BiomeAltitudeMapGenStep(),
             new MapGenStepMarker("DeterminePlaces"),
             new RecalculateRegionEdgesMapGenStep(),
-            new CalculateRegionEdgesMapGenStep(),
+            new CalculateRegionDistanceMapGenStep(),
             new PopulateFinalBiomesMapGenStep(),
             new BiomeFinalChangesMapGenStep(),
 
