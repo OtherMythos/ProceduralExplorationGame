@@ -12,18 +12,18 @@ namespace ProceduralExplorationGameCore{
     class ExplorationMapInputData;
     class ExplorationMapData;
 
-    class PopulateFinalBiomesMapGenStep : public MapGenStep{
+    class BiomeVoxelMapGenStep : public MapGenStep{
     public:
-        PopulateFinalBiomesMapGenStep();
-        ~PopulateFinalBiomesMapGenStep();
+        BiomeVoxelMapGenStep();
+        ~BiomeVoxelMapGenStep();
 
         void processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace) override;
     };
 
-    class PopulateFinalBiomesMapGenJob{
+    class BiomeVoxelMapGenJob{
     public:
-        PopulateFinalBiomesMapGenJob();
-        ~PopulateFinalBiomesMapGenJob();
+        BiomeVoxelMapGenJob();
+        ~BiomeVoxelMapGenJob();
 
         void processJob(ExplorationMapData* mapData, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb);
 

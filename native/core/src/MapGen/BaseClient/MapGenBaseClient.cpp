@@ -23,7 +23,7 @@
 #include "Steps/DetermineRegionsMapGenStep.h"
 #include "Steps/DetermineRegionTypesMapGenStep.h"
 #include "Steps/MergeExpandableRegionsMapGenStep.h"
-#include "Steps/PopulateFinalBiomesMapGenStep.h"
+#include "Steps/BiomeVoxelMapGenStep.h"
 #include "Steps/WriteFinalRegionValuesMapGenStep.h"
 #include "Steps/PlaceItemsForBiomesMapGenStep.h"
 #include "Steps/MergeSmallRegionsMapGenStep.h"
@@ -83,7 +83,7 @@ namespace ProceduralExplorationGameCore{
             new MapGenStepMarker("DeterminePlaces"),
             new RecalculateRegionEdgesMapGenStep(),
             new CalculateRegionDistanceMapGenStep(),
-            new PopulateFinalBiomesMapGenStep(),
+            new BiomeVoxelMapGenStep(),
             new BiomeFinalChangesMapGenStep(),
 
             new PerformFinalFloodFillMapGenStep(),

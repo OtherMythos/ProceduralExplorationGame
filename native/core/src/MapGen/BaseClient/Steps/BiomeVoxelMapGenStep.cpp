@@ -1,4 +1,4 @@
-#include "PopulateFinalBiomesMapGenStep.h"
+#include "BiomeVoxelMapGenStep.h"
 
 #include "MapGen/ExplorationMapDataPrerequisites.h"
 #include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
@@ -8,35 +8,35 @@
 
 namespace ProceduralExplorationGameCore{
 
-    PopulateFinalBiomesMapGenStep::PopulateFinalBiomesMapGenStep() : MapGenStep("Populate Final Biomes"){
+    BiomeVoxelMapGenStep::BiomeVoxelMapGenStep() : MapGenStep("Place Biome Voxels"){
 
     }
 
-    PopulateFinalBiomesMapGenStep::~PopulateFinalBiomesMapGenStep(){
+    BiomeVoxelMapGenStep::~BiomeVoxelMapGenStep(){
 
     }
 
-    void PopulateFinalBiomesMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    void BiomeVoxelMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         const AV::uint32 width = input->uint32("width");
         const AV::uint32 height = input->uint32("height");
 
         int div = 4;
         int divHeight = height / div;
         for(int i = 0; i < 4; i++){
-            PopulateFinalBiomesMapGenJob job;
+            BiomeVoxelMapGenJob job;
             job.processJob(mapData, 0, i * divHeight, width, i * divHeight + divHeight);
         }
     }
 
-    PopulateFinalBiomesMapGenJob::PopulateFinalBiomesMapGenJob(){
+    BiomeVoxelMapGenJob::BiomeVoxelMapGenJob(){
 
     }
 
-    PopulateFinalBiomesMapGenJob::~PopulateFinalBiomesMapGenJob(){
+    BiomeVoxelMapGenJob::~BiomeVoxelMapGenJob(){
 
     }
 
-    void PopulateFinalBiomesMapGenJob::processJob(ExplorationMapData* mapData, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb){
+    void BiomeVoxelMapGenJob::processJob(ExplorationMapData* mapData, WorldCoord xa, WorldCoord ya, WorldCoord xb, WorldCoord yb){
         const AV::uint32 seaLevel = mapData->uint32("seaLevel");
         const std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
 
