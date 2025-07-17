@@ -337,6 +337,15 @@
             case PlacedItemId.SWAMP_BULLRUSH_2:{
                 return "swampPlants.bullrush2.voxMesh";
             }
+            case PlacedItemId.SWAMP_GRASS_1:{
+                return "swampPlants.waterBush1.voxMesh";
+            }
+            case PlacedItemId.SWAMP_GRASS_2:{
+                return "swampPlants.waterBush2.voxMesh";
+            }
+            case PlacedItemId.SWAMP_LILYPAD:{
+                return "swampPlants.lilypad.voxMesh";
+            }
             default:{
                 return "tree.voxMesh";
             }
@@ -361,11 +370,14 @@
                 return 0.2;
             }
             case PlacedItemId.SWAMP_TREE_ONE:
-            case PlacedItemId.SWAMP_TREE_TWO:{
+            case PlacedItemId.SWAMP_TREE_TWO:
+            case PlacedItemId.SWAMP_GRASS_1:{
                 return 0.4;
             }
             case PlacedItemId.SWAMP_BULLRUSH_1:
-            case PlacedItemId.SWAMP_BULLRUSH_2:{
+            case PlacedItemId.SWAMP_BULLRUSH_2:
+            case PlacedItemId.SWAMP_LILYPAD:
+            case PlacedItemId.SWAMP_GRASS_2:{
                 return 0.2;
             }
             default:

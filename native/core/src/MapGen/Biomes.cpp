@@ -137,13 +137,22 @@ namespace ProceduralExplorationGameCore{
 
     void SWAMP_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture, AV::uint8 regionDistance){
         if(altitude < mapData->seaLevel){
-            if(processRValue(mapData, x, y, 5)){
-                bool plantType = (mapGenRandomIntMinMax(0, 3) == 0);
-                PLACE_ITEM(
-                    plantType ?
-                    PlacedItemId::SWAMP_BULLRUSH_1 :
-                    PlacedItemId::SWAMP_BULLRUSH_2
-                );
+            if(regionDistance <= 1){
+                if(processRValue(mapData, x, y, 1)){
+                    bool plantType = (mapGenRandomIntMinMax(0, 3) == 0);
+                    PLACE_ITEM(
+                        plantType ?
+                        PlacedItemId::SWAMP_GRASS_2 :
+                        PlacedItemId::SWAMP_GRASS_1
+                    );
+                }
+            }
+            if(regionDistance >= 4){
+                if(processRValue(mapData, x, y, 4)){
+                    PLACE_ITEM(
+                        PlacedItemId::SWAMP_LILYPAD
+                    );
+                }
             }
             return;
         }
