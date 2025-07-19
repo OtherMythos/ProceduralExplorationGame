@@ -2,7 +2,7 @@
     "Universal":{
         "swampPlants.gox": {
             "separateLayers": true,
-            "animValues": "88,3;161,2;137,2"
+            "animValues": "88,3;161,2;137,2;153,2;203,2"
         }
     }
 }
