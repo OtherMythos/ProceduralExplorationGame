@@ -19,4 +19,4 @@
 ::PlacedItems[PlacedItemId.SWAMP_BULLRUSH_2] = PlacedItem("swampPlants.bullrush2.voxMesh", 0.2);
 ::PlacedItems[PlacedItemId.SWAMP_GRASS_1] = PlacedItem("swampPlants.waterBush1.voxMesh", 0.4);
 ::PlacedItems[PlacedItemId.SWAMP_GRASS_2] = PlacedItem("swampPlants.waterBush2.voxMesh", 0.2);
-::PlacedItems[PlacedItemId.SWAMP_LILYPAD] = PlacedItem("swampPlants.lilypad.voxMesh", 0.2);
+::PlacedItems[PlacedItemId.SWAMP_LILYPAD] = PlacedItem("swampPlants.lilypad.voxMesh", 0.2, Vec3(0, -0.8, 0));

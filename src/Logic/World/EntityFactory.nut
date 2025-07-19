@@ -406,13 +406,17 @@
         return en;
     }
     function constructPlacedItem(parentNode, itemData, idx=0){
+        local itemType = itemData.type;
+        local d = ::PlacedItems[itemType];
+
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = Vec3(itemData.originX, 0, -itemData.originY);
         targetPos.y = getZForPos(targetPos);
         local en = manager.createEntity(targetPos);
 
-        local itemType = itemData.type;
-        local d = ::PlacedItems[itemType];
+        if(d.mPosOffset != null){
+            targetPos += d.mPosOffset;
+        }
 
         //local entry = ActiveEnemyEntry(mConstructorWorld_, itemData.type, targetPos, en);
 
