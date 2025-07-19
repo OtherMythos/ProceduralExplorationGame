@@ -293,97 +293,6 @@
         return enemy;
     }
 
-    function getMeshForPlacedItemType_(item){
-        switch(item){
-            case PlacedItemId.CHERRY_BLOSSOM_TREE:{
-                return "treeCherryBlossom.voxMesh";
-            }
-            case PlacedItemId.TREE_APPLE:{
-                return "treeApple.voxMesh";
-            }
-            case PlacedItemId.CACTUS:{
-                return "cactus1.voxMesh";
-            }
-            case PlacedItemId.FLOWER_PURPLE:{
-                return "flower.flowerPurple.voxMesh";
-            }
-            case PlacedItemId.FLOWER_WHITE:{
-                return "flower.flowerWhite.voxMesh";
-            }
-            case PlacedItemId.FLOWER_RED:{
-                return "flower.flowerRed.voxMesh";
-            }
-            case PlacedItemId.PALM_TREE:{
-                return "palmTree.voxMesh";
-            }
-            case PlacedItemId.PALM_TREE_COCONUTS:{
-                return "coconutPalmTree.voxMesh";
-            }
-            case PlacedItemId.BERRY_BUSH:{
-                return "berryBush.voxMesh";
-            }
-            case PlacedItemId.BERRY_BUSH_BERRIES:{
-                return "berryBushBerries.voxMesh";
-            }
-            case PlacedItemId.SWAMP_TREE_ONE:{
-                return "swampPlants.tree1.voxMesh";
-            }
-            case PlacedItemId.SWAMP_TREE_TWO:{
-                return "swampPlants.tree2.voxMesh";
-            }
-            case PlacedItemId.SWAMP_BULLRUSH_1:{
-                return "swampPlants.bullrush1.voxMesh";
-            }
-            case PlacedItemId.SWAMP_BULLRUSH_2:{
-                return "swampPlants.bullrush2.voxMesh";
-            }
-            case PlacedItemId.SWAMP_GRASS_1:{
-                return "swampPlants.waterBush1.voxMesh";
-            }
-            case PlacedItemId.SWAMP_GRASS_2:{
-                return "swampPlants.waterBush2.voxMesh";
-            }
-            case PlacedItemId.SWAMP_LILYPAD:{
-                return "swampPlants.lilypad.voxMesh";
-            }
-            default:{
-                return "tree.voxMesh";
-            }
-        }
-    }
-    function getScaleForPlacedItemType_(item){
-        switch(item){
-            case PlacedItemId.CACTUS:{
-                return 0.3;
-            }
-            case PlacedItemId.FLOWER_RED:
-            case PlacedItemId.FLOWER_PURPLE:
-            case PlacedItemId.FLOWER_WHITE:{
-                return 0.3;
-            }
-            case PlacedItemId.PALM_TREE:
-            case PlacedItemId.PALM_TREE_COCONUTS:{
-                return 0.3;
-            }
-            case PlacedItemId.BERRY_BUSH:
-            case PlacedItemId.BERRY_BUSH_BERRIES:{
-                return 0.2;
-            }
-            case PlacedItemId.SWAMP_TREE_ONE:
-            case PlacedItemId.SWAMP_TREE_TWO:
-            case PlacedItemId.SWAMP_GRASS_1:{
-                return 0.4;
-            }
-            case PlacedItemId.SWAMP_BULLRUSH_1:
-            case PlacedItemId.SWAMP_BULLRUSH_2:
-            case PlacedItemId.SWAMP_LILYPAD:
-            case PlacedItemId.SWAMP_GRASS_2:{
-                return 0.2;
-            }
-            default:
-                return 0.6;
-        }
-    }
     function constructSimpleTeleportItem(parentNode, meshPath, pos, scale, teleData, collisionRadius=null, forceZ=null){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = pos.copy();
@@ -503,19 +412,18 @@
         local en = manager.createEntity(targetPos);
 
         local itemType = itemData.type;
+        local d = ::PlacedItems[itemType];
 
         //local entry = ActiveEnemyEntry(mConstructorWorld_, itemData.type, targetPos, en);
 
         local placeNode = parentNode.createChildSceneNode(_SCENE_STATIC);
-        //local meshTarget = itemData.type == PlacedItemId.CHERRY_BLOSSOM_TREE ? "treeCherryBlossom.voxMesh" : "tree.voxMesh";
-        local meshTarget = getMeshForPlacedItemType_(itemType);
+        local meshTarget = d.mMesh;
         placeNode.setPosition(targetPos);
-        //TODO make some of these scene static
         local item = _gameCore.createVoxMeshItem(meshTarget, HLMS_PACKED_VOXELS | HLMS_PACKED_OFFLINE_VOXELS | HLMS_TREE_VERTICES, _SCENE_STATIC);
         item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         //_gameCore.writeFlagsToItem(item, HLMS_PACKED_VOXELS | HLMS_PACKED_OFFLINE_VOXELS | HLMS_TREE_VERTICES);
         placeNode.attachObject(item);
-        local scale = getScaleForPlacedItemType_(itemType);
+        local scale = d.mScale;
         placeNode.setScale(scale, scale, scale);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](placeNode, true));
 

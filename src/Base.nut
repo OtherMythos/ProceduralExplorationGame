@@ -117,6 +117,7 @@
         _doFile("res://src/Content/Equippables.nut");
         _doFile("res://src/Content/Enemies.nut");
         _doFile("res://src/Content/Items.nut");
+        _doFile("res://src/Content/PlacedItem.nut");
         _doFile("res://src/Content/StatusAffliction.nut");
         _doFile("res://src/Content/Places.nut");
         _doFile("res://src/Content/FoundObject.nut");

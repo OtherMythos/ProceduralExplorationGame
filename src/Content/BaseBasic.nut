@@ -15,6 +15,7 @@
         _doFile("script://ScreenEnums.nut");
         _doFile("script://StatusAfflictionEnums.nut");
         _doFile("script://VoxelEnums.nut");
+        _doFile("script://PlacedItemEnums.nut");
     }
 
     function loadContentFiles(){
@@ -22,6 +23,7 @@
         _doFile("res://src/Content/EnemyDefs.nut");
         _doFile("res://src/Content/StatusAfflictionDefs.nut");
         _doFile("res://src/Content/PlaceDefs.h.nut");
+        _doFile("res://src/Content/PlacedItemDefs.nut");
         _doFile("script://VoxelDefs.nut");
     }
 
