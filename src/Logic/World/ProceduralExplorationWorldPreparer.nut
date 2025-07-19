@@ -57,7 +57,6 @@
             mOutNativeData_ = mapClaim.data;
             //TODO work towards being able to get rid of this.
             mOutData_ = mOutNativeData_.explorationMapDataToTable();
-            //local scriptMapGen = ::ScriptedMapGen(mOutData_, mOutNativeData_);
             //mOutData_.rawset("placeData", scriptMapGen.determinePlaces());
             //print(_prettyPrint(mapClaim.testClient));
             mOutData_.rawset("placeData", mapClaim.testClient.placeData);

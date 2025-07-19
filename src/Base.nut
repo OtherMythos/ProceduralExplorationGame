@@ -174,7 +174,6 @@
         mActionManager.setup();
 
         _doFile("res://src/MapGen/Exploration/Generator/Biomes.nut");
-        _doFile("res://src/MapGen/Exploration/Generator/MapGen.nut");
         _doFile("res://src/MapGen/MapViewer.nut");
         _doFile("res://src/MapGen/VisitedLocationMapViewer.nut");
         _doFile("res://src/MapGen/Exploration/Viewer/ExplorationMapViewerConstants.h.nut");
