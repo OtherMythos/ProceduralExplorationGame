@@ -222,13 +222,17 @@ namespace ProceduralExplorationGameCore{
         return out;
     }
 
-    Biome::BiomeColour NONE_WaterTextureColourChangeFunction(bool mask, const ExplorationMapData* mapData){
+    Biome::BiomeColour NONE_WaterTextureColourChangeFunction(bool mask, AV::uint8 distance, const ExplorationMapData* mapData){
         return {0, 0, 150, 255};
     }
 
-    Biome::BiomeColour SWAMP_WaterTextureColourChangeFunction(bool mask, const ExplorationMapData* mapData){
+    Biome::BiomeColour SWAMP_WaterTextureColourChangeFunction(bool mask, AV::uint8 distance, const ExplorationMapData* mapData){
+        AV::uint8 targetDist = distance >= 4 ? 4 : distance;
 
-        return {0, 100, 75, 255};
+        Biome::BiomeColour c{0, 100, 75, 255};
+        c.g -= targetDist * 10;
+        c.b -= targetDist * 10;
+        return c;
     }
 
     static const std::array BIOMES{

@@ -16,7 +16,7 @@ namespace ProceduralExplorationGameCore{
         typedef AV::uint8 (*DetermineAltitudeFunction)(AV::uint8 altitude, AV::uint8 moisture, AV::uint8 regionDistance, AV::uint16 x, AV::uint16 y, const ExplorationMapData* mapData);
         typedef void (*PlaceObjectFunction)(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture, AV::uint8 regionDistance);
         typedef void (*FinalVoxChangeFunction)(const ExplorationMapData* mapData, AV::uint32* vox, AV::uint32* secondary, AV::uint16 x, AV::uint16 y);
-        typedef BiomeColour (*WaterTextureColourFunction)(bool mask, const ExplorationMapData* mapData);
+        typedef BiomeColour (*WaterTextureColourFunction)(bool mask, AV::uint8 distance, const ExplorationMapData* mapData);
 
         Biome(DetermineVoxFunction voxFunction, PlaceObjectFunction placementFunction, DetermineAltitudeFunction altitudeFunction, FinalVoxChangeFunction finalVoxFunction, WaterTextureColourFunction waterTexFunction);
         ~Biome();

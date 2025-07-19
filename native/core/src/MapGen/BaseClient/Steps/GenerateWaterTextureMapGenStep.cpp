@@ -59,7 +59,7 @@ namespace ProceduralExplorationGameCore{
         *((*buf)) = a / 255;
     }
 
-    static void getBufferWriteForRegion(float** buf, RegionId regionId, ExplorationMapData* mapData){
+    static void getBufferWriteForRegion(float** buf, RegionId regionId, AV::uint8 distance, ExplorationMapData* mapData){
         if(regionId == REGION_ID_WATER){
             _writeToBuffer(buf, 0, 0, 150);
             return;
@@ -72,7 +72,7 @@ namespace ProceduralExplorationGameCore{
         Biome::WaterTextureColourFunction func = b.getWaterTextureColourFunction();
         assert(func != 0);
 
-        Biome::BiomeColour texCol = (*func)(false, mapData);
+        Biome::BiomeColour texCol = (*func)(false, distance, mapData);
         _writeToBuffer(buf, texCol.r, texCol.g, texCol.b, texCol.a);
     }
 
@@ -88,6 +88,7 @@ namespace ProceduralExplorationGameCore{
                 const WorldPoint altitudePoint = WRAP_WORLD_POINT(x, yy);
                 const AV::uint8* altitude = VOX_PTR_FOR_COORD_CONST(mapData, altitudePoint);
                 const AV::uint8* waterGroup = WATER_GROUP_PTR_FOR_COORD_CONST(mapData, altitudePoint);
+                const AV::uint8* distPtr = REGION_DISTANCE_PTR_FOR_COORD(mapData, altitudePoint);
 
                 /*
                 if(*altitude >= mapData->seaLevel){
@@ -117,7 +118,7 @@ namespace ProceduralExplorationGameCore{
                     _writeToBuffer(&b, 143, 189, 207);
                 }else{
                     RegionId regionId = *REGION_PTR_FOR_COORD_CONST(mapData, altitudePoint);
-                    getBufferWriteForRegion(&b, regionId, mapData);
+                    getBufferWriteForRegion(&b, regionId, *distPtr, mapData);
                 }
 
                 if(*waterGroup == 0 || *waterGroup == INVALID_WATER_ID){
@@ -159,7 +160,7 @@ namespace ProceduralExplorationGameCore{
                         float* b = ((buffer) + ((xxa + reverseWidth * width) * 4));
 
                         RegionId regionId = *REGION_PTR_FOR_COORD_CONST(mapData, p);
-                        getBufferWriteForRegion(&b, regionId, mapData);
+                        getBufferWriteForRegion(&b, regionId, 0, mapData);
                         //_writeToBuffer(&b, 0, 0, 150);
                     }
                 }
