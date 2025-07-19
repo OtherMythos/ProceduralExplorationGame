@@ -53,7 +53,7 @@ namespace ProceduralExplorationGameCore{
             if(processRValue(mapData, x, y, moisture >= 150 ? 1 : 6)){
                 if(moisture < 150 && mapGenRandomIntMinMax(0, 3) == 0){
                     static const PlacedItemId VALS[] = {PlacedItemId::FLOWER_RED, PlacedItemId::FLOWER_WHITE, PlacedItemId::FLOWER_PURPLE};
-                    size_t val = mapGenRandomIntMinMax(0, 3);
+                    size_t val = mapGenRandomIntMinMax(0, 2);
                     PLACE_ITEM(VALS[val]);
                 }else if(moisture < 150 && mapGenRandomIntMinMax(0, 3) == 0){
                     PLACE_ITEM(PlacedItemId::BERRY_BUSH_BERRIES);
