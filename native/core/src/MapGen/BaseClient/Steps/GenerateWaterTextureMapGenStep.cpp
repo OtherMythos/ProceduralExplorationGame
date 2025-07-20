@@ -109,7 +109,18 @@ namespace ProceduralExplorationGameCore{
                         _writeToBuffer(&b, 113, 159, 177);
                     }
                     else if(*altitude >= seaLevel - seaLevelCutoffSecond && *altitude < seaLevel){
-                        _writeToBuffer(&b, 143, 189, 207);
+                        /*
+                        AV::uint8 distVal = *distPtr >= 4 ? 4 : *distPtr;
+                        float red = 143 - (distVal * 10);
+                        float green = 189 - (distVal * 10);
+                        float blue = 207 - (distVal * 10);
+                        _writeToBuffer(&b, red, green, blue);
+                         */
+                        if(*distPtr < 4){
+                            _writeToBuffer(&b, 143, 189, 207);
+                        }else{
+                            _writeToBuffer(&b, 113, 159, 177);
+                        }
                     }
                     else{
                         _writeToBuffer(&b, 0, 102, 255);
