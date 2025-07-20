@@ -475,7 +475,24 @@ jobs:
       - name: Setup CMake
         run: |
           git clone https://github.com/OtherMythos/avEngine.git /tmp/avEngine
-          cmake -DAV_LIBS_DIR=${{ github.workspace }}/${{ matrix.buildType }} -DCMAKE_TOOLCHAIN_FILE=/tmp/avEngine/CMake/iosbuild.toolchain.cmake -GXcode -DPLATFORM=OS64 -DENGINE_SOURCE_PATH=/tmp/avEngine -DAV_PROJECT_DIR=/tmp/dist -DUSE_STATIC_PLUGINS=True ..
+          cd /tmp/avEngine
+          mkdir build
+          cd build
+          cmake -DAV_LIBS_DIR=${{ github.workspace }}/${{ matrix.buildType }} \
+          -DCMAKE_BUILD_TYPE=${{ matrix.buildType }} \
+          -DCMAKE_TOOLCHAIN_FILE=/tmp/avEngine/CMake/iosbuild.toolchain.cmake \
+          -GXcode -DPLATFORM=OS64 \
+          -DENGINE_SOURCE_PATH=/tmp/avEngine \
+          -DAV_PROJECT_DIR=/tmp/dist \
+          -DUSE_STATIC_PLUGINS=True \
+          -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY="${{ secrets.APPLE_SIGN_IDENTITY }}" \
+          -DCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM="${{ secrets.APPLE_TEAM_ID }}" \
+          -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGN_STYLE=Manual \
+          ..
+      - name: build
+        run: |
+          cd build
+          cmake --build . --target av --config ${{ matrix.buildType }}
 
   buildWindows:
     runs-on: windows-2022

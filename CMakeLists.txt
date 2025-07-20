@@ -11,19 +11,21 @@ set(StaticPluginHeaderIncludes ${CMAKE_CURRENT_LIST_DIR})
 set(StaticPluginSrcIncludes ${CMAKE_CURRENT_LIST_DIR}/plugins/include)
 
 set(BuildDir build)
+set(StaticEnding "android")
 if(${CMAKE_SYSTEM_NAME} STREQUAL "iOS")
     set(BuildDir buildIos)
     set(IosBuildEnding "-iphoneos")
+    set(StaticEnding "ios")
 endif()
 
-FIND_LIBRARY(NATIVE_CORE_LIBRARY NAMES ProceduralExplorationGameNativeCore ProceduralExplorationGameNativeCore_android_static_${CMAKE_BUILD_TYPE} ProceduralExplorationGameNativeCore_android_static_Release
+FIND_LIBRARY(NATIVE_CORE_LIBRARY NAMES ProceduralExplorationGameNativeCore ProceduralExplorationGameNativeCore_${StaticEnding}_static_${CMAKE_BUILD_TYPE} ProceduralExplorationGameNativeCore_${StaticEnding}_static_Release
     PATHS ${CMAKE_CURRENT_LIST_DIR}/native/${BuildDir}/core/${CMAKE_BUILD_TYPE}${IosBuildEnding}
     ${CMAKE_CURRENT_LIST_DIR}/native/buildAndroid/core
     ${CMAKE_CURRENT_LIST_DIR}/plugins/
     PATH_SUFFIXES a lib
     )
 
-FIND_LIBRARY(PROCEDURAL_EXPLORATION_GAME_PLUGIN NAMES ProceduralExplorationGamePlugin_static ProceduralExplorationGamePlugin_android_static_${CMAKE_BUILD_TYPE} ProceduralExplorationGamePlugin_android_static_Release
+FIND_LIBRARY(PROCEDURAL_EXPLORATION_GAME_PLUGIN NAMES ProceduralExplorationGamePlugin_static ProceduralExplorationGamePlugin_${StaticEnding}_static_${CMAKE_BUILD_TYPE} ProceduralExplorationGamePlugin_${StaticEnding}_static_Release
     PATHS ${CMAKE_CURRENT_LIST_DIR}/native/${BuildDir}/plugin/${CMAKE_BUILD_TYPE}${IosBuildEnding}
     ${CMAKE_CURRENT_LIST_DIR}/native/buildAndroid/plugin
     ${CMAKE_CURRENT_LIST_DIR}/plugins/
