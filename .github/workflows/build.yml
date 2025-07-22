@@ -44,7 +44,7 @@ jobs:
           path: "native/build/plugin/libProceduralExplorationGamePlugin_${{ matrix.buildType }}-linux-x86_64.so"
 
   buildNativeIOS:
-    runs-on: macos-latest
+    runs-on: macos-15
     strategy:
       matrix:
         buildType: [Debug, Release]
@@ -432,7 +432,7 @@ jobs:
           path: /tmp/buildMacOS-${{ matrix.buildType }}-${{ needs.build.outputs.sha_short }}.dmg
 
   buildiOS:
-    runs-on: macos-latest
+    runs-on: macos-15
     needs: build
     strategy:
       matrix:
@@ -450,7 +450,7 @@ jobs:
           security set-keychain-settings "$KEYCHAIN_PATH"
       - name: Import signing certificate
         env:
-          CERTIFICATE_P12: ${{ secrets.CERTIFICATE_P12 }}
+          CERTIFICATE_P12: ${{ secrets.CERTIFICATE_P12_IOS }}
           CERTIFICATE_P12_PASSWORD: ${{ secrets.CERTIFICATE_P12_PASSWORD }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
         run: |
@@ -458,6 +458,12 @@ jobs:
           security import certificate.p12 -k "$RUNNER_TEMP/build.keychain-db" -P "$CERTIFICATE_P12_PASSWORD" -A -t cert -f pkcs12
           security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$RUNNER_TEMP/build.keychain-db"
           mkdir -p /tmp/dist
+      - name: Install provisioning profile
+        run: |
+          echo "${{ secrets.MOBILE_PROVISION }}" | base64 --decode > profile.mobileprovision
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          uuid=$(grep -aA1 UUID profile.mobileprovision | grep -io "[-A-F0-9]\{36\}")
+          mv profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/$uuid.mobileprovision
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
@@ -472,9 +478,35 @@ jobs:
       - name: Expand artifact
         run: |
           tar -xvf build.tar.gz
-      - name: Setup CMake
+      - name: Prepare Engine
         run: |
           git clone https://github.com/OtherMythos/avEngine.git /tmp/avEngine
+          cd /tmp/avEngine
+          git log -1
+          sed -i '' 's/com\.othermythos\.av/com.othermythos.proceduralexplorationgame/g' setup/ios/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $GITHUB_RUN_NUMBER" setup/ios/Info.plist
+          cat setup/ios/Info.plist
+          #Bit of a hack to resolve a linking error relating to the git_version library.
+          sed -i '' '/git_version/d' CMakeLists.txt
+          sed -i '' '\#include(CMake/CheckGit.cmake)#d' CMakeLists.txt
+          sed -i '' '/CheckGitSetup()/d' CMakeLists.txt
+          cp /tmp/avEngine/CMake/git_version.h /tmp/avEngine/src
+          cp /tmp/avEngine/CMake/git_version.cpp.in /tmp/avEngine/src/git_version.cpp
+          sed -i '' 's/@GIT_HASH@/${{ steps.vars.outputs.sha_short }}/' /tmp/avEngine/src/git_version.cpp
+
+          # Input file (change this if needed)
+          file="/tmp/dist/src/Versions.h.nut"
+
+          # Extract version components using grep and cut
+          major=$(grep 'const GAME_VERSION_MAJOR' "$file" | cut -d= -f2 | tr -d ' ;')
+          minor=$(grep 'const GAME_VERSION_MINOR' "$file" | cut -d= -f2 | tr -d ' ;')
+          patch=$(grep 'const GAME_VERSION_PATCH' "$file" | cut -d= -f2 | tr -d ' ;')
+          # Combine into a version string
+          version="${major}.${minor}.${patch}"
+          echo "$version"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $version" setup/ios/Info.plist
+      - name: Setup CMake
+        run: |
           cd /tmp/avEngine
           mkdir build
           cd build
@@ -482,17 +514,50 @@ jobs:
           -DCMAKE_BUILD_TYPE=${{ matrix.buildType }} \
           -DCMAKE_TOOLCHAIN_FILE=/tmp/avEngine/CMake/iosbuild.toolchain.cmake \
           -GXcode -DPLATFORM=OS64 \
-          -DENGINE_SOURCE_PATH=/tmp/avEngine \
           -DAV_PROJECT_DIR=/tmp/dist \
           -DUSE_STATIC_PLUGINS=True \
-          -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY="${{ secrets.APPLE_SIGN_IDENTITY }}" \
+          -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY="${{ secrets.APPLE_SIGN_IDENTITY_IOS }}" \
           -DCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM="${{ secrets.APPLE_TEAM_ID }}" \
+          -DCMAKE_XCODE_ATTRIBUTE_PROVISIONING_PROFILE_SPECIFIER="ProceduralExplorationGame" \
           -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGN_STYLE=Manual \
           ..
       - name: build
         run: |
-          cd build
+          cd /tmp/avEngine/build
           cmake --build . --target av --config ${{ matrix.buildType }}
+      - name: Create archive
+        run: |
+          xcodebuild \
+            -project /tmp/avEngine/build/av.xcodeproj \
+            -scheme av \
+            -sdk iphoneos \
+            -configuration ${{ matrix.buildType }} \
+            -destination 'generic/platform=iOS' \
+            -archivePath /tmp/avEngine/build/av.xcarchive \
+            clean archive \
+            DEVELOPMENT_TEAM=${{ secrets.APPLE_TEAM_ID }} \
+            PROVISIONING_PROFILE_SPECIFIER="ProceduralExplorationGame"
+      - name: Generate exportOptions.plist
+        run: |
+          cp /tmp/avEngine/setup/ios/ExportOptions.plist ${{ github.workspace }}
+
+          sed -i '' "s|@TEAM_ID@|${{ secrets.APPLE_TEAM_ID }}|g" ${{ github.workspace }}/ExportOptions.plist
+          sed -i '' "s|@BUNDLE@|com.othermythos.proceduralexplorationgame|g" ${{ github.workspace }}/ExportOptions.plist
+          sed -i '' "s|@PROVISIONING_PROFILE@|ProceduralExplorationGame|g" ${{ github.workspace }}/ExportOptions.plist
+      - name: Export IPA
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath /tmp/avEngine/build/av.xcarchive \
+            -exportPath /tmp/avExport \
+            -exportOptionsPlist ExportOptions.plist
+          echo "${{ secrets.APPSTORE_API_PRIVATE_KEY }}" > ${{ github.workspace }}/AuthKey_${{ secrets.APPSTORE_API_KEY_ID }}.p8
+      - name: Upload app to TestFlight
+        if: matrix.buildType != 'Debug'
+        run: |
+          mkdir -p ./private_keys
+          echo "${{ secrets.APPSTORE_API_PRIVATE_KEY }}" > "./private_keys/AuthKey_${{ secrets.APPSTORE_API_KEY_ID }}.p8"
+          xcrun altool --validate-app -f /tmp/avExport/av.ipa -t ios --apiKey ${{ secrets.APPSTORE_API_KEY_ID }} --apiIssuer ${{ secrets.APPSTORE_ISSUER_ID }}
+          xcrun altool --upload-app -f /tmp/avExport/av.ipa -t ios --apiKey ${{ secrets.APPSTORE_API_KEY_ID }} --apiIssuer ${{ secrets.APPSTORE_ISSUER_ID }}
 
   buildWindows:
     runs-on: windows-2022
