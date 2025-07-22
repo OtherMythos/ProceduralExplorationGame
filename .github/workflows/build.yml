@@ -66,7 +66,7 @@ jobs:
           mkdir -p native/build
           cd native/build
           git clone https://github.com/OtherMythos/avEngine.git /tmp/avEngine
-          cmake -DAV_LIBS_DIR=${{ github.workspace }}/${{ matrix.buildType }} -DCMAKE_TOOLCHAIN_FILE=/tmp/avEngine/CMake/iosbuild.toolchain.cmake -GXcode -DPLATFORM=OS64 -DENGINE_SOURCE_PATH=/tmp/avEngine ..
+          cmake -DAV_LIBS_DIR=${{ github.workspace }}/${{ matrix.buildType }} -DCMAKE_BUILD_TYPE=${{ matrix.buildType }} -DCMAKE_TOOLCHAIN_FILE=/tmp/avEngine/CMake/iosbuild.toolchain.cmake -GXcode -DPLATFORM=OS64 -DENGINE_SOURCE_PATH=/tmp/avEngine ..
       - name: Build
         run: |
           cd native/build
