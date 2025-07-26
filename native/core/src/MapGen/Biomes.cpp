@@ -154,14 +154,21 @@ namespace ProceduralExplorationGameCore{
                     );
                 }
             }
-            return;
-        }
-
-        if(regionDistance >= 12){
-            if(processRValue(mapData, x, y, 12)){
-                bool treeType = (mapGenRandomIntMinMax(0, 2) == 0);
-                PLACE_ITEM(treeType ? PlacedItemId::SWAMP_TREE_ONE : PlacedItemId::SWAMP_TREE_TWO);
-                //PLACE_ITEM(PlacedItemId::SWAMP_TREE_TWO);
+        }else{
+            bool placed = false;
+            if(regionDistance >= 12){
+                if(processRValue(mapData, x, y, 12)){
+                    bool treeType = (mapGenRandomIntMinMax(0, 2) == 0);
+                    PLACE_ITEM(treeType ? PlacedItemId::SWAMP_TREE_ONE : PlacedItemId::SWAMP_TREE_TWO);
+                    placed = true;
+                    //PLACE_ITEM(PlacedItemId::SWAMP_TREE_TWO);
+                }
+            }
+            if(!placed){
+                if(processRValue(mapData, x, y, 10)){
+                    bool treeType = (mapGenRandomIntMinMax(0, 2) == 0);
+                    PLACE_ITEM(treeType ? PlacedItemId::SWAMP_TREE_THREE : PlacedItemId::SWAMP_TREE_FOUR);
+                }
             }
         }
     }
