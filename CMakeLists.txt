@@ -47,9 +47,16 @@ else()
     message( FATAL_ERROR "Unable to find game native libraries")
 endif()
 
+if(NOT ${SKIP_EXTRA})
+    set(ProjectExtra extra)
+    message("Copying extra")
+else()
+    message("Skipping extra")
+endif()
+
 file(GLOB PROJ_TO_BUNDLE
     src
-    extra
+    ${ProjectExtra}
     build
     avSetup.cfg
     OgreResources.cfg

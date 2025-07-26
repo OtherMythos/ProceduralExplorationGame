@@ -26,7 +26,7 @@ class AssetModuleGox(AssetModule):
 
         #Goxel changes
 
-        extraFlags = ""
+        extraFlags = " -g "
 
         if(resSettings.disableAmbient):
             extraFlags = extraFlags + " -a "
