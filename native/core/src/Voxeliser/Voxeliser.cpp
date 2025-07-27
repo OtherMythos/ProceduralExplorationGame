@@ -424,8 +424,9 @@ namespace ProceduralExplorationGameCore{
             //mergeTerrainFaces(regionEntries[i]);
         }
 
-        TerrainFaceMerger faceMerger;
-        OutputFaces mergedFaces = faceMerger.mergeFaces(outFaces);
+        //TerrainFaceMerger faceMerger;
+        //OutputFaces mergedFaces = faceMerger.mergeFaces(outFaces);
+        OutputFaces& mergedFaces = outFaces;
 
         for(const WrappedFaceContainer& w : mergedFaces.outFaces){
             AV::uint32 f = 3;
