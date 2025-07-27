@@ -129,7 +129,7 @@
 	@end
 
 	@property( renderSceneDecorations )
-		float colVal = float(finalDrawId % uint(100)) / 100.0;
+		float colVal = float(finalDrawId % uint(100));
 		float4 positionRelativeToCam = mul(worldPos, passBuf.viewProj);
 		float dist = length(positionRelativeToCam.xyz);
 		outVs.decorationColour = float3(1, dist, 0);

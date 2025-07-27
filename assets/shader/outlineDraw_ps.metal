@@ -43,7 +43,7 @@ float2 computeLineForImage(float center, float left, float right, float top, flo
 
     bool edgeFactor = false;
     if(inner){
-        edgeFactor = !allEqual(left, right, top, bottom, center);
+        edgeFactor = !allEqual(round(left), round(right), round(top), round(bottom), round(center));
     }else{
         edgeFactor = (round(center) + round(left) + round(right) + round(top) + round(bottom)) < 5;
     }
