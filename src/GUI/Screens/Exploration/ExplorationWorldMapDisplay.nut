@@ -151,6 +151,9 @@
     function getSize(){
         return mExplorationScenePanel_.getSize();
     }
+    function getMapViewerSize(){
+        return mMapViewerWindow_.getSize();
+    }
 
     function setPosition(x, y){
         mExplorationScenePanel_.setPosition(x, y);

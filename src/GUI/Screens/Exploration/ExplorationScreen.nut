@@ -29,6 +29,7 @@ enum ExplorationScreenWidgetType{
     mCurrentPlace_ = null;
     mScrapAllButton_ = null;
     mWieldActiveButton = null;
+    mZoomModifierButton = null;
     mDiscoverLevelUpScreen_ = null;
     mLayoutLine_ = null;
 
@@ -234,6 +235,19 @@ enum ExplorationScreenWidgetType{
             }, _GUI_ACTION_PRESSED, this);
             mScreenInputCheckList_.append(mWieldActiveButton);
             mExplorationScreenWidgetType_[ExplorationScreenWidgetType.WIELD_BUTTON] = mWieldActiveButton;
+
+            mZoomModifierButton = mWindow_.createButton();
+            mZoomModifierButton.setText("Zoom");
+            local zoomButtonPos = mWorldMapDisplay_.getPosition();
+            zoomButtonPos.y += mWorldMapDisplay_.getMapViewerSize().y;
+            zoomButtonPos.x += mWorldMapDisplay_.getSize().x - mZoomModifierButton.getSize().x;
+            mZoomModifierButton.setPosition(zoomButtonPos);
+            mZoomModifierButton.attachListenerForEvent(function(widget, action){
+                //TODO clean up direct access
+                local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+                currentWorld.requestCameraZooming();
+            }, _GUI_ACTION_PRESSED, this);
+            mScreenInputCheckList_.append(mZoomModifierButton);
         }
 
         mExplorationBus_.registerCallback(busCallback, this);

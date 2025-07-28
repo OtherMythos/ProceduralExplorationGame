@@ -373,10 +373,6 @@
         mCurrentWorld_.sceneSafeUpdate();
     }
 
-    function setOrientatingCamera(orientating){
-        mCurrentWorld_.setOrientatingCamera(orientating);
-    }
-
     function readLoreContentForItem(item){
         local targetPath = "res://build/assets/readables/" + item.getDefData();
         readLoreContentPath(targetPath);

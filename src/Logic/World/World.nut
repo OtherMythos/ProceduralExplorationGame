@@ -122,6 +122,7 @@ enum WorldMousePressContexts{
     TARGET_ENEMY,
     PLACING_FLAG,
     ORIENTING_CAMERA,
+    ZOOMING,
     //In the case of a window that takes the full screen with exploration in the back, ensure clicks to leave don't result in a flag press.
     POPUP_WINDOW,
 };
@@ -331,6 +332,9 @@ enum WorldMousePressContexts{
                 mDoubleClickTimer_ = 20;
             }
             return stateBegan;
+        }
+        function requestZoomingCamera(){
+            return beginState_(WorldMousePressContexts.ZOOMING);
         }
         function requestPopupWindow(){
             return beginState_(WorldMousePressContexts.POPUP_WINDOW);
@@ -616,6 +620,7 @@ enum WorldMousePressContexts{
         //checkForFlagPlacement();
         //checkForFlagUpdate();
         checkForPlayerMoveBegin();
+        checkForPlayerZoom();
         checkPlayerInputs();
         //Some of the player inputs might have deactivated this world, so check again.
         if(!isActive()) return;
@@ -1024,6 +1029,10 @@ enum WorldMousePressContexts{
                 }
             }
         }
+    }
+    function requestCameraZooming(){
+        local result = mMouseContext_.requestZoomingCamera();
+        assert(result);
     }
     function checkForFlagPlacement(){
         if(!mGui_) return;
@@ -1660,9 +1669,6 @@ enum WorldMousePressContexts{
         return false;
     }
 
-    function setOrientatingCamera(orientate){
-        mMouseContext_.requestOrientingCamera();
-    }
     function checkOrientatingCamera(){
 
         local zoomDelta = ::MultiTouchManager.determinePinchToZoom();
@@ -1676,6 +1682,13 @@ enum WorldMousePressContexts{
         if(mMouseContext_.getCurrentState() != WorldMousePressContexts.ORIENTING_CAMERA) return;
         print("orientating");
 
+        local mouseDelta = processMouseDelta();
+        if(mouseDelta != null){
+            processCameraMove(mouseDelta.x*-0.2, mouseDelta.y*-0.2);
+        }
+    }
+    function processMouseDelta(){
+        local retVal = null;
         if(_input.getMouseButton(_MB_LEFT)){
             _window.grabCursor(true);
 
@@ -1685,7 +1698,8 @@ enum WorldMousePressContexts{
                 local deltaX = mouseX - mPrevMouseX_;
                 local deltaY = mouseY - mPrevMouseY_;
                 printf("delta x: %f y: %f", deltaX, deltaY);
-                processCameraMove(deltaX*-0.2, deltaY*-0.2);
+                retVal = Vec2(deltaX, deltaY);
+                //processCameraMove(deltaX*-0.2, deltaY*-0.2);
             }
             mPrevMouseX_ = mouseX;
             mPrevMouseY_ = mouseY;
@@ -1697,6 +1711,18 @@ enum WorldMousePressContexts{
             }
 
             _window.grabCursor(false);
+        }
+        return retVal;
+    }
+    function checkForPlayerZoom(){
+        if(mMouseContext_.getCurrentState() != WorldMousePressContexts.ZOOMING) return;
+        print("zooming");
+
+        local mouseDelta = processMouseDelta();
+        if(mouseDelta != null){
+            mCurrentZoomLevel_ += mouseDelta.y * 0.1;
+            if(mCurrentZoomLevel_ < MIN_ZOOM) mCurrentZoomLevel_ = MIN_ZOOM;
+            //processCameraMove(mouseDelta.x*-0.2, mouseDelta.y*-0.2);
         }
     }
     function checkCameraChange(){
