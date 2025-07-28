@@ -5,6 +5,7 @@
     ABOVE_GROUND = null;
     mVoxMesh_ = null;
     mWorldViewActive_ = false;
+    mWorldViewAnim_ = 1.0;
 
     mActivePlaces_ = null;
     mCurrentFoundRegions_ = null;
@@ -395,6 +396,9 @@
 
     }
 
+    function easeOutQuat(x) {
+        return 1 - pow(1 - x, 4);
+    }
     function updateCameraPosition(){
         local zPos = getZForPos(mPosition_);
 
@@ -402,7 +406,17 @@
         assert(camera != null);
         local parentNode = camera.getParentNode();
 
-        local zoom = mWorldViewActive_ ? 300 : mCurrentZoomLevel_
+        local worldViewDistance = 300;
+        local targetDistance = mWorldViewActive_ ? worldViewDistance : mCurrentZoomLevel_
+        if(mWorldViewAnim_ < 1.0){
+            mWorldViewAnim_ += 0.04;
+            if(mWorldViewActive_){
+                targetDistance = mCurrentZoomLevel_ + (worldViewDistance - mCurrentZoomLevel_) * easeOutQuat(mWorldViewAnim_);
+            }else{
+                targetDistance = worldViewDistance - (worldViewDistance - mCurrentZoomLevel_) * easeOutQuat(mWorldViewAnim_);
+            }
+        }
+        local zoom = targetDistance;
         setShadowFarDistance(30 + zoom * 2);
 
         local xPos = cos(mRotation_.x)*zoom;
@@ -456,6 +470,7 @@
 
     function setWorldZoomState(worldZoom){
         mWorldViewActive_ = worldZoom;
+        mWorldViewAnim_ = 0.0;
     }
 
     #Override
