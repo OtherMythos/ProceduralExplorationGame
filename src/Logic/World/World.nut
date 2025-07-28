@@ -406,6 +406,7 @@ enum WorldMousePressContexts{
     mPosition_ = null;
     mRotation_ = null;
     mCurrentZoomLevel_ = 30;
+    mZoomAcceleration_ = 0.0;
     static MIN_ZOOM = 10;
 
     mQueuedFlags_ = null;
@@ -622,6 +623,7 @@ enum WorldMousePressContexts{
         checkForPlayerMoveBegin();
         checkForPlayerZoom();
         checkPlayerInputs();
+        checkZoomAcceleration();
         //Some of the player inputs might have deactivated this world, so check again.
         if(!isActive()) return;
         checkPlayerCombatLogic();
@@ -795,6 +797,19 @@ enum WorldMousePressContexts{
             c.mGizmo[gizmoType].destroy();
             c.mGizmo[gizmoType] = null;
         }
+    }
+
+    function checkZoomAcceleration(){
+        if(mZoomAcceleration_ == 0.0) return;
+
+        if(mZoomAcceleration_ > 0){
+            mZoomAcceleration_ -= 0.1;
+            if(mZoomAcceleration_ < 0) mZoomAcceleration_ = 0.0;
+        }else{
+            mZoomAcceleration_ += 0.1;
+            if(mZoomAcceleration_ > 0) mZoomAcceleration_ = 0.0;
+        }
+        setCurrentZoom(mCurrentZoomLevel_ + mZoomAcceleration_);
     }
 
     function assignGizmoToEntity(entity, gizmoType, data=null, replace=false){
@@ -1008,12 +1023,12 @@ enum WorldMousePressContexts{
         if(!mGui_) return;
         if(!_input.getMouseButton(_MB_LEFT) || mMouseContext_.getCurrentState() != null){
             mPinchToZoomWarmDown_ = 5;
-            return;
+            //return;
         }
 
         local inWindow = mGui_.checkPlayerInputPosition(_input.getMouseX(), _input.getMouseY());
         if(inWindow != null){
-            if(!mPinchToZoomActive_){
+            if(!mPinchToZoomActive_ && true){
                 mPinchToZoomWarmDown_--;
                 if(mPinchToZoomWarmDown_ <= 0 || ::Base.getTargetInterface() != TargetInterface.MOBILE){
                     local result = mMouseContext_.requestOrientingCamera();
@@ -1722,8 +1737,8 @@ enum WorldMousePressContexts{
 
         local mouseDelta = processMouseDelta();
         if(mouseDelta != null){
-            mCurrentZoomLevel_ += mouseDelta.y * 0.1;
-            if(mCurrentZoomLevel_ < MIN_ZOOM) mCurrentZoomLevel_ = MIN_ZOOM;
+            setZoomAcceleration(mouseDelta.y * 0.15);
+            //setCurrentZoom(mCurrentZoomLevel_ + (mouseDelta.y * 0.1));
         }
     }
     function checkCameraChange(){
@@ -1733,6 +1748,17 @@ enum WorldMousePressContexts{
         local y = _input.getAxisActionY(mInputs_.camera, _INPUT_ANY);
         ::DebugOverlayManager.appendText(DebugOverlayId.INPUT, format("camera x: %f y: %f", x, y));
         processCameraMove(x*modifier, y*modifier);
+    }
+
+    function setZoomAcceleration(acceleration){
+        mZoomAcceleration_ = acceleration;
+        if(mZoomAcceleration_ <= -4.0) mZoomAcceleration_ = -4.0;
+        if(mZoomAcceleration_ >= 4.0) mZoomAcceleration_ = 4.0;
+    }
+
+    function setCurrentZoom(zoom){
+        mCurrentZoomLevel_ = zoom;
+        if(mCurrentZoomLevel_ < MIN_ZOOM) mCurrentZoomLevel_ = MIN_ZOOM;
     }
 
     function notifyModalPopupScreen(){
