@@ -267,6 +267,8 @@ enum ExplorationScreenWidgetType{
             mExplorationMovesContainer_.setVisible(false);
         }
 
+        mScreenInputCheckList_.append(mWorldMapDisplay_.mMapViewerWindow_);
+
         _event.subscribe(Event.WORLD_PREPARATION_STATE_CHANGE, receivePreparationStateChange, this);
         ::ScreenManager.transitionToScreen(Screen.WORLD_GENERATION_STATUS_SCREEN, null, 1);
 

@@ -5,6 +5,7 @@
     mVisible_ = true;
 
     mMapViewerPanel_ = null;
+    mMapViewerTapButton_ = null;
     mMapViewer_ = null;
     mMapViewerWindow_ = null;
 
@@ -16,10 +17,16 @@
 
         mMapViewerWindow_ = parentWin.createWindow("ExplorationWorldMapDisplay");
         mMapViewerPanel_ = mMapViewerWindow_.createPanel();
+        mMapViewerTapButton_ = mMapViewerWindow_.createButton();
+        mMapViewerTapButton_.setVisualsEnabled(false);
         mMapViewerWindow_.setVisualsEnabled(false);
         if(::Base.isProfileActive(GameProfile.SCREENSHOT_MODE)){
             mMapViewerWindow_.setVisible(false);
         }
+
+        mMapViewerTapButton_.attachListenerForEvent(function(widget, action){
+            _event.transmit(Event.REQUEST_WORLD_VIEW_CHANGE, null);
+        }, _GUI_ACTION_PRESSED, this);
 
         _event.subscribe(Event.ACTIVE_WORLD_CHANGE, processActiveWorldChange, this);
         _event.subscribe(Event.PLACE_DISCOVERED, notifyPlaceDiscovered, this);
@@ -143,6 +150,11 @@
         mMapViewerWindow_.setSize(targetSize);
         mMapViewerWindow_.setPosition((basePos.x + winSize.x) - mMapViewerWindow_.getSize().x, basePos.y);
         mMapViewerPanel_.setSize(targetSize);
+
+        mMapViewerTapButton_.setSize(mMapViewerWindow_.getSize());
+        //mMapViewerTapButton_.setVisualsEnabled(false);
+        //mMapViewerTapButton_.setPosition(mMapViewerWindow_.getPosition());
+        //mMapViewerTapButton_.setZOrder(100);
     }
 
     function getPosition(){

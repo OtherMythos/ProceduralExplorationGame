@@ -209,6 +209,8 @@
         mCurrentFoundRegions_ = {};
         mRegionEntries_ = {};
 
+        _event.subscribe(Event.REQUEST_WORLD_VIEW_CHANGE, receiveWorldViewChangeRequest, this);
+
         //TODO consider moving this somewhere else.
         _event.transmit(Event.GAMEPLAY_SESSION_STARTED, null);
     }
@@ -291,7 +293,13 @@
         _gameCore.destroyMapData(::currentNativeMapData);
         ::currentNativeMapData = null;
 
+        _event.unsubscribe(Event.REQUEST_WORLD_VIEW_CHANGE, receiveWorldViewChangeRequest, this);
+
         base.shutdown();
+    }
+
+    function receiveWorldViewChangeRequest(id, data){
+        toggleWorldZoomState();
     }
 
     function getPositionForAppearEnemy_(enemyType){
@@ -437,8 +445,13 @@
 
     function checkWorldZoomState(){
         if(_input.getButtonAction(mInputs_.toggleWorldView, _INPUT_PRESSED)){
-            setWorldZoomState(!mWorldViewActive_);
+            _event.transmit(Event.REQUEST_WORLD_VIEW_CHANGE, null);
+            //setWorldZoomState(!mWorldViewActive_);
         }
+    }
+
+    function toggleWorldZoomState(){
+        setWorldZoomState(!mWorldViewActive_);
     }
 
     function setWorldZoomState(worldZoom){
