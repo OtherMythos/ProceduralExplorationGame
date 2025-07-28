@@ -1671,6 +1671,7 @@ enum WorldMousePressContexts{
 
     function checkOrientatingCamera(){
 
+        /*
         local zoomDelta = ::MultiTouchManager.determinePinchToZoom();
         mPinchToZoomActive_ = (zoomDelta != null);
         if(zoomDelta != null){
@@ -1678,6 +1679,7 @@ enum WorldMousePressContexts{
             if(mCurrentZoomLevel_ < MIN_ZOOM) mCurrentZoomLevel_ = MIN_ZOOM;
             return;
         }
+        */
 
         if(mMouseContext_.getCurrentState() != WorldMousePressContexts.ORIENTING_CAMERA) return;
         print("orientating");
@@ -1722,7 +1724,6 @@ enum WorldMousePressContexts{
         if(mouseDelta != null){
             mCurrentZoomLevel_ += mouseDelta.y * 0.1;
             if(mCurrentZoomLevel_ < MIN_ZOOM) mCurrentZoomLevel_ = MIN_ZOOM;
-            //processCameraMove(mouseDelta.x*-0.2, mouseDelta.y*-0.2);
         }
     }
     function checkCameraChange(){
