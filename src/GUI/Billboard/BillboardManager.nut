@@ -35,9 +35,18 @@
     }
 
     function update(){
+        local camPos = mCamera_.getParentNode().getPositionVec3();
+        camPos.y = 0;
         foreach(i in mTrackedNodes_){
             if(i == null) continue;
-            local pos = mCamera_.getWorldPosInWindow(i.mNode.getPositionVec3());
+            local nodePos = i.mNode.getPositionVec3();
+            //Don't square root for efficiency.
+            local distance = camPos.squaredDistance(nodePos);
+            if(distance >= 50000){
+                i.mBillboard.setCullVisible(false);
+                continue;
+            }
+            local pos = mCamera_.getWorldPosInWindow(nodePos);
             if(pos == null){
                 i.mBillboard.setCullVisible(false);
                 continue;
