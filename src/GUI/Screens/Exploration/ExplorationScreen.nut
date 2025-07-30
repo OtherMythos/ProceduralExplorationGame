@@ -185,9 +185,10 @@ enum ExplorationScreenWidgetType{
 
         mExplorationStatsContainer_ = ExplorationStatsContainer(mWindow_, mExplorationBus_);
         if(mobileInterface){
-            mExplorationStatsContainer_.addToLayout(layoutLine);
+            mExplorationStatsContainer_.setPosition(Vec2(0, 0));
+            //mExplorationStatsContainer_.addToLayout(layoutLine);
         }else{
-            mExplorationStatsContainer_.setPosition(Vec2(0, 110));
+            mExplorationStatsContainer_.setPosition(Vec2(0, 0));
             //mExplorationStatsContainer_.setSize(400, 140);
         }
         mExplorationScreenWidgetType_[ExplorationScreenWidgetType.STATS_CONTAINER] = mExplorationStatsContainer_;
@@ -196,14 +197,14 @@ enum ExplorationScreenWidgetType{
         //mExplorationItemsContainer_.addToLayout(layoutLine);
 
         //mExplorationEnemiesContainer_ = ExplorationEnemiesContainer(mWindow_, mExplorationBus_);
-        mExplorationMovesContainer_ = ExplorationMovesContainer(mWindow_, mExplorationBus_);
+        //mExplorationMovesContainer_ = ExplorationMovesContainer(mWindow_, mExplorationBus_);
         if(mobileInterface){
-            mExplorationMovesContainer_.addToLayout(layoutLine);
+            //mExplorationMovesContainer_.addToLayout(layoutLine);
         }else{
-            mExplorationMovesContainer_.setPosition(Vec2(0, 0));
-            mExplorationMovesContainer_.setSize(400, 100);
+            //mExplorationMovesContainer_.setPosition(Vec2(0, 0));
+            //mExplorationMovesContainer_.setSize(400, 100);
         }
-        mExplorationScreenWidgetType_[ExplorationScreenWidgetType.MOVES_CONTAINER] = mExplorationMovesContainer_;
+        //mExplorationScreenWidgetType_[ExplorationScreenWidgetType.MOVES_CONTAINER] = mExplorationMovesContainer_;
         mWorldMapDisplay_.addToLayout(layoutLine);
         mExplorationScreenWidgetType_[ExplorationScreenWidgetType.MINIMAP] = mWorldMapDisplay_;
 
@@ -218,12 +219,15 @@ enum ExplorationScreenWidgetType{
 
         mWorldMapDisplay_.notifyResize();
 
-        mExplorationStatsContainer_.sizeLayout();
-        mExplorationMovesContainer_.sizeForButtons();
+        mExplorationStatsContainer_.sizeLayout(mWorldMapDisplay_.getMapViewerSize());
+
+        mWorldMapDisplay_.positionWorldMapDisplay(Vec2(mWorldMapDisplay_.getMapViewerPosition().x, 0));
+        //mExplorationStatsContainer_.getSize().y
+        //mExplorationMovesContainer_.sizeForButtons();
 
         mScreenInputCheckList_ = [
-            mExplorationStatsContainer_,
-            mExplorationMovesContainer_
+            mExplorationStatsContainer_//,
+            //mExplorationMovesContainer_
         ];
 
         if(::Base.getTargetInterface() == TargetInterface.MOBILE){
@@ -239,7 +243,7 @@ enum ExplorationScreenWidgetType{
             mZoomModifierButton = mWindow_.createButton();
             mZoomModifierButton.setText("Zoom");
             local zoomButtonPos = mWorldMapDisplay_.getPosition();
-            zoomButtonPos.y += mWorldMapDisplay_.getMapViewerSize().y;
+            zoomButtonPos.y += mWorldMapDisplay_.getMapViewerPosition().y + mWorldMapDisplay_.getMapViewerSize().y;
             zoomButtonPos.x += mWorldMapDisplay_.getSize().x - mZoomModifierButton.getSize().x;
             mZoomModifierButton.setPosition(zoomButtonPos);
             mZoomModifierButton.attachListenerForEvent(function(widget, action){
@@ -298,7 +302,7 @@ enum ExplorationScreenWidgetType{
 
     function update(){
         mLogicInterface_.tickUpdate();
-        mExplorationMovesContainer_.update();
+        //mExplorationMovesContainer_.update();
         mExplorationStatsContainer_.update();
         mWorldMapDisplay_.update();
         mDiscoverLevelUpScreen_.update();
@@ -425,7 +429,8 @@ enum ExplorationScreenWidgetType{
     }
 
     function notifyPlayerMove(moveId){
-        return mExplorationMovesContainer_.notifyPlayerMove(moveId);
+        //return mExplorationMovesContainer_.notifyPlayerMove(moveId);
+        return true;
     }
 
 

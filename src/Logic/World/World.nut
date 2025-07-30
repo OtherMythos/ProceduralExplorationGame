@@ -1033,7 +1033,7 @@ enum WorldMousePressContexts{
                 if(mPinchToZoomWarmDown_ <= 0 || ::Base.getTargetInterface() != TargetInterface.MOBILE){
                     local result = mMouseContext_.requestOrientingCamera();
 
-                    assert(result);
+                    //assert(result);
 
                     if(::Base.getTargetInterface() == TargetInterface.MOBILE){
                         local double = mMouseContext_.checkDoubleClick();

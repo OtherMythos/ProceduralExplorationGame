@@ -148,7 +148,7 @@
         targetSize.y = targetSize.x;
         mMapViewerWindow_.setSkinPack("WindowSkinNoBorder");
         mMapViewerWindow_.setSize(targetSize);
-        mMapViewerWindow_.setPosition((basePos.x + winSize.x) - mMapViewerWindow_.getSize().x, basePos.y);
+        mMapViewerWindow_.setPosition((basePos.x + winSize.x) - mMapViewerWindow_.getSize().x, 0);
         mMapViewerPanel_.setSize(targetSize);
 
         mMapViewerTapButton_.setSize(mMapViewerWindow_.getSize());
@@ -157,11 +157,18 @@
         //mMapViewerTapButton_.setZOrder(100);
     }
 
+    function positionWorldMapDisplay(pos){
+        mMapViewerWindow_.setPosition(pos);
+    }
+
     function getPosition(){
         return mExplorationScenePanel_.getPosition();
     }
     function getSize(){
         return mExplorationScenePanel_.getSize();
+    }
+    function getMapViewerPosition(){
+        return mMapViewerWindow_.getPosition();
     }
     function getMapViewerSize(){
         return mMapViewerWindow_.getSize();

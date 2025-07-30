@@ -19,9 +19,9 @@
         mWindow_ = _gui.createWindow("ExplorationScreen", parentWin);
         mWindow_.setClickable(false);
         //Shrink to the correct size later on.
-        if(::Base.getTargetInterface() != TargetInterface.MOBILE){
+        //if(::Base.getTargetInterface() != TargetInterface.MOBILE){
             mWindow_.setSize(400, 700);
-        }
+        //}
         //mWindow_.setVisualsEnabled(false);
 
         mLayoutLine_ = _gui.createLayoutLine();
@@ -115,7 +115,12 @@
         mEXPCounter_.update();
     }
 
-    function sizeLayout(){
+    function sizeLayout(minimapSize){
+        if(::Base.getTargetInterface() == TargetInterface.MOBILE){
+            mWindow_.setSize(_window.getWidth() - minimapSize.x, mWindow_.calculateChildrenSize().y * 2);
+            mWindow_.setVisualsEnabled(false);
+        }
+
         mPlayerHealthBar_.setMinSize(Vec2(mWindow_.getSizeAfterClipping().x, 50));
         mLayoutLine_.setSize(mWindow_.getSize());
         mHorizontalLayoutLine_.setSize(mWindow_.getSize());
@@ -135,7 +140,7 @@
     }
 
     function notifyCounterChanged(){
-        sizeLayout();
+        //sizeLayout();
     }
 
     function playerHealthChanged(id, data){
