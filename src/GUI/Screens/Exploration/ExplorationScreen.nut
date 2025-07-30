@@ -221,7 +221,8 @@ enum ExplorationScreenWidgetType{
 
         mExplorationStatsContainer_.sizeLayout(mWorldMapDisplay_.getMapViewerSize());
 
-        mWorldMapDisplay_.positionWorldMapDisplay(Vec2(mWorldMapDisplay_.getMapViewerPosition().x, 0));
+        local insets = _window.getScreenSafeAreaInsets();
+        mWorldMapDisplay_.positionWorldMapDisplay(Vec2(mWorldMapDisplay_.getMapViewerPosition().x, insets.top));
         //mExplorationStatsContainer_.getSize().y
         //mExplorationMovesContainer_.sizeForButtons();
 
@@ -270,6 +271,8 @@ enum ExplorationScreenWidgetType{
             mExplorationStatsContainer_.setVisible(false);
             mExplorationMovesContainer_.setVisible(false);
         }
+
+        mExplorationStatsContainer_.setPosition(Vec2(0, insets.top));
 
         mScreenInputCheckList_.append(mWorldMapDisplay_.mMapViewerWindow_);
 
