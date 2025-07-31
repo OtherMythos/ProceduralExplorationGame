@@ -321,6 +321,10 @@
         _gameCore.recollectMapGenSteps();
 
         setupDeveloperWorkaroundsPost_();
+
+        if(getTargetInterface() == TargetInterface.MOBILE){
+            _gameCore.disableShadows();
+        }
     }
     function setupFullscreen(){
         setFullscreenState(FullscreenMode.BORDERLESS_FULLSCREEN);

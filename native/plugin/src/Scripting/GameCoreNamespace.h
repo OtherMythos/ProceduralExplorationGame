@@ -31,6 +31,8 @@ namespace ProceduralExplorationGamePlugin{
         static SQInteger writeFlagsToItem(HSQUIRRELVM vm);
         static SQInteger setCustomPassBufferValue(HSQUIRRELVM vm);
 
+        static SQInteger disableShadows(HSQUIRRELVM vm);
+
         static SQInteger createDataPointFileParser(HSQUIRRELVM vm);
 
         static SQInteger beginMapGen(HSQUIRRELVM vm);

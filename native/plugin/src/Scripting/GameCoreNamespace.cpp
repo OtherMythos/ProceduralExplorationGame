@@ -29,6 +29,10 @@
 #include "Scripting/ScriptNamespace/ScriptGetterUtils.h"
 #include "Scripting/SquirrelDeepCopy.h"
 
+#include "Compositor/OgreCompositorManager2.h"
+#include "Compositor/OgreCompositorNodeDef.h"
+#include "Compositor/Pass/PassScene/OgreCompositorPassSceneDef.h"
+
 #include "Scripting/DataPointFileUserData.h"
 
 #include "MapGen/ExplorationMapViewer.h"
@@ -532,6 +536,22 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger GameCoreNamespace::disableShadows(HSQUIRRELVM vm){
+        Ogre::CompositorManager2 *compositorManager = Ogre::Root::getSingleton().getCompositorManager2();
+        Ogre::CompositorNodeDef* nodeDef = compositorManager->getNodeDefinitionNonConst("renderMainGameplayNode");
+        for(int i = 0; i < nodeDef->getNumTargetPasses(); i++){
+            Ogre::CompositorTargetDef* def = nodeDef->getTargetPass(i);
+            for(Ogre::CompositorPassDef* p : def->getCompositorPassesNonConst()){
+                if(p->getType() != Ogre::CompositorPassType::PASS_SCENE) continue;
+
+                Ogre::CompositorPassSceneDef* sceneDef = dynamic_cast<Ogre::CompositorPassSceneDef*>(p);
+                sceneDef->mShadowNode = Ogre::IdString();
+            }
+        }
+
+        return 0;
+    }
+
     SQInteger GameCoreNamespace::createVoxMeshItem(HSQUIRRELVM vm){
         SQInteger size = sq_gettop(vm);
         Ogre::SceneMemoryMgrTypes targetType = Ogre::SCENE_DYNAMIC;
@@ -727,6 +747,8 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, registerMapGenClient, "registerMapGenClient", 4, ".sst|o");
         AV::ScriptUtils::addFunction(vm, recollectMapGenSteps, "recollectMapGenSteps");
         AV::ScriptUtils::addFunction(vm, setCustomPassBufferValue, "setCustomPassBufferValue", -2, ".n|unn");
+
+        AV::ScriptUtils::addFunction(vm, disableShadows, "disableShadows");
 
         AV::ScriptUtils::addFunction(vm, registerVoxel, "registerVoxel", 4, ".nnu");
 
