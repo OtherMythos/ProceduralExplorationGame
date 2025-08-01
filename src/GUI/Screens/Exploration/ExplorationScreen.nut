@@ -247,11 +247,14 @@ enum ExplorationScreenWidgetType{
             zoomButtonPos.y += mWorldMapDisplay_.getMapViewerPosition().y + mWorldMapDisplay_.getMapViewerSize().y;
             zoomButtonPos.x += mWorldMapDisplay_.getSize().x - mZoomModifierButton.getSize().x;
             mZoomModifierButton.setPosition(zoomButtonPos);
+            mZoomModifierButton.setSize(mZoomModifierButton.getSize().x, _window.getHeight() - zoomButtonPos.y - insets.bottom);
+            //mZoomModifierButton.setSize(40, 40);
             mZoomModifierButton.attachListenerForEvent(function(widget, action){
                 //TODO clean up direct access
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
                 currentWorld.requestCameraZooming();
             }, _GUI_ACTION_PRESSED, this);
+            mZoomModifierButton.setSkinPack("ButtonZoom");
             mScreenInputCheckList_.append(mZoomModifierButton);
         }
 

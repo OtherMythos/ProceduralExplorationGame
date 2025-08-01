@@ -28,6 +28,12 @@
             "diffuse" : [1, 1, 1, 1.0]
         },
 
+        "gui/zoomButton" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse" : [1, 1, 1, 0.5]
+        },
+
         "gui/progressBarBackground" :
         {
             "diffuse" : [0.05, 0.05, 0.05, 1.0]

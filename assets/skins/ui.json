@@ -126,6 +126,36 @@
         "ButtonRed_pressed" :
         {
             "copy_from" : "ButtonRed_idle"
+        },
+
+        "ButtonZoom_skin":
+        {
+            "material" : "gui/zoomButton"
+        },
+        "ButtonZoom_idle" :
+        {
+            "copy_from" : "ButtonZoom_skin",
+            "colour": [0.1, 0.1, 0.1]
+        },
+        "ButtonZoom_disabled" :
+        {
+            "copy_from" : "ButtonZoom_idle"
+        },
+        "ButtonZoom_highlighted_cursor" :
+        {
+            "copy_from" : "ButtonZoom_idle"
+        },
+        "ButtonZoom_highlighted_button" :
+        {
+            "copy_from" : "ButtonZoom_idle"
+        },
+        "ButtonZoom_highlighted_button_and_cursor" :
+        {
+            "copy_from" : "ButtonZoom_idle"
+        },
+        "ButtonZoom_pressed" :
+        {
+            "copy_from" : "ButtonZoom_idle"
         }
     },
 
@@ -142,6 +172,10 @@
         "ButtonRed" :
         {
             "auto" : "ButtonRed"
+        },
+        "ButtonZoom" :
+        {
+            "auto" : "ButtonZoom"
         },
         "WindowSkinNoBorder" :
         {
