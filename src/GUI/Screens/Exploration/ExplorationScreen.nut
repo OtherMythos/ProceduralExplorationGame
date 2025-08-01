@@ -8,6 +8,7 @@ enum ExplorationScreenWidgetType{
     MOVES_CONTAINER,
     MINIMAP,
     WIELD_BUTTON,
+    CAMERA_BUTTON,
 
     MAX
 }
@@ -30,6 +31,7 @@ enum ExplorationScreenWidgetType{
     mScrapAllButton_ = null;
     mWieldActiveButton = null;
     mZoomModifierButton = null;
+    mCameraButton = null;
     mDiscoverLevelUpScreen_ = null;
     mLayoutLine_ = null;
 
@@ -240,6 +242,17 @@ enum ExplorationScreenWidgetType{
             }, _GUI_ACTION_PRESSED, this);
             mScreenInputCheckList_.append(mWieldActiveButton);
             mExplorationScreenWidgetType_[ExplorationScreenWidgetType.WIELD_BUTTON] = mWieldActiveButton;
+
+            mCameraButton = mWindow_.createButton();
+            mCameraButton.setText("Camera");
+            //mCameraButton.setPosition(_window.getWidth() / 2 - mCameraButton.getSize().x/2 - mWieldActiveButton.getSize().x - 20, _window.getHeight() - mWieldActiveButton.getSize().y*2);
+            mCameraButton.setPosition(_window.getWidth() / 2 - mCameraButton.getSize().x/2, _window.getHeight() - mWieldActiveButton.getSize().y*2 - mCameraButton.getSize().y - 20);
+            mCameraButton.attachListenerForEvent(function(widget, action){
+                local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+                currentWorld.requestOrientingCamera();
+            }, _GUI_ACTION_PRESSED, this);
+            mScreenInputCheckList_.append(mCameraButton);
+            mExplorationScreenWidgetType_[ExplorationScreenWidgetType.CAMERA_BUTTON] = mCameraButton;
 
             mZoomModifierButton = mWindow_.createButton();
             mZoomModifierButton.setText("Zoom");

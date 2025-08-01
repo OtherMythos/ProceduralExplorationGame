@@ -122,6 +122,7 @@ enum WorldMousePressContexts{
     TARGET_ENEMY,
     PLACING_FLAG,
     ORIENTING_CAMERA,
+    ORIENTING_CAMERA_WITH_MOVEMENT,
     ZOOMING,
     //In the case of a window that takes the full screen with exploration in the back, ensure clicks to leave don't result in a flag press.
     POPUP_WINDOW,
@@ -322,8 +323,8 @@ enum WorldMousePressContexts{
         function requestFlagLogic(){
             return beginState_(WorldMousePressContexts.PLACING_FLAG);
         }
-        function requestOrientingCamera(){
-            local stateBegan = beginState_(WorldMousePressContexts.ORIENTING_CAMERA);
+        function requestOrientingCameraWithMovement(){
+            local stateBegan = beginState_(WorldMousePressContexts.ORIENTING_CAMERA_WITH_MOVEMENT);
             if(stateBegan){
                 if(mDoubleClickTimer_ > 0){
                     //Register that the double click took place.
@@ -332,6 +333,9 @@ enum WorldMousePressContexts{
                 mDoubleClickTimer_ = 20;
             }
             return stateBegan;
+        }
+        function requestOrientingCamera(){
+            return beginState_(WorldMousePressContexts.ORIENTING_CAMERA);
         }
         function requestZoomingCamera(){
             return beginState_(WorldMousePressContexts.ZOOMING);
@@ -1031,7 +1035,7 @@ enum WorldMousePressContexts{
             if(!mPinchToZoomActive_ && true){
                 mPinchToZoomWarmDown_--;
                 if(mPinchToZoomWarmDown_ <= 0 || ::Base.getTargetInterface() != TargetInterface.MOBILE){
-                    local result = mMouseContext_.requestOrientingCamera();
+                    local result = mMouseContext_.requestOrientingCameraWithMovement();
 
                     //assert(result);
 
@@ -1047,6 +1051,10 @@ enum WorldMousePressContexts{
     }
     function requestCameraZooming(){
         local result = mMouseContext_.requestZoomingCamera();
+        assert(result);
+    }
+    function requestOrientingCamera(){
+        local result = mMouseContext_.requestOrientingCamera();
         assert(result);
     }
     function checkForFlagPlacement(){
@@ -1127,7 +1135,7 @@ enum WorldMousePressContexts{
         if(mMovementCooldown_ > 0){
             mMovementCooldown_--;
         }
-        if(mMouseContext_.getCurrentState() == WorldMousePressContexts.ORIENTING_CAMERA){
+        if(mMouseContext_.getCurrentState() == WorldMousePressContexts.ORIENTING_CAMERA_WITH_MOVEMENT){
             mMovementCooldown_ = mMovementCooldownTotal_;
         }
 
@@ -1696,7 +1704,7 @@ enum WorldMousePressContexts{
         }
         */
 
-        if(mMouseContext_.getCurrentState() != WorldMousePressContexts.ORIENTING_CAMERA) return;
+        if(mMouseContext_.getCurrentState() != WorldMousePressContexts.ORIENTING_CAMERA && mMouseContext_.getCurrentState() != WorldMousePressContexts.ORIENTING_CAMERA_WITH_MOVEMENT) return;
         print("orientating");
 
         local mouseDelta = processMouseDelta();
