@@ -8,6 +8,7 @@
     mEXPCounter_ = null;
     mTargetEnemyWidget_ = null;
     mInventoryButton_ = null;
+    mPauseButton_ = null;
     mWieldPutAway_ = null;
 
     mPlayerHealthBar_ = null;
@@ -20,11 +21,45 @@
         mWindow_.setClickable(false);
         //Shrink to the correct size later on.
         //if(::Base.getTargetInterface() != TargetInterface.MOBILE){
-            mWindow_.setSize(400, 700);
+            mWindow_.setSize(400, 100);
         //}
         //mWindow_.setVisualsEnabled(false);
 
         mLayoutLine_ = _gui.createLayoutLine();
+
+        local buttonLayout = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
+        mInventoryButton_ = mWindow_.createButton();
+        mInventoryButton_.setText("Inventory");
+        mInventoryButton_.setShadowOutline(true, ColourValue(0.3, 0.3, 0.3), Vec2(2, 2));
+        //mInventoryButton_.setExpandVertical(true);
+        mInventoryButton_.setExpandHorizontal(true);
+        local cellId = buttonLayout.addCell(mInventoryButton_);
+        mInventoryButton_.attachListenerForEvent(function(widget, action){
+            ::Base.mExplorationLogic.mCurrentWorld_.showInventory();
+        }, _GUI_ACTION_PRESSED, this);
+
+        mPauseButton_ = mWindow_.createButton();
+        mPauseButton_.setText("Pause");
+        //mPauseButton_.setExpandVertical(true);
+        mPauseButton_.setExpandHorizontal(true);
+        mPauseButton_.setShadowOutline(true, ColourValue(0.3, 0.3, 0.3), Vec2(2, 2));
+        buttonLayout.addCell(mPauseButton_);
+        mPauseButton_.setMargin(10, 0);
+        mPauseButton_.attachListenerForEvent(function(widget, action){
+            ::Base.mExplorationLogic.setGamePaused(true);
+        }, _GUI_ACTION_PRESSED, this);
+
+        buttonLayout.setSize(mWindow_.getSize());
+        //buttonLayout.setMarginForAllCells(10, 10);
+        buttonLayout.layout();
+
+        //mLayoutLine_.addCell(buttonLayout);
+
+
+        ::evenOutButtonsForHeight([
+            mInventoryButton_,
+            mPauseButton_
+        ]);
 
         mPlayerHealthBar_ = ::GuiWidgets.ProgressBar(mWindow_);
         //mPlayerHealthBar_.setSize(100, 40);
@@ -34,20 +69,15 @@
         //local mobileInterface = (::Base.getTargetInterface() == TargetInterface.MOBILE);
         local mobileInterface = true;
         local targetLayout = mLayoutLine_;
+        /*
         if(mobileInterface){
-            mHorizontalLayoutLine_ = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
+            mHorizontalLayoutLine_ = _gui.createLayoutLine(_LAYOUT_VERTICAL);
             targetLayout = mHorizontalLayoutLine_;
         }
+        */
 
-        mInventoryButton_ = mWindow_.createButton();
-        mInventoryButton_.setText("Inventory");
-        mInventoryButton_.setExpandVertical(true);
-        mInventoryButton_.setExpandHorizontal(true);
-        targetLayout.addCell(mInventoryButton_);
-        mInventoryButton_.attachListenerForEvent(function(widget, action){
-            ::Base.mExplorationLogic.mCurrentWorld_.showInventory();
-        }, _GUI_ACTION_PRESSED, this);
 
+        /*
         if(::Base.getTargetInterface() != TargetInterface.MOBILE){
             mWieldPutAway_ = mWindow_.createButton();
             mWieldPutAway_.setText("Wield");
@@ -58,6 +88,7 @@
                 ::Base.mPlayerStats.toggleWieldActive();
             }, _GUI_ACTION_PRESSED, this);
         }
+        */
 
         mMoneyCounter_ = ::GuiWidgets.InventoryMoneyCounter(mWindow_, this);
         mMoneyCounter_.addToLayout(targetLayout);
@@ -68,7 +99,7 @@
         mTargetEnemyWidget_.addToLayout(targetLayout);
 
         if(mobileInterface){
-            mLayoutLine_.addCell(targetLayout);
+            //mLayoutLine_.addCell(targetLayout);
             targetLayout.setMarginForAllCells(10, 10);
         }
 
@@ -118,12 +149,12 @@
     function sizeLayout(minimapSize){
         if(::Base.getTargetInterface() == TargetInterface.MOBILE){
             mWindow_.setSize(_window.getWidth() - minimapSize.x, mWindow_.calculateChildrenSize().y * 2);
-            mWindow_.setVisualsEnabled(false);
         }
+        mWindow_.setVisualsEnabled(false);
 
         mPlayerHealthBar_.setMinSize(Vec2(mWindow_.getSizeAfterClipping().x, 50));
         mLayoutLine_.setSize(mWindow_.getSize());
-        mHorizontalLayoutLine_.setSize(mWindow_.getSize());
+        //mHorizontalLayoutLine_.setSize(mWindow_.getSize());
         if(mHorizontalLayoutLine_){
             mHorizontalLayoutLine_.setSize(mWindow_.getSize());
         }
@@ -134,9 +165,23 @@
 
         mPlayerHealthBar_.notifyLayout();
 
-        if(::Base.getTargetInterface() != TargetInterface.MOBILE){
-            mWindow_.setSize(mWindow_.calculateChildrenSize());
+        local healthBarPos = mInventoryButton_.getPosition();
+        healthBarPos.y += mInventoryButton_.getSize().y + 10;
+        mPlayerHealthBar_.setPosition(healthBarPos.x, healthBarPos.y);
+
+        local delta = (mPlayerHealthBar_.getPosition().y + mPlayerHealthBar_.getSize().y) - (mMoneyCounter_.getPosition().y) - 5;
+        foreach(c,i in [mMoneyCounter_, mEXPCounter_]){
+            local newPos = i.getPosition();
+            newPos.y += delta;
+            print(i);
+            print(delta);
+            print(newPos);
+            i.setPosition(newPos);
         }
+
+        //if(::Base.getTargetInterface() != TargetInterface.MOBILE){
+            mWindow_.setSize(mWindow_.calculateChildrenSize());
+        //}
     }
 
     function notifyCounterChanged(){

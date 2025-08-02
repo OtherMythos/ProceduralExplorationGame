@@ -13,6 +13,7 @@
     function setup(parent, parentObj=null){
         mLabel_ = parent.createLabel();
         mLabel_.setMargin(10, 10);
+        mLabel_.setShadowOutline(true, ColourValue(0, 0, 0), Vec2(2, 2));
         mAnimTo_ = mCurrentAnim_;
         setLabelTo(mCurrentAnim_);
 
@@ -55,5 +56,17 @@
             }
             setLabelTo(mCurrentAnim_);
         }
+    }
+
+    function getSize(){
+        return mLabel_.getSize();
+    }
+
+    function getPosition(){
+        return mLabel_.getPosition();
+    }
+
+    function setPosition(pos){
+        mLabel_.setPosition(pos);
     }
 };
