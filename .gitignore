@@ -12,6 +12,7 @@ developerTools.nut
 testingWorldScript.nut
 native/build
 native/buildIos
+native/buildAndroid
 util/VoxelConverterTool/build
 util/helper/token
 extra/
