@@ -118,10 +118,12 @@
         local winPos = mExplorationScenePanel_.getPosition();
 
         local resSize = winSize;
+        local pointSampler = false;
         if(::Base.getTargetInterface() == TargetInterface.MOBILE){
             resSize /= 2;
+            pointSampler = true;
         }
-        local compId = ::CompositorManager.createCompositorWorkspace("mainGameplayRenderWorkspace", resSize, CompositorSceneType.EXPLORATION);
+        local compId = ::CompositorManager.createCompositorWorkspace("mainGameplayRenderWorkspace", resSize, CompositorSceneType.EXPLORATION, pointSampler);
         local datablock = ::CompositorManager.getDatablockForCompositor(compId);
         mCompositorId_ = compId;
         mExplorationScenePanel_.setDatablock(datablock);
