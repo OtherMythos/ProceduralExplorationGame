@@ -178,6 +178,8 @@ enum ExplorationScreenWidgetType{
         mWindow_.setSkinPack("WindowSkinNoBorder");
         mWindow_.setBreadthFirst(true);
 
+        local screenshotMode = ::Base.isProfileActive(GameProfile.SCREENSHOT_MODE);
+
         local layoutLine = _gui.createLayoutLine();
 
         //World map display
@@ -269,6 +271,12 @@ enum ExplorationScreenWidgetType{
             }, _GUI_ACTION_PRESSED, this);
             mZoomModifierButton.setSkinPack("ButtonZoom");
             mScreenInputCheckList_.append(mZoomModifierButton);
+
+            if(screenshotMode){
+                mWieldActiveButton.setVisible(false);
+                mCameraButton.setVisible(false);
+                mZoomModifierButton.setVisible(false);
+            }
         }
 
         mExplorationBus_.registerCallback(busCallback, this);
@@ -283,9 +291,9 @@ enum ExplorationScreenWidgetType{
         mDiscoverLevelUpScreen_ = DiscoverLevelUpScreen(mWindow_);
         mDiscoverLevelUpScreen_.setup();
 
-        if(::Base.isProfileActive(GameProfile.SCREENSHOT_MODE)){
+        if(screenshotMode){
             mExplorationStatsContainer_.setVisible(false);
-            mExplorationMovesContainer_.setVisible(false);
+            //mExplorationMovesContainer_.setVisible(false);
         }
 
         mExplorationStatsContainer_.setPosition(Vec2(0, insets.top));
