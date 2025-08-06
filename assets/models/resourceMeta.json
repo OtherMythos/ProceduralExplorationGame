@@ -5,11 +5,13 @@
         },
         "tree.gox": {
             "disableAmbient": true,
+            "enableFaceMerging": true,
             "disableFaces": [0],
             "animValues": "191,3"
         },
         "treeCherryBlossom.gox": {
             "disableAmbient": true,
+            "enableFaceMerging": true,
             "disableFaces": [0],
             "animValues": "48,3"
         },

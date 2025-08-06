@@ -28,6 +28,8 @@ class AssetModuleGox(AssetModule):
 
         extraFlags = " -g "
 
+        if(resSettings.enableFaceMerging):
+            extraFlags = "  "
         if(resSettings.disableAmbient):
             extraFlags = extraFlags + " -a "
         if(resSettings.disableFaces):
