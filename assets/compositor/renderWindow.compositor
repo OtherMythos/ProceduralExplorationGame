@@ -3,9 +3,6 @@ compositor_node renderWindowNode
     in 0 renderWindowTexture
     in 1 otherTex1
     in 2 otherTex2
-    in 3 otherTex3
-    in 4 otherTex4
-    in 5 otherTex5
 
     target renderWindowTexture
     {
@@ -14,9 +11,6 @@ compositor_node renderWindowNode
 
             expose otherTex1
             expose otherTex2
-            expose otherTex3
-            expose otherTex4
-            expose otherTex5
 
             load
             {
@@ -61,7 +55,4 @@ workspace renderWindowWorkspace
     connect_output renderWindowNode 0
     connect_external 1 renderWindowNode 1
     connect_external 2 renderWindowNode 2
-    connect_external 3 renderWindowNode 3
-    connect_external 4 renderWindowNode 4
-    connect_external 5 renderWindowNode 5
 }

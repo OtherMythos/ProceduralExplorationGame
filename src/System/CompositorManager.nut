@@ -3,8 +3,6 @@
 enum CompositorSceneType{
     NONE,
     EXPLORATION,
-    BG_EFFECT,
-    FG_EFFECT,
     INVENTORY_PLAYER_INSPECTOR,
 
     MAX
@@ -18,7 +16,7 @@ enum CompositorSceneType{
     mCompositorsForTypes = array(CompositorSceneType.MAX, null)
     mTextures_ = []
 
-    effectCam = null
+    mEffectCam = null
 
     CompositorDef = class{
         mWorkspace = null;
@@ -43,22 +41,24 @@ enum CompositorSceneType{
     }
 
     function setup(){
-        for(local i = 0; i < CompositorSceneType.MAX; i++){
+        for(local i = CompositorSceneType.NONE + 1; i < CompositorSceneType.MAX; i++){
             local newTex = _graphics.createTexture("compositor/renderTexture" + i);
             newTex.setResolution(100, 100);
             newTex.scheduleTransitionTo(_GPU_RESIDENCY_RESIDENT);
             mTextures_.append(newTex);
         }
 
-        effectCam = _scene.createCamera("compositor/foregroundEffectCamera");
+        mEffectCam = _scene.createCamera("compositor/foregroundEffectCamera");
         local cameraNode = _scene.getRootSceneNode().createChildSceneNode();
-        cameraNode.attachObject(effectCam);
+        cameraNode.attachObject(mEffectCam);
 
         cameraNode.setPosition(0, 0, EFFECT_WINDOW_CAMERA_Z);
-        effectCam.lookAt(0, 0, 0);
-        effectCam.setAspectRatio(_window.getWidth().tofloat() / _window.getHeight().tofloat());
-        effectCam.setProjectionType(_PT_ORTHOGRAPHIC);
-        effectCam.setOrthoWindow(20, 20);
+        mEffectCam.lookAt(0, 0, 0);
+        mEffectCam.setAspectRatio(_window.getWidth().tofloat() / _window.getHeight().tofloat());
+        mEffectCam.setProjectionType(_PT_ORTHOGRAPHIC);
+        mEffectCam.setOrthoWindow(20, 20);
+
+        ::FGEffectCamera <- mEffectCam;
 
         refreshRenderWindowWorkspace_();
 
@@ -123,9 +123,6 @@ enum CompositorSceneType{
     }
 
     function getCameraForSceneType(sceneType){
-        if(sceneType == CompositorSceneType.FG_EFFECT){
-            return effectCam;
-        }
         local data = mCompositorsForTypes[sceneType];
         return data == null ? null : data.mCamera;
     }

@@ -108,12 +108,10 @@
     }
 
     function getWorldPositionForWindowPos(winPos){
-        local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.FG_EFFECT);
-
         local posX = winPos.x / _window.getWidth();
         local posY = winPos.y / _window.getHeight();
 
-        local ray = camera.getCameraToViewportRay(posX, posY);
+        local ray = ::FGEffectCamera.getCameraToViewportRay(posX, posY);
         local point = ray.intersects(mTestPlane_);
         assert(point != false);
         local windowPoint = ray.getPoint(point);

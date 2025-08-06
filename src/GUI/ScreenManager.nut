@@ -10,8 +10,6 @@
     "mScreenQueued_": false,
     "mQueuedScreens_": null,
 
-    mBGEffectRenderWindow = null
-    mFGEffectRenderWindow = null
     mVersionInfoWindow_ = null
 
     mCurrentAspect = null
@@ -43,15 +41,9 @@
         mPreviousScreens_ = array(MAX_SCREENS, null);
         mQueuedScreens_ = array(MAX_SCREENS, null);
 
-        //mBGEffectRenderWindow = EffectAnimationRenderWindow(CompositorSceneType.BG_EFFECT);
-        //mBGEffectRenderWindow.setZOrder(mScreensZOrder);
-
         for(local i = 0; i < MAX_SCREENS; i++){
             mPreviousScreens_[i] = [];
         }
-
-        //mFGEffectRenderWindow = EffectAnimationRenderWindow(CompositorSceneType.FG_EFFECT);
-        //mFGEffectRenderWindow.setZOrder(mScreensZOrder + MAX_SCREENS + 1);
 
         if(!(::Base.isProfileActive(GameProfile.SCREENSHOT_MODE))){
             mVersionInfoWindow_ = VersionInfoWindow(::getVersionInfo());

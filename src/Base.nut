@@ -214,7 +214,6 @@
         ::EffectManager.setup();
 
         _doFile("res://src/GUI/ScreenManager.nut");
-        _doFile("res://src/GUI/EffectAnimationRenderWindow.nut");
         _doFile("res://src/GUI/VersionInfoWindow.nut");
         ::ScreenManager.setup();
         _doFile("res://src/GUI/Screens/Screen.nut");
