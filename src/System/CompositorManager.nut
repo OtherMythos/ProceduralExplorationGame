@@ -1,11 +1,11 @@
 //Some compositor scenes are generic.
 //Giving them a designated type allows for things like easy access to cameras and queries.
 enum CompositorSceneType{
-    NONE,
     EXPLORATION,
     INVENTORY_PLAYER_INSPECTOR,
 
-    MAX
+    MAX,
+    NONE
 };
 
 ::CompositorManager <- {
@@ -41,7 +41,7 @@ enum CompositorSceneType{
     }
 
     function setup(){
-        for(local i = CompositorSceneType.NONE + 1; i < CompositorSceneType.MAX; i++){
+        for(local i = 0; i < CompositorSceneType.MAX; i++){
             local newTex = _graphics.createTexture("compositor/renderTexture" + i);
             newTex.setResolution(100, 100);
             newTex.scheduleTransitionTo(_GPU_RESIDENCY_RESIDENT);
