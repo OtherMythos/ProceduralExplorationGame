@@ -50,6 +50,21 @@
     };
 }
 
+::toggleDrawWireframe <- function(){
+    ::drawWireframe = !::drawWireframe;
+    ::setDrawWireframe(::drawWireframe);
+}
+::setDrawWireframe <- function(wireframe){
+    ::drawWireframe = wireframe;
+    foreach(i in ["baseVoxelMaterial", "MaskedWorld", "waterBlock", "outsideWaterBlock"]){
+        local datablock = _hlms.getDatablock(i);
+        if(datablock == null) continue;
+        datablock.setMacroblock(_hlms.getMacroblock({
+            "polygonMode": wireframe ? _PM_WIREFRAME : _PM_SOLID
+        }));
+    }
+}
+
 ::printTextBox <- function(strings){
     local max = 0;
     foreach(i in strings){

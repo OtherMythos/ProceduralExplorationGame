@@ -268,6 +268,8 @@ enum ActionSlotType{
 
 enum SystemSetting{
     INVERT_CAMERA_CONTROLLER,
+    TOGGLE_WIREFRAME,
+    TOGGLE_RENDER_STATS,
 
     MAX
 };

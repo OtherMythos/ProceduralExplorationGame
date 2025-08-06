@@ -43,6 +43,22 @@
         layoutLine.addCell(invertCamera);
         mSettingsWidgets_[SystemSetting.INVERT_CAMERA_CONTROLLER] = invertCamera;
 
+        local wireframeButton = mWindow_.createButton();
+        wireframeButton.setText("Toggle wireframe");
+        wireframeButton.attachListenerForEvent(function(widget, action){
+            ::toggleDrawWireframe();
+        }, _GUI_ACTION_PRESSED);
+        layoutLine.addCell(wireframeButton);
+        mSettingsWidgets_[SystemSetting.TOGGLE_WIREFRAME] = wireframeButton;
+
+        local renderStatsButton = mWindow_.createButton();
+        renderStatsButton.setText("Toggle Render Stats");
+        renderStatsButton.attachListenerForEvent(function(widget, action){
+            _window.toggleRenderStats();
+        }, _GUI_ACTION_PRESSED);
+        layoutLine.addCell(renderStatsButton);
+        mSettingsWidgets_[SystemSetting.TOGGLE_WIREFRAME] = renderStatsButton;
+
         backButton.setFocus();
 
         layoutLine.setMarginForAllCells(0, 20);

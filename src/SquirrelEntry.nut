@@ -77,15 +77,7 @@ function update(){
     if(_input.getRawKeyScancodeInput(62)){
         if(!::wireframeToggleDown){
             ::wireframeToggleDown = true;
-            ::drawWireframe = !::drawWireframe;
-
-            foreach(i in ["baseVoxelMaterial", "MaskedWorld", "waterBlock", "outsideWaterBlock"]){
-                local datablock = _hlms.getDatablock(i);
-                if(datablock == null) continue;
-                datablock.setMacroblock(_hlms.getMacroblock({
-                    "polygonMode": ::drawWireframe ? _PM_WIREFRAME : _PM_SOLID
-                }));
-            }
+            ::toggleDrawWireframe();
         }
     }else{
         ::wireframeToggleDown = false;
