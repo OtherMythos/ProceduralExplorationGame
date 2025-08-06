@@ -716,13 +716,35 @@ jobs:
           ./gradlew assemble${{ matrix.buildType }} clean
           ./gradlew assemble${{ matrix.buildType }}
 
+      - name: Decode and save dev keystore
+        run: |
+          echo "${{ secrets.DEV_KEYSTORE_BASE64 }}" | base64 -d > dev-keystore.jks
+
+      - name: Sign APK with dev key
+        if: matrix.buildType != 'Debug'
+        run: |
+          APK_PATH="avEngine-android/app/build/outputs/apk/${{env.BUILD_TYPE_LOWER}}/app-${{env.BUILD_TYPE_LOWER}}-unsigned.apk"
+          SIGNED_APK_PATH="avEngine-android/app/build/outputs/apk/${{env.BUILD_TYPE_LOWER}}/app-${{env.BUILD_TYPE_LOWER}}-signed.apk"
+
+          # Sign the APK
+          $ANDROID_HOME/build-tools/34.0.0/apksigner sign \
+            --ks dev-keystore.jks \
+            --ks-key-alias ${{ secrets.DEV_KEY_ALIAS }} \
+            --ks-pass pass:${{ secrets.DEV_KEYSTORE_PASSWORD }} \
+            --key-pass pass:${{ secrets.DEV_KEYSTORE_PASSWORD }} \
+            --out "$SIGNED_APK_PATH" \
+            "$APK_PATH"
+
+          # Optional: Verify signature
+          $ANDROID_HOME/build-tools/34.0.0/apksigner verify "$SIGNED_APK_PATH"
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: avEngine-android-${{ matrix.buildType }}.apk
           path: |
             avEngine-android/app/build/outputs/apk/${{env.BUILD_TYPE_LOWER}}/app-${{env.BUILD_TYPE_LOWER}}.apk
-            avEngine-android/app/build/outputs/apk/${{env.BUILD_TYPE_LOWER}}/app-${{env.BUILD_TYPE_LOWER}}-unsigned.apk
+            avEngine-android/app/build/outputs/apk/${{env.BUILD_TYPE_LOWER}}/app-${{env.BUILD_TYPE_LOWER}}-signed.apk
 
   runUnitTests:
     runs-on: ubuntu-latest
