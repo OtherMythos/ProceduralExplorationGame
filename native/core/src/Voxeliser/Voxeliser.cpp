@@ -699,8 +699,16 @@ namespace ProceduralExplorationGameCore{
         subMesh->mVao[Ogre::VpNormal].push_back(arrayObj);
         subMesh->mVao[Ogre::VpShadow].push_back(arrayObj);
 
-        const Ogre::Vector3 halfBounds((mMaxX - mMinX) / 2, -(mMaxY - mMinY) / 2, maxAltitude/2);
-        const Ogre::Aabb bounds(halfBounds, halfBounds);
+        float maxX = mMaxX;
+        float maxY = mMaxY;
+        float minX = mMinX;
+        float minY = mMinY;
+
+        const Ogre::Vector3 halfBounds((maxX - minX) / 2, (maxY - minY) / 2, maxAltitude/2);
+        const Ogre::Aabb bounds(
+            Ogre::Vector3(minX + halfBounds.x, minY + halfBounds.y, halfBounds.z),
+            halfBounds
+        );
         mesh->_setBounds(bounds);
         mesh->_setBoundingSphereRadius(bounds.getRadius());
 
