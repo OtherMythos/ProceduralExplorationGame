@@ -18,6 +18,8 @@ enum CompositorSceneType{
     mCompositorsForTypes = array(CompositorSceneType.MAX, null)
     mTextures_ = []
 
+    effectCam = null
+
     CompositorDef = class{
         mWorkspace = null;
         mTexture = null;
@@ -47,6 +49,16 @@ enum CompositorSceneType{
             newTex.scheduleTransitionTo(_GPU_RESIDENCY_RESIDENT);
             mTextures_.append(newTex);
         }
+
+        effectCam = _scene.createCamera("compositor/foregroundEffectCamera");
+        local cameraNode = _scene.getRootSceneNode().createChildSceneNode();
+        cameraNode.attachObject(effectCam);
+
+        cameraNode.setPosition(0, 0, EFFECT_WINDOW_CAMERA_Z);
+        effectCam.lookAt(0, 0, 0);
+        effectCam.setAspectRatio(_window.getWidth().tofloat() / _window.getHeight().tofloat());
+        effectCam.setProjectionType(_PT_ORTHOGRAPHIC);
+        effectCam.setOrthoWindow(20, 20);
 
         refreshRenderWindowWorkspace_();
 
@@ -111,6 +123,9 @@ enum CompositorSceneType{
     }
 
     function getCameraForSceneType(sceneType){
+        if(sceneType == CompositorSceneType.FG_EFFECT){
+            return effectCam;
+        }
         local data = mCompositorsForTypes[sceneType];
         return data == null ? null : data.mCamera;
     }

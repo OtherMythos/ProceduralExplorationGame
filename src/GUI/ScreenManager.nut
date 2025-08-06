@@ -50,8 +50,8 @@
             mPreviousScreens_[i] = [];
         }
 
-        mFGEffectRenderWindow = EffectAnimationRenderWindow(CompositorSceneType.FG_EFFECT);
-        mFGEffectRenderWindow.setZOrder(mScreensZOrder + MAX_SCREENS + 1);
+        //mFGEffectRenderWindow = EffectAnimationRenderWindow(CompositorSceneType.FG_EFFECT);
+        //mFGEffectRenderWindow.setZOrder(mScreensZOrder + MAX_SCREENS + 1);
 
         if(!(::Base.isProfileActive(GameProfile.SCREENSHOT_MODE))){
             mVersionInfoWindow_ = VersionInfoWindow(::getVersionInfo());

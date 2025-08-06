@@ -33,6 +33,26 @@ compositor_node renderWindowNode
 
             profiling_id "Colibri GUI"
         }
+        //Render the foreground effects
+        pass render_scene
+        {
+            load{
+                depth clear
+                stencil clear
+            }
+            store{
+                all store_or_resolve
+            }
+
+            rq_first 65
+            rq_last 66
+
+            camera compositor/foregroundEffectCamera
+
+            identifier 10
+
+            profiling_id "Foreground Effects"
+        }
     }
 }
 
