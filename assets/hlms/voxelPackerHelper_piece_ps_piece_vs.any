@@ -72,12 +72,15 @@
 @end
 
 @piece( custom_VStoPS )
-	float ambientVal;
+	@property(floorDecals)
 	float3 worldPos;
-	float fog;
+	@end
 	@property( renderSceneDecorations )
 		NO_INTERPOLATION_PREFIX float passDrawColour;
 		float3 decorationColour;
+	@else
+		float fog;
+		float ambientVal;
 	@end
 	@property( windStreaks )
 		float windDistance;
@@ -87,7 +90,7 @@
 @piece( custom_vs_posExecution )
 
 	@property( !hlms_shadowcaster || !hlms_shadow_uses_depth_texture || alpha_test || exponential_shadow_maps && !renderSceneDecorations)
-	@property( !disableFog )
+	@property( !disableFog && !renderSceneDecorations )
 		float3 playerPosition = float3(passBuf.playerPositionX, passBuf.playerPositionY, passBuf.playerPositionZ);
 		//float4 positionRelativeToCam = mul(worldPos, passBuf.viewProj);
 		//float dist = length(positionRelativeToCam.xyz);
@@ -118,7 +121,9 @@
 		visibility = clamp(visibility, 0.0, 1.0);
 		outVs.fog = visibility;
 	@end
+		@property(floorDecals)
 		outVs.worldPos = worldPos.xyz;
+		@end
 	@end
 
 	@property( windStreaks )
@@ -141,7 +146,9 @@
 
 	@property(packedVoxels)
 
+		@property(!renderSceneDecorations)
 		@insertpiece(voxelData)
+		@end
 
 		float4 inValues = inVs_vertex;
 		@property( syntax == metal )
@@ -162,6 +169,7 @@
 		uint voxValue = originalSecond & uint(0xFF);
 		uint voxFlags = (originalSecond >> 16) & uint(0xFF);
 
+		@property(!renderSceneDecorations)
 		const uint COLS_WIDTH = uint(16);
 		const uint COLS_HEIGHT = uint(16);
 		const float TILE_WIDTH = (1.0 / COLS_WIDTH) / 2.0;
@@ -169,6 +177,9 @@
 		const float texCoordX = (float(voxValue % COLS_WIDTH) / COLS_WIDTH) + TILE_WIDTH;
 		const float texCoordY = (float((uint(float(voxValue) / COLS_WIDTH))) / COLS_HEIGHT) + TILE_HEIGHT;
 		const float2 testVal = float2(texCoordX, texCoordY);
+		@else
+		const float2 testVal = float2(0, 0);
+		@end
 
 		//float2 testVal = VOXEL_TEX_COORDS[voxValue];
 		#undef inVs_uv0
@@ -203,7 +214,7 @@
 			@end
 		@end
 
-		@property(!invisibleTerrain)
+		@property(!invisibleTerrain && voxelTerrain)
 			//Hide voxels only if the terrain is not in the invisible state.
 			uint test = voxFlags & uint(0x1);
 			if(test > uint(0)){
@@ -211,11 +222,13 @@
 			}
 		@end
 
+		@property(!renderSceneDecorations)
 		normVal = FACES_NORMALS[norm];
 
 		//If the renderable does not require pixel shading because it is a shadow caster for instance, these settings won't always be available.
 		@property( !hlms_shadowcaster || !hlms_shadow_uses_depth_texture || alpha_test || exponential_shadow_maps )
 			outVs.ambientVal = float(ambient)/3;
+		@end
 		@end
 
 	@else
