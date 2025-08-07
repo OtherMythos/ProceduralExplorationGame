@@ -40,9 +40,6 @@ function start(){
     _doFile("res://src/Helpers.nut");
     _doFile("res://src/MapGen/Exploration/Generator/MapConstants.h.nut");
 
-    _doFile("res://src/System/CompositorManager.nut");
-    ::CompositorManager.setup();
-
     setupInitialCanvasSize();
 
     _doFile("res://src/Util/StateMachine.nut");

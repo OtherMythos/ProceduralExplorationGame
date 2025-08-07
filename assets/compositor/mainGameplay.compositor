@@ -21,14 +21,16 @@ compositor_node renderMainGameplayNode
 {
     in 0 renderTexture
 
-    texture sceneRenderDecorations    target_width target_height PFG_RGBA32_FLOAT depth_pool 2
-    texture finalSceneRender     target_width target_height PFG_RGBA32_FLOAT depth_pool 2
-    texture windTexture     target_width_scaled 0.5 target_height_scaled 0.5 PFG_R32_FLOAT
+    //Note: These width and height values will be changed later by code to match the device screen size
+    texture sceneRenderDecorations    1920 1080 PFG_RGBA32_FLOAT depth_pool 2
+    texture finalSceneRender          1920 1080 PFG_RGBA32_FLOAT depth_pool 2
+    texture windTexture               1920 1080 PFG_R32_FLOAT
 
     target finalSceneRender
     {
         pass clear{
             colour_value 0.1 0.1 1 1
+            depth_value 1.0
         }
         //Render invisible terrain
         pass render_scene
@@ -37,6 +39,7 @@ compositor_node renderMainGameplayNode
             rq_last 42
 
             shadows default_simpleShadowNode
+            camera explorationCamera
 
             identifier 11
         }
@@ -45,12 +48,14 @@ compositor_node renderMainGameplayNode
             rq_first 15
             rq_last 18
 
+            camera explorationCamera
             shadows default_simpleShadowNode
         }
         //Ensure particles are rendered
         pass render_scene
         {
             rq_first 80
+            camera explorationCamera
         }
         //Render discovered terrain
         pass render_scene
@@ -64,6 +69,7 @@ compositor_node renderMainGameplayNode
 				stencil	dont_care
 			}
 
+            camera explorationCamera
             shadows default_simpleShadowNode
 
             rq_first 10
@@ -75,6 +81,7 @@ compositor_node renderMainGameplayNode
             rq_first 18
             rq_last 19
 
+            camera explorationCamera
             shadows default_simpleShadowNode
         }
         //Render effects without lines
@@ -82,6 +89,7 @@ compositor_node renderMainGameplayNode
         {
             rq_first 16
             rq_last 17
+            camera explorationCamera
         }
 
         //Render the sky
@@ -109,6 +117,7 @@ compositor_node renderMainGameplayNode
             overlays    off
 
             identifier 12
+            camera explorationCamera
 
             rq_first 15
             rq_last 16
@@ -118,6 +127,7 @@ compositor_node renderMainGameplayNode
         {
             rq_first 80
 
+            camera explorationCamera
             identifier 12
         }
     }
@@ -132,6 +142,7 @@ compositor_node renderMainGameplayNode
         {
             rq_first 40
             rq_last 41
+            camera explorationCamera
 
             identifier 13
         }
@@ -159,9 +170,6 @@ compositor_node renderMainGameplayNode
             input 1 sceneRenderDecorations
         }
     }
-}
 
-workspace mainGameplayRenderWorkspace
-{
-    connect_output renderMainGameplayNode 0
+    out 0 renderTexture
 }

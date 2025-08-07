@@ -100,6 +100,9 @@
     }
 
     function loadFiles(){
+        _doFile("res://src/System/CompositorManager.nut");
+        ::CompositorManager.setup();
+
         _doFile("res://src/System/EnumDef.nut");
         _doFile("res://src/System/InputManager.nut");
         _doFile("res://src/Util/IdPool.nut");
@@ -306,6 +309,8 @@
         _gui.loadSkins("res://build/assets/skins/ui.json");
         _gui.loadSkins("res://build/assets/skins/itemSkins.json");
 
+        applyCompositorModifications();
+
         loadFiles();
 
         setupBaseMaterials();
@@ -320,13 +325,19 @@
         _gameCore.recollectMapGenSteps();
 
         setupDeveloperWorkaroundsPost_();
-
-        if(getTargetInterface() == TargetInterface.MOBILE){
-            _gameCore.disableShadows();
-        }
     }
     function setupFullscreen(){
         setFullscreenState(FullscreenMode.BORDERLESS_FULLSCREEN);
+    }
+
+    function applyCompositorModifications(){
+        local mobile = (getTargetInterface() == TargetInterface.MOBILE);
+        local size = _window.getActualSize();
+        if(mobile){
+            _gameCore.disableShadows();
+            size /= 2;
+        }
+        _gameCore.setupCompositorDefs(size.x.tointeger(), size.y.tointeger());
     }
 
     function registerProfiles_(){

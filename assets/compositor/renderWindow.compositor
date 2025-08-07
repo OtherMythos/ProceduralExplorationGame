@@ -1,3 +1,18 @@
+compositor_node clearRenderWindowNode
+{
+    in 0 renderWindowTexture
+
+    target renderWindowTexture
+    {
+        pass clear
+        {
+            colour_value 0 0 0 0
+        }
+    }
+
+    out 0 renderWindowTexture
+}
+
 compositor_node renderWindowNode
 {
     in 0 renderWindowTexture
@@ -14,8 +29,8 @@ compositor_node renderWindowNode
 
             load
             {
-                all clear
-                clear_colour 0 0 0 0
+                depth clear
+                stencil clear
             }
             store
             {
@@ -50,9 +65,22 @@ compositor_node renderWindowNode
     }
 }
 
+workspace renderWindowWorkspaceGameplay
+{
+    connect_external 0 renderMainGameplayNode 0
+    connect renderMainGameplayNode 0 renderWindowNode 0
+
+    //connect_external 0 renderWindowNode 0
+    connect_external 1 renderWindowNode 1
+    connect_external 2 renderWindowNode 2
+}
+
 workspace renderWindowWorkspace
 {
-    connect_output renderWindowNode 0
+    connect_external 0 clearRenderWindowNode 0
+    connect clearRenderWindowNode 0 renderWindowNode 0
+
+    //connect_external 0 renderWindowNode 0
     connect_external 1 renderWindowNode 1
     connect_external 2 renderWindowNode 2
 }

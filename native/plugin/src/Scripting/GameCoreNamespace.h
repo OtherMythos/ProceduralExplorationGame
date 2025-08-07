@@ -32,6 +32,7 @@ namespace ProceduralExplorationGamePlugin{
         static SQInteger setCustomPassBufferValue(HSQUIRRELVM vm);
 
         static SQInteger disableShadows(HSQUIRRELVM vm);
+        static SQInteger setupCompositorDefs(HSQUIRRELVM vm);
 
         static SQInteger createDataPointFileParser(HSQUIRRELVM vm);
 

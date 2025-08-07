@@ -552,6 +552,21 @@ namespace ProceduralExplorationGamePlugin{
         return 0;
     }
 
+    SQInteger GameCoreNamespace::setupCompositorDefs(HSQUIRRELVM vm){
+        SQInteger width, height;
+        sq_getinteger(vm, 2, &width);
+        sq_getinteger(vm, 3, &height);
+
+        Ogre::CompositorManager2 *compositorManager = Ogre::Root::getSingleton().getCompositorManager2();
+        Ogre::CompositorNodeDef* nodeDef = compositorManager->getNodeDefinitionNonConst("renderMainGameplayNode");
+        for(Ogre::TextureDefinitionBase::TextureDefinition& t : nodeDef->getLocalTextureDefinitionsNonConst()){
+            t.width = static_cast<Ogre::uint32>(width);
+            t.height = static_cast<Ogre::uint32>(height);
+        }
+
+        return 0;
+    }
+
     SQInteger GameCoreNamespace::createVoxMeshItem(HSQUIRRELVM vm){
         SQInteger size = sq_gettop(vm);
         Ogre::SceneMemoryMgrTypes targetType = Ogre::SCENE_DYNAMIC;
@@ -749,6 +764,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, setCustomPassBufferValue, "setCustomPassBufferValue", -2, ".n|unn");
 
         AV::ScriptUtils::addFunction(vm, disableShadows, "disableShadows");
+        AV::ScriptUtils::addFunction(vm, setupCompositorDefs, "setupCompositorDefs", 3, ".ii");
 
         AV::ScriptUtils::addFunction(vm, registerVoxel, "registerVoxel", 4, ".nnu");
 

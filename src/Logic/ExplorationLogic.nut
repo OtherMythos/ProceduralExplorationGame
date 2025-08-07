@@ -45,6 +45,11 @@
         //resetExploration_();
     }
 
+    function setExplorationActive_(active){
+        mExplorationActive_ = active;
+        ::CompositorManager.setGameplayActive(active);
+    }
+
     function shutdown(){
         if(mCurrentWorld_ == null || !mExplorationActive_) return;
         mCurrentWorld_.shutdown();
@@ -59,13 +64,13 @@
 
         _state.setPauseState(0);
 
-        mExplorationActive_ = false;
+        setExplorationActive_(false);
         mCurrentWorld_ = null;
     }
 
     function setup(){
         if(mCurrentWorld_ != null || mExplorationActive_) return;
-        mExplorationActive_ = true;
+        setExplorationActive_(true);
 
         _state.setPauseState(0);
 

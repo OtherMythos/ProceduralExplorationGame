@@ -14,6 +14,7 @@
     constructor(parentWin){
         mExplorationScenePanel_ = parentWin.createPanel();
         mExplorationScenePanel_.setPosition(0, 0);
+        mExplorationScenePanel_.setVisible(false);
 
         mMapViewerWindow_ = parentWin.createWindow("ExplorationWorldMapDisplay");
         mMapViewerPanel_ = mMapViewerWindow_.createPanel();
@@ -123,10 +124,10 @@
             resSize /= 2;
             pointSampler = true;
         }
-        local compId = ::CompositorManager.createCompositorWorkspace("mainGameplayRenderWorkspace", resSize, CompositorSceneType.EXPLORATION, pointSampler);
-        local datablock = ::CompositorManager.getDatablockForCompositor(compId);
-        mCompositorId_ = compId;
-        mExplorationScenePanel_.setDatablock(datablock);
+        //local compId = ::CompositorManager.createCompositorWorkspace("mainGameplayRenderWorkspace", resSize, CompositorSceneType.EXPLORATION, pointSampler);
+        //local datablock = ::CompositorManager.getDatablockForCompositor(compId);
+        //mCompositorId_ = compId;
+        //mExplorationScenePanel_.setDatablock(datablock);
 
         local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION);
         if(mBillboardManager_ == null){
