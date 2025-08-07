@@ -1,3 +1,181 @@
+compositor_node_shadow default_simpleShadowNode
+{
+    technique focused
+    texture focusedTex 4096 4096 PFG_D32_FLOAT
+    shadow_map 0 focusedTex light 0
+    //Render shadow map "0"
+    shadow_map_target_type directional spot
+    {
+        shadow_map 0
+        {
+            pass clear { colour_value 1 1 1 1 }
+            pass render_scene
+            {
+                rq_first 10
+                rq_last 40
+            }
+        }
+    }
+}
+compositor_node renderMainGameplayNode
+{
+    in 0 renderTexture
+
+    //Note: These width and height values will be changed later by code to match the device screen size
+    texture sceneRenderDecorations    1920 1080 PFG_RGBA32_FLOAT depth_pool 2
+    texture finalSceneRender          1920 1080 PFG_RGBA32_FLOAT depth_pool 2
+    texture windTexture               1920 1080 PFG_R32_FLOAT
+
+    target finalSceneRender
+    {
+        pass clear{
+            colour_value 0.1 0.1 1 1
+            depth_value 1.0
+        }
+        //Render invisible terrain
+        pass render_scene
+        {
+            rq_first 41
+            rq_last 42
+
+            shadows default_simpleShadowNode
+            camera explorationCamera
+
+            identifier 11
+        }
+        pass render_scene
+        {
+            rq_first 15
+            rq_last 18
+
+            camera explorationCamera
+            shadows default_simpleShadowNode
+        }
+        //Ensure particles are rendered
+        pass render_scene
+        {
+            rq_first 80
+            camera explorationCamera
+        }
+        //Render discovered terrain
+        pass render_scene
+        {
+
+			load { all dont_care }
+			store
+			{
+				colour	dont_care
+				depth	store
+				stencil	dont_care
+			}
+
+            camera explorationCamera
+            shadows default_simpleShadowNode
+
+            rq_first 10
+            rq_last 15
+        }
+        //Render water
+        pass render_scene
+        {
+            rq_first 18
+            rq_last 19
+
+            camera explorationCamera
+            shadows default_simpleShadowNode
+        }
+        //Render effects without lines
+        pass render_scene
+        {
+            rq_first 16
+            rq_last 17
+            camera explorationCamera
+        }
+
+        //Render the sky
+        pass render_quad
+        {
+            material Postprocess/FillColour
+        }
+    }
+
+    //Render just decorations (trees, houses, enemies) for the line drawing algorithm
+    target sceneRenderDecorations
+    {
+        pass render_scene
+        {
+			load {
+                colour clear
+            }
+			store
+			{
+				colour	store
+				depth	dont_care
+				stencil	dont_care
+			}
+
+            overlays    off
+
+            identifier 12
+            camera explorationCamera
+
+            rq_first 15
+            rq_last 16
+        }
+        //Render particles
+        pass render_scene
+        {
+            rq_first 80
+
+            camera explorationCamera
+            identifier 12
+        }
+    }
+
+    target windTexture
+    {
+        pass clear
+        {
+            colour_value 0 0 0 0
+        }
+        pass render_scene
+        {
+            rq_first 40
+            rq_last 41
+            camera explorationCamera
+
+            identifier 13
+        }
+    }
+
+    target finalSceneRender{
+        pass render_quad
+        {
+            material Postprocess/lowResCopy
+            input 0 finalSceneRender
+            input 1 windTexture
+        }
+    }
+
+    target renderTexture
+    {
+        pass clear
+        {
+
+        }
+        pass render_quad
+        {
+            material Postprocess/OutlineDraw
+            input 0 finalSceneRender
+            input 1 sceneRenderDecorations
+        }
+    }
+
+    out 0 renderTexture
+}
+
+
+
 compositor_node clearRenderWindowNode
 {
     in 0 renderWindowTexture
