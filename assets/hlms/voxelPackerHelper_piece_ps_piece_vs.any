@@ -26,7 +26,7 @@
 @end
 
 @piece( custom_ps_preLights )
-	pixelData.diffuse.xyz *= inPs.diffuse;
+	pixelData.diffuse.xyz *= inPs.ambientVal;
 @end
 
 @piece( custom_ps_posExecution )
@@ -72,8 +72,7 @@
 @end
 
 @piece( custom_VStoPS )
-	//TODO reduce this down to a single float
-	float3 diffuse;
+	float ambientVal;
 	float3 worldPos;
 	float fog;
 	@property( renderSceneDecorations )
@@ -216,8 +215,7 @@
 
 		//If the renderable does not require pixel shading because it is a shadow caster for instance, these settings won't always be available.
 		@property( !hlms_shadowcaster || !hlms_shadow_uses_depth_texture || alpha_test || exponential_shadow_maps )
-			float ambientVal = float(ambient)/3;
-			outVs.diffuse = float3(ambientVal, ambientVal, ambientVal);
+			outVs.ambientVal = float(ambient)/3;
 		@end
 
 	@else
@@ -226,7 +224,7 @@
 		#define inVs_vertex inValues
 
 		@property( !hlms_shadowcaster || !hlms_shadow_uses_depth_texture || alpha_test || exponential_shadow_maps )
-			outVs.diffuse = float3(1, 1, 1);
+			outVs.ambientVal = 1.0;
 		@end
 
 		@property(oceanVertices)
