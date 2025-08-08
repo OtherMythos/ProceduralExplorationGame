@@ -560,8 +560,12 @@ namespace ProceduralExplorationGamePlugin{
         Ogre::CompositorManager2 *compositorManager = Ogre::Root::getSingleton().getCompositorManager2();
         Ogre::CompositorNodeDef* nodeDef = compositorManager->getNodeDefinitionNonConst("renderMainGameplayNode");
         for(Ogre::TextureDefinitionBase::TextureDefinition& t : nodeDef->getLocalTextureDefinitionsNonConst()){
-            t.width = static_cast<Ogre::uint32>(width);
-            t.height = static_cast<Ogre::uint32>(height);
+            int divVal = 1;
+            if(t.getName() == "windTexture"){
+                divVal = 2;
+            }
+            t.width = static_cast<Ogre::uint32>(width / divVal);
+            t.height = static_cast<Ogre::uint32>(height / divVal);
         }
 
         return 0;
