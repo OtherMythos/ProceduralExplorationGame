@@ -18,6 +18,8 @@
     mCloudManager_ = null;
     mWindStreakManager_ = null;
 
+    WORLD_VIEW_DISTANCE = 300;
+
     mTerrain_ = null;
 
     ProceduralRegionEntry = class{
@@ -299,6 +301,14 @@
         base.shutdown();
     }
 
+    #Override
+    function zoomChanged_(){
+        if(!mWorldViewActive_) return;
+
+        mCurrentZoomLevel_ = WORLD_VIEW_DISTANCE;
+        setWorldZoomState(false);
+    }
+
     function receiveWorldViewChangeRequest(id, data){
         toggleWorldZoomState();
     }
@@ -406,14 +416,13 @@
         assert(camera != null);
         local parentNode = camera.getParentNode();
 
-        local worldViewDistance = 300;
-        local targetDistance = mWorldViewActive_ ? worldViewDistance : mCurrentZoomLevel_
+        local targetDistance = mWorldViewActive_ ? WORLD_VIEW_DISTANCE : mCurrentZoomLevel_
         if(mWorldViewAnim_ < 1.0){
             mWorldViewAnim_ += 0.04;
             if(mWorldViewActive_){
-                targetDistance = mCurrentZoomLevel_ + (worldViewDistance - mCurrentZoomLevel_) * easeOutQuat(mWorldViewAnim_);
+                targetDistance = mCurrentZoomLevel_ + (WORLD_VIEW_DISTANCE - mCurrentZoomLevel_) * easeOutQuat(mWorldViewAnim_);
             }else{
-                targetDistance = worldViewDistance - (worldViewDistance - mCurrentZoomLevel_) * easeOutQuat(mWorldViewAnim_);
+                targetDistance = WORLD_VIEW_DISTANCE - (WORLD_VIEW_DISTANCE - mCurrentZoomLevel_) * easeOutQuat(mWorldViewAnim_);
             }
         }
         local zoom = targetDistance;

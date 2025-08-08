@@ -1767,6 +1767,12 @@ enum WorldMousePressContexts{
     function setCurrentZoom(zoom){
         mCurrentZoomLevel_ = zoom;
         if(mCurrentZoomLevel_ < MIN_ZOOM) mCurrentZoomLevel_ = MIN_ZOOM;
+        zoomChanged_();
+    }
+
+    #Stub
+    function zoomChanged_(){
+
     }
 
     function notifyModalPopupScreen(){
