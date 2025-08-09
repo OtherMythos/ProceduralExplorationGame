@@ -3,6 +3,7 @@ function setup(){
     //All we care about here is the ForceWindowed flag, so just check for that.
     local profiles = _settings.getUserSetting("profile");
     local windowed = false;
+    local mobileSize = false;
 
     if(profiles != null){
         local v = split(profiles, ",");
@@ -11,13 +12,16 @@ function setup(){
                 windowed = true;
                 break;
             }
+            else if(i == "MobileSize"){
+                mobileSize = true;
+            }
         }
     }
 
     _window.setDefaultFullscreen(windowed ? _WINDOW_WINDOWED : _WINDOW_FULLSCREEN_BORDERLESS);
     if(windowed){
-        _window.setIntendedWidth(1920);
-        _window.setIntendedHeight(1080);
+        _window.setIntendedWidth(mobileSize ? 400 : 1920);
+        _window.setIntendedHeight(mobileSize ? 800 : 1080);
     }else{
         local displaySize = _window.getDisplaySize(0);
 
