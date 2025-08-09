@@ -474,6 +474,18 @@ enum ExplorationScreenWidgetType{
         return true;
     }
 
+    function showPopup(popupData){
+        if(popupData.id == Popup.REGION_DISCOVERED){
+            local yPos = 50;
+            if(::Base.getTargetInterface() == TargetInterface.MOBILE){
+                local statsContainer = mExplorationScreenWidgetType_[ExplorationScreenWidgetType.STATS_CONTAINER];
+                yPos = statsContainer.getPosition().y + statsContainer.getSize().y - 10;
+            }
+            popupData.data.pos <- Vec2(0, yPos);
+        }
+
+        ::PopupManager.displayPopup(popupData);
+    }
 
     function notifyGatewayEnd(explorationStats){
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_END_SCREEN, explorationStats), null, 1);

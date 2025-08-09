@@ -813,8 +813,11 @@
         local discoveredData = ::Base.mPlayerStats.processBiomeDiscovered(targetBiome);
         if(discoveredData != null){
             local biomeData = ::Biomes[targetBiome];
-            //print("Discovered " + biomeData.getName());
-            ::PopupManager.displayPopup(::PopupManager.PopupData(Popup.REGION_DISCOVERED, biomeData));
+            if(mGui_){
+                local popupData = ::PopupManager.PopupData(Popup.REGION_DISCOVERED, { "biome": biomeData });
+                mGui_.showPopup(popupData);
+            }
+
             discoveredData.biome <- biomeData;
             _event.transmit(Event.BIOME_DISCOVER_STATS_CHANGED, discoveredData);
         }

@@ -10,7 +10,7 @@
     mUnderlineDatablock_ = null;
     mUnderlineShadowDatablock_ = null;
 
-    function setup(biomeData){
+    function setup(data){
         setLifespan(320);
         mFadeInTimer_ = mTotalFadeIn_;
         mForceSingleInstance = true;
@@ -20,11 +20,15 @@
         mPopupWin_.setVisualsEnabled(false);
         mPopupWin_.setConsumeCursor(false);
 
+        if(data.rawin("pos")){
+            mPopupWin_.setPosition(data.pos);
+        }
+
         local label = mPopupWin_.createLabel();
         local currentFontSize = label.getDefaultFontSize() * 2;
         label.setDefaultFontSize(currentFontSize);
         label.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
-        label.setText(getLabelForRegionType(biomeData));
+        label.setText(getLabelForRegionType(data.biome));
         label.setShadowOutline(true, ColourValue(0, 0, 0), Vec2(2, 2));
         mLabel_ = label;
         mCurrentFontSize_ = currentFontSize;
@@ -82,7 +86,7 @@
         //local pos = getIntendedPosition();
         //pos = Vec2(0, 500 - (currentPercentage * (20 * (mCurrentFontSize_ * labelOpacity))));
         //local animVal = 1.0-((pow(1 - currentPercentage, 4)));
-        local pos = Vec2(_window.getWidth() / 2 - mLabel_.getSize().x / 2 - (20 - animVal * 20), 50);
+        local pos = Vec2(_window.getWidth() / 2 - mLabel_.getSize().x / 2 - (20 - animVal * 20), -10);
         mLabel_.setPosition(pos);
         //mLabel_.setCentre(pos);
         //mPopupWin_.setPosition(pos);
