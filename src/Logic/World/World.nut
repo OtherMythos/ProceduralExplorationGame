@@ -124,6 +124,7 @@ enum WorldMousePressContexts{
     ORIENTING_CAMERA,
     ORIENTING_CAMERA_WITH_MOVEMENT,
     ZOOMING,
+    DIRECTING_PLAYER,
     //In the case of a window that takes the full screen with exploration in the back, ensure clicks to leave don't result in a flag press.
     POPUP_WINDOW,
 };
@@ -339,6 +340,9 @@ enum WorldMousePressContexts{
         }
         function requestZoomingCamera(){
             return beginState_(WorldMousePressContexts.ZOOMING);
+        }
+        function requestDirectingPlayer(){
+            return beginState_(WorldMousePressContexts.DIRECTING_PLAYER);
         }
         function requestPopupWindow(){
             return beginState_(WorldMousePressContexts.POPUP_WINDOW);
@@ -626,6 +630,7 @@ enum WorldMousePressContexts{
         //checkForFlagUpdate();
         checkForPlayerMoveBegin();
         checkForPlayerZoom();
+        checkForPlayerDirecting();
         checkPlayerInputs();
         checkZoomAcceleration();
         //Some of the player inputs might have deactivated this world, so check again.
@@ -1053,6 +1058,10 @@ enum WorldMousePressContexts{
         local result = mMouseContext_.requestZoomingCamera();
         assert(result);
     }
+    function requestDirectingPlayer(){
+        local result = mMouseContext_.requestDirectingPlayer();
+        assert(result);
+    }
     function requestOrientingCamera(){
         local result = mMouseContext_.requestOrientingCamera();
         assert(result);
@@ -1167,9 +1176,11 @@ enum WorldMousePressContexts{
         }
     }
 
-    function getPositionForRaycast(){
-        local inWindow = mGui_.checkPlayerInputPosition(_input.getMouseX(), _input.getMouseY());
-        if(inWindow == null) return null;
+    function getPositionForRaycast(checkWindow=true){
+        if(checkWindow){
+            local inWindow = mGui_.checkPlayerInputPosition(_input.getMouseX(), _input.getMouseY());
+            if(inWindow == null) return null;
+        }
 
         local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION)
         assert(camera != null);
@@ -1712,7 +1723,7 @@ enum WorldMousePressContexts{
             processCameraMove(mouseDelta.x*-0.2, mouseDelta.y*-0.2);
         }
     }
-    function processMouseDelta(){
+    function processMouseDelta(alterPrev=true){
         local retVal = null;
         if(_input.getMouseButton(_MB_LEFT)){
             _window.grabCursor(true);
@@ -1726,8 +1737,10 @@ enum WorldMousePressContexts{
                 retVal = Vec2(deltaX, deltaY);
                 //processCameraMove(deltaX*-0.2, deltaY*-0.2);
             }
-            mPrevMouseX_ = mouseX;
-            mPrevMouseY_ = mouseY;
+            if(alterPrev || (mPrevMouseX_ == null && mPrevMouseY_ == null)){
+                mPrevMouseX_ = mouseX;
+                mPrevMouseY_ = mouseY;
+            }
         }else{
             //Wait for the first move to happen.
             if(mPrevMouseX_ != null && mPrevMouseY_ != null){
@@ -1738,6 +1751,29 @@ enum WorldMousePressContexts{
             _window.grabCursor(false);
         }
         return retVal;
+    }
+    function checkForPlayerDirecting(){
+        if(mMouseContext_.getCurrentState() != WorldMousePressContexts.DIRECTING_PLAYER) return;
+        print("Directing player");
+
+        //local raycastPosition = getPositionForRaycast(false);
+        //assert(raycastPosition != null);
+        //movePlayerToPos(raycastPosition);
+
+        local mouseDelta = processMouseDelta(false);
+        if(mouseDelta != null){
+            local camDir = getCameraDirection();
+            local camAngle = atan2(camDir.x, camDir.y);
+            local cosA = -cos(camAngle);
+            local sinA = sin(camAngle);
+
+            local worldDir = Vec2(
+                mouseDelta.x * cosA - mouseDelta.y * sinA,
+                mouseDelta.x * sinA + mouseDelta.y * cosA
+            );
+
+            movePlayer(worldDir);
+        }
     }
     function checkForPlayerZoom(){
         if(mMouseContext_.getCurrentState() != WorldMousePressContexts.ZOOMING) return;

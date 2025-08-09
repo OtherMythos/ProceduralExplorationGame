@@ -32,6 +32,7 @@ enum ExplorationScreenWidgetType{
     mWieldActiveButton = null;
     mZoomModifierButton = null;
     mCameraButton = null;
+    mPlayerTapButton = null;
     mDiscoverLevelUpScreen_ = null;
     mLayoutLine_ = null;
 
@@ -255,6 +256,19 @@ enum ExplorationScreenWidgetType{
             }, _GUI_ACTION_PRESSED, this);
             mScreenInputCheckList_.append(mCameraButton);
             mExplorationScreenWidgetType_[ExplorationScreenWidgetType.CAMERA_BUTTON] = mCameraButton;
+
+            mPlayerTapButton = mWindow_.createButton();
+            local playerSizeButton = Vec2(100, 100);
+            mPlayerTapButton.setText("Direct");
+            //mPlayerTapButton.setSize(playerSizeButton);
+            //mPlayerTapButton.setPosition(_window.getWidth() / 2 - playerSizeButton.x / 2, _window.getHeight() / 2 - playerSizeButton.y / 2);
+            mPlayerTapButton.setKeyboardNavigable(false);
+            //mPlayerTapButton.setVisualsEnabled(false);
+            mPlayerTapButton.setPosition(_window.getWidth() / 2 - mPlayerTapButton.getSize().x/2, mCameraButton.getPosition().y - mPlayerTapButton.getSize().y - 20);
+            mPlayerTapButton.attachListenerForEvent(function(widget, action){
+                local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+                currentWorld.requestDirectingPlayer();
+            }, _GUI_ACTION_PRESSED);
 
             mZoomModifierButton = mWindow_.createButton();
             mZoomModifierButton.setText("Zoom");
