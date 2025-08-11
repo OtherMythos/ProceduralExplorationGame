@@ -8,9 +8,18 @@ compositor_node_shadow default_simpleShadowNode
     {
         shadow_map 0
         {
-            pass clear { colour_value 1 1 1 1 }
             pass render_scene
             {
+                load
+                {
+                    all clear
+                    clear_colour 1 1 1 1
+                }
+                store
+                {
+                    all store_or_resolve
+                }
+
                 rq_first 10
                 rq_last 40
             }
@@ -28,13 +37,20 @@ compositor_node renderMainGameplayNode
 
     target finalSceneRender
     {
-        pass clear{
-            colour_value 0.1 0.1 1 1
-            depth_value 1.0
-        }
         //Render invisible terrain
         pass render_scene
         {
+            load
+            {
+                all clear
+                clear_colour 0.1 0.1 1 1
+                depth_value 1.0
+            }
+            store
+            {
+                all store_or_resolve
+            }
+
             rq_first 41
             rq_last 42
 
@@ -134,12 +150,18 @@ compositor_node renderMainGameplayNode
 
     target windTexture
     {
-        pass clear
-        {
-            colour_value 0 0 0 0
-        }
         pass render_scene
         {
+            load
+            {
+                all clear
+                clear_colour 0 0 0 0
+            }
+            store
+            {
+                all store_or_resolve
+            }
+
             rq_first 40
             rq_last 41
             camera explorationCamera
