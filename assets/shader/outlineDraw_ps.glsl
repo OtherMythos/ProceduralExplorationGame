@@ -59,9 +59,11 @@ in block
 
 vulkan_layout( ogre_t0 ) uniform texture2D Image;
 vulkan_layout( ogre_t1 ) uniform texture2D Depth;
+vulkan_layout( ogre_t2 ) uniform texture2D Wind;
 
 vulkan( layout( ogre_s0 ) uniform sampler samplerState; )
 vulkan( layout( ogre_s1 ) uniform sampler DepthSampler; )
+vulkan( layout( ogre_s2 ) uniform sampler WindSampler; )
 
 float calculateLineStrengthForDistance(float distance){
 
@@ -105,6 +107,9 @@ void main()
 {
     float4 startValue = OGRE_Sample( Image, samplerState, inPs.uv0 );
     float4 Center = OGRE_Sample( Depth, DepthSampler, inPs.uv0);
+    float4 WindValue = OGRE_Sample( Wind, WindSampler, inPs.uv0);
+
+    startValue = mix(startValue, float4(1, 1, 1, 1), 0.5 * WindValue.x);
 
     if(Center.x == 0){
         returnFinalColour(startValue);

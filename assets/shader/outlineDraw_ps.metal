@@ -60,13 +60,18 @@ fragment float4 main_metal
     PS_INPUT inPs [[stage_in]],
     texture2d<float> Image [[texture(0)]],
     texture2d<float> Depth [[texture(1)]],
+    texture2d<float> Wind [[texture(2)]],
     sampler samplerState [[sampler(0)]],
-    sampler DepthSampler [[sampler(1)]]
+    sampler DepthSampler [[sampler(1)]],
+    sampler WindSampler [[sampler(2)]]
 )
 {
 
     float4 startValue = OGRE_Sample( Image, samplerState, inPs.uv0 );
     float4 Center = OGRE_Sample( Depth, DepthSampler, inPs.uv0);
+    float4 WindValue = OGRE_Sample( Wind, WindSampler, inPs.uv0);
+
+    startValue = mix(startValue, float4(1, 1, 1, 1), 0.5 * WindValue.x);
 
     if(Center.x == 0){
         returnFinalColour(startValue);

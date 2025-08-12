@@ -170,15 +170,6 @@ compositor_node renderMainGameplayNode
         }
     }
 
-    target finalSceneRender{
-        pass render_quad
-        {
-            material Postprocess/lowResCopy
-            input 0 finalSceneRender
-            input 1 windTexture
-        }
-    }
-
     target renderTexture
     {
         pass clear
@@ -190,6 +181,7 @@ compositor_node renderMainGameplayNode
             material Postprocess/OutlineDraw
             input 0 finalSceneRender
             input 1 sceneRenderDecorations
+            input 2 windTexture
         }
     }
 
