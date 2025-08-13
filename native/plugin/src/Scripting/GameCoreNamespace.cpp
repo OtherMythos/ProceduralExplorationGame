@@ -50,6 +50,8 @@
 #include "Ogre/OgreVoxMeshManager.h"
 #include "Hlms/Pbs/OgreHlmsPbsDatablock.h"
 
+#include "Vao/OgreConstBufferPacked.h"
+
 #include "GameCorePBSHlmsListener.h"
 
 #include "../../../../src/Versions.h.nut"
@@ -720,6 +722,24 @@ namespace ProceduralExplorationGamePlugin{
         return 0;
     }
 
+    SQInteger GameCoreNamespace::regionAnimationSetValue(HSQUIRRELVM vm){
+        SQInteger id, value;
+        sq_getinteger(vm, 2, &id);
+        sq_getinteger(vm, 3, &value);
+
+        ProceduralExplorationGameCore::RegionBufferDataContainer buffer = ProceduralExplorationGameCore::PluginBaseSingleton::getRegionBuffer();
+        *(buffer.buffer + id) = static_cast<AV::uint8>(value);
+
+        return 0;
+    }
+
+    SQInteger GameCoreNamespace::regionAnimationUpload(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::RegionBufferDataContainer buffer = ProceduralExplorationGameCore::PluginBaseSingleton::getRegionBuffer();
+        buffer.constBuffer->upload(buffer.buffer, 0u, sizeof(AV::uint8) * 600 * 600);
+
+        return 0;
+    }
+
     SQInteger GameCoreNamespace::dumpSceneToObj(HSQUIRRELVM vm){
         std::string outPath;
         AV::formatResToPath("user://dumpedScene.obj", outPath);
@@ -766,6 +786,9 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, registerMapGenClient, "registerMapGenClient", 4, ".sst|o");
         AV::ScriptUtils::addFunction(vm, recollectMapGenSteps, "recollectMapGenSteps");
         AV::ScriptUtils::addFunction(vm, setCustomPassBufferValue, "setCustomPassBufferValue", -2, ".n|unn");
+
+        AV::ScriptUtils::addFunction(vm, regionAnimationSetValue, "regionAnimationSetValue", 3, ".ii");
+        AV::ScriptUtils::addFunction(vm, regionAnimationUpload, "regionAnimationUpload");
 
         AV::ScriptUtils::addFunction(vm, disableShadows, "disableShadows");
         AV::ScriptUtils::addFunction(vm, setupCompositorDefs, "setupCompositorDefs", 3, ".ii");

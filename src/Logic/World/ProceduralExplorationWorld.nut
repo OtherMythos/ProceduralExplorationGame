@@ -360,6 +360,13 @@
                 i.update();
             }
         }
+
+        for(local y = 0; y < 10; y++){
+            for(local x = 0; x < 10; x++){
+                _gameCore.regionAnimationSetValue((300 + x) + (250 + y) * 600, 5);
+            }
+        }
+        _gameCore.regionAnimationUpload();
     }
 
     function checkForEnemyAppear(){

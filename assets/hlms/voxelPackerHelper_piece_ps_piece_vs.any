@@ -29,6 +29,17 @@
 	pixelData.diffuse.xyz *= inPs.ambientVal;
 @end
 
+@piece( custom_vs_uniformStructDeclaration )
+	struct RegionAnimBuffer
+	{
+		uchar data[600 * 600];
+	};
+@end
+
+@piece( custom_vs_uniformDeclaration )
+	, constant RegionAnimBuffer &regionAnimBuffer [[buffer(CONST_SLOT_START+3)]]
+@end
+
 @piece( custom_ps_posExecution )
 	//For debug purposes
 	//outPs_colour0.xyz = float3(inPs.diffuse.xyz);
@@ -194,11 +205,18 @@
 			pos_z -= 128;
 		@end
 
+		@property(voxelTerrain)
+			uint voxelId = floatBitsToUint(inValues.z);
+		@end
+
 		inValues.x = float(pos_x)-0.5;
 		inValues.y = float(pos_y)-0.5;
 		inValues.z = float(pos_z)-0.5;
 		@property(voxelTerrain)
 			inValues.z -= 4.0;
+
+			uchar animValue = regionAnimBuffer.data[voxelId];
+			inValues.z += float(animValue);
 		@end
 
 		uint norm = uint((originalSecond >> 29) & uint(0x7));

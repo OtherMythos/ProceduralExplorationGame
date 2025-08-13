@@ -35,6 +35,13 @@
 #include "GameCorePBSHlmsListener.h"
 #include "OgreRenderable.h"
 
+#include "Vao/OgreConstBufferPacked.h"
+#include "Vao/OgreVaoManager.h"
+#include "CommandBuffer/OgreCommandBuffer.h"
+#include "CommandBuffer/OgreCbShaderBuffer.h"
+
+#include "GameCoreLogger.h"
+
 namespace ProceduralExplorationGamePlugin{
 
 #ifdef WIN32
@@ -49,7 +56,13 @@ namespace ProceduralExplorationGamePlugin{
     }
 
     class HlmsGameCoreCustomHlmsListener : public Ogre::HlmsAVCustomListener{
+    private:
+        Ogre::ConstBufferPacked *mHlmsBuffer;
     public:
+        HlmsGameCoreCustomHlmsListener(Ogre::ConstBufferPacked *hlmsBuffer) : mHlmsBuffer(hlmsBuffer){
+
+        }
+
         template <bool CasterPass>
         inline void _defineProperties(Ogre::HlmsPbsAVCustom* hlms, Ogre::Renderable *renderable){
             if(!renderable->hasCustomParameter(0)) return;
@@ -90,6 +103,11 @@ namespace ProceduralExplorationGamePlugin{
         void calculateHashForPreCreate( Ogre::HlmsPbsAVCustom* hlms, Ogre::Renderable *renderable, Ogre::PiecesMap *inOutPieces ){
             _defineProperties<false>(hlms, renderable);
         }
+        Ogre::uint32 fillBuffersForV2(const Ogre::HlmsCache *cache, const Ogre::QueuedRenderable &queuedRenderable, bool casterPass, Ogre::uint32 lastCacheHash, Ogre::CommandBuffer *commandBuffer){
+            *commandBuffer->addCommand<Ogre::CbShaderBuffer>() = Ogre::CbShaderBuffer(Ogre::VertexShader, Ogre::uint16( 3 ), mHlmsBuffer, 0, (Ogre::uint32)mHlmsBuffer->getTotalSizeBytes() );
+
+            return 0;
+        }
     };
 
 
@@ -128,8 +146,17 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptVM::setupDelegateTable(VisitedPlaceMapDataUserData::setupDelegateTable);
         AV::ScriptVM::setupDelegateTable(DataPointFileParserUserData::setupDelegateTable);
 
+        Ogre::RenderSystem *renderSystem = Ogre::Root::getSingletonPtr()->getRenderSystem();
+        Ogre::VaoManager *vaoManager = renderSystem->getVaoManager();
+        AV::uint8* regionAnimationBuffer = new AV::uint8[600 * 600];
+        for(int i = 0; i < 600 * 600; i++){
+            *(regionAnimationBuffer + i) = 0;
+        }
+        Ogre::ConstBufferPacked *hlmsBuffer = vaoManager->createConstBuffer( sizeof(AV::uint8) * 600 * 600, Ogre::BT_DEFAULT, 0, false );
+        hlmsBuffer->upload( regionAnimationBuffer, 0u, sizeof(AV::uint8) * 600 * 600 );
+
         ProceduralExplorationGameCore::MapGen* mapGen = new ProceduralExplorationGameCore::MapGen();
-        ProceduralExplorationGameCore::PluginBaseSingleton::initialise(mapGen, 0, new ProceduralExplorationGameCore::MapGenScriptManager());
+        ProceduralExplorationGameCore::PluginBaseSingleton::initialise(mapGen, 0, new ProceduralExplorationGameCore::MapGenScriptManager(), {regionAnimationBuffer, hlmsBuffer});
 
         Ogre::VoxMeshManager* meshManager = OGRE_NEW Ogre::VoxMeshManager();
         meshManager->_initialise();
@@ -147,7 +174,7 @@ namespace ProceduralExplorationGamePlugin{
 
         Ogre::HlmsPbsAVCustom* customPbs = dynamic_cast<Ogre::HlmsPbsAVCustom*>(hlmsPbs);
         assert(customPbs);
-        customPbs->registerCustomListener(new HlmsGameCoreCustomHlmsListener());
+        customPbs->registerCustomListener(new HlmsGameCoreCustomHlmsListener(hlmsBuffer));
     }
 
     void ProceduralExplorationGameCorePlugin::shutdown(){
