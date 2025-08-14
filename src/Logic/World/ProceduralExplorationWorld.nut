@@ -1,6 +1,9 @@
 ::ProceduralExplorationWorld <- class extends ::World{
     mMapData_ = null;
 
+    ProceduralExplorationWorldRegionAnimator = null;
+    mRegionAnimator_ = null;
+
     static WORLD_DEPTH = 20;
     ABOVE_GROUND = null;
     mVoxMesh_ = null;
@@ -213,6 +216,8 @@
         mCurrentFoundRegions_ = {};
         mRegionEntries_ = {};
 
+        mRegionAnimator_ = ProceduralExplorationWorldRegionAnimator();
+
         _event.subscribe(Event.REQUEST_WORLD_VIEW_CHANGE, receiveWorldViewChangeRequest, this);
 
         //TODO consider moving this somewhere else.
@@ -364,7 +369,7 @@
             }
         }
 
-        _gameCore.regionAnimationUpload();
+        mRegionAnimator_.update();
     }
 
     function checkForEnemyAppear(){
@@ -727,6 +732,17 @@
         if(mParentNode_ != null) mParentNode_.setVisible(current);
     }
 
+    function notifyRegionCoordAppeared(x, y, radius, idx){
+        local placedItem = mPlacedItemGrid_[idx];
+        if(placedItem != null && !mPlacedItemGridVisible_[idx]){
+            mPlacedItemGridVisible_[idx] = true;
+            placedItem.setVisible(true);
+            //radiusCheckRegion(x, y, 6);
+
+            mRegionAnimator_.addFoundSection(this, x, y, radius);
+        }
+    }
+
     function radiusCheckRegion(circleX, circleY, radius){
         //The coordinates of the circle's rectangle
         local startX = circleX - radius;
@@ -746,6 +762,9 @@
         //local mapWidth = mMapData_.width;
         //local mapHeight = mMapData_.height;
 
+        mRegionAnimator_.addFoundSection(this, circleX, circleY, radius);
+
+        /*
         local width = mMapData_.width;
 
         local foundRegions = {};
@@ -754,14 +773,7 @@
                 //Go through these chunks to determine what to load.
                 if(_checkRectCircleCollision(x, y, radius, circleX, circleY)){
 
-                    _gameCore.regionAnimationSetValue((x + y * 600).tointeger(), 0);
-                    local checkIdx = x + y * width;
-                    local placedItem = mPlacedItemGrid_[checkIdx];
-                    if(placedItem != null && !mPlacedItemGridVisible_[checkIdx]){
-                        mPlacedItemGridVisible_[checkIdx] = true;
-                        placedItem.setVisible(true);
-                        radiusCheckRegion(x, y, 6);
-                    }
+                    //_gameCore.regionAnimationSetValue((x + y * 600).tointeger(), 0);
 
                     //if(x < 0 || y < 0 || x >= mapWidth || y >= mapHeight) continue;
                     //Query the voxel data and determine what the region is.
@@ -779,6 +791,7 @@
                 processFoundNewRegion(c);
             }
         }
+        */
     }
 
     function notifyPlayerVoxelChange(){
@@ -911,3 +924,5 @@
         return outString;
     }
 };
+
+_doFile("res://src/Logic/World/ProceduralExplorationWorldRegionAnimator.nut");
