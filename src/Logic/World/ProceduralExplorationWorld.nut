@@ -53,6 +53,7 @@
         }
         function update(){
             if(mAnimCount_ <= 0) return;
+            return;
             local animIdx = mAnimCount_.tofloat() / mMaxAnim_.tofloat();
             mAnimCount_--;
             local animPos = mAnimCount_ * -0.10;
@@ -363,7 +364,6 @@
 
         for(local y = 0; y < 10; y++){
             for(local x = 0; x < 10; x++){
-                _gameCore.regionAnimationSetValue((300 + x) + (250 + y) * 600, 5);
             }
         }
         _gameCore.regionAnimationUpload();
@@ -755,6 +755,9 @@
             for (local x = startXTile; x < endXTile; x++){
                 //Go through these chunks to determine what to load.
                 if(_checkRectCircleCollision(x, y, radius, circleX, circleY)){
+
+                    _gameCore.regionAnimationSetValue((x + y * 600).tointeger(), 0);
+
                     //if(x < 0 || y < 0 || x >= mapWidth || y >= mapHeight) continue;
                     //Query the voxel data and determine what the region is.
                     local targetRegion = targetFunc(mMapData_, playerPos);
@@ -771,6 +774,8 @@
                 processFoundNewRegion(c);
             }
         }
+
+        _gameCore.regionAnimationUpload();
     }
     function _checkRectCircleCollision(tileX, tileY, radius, circleX, circleY){
         local distX = abs(circleX - (tileX)-0.5);

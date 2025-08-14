@@ -150,7 +150,7 @@ namespace ProceduralExplorationGamePlugin{
         Ogre::VaoManager *vaoManager = renderSystem->getVaoManager();
         AV::uint8* regionAnimationBuffer = new AV::uint8[600 * 600];
         for(int i = 0; i < 600 * 600; i++){
-            *(regionAnimationBuffer + i) = 0;
+            *(regionAnimationBuffer + i) = 0x80;
         }
         Ogre::ConstBufferPacked *hlmsBuffer = vaoManager->createConstBuffer( sizeof(AV::uint8) * 600 * 600, Ogre::BT_DEFAULT, 0, false );
         hlmsBuffer->upload( regionAnimationBuffer, 0u, sizeof(AV::uint8) * 600 * 600 );

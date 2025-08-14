@@ -216,7 +216,11 @@
 			inValues.z -= 4.0;
 
 			uchar animValue = regionAnimBuffer.data[voxelId];
-			inValues.z += float(animValue);
+			if(animValue & 0x80){
+				inValues.y += -1000000.0;
+			}else{
+				inValues.z += float(animValue);
+			}
 		@end
 
 		uint norm = uint((originalSecond >> 29) & uint(0x7));
