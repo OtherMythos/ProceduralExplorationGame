@@ -15,6 +15,8 @@
     mWaterDatablock_ = null;
     mOutsideWaterDatablock_ = null;
 
+    mPlacedItemGrid_ = null;
+
     mCloudManager_ = null;
     mWindStreakManager_ = null;
 
@@ -78,11 +80,8 @@
         function setVisible_(){
             local vis = mWorldActive_ && mVisible_;
             if(mLandNode_){
-                mLandItem_.setDatablock(vis ? "baseVoxelMaterial" : "MaskedWorld");
-                mLandItem_.setRenderQueueGroup(vis ?
-                    RENDER_QUEUE_EXPLORATION_TERRRAIN_DISCOVERED :
-                    RENDER_QUEUE_EXPLORATION_TERRRAIN_UNDISCOVERED
-                );
+                mLandItem_.setDatablock("baseVoxelMaterial");
+                mLandItem_.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_TERRRAIN_DISCOVERED);
             }
 
             if(vis){
@@ -142,7 +141,7 @@
                 node.setVisible(mWorldActive_ && !mVisible_);
             }
             */
-            mDecoratioNode_.setVisible(vis);
+            //mDecoratioNode_.setVisible(vis);
         }
         function pushPlace(place, beacon){
             mPlaces_.append(place);
@@ -260,6 +259,7 @@
         mCloudManager_ = CloudManager(mParentNode_, mMapData_.width * 3, mMapData_.height * 3, -mMapData_.width, -mMapData_.height);
         mWindStreakManager_ = WindStreakManager(mParentNode_, mMapData_.width, mMapData_.height);
 
+        mPlacedItemGrid_ = array(mMapData_.width * mMapData_.height, null);
         setupPlaces();
         createPlacedItems();
 
@@ -362,10 +362,6 @@
             }
         }
 
-        for(local y = 0; y < 10; y++){
-            for(local x = 0; x < 10; x++){
-            }
-        }
         _gameCore.regionAnimationUpload();
     }
 
@@ -650,7 +646,8 @@
 
             local item = _scene.createItem(i, _SCENE_STATIC);
             _gameCore.writeFlagsToItem(item, HLMS_PACKED_VOXELS | HLMS_TERRAIN | HLMS_FLOOR_DECALS);
-            item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_TERRRAIN_UNDISCOVERED);
+            item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_TERRRAIN_DISCOVERED);
+            item.setDatablock("baseVoxelMaterial");
             item.setCastsShadows(false);
             local landNode = regionNode.createChildSceneNode(_SCENE_STATIC);
             landNode.attachObject(item);
@@ -694,10 +691,13 @@
             }
         }
 
+        local width = mMapData_.width;
         foreach(c,i in list){
             //When generating places check if one of them has a point in the blob and if so set that placed item to null, then later remove.
             local node = mRegionEntries_[i.region].mDecoratioNode_;
-            mEntityFactory_.constructPlacedItem(node, i, c);
+            local newNode = mEntityFactory_.constructPlacedItem(node, i, c);
+            newNode.setVisible(false);
+            mPlacedItemGrid_[i.originX + i.originY * width] = newNode;
             //mActivePlaces_.append(itemEntry);
         }
     }
@@ -750,6 +750,8 @@
         //local mapWidth = mMapData_.width;
         //local mapHeight = mMapData_.height;
 
+        local width = mMapData_.width;
+
         local foundRegions = {};
         for (local y = startYTile; y < endYTile; y++){
             for (local x = startXTile; x < endXTile; x++){
@@ -757,6 +759,10 @@
                 if(_checkRectCircleCollision(x, y, radius, circleX, circleY)){
 
                     _gameCore.regionAnimationSetValue((x + y * 600).tointeger(), 0);
+                    local placedItem = mPlacedItemGrid_[x + y * width];
+                    if(placedItem != null){
+                        placedItem.setVisible(true);
+                    }
 
                     //if(x < 0 || y < 0 || x >= mapWidth || y >= mapHeight) continue;
                     //Query the voxel data and determine what the region is.

@@ -502,6 +502,8 @@
         //entry.setPosition(targetPos);
 
         //return entry;
+
+        return placeNode;
     }
 
     function constructPlace(placeData, idx, explorationScreen=null){
