@@ -16,6 +16,7 @@
     mOutsideWaterDatablock_ = null;
 
     mPlacedItemGrid_ = null;
+    mPlacedItemGridVisible_ = null;
 
     mCloudManager_ = null;
     mWindStreakManager_ = null;
@@ -260,6 +261,7 @@
         mWindStreakManager_ = WindStreakManager(mParentNode_, mMapData_.width, mMapData_.height);
 
         mPlacedItemGrid_ = array(mMapData_.width * mMapData_.height, null);
+        mPlacedItemGridVisible_ = array(mMapData_.width * mMapData_.height, false);
         setupPlaces();
         createPlacedItems();
 
@@ -725,13 +727,7 @@
         if(mParentNode_ != null) mParentNode_.setVisible(current);
     }
 
-    function notifyPlayerVoxelChange(){
-        local playerPos = mPlayerEntry_.getPosition();
-        local radius = 4;
-
-        local circleX = playerPos.x;
-        local circleY = -playerPos.z;
-
+    function radiusCheckRegion(circleX, circleY, radius){
         //The coordinates of the circle's rectangle
         local startX = circleX - radius;
         local startY = circleY - radius;
@@ -759,17 +755,20 @@
                 if(_checkRectCircleCollision(x, y, radius, circleX, circleY)){
 
                     _gameCore.regionAnimationSetValue((x + y * 600).tointeger(), 0);
-                    local placedItem = mPlacedItemGrid_[x + y * width];
-                    if(placedItem != null){
+                    local checkIdx = x + y * width;
+                    local placedItem = mPlacedItemGrid_[checkIdx];
+                    if(placedItem != null && !mPlacedItemGridVisible_[checkIdx]){
+                        mPlacedItemGridVisible_[checkIdx] = true;
                         placedItem.setVisible(true);
+                        radiusCheckRegion(x, y, 6);
                     }
 
                     //if(x < 0 || y < 0 || x >= mapWidth || y >= mapHeight) continue;
                     //Query the voxel data and determine what the region is.
-                    local targetRegion = targetFunc(mMapData_, playerPos);
-                    if(targetRegion < 0) continue;
+                    //local targetRegion = targetFunc(mMapData_, playerPos);
+                    //if(targetRegion < 0) continue;
                     //print("Found target region " + targetRegion);
-                    foundRegions.rawset(targetRegion, true);
+                    //foundRegions.rawset(targetRegion, true);
                 }
             }
         }
@@ -780,6 +779,16 @@
                 processFoundNewRegion(c);
             }
         }
+    }
+
+    function notifyPlayerVoxelChange(){
+        local playerPos = mPlayerEntry_.getPosition();
+        local radius = 8;
+
+        local circleX = playerPos.x;
+        local circleY = -playerPos.z;
+
+        radiusCheckRegion(circleX, circleY, radius);
 
         _gameCore.regionAnimationUpload();
     }
