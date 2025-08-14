@@ -106,6 +106,7 @@
         _doFile("res://src/System/EnumDef.nut");
         _doFile("res://src/System/InputManager.nut");
         _doFile("res://src/Util/IdPool.nut");
+        _doFile("res://src/Util/LifetimePool.nut");
         _doFile("res://src/Util/VersionPool.nut");
 
         _doFile("res://src/System/LottieAnimationManager.nut");
