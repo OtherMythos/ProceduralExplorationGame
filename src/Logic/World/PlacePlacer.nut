@@ -5,9 +5,10 @@
         local placeFile = placeDefine.getPlaceFileName();
         local placeEntry = null;
         local pos = Vec3(placeData.originX, 0, -placeData.originY);
+        local insertNode = null;
         //TODO eventually depreciate and remove the placement function logic.
         if(placeFile != null){
-            local insertNode = node.createChildSceneNode();
+            insertNode = node.createChildSceneNode();
             local insertPos = pos - placeDefine.mCentre;
             insertPos.y = 0;
             insertNode.setPosition(insertPos);
@@ -33,15 +34,16 @@
             debugNode.setScale(placeDefine.mHalf);
             */
         }else{
+            insertNode = node.createChildSceneNode();
             local placementFunction = placeDefine.getPlacementFunction();
             //NOTE replaced c with 0 here
-            placeEntry = (placeDefine.getPlacementFunction())(world, world.mEntityFactory_, node, placeData, c);
+            placeEntry = (placeDefine.getPlacementFunction())(world, world.mEntityFactory_, insertNode, placeData, c);
             if(placeDefine.getRegionAppearFunction() != null){
                 regionEntry.pushFuncPlace(placeData.placeId, pos);
             }
         }
 
-        return placeEntry;
+        return [placeEntry, insertNode];
     }
 
 };

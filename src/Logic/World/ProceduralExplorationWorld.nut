@@ -19,6 +19,7 @@
     mOutsideWaterDatablock_ = null;
 
     mPlacedItemGrid_ = null;
+    mPlacesGrid_ = null;
     mPlacedItemGridVisible_ = null;
 
     mCloudManager_ = null;
@@ -162,9 +163,12 @@
             mBeacons_.append(beacon);
         }
         function pushFuncPlace(placeId, pos){
+            local retId = mPlaceIds_.len();
             mPlaceIds_.append([placeId, pos]);
 
             processPlaceCreation(placeId, pos);
+
+            return retId;
         }
         function processPlaceCreation(placeId, pos){
             local placeDef = ::Places[placeId];
@@ -276,6 +280,7 @@
         mWindStreakManager_ = WindStreakManager(mParentNode_, mMapData_.width, mMapData_.height);
 
         mPlacedItemGrid_ = array(mMapData_.width * mMapData_.height, null);
+        mPlacesGrid_ = array(mMapData_.width * mMapData_.height, null);
         mPlacedItemGridVisible_ = array(mMapData_.width * mMapData_.height, false);
         setupPlaces();
         createPlacedItems();
@@ -698,11 +703,21 @@
 
             local placeEntry = placer.placeIntoWorld(i, placeDefine, node, this, regionEntry, c);
 
-            if(placeEntry == null) continue;
+            node.setVisible(false);
+
+            if(placeDefine.mHalf != null){
+                for(local yy = ceil(i.originY) - ceil(placeDefine.mHalf.z); yy < ceil(i.originY) + ceil(placeDefine.mHalf.z); yy++){
+                    for(local xx = ceil(i.originX) - ceil(placeDefine.mHalf.x); xx < ceil(i.originX) + ceil(placeDefine.mHalf.x); xx++){
+                        mPlacesGrid_[xx + yy * mMapData_.width] = [i, placeEntry[1]];
+                    }
+                }
+            }
+
+            if(placeEntry[0] == null) continue;
 
             //local beaconEntity = mEntityFactory_.constructPlaceIndicatorBeacon(placeEntry.getPosition());
-            mActivePlaces_.append(placeEntry);
-            regionEntry.pushPlace(placeEntry, null);
+            mActivePlaces_.append(placeEntry[0]);
+            regionEntry.pushPlace(placeEntry[0], null);
         }
     }
 
@@ -755,12 +770,30 @@
     function notifyRegionCoordAppeared(x, y, radius, idx){
         local placedItem = mPlacedItemGrid_[idx];
         if(placedItem != null && !mPlacedItemGridVisible_[idx]){
-            mPlacedItemGridVisible_[idx] = true;
             placedItem.setVisible(true);
             //radiusCheckRegion(x, y, 6);
 
             mRegionAnimator_.addFoundSection(this, x, y, radius);
         }
+        local place = mPlacesGrid_[idx];
+        if(place != null && !mPlacedItemGridVisible_[idx]){
+            place[1].setVisible(true);
+            local i = place[0];
+            local placeDefine = ::Places[i.placeId];
+
+            {
+                for(local yy = ceil(i.originY) - ceil(placeDefine.mHalf.z); yy < ceil(i.originY) + ceil(placeDefine.mHalf.z); yy++){
+                    for(local xx = ceil(i.originX) - ceil(placeDefine.mHalf.x); xx < ceil(i.originX) + ceil(placeDefine.mHalf.x); xx++){
+
+                        local targetId = (xx + yy * 600).tointeger();
+                        _gameCore.regionAnimationSetValue(targetId, 0);
+                        //mRegionAnimator_.addFoundSection(this, xx, yy, radius);
+                    }
+                }
+            }
+        }
+
+        mPlacedItemGridVisible_[idx] = true;
     }
 
     function radiusCheckRegion(circleX, circleY, radius){
