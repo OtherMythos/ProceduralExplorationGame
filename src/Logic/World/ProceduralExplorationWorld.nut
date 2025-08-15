@@ -37,6 +37,9 @@
         mVisible_ = false;
         mWorldActive_ = false;
 
+        mRegionHiddenNode_ = null;
+        mRegionDiscoveredNode_ = null;
+
         //TODO consider tying this into a class.
         mPlaceIds_ = null;
         mPlaces_ = null;
@@ -45,13 +48,18 @@
         mAnimCount_ = -1;
         mMaxAnim_ = 30;
 
-        constructor(world, entityManager, node, decorationNode){
+        constructor(world, entityManager, regionHiddenNode, regionDiscoveredNode, decorationNode){
             mCreatorWorld_ = world;
             mEntityManager_ = entityManager;
-            mLandNode_ = node;
+            //mLandNode_ = node;
+            mRegionHiddenNode_ = regionHiddenNode;
+            mRegionDiscoveredNode_ = regionDiscoveredNode;
             mDecoratioNode_ = decorationNode;
-            if(mLandNode_){
-                mLandItem_ = mLandNode_.getAttachedObject(0);
+            if(mRegionHiddenNode_){
+                //mRegionHiddenItem_ = mRegionHiddenNode_.getAttachedObject(0);
+            }
+            if(mRegionDiscoveredNode_){
+                //mRegionDiscoveredItem_ = mRegionHiddenNode_.getAttachedObject(0);
             }
             mPlaceIds_ = [];
             mPlaces_ = [];
@@ -83,10 +91,12 @@
         //Workaround to resolve the recursive setVisible from the world.
         function setVisible_(){
             local vis = mWorldActive_ && mVisible_;
+            /*
             if(mLandNode_){
                 mLandItem_.setDatablock("baseVoxelMaterial");
                 mLandItem_.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_TERRRAIN_DISCOVERED);
             }
+            */
 
             if(vis){
                 for(local i = 0; i < mPlaceIds_.len(); i++){
@@ -651,18 +661,28 @@
             if(i == null) continue;
             local decorationNode = regionNode.createChildSceneNode(_SCENE_STATIC);
 
-            local item = _scene.createItem(i, _SCENE_STATIC);
-            _gameCore.writeFlagsToItem(item, HLMS_PACKED_VOXELS | HLMS_TERRAIN | HLMS_FLOOR_DECALS);
-            item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_TERRRAIN_DISCOVERED);
-            item.setDatablock("baseVoxelMaterial");
-            item.setCastsShadows(false);
-            local landNode = regionNode.createChildSceneNode(_SCENE_STATIC);
-            landNode.attachObject(item);
-            landNode.setScale(1, 1, PROCEDURAL_WORLD_UNIT_MULTIPLIER);
-            landNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
-            landNode.setVisible(true);
+            local landNodeHidden = null;
+            local landNodeDiscovered = null;
+            for(local r = 0; r < 2; r++){
+                local item = _scene.createItem(i, _SCENE_STATIC);
+                _gameCore.writeFlagsToItem(item, HLMS_PACKED_VOXELS | HLMS_TERRAIN | HLMS_FLOOR_DECALS);
+                item.setRenderQueueGroup(r == 0 ? RENDER_QUEUE_EXPLORATION_TERRRAIN_UNDISCOVERED : RENDER_QUEUE_EXPLORATION_TERRRAIN_DISCOVERED);
+                item.setDatablock(r == 0 ? "MaskedWorld" : "baseVoxelMaterial");
+                item.setCastsShadows(false);
+                local landNode = regionNode.createChildSceneNode(_SCENE_STATIC);
+                landNode.attachObject(item);
+                landNode.setScale(1, 1, PROCEDURAL_WORLD_UNIT_MULTIPLIER);
+                landNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
+                landNode.setVisible(true);
 
-            mRegionEntries_.rawset(c, ProceduralRegionEntry(this, mEntityManager_, landNode, decorationNode));
+                if(r == 0){
+                    landNodeHidden = landNode;
+                }else{
+                    landNodeDiscovered = landNode;
+                }
+            }
+
+            mRegionEntries_.rawset(c, ProceduralRegionEntry(this, mEntityManager_, landNodeHidden, landNodeDiscovered, decorationNode));
         }
     }
 

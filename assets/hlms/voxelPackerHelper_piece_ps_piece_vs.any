@@ -214,6 +214,9 @@
 		inValues.z = float(pos_z)-0.5;
 		@property(voxelTerrain)
 			inValues.z -= 4.0;
+		@end
+
+		@property(voxelTerrain && !invisibleTerrain)
 
 			uchar animValue = regionAnimBuffer.data[voxelId];
 			if(animValue & 0x80){
