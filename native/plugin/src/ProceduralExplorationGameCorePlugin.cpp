@@ -90,6 +90,9 @@ namespace ProceduralExplorationGamePlugin{
         void calculateHashForPreCreate( Ogre::HlmsPbsAVCustom* hlms, Ogre::Renderable *renderable, Ogre::PiecesMap *inOutPieces ){
             _defineProperties<false>(hlms, renderable);
         }
+        Ogre::uint32 fillBuffersForV2(const Ogre::HlmsCache *cache, const Ogre::QueuedRenderable &queuedRenderable, bool casterPass, Ogre::uint32 lastCacheHash, Ogre::CommandBuffer *commandBuffer){
+            return 0;
+        }
     };
 
 
