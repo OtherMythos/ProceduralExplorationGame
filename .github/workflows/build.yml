@@ -432,7 +432,7 @@ jobs:
           path: /tmp/buildMacOS-${{ matrix.buildType }}-${{ needs.build.outputs.sha_short }}.dmg
 
   buildiOS:
-    runs-on: macos-15
+    runs-on: macos-15-large
     needs: build
     strategy:
       matrix:
@@ -516,6 +516,9 @@ jobs:
           -GXcode -DPLATFORM=OS64 \
           -DAV_PROJECT_DIR=/tmp/dist \
           -DUSE_STATIC_PLUGINS=True \
+          -DCMAKE_OSX_SYSROOT=iphoneos \
+          -DCMAKE_OSX_ARCHITECTURES=arm64 \
+          -DCMAKE_XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_PLATFORM=iphoneos \
           -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY="${{ secrets.APPLE_SIGN_IDENTITY_IOS }}" \
           -DCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM="${{ secrets.APPLE_TEAM_ID }}" \
           -DCMAKE_XCODE_ATTRIBUTE_PROVISIONING_PROFILE_SPECIFIER="ProceduralExplorationGame" \
