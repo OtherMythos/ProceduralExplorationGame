@@ -172,8 +172,8 @@
 		@property(!renderSceneDecorations)
 		const uint COLS_WIDTH = uint(16);
 		const uint COLS_HEIGHT = uint(16);
-		const float TILE_WIDTH = (1.0 / COLS_WIDTH) / 2.0;
-		const float TILE_HEIGHT = (1.0 / COLS_HEIGHT) / 2.0;
+		const float TILE_WIDTH = (1.0 / float(COLS_WIDTH)) / 2.0;
+		const float TILE_HEIGHT = (1.0 / float(COLS_HEIGHT)) / 2.0;
 		const float texCoordX = (float(voxValue % COLS_WIDTH) / COLS_WIDTH) + TILE_WIDTH;
 		const float texCoordY = (float((uint(float(voxValue) / COLS_WIDTH))) / COLS_HEIGHT) + TILE_HEIGHT;
 		const float2 testVal = float2(texCoordX, texCoordY);
