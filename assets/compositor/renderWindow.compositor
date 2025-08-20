@@ -37,7 +37,6 @@ compositor_node renderMainGameplayNode
 
     target finalSceneRender
     {
-        //Render invisible terrain
         pass render_scene
         {
             load
@@ -51,16 +50,6 @@ compositor_node renderMainGameplayNode
                 all store_or_resolve
             }
 
-            rq_first 41
-            rq_last 42
-
-            shadows default_simpleShadowNode
-            camera explorationCamera
-
-            identifier 11
-        }
-        pass render_scene
-        {
             rq_first 15
             rq_last 18
 
@@ -90,6 +79,18 @@ compositor_node renderMainGameplayNode
 
             rq_first 10
             rq_last 15
+        }
+        //Render invisible terrain
+        pass render_scene
+        {
+
+            rq_first 41
+            rq_last 42
+
+            shadows default_simpleShadowNode
+            camera explorationCamera
+
+            identifier 11
         }
         //Render water
         pass render_scene
