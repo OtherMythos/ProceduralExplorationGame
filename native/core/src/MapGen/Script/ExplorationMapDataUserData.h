@@ -29,6 +29,8 @@ namespace ProceduralExplorationGameCore{
         static SQInteger getRegionForPos(HSQUIRRELVM vm);
         static SQInteger getWaterGroupForPos(HSQUIRRELVM vm);
         static SQInteger randomIntMinMax(HSQUIRRELVM vm);
+        static SQInteger getWaterGroupForCoord(HSQUIRRELVM vm);
+        static SQInteger getRegionDistanceForCoord(HSQUIRRELVM vm);
 
         static SQInteger getValue(HSQUIRRELVM vm);
         static SQInteger setValue(HSQUIRRELVM vm);

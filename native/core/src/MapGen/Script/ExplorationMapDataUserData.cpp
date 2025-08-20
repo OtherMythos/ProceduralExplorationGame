@@ -310,6 +310,60 @@ namespace ProceduralExplorationGameCore{
         return 1;
     }
 
+    SQInteger ExplorationMapDataUserData::getWaterGroupForCoord(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger xx, yy;
+        sq_getinteger(vm, 2, &xx);
+        sq_getinteger(vm, 3, &yy);
+
+        WaterId outWater = INVALID_WATER_ID;
+
+        if(xx < 0 || yy < 0 || xx >= mapData->width || yy >= mapData->height){
+            sq_pushinteger(vm, static_cast<SQInteger>(outWater));
+            return 1;
+        }
+
+        WorldCoord x, y;
+        x = static_cast<WorldCoord>(xx);
+        y = static_cast<WorldCoord>(yy);
+
+        const WaterId* waterPtr = WATER_GROUP_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y));
+        outWater = *waterPtr;
+
+        sq_pushinteger(vm, static_cast<SQInteger>(outWater));
+
+        return 1;
+    }
+
+    SQInteger ExplorationMapDataUserData::getRegionDistanceForCoord(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger xx, yy;
+        sq_getinteger(vm, 2, &xx);
+        sq_getinteger(vm, 3, &yy);
+
+        AV::uint8 outDistance = 0;
+
+        if(xx < 0 || yy < 0 || xx >= mapData->width || yy >= mapData->height){
+            sq_pushinteger(vm, static_cast<SQInteger>(outDistance));
+            return 1;
+        }
+
+        WorldCoord x, y;
+        x = static_cast<WorldCoord>(xx);
+        y = static_cast<WorldCoord>(yy);
+
+        const AV::uint8* distPtr = REGION_DISTANCE_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y));
+        outDistance = *distPtr;
+
+        sq_pushinteger(vm, static_cast<SQInteger>(outDistance));
+
+        return 1;
+    }
+
     SQInteger ExplorationMapDataUserData::getIsWaterForCoord(HSQUIRRELVM vm){
         ExplorationMapData* mapData;
         SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
@@ -833,6 +887,8 @@ namespace ProceduralExplorationGameCore{
         AV::ScriptUtils::addFunction(vm, getIsWaterForPos, "getIsWaterForPos", 2, ".u");
         AV::ScriptUtils::addFunction(vm, getRegionForPos, "getRegionForPos", 2, ".u");
         AV::ScriptUtils::addFunction(vm, randomIntMinMax, "randomIntMinMax", 3, ".ii");
+        AV::ScriptUtils::addFunction(vm, getWaterGroupForCoord, "getWaterGroupForCoord", 3, ".ii");
+        AV::ScriptUtils::addFunction(vm, getRegionDistanceForCoord, "getRegionDistanceForCoord", 3, ".ii");
 
         AV::ScriptUtils::addFunction(vm, getIsWaterForCoord, "getIsWaterForCoord", 3, ".ii");
 

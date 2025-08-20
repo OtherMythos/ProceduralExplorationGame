@@ -794,9 +794,12 @@
         }
 
         if(!mPlacedItemGridVisible_[idx]){
-            local waterGroup = ::currentNativeMapData.getWaterGroupForPos(Vec3(x, 0, -y));
+            local waterGroup = ::currentNativeMapData.getWaterGroupForCoord(x, y);
             if(waterGroup != INVALID_WATER_ID && waterGroup != 0){
-                mRegionAnimator_.addFoundSection(this, x, y, radius * 2);
+                local distance = ::currentNativeMapData.getRegionDistanceForCoord(x, y);
+                if(distance <= 1){
+                    mRegionAnimator_.addFoundSection(this, x, y, radius * 2);
+                }
             }
         }
 
