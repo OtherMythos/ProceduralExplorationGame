@@ -33,6 +33,10 @@
 	//For debug purposes
 	//outPs_colour0.xyz = float3(inPs.diffuse.xyz);
 
+	@property( !renderSceneDecorations )
+		outPs_colour0.xyz *= (0.8 + inPs.ambientVal * 0.2);
+	@end
+
 	@property(windStreaks)
 		float startDist = 20.0;
 		float lengthDist = 150.0;
