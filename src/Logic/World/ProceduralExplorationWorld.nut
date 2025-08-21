@@ -310,6 +310,18 @@
                 }
             }
         }
+
+        foreach(c,i in mMapData_.placeData){
+            local p = i.placeId;
+            if(
+                p == PlaceId.REGION_TOWER_1 ||
+                p == PlaceId.REGION_TOWER_2 ||
+                p == PlaceId.REGION_TOWER_3
+            )
+            {
+                mRegionAnimator_.addFoundSection(this, i.originX, i.originY, 10, false);
+            }
+        }
     }
 
     function shutdown(){
@@ -777,6 +789,10 @@
         if(placedItem != null && !mPlacedItemGridVisible_[id]){
             placedItem.setVisible(true);
         }
+        local place = mPlacesGrid_[id];
+        if(place != null && !mPlacedItemGridVisible_[id]){
+            place[1].setVisible(true);
+        }
 
         mPlacedItemGridVisible_[id] = true;
     }
@@ -788,7 +804,6 @@
         }
         local place = mPlacesGrid_[idx];
         if(place != null && !mPlacedItemGridVisible_[idx]){
-            place[1].setVisible(true);
             local i = place[0];
             local placeDefine = ::Places[i.placeId];
 

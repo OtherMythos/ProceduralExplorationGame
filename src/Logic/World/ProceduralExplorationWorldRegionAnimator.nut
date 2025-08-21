@@ -13,9 +13,14 @@
         _gameCore.regionAnimationUpload();
     }
 
-    function addFoundSection(world, x, y, radius){
-        local section = FoundSectionRadius(world, x, y, radius);
-        //mActiveFoundSections_.append(section);
+    function addFoundSection(world, x, y, radius, cascade=true){
+        local section = null;
+
+        if(cascade){
+            section = FoundSectionRadius(world, x, y, radius);
+        }else{
+            section = FoundSectionRadiusNoCascade(world, x, y, radius);
+        }
 
         mPool_.store(section);
     }
@@ -44,8 +49,32 @@
 
     function regionSetValue(x, y){
         local idx = (x + y * 600).tointeger();
-        _gameCore.regionAnimationSetValue(idx, 0);
+        //_gameCore.regionAnimationSetValue(idx, 0);
         mWorld_.notifyRegionCoordAppeared(x, y, 6, idx);
+    }
+
+    function regionProcessCoord(x, y){
+        local idx = (x + y * 600).tointeger();
+        mWorld_.processRegionCoord_(idx);
+    }
+}
+
+::FoundSectionRadiusNoCascade <- class extends ::FoundSection{
+    mRadius_ = 0;
+    constructor(world, x, y, radius){
+        base.constructor(world, x, y);
+        mRadius_ = radius.tointeger();
+    }
+
+    function update(){
+        local radius = mRadius_;
+        for(local y = mY_ - radius; y < mY_ + radius; y++){
+            for(local x = mX_ - radius; x < mX_ + radius; x++){
+                regionProcessCoord(x, y);
+            }
+        }
+
+        return false;
     }
 }
 
