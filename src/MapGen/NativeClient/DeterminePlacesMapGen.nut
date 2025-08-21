@@ -38,6 +38,10 @@
         return targetRegions;
     }
 
+    function _determineRegionById(){
+        return [mData_.region];
+    }
+
     function _checkPlacementVoxelsAreLand(x, y){
         local halfX = mData_.halfX;
         local halfY = mData_.halfY;
@@ -210,6 +214,12 @@
         placeLocation(PlaceId.TEMPLE, _determineRegionBySize, _checkPlacementVoxelsAreLand);
         placeLocation(PlaceId.GRAVEYARD, _determineRegionBySize, _checkPlacementVoxelsAreLand);
         placeLocation(PlaceId.DUSTMITE_NEST, _determineRegionByType, _checkPlacementVoxelsAreLand);
+        mData_.region = 0;
+        placeLocation(PlaceId.REGION_TOWER_1, _determineRegionById, _checkPlacementVoxelsAreLand);
+        mData_.region = 1;
+        placeLocation(PlaceId.REGION_TOWER_2, _determineRegionById, _checkPlacementVoxelsAreLand);
+        mData_.region = 2;
+        placeLocation(PlaceId.REGION_TOWER_3, _determineRegionById, _checkPlacementVoxelsAreLand);
 
         return mReturnPlaces_;
     }

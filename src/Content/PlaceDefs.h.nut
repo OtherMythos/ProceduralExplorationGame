@@ -227,6 +227,9 @@ function initialisePlaceEditorMeta(){
 ::Places[PlaceId.GARRITON] = PlaceDef("Garriton", "A nice town", PlaceType.LOCATION, 1.0, null, null, "testPlace", 100);
 ::Places[PlaceId.TEMPLE] = PlaceDef("Temple", "Some sort of temple", PlaceType.LOCATION, 1.0, null, null, "temple", 100);
 ::Places[PlaceId.GRAVEYARD] = PlaceDef("Graveyard", "An old graveyard", PlaceType.LOCATION, 1.0, null, null, "graveyard", 100);
+::Places[PlaceId.REGION_TOWER_1] = PlaceDef("Region Tower 1", "Region Tower 1", PlaceType.LOCATION, 1.0, null, null, "regionTower", 100);
+::Places[PlaceId.REGION_TOWER_2] = PlaceDef("Region Tower 2", "Region Tower 2", PlaceType.LOCATION, 1.0, null, null, "regionTower", 100);
+::Places[PlaceId.REGION_TOWER_3] = PlaceDef("Region Tower 3", "Region Tower 3", PlaceType.LOCATION, 1.0, null, null, "regionTower", 100);
 
 ::PlacesByType <- {};
 

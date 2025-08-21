@@ -1,6 +1,6 @@
 ::PlaceScriptObject <- {
 
-    function processDataPointCreation(world, pos, major, minor, node){
+    function processDataPointCreation(placeId, world, pos, major, minor, node){
         local triggerWorld = world.getTriggerWorld();
         local targetRadius = 4;
 

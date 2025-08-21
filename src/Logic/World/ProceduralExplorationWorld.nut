@@ -27,6 +27,8 @@
 
     WORLD_VIEW_DISTANCE = 300;
 
+    mActivatedTowers_ = null;
+
     mTerrain_ = null;
 
     ProceduralRegionEntry = class{
@@ -202,7 +204,7 @@
                 local minor = val & 0xFFFF;
                 //processDataPoint(data[0], major, minor);
 
-                ::PlaceScriptObject.processDataPointCreation(mCreatorWorld_, pos + data[0] - placeDef.mCentre, major, minor, mDecoratioNode_);
+                ::PlaceScriptObject.processDataPointCreation(placeId, mCreatorWorld_, pos + data[0] - placeDef.mCentre, major, minor, mDecoratioNode_);
             }
 
         }
@@ -221,6 +223,7 @@
         base.constructor(worldId, preparer);
 
         mTerrain_ = [];
+        mActivatedTowers_ = array(3, false);
 
         local requestedZoom = ::Base.mPlayerStats.getExplorationCurrentZoom();
         if(requestedZoom != null){
@@ -767,12 +770,20 @@
         if(mParentNode_ != null) mParentNode_.setVisible(current);
     }
 
+    function processRegionCoord_(id){
+        _gameCore.regionAnimationSetValue(id, 0);
+
+        local placedItem = mPlacedItemGrid_[id];
+        if(placedItem != null && !mPlacedItemGridVisible_[id]){
+            placedItem.setVisible(true);
+        }
+
+        mPlacedItemGridVisible_[id] = true;
+    }
+
     function notifyRegionCoordAppeared(x, y, radius, idx){
         local placedItem = mPlacedItemGrid_[idx];
         if(placedItem != null && !mPlacedItemGridVisible_[idx]){
-            placedItem.setVisible(true);
-            //radiusCheckRegion(x, y, 6);
-
             mRegionAnimator_.addFoundSection(this, x, y, radius);
         }
         local place = mPlacesGrid_[idx];
@@ -803,7 +814,7 @@
             }
         }
 
-        mPlacedItemGridVisible_[idx] = true;
+        processRegionCoord_(idx);
     }
 
     function radiusCheckRegion(circleX, circleY, radius){
@@ -956,6 +967,31 @@
             //TODO hack when moving around worlds, really this check should never be needed.
             if(viewer.rawin("notifyRegionFound")){
                 viewer.notifyRegionFound(regionId);
+            }
+        }
+    }
+
+    function activateTower(id){
+        printf("Activating tower %i", id);
+
+        assert(id < mActivatedTowers_.len());
+        mActivatedTowers_[id] = true;
+
+        if(mActivatedTowers_.find(false) == null){
+            //All towers are activated.
+            local width = mMapData_.width;
+            for(local y = 0; y < width; y++){
+                for(local x = 0; x < mMapData_.height; x++){
+                    processRegionCoord_(x + y * width);
+                }
+            }
+        }else{
+            local regionData = mMapData_.regionData[id];
+            foreach(e in regionData.coords){
+                local startX = (e >> 16) & 0xFFFF;
+                local startY = e & 0xFFFF;
+
+                processRegionCoord_(startX + startY * 600);
             }
         }
     }

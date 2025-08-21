@@ -153,3 +153,11 @@ variationSeed: %i";
 
     return "Dumped to " + scenePath;
 });
+::DebugConsole.registerCommand("tower", "Activate a tower in the procedural world", 0, "", function(command){
+    local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+
+    local towerId = command[0].tointeger();
+    currentWorld.activateTower(towerId);
+
+    return "Activated tower " + towerId;
+});

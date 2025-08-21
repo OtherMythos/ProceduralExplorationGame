@@ -1,0 +1,9 @@
+<scene>
+    <user0 value="regionTower.voxMesh">
+        <scale x="0.3" y="0.3" z="0.3"/>
+        <user1 value="1-0"/>
+    </user0>
+    <user2 value="0">
+        <scale x="2" y="2" z="2"/>
+    </user2>
+</scene>

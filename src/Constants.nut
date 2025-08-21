@@ -141,6 +141,7 @@ enum CollisionWorldTriggerResponses{
     PICK,
     PICK_KEEP_PLACED_ITEM,
     READ_LORE,
+    ACTIVATE_TOWER,
 
     MAX = 100
 };
@@ -264,6 +265,9 @@ enum ActionSlotType{
     ITEM_SEARCH,
     PICK,
     READ_LORE,
+    ACTIVATE_TOWER,
+
+    MAX
 };
 
 enum SystemSetting{
@@ -284,8 +288,11 @@ enum SystemSetting{
     "Enter",
     "Item Search",
     "Pick",
-    "Read"
+    "Read",
+    "Activate"
 ];
+
+assert(::ActionSlotTypeString.len() == ActionSlotType.MAX);
 
 enum ProceduralDungeonTypes{
     CATACOMB,

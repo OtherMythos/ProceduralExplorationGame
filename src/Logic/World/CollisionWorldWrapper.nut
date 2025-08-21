@@ -291,3 +291,10 @@
                 ::Base.mActionManager.unsetAction(0, entityId);
             }
         });
+        ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.ACTIVATE_TOWER] <- TriggerResponse(function(world, towerId, second, collisionStatus){
+            if(collisionStatus == 0x1){
+                ::Base.mActionManager.registerAction(ActionSlotType.ACTIVATE_TOWER, 0, towerId, second);
+            }else if(collisionStatus == 0x2){
+                ::Base.mActionManager.unsetAction(0, second);
+            }
+        });

@@ -8,7 +8,11 @@
     GARRITON,
 
     TEMPLE,
-    GRAVEYARD
+    GRAVEYARD,
+
+    REGION_TOWER_1,
+    REGION_TOWER_2,
+    REGION_TOWER_3,
 ");
 
 enum PlaceType{

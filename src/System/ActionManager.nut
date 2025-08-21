@@ -161,6 +161,11 @@ These actions might be things like 'talk', 'buy things from', etc.
                 local world = ::Base.mExplorationLogic.readReadable(data);
                 break;
             }
+            case ActionSlotType.ACTIVATE_TOWER:{
+                local world = ::Base.mExplorationLogic.mCurrentWorld_;
+                world.activateTower(data);
+                break;
+            }
             default:{
                 throw "Attempted to execute an invalid action slot.";
             }
