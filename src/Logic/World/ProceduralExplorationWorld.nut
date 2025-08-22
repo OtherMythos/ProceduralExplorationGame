@@ -59,7 +59,7 @@
             mRegionDiscoveredNode_ = regionDiscoveredNode;
             mDecoratioNode_ = decorationNode;
             if(mRegionHiddenNode_){
-                //mRegionHiddenItem_ = mRegionHiddenNode_.getAttachedObject(0);
+                mLandItem_ = mRegionHiddenNode_.getAttachedObject(0);
             }
             if(mRegionDiscoveredNode_){
                 //mRegionDiscoveredItem_ = mRegionHiddenNode_.getAttachedObject(0);
@@ -210,9 +210,9 @@
         }
         function destroy(){
             if(mLandItem_ != null){
-                mLandNode_.getPosition();
                 local name = mLandItem_.getName();
-                mLandNode_.destroyNodeAndChildren();
+                mRegionDiscoveredNode_.destroyNodeAndChildren();
+                mRegionHiddenNode_.destroyNodeAndChildren();
                 //Remove afterwards so there are no references to it.
                 _graphics.removeManualMesh(name);
             }
