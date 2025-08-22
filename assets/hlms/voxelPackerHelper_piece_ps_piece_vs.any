@@ -216,14 +216,17 @@
 			inValues.z -= 4.0;
 		@end
 
-		@property(voxelTerrain && !invisibleTerrain)
-
+		@property(voxelTerrain)
 			uchar animValue = regionAnimBuffer.data[voxelId];
-			if(animValue & 0x80){
-				inValues.y += -1000000.0;
-			}else{
-				inValues.z += float(animValue);
-			}
+ 			@property(invisibleTerrain)
+				if((animValue & 0x80) == 0){
+					inValues.y += -1000000.0;
+				}
+			@else
+				if(animValue & 0x80){
+					inValues.y += -1000000.0;
+				}
+			@end
 		@end
 
 		uint norm = uint((originalSecond >> 29) & uint(0x7));
