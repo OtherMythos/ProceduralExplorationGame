@@ -722,6 +722,20 @@ namespace ProceduralExplorationGamePlugin{
         return 0;
     }
 
+    SQInteger GameCoreNamespace::regionAnimationResetBuffer(HSQUIRRELVM vm){
+        SQInteger value;
+        sq_getinteger(vm, 2, &value);
+
+        ProceduralExplorationGameCore::RegionBufferDataContainer buffer = ProceduralExplorationGameCore::PluginBaseSingleton::getRegionBuffer();
+        for(int y = 0; y < 600; y++){
+            for(int x = 0; x < 600; x++){
+                *(buffer.buffer + (x + y * 600)) = static_cast<AV::uint8>(value);
+            }
+        }
+
+        return 0;
+    }
+
     SQInteger GameCoreNamespace::regionAnimationSetValue(HSQUIRRELVM vm){
         SQInteger id, value;
         sq_getinteger(vm, 2, &id);
@@ -789,6 +803,7 @@ namespace ProceduralExplorationGamePlugin{
 
         AV::ScriptUtils::addFunction(vm, regionAnimationSetValue, "regionAnimationSetValue", 3, ".ii");
         AV::ScriptUtils::addFunction(vm, regionAnimationUpload, "regionAnimationUpload");
+        AV::ScriptUtils::addFunction(vm, regionAnimationResetBuffer, "regionAnimationResetBuffer", 2, ".i");
 
         AV::ScriptUtils::addFunction(vm, disableShadows, "disableShadows");
         AV::ScriptUtils::addFunction(vm, setupCompositorDefs, "setupCompositorDefs", 3, ".ii");

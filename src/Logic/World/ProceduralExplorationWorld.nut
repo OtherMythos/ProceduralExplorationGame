@@ -268,6 +268,7 @@
         ::currentNativeMapData = null;
         ::currentNativeMapData <- nativeMapData;
         _gameCore.setNewMapData(nativeMapData);
+        _gameCore.regionAnimationResetBuffer(0x80);
         //TODO would prefer to have the base call further up.
         createScene();
 
