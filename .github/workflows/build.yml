@@ -44,7 +44,7 @@ jobs:
           path: "native/build/plugin/libProceduralExplorationGamePlugin_${{ matrix.buildType }}-linux-x86_64.so"
 
   buildNativeIOS:
-    runs-on: macos-15
+    runs-on: macos-latest
     strategy:
       matrix:
         buildType: [Debug, Release]
@@ -432,7 +432,7 @@ jobs:
           path: /tmp/buildMacOS-${{ matrix.buildType }}-${{ needs.build.outputs.sha_short }}.dmg
 
   buildiOS:
-    runs-on: macos-15-large
+    runs-on: macos-14
     needs: build
     strategy:
       matrix:
@@ -507,6 +507,7 @@ jobs:
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $version" setup/ios/Info.plist
       - name: Setup CMake
         run: |
+          xcrun simctl list
           cd /tmp/avEngine
           mkdir build
           cd build
