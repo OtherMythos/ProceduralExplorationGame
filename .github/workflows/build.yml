@@ -432,7 +432,8 @@ jobs:
           path: /tmp/buildMacOS-${{ matrix.buildType }}-${{ needs.build.outputs.sha_short }}.dmg
 
   buildiOS:
-    runs-on: macos-14
+    runs-on: macos-latest
+    if: false
     needs: build
     strategy:
       matrix:
