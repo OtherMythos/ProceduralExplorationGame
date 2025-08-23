@@ -42,10 +42,10 @@ namespace ProceduralExplorationGameCore{
         return 4;
     }
 
-    void MapGenScriptStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool MapGenScriptStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         populateMapData = mapData;
         populateMapInputData = input;
         clientTable = mParentClient->getClientTable();
-        mScript->call("processStep", populateProcessStep);
+        return mScript->call("processStep", populateProcessStep);
     }
 }

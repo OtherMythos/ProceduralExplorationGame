@@ -15,9 +15,11 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void CalculateRegionDistanceMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool CalculateRegionDistanceMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         CalculateRegionDistanceMapGenJob job;
         job.processJob(mapData, workspace);
+
+        return true;
     }
 
 

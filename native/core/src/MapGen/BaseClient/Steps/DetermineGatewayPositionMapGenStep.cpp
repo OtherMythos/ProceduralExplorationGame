@@ -15,7 +15,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void DetermineGatewayPositionMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool DetermineGatewayPositionMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         const std::vector<FloodFillEntry*>& landData = (*mapData->ptr<std::vector<FloodFillEntry*>>("landData"));
         WorldPoint retPoint = INVALID_WORLD_POINT;
 
@@ -44,6 +44,8 @@ namespace ProceduralExplorationGameCore{
             retPoint = WRAP_WORLD_POINT(mapData->width/2, mapData->height/2);
         }
         mapData->worldPoint("gatewayPosition", retPoint);
+
+        return true;
     }
 
 }

@@ -51,7 +51,7 @@ namespace ProceduralExplorationGameCore{
         return WRAP_WORLD_POINT(xx, yy);
     }
 
-    void GenerateMetaMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool GenerateMetaMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         //Some universal values are kept for quick lookup.
         mapData->width = input->uint32("width");
         mapData->height = input->uint32("height");
@@ -78,6 +78,8 @@ namespace ProceduralExplorationGameCore{
             WorldPoint p = determinePositionForBlob_(mapData, workspace->blobSeeds, i);
             workspace->blobSeeds.push_back(p);
         }
+
+        return true;
     }
 
 }

@@ -17,7 +17,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void MergeExpandableRegionsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool MergeExpandableRegionsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
 
         for(RegionData& r : regionData){
@@ -30,6 +30,8 @@ namespace ProceduralExplorationGameCore{
                 }
             }
         }
+
+        return true;
     }
 
 }

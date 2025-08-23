@@ -16,7 +16,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void BiomeFinalChangesMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool BiomeFinalChangesMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         const AV::uint32 width = input->uint32("width");
         const AV::uint32 height = input->uint32("height");
 
@@ -26,6 +26,8 @@ namespace ProceduralExplorationGameCore{
             BiomeFinalChangesMapGenJob job;
             job.processJob(mapData, 0, i * divHeight, width, i * divHeight + divHeight);
         }
+
+        return true;
     }
 
     BiomeFinalChangesMapGenJob::BiomeFinalChangesMapGenJob(){

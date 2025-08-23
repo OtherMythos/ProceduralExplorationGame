@@ -15,10 +15,12 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void PerformFinalFloodFillMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool PerformFinalFloodFillMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         //TODO in future one thread gets land and another water.
         PerformFinalFloodFillMapGenJob floodFillWater;
         floodFillWater.processJob(mapData);
+
+        return true;
     }
 
 
@@ -72,5 +74,7 @@ namespace ProceduralExplorationGameCore{
                 }
             }
         }
+
+        return true;
     }
 }

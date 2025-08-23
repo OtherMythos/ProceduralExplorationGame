@@ -136,7 +136,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void GenerateAdditionLayerMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool GenerateAdditionLayerMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         std::vector<float> additionVals;
         additionVals.resize(mapData->width * mapData->height);
 
@@ -146,5 +146,7 @@ namespace ProceduralExplorationGameCore{
         calculateBlobs_(additionVals, mapData, workspace->blobSeeds);
 
         workspace->additionLayer = std::move(additionVals);
+
+        return true;
     }
 }

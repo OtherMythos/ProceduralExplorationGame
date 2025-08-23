@@ -13,16 +13,18 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void DeterminePlayerStartMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool DeterminePlayerStartMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         const std::vector<FloodFillEntry*>& landData = (*mapData->ptr<std::vector<FloodFillEntry*>>("landData"));
 
         if(landData.empty()){
             mapData->worldPoint("playerStart", WRAP_WORLD_POINT(input->uint32("width")/2, input->uint32("height")/2));
-            return;
+            return true;
         }
         const FloodFillEntry* landEntry = landData[0];
         WorldPoint point = findRandomPointInLandmass(landEntry);
         mapData->worldPoint("playerStart", point);
+
+        return true;
     }
 
 }

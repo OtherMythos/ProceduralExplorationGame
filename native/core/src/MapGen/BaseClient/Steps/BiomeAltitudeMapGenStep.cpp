@@ -16,7 +16,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void BiomeAltitudeMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool BiomeAltitudeMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         const AV::uint32 width = input->uint32("width");
         const AV::uint32 height = input->uint32("height");
 
@@ -26,6 +26,8 @@ namespace ProceduralExplorationGameCore{
             BiomeAltitudeMapGenJob job;
             job.processJob(mapData, 0, i * divHeight, width, i * divHeight + divHeight);
         }
+
+        return true;
     }
 
     BiomeAltitudeMapGenJob::BiomeAltitudeMapGenJob(){

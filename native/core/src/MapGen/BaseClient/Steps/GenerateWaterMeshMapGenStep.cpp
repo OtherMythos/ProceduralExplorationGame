@@ -14,7 +14,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void GenerateWaterMeshMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool GenerateWaterMeshMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
 
         WaterMeshGenerator gen;
         std::vector<WaterMeshGenerator::Hole> holes;
@@ -31,6 +31,7 @@ namespace ProceduralExplorationGameCore{
         data->vertices = std::move(meshData.vertices);
         mapData->voidPtr("waterMeshData", reinterpret_cast<void*>(data));
 
+        return true;
     }
 
 }

@@ -17,7 +17,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void GenerateWaterTextureMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool GenerateWaterTextureMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         const AV::uint32 width = mapData->width;
         const AV::uint32 height = mapData->height;
 
@@ -39,6 +39,8 @@ namespace ProceduralExplorationGameCore{
 
         mapData->voidPtr("waterTextureBuffer", buffer);
         mapData->voidPtr("waterTextureBufferMask", bufferMask);
+
+        return true;
     }
 
     GenerateWaterTextureMapGenJob::GenerateWaterTextureMapGenJob(){

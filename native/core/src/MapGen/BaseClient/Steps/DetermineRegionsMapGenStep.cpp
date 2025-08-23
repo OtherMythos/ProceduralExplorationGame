@@ -33,7 +33,7 @@ namespace ProceduralExplorationGameCore{
         return INVALID_WORLD_POINT;
     }
 
-    void DetermineRegionsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool DetermineRegionsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         const AV::uint32 width = mapData->width;
         const AV::uint32 height = mapData->height;
         std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
@@ -65,6 +65,8 @@ namespace ProceduralExplorationGameCore{
             DetermineRegionsMapGenJob job;
             job.processJob(mapData, points, regionData, 0, i * divHeight, width, i * divHeight + divHeight);
         }
+
+        return true;
     }
 
     DetermineRegionsMapGenJob::DetermineRegionsMapGenJob(){

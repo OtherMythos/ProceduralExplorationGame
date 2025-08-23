@@ -17,7 +17,7 @@ namespace ProceduralExplorationGameCore{
         DetermineRegionTypesMapGenStep();
         ~DetermineRegionTypesMapGenStep();
 
-        void processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace) override;
+        bool processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace) override;
     };
 
 }

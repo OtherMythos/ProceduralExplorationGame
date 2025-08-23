@@ -25,7 +25,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void ReduceNoiseMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool ReduceNoiseMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         const AV::uint32 width = input->uint32("width");
         const AV::uint32 height = input->uint32("height");
 
@@ -35,6 +35,8 @@ namespace ProceduralExplorationGameCore{
             ReduceNoiseMapGenJob job;
             job.processJob(mapData, 0, i * divHeight, width, i * divHeight + divHeight, workspace->additionLayer);
         }
+
+        return true;
     }
 
 

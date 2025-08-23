@@ -31,6 +31,7 @@ namespace ProceduralExplorationGameCore{
 
         int getCurrentStage() const;
         bool isFinished() const;
+        bool hasFailed() const;
         void beginMapGen(const ExplorationMapInputData* input);
         int getNumTotalStages();
         void recollectMapGenSteps();
@@ -48,6 +49,7 @@ namespace ProceduralExplorationGameCore{
 
     private:
         std::atomic<int> mCurrentStage;
+        std::atomic<bool> mFailed;
         std::thread* mParentThread;
 
         std::vector<MapGenClient*> mActiveClients;

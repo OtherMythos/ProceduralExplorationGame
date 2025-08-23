@@ -447,6 +447,10 @@ namespace ProceduralExplorationGamePlugin{
         ProceduralExplorationGameCore::MapGen* mapGen = ProceduralExplorationGameCore::PluginBaseSingleton::getMapGen();
         assert(mapGen);
 
+        if(mapGen->hasFailed()){
+            return sq_throwerror(vm, "Map Gen failed!");
+        }
+
         if(mapGen->isFinished()){
             //ProceduralExplorationGameCore::ExplorationMapData* mapData = mapGen->claimMapData(vm);
             //ExplorationMapDataUserData::ExplorationMapDataToUserData(vm, mapData);

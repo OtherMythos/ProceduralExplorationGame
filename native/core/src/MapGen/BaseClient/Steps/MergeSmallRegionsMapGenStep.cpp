@@ -17,7 +17,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void MergeSmallRegionsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool MergeSmallRegionsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
 
         for(RegionData& d : regionData){
@@ -43,6 +43,8 @@ namespace ProceduralExplorationGameCore{
                 break;
             }
         }
+
+        return true;
     }
 
 }

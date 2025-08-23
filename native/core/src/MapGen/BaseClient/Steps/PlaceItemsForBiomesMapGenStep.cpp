@@ -16,7 +16,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void PlaceItemsForBiomesMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool PlaceItemsForBiomesMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         const AV::uint32 width = mapData->width;
         const AV::uint32 height = mapData->height;
 
@@ -26,6 +26,8 @@ namespace ProceduralExplorationGameCore{
             PlaceItemsForBiomesMapGenJob job;
             job.processJob(mapData, 0, i * divHeight, width, i * divHeight + divHeight);
         }
+
+        return true;
     }
 
     PlaceItemsForBiomesMapGenJob::PlaceItemsForBiomesMapGenJob(){

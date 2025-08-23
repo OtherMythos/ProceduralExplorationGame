@@ -17,7 +17,7 @@ namespace ProceduralExplorationGameCore{
         PlaceItemsForBiomesMapGenStep();
         ~PlaceItemsForBiomesMapGenStep();
 
-        void processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace) override;
+        bool processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace) override;
     };
 
     class PlaceItemsForBiomesMapGenJob{

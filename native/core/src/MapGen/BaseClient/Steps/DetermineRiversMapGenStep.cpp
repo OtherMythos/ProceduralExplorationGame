@@ -109,7 +109,7 @@ namespace ProceduralExplorationGameCore{
         }
     }
 
-    void DetermineRiversMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool DetermineRiversMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         const std::vector<FloodFillEntry*>& landData = (*mapData->ptr<std::vector<FloodFillEntry*>>("landData"));
 
         std::vector<WorldPoint> origins;
@@ -118,6 +118,8 @@ namespace ProceduralExplorationGameCore{
         std::vector<RiverData>* outData = new std::vector<RiverData>();
         _calculateRivers(origins, mapData->voxelBuffer, mapData, *outData);
         mapData->voidPtr("riverData", outData);
+
+        return true;
     }
 
 }

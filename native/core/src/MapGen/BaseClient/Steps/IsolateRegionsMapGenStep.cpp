@@ -98,7 +98,7 @@ namespace ProceduralExplorationGameCore{
         }
     }
 
-    void IsolateRegionsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool IsolateRegionsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         //For each region
         //Start on the first coordinate, from there flood fill outwards until completion.
         //If the flood fill coords match the length of the coords length then the region is concave and return.
@@ -122,6 +122,7 @@ namespace ProceduralExplorationGameCore{
             //it++;
         }
 
+        return true;
     }
 
     IsolateRegionsMapGenJob::IsolateRegionsMapGenJob(){

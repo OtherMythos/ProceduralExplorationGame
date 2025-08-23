@@ -19,7 +19,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void CarveRiversMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool CarveRiversMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         std::set<WorldPoint> writePoints;
         const std::vector<RiverData>* riverData = mapData->ptr<std::vector<RiverData>>("riverData");
 
@@ -40,6 +40,8 @@ namespace ProceduralExplorationGameCore{
             AV::uint32* fullSecondary = FULL_PTR_FOR_COORD_SECONDARY(mapData, p);
             *fullSecondary |= RIVER_VOXEL_FLAG;
         }
+
+        return true;
     }
 
 }

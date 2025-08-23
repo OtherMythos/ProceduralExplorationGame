@@ -107,6 +107,7 @@ namespace ProceduralExplorationGameCore{
         i.input = input;
         i.steps = &mMapGenSteps;
         mCurrentStage = 0;
+        mFailed = false;
         mParentThread = new std::thread(&MapGen::beginMapGen_, this, i);
     }
 
@@ -169,13 +170,21 @@ namespace ProceduralExplorationGameCore{
         notifyClientsBegan_(input.input);
         ExplorationMapGenWorkspace workspace;
         const std::vector<MapGenStep*>& steps = *(input.steps);
+        bool success = true;
         for(int i = 0; i < steps.size(); i++){
             AV::Timer t;
             t.start();
-            steps[i]->processStep(input.input, mMapData, &workspace);
+            success = steps[i]->processStep(input.input, mMapData, &workspace);
             t.stop();
+            if(!success){
+                break;
+            }
             GAME_CORE_INFO("Time taken for stage '{}' was {}", steps[i]->getName(), t.getTimeTotal());
             mCurrentStage++;
+        }
+        if(!success){
+            GAME_CORE_ERROR("Map Gen failed!");
+            mFailed = true;
         }
         notifyClientsEnded_(mMapData, &workspace);
         tt.stop();
@@ -193,6 +202,10 @@ namespace ProceduralExplorationGameCore{
     bool MapGen::isFinished() const{
         return mCurrentStage >= mMapGenSteps.size();
     };
+
+    bool MapGen::hasFailed() const{
+        return mFailed;
+    }
 
     void MapGen::registerMapGenClient(const std::string& clientName, MapGenClient* client, HSQUIRRELVM vm){
         mActiveClients.push_back(client);

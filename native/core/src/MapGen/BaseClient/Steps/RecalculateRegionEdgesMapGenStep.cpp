@@ -16,7 +16,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void RecalculateRegionEdgesMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool RecalculateRegionEdgesMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
 
         for(RegionData& r : regionData){
@@ -45,6 +45,8 @@ namespace ProceduralExplorationGameCore{
             }
 
         }
+
+        return true;
     }
 
 }

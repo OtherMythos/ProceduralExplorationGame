@@ -16,7 +16,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void DetermineRegionTypesMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool DetermineRegionTypesMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
 
         std::vector<RegionId> freeRegions;
@@ -47,6 +47,7 @@ namespace ProceduralExplorationGameCore{
             freeRegions.erase(freeRegions.begin() + targetIdx);
         }
 
+        return true;
     }
 
 }

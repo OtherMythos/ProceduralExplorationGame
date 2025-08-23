@@ -17,7 +17,7 @@ namespace ProceduralExplorationGameCore{
         GenerateWaterMeshMapGenStep();
         ~GenerateWaterMeshMapGenStep();
 
-        void processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace) override;
+        bool processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace) override;
     };
 
 }

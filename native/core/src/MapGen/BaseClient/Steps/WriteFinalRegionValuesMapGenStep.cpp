@@ -19,7 +19,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void WriteFinalRegionValuesMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool WriteFinalRegionValuesMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         const std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
 
         AV::uint8* regionPtr = REGION_PTR_FOR_COORD(mapData, 0);
@@ -34,6 +34,8 @@ namespace ProceduralExplorationGameCore{
                 *REGION_PTR_FOR_COORD(mapData, p) = r.id;
             }
         }
+
+        return true;
     }
 
 }

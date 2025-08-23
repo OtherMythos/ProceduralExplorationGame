@@ -86,7 +86,7 @@ namespace ProceduralExplorationGameCore{
         }
     }
 
-    void DetermineEarlyRegionsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool DetermineEarlyRegionsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
 
         int totalRegions = input->uint32("numRegions");
         std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
@@ -189,6 +189,8 @@ namespace ProceduralExplorationGameCore{
                 *regionPtr = r;
             }
         }
+
+        return true;
     }
 
     DetermineEarlyRegionsMapGenJob::DetermineEarlyRegionsMapGenJob(){

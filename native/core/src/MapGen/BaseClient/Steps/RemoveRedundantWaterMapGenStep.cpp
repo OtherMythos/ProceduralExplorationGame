@@ -13,9 +13,11 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void RemoveRedundantWaterMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool RemoveRedundantWaterMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         RemoveRedundantWaterMapGenJob job;
         job.processJob(mapData, workspace);
+
+        return true;
     }
 
 

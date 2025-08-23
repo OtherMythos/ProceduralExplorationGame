@@ -13,7 +13,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void SetupBuffersMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool SetupBuffersMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         const size_t NUM_VOX = mapData->width * mapData->height;
         const size_t VOX_BUF_SIZE = (NUM_VOX * sizeof(float));
         const size_t SECONDARY_VOX_BUF_SIZE = (NUM_VOX * sizeof(float));
@@ -39,6 +39,8 @@ namespace ProceduralExplorationGameCore{
         mapData->sizeType("voxelBufferSize", VOX_BUF_SIZE);
         mapData->sizeType("secondaryVoxelBufferSize", SECONDARY_VOX_BUF_SIZE);
         mapData->sizeType("blueNoiseBufferSize", BLUE_NOISE_BUF_SIZE);
+
+        return true;
     }
 
 }

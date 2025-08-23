@@ -17,7 +17,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    void GenerateNoiseMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool GenerateNoiseMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         const AV::uint32 width = mapData->width;
         const AV::uint32 height = mapData->height;
 
@@ -27,6 +27,8 @@ namespace ProceduralExplorationGameCore{
             GenerateNoiseMapGenJob job;
             job.processJob(mapData, 0, i * divHeight, width, i * divHeight + divHeight);
         }
+
+        return true;
     }
 
 

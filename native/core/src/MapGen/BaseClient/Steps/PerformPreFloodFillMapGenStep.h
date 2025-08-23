@@ -14,7 +14,7 @@ namespace ProceduralExplorationGameCore{
         PerformPreFloodFillMapGenStep();
         ~PerformPreFloodFillMapGenStep();
 
-        void processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace) override;
+        bool processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace) override;
     };
 
     class PerformPreFloodFillMapGenJob{

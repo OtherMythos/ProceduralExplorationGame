@@ -21,7 +21,7 @@ namespace ProceduralExplorationGameCore{
         MapGenScriptStep(const std::string& stepName, MapGenScriptClient* parentClient, CallbackScript* script);
         ~MapGenScriptStep();
 
-        virtual void processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace);
+        virtual bool processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace);
 
     private:
         CallbackScript* mScript;

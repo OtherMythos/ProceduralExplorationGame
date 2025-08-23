@@ -27,7 +27,7 @@ namespace ProceduralExplorationGameCore{
         }
     }
 
-    void MergeIsolatedRegionsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
+    bool MergeIsolatedRegionsMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
 
         auto it = regionData.begin();
@@ -86,6 +86,8 @@ namespace ProceduralExplorationGameCore{
 
             //Merge the layer
         }
+
+        return true;
     }
 
 }
