@@ -90,14 +90,8 @@
                     local placeData = mPlaceIds_[i];
                     local placeDef = ::Places[placeData[0]];
 
-                    //TODO depreciate and remove
-                    local appearFunction = placeDef.getRegionAppearFunction();
-                    if(appearFunction != null){
-                        appearFunction(mCreatorWorld_, placeData[0], placeData[1]);
-                    }
-
                     local placeFileName = placeDef.getPlaceFileName();
-                    if(placeFileName == null) continue;
+                    assert(placeFileName != null);
 
                     //TODO nasty duplication
                     local scriptPath = "res://build/assets/places/" + placeFileName + "/script.nut";
@@ -665,13 +659,11 @@
             local node = regionEntry.mDecoratioNode_;
             local placeDefine = ::Places[i.placeId];
 
-            local placeEntry = placer.placeIntoWorld(i, placeDefine, node, this, regionEntry, c);
-
-            if(placeEntry == null) continue;
+            placer.placeIntoWorld(i, placeDefine, node, this, regionEntry, c);
 
             //local beaconEntity = mEntityFactory_.constructPlaceIndicatorBeacon(placeEntry.getPosition());
-            mActivePlaces_.append(placeEntry);
-            regionEntry.pushPlace(placeEntry, null);
+            //mActivePlaces_.append(placeEntry);
+            //regionEntry.pushPlace(placeEntry, null);
         }
     }
 

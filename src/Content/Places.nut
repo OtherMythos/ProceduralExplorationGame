@@ -24,8 +24,6 @@
     mRarity = null;
     mMinLandmass = 10;
     mNecessaryFeatures = 0;
-    mPlacementFunction = null;
-    mRegionAppearFunction = null;
     mPlaceFileName = null;
 
     //Editor meta
@@ -34,15 +32,13 @@
     mRadius = 10;
     //
 
-    constructor(name, desc, placeType, rarity, placementFunction, regionAppearFunction, placeFileName, minLandmass = 10, necessaryFeatures = 0){
+    constructor(name, desc, placeType, rarity, placeFileName, minLandmass = 10, necessaryFeatures = 0){
         mName = name;
         mDesc = desc;
         mType = placeType;
         mRarity = rarity;
         mMinLandmass = minLandmass;
         mNecessaryFeatures = necessaryFeatures;
-        mPlacementFunction = placementFunction;
-        mRegionAppearFunction = regionAppearFunction;
         mPlaceFileName = placeFileName;
     }
 
@@ -52,8 +48,6 @@
     function getRarity(){ return mRarity; }
     function getMinLandmass(){ return mMinLandmass; }
     function getNecessaryFeatures(){ return mNecessaryFeatures; }
-    function getPlacementFunction(){ return mPlacementFunction; }
-    function getRegionAppearFunction(){ return mRegionAppearFunction; }
     function getPlaceFileName(){ return mPlaceFileName; }
 
     function _tostring(){
