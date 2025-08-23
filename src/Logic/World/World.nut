@@ -579,6 +579,10 @@ enum WorldMousePressContexts{
         _gameCore.setCustomPassBufferValue(::Base.mPlayerStats.getWieldActive() ? 1.0 : 0.0, 0, 0);
     }
 
+    function getEntityFactory(){
+        return mEntityFactory_;
+    }
+
     function playerHealthChanged(data){
         //TODO remove this duplication.
         //Have a single place to store health and make sure it's set from a single function.
