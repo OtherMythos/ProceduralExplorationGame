@@ -12,7 +12,7 @@ namespace ProceduralExplorationGameCore{
 
     void GameplayConstants::initialise(){
         //mPlaces.resize((size_t)PlaceId::MAX);
-        //#include "../../../src/Content/PlaceDefs.h.nut"
+        //#include "../../../src/Content/PlaceDefs.nut"
 
         /*
         mPlacesByType.resize((size_t)PlaceType::MAX);

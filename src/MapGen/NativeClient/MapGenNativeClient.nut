@@ -15,7 +15,7 @@ function notifyRegistered(data){
     ::EnumDef.commitEnums();
 
     _doFile(::basePath + "src/Content/Places.nut");
-    _doFile(::basePath + "src/Content/PlaceDefs.h.nut");
+    _doFile(::basePath + "src/Content/PlaceDefs.nut");
 
     processPlacesData();
 }

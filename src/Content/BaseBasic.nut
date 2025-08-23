@@ -22,7 +22,7 @@
         _doFile("res://src/Content/ItemDefs.nut");
         _doFile("res://src/Content/EnemyDefs.nut");
         _doFile("res://src/Content/StatusAfflictionDefs.nut");
-        _doFile("res://src/Content/PlaceDefs.h.nut");
+        _doFile("res://src/Content/PlaceDefs.nut");
         _doFile("res://src/Content/PlacedItemDefs.nut");
         _doFile("script://VoxelDefs.nut");
     }

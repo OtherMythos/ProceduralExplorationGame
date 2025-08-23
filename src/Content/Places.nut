@@ -75,7 +75,7 @@ getroottable().setdelegate({
         return null;
     }
 });
-_doFileWithContext("script://PlaceDefs.h.nut", this);
+_doFileWithContext("script://PlaceDefs.nut", this);
 getroottable().setdelegate(null);
 //-------------------------------
 */
