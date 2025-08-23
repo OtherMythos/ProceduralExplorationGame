@@ -218,5 +218,12 @@
 function processStep(inputData, mapData, data){
     local gen = ::ScriptedMapGen(mapData);
 
-    data.placeData <- gen.determinePlaces();
+    local placeData = gen.determinePlaces();
+    data.placeData <- placeData;
+
+    //Set the gateway position.
+    assert(placeData[0].placeId == PlaceId.GATEWAY);
+    mapData.gatewayPosition = placeData[0].originWrapped;
+
+    mapData.playerStart = (300 << 16) | 300;
 }
