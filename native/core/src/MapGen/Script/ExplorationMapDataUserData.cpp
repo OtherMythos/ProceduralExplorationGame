@@ -199,6 +199,9 @@ namespace ProceduralExplorationGameCore{
         const std::map<std::string, MapDataEntry>& data = mapData->getEntries();
 
         for(const std::pair<std::string, MapDataEntry>& entry : data){
+            if(entry.first == "playerStart"){
+                pushInteger(vm, entry.first.c_str(), entry.second.value.uint32);
+            }
             if(entry.second.type == MapDataEntryType::UINT32){
                 pushInteger(vm, entry.first.c_str(), entry.second.value.uint32);
             }

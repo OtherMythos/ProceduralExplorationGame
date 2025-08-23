@@ -1,6 +1,7 @@
 
 ::EnumDef.addToEnum("PlaceId", @"
     GATEWAY,
+    PLAYER_SPAWN,
 
     GOBLIN_CAMP,
     DUSTMITE_NEST,
@@ -14,6 +15,7 @@
 enum PlaceType{
     NONE,
     GATEWAY,
+    PLAYER_SPAWN,
     CITY,
     TOWN,
     VILLAGE,

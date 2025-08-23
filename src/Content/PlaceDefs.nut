@@ -60,6 +60,7 @@ function initialisePlaceEditorMeta(){
 ::Places[PlaceId.NONE] = PlaceDef("None", "None", PlaceType.NONE, 0.0, null, 0);
 
 ::Places[PlaceId.GATEWAY] = PlaceDef("Gateway", "Gateway", PlaceType.GATEWAY, 1.0, "gateway", 0);
+::Places[PlaceId.PLAYER_SPAWN] = PlaceDef("Player Spawn", "Player Spawn", PlaceType.PLAYER_SPAWN, 1.0, "playerSpawn", 0);
 
 ::Places[PlaceId.GOBLIN_CAMP] = PlaceDef("Goblin Camp", "Spooky goblin camp", PlaceType.LOCATION, 1.0, "goblinCampsite", 100);
 ::Places[PlaceId.DUSTMITE_NEST] = PlaceDef("Dust Mite Nest", "An entrance to a Dust Mite nest.", PlaceType.LOCATION, 1.0, "dustMiteNest", 100);

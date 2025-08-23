@@ -200,8 +200,8 @@
             "halfY": 5,
         };
 
-        //TODO Ensure the gateway is placed at a position using a map gen step rather than just randomly.
         placeLocation(PlaceId.GATEWAY, _determineRegionBySize, _checkPlacementVoxelsAreLand)
+        placeLocation(PlaceId.PLAYER_SPAWN, _determineRegionBySize, _checkPlacementVoxelsAreLand)
         placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize, _checkPlacementVoxelsAreLand)
         placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize, _checkPlacementVoxelsAreLand)
         placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize, _checkPlacementVoxelsAreLand)
@@ -221,9 +221,14 @@ function processStep(inputData, mapData, data){
     local placeData = gen.determinePlaces();
     data.placeData <- placeData;
 
-    //Set the gateway position.
-    assert(placeData[0].placeId == PlaceId.GATEWAY);
-    mapData.gatewayPosition = placeData[0].originWrapped;
-
-    mapData.playerStart = (300 << 16) | 300;
+    local gatewayPosition = 0;
+    local playerStartPosition = 0;
+    if(placeData.len() >= 1 && placeData[0].placeId == PlaceId.GATEWAY){
+        gatewayPosition = placeData[0].originWrapped;
+    }
+    if(placeData.len() >= 2 && placeData[1].placeId == PlaceId.PLAYER_SPAWN){
+        playerStart = placeData[1].originWrapped;
+    }
+    mapData.gatewayPosition = gatewayPosition;
+    mapData.playerStart = playerStartPosition;
 }
