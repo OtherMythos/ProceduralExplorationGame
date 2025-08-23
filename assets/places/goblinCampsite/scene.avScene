@@ -1,0 +1,17 @@
+<scene>
+    <user0 value="goblinTent.voxMesh">
+        <scale x="0.3" y="0.3" z="0.3"/>
+        <user2 value="1">
+            <position x="0.916683" y="0" z="0"/>
+            <scale x="9.66142" y="9.66142" z="8.29853"/>
+        </user2>
+    </user0>
+    <user0 value="goblinTotem.voxMesh">
+        <position x="-3.01035" y="0" z="4.68694"/>
+        <scale x="0.15" y="0.15" z="0.15"/>
+    </user0>
+    <user0 value="campfireBase.voxMesh">
+        <position x="-0.136195" y="0" z="5.83399"/>
+        <scale x="0.4" y="0.4" z="0.4"/>
+    </user0>
+</scene>
