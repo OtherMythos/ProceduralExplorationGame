@@ -227,7 +227,7 @@ function processStep(inputData, mapData, data){
         gatewayPosition = placeData[0].originWrapped;
     }
     if(placeData.len() >= 2 && placeData[1].placeId == PlaceId.PLAYER_SPAWN){
-        playerStart = placeData[1].originWrapped;
+        playerStartPosition = placeData[1].originWrapped;
     }
     mapData.gatewayPosition = gatewayPosition;
     mapData.playerStart = playerStartPosition;
