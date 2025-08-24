@@ -365,7 +365,9 @@ enum ExplorationScreenWidgetType{
                 break;
             }
         }
-        mPlayerTapButton.setVisible(!allEmpty);
+        if(::Base.getTargetInterface() == TargetInterface.MOBILE){
+            mPlayerTapButton.setVisible(!allEmpty);
+        }
         mPlayerTapButtonActive = !allEmpty;
     }
 
