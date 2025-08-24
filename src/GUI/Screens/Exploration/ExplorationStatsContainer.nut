@@ -8,6 +8,7 @@
     mEXPCounter_ = null;
     mTargetEnemyWidget_ = null;
     mInventoryButton_ = null;
+    mInventoryCounter_ = null;
     mPauseButton_ = null;
     mWieldPutAway_ = null;
 
@@ -33,21 +34,31 @@
         mInventoryButton_.setShadowOutline(true, ColourValue(0.3, 0.3, 0.3), Vec2(2, 2));
         //mInventoryButton_.setExpandVertical(true);
         mInventoryButton_.setExpandHorizontal(true);
-        local cellId = buttonLayout.addCell(mInventoryButton_);
         mInventoryButton_.attachListenerForEvent(function(widget, action){
             ::Base.mExplorationLogic.mCurrentWorld_.showInventory();
         }, _GUI_ACTION_PRESSED, this);
+
+        mInventoryCounter_ = mWindow_.createLabel();
+        {
+            local inv = ::Base.mPlayerStats.mInventory_;
+            local free = inv.getNumSlotsFree();
+            local fullSize = inv.getInventorySize();
+            setInventoryCount_(fullSize - free, fullSize);
+        }
+        mInventoryCounter_.setShadowOutline(true, ColourValue(0.3, 0.3, 0.3), Vec2(2, 2));
 
         mPauseButton_ = mWindow_.createButton();
         mPauseButton_.setText("Pause");
         //mPauseButton_.setExpandVertical(true);
         mPauseButton_.setExpandHorizontal(true);
         mPauseButton_.setShadowOutline(true, ColourValue(0.3, 0.3, 0.3), Vec2(2, 2));
-        buttonLayout.addCell(mPauseButton_);
         mPauseButton_.setMargin(10, 0);
         mPauseButton_.attachListenerForEvent(function(widget, action){
             ::Base.mExplorationLogic.setGamePaused(true);
         }, _GUI_ACTION_PRESSED, this);
+
+        buttonLayout.addCell(mPauseButton_);
+        buttonLayout.addCell(mInventoryButton_);
 
         buttonLayout.setSize(mWindow_.getSize());
         //buttonLayout.setMarginForAllCells(10, 10);
@@ -113,10 +124,12 @@
         //mPlayerHealthBar_.setPosition(healthSize.x, healthSize.y);
 
         _event.subscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);
+        _event.subscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent, this);
     }
 
     function shutdown(){
         _event.unsubscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);
+        _event.unsubscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent, this);
         mTargetEnemyWidget_.shutdown();
     }
 
@@ -165,8 +178,8 @@
 
         mPlayerHealthBar_.notifyLayout();
 
-        local healthBarPos = mInventoryButton_.getPosition();
-        healthBarPos.y += mInventoryButton_.getSize().y + 10;
+        local healthBarPos = mPauseButton_.getPosition();
+        healthBarPos.y += mPauseButton_.getSize().y + 10;
         mPlayerHealthBar_.setPosition(healthBarPos.x, healthBarPos.y);
 
         local delta = (mPlayerHealthBar_.getPosition().y + mPlayerHealthBar_.getSize().y) - (mMoneyCounter_.getPosition().y) - 5;
@@ -182,6 +195,8 @@
         //if(::Base.getTargetInterface() != TargetInterface.MOBILE){
             mWindow_.setSize(mWindow_.calculateChildrenSize());
         //}
+
+        mInventoryCounter_.setPosition(mInventoryButton_.getPosition().x + mInventoryButton_.getSize().x + 5, 5);
     }
 
     function notifyCounterChanged(){
@@ -190,6 +205,18 @@
 
     function playerHealthChanged(id, data){
         mPlayerHealthBar_.setPercentage(data.percentage);
+    }
+
+    function receiveInventoryChangedEvent(id, data){
+        local count = 0;
+        foreach(i in data){
+            if(i != null) count++;
+        }
+        setInventoryCount_(count, data.len());
+    }
+
+    function setInventoryCount_(count, size){
+        mInventoryCounter_.setText(format("%i/%i", count, size));
     }
 
     function getMoneyCounter(){
