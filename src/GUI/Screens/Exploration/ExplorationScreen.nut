@@ -32,7 +32,9 @@ enum ExplorationScreenWidgetType{
     mWieldActiveButton = null;
     mZoomModifierButton = null;
     mCameraButton = null;
+    mPlayerDirectButton = null;
     mPlayerTapButton = null;
+    mPlayerTapButtonActive = false;
     mDiscoverLevelUpScreen_ = null;
     mLayoutLine_ = null;
 
@@ -259,13 +261,26 @@ enum ExplorationScreenWidgetType{
 
             mPlayerTapButton = mWindow_.createButton();
             local playerSizeButton = Vec2(100, 100);
-            mPlayerTapButton.setText("Direct");
-            //mPlayerTapButton.setSize(playerSizeButton);
-            //mPlayerTapButton.setPosition(_window.getWidth() / 2 - playerSizeButton.x / 2, _window.getHeight() / 2 - playerSizeButton.y / 2);
+            mPlayerTapButton.setSize(playerSizeButton);
+            mPlayerTapButton.setPosition(_window.getWidth() / 2 - playerSizeButton.x / 2, _window.getHeight() / 2 - playerSizeButton.y / 2);
             mPlayerTapButton.setKeyboardNavigable(false);
-            //mPlayerTapButton.setVisualsEnabled(false);
-            mPlayerTapButton.setPosition(_window.getWidth() / 2 - mPlayerTapButton.getSize().x/2, mCameraButton.getPosition().y - mPlayerTapButton.getSize().y - 20);
+            mPlayerTapButton.setVisible(false);
+            mPlayerTapButton.setVisualsEnabled(false);
+            //mPlayerTapButton.setPosition(_window.getWidth() / 2 - mPlayerTapButton.getSize().x/2, mCameraButton.getPosition().y - mPlayerTapButton.getSize().y - 20);
             mPlayerTapButton.attachListenerForEvent(function(widget, action){
+                ::Base.mActionManager.executeSlot(0);
+            }, _GUI_ACTION_PRESSED);
+            //mScreenInputCheckList_.append(mPlayerTapButton);
+
+            mPlayerDirectButton = mWindow_.createButton();
+            local playerSizeButton = Vec2(100, 100);
+            mPlayerDirectButton.setText("Direct");
+            //mPlayerDirectButton.setSize(playerSizeButton);
+            //mPlayerDirectButton.setPosition(_window.getWidth() / 2 - playerSizeButton.x / 2, _window.getHeight() / 2 - playerSizeButton.y / 2);
+            mPlayerDirectButton.setKeyboardNavigable(false);
+            //mPlayerDirectButton.setVisualsEnabled(false);
+            mPlayerDirectButton.setPosition(_window.getWidth() / 2 - mPlayerDirectButton.getSize().x/2, mCameraButton.getPosition().y - mPlayerDirectButton.getSize().y - 20);
+            mPlayerDirectButton.attachListenerForEvent(function(widget, action){
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
                 currentWorld.requestDirectingPlayer();
             }, _GUI_ACTION_PRESSED);
@@ -314,6 +329,7 @@ enum ExplorationScreenWidgetType{
 
         mScreenInputCheckList_.append(mWorldMapDisplay_.mMapViewerWindow_);
 
+        _event.subscribe(Event.ACTIONS_CHANGED, receiveActionsChanged, this);
         _event.subscribe(Event.WORLD_PREPARATION_STATE_CHANGE, receivePreparationStateChange, this);
         ::ScreenManager.transitionToScreen(Screen.WORLD_GENERATION_STATUS_SCREEN, null, 1);
 
@@ -339,6 +355,18 @@ enum ExplorationScreenWidgetType{
             assert(data.ended);
             ::ScreenManager.transitionToScreen(null, null, 1);
         }
+    }
+
+    function receiveActionsChanged(id, data){
+        local allEmpty = true;
+        foreach(i in data){
+            if(i.populated()){
+                allEmpty = false;
+                break;
+            }
+        }
+        mPlayerTapButton.setVisible(!allEmpty);
+        mPlayerTapButtonActive = !allEmpty;
     }
 
     function update(){
@@ -387,6 +415,7 @@ enum ExplorationScreenWidgetType{
             foreach(i in mScreenInputCheckList_){
                 if(checkIntersect_(x, y, i)) return null;
             }
+            if(mPlayerTapButtonActive && checkIntersect_(x, y, mPlayerTapButton)) return null;
 
             return Vec2((x-start.x) / end.x, (y-start.y) / end.y);
         }
@@ -425,6 +454,7 @@ enum ExplorationScreenWidgetType{
 
     function shutdown(){
         _event.unsubscribe(Event.WORLD_PREPARATION_STATE_CHANGE, receivePreparationStateChange, this);
+        _event.unsubscribe(Event.ACTIONS_CHANGED, receiveActionsChanged, this);
         mLogicInterface_.shutdown();
         //mLogicInterface_.notifyLeaveExplorationScreen();
         mExplorationStatsContainer_.shutdown();
