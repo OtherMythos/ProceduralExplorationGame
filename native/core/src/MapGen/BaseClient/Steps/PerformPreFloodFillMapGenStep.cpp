@@ -68,7 +68,5 @@ namespace ProceduralExplorationGameCore{
                 }
             }
         }
-
-        return true;
     }
 }

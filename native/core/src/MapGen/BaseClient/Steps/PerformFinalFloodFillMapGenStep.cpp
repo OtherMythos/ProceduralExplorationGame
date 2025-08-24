@@ -74,7 +74,5 @@ namespace ProceduralExplorationGameCore{
                 }
             }
         }
-
-        return true;
     }
 }
