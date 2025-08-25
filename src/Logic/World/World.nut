@@ -426,6 +426,7 @@ enum WorldMousePressContexts{
     mPrevMouseX_ = null;
     mPrevMouseY_ = null;
     mMouseContext_ = null;
+    mDirectingPlayerSpeedModifier_ = 0.0;
 
     mPlayerTargetRadius_ = null;
     mPlayerTargetRadiusProjectiles_ = null;
@@ -629,13 +630,13 @@ enum WorldMousePressContexts{
         checkCameraChange();
         checkOrientatingCamera();
         checkHighlightEnemy();
+        checkForPlayerDirecting();
         checkPlayerMove();
         //checkTargetEnemy();
         //checkForFlagPlacement();
         //checkForFlagUpdate();
         checkForPlayerMoveBegin();
         checkForPlayerZoom();
-        checkForPlayerDirecting();
         checkPlayerInputs();
         checkZoomAcceleration();
         //Some of the player inputs might have deactivated this world, so check again.
@@ -1163,6 +1164,7 @@ enum WorldMousePressContexts{
 
             if(mMostRecentMovementType_ == WorldMousePressContexts.ORIENTING_CAMERA_WITH_MOVEMENT){
                 targetForward = getCameraDirection();
+                mDirectingPlayerSpeedModifier_ = 1.0;
             }
             else if(mMostRecentMovementType_ == WorldMousePressContexts.DIRECTING_PLAYER){
                 targetForward = getPlayerDirection();
@@ -1171,7 +1173,9 @@ enum WorldMousePressContexts{
             assert(targetForward != null);
             local movementPercentage = mMovementCooldown_.tofloat() / mMovementCooldownTotal_.tofloat();
 
-            movePlayer(targetForward, 0.2 * sin(movementPercentage));
+            if(mDirectingPlayerSpeedModifier_){
+                movePlayer(targetForward, 0.2 * sin(movementPercentage));
+            }
         }
 
         for(local i = 0; i < NUM_PLAYER_QUEUED_FLAGS; i++){
@@ -1773,6 +1777,19 @@ enum WorldMousePressContexts{
         }
         return retVal;
     }
+    function dirWithinDeadzone_(dir){
+        local limit = 0.1;
+        if(
+            dir.x >= -limit &&
+            dir.y >= -limit &&
+            dir.x <= limit &&
+            dir.y <= limit
+        ){
+            return true;
+        }
+
+        return false;
+    }
     function checkForPlayerDirecting(){
         if(mMouseContext_.getCurrentState() != WorldMousePressContexts.DIRECTING_PLAYER) return;
         print("Directing player");
@@ -1783,18 +1800,25 @@ enum WorldMousePressContexts{
 
         local mouseDelta = processMouseDelta(false);
         if(mouseDelta != null){
-            local camDir = getCameraDirection();
-            local camAngle = atan2(camDir.x, camDir.y);
-            local cosA = -cos(camAngle);
-            local sinA = sin(camAngle);
+            local dirWithinDeadzone_ = dirWithinDeadzone_(mouseDelta);
+            if(!dirWithinDeadzone_){
+                local camDir = getCameraDirection();
+                local camAngle = atan2(camDir.x, camDir.y);
+                local cosA = -cos(camAngle);
+                local sinA = sin(camAngle);
 
-            local worldDir = Vec2(
-                mouseDelta.x * cosA - mouseDelta.y * sinA,
-                mouseDelta.x * sinA + mouseDelta.y * cosA
-            );
+                local worldDir = Vec2(
+                    mouseDelta.x * cosA - mouseDelta.y * sinA,
+                    mouseDelta.x * sinA + mouseDelta.y * cosA
+                );
 
-            //movePlayer(worldDir);
-            setPlayerDirection(worldDir);
+                setPlayerDirection(worldDir);
+                mDirectingPlayerSpeedModifier_ = 1.0;
+            }else{
+                mDirectingPlayerSpeedModifier_ = 0.0;
+            }
+        }else{
+            //mDirectingPlayerSpeedModifier_ = 0.0;
         }
     }
     function checkForPlayerZoom(){
