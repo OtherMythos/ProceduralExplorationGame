@@ -417,7 +417,9 @@ enum ExplorationScreenWidgetType{
             foreach(i in mScreenInputCheckList_){
                 if(checkIntersect_(x, y, i)) return null;
             }
-            if(mPlayerTapButtonActive && checkIntersect_(x, y, mPlayerTapButton)) return null;
+            if(mPlayerTapButtonActive && mPlayerTapButton != null){
+                if(checkIntersect_(x, y, mPlayerTapButton)) return null;
+            }
 
             return Vec2((x-start.x) / end.x, (y-start.y) / end.y);
         }
