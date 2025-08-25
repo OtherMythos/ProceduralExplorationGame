@@ -405,6 +405,7 @@ enum WorldMousePressContexts{
 
     mMovementCooldown_ = 0;
     mMovementCooldownTotal_ = 30;
+    mMostRecentMovementType_ = null;
 
     mLocationFlagIds_ = 0;
     mLocationFlagNodes_ = null;
@@ -1148,13 +1149,26 @@ enum WorldMousePressContexts{
         if(mMovementCooldown_ > 0){
             mMovementCooldown_--;
         }
-        if(mMouseContext_.getCurrentState() == WorldMousePressContexts.ORIENTING_CAMERA_WITH_MOVEMENT){
+        local currentState = mMouseContext_.getCurrentState();
+        if(
+            currentState == WorldMousePressContexts.ORIENTING_CAMERA_WITH_MOVEMENT ||
+            currentState == WorldMousePressContexts.DIRECTING_PLAYER
+        ){
             mMovementCooldown_ = mMovementCooldownTotal_;
+            mMostRecentMovementType_ = currentState;
         }
 
         if(mMovementCooldown_ > 0){
-            local targetForward = getCameraDirection();
+            local targetForward = null;
 
+            if(mMostRecentMovementType_ == WorldMousePressContexts.ORIENTING_CAMERA_WITH_MOVEMENT){
+                targetForward = getCameraDirection();
+            }
+            else if(mMostRecentMovementType_ == WorldMousePressContexts.DIRECTING_PLAYER){
+                targetForward = getPlayerDirection();
+            }
+
+            assert(targetForward != null);
             local movementPercentage = mMovementCooldown_.tofloat() / mMovementCooldownTotal_.tofloat();
 
             movePlayer(targetForward, 0.2 * sin(movementPercentage));
@@ -1248,6 +1262,9 @@ enum WorldMousePressContexts{
         mQueuedFlags_.insert(0, [worldPos, flagId]);
     }
 
+    function setPlayerDirection(dir){
+        mPlayerEntry_.setDirection(dir);
+    }
     function movePlayer(amount, speed=0.2){
         local targetPos = mPlayerEntry_.mPos_ + Vec3(amount.x, 0, amount.y);
         movePlayerToPos(targetPos, speed);
@@ -1776,7 +1793,8 @@ enum WorldMousePressContexts{
                 mouseDelta.x * sinA + mouseDelta.y * cosA
             );
 
-            movePlayer(worldDir);
+            //movePlayer(worldDir);
+            setPlayerDirection(worldDir);
         }
     }
     function checkForPlayerZoom(){

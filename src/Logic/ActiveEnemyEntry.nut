@@ -271,6 +271,13 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
     function getTargetCollisionWorld(){
         return mTargetCollisionWorld_;
     }
+    function setDirection(dir){
+        local orientation = Quat(atan2(dir.x, dir.y), ::Vec3_UNIT_Y);
+        if(mModel_){
+            mModel_.setOrientation(orientation);
+        }
+        mOrientation_ = orientation;
+    }
     function move_(pos, amount){
         //Check for potential obsticles.
         if(mEntity_ != null){
@@ -281,11 +288,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         }
 
         setPosition(pos);
-        local orientation = Quat(atan2(amount.x, amount.z), ::Vec3_UNIT_Y);
-        if(mModel_){
-            mModel_.setOrientation(orientation);
-        }
-        mOrientation_ = orientation;
+        setDirection(Vec2(amount.x, amount.z));
 
         if(mMoving_ <= 0 && mStateMachineModel_){
             mStateMachineModel_.notify(ActiveEnemyAnimationEvents.STARTED_MOVING);
