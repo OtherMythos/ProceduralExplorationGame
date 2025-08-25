@@ -402,6 +402,7 @@ enum WorldMousePressContexts{
     mCollisionDetectionWorld_ = null;
     mEntityManager_ = null;
     mWorldScaleSize_ = 1;
+    mCameraAcceleration_ = null;
 
     mMovementCooldown_ = 0;
     mMovementCooldownTotal_ = 30;
@@ -445,6 +446,8 @@ enum WorldMousePressContexts{
         mPlayerTargetRadius_ = {};
         mPlayerTargetRadiusProjectiles_ = {};
         mPerformingMoves_ = [];
+
+        mCameraAcceleration_ = Vec2();
 
         mAppearDistractionLogic_ = FoundObjectLogic([
             {
@@ -639,11 +642,13 @@ enum WorldMousePressContexts{
         checkForPlayerZoom();
         checkPlayerInputs();
         checkZoomAcceleration();
+        checkCameraAcceleration();
         //Some of the player inputs might have deactivated this world, so check again.
         if(!isActive()) return;
         checkPlayerCombatLogic();
 
         updatePerformingMoves();
+        updateCameraPosition();
 
         if(::Base.isProfileActive(GameProfile.ENABLE_RIGHT_CLICK_WORKAROUNDS)){
             if(_input.getMousePressed(_MB_RIGHT)){
@@ -814,17 +819,28 @@ enum WorldMousePressContexts{
         }
     }
 
-    function checkZoomAcceleration(){
-        if(mZoomAcceleration_ == 0.0) return;
+    function accelerationClampCoordinate_(coord, change=0.1){
+        if(coord == 0.0) return coord;
 
-        if(mZoomAcceleration_ > 0){
-            mZoomAcceleration_ -= 0.1;
-            if(mZoomAcceleration_ < 0) mZoomAcceleration_ = 0.0;
+        if(coord > 0){
+            coord -= change;
+            if(coord < 0) coord = 0.0;
         }else{
-            mZoomAcceleration_ += 0.1;
-            if(mZoomAcceleration_ > 0) mZoomAcceleration_ = 0.0;
+            coord += change;
+            if(coord > 0) coord = 0.0;
         }
+
+        return coord;
+    }
+    function checkZoomAcceleration(){
+        mZoomAcceleration_ = accelerationClampCoordinate_(mZoomAcceleration_);
+        if(mZoomAcceleration_ == 0) return;
         setCurrentZoom(mCurrentZoomLevel_ + mZoomAcceleration_);
+    }
+
+    function checkCameraAcceleration(){
+        mCameraAcceleration_.x = accelerationClampCoordinate_(mCameraAcceleration_.x);
+        mCameraAcceleration_.y = accelerationClampCoordinate_(mCameraAcceleration_.y);
     }
 
     function assignGizmoToEntity(entity, gizmoType, data=null, replace=false){
@@ -1745,6 +1761,9 @@ enum WorldMousePressContexts{
 
         local mouseDelta = processMouseDelta();
         if(mouseDelta != null){
+            if(::Base.getTargetInterface() == TargetInterface.MOBILE){
+                setCameraAcceleration(Vec2(mouseDelta.x*-0.2, mouseDelta.y*-0.2));
+            }
             processCameraMove(mouseDelta.x*-0.2, mouseDelta.y*-0.2);
         }
     }
@@ -1837,13 +1856,26 @@ enum WorldMousePressContexts{
         local x = _input.getAxisActionX(mInputs_.camera, _INPUT_ANY);
         local y = _input.getAxisActionY(mInputs_.camera, _INPUT_ANY);
         ::DebugOverlayManager.appendText(DebugOverlayId.INPUT, format("camera x: %f y: %f", x, y));
-        processCameraMove(x*modifier, y*modifier);
+        local movAmount = Vec2(x*modifier, y*modifier);
+        if(::Base.getTargetInterface() == TargetInterface.MOBILE){
+            local currentState = mMouseContext_.getCurrentState();
+            if(currentState == null){
+                movAmount += (mCameraAcceleration_ * 1.0);
+            }
+        }
+        processCameraMove(movAmount.x, movAmount.y);
+
+        //processCameraMove();
     }
 
     function setZoomAcceleration(acceleration){
         mZoomAcceleration_ = acceleration;
         if(mZoomAcceleration_ <= -4.0) mZoomAcceleration_ = -4.0;
         if(mZoomAcceleration_ >= 4.0) mZoomAcceleration_ = 4.0;
+    }
+
+    function setCameraAcceleration(acceleration){
+        mCameraAcceleration_ = acceleration;
     }
 
     function setCurrentZoom(zoom){
