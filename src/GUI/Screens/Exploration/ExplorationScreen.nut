@@ -238,10 +238,11 @@ enum ExplorationScreenWidgetType{
             //mExplorationMovesContainer_
         ];
 
-        if(::Base.getTargetInterface() == TargetInterface.MOBILE){
+        local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
+        if(mobile){
             mWieldActiveButton = mWindow_.createButton();
             mWieldActiveButton.setText("Wield");
-            mWieldActiveButton.setPosition(_window.getWidth() / 2 - mWieldActiveButton.getSize().x/2, _window.getHeight() - mWieldActiveButton.getSize().y*2);
+            //mWieldActiveButton.setPosition(_window.getWidth() / 2 - mWieldActiveButton.getSize().x/2, _window.getHeight() - mWieldActiveButton.getSize().y*2);
             mWieldActiveButton.attachListenerForEvent(function(widget, action){
                 ::Base.mPlayerStats.toggleWieldActive();
             }, _GUI_ACTION_PRESSED, this);
@@ -251,7 +252,7 @@ enum ExplorationScreenWidgetType{
             mCameraButton = mWindow_.createButton();
             mCameraButton.setText("Camera");
             //mCameraButton.setPosition(_window.getWidth() / 2 - mCameraButton.getSize().x/2 - mWieldActiveButton.getSize().x - 20, _window.getHeight() - mWieldActiveButton.getSize().y*2);
-            mCameraButton.setPosition(_window.getWidth() / 2 - mCameraButton.getSize().x/2, _window.getHeight() - mWieldActiveButton.getSize().y*2 - mCameraButton.getSize().y - 20);
+            //mCameraButton.setPosition(_window.getWidth() / 2 - mCameraButton.getSize().x/2, _window.getHeight() - mWieldActiveButton.getSize().y*2 - mCameraButton.getSize().y - 20);
             mCameraButton.attachListenerForEvent(function(widget, action){
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
                 currentWorld.requestOrientingCamera();
@@ -301,6 +302,15 @@ enum ExplorationScreenWidgetType{
             mZoomModifierButton.setSkinPack("ButtonZoom");
             mScreenInputCheckList_.append(mZoomModifierButton);
 
+            local zoomWidth = mZoomModifierButton.getSize().x;
+            mCameraButton.setPosition(0, _window.getHeight() - zoomWidth - insets.bottom);
+            mCameraButton.setSize(_window.getWidth() - zoomWidth, zoomWidth);
+            mCameraButton.setSkinPack("ButtonZoom");
+
+            mPlayerDirectButton.setSize(100, 100);
+            mPlayerDirectButton.setPosition(mZoomModifierButton.getPosition().x - 100, mCameraButton.getPosition().y - 100);
+            mPlayerDirectButton.setSkinPack("ButtonZoom");
+
             if(screenshotMode){
                 mWieldActiveButton.setVisible(false);
                 mCameraButton.setVisible(false);
@@ -326,6 +336,9 @@ enum ExplorationScreenWidgetType{
         }
 
         mExplorationStatsContainer_.setPosition(Vec2(0, insets.top));
+        if(mobile){
+            mWieldActiveButton.setPosition(0, mExplorationStatsContainer_.getSize().y + insets.top);
+        }
 
         mScreenInputCheckList_.append(mWorldMapDisplay_.mMapViewerWindow_);
 
