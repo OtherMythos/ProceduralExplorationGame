@@ -186,6 +186,17 @@ enum InventoryBusEvents{
         mWindow_.setSkinPack("WindowSkinNoBorder");
         mWindow_.setBreadthFirst(true);
 
+        local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
+
+        if(mobile){
+            local inventoryCloseButton = mWindow_.createButton();
+            inventoryCloseButton.setSize(mWindow_.getSize());
+            inventoryCloseButton.setVisualsEnabled(false);
+            inventoryCloseButton.attachListenerForEvent(function(widget, action){
+                closeInventory();
+            }, _GUI_ACTION_PRESSED, this);
+        }
+
         local inventoryButton = mWindow_.createButton();
         {
             inventoryButton.setText("Back");
@@ -213,8 +224,6 @@ enum InventoryBusEvents{
 
         //local container = InventoryContainer(mWindow_, mInventory_, mInventoryBus_);
         //container.addToLayout(layoutLine);
-
-        local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
 
         mOverlayWindow_ = _gui.createWindow("InventoryOverlayWindow");
         mOverlayWindow_.setPosition(0, 0);
