@@ -66,7 +66,13 @@
 
     function update(){
         animateFadeIn();
-        return tickTimer();
+        local result = tickTimer();
+
+        if(!result){
+            _event.transmit(Event.REGION_DISCOVERED_POPUP_FINISHED, null);
+        }
+
+        return result;
     }
 
     function animateFadeIn(){

@@ -182,6 +182,8 @@ enum Event{
 
     REQUEST_WORLD_VIEW_CHANGE = 1029,
 
+    REGION_DISCOVERED_POPUP_FINISHED = 1030,
+
 }
 
 enum FoundObjectType{

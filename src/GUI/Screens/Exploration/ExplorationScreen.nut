@@ -128,6 +128,9 @@ enum ExplorationScreenWidgetType{
 
             _event.subscribe(Event.BIOME_DISCOVER_STATS_CHANGED, biomeStatsChanged, this);
         }
+        function setPosition(pos){
+            mWindow_.setPosition(pos);
+        }
         function update(){
             mFrame_++;
             if(mFrame_ > 300) return;
@@ -338,12 +341,16 @@ enum ExplorationScreenWidgetType{
         mExplorationStatsContainer_.setPosition(Vec2(0, insets.top));
         if(mobile){
             mWieldActiveButton.setPosition(0, mExplorationStatsContainer_.getSize().y + insets.top);
+            local newPos = mWieldActiveButton.getPosition();
+            newPos.y += mWieldActiveButton.getSize().y;
+            mDiscoverLevelUpScreen_.setPosition(newPos);
         }
 
         mScreenInputCheckList_.append(mWorldMapDisplay_.mMapViewerWindow_);
 
         _event.subscribe(Event.ACTIONS_CHANGED, receiveActionsChanged, this);
         _event.subscribe(Event.WORLD_PREPARATION_STATE_CHANGE, receivePreparationStateChange, this);
+        _event.subscribe(Event.REGION_DISCOVERED_POPUP_FINISHED, receiveRegionDiscoveredPopupFinished, this);
         ::ScreenManager.transitionToScreen(Screen.WORLD_GENERATION_STATUS_SCREEN, null, 1);
 
         //TOOD NOTE Workaround! This isn't how the paradigm should fit together
@@ -359,6 +366,10 @@ enum ExplorationScreenWidgetType{
         if(widget != null){
             widget.setVisible(visible);
         }
+    }
+
+    function receiveRegionDiscoveredPopupFinished(id, data){
+        setTopInfoVisible(true);
     }
 
     function receivePreparationStateChange(id, data){
@@ -472,6 +483,7 @@ enum ExplorationScreenWidgetType{
     function shutdown(){
         _event.unsubscribe(Event.WORLD_PREPARATION_STATE_CHANGE, receivePreparationStateChange, this);
         _event.unsubscribe(Event.ACTIONS_CHANGED, receiveActionsChanged, this);
+        _event.unsubscribe(Event.REGION_DISCOVERED_POPUP_FINISHED, receiveRegionDiscoveredPopupFinished, this);
         mLogicInterface_.shutdown();
         //mLogicInterface_.notifyLeaveExplorationScreen();
         mExplorationStatsContainer_.shutdown();
@@ -525,13 +537,24 @@ enum ExplorationScreenWidgetType{
         if(popupData.id == Popup.REGION_DISCOVERED){
             local yPos = 50;
             if(::Base.getTargetInterface() == TargetInterface.MOBILE){
+                /*
                 local statsContainer = mExplorationScreenWidgetType_[ExplorationScreenWidgetType.STATS_CONTAINER];
                 yPos = statsContainer.getPosition().y + statsContainer.getSize().y - 10;
+                */
+                local insets = _window.getScreenSafeAreaInsets();
+                yPos = insets.top + 20;
+
+                setTopInfoVisible(false);
             }
             popupData.data.pos <- Vec2(0, yPos);
         }
 
         ::PopupManager.displayPopup(popupData);
+    }
+
+    function setTopInfoVisible(visible){
+        mExplorationStatsContainer_.setVisible(visible);
+        mWorldMapDisplay_.setVisible(visible);
     }
 
     function notifyGatewayEnd(explorationStats){
