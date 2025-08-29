@@ -13,6 +13,9 @@ enum GameplayMainMenuComplexWindow{
 
         mParent_ = null;
         mButtons_ = null;
+        mPosition_ = null;
+        mNumPanels_ = 1;
+        SIZE = 75;
 
         constructor(parent){
             mParent_ = parent;
@@ -21,10 +24,11 @@ enum GameplayMainMenuComplexWindow{
 
         function setup(numPanels){
 
-            local win = mParent_.getWindow();
-            local SIZE = 50;
+            mNumPanels_ = numPanels;
 
-            for(local i = 0; i < numPanels; i++){
+            local win = mParent_.getWindow();
+
+            for(local i = 0; i < mNumPanels_; i++){
                 local button = win.createButton();
                 button.setSize(SIZE, SIZE);
                 button.setPosition(i * SIZE, 0);
@@ -36,6 +40,19 @@ enum GameplayMainMenuComplexWindow{
                 mButtons_.append(button);
             }
 
+            setPosition(Vec2(0, 0));
+        }
+
+        function setPosition(pos){
+            mPosition_ = pos;
+
+            for(local i = 0; i < mNumPanels_; i++){
+                mButtons_[i].setPosition(mPosition_ + Vec2(i * (SIZE + 10), 0));
+            }
+        }
+
+        function getSize(){
+            return Vec2(mNumPanels_ * (SIZE + 10), SIZE);
         }
 
     };
@@ -50,6 +67,7 @@ enum GameplayMainMenuComplexWindow{
 
             mWindow_ = _gui.createWindow("TabWindow" + mId_);
             mWindow_.setZOrder(140);
+            mWindow_.setVisualsEnabled(false);
 
             recreate();
         }
@@ -89,12 +107,15 @@ enum GameplayMainMenuComplexWindow{
         mWindow_ = _gui.createWindow("GameplayMainMenuComplex");
         mWindow_.setSize(::drawable.x, ::drawable.y);
         mWindow_.setClipBorders(0, 0, 0, 0);
-        mWindow_.setVisualsEnabled(false);
+        //mWindow_.setVisualsEnabled(false);
         mWindow_.setSkinPack("WindowSkinNoBorder");
         mWindow_.setBreadthFirst(true);
 
         mTabPanel_ = TabPanel(this);
         mTabPanel_.setup(GameplayMainMenuComplexWindow.MAX);
+        local tabSize = mTabPanel_.getSize();
+        local insets = _window.getScreenSafeAreaInsets();
+        mTabPanel_.setPosition(Vec2(::drawable.x / 2 - tabSize.x / 2, ::drawable.y - tabSize.y - insets.bottom))
 
         local targetWindows = [
             ExploreWindow
@@ -107,10 +128,11 @@ enum GameplayMainMenuComplexWindow{
             }
             local tabWindow = targetObj(i);
 
-            local size = _window.getSize();
-            size.y -= 50;
+            local size = ::drawable.copy();
+            size.y -= tabSize.y;
+            size.y -= insets.bottom;
             tabWindow.setSize(size);
-            tabWindow.setPosition(Vec2(0, 50));
+            tabWindow.setPosition(Vec2(0, 0));
             mTabWindows_.append(tabWindow);
         }
 
@@ -152,7 +174,7 @@ enum GameplayMainMenuComplexWindow{
     function updateTabPosition_(percentage){
         foreach(c,i in mTabWindows_){
             local size = i.getSize();
-            local pos = Vec2(0, 50);
+            local pos = Vec2(0, 0);
             //pos.x = (c.tofloat() - ( (mPreviousTab_ + (mCurrentTab_ -  mPreviousTab_) * percentage).tofloat())) * size.x;
             pos.x = (c.tofloat() - mCurrentTab_) * size.x;
             i.setPosition(pos);
@@ -166,13 +188,19 @@ enum GameplayMainMenuComplexWindow{
 
     function recreate(){
         local line = _gui.createLayoutLine();
+        local insets = _window.getScreenSafeAreaInsets();
 
-        local label = mWindow_.createLabel();
-        label.setText("Explore");
-        line.addCell(label);
+        local title = mWindow_.createLabel();
+        title.setDefaultFontSize(title.getDefaultFontSize() * 2);
+        title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
+        title.setText("Explore", false);
+        title.sizeToFit(::drawable.x * 0.9);
+        line.addCell(title);
 
         local button = mWindow_.createButton();
+        button.setDefaultFontSize(button.getDefaultFontSize() * 1.5);
         button.setText("Explore");
+        button.setExpandHorizontal(true);
         line.addCell(button);
         button.attachListenerForEvent(function(widget, action){
             local viableSaves = ::Base.mSaveManager.findViableSaves();
@@ -182,6 +210,10 @@ enum GameplayMainMenuComplexWindow{
 
             ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
         }, _GUI_ACTION_PRESSED, this);
+
+        line.setSize(::drawable);
+        line.setPosition(::drawable.x * 0.0, insets.top);
+        line.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
 
         line.layout();
 
