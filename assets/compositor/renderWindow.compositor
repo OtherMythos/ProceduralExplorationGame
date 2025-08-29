@@ -44,7 +44,6 @@ compositor_node renderMainGameplayNode
             {
                 all clear
                 clear_colour 0.1 0.1 1 1
-                depth_value 1.0
             }
             store
             {
