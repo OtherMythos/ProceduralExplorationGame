@@ -19,6 +19,7 @@
     PAUSE_SCREEN,
     SETTINGS_SCREEN,
     READABLE_CONTENT_SCREEN,
+    GAMEPLAY_MAIN_MENU_COMPLEX_SCREEN,
 
 ");
 
@@ -42,4 +43,5 @@
     "pauseScreen",
     "settingsScreen",
     "readableContentScreen",
+    "gameplayMainMenuComplex"
 ]);
