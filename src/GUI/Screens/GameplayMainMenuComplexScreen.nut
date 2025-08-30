@@ -67,12 +67,15 @@ enum GameplayMainMenuComplexWindow{
             mId_ = id;
 
             mWindow_ = _gui.createWindow("TabWindow" + mId_);
-            mWindow_.setZOrder(140);
             mWindow_.setVisualsEnabled(false);
 
             mOffset_ = offset;
 
             recreate();
+        }
+
+        function setZOrder(idx){
+            mWindow_.setZOrder(idx);
         }
 
         function shutdown(){
@@ -167,6 +170,14 @@ enum GameplayMainMenuComplexWindow{
         updateTabPosition_(percentage);
     }
 
+    function setZOrder(idx){
+        base.setZOrder(idx);
+
+        foreach(i in mTabWindows_){
+            i.setZOrder(idx + 1);
+        }
+    }
+
     function shutdown(){
         base.shutdown();
 
@@ -208,6 +219,7 @@ enum GameplayMainMenuComplexWindow{
 
         mWindow_.setClipBorders(0, 0, 0, 0);
 
+        /*
         local title = mWindow_.createLabel();
         title.setDefaultFontSize(title.getDefaultFontSize() * 2);
         title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
@@ -232,6 +244,14 @@ enum GameplayMainMenuComplexWindow{
         line.setSize(::drawable);
         line.setPosition(::drawable.x * 0.0, insets.top);
         line.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
+        */
+
+        local iconButton = ::IconButton(mWindow_, "settingsIcon");
+        iconButton.setSize(Vec2(64, 64));
+        iconButton.setPosition(Vec2(10, 10));
+        iconButton.attachListenerForEvent(function(widget, action){
+            ::ScreenManager.queueTransition(Screen.SETTINGS_SCREEN, null, 3);
+        }, _GUI_ACTION_PRESSED, this);
 
         line.layout();
 
@@ -319,20 +339,6 @@ enum GameplayMainMenuComplexWindow{
             mCoinLabel_.setText("240");
             mCoinLabel_.setPosition(leftCount, 0);
             leftCount += mCoinLabel_.getSize().x;
-        }
-
-        foreach(c,i in [
-            "coinsIcon",
-            "settingsIcon",
-            "healthIcon",
-            "orbsIcon",
-            "playIcon",
-            "swordsIcon",
-        ]){
-            local panelThing = window.createPanel();
-            panelThing.setDatablock(i);
-            panelThing.setSize(64, 64);
-            panelThing.setPosition(200, 200 + c * 50);
         }
     }
 
