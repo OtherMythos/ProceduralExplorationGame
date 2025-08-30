@@ -61,13 +61,16 @@ enum GameplayMainMenuComplexWindow{
 
         mId_ = null;
         mWindow_ = null;
+        mOffset_ = null;
 
-        constructor(id){
+        constructor(id, offset){
             mId_ = id;
 
             mWindow_ = _gui.createWindow("TabWindow" + mId_);
             mWindow_.setZOrder(140);
             mWindow_.setVisualsEnabled(false);
+
+            mOffset_ = offset;
 
             recreate();
         }
@@ -82,7 +85,7 @@ enum GameplayMainMenuComplexWindow{
         }
 
         function setPosition(pos){
-            mWindow_.setPosition(pos);
+            mWindow_.setPosition(pos + mOffset_);
         }
 
         function setSize(size){
@@ -91,6 +94,10 @@ enum GameplayMainMenuComplexWindow{
 
         function getSize(){
             return mWindow_.getSize();
+        }
+
+        function getOffset(){
+            return mOffset_;
         }
 
     };
@@ -111,10 +118,15 @@ enum GameplayMainMenuComplexWindow{
         mWindow_.setSkinPack("WindowSkinNoBorder");
         mWindow_.setBreadthFirst(true);
 
+        local insets = _window.getScreenSafeAreaInsets();
+
+        local stats = MainMenuStatsWidget();
+        stats.setup(mWindow_);
+        stats.setPosition(Vec2(0, insets.top));
+
         mTabPanel_ = TabPanel(this);
         mTabPanel_.setup(GameplayMainMenuComplexWindow.MAX);
         local tabSize = mTabPanel_.getSize();
-        local insets = _window.getScreenSafeAreaInsets();
         mTabPanel_.setPosition(Vec2(::drawable.x / 2 - tabSize.x / 2, ::drawable.y - tabSize.y - insets.bottom))
 
         local targetWindows = [
@@ -126,13 +138,15 @@ enum GameplayMainMenuComplexWindow{
             if(i < targetWindows.len()){
                 targetObj = targetWindows[i];
             }
-            local tabWindow = targetObj(i);
+            local offset = Vec2(0, insets.bottom + stats.getSize().y);
+            local tabWindow = targetObj(i, offset);
 
             local size = ::drawable.copy();
             size.y -= tabSize.y;
             size.y -= insets.bottom;
+            size.y -= stats.getSize().y;
             tabWindow.setSize(size);
-            tabWindow.setPosition(Vec2(0, 0));
+            tabWindow.setPosition(Vec2(0, stats.getSize().y));
             mTabWindows_.append(tabWindow);
         }
 
@@ -154,6 +168,8 @@ enum GameplayMainMenuComplexWindow{
     }
 
     function shutdown(){
+        base.shutdown();
+
         foreach(c,i in mTabWindows_){
             i.shutdown();
         }
@@ -190,6 +206,8 @@ enum GameplayMainMenuComplexWindow{
         local line = _gui.createLayoutLine();
         local insets = _window.getScreenSafeAreaInsets();
 
+        mWindow_.setClipBorders(0, 0, 0, 0);
+
         local title = mWindow_.createLabel();
         title.setDefaultFontSize(title.getDefaultFontSize() * 2);
         title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
@@ -217,6 +235,105 @@ enum GameplayMainMenuComplexWindow{
 
         line.layout();
 
+    }
+
+};
+
+::MainMenuStatsWidget <- class{
+
+    mCoinLabel_ = null;
+    mEXPOrbLabel_ = null;
+
+    mWindow_ = null;
+    mSize_ = null;
+
+    function setPosition(pos){
+        mWindow_.setPosition(pos);
+    }
+
+    function getSize(){
+        return mSize_;
+    }
+
+    function setup(parentWindow){
+
+        local window = parentWindow.createWindow();
+
+        local statsSize = Vec2(::drawable.x, 50);
+        local leftCount = 0;
+        mSize_ = statsSize;
+
+        window.setSize(statsSize);
+        window.setVisualsEnabled(false);
+        window.setClipBorders(0, 0, 0, 0);
+        mWindow_ = window;
+
+        /*
+        local debugBackground = window.createPanel();
+        debugBackground.setSize(statsSize);
+        debugBackground.setPosition(0, 0);
+        debugBackground.setDatablock("playerMapIndicator");
+        */
+
+        {
+            local heartIcon = window.createPanel();
+            heartIcon.setDatablock("healthIcon");
+            heartIcon.setSize(48, 48);
+            heartIcon.setPosition(0, 0);
+            leftCount += 50;
+
+            local healthBar = ::GuiWidgets.ProgressBar(window);
+            local barSize = statsSize.x / 2 - leftCount;
+            local barHeight = 35;
+            healthBar.setSize(barSize, barHeight);
+            healthBar.setPercentage(0.5);
+            healthBar.setBorder(2);
+            healthBar.setPosition(leftCount, statsSize.y / 2 - barHeight / 2);
+            healthBar.setLabel("120/240");
+            leftCount += barSize;
+        }
+
+        {
+            local orbIcon = window.createPanel();
+            orbIcon.setDatablock("orbsIcon");
+            orbIcon.setSize(48, 48);
+            orbIcon.setPosition(leftCount, 0);
+            leftCount += 48;
+
+            mEXPOrbLabel_ = window.createLabel();
+            mEXPOrbLabel_.setDefaultFontSize(mEXPOrbLabel_.getDefaultFontSize() * 1.2);
+            mEXPOrbLabel_.setText("120");
+            mEXPOrbLabel_.setPosition(leftCount, 0);
+            leftCount += mEXPOrbLabel_.getSize().x;
+        }
+
+        {
+            local coinIcon = window.createPanel();
+            coinIcon.setDatablock("coinsIcon");
+            coinIcon.setSize(48, 48);
+            coinIcon.setPosition(leftCount, 0);
+            leftCount += 48;
+
+            mCoinLabel_ = window.createLabel();
+            mCoinLabel_.setDefaultFontSize(mCoinLabel_.getDefaultFontSize() * 1.2);
+            mCoinLabel_.setText("240");
+            mCoinLabel_.setPosition(leftCount, 0);
+            leftCount += mCoinLabel_.getSize().x;
+        }
+
+        foreach(c,i in [
+            "coinsIcon",
+            "settingsIcon",
+            "healthIcon",
+            "orbsIcon",
+            "playIcon",
+            "swordsIcon",
+        ]){
+            local panelThing = window.createPanel();
+            panelThing.setDatablock(i);
+            panelThing.setSize(64, 64);
+            panelThing.setPosition(200, 200 + c * 50);
+        }
     }
 
 };

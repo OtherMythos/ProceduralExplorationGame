@@ -105,6 +105,49 @@
         "placeMapGateway" :
         {
             "diffuse": [0.2, 0.2, 1, 1]
+        },
+
+        "settingsIcon" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse_map0": {
+                "texture": "icon_cog.png"
+            }
+        },
+        "healthIcon" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse_map0": {
+                "texture": "icon_heart.png"
+            }
+        },
+        "coinsIcon" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse_map0": {
+                "texture": "icon_coins.png"
+            }
+        },
+        "orbsIcon" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse_map0": {
+                "texture": "icon_orbs.png"
+            }
+        },
+        "playIcon" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse_map0": {
+                "texture": "icon_playButton.png"
+            }
+        },
+        "swordsIcon" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse_map0": {
+                "texture": "icon_swords.png"
+            }
         }
     }
 }
