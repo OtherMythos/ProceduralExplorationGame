@@ -11,10 +11,14 @@ enum GameplayMainMenuComplexWindow{
 
     TabPanel = class{
 
+        mBackgroundPanel_ = null;
+        mWindow_ = null;
+
         mParent_ = null;
         mButtons_ = null;
         mPosition_ = null;
         mNumPanels_ = 1;
+        mHeightOverride_ = 0;
         SIZE = 75;
 
         constructor(parent){
@@ -26,33 +30,122 @@ enum GameplayMainMenuComplexWindow{
 
             mNumPanels_ = numPanels;
 
-            local win = mParent_.getWindow();
+            local parentWin = mParent_.getWindow();
+            local totalHeight = SIZE + 10;
+
+            mHeightOverride_ = 100;
+
+            local win = parentWin.createWindow();
+            win.setClipBorders(0, 0, 0, 0);
+            win.setSize(::drawable.x, SIZE + 10 + mHeightOverride_);
+            //win.setVisualsEnabled(false);
+            mWindow_ = win;
+
+            mBackgroundPanel_ = win.createPanel();
+            mBackgroundPanel_.setSize(win.getSize());
+            mBackgroundPanel_.setDatablock("simpleGrey");
+
+            local linePanel = win.createPanel();
+            linePanel.setSize(::drawable.x, 2);
+            linePanel.setPosition(0, ::drawable.y - totalHeight);
+            linePanel.setDatablock("unlitBlack");
+
+            local padding = 10;
+            local totalButtonsWidth = mNumPanels_ * (SIZE + padding);
+            local buttonsStart = (win.getSize().x / 2 - totalButtonsWidth / 2);
 
             for(local i = 0; i < mNumPanels_; i++){
                 local button = win.createButton();
                 button.setSize(SIZE, SIZE);
-                button.setPosition(i * SIZE, 0);
+                button.setPosition(buttonsStart + i * (SIZE + padding), 15);
                 button.setUserId(i);
                 button.setKeyboardNavigable(false);
+                button.setVisualsEnabled(false);
                 button.attachListenerForEvent(function(widget, action){
-                    mParent_.notifyTabChange(widget.getUserId());
+                    local tabId = widget.getUserId();
+                    notifyTabChange_(tabId);
+                    mParent_.notifyTabChange(tabId);
                 }, _GUI_ACTION_PRESSED, this);
-                mButtons_.append(button);
+
+                if(i != mNumPanels_ - 1){
+                    local buttonLine = mWindow_.createPanel();
+                    buttonLine.setSize(2, SIZE + 20);
+                    local pos = button.getPosition();
+                    buttonLine.setPosition(pos.x + SIZE + 4, pos.y - 15);
+                    buttonLine.setDatablock("unlitBlack");
+                }
+
+                local icon = win.createPanel();
+                icon.setDatablock("settingsIcon");
+                icon.setClickable(false);
+                icon.setSize(SIZE, SIZE);
+                local pos = button.getPosition();
+                icon.setPosition(pos);
+
+                local tabLabel = win.createLabel();
+                tabLabel.setText("Explore");
+                tabLabel.setCentre(button.getCentre());
+                local labelPos = tabLabel.getPosition();
+                labelPos.y = button.getPosition().y + button.getSize().y - tabLabel.getSize().y * 0.8;
+                tabLabel.setPosition(labelPos);
+
+                mButtons_.append({
+                    "button": button,
+                    "icon": icon,
+                    "label": tabLabel,
+                    "currentAnim": 0.0,
+                    "targetAnim": 0.0,
+                    "startPos": pos
+                });
             }
 
-            setPosition(Vec2(0, 0));
+            //setPosition(Vec2(0, 0));
+            notifyTabChange_(0);
+        }
+
+        function update(){
+            foreach(i in mButtons_){
+                local current = i.currentAnim;
+                local target = i.targetAnim;
+                if(current == target) continue;
+
+                if(current >= target){
+                    current -= 0.1;
+                    if(current <= target){
+                        current = target;
+                    }
+                }
+                else if(current <= target){
+                    current += 0.1;
+                    if(current >= target){
+                        current = target;
+                    }
+                }
+                i.currentAnim = current;
+                local startPos = i.startPos;
+                i.icon.setPosition(startPos.x, startPos.y - current * 20);
+                i.label.setTextColour(1, 1, 1, current);
+            }
+        }
+
+        function notifyTabChange_(id){
+            foreach(i in mButtons_){
+                i.label.setVisible(false);
+                i.targetAnim = 0.0;
+            }
+
+            local button = mButtons_[id];
+            button.label.setVisible(true);
+            button.targetAnim = 1.0;
         }
 
         function setPosition(pos){
             mPosition_ = pos;
-
-            for(local i = 0; i < mNumPanels_; i++){
-                mButtons_[i].setPosition(mPosition_ + Vec2(i * (SIZE + 10), 0));
-            }
+            mWindow_.setPosition(pos.x, pos.y);
         }
 
         function getSize(){
-            return Vec2(mNumPanels_ * (SIZE + 10), SIZE);
+            return Vec2(mNumPanels_ * (SIZE + 10), SIZE + 15);
         }
 
     };
@@ -117,7 +210,7 @@ enum GameplayMainMenuComplexWindow{
         mWindow_ = _gui.createWindow("GameplayMainMenuComplex");
         mWindow_.setSize(::drawable.x, ::drawable.y);
         mWindow_.setClipBorders(0, 0, 0, 0);
-        //mWindow_.setVisualsEnabled(false);
+        mWindow_.setVisualsEnabled(false);
         mWindow_.setSkinPack("WindowSkinNoBorder");
         mWindow_.setBreadthFirst(true);
 
@@ -130,7 +223,8 @@ enum GameplayMainMenuComplexWindow{
         mTabPanel_ = TabPanel(this);
         mTabPanel_.setup(GameplayMainMenuComplexWindow.MAX);
         local tabSize = mTabPanel_.getSize();
-        mTabPanel_.setPosition(Vec2(::drawable.x / 2 - tabSize.x / 2, ::drawable.y - tabSize.y - insets.bottom))
+        //mTabPanel_.setPosition(Vec2(::drawable.x / 2 - tabSize.x / 2, ::drawable.y - tabSize.y - insets.bottom))
+        mTabPanel_.setPosition(Vec2(0, ::drawable.y - tabSize.y - insets.bottom));
 
         local targetWindows = [
             ExploreWindow
@@ -168,6 +262,7 @@ enum GameplayMainMenuComplexWindow{
         print(percentage);
 
         updateTabPosition_(percentage);
+        mTabPanel_.update();
     }
 
     function setZOrder(idx){

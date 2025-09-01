@@ -107,6 +107,11 @@
             "diffuse": [0.2, 0.2, 1, 1]
         },
 
+        "simpleGrey" :
+        {
+            "diffuse": [0.4, 0.4, 0.4, 1]
+        },
+
         "settingsIcon" :
         {
             "blendblock": "gui/uiBlend",
