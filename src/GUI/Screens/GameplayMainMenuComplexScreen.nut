@@ -26,9 +26,9 @@ enum GameplayMainMenuComplexWindow{
             mButtons_ = [];
         }
 
-        function setup(numPanels){
+        function setup(panelData){
 
-            mNumPanels_ = numPanels;
+            mNumPanels_ = panelData.len();
 
             local parentWin = mParent_.getWindow();
             local totalHeight = SIZE + 10;
@@ -76,14 +76,14 @@ enum GameplayMainMenuComplexWindow{
                 }
 
                 local icon = win.createPanel();
-                icon.setDatablock("settingsIcon");
+                icon.setDatablock(panelData[i].icon);
                 icon.setClickable(false);
                 icon.setSize(SIZE, SIZE);
                 local pos = button.getPosition();
                 icon.setPosition(pos);
 
                 local tabLabel = win.createLabel();
-                tabLabel.setText("Explore");
+                tabLabel.setText(panelData[i].label);
                 tabLabel.setCentre(button.getCentre());
                 local labelPos = tabLabel.getPosition();
                 labelPos.y = button.getPosition().y + button.getSize().y - tabLabel.getSize().y * 0.8;
@@ -154,15 +154,12 @@ enum GameplayMainMenuComplexWindow{
 
         mId_ = null;
         mWindow_ = null;
-        mOffset_ = null;
 
-        constructor(id, offset){
+        constructor(id){
             mId_ = id;
 
             mWindow_ = _gui.createWindow("TabWindow" + mId_);
             mWindow_.setVisualsEnabled(false);
-
-            mOffset_ = offset;
 
             recreate();
         }
@@ -181,7 +178,7 @@ enum GameplayMainMenuComplexWindow{
         }
 
         function setPosition(pos){
-            mWindow_.setPosition(pos + mOffset_);
+            mWindow_.setPosition(pos);
         }
 
         function setSize(size){
@@ -200,6 +197,7 @@ enum GameplayMainMenuComplexWindow{
 
     mTabPanel_ = null;
     mTabWindows_ = null;
+    mTabWindowYStart_ = 0;
     mPreviousTab_ = null;
     mCurrentTab_ = null;
 
@@ -220,11 +218,19 @@ enum GameplayMainMenuComplexWindow{
         stats.setup(mWindow_);
         stats.setPosition(Vec2(0, insets.top));
 
+        local tabs = [
+            {"icon": "swordsIcon", "label": "Explore"},
+            {"icon": "settingsIcon", "label": "Inventory"},
+            {"icon": "settingsIcon", "label": "Second"},
+            {"icon": "settingsIcon", "label": "Third"},
+        ];
         mTabPanel_ = TabPanel(this);
-        mTabPanel_.setup(GameplayMainMenuComplexWindow.MAX);
+        mTabPanel_.setup(tabs);
         local tabSize = mTabPanel_.getSize();
         //mTabPanel_.setPosition(Vec2(::drawable.x / 2 - tabSize.x / 2, ::drawable.y - tabSize.y - insets.bottom))
         mTabPanel_.setPosition(Vec2(0, ::drawable.y - tabSize.y - insets.bottom));
+
+        mTabWindowYStart_ = insets.top + stats.getSize().y;
 
         local targetWindows = [
             ExploreWindow
@@ -235,12 +241,13 @@ enum GameplayMainMenuComplexWindow{
             if(i < targetWindows.len()){
                 targetObj = targetWindows[i];
             }
-            local offset = Vec2(0, insets.bottom + stats.getSize().y);
-            local tabWindow = targetObj(i, offset);
+            //local offset = Vec2(0, 0);
+            local tabWindow = targetObj(i);
 
             local size = ::drawable.copy();
             size.y -= tabSize.y;
             size.y -= insets.bottom;
+            size.y -= insets.top;
             size.y -= stats.getSize().y;
             tabWindow.setSize(size);
             tabWindow.setPosition(Vec2(0, stats.getSize().y));
@@ -299,6 +306,7 @@ enum GameplayMainMenuComplexWindow{
             local pos = Vec2(0, 0);
             //pos.x = (c.tofloat() - ( (mPreviousTab_ + (mCurrentTab_ -  mPreviousTab_) * percentage).tofloat())) * size.x;
             pos.x = (c.tofloat() - mCurrentTab_) * size.x;
+            pos.y = mTabWindowYStart_;
             i.setPosition(pos);
         }
     }
