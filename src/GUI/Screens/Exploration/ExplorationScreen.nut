@@ -318,6 +318,7 @@ enum ExplorationScreenWidgetType{
                 mWieldActiveButton.setVisible(false);
                 mCameraButton.setVisible(false);
                 mZoomModifierButton.setVisible(false);
+                mPlayerDirectButton.setVisible(false);
             }
         }
 
@@ -553,8 +554,12 @@ enum ExplorationScreenWidgetType{
     }
 
     function setTopInfoVisible(visible){
-        mExplorationStatsContainer_.setVisible(visible);
-        mWorldMapDisplay_.setVisible(visible);
+        local vis = visible;
+        if(::Base.isProfileActive(GameProfile.SCREENSHOT_MODE)){
+            vis = false;
+        }
+        mExplorationStatsContainer_.setVisible(vis);
+        mWorldMapDisplay_.setVisible(vis);
     }
 
     function notifyGatewayEnd(explorationStats){
