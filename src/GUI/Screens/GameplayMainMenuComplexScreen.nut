@@ -163,8 +163,6 @@ enum GameplayMainMenuComplexWindow{
 
             mWindow_ = _gui.createWindow("TabWindow" + mId_);
             mWindow_.setVisualsEnabled(false);
-
-            recreate();
         }
 
         function setZOrder(idx){
@@ -186,6 +184,7 @@ enum GameplayMainMenuComplexWindow{
 
         function setSize(size){
             mWindow_.setSize(size);
+            recreate();
         }
 
         function getSize(){
@@ -223,7 +222,7 @@ enum GameplayMainMenuComplexWindow{
 
         local tabs = [
             {"icon": "swordsIcon", "label": "Explore"},
-            {"icon": "settingsIcon", "label": "Inventory"},
+            {"icon": "bagIcon", "label": "Inventory"},
             {"icon": "settingsIcon", "label": "Second"},
             {"icon": "settingsIcon", "label": "Third"},
         ];
@@ -358,6 +357,29 @@ enum GameplayMainMenuComplexWindow{
         iconButton.attachListenerForEvent(function(widget, action){
             ::ScreenManager.queueTransition(Screen.SETTINGS_SCREEN, null, 3);
         }, _GUI_ACTION_PRESSED, this);
+
+        local currentY = iconButton.getPosition().y + iconButton.getSize().y;
+
+        local winSize = mWindow_.getSize();
+
+        local MARGIN = 10;
+        currentY += MARGIN;
+        local explorationMap = mWindow_.createPanel();
+        explorationMap.setPosition(MARGIN, currentY);
+        explorationMap.setSize(winSize.x - MARGIN * 2, 300);
+        currentY += explorationMap.getSize().y;
+
+        currentY -= 20;
+        local playIconButton = ::IconButtonComplex(mWindow_, {
+            "icon": "swordsIcon",
+            "iconSize": Vec2(80, 80),
+            "iconPosition": Vec2(0, 0),
+            "label": "Explore",
+            "labelPosition": Vec2(80, 0)
+            "labelSizeModifier": 2
+        });
+        playIconButton.setSize(Vec2(240, 80));
+        playIconButton.setPosition(Vec2(MARGIN + explorationMap.getSize().x / 2 - playIconButton.getSize().x / 2, currentY));
 
         line.layout();
 

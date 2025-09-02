@@ -20,8 +20,57 @@
         mIcon_.setPosition(position);
     }
 
+    function getPosition(){
+        return mButton_.getPosition();
+    }
+
+    function getSize(){
+        return mButton_.getSize();
+    }
+
     function attachListenerForEvent(func, id, context){
         mButton_.attachListenerForEvent(func, id, context);
+    }
+
+};
+
+::IconButtonComplex <- class extends IconButton{
+
+    mData_ = null;
+    mLabel_ = null;
+
+    constructor(window, data){
+        mData_ = data;
+        base.constructor(window, data.icon);
+
+        if(data.rawin("label")){
+            mLabel_ = window.createLabel();
+            if(data.rawin("labelSizeModifier")){
+                mLabel_.setDefaultFontSize(mLabel_.getDefaultFontSize() * data.rawget("labelSizeModifier"));
+            }
+            mLabel_.setText(data.label);
+        }
+    }
+
+    function setSize(size){
+        base.setSize(size);
+        if(mData_.rawin("iconSize")){
+            mIcon_.setSize(mData_.rawget("iconSize"));
+        }
+    }
+
+    function setPosition(pos){
+        base.setPosition(pos);
+        if(mData_.rawin("iconPosition")){
+            mIcon_.setPosition(pos + mData_.rawget("iconPosition"));
+        }
+        if(mLabel_ != null){
+            local labelPos = Vec2();
+            if(mData_.rawin("labelPosition")){
+                labelPos = mData_.rawget("labelPosition");
+            }
+            mLabel_.setPosition(pos + labelPos);
+        }
     }
 
 };
