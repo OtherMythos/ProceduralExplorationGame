@@ -100,7 +100,7 @@ enum GameplayMainMenuComplexWindow{
             }
 
             //setPosition(Vec2(0, 0));
-            notifyTabChange_(0);
+            notifyTabChange_(0, false);
         }
 
         function update(){
@@ -128,7 +128,7 @@ enum GameplayMainMenuComplexWindow{
             }
         }
 
-        function notifyTabChange_(id){
+        function notifyTabChange_(id, animate=true){
             foreach(i in mButtons_){
                 i.label.setVisible(false);
                 i.targetAnim = 0.0;
@@ -137,6 +137,9 @@ enum GameplayMainMenuComplexWindow{
             local button = mButtons_[id];
             button.label.setVisible(true);
             button.targetAnim = 1.0;
+            if(!animate){
+                button.currentAnim = button.targetAnim - 0.001;
+            }
         }
 
         function setPosition(pos){
