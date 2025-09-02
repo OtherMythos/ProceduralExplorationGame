@@ -819,19 +819,6 @@ enum WorldMousePressContexts{
         }
     }
 
-    function accelerationClampCoordinate_(coord, change=0.1){
-        if(coord == 0.0) return coord;
-
-        if(coord > 0){
-            coord -= change;
-            if(coord < 0) coord = 0.0;
-        }else{
-            coord += change;
-            if(coord > 0) coord = 0.0;
-        }
-
-        return coord;
-    }
     function checkZoomAcceleration(){
         mZoomAcceleration_ = accelerationClampCoordinate_(mZoomAcceleration_);
         if(mZoomAcceleration_ == 0) return;

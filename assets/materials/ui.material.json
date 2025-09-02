@@ -112,6 +112,13 @@
             "diffuse": [0.4, 0.4, 0.4, 1]
         },
 
+        "explorationMapPanel" :
+        {
+            "diffuse_map0": {
+                "texture": "checkerPattern.png"
+            }
+        },
+
         "settingsIcon" :
         {
             "blendblock": "gui/uiBlend",

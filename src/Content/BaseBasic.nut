@@ -49,6 +49,7 @@
         _doFile("res://src/GUI/Screens/InventoryItemHelperScreen.nut");
         _doFile("res://src/GUI/Screens/PauseScreen.nut");
         _doFile("res://src/GUI/Screens/GameplayMainMenuComplexScreen.nut");
+        _doFile("res://src/GUI/Screens/ExplorationMapSelectScreen.nut");
         _doFile("res://src/GUI/Screens/SettingsScreen.nut");
     }
 

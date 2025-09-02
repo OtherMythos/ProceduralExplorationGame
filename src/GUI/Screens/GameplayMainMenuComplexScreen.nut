@@ -368,6 +368,13 @@ enum GameplayMainMenuComplexWindow{
         explorationMap.setPosition(MARGIN, currentY);
         explorationMap.setSize(winSize.x - MARGIN * 2, 300);
         currentY += explorationMap.getSize().y;
+        local explorePanelButton = mWindow_.createButton();
+        explorePanelButton.setPosition(explorationMap.getPosition());
+        explorePanelButton.setSize(explorationMap.getSize());
+        explorePanelButton.setVisualsEnabled(false);
+        explorePanelButton.attachListenerForEvent(function(widget, action){
+            notifyExplorationBegin_();
+        }, _GUI_ACTION_PRESSED, this);
 
         currentY -= 20;
         local playIconButton = ::IconButtonComplex(mWindow_, {
@@ -375,14 +382,21 @@ enum GameplayMainMenuComplexWindow{
             "iconSize": Vec2(80, 80),
             "iconPosition": Vec2(0, 0),
             "label": "Explore",
-            "labelPosition": Vec2(80, 0)
+            "labelPosition": Vec2(80, 0),
             "labelSizeModifier": 2
         });
         playIconButton.setSize(Vec2(240, 80));
         playIconButton.setPosition(Vec2(MARGIN + explorationMap.getSize().x / 2 - playIconButton.getSize().x / 2, currentY));
+        playIconButton.attachListenerForEvent(function(widget, action){
+            notifyExplorationBegin_();
+        }, _GUI_ACTION_PRESSED, this);
 
         line.layout();
 
+    }
+
+    function notifyExplorationBegin_(){
+        ::ScreenManager.queueTransition(Screen.EXPLORATION_MAP_SELECT_SCREEN, null, 3);
     }
 
 };

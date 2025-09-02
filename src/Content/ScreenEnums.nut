@@ -20,6 +20,7 @@
     SETTINGS_SCREEN,
     READABLE_CONTENT_SCREEN,
     GAMEPLAY_MAIN_MENU_COMPLEX_SCREEN,
+    EXPLORATION_MAP_SELECT_SCREEN,
 
 ");
 
@@ -43,5 +44,6 @@
     "pauseScreen",
     "settingsScreen",
     "readableContentScreen",
-    "gameplayMainMenuComplex"
+    "gameplayMainMenuComplex",
+    "explorationMapSelectScreen"
 ]);
