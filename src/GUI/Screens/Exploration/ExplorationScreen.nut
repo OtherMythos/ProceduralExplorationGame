@@ -193,15 +193,21 @@ enum ExplorationScreenWidgetType{
 
         local mobileInterface = (::Base.getTargetInterface() == TargetInterface.MOBILE);
 
-        mExplorationStatsContainer_ = ExplorationStatsContainer(mWindow_, mExplorationBus_);
+        local statsWidget = ::GuiWidgets.PlayerBasicStatsWidget();
+        statsWidget.setup(mWindow_);
+        statsWidget.setPosition(Vec2(0, 0));
+        mExplorationStatsContainer_ = statsWidget;
+
+        //mExplorationStatsContainer_ = ExplorationStatsContainer(mWindow_, mExplorationBus_);
         if(mobileInterface){
-            mExplorationStatsContainer_.setPosition(Vec2(0, 0));
+            //mExplorationStatsContainer_.setPosition(Vec2(0, 0));
             //mExplorationStatsContainer_.addToLayout(layoutLine);
         }else{
-            mExplorationStatsContainer_.setPosition(Vec2(0, 0));
+            //mExplorationStatsContainer_.setPosition(Vec2(0, 0));
             //mExplorationStatsContainer_.setSize(400, 140);
         }
-        mExplorationScreenWidgetType_[ExplorationScreenWidgetType.STATS_CONTAINER] = mExplorationStatsContainer_;
+        //mExplorationScreenWidgetType_[ExplorationScreenWidgetType.STATS_CONTAINER] = mExplorationStatsContainer_;
+        mExplorationScreenWidgetType_[ExplorationScreenWidgetType.STATS_CONTAINER] = statsWidget;
 
         //mExplorationItemsContainer_ = ExplorationItemsContainer(mWindow_, mExplorationBus_);
         //mExplorationItemsContainer_.addToLayout(layoutLine);
@@ -229,15 +235,15 @@ enum ExplorationScreenWidgetType{
 
         mWorldMapDisplay_.notifyResize();
 
-        mExplorationStatsContainer_.sizeLayout(mWorldMapDisplay_.getMapViewerSize());
+        //mExplorationStatsContainer_.sizeLayout(mWorldMapDisplay_.getMapViewerSize());
 
         local insets = _window.getScreenSafeAreaInsets();
-        mWorldMapDisplay_.positionWorldMapDisplay(Vec2(mWorldMapDisplay_.getMapViewerPosition().x, insets.top));
+        mWorldMapDisplay_.positionWorldMapDisplay(Vec2(mWorldMapDisplay_.getMapViewerPosition().x, insets.top + statsWidget.getSize().y));
         //mExplorationStatsContainer_.getSize().y
         //mExplorationMovesContainer_.sizeForButtons();
 
         mScreenInputCheckList_ = [
-            mExplorationStatsContainer_//,
+            //mExplorationStatsContainer_//,
             //mExplorationMovesContainer_
         ];
 
@@ -399,17 +405,17 @@ enum ExplorationScreenWidgetType{
     function update(){
         mLogicInterface_.tickUpdate();
         //mExplorationMovesContainer_.update();
-        mExplorationStatsContainer_.update();
+        //mExplorationStatsContainer_.update();
         mWorldMapDisplay_.update();
         mDiscoverLevelUpScreen_.update();
 
         mTooltipManager_.update();
     }
 
-    function getMoneyCounter(){
+    function getMoneyCounterWindowPos(){
         return mExplorationStatsContainer_.getMoneyCounter();
     }
-    function getEXPCounter(){
+    function getEXPCounterWindowPos(){
         return mExplorationStatsContainer_.getEXPCounter();
     }
     function getGameplayWindowPosition(){
@@ -487,7 +493,7 @@ enum ExplorationScreenWidgetType{
         _event.unsubscribe(Event.REGION_DISCOVERED_POPUP_FINISHED, receiveRegionDiscoveredPopupFinished, this);
         mLogicInterface_.shutdown();
         //mLogicInterface_.notifyLeaveExplorationScreen();
-        mExplorationStatsContainer_.shutdown();
+        //mExplorationStatsContainer_.shutdown();
         mWorldMapDisplay_.shutdown();
         mDiscoverLevelUpScreen_.shutdown();
         mExplorationPlayerActionsContainer_.shutdown();

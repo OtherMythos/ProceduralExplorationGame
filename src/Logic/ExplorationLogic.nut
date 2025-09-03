@@ -249,7 +249,7 @@
         mExplorationStats_.foundEXPOrbs++;
 
         local worldPos = ::EffectManager.getWorldPositionForWindowPos(::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getPosition() + ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getSize() / 2);
-        local endPos = ::Base.mExplorationLogic.mGui_.getEXPCounter().getPositionWindowPos();
+        local endPos = ::Base.mExplorationLogic.mGui_.getEXPCounterWindowPos();
 
         ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_EXP_ORB_EFFECT, {"numOrbs": 1, "start": worldPos, "end": endPos, "orbScale": 0.2}));
     }

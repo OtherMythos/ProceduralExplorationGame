@@ -1686,7 +1686,7 @@ enum WorldMousePressContexts{
             //::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"cellSize": 2, "coinScale": 0.1, "numCoins": 5, "start": worldPos, "end": endPos, "money": 100}));
 
             local worldPos = ::EffectManager.getWorldPositionForWindowPos(::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getPosition() + ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getSize() / 2);
-            local endPos = ::Base.mExplorationLogic.mGui_.getEXPCounter().getPositionWindowPos();
+            local endPos = ::Base.mExplorationLogic.mGui_.getEXPCounterWindowPos();
 
             ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": 1, "start": worldPos, "end": endPos, "money": 1, "coinScale": 0.2}));
         }
