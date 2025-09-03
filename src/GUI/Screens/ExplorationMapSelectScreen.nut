@@ -7,11 +7,40 @@
     mMapAcceleration_ = null;
     mMapPanelWidth_ = 4000;
     mMapPanelHeight_ = 4000;
+
+    mDrawableWidthChecked_ = null;
+    mDrawableHeightChecked_ = null;
     mMapPanelWidthChecked_ = null;
     mMapPanelHeightChecked_ = null;
 
     mPrevMouseX_ = null;
     mPrevMouseY_ = null;
+
+    mMapInfoPanel_ = null;
+    mMapInfoData_ = null;
+
+    MapInfoPanel = class{
+
+        mWindow_ = null;
+        mLabel_ = null;
+
+        constructor(parent){
+            mWindow_ = parent.createWindow();
+            mWindow_.setSize(100, 100);
+            mWindow_.setDatablock("simpleGrey");
+
+            mLabel_ = mWindow_.createLabel();
+        }
+
+        function setData(data){
+            mLabel_.setText(format("%i, %i", data.x, data.y));
+        }
+
+        function setPosition(pos){
+            mWindow_.setPosition(pos);
+        }
+
+    }
 
     function recreate(){
         mMapPosition_ = Vec2();
@@ -27,8 +56,10 @@
         mMapPanel_ = mWindow_.createPanel();
         mMapPanel_.setSize(mMapPanelWidth_, mMapPanelHeight_);
         mMapPanel_.setDatablock("explorationMapPanel");
-        mMapPanelWidthChecked_ = mMapPanelWidth_ - ::drawable.x;
-        mMapPanelHeightChecked_ = mMapPanelHeight_ - ::drawable.y;
+        mDrawableWidthChecked_ = ::drawable.x / 2;
+        mDrawableHeightChecked_ = ::drawable.y / 2;
+        mMapPanelWidthChecked_ = mMapPanelWidth_ - mDrawableWidthChecked_;
+        mMapPanelHeightChecked_ = mMapPanelHeight_ - mDrawableHeightChecked_;
 
         local closeButton = mWindow_.createButton();
         closeButton.setText("Back");
@@ -59,6 +90,9 @@
             ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
         }, _GUI_ACTION_PRESSED, this);
 
+        mMapInfoPanel_ = MapInfoPanel(mWindow_);
+        mMapInfoPanel_.setPosition(Vec2(::drawable.x - 100 - MARGIN, MARGIN + insets.top));
+
         updateMapPosition_(mMapPosition_);
     }
 
@@ -74,12 +108,18 @@
     }
 
     function updateMapPosition_(pos){
-        if(pos.x < 0) pos.x = 0;
-        if(pos.y < 0) pos.y = 0;
+        if(pos.x < -mDrawableWidthChecked_) pos.x = -mDrawableWidthChecked_;
+        if(pos.y < -mDrawableHeightChecked_) pos.y = -mDrawableHeightChecked_;
         if(pos.x >= mMapPanelWidthChecked_) pos.x = mMapPanelWidthChecked_;
         if(pos.y >= mMapPanelHeightChecked_) pos.y = mMapPanelHeightChecked_;
 
         mMapPosition_ = pos;
+        mMapInfoData_ = {
+            "x": ((mMapPosition_.x + mDrawableWidthChecked_) / 100).tointeger(),
+            "y": ((mMapPosition_.y + mDrawableHeightChecked_) / 100).tointeger()
+        };
+        mMapInfoPanel_.setData(mMapInfoData_);
+
         //print(mMapPosition_);
         mMapPanel_.setPosition(-mMapPosition_);
     }
