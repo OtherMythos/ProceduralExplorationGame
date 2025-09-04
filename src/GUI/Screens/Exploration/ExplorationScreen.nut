@@ -38,6 +38,8 @@ enum ExplorationScreenWidgetType{
     mDiscoverLevelUpScreen_ = null;
     mLayoutLine_ = null;
 
+    mAnimator_ = null;
+
     mScreenInputCheckList_ = null;
 
     mInputBlockerWindow_ = null;
@@ -48,6 +50,74 @@ enum ExplorationScreenWidgetType{
     mWorldStatsScreen_ = null;
 
     mExplorationScreenWidgetType_ = null;
+
+    ExplorationScreenAnimator = class{
+        mInventoryParams_ = null;
+        mInventoryColour_ = null;
+
+        static GREEN = 0;
+        static YELLOW = 1;
+        static RED = 2;
+
+        mAnimCount_ = 1.0;
+        mPrevPercentage_ = 0.0;
+        mTargetPercentage_ = 0.0;
+
+        constructor(){
+            local material = _graphics.getMaterialByName("Postprocess/InventoryRing");
+            local gpuParams = material.getFragmentProgramParameters(0, 0);
+            mInventoryParams_ = gpuParams;
+
+            setInventoryColour_(GREEN);
+        }
+
+        function update(){
+            if(mAnimCount_ >= 1.0) return;
+            mAnimCount_ += 0.05;
+            if(mAnimCount_ > 1.0) mAnimCount_ = 1.0;
+            //mInventoryParams_.setNamedConstant("radian", mCount_ % (PI * 2));
+
+            local animPercentage = mPrevPercentage_ + (mTargetPercentage_ - mPrevPercentage_) * mAnimCount_;
+            setInventoryPercentage_(animPercentage);
+        }
+
+        function setInventoryPercentage_(percentage){
+            local c = GREEN;
+            if(percentage <= 0.5){
+                c = GREEN;
+            }else if(percentage > 0.5 && percentage <= 0.8){
+                c = YELLOW;
+            }else{
+                c = RED;
+            }
+            setInventoryColour_(c);
+            mInventoryParams_.setNamedConstant("radian", percentage * (PI * 2));
+        }
+
+        function animateToInventoryPercentage(percentage){
+            mAnimCount_ = 0.0;
+            mPrevPercentage_ = mTargetPercentage_;
+            mTargetPercentage_ = percentage;
+        }
+
+        function setInventoryColour_(col){
+            if(col == mInventoryColour_) return;
+
+            local c = null;
+            if(col == GREEN){
+                c = Vec3(0, 1, 0);
+            }
+            else if(col == YELLOW){
+                c = Vec3(1, 1, 0);
+            }
+            else if(col == RED){
+                c = Vec3(1, 0, 0);
+            }
+            mInventoryParams_.setNamedConstant("colour", c);
+
+            mInventoryColour_ = col;
+        }
+    }
 
     WorldStatsScreen = class{
         mParent_ = null;
@@ -361,7 +431,11 @@ enum ExplorationScreenWidgetType{
         _event.subscribe(Event.ACTIONS_CHANGED, receiveActionsChanged, this);
         _event.subscribe(Event.WORLD_PREPARATION_STATE_CHANGE, receivePreparationStateChange, this);
         _event.subscribe(Event.REGION_DISCOVERED_POPUP_FINISHED, receiveRegionDiscoveredPopupFinished, this);
+        _event.subscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent, this);
         ::ScreenManager.transitionToScreen(Screen.WORLD_GENERATION_STATUS_SCREEN, null, 1);
+
+        mAnimator_ = ExplorationScreenAnimator();
+        mAnimator_.animateToInventoryPercentage(0.5);
 
         //TOOD NOTE Workaround! This isn't how the paradigm should fit together
         //Screen shouldn't dictate what the logic does other than let it know of events happening.
@@ -376,6 +450,18 @@ enum ExplorationScreenWidgetType{
         if(widget != null){
             widget.setVisible(visible);
         }
+    }
+
+    function receiveInventoryChangedEvent(id, data){
+        local count = 0;
+        foreach(i in data){
+            if(i != null) count++;
+        }
+        setInventoryCount_(count, data.len());
+    }
+
+    function setInventoryCount_(count, size){
+        mAnimator_.animateToInventoryPercentage(count.tofloat() / size.tofloat());
     }
 
     function receiveRegionDiscoveredPopupFinished(id, data){
@@ -413,6 +499,8 @@ enum ExplorationScreenWidgetType{
         mDiscoverLevelUpScreen_.update();
 
         mTooltipManager_.update();
+
+        mAnimator_.update();
     }
 
     function getMoneyCounterWindowPos(){
@@ -494,6 +582,7 @@ enum ExplorationScreenWidgetType{
         _event.unsubscribe(Event.WORLD_PREPARATION_STATE_CHANGE, receivePreparationStateChange, this);
         _event.unsubscribe(Event.ACTIONS_CHANGED, receiveActionsChanged, this);
         _event.unsubscribe(Event.REGION_DISCOVERED_POPUP_FINISHED, receiveRegionDiscoveredPopupFinished, this);
+        _event.unsubscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent, this);
         mLogicInterface_.shutdown();
         //mLogicInterface_.notifyLeaveExplorationScreen();
         //mExplorationStatsContainer_.shutdown();

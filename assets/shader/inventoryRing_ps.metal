@@ -19,7 +19,8 @@ struct PS_INPUT
 
 struct Params
 {
-    float4 colour;
+    float3 colour;
+    float radian;
 };
 
 fragment float4 main_metal
@@ -31,20 +32,43 @@ fragment float4 main_metal
     float suppliedRadian = M_PI_F * 2 - 0.2;
 
     float2 delta = inPs.uv0 - float2(0.5, 0.5);
-    float dist2 = dot(delta, delta);
+    float dist = length(delta); // use actual distance, easier for outline thickness
 
     float outer = 0.5;
     float inner = 0.38;
+    float outline = 0.02; // outline thickness in UV units
 
-    if(dist2 <= outer * outer && dist2 >= inner * inner) {
+    if(dist <= outer && dist >= inner) {
+        float4 targetCol = float4(0, 0, 0, 0.2); // default = outline
+
+        // inside the "fill" part, away from outline
+        if(dist >= inner + outline && dist <= outer - outline) {
+            targetCol = float4(p.colour, 1);
+        }
+
         // Angle measured clockwise from top (north)
         float angle = atan2(delta.x, -delta.y);
         if(angle < 0.0) angle += 2.0 * M_PI_F;
 
-        float cutoff = suppliedRadian; // arc length in radians, clockwise from top
+        if(angle <= p.radian) {
+            returnFinalColour(targetCol);
+        }
+    }
 
-        if(angle <= cutoff) {
-            returnFinalColour(float4(1, 1, 1, 1)); // visible arc
+    if(dist <= outer && dist >= inner) {
+        float4 targetCol = float4(0, 0, 0, 0.2); // default = outline
+
+        // inside the "fill" part, away from outline
+        if(dist >= inner + outline && dist <= outer - outline) {
+            targetCol = float4(p.colour, 1);
+        }
+
+        // Angle measured clockwise from top (north)
+        float angle = atan2(delta.x, -delta.y);
+        if(angle < 0.0) angle += 2.0 * M_PI_F;
+
+        if(angle <= p.radian) {
+            returnFinalColour(targetCol);
         }
     }
 

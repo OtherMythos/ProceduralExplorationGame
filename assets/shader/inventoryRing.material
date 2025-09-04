@@ -40,7 +40,8 @@ material Postprocess/InventoryRing
 
 			fragment_program_ref Postprocess/inventoryRing_ps
 			{
-				param_named colour float4 0.5 0.89 1 1
+				param_named colour float3 0.5 0.89 1
+				param_named radian float 0.0
 			}
 
 		}
