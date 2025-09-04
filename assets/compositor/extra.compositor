@@ -56,6 +56,23 @@ compositor_node renderTextureInventoryNode
     }
 }
 
+compositor_node compositor/GamplayInventoryRingNode
+{
+    in 0 renderTexture
+    target renderTexture
+    {
+        pass render_quad
+        {
+            load
+            {
+                all clear
+                clear_colour 0 0 0 0
+            }
+            material Postprocess/InventoryRing
+        }
+    }
+}
+
 workspace renderTextureInventoryWorkspace
 {
     connect_output renderTextureInventoryNode 0
@@ -67,4 +84,8 @@ workspace renderTextureBGEffectWorkspace
 workspace renderTextureFGEffectWorkspace
 {
     connect_output renderTextureFGEffectNode 0
+}
+workspace compositor/GamplayInventoryRingWorkspace
+{
+    connect_output compositor/GamplayInventoryRingNode 0
 }

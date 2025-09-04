@@ -347,13 +347,16 @@ enum ExplorationScreenWidgetType{
 
         mExplorationStatsContainer_.setPosition(Vec2(0, insets.top));
         if(mobile){
-            mWieldActiveButton.setPosition(0, mExplorationStatsContainer_.getSize().y + insets.top);
+            mWieldActiveButton.setPosition(0, mExplorationStatsContainer_.getSize().y + insets.top + 200);
             local newPos = mWieldActiveButton.getPosition();
             newPos.y += mWieldActiveButton.getSize().y;
             mDiscoverLevelUpScreen_.setPosition(newPos);
         }
 
         mScreenInputCheckList_.append(mWorldMapDisplay_.mMapViewerWindow_);
+
+        local inventoryWidget = ::GuiWidgets.GameplayInventoryWidget(mWindow_, Vec2(100, 100));
+        inventoryWidget.setPosition(Vec2(0, statsWidget.getPosition().y + statsWidget.getSize().y));
 
         _event.subscribe(Event.ACTIONS_CHANGED, receiveActionsChanged, this);
         _event.subscribe(Event.WORLD_PREPARATION_STATE_CHANGE, receivePreparationStateChange, this);

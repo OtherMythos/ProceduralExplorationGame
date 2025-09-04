@@ -1,0 +1,48 @@
+
+fragment_program Postprocess/inventoryRing_ps_GLSL glsl
+{
+	source inventoryRing_ps.glsl
+}
+
+fragment_program Postprocess/inventoryRing_ps_VK glslvk
+{
+	source inventoryRing_ps.glsl
+}
+
+fragment_program Postprocess/inventoryRing_ps_Metal metal
+{
+	source inventoryRing_ps.metal
+	shader_reflection_pair_hint Ogre/Compositor/QuadCameraDirNoUV_vs
+}
+
+fragment_program Postprocess/inventoryRing_ps unified
+{
+	delegate Postprocess/inventoryRing_ps_GLSL
+	delegate Postprocess/inventoryRing_ps_VK
+	delegate Postprocess/inventoryRing_ps_Metal
+}
+
+material Postprocess/InventoryRing
+{
+    technique
+    {
+
+		pass
+		{
+			depth_write off
+			depth_check on
+
+			cull_hardware none
+
+			vertex_program_ref Ogre/Compositor/Quad_vs
+			{
+			}
+
+			fragment_program_ref Postprocess/inventoryRing_ps
+			{
+				param_named colour float4 0.5 0.89 1 1
+			}
+
+		}
+	}
+}
