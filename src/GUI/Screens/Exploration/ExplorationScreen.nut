@@ -36,6 +36,7 @@ enum ExplorationScreenWidgetType{
     mPlayerTapButton = null;
     mPlayerTapButtonActive = false;
     mDiscoverLevelUpScreen_ = null;
+    mInventoryWidget_ = null;
     mLayoutLine_ = null;
 
     mAnimator_ = null;
@@ -425,8 +426,8 @@ enum ExplorationScreenWidgetType{
 
         mScreenInputCheckList_.append(mWorldMapDisplay_.mMapViewerWindow_);
 
-        local inventoryWidget = ::GuiWidgets.GameplayInventoryWidget(mWindow_, Vec2(100, 100));
-        inventoryWidget.setPosition(Vec2(0, statsWidget.getPosition().y + statsWidget.getSize().y));
+        mInventoryWidget_ = ::GuiWidgets.GameplayInventoryWidget(mWindow_, Vec2(100, 100));
+        mInventoryWidget_.setPosition(Vec2(0, statsWidget.getPosition().y + statsWidget.getSize().y));
 
         _event.subscribe(Event.ACTIONS_CHANGED, receiveActionsChanged, this);
         _event.subscribe(Event.WORLD_PREPARATION_STATE_CHANGE, receivePreparationStateChange, this);
@@ -435,7 +436,14 @@ enum ExplorationScreenWidgetType{
         ::ScreenManager.transitionToScreen(Screen.WORLD_GENERATION_STATUS_SCREEN, null, 1);
 
         mAnimator_ = ExplorationScreenAnimator();
-        mAnimator_.animateToInventoryPercentage(0.5);
+        //mAnimator_.animateToInventoryPercentage(0.5);
+
+        {
+            local inv = ::Base.mPlayerStats.mInventory_;
+            local free = inv.getNumSlotsFree();
+            local fullSize = inv.getInventorySize();
+            setInventoryCount_(fullSize - free, fullSize);
+        }
 
         //TOOD NOTE Workaround! This isn't how the paradigm should fit together
         //Screen shouldn't dictate what the logic does other than let it know of events happening.
@@ -462,6 +470,7 @@ enum ExplorationScreenWidgetType{
 
     function setInventoryCount_(count, size){
         mAnimator_.animateToInventoryPercentage(count.tofloat() / size.tofloat());
+        mInventoryWidget_.setInventoryCount(count, size);
     }
 
     function receiveRegionDiscoveredPopupFinished(id, data){
@@ -589,6 +598,7 @@ enum ExplorationScreenWidgetType{
         mWorldMapDisplay_.shutdown();
         mDiscoverLevelUpScreen_.shutdown();
         mExplorationPlayerActionsContainer_.shutdown();
+        mInventoryWidget_.shutdown();
         base.shutdown();
     }
 
