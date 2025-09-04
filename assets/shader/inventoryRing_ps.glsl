@@ -35,7 +35,7 @@
 #define PARAMS_ARG
 
 #define readUniform( x ) x
-#define returnFinalColour( x ) fragColour = ( x )
+#define returnFinalColour( x ) fragColour = ( x ); return;
 
 #define outVs_Position gl_Position
 #define OGRE_Sample( tex, sampler, uv ) texture( vkSampler2D(tex, sampler), uv )
@@ -48,20 +48,67 @@
 #define OGRE_ddy( val ) dFdy( val )
 //----------------------------------------------------------
 
+#define M_PI_F 3.1415926535897932384626433832795
+#define atan2 atan
+
 vulkan_layout( location = 0 )
 out vec4 fragColour;
 
 vulkan( layout( ogre_P0 ) uniform params { )
-    uniform float4 colour;
+    uniform float3 colour;
+    uniform float radian;
 vulkan( }; )
 
 vulkan_layout( location = 0 )
 in block
 {
-    vec3 cameraDir;
+    vec2 uv0;
 } inPs;
 
 void main()
 {
-    fragColour = colour;
+    float suppliedRadian = M_PI_F * 2 - 0.2;
+
+    float2 delta = inPs.uv0 - float2(0.5, 0.5);
+    float dist = length(delta); // use actual distance, easier for outline thickness
+
+    float outer = 0.5;
+    float inner = 0.38;
+    float outline = 0.02; // outline thickness in UV units
+
+    if(dist <= outer && dist >= inner) {
+        float4 targetCol = float4(0, 0, 0, 0.2); // default = outline
+
+        // inside the "fill" part, away from outline
+        if(dist >= inner + outline && dist <= outer - outline) {
+            targetCol = float4(colour, 1);
+        }
+
+        // Angle measured clockwise from top (north)
+        float angle = atan2(delta.x, -delta.y);
+        if(angle < 0.0) angle += 2.0 * M_PI_F;
+
+        if(angle <= radian) {
+            returnFinalColour(targetCol);
+        }
+    }
+
+    if(dist <= outer && dist >= inner) {
+        float4 targetCol = float4(0, 0, 0, 0.2); // default = outline
+
+        // inside the "fill" part, away from outline
+        if(dist >= inner + outline && dist <= outer - outline) {
+            targetCol = float4(colour, 1);
+        }
+
+        // Angle measured clockwise from top (north)
+        float angle = atan2(delta.x, -delta.y);
+        if(angle < 0.0) angle += 2.0 * M_PI_F;
+
+        if(angle <= radian) {
+            returnFinalColour(targetCol);
+        }
+    }
+
+    returnFinalColour(float4(0, 0, 0, 0));
 }
