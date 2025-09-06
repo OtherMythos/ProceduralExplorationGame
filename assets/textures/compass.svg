@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <!-- Drop shadow filter -->
+    <filter id="shadow" x="-50%" y="-50%" width="400%" height="400%">
+      <feDropShadow dx="0" dy="0" stdDeviation="16" flood-color="black" flood-opacity="2.0"/>
+    </filter>
+  </defs>
+
+  <!-- Compass ticks with shadow -->
+  <g stroke="white" stroke-linecap="round" filter="url(#shadow)">
+    <!-- Major ticks (N, S, E, W) -->
+    <line x1="256" y1="16"  x2="256" y2="76"  stroke-width="10"/> <!-- N -->
+    <line x1="256" y1="496" x2="256" y2="436" stroke-width="10"/> <!-- S -->
+    <line x1="16"  y1="256" x2="76"  y2="256" stroke-width="10"/> <!-- W -->
+    <line x1="496" y1="256" x2="436" y2="256" stroke-width="10"/> <!-- E -->
+
+    <!-- Secondary ticks (NE, SE, SW, NW) -->
+    <line x1="256" y1="16" x2="256" y2="56" stroke-width="8" transform="rotate(45 256 256)"/>  <!-- NE -->
+    <line x1="256" y1="16" x2="256" y2="56" stroke-width="8" transform="rotate(135 256 256)"/> <!-- SE -->
+    <line x1="256" y1="16" x2="256" y2="56" stroke-width="8" transform="rotate(225 256 256)"/> <!-- SW -->
+    <line x1="256" y1="16" x2="256" y2="56" stroke-width="8" transform="rotate(315 256 256)"/> <!-- NW -->
+
+    <!-- Tertiary ticks (NNE, ENE, ESE, SSE, SSW, WSW, WNW, NNW) -->
+    <line x1="256" y1="16" x2="256" y2="41" stroke-width="6" transform="rotate(22.5 256 256)"/>   <!-- NNE -->
+    <line x1="256" y1="16" x2="256" y2="41" stroke-width="6" transform="rotate(67.5 256 256)"/>   <!-- ENE -->
+    <line x1="256" y1="16" x2="256" y2="41" stroke-width="6" transform="rotate(112.5 256 256)"/>  <!-- ESE -->
+    <line x1="256" y1="16" x2="256" y2="41" stroke-width="6" transform="rotate(157.5 256 256)"/>  <!-- SSE -->
+    <line x1="256" y1="16" x2="256" y2="41" stroke-width="6" transform="rotate(202.5 256 256)"/>  <!-- SSW -->
+    <line x1="256" y1="16" x2="256" y2="41" stroke-width="6" transform="rotate(247.5 256 256)"/>  <!-- WSW -->
+    <line x1="256" y1="16" x2="256" y2="41" stroke-width="6" transform="rotate(292.5 256 256)"/>  <!-- WNW -->
+    <line x1="256" y1="16" x2="256" y2="41" stroke-width="6" transform="rotate(337.5 256 256)"/>  <!-- NNW -->
+  </g>
+</svg>

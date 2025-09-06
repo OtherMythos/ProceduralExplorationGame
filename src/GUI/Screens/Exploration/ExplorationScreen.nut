@@ -40,6 +40,7 @@ enum ExplorationScreenWidgetType{
     mLayoutLine_ = null;
 
     mAnimator_ = null;
+    mCompassAnimator_ = null;
 
     mScreenInputCheckList_ = null;
 
@@ -51,6 +52,118 @@ enum ExplorationScreenWidgetType{
     mWorldStatsScreen_ = null;
 
     mExplorationScreenWidgetType_ = null;
+
+    ExplorationScreenCompassAnimator = class{
+        mTexture_ = null;
+        mDatablock_ = null;
+
+        mCompassPanel_ = null;
+        mCompassNode_ = null;
+
+        mRenderWorkspace_ = null;
+
+        constructor(window, size){
+
+            local texture = _graphics.createTexture("explorationCompassTexture");
+            texture.setResolution((size.x * ::resolutionMult.x).tointeger(), (size.y.tointeger() * ::resolutionMult.y).tointeger());
+            texture.setPixelFormat(_PFG_RGBA8_UNORM);
+            texture.scheduleTransitionTo(_GPU_RESIDENCY_RESIDENT);
+
+            mTexture_ = texture;
+            mRenderWorkspace_ = _compositor.addWorkspace([texture], _camera.getCamera(), "compositor/GamplayExplorationCompassWorkspace", true);
+            //mRenderWorkspace_.update();
+
+            local blendBlock = _hlms.getBlendblock({
+                "src_blend_factor": _HLMS_SBF_SOURCE_ALPHA,
+                "dst_blend_factor": _HLMS_SBF_ONE_MINUS_SOURCE_ALPHA,
+                "src_alpha_blend_factor": _HLMS_SBF_ONE_MINUS_DEST_ALPHA,
+                "dst_alpha_blend_factor": _HLMS_SBF_ONE
+            });
+            local datablock = _hlms.unlit.createDatablock("gameplayExplorationCompassDatablock", blendBlock);
+            datablock.setTexture(0, texture);
+            //mIconBackground_.setDatablock(datablock);
+            mDatablock_ = datablock;
+
+
+            local compassPanel = window.createPanel();
+            compassPanel.setPosition(0, ::drawable.y - 250);
+            compassPanel.setClickable(false);
+            compassPanel.setSize(400, 300);
+            mCompassPanel_ = compassPanel;
+            //mCameraButton.setPosition(compassPanel.getPosition());
+            //mCameraButton.setSize(compassPanel.getSize());
+
+            local node = _scene.getRootSceneNode().createChildSceneNode();
+            local item = _scene.createItem("plane");
+            item.setRenderQueueGroup(74);
+            node.attachObject(item);
+            node.setOrientation(Quat(0, 0, 1, sqrt(0.1)));
+            node.setPosition(0, 0, -3);
+            item.setDatablock("guiExplorationCompass");
+            mCompassNode_ = node;
+            compassPanel.setDatablock(mDatablock_);
+        }
+
+        function shutdown(){
+            _compositor.removeWorkspace(mRenderWorkspace_);
+            _gui.destroy(mCompassPanel_);
+            _hlms.destroyDatablock(mDatablock_);
+            _graphics.destroyTexture(mTexture_);
+            mCompassNode_.destroyNodeAndChildren();
+        }
+
+        function getPosition(){
+            return mCompassPanel_.getPosition();
+        }
+
+        function getSize(){
+            return mCompassPanel_.getSize();
+        }
+
+        function update(){
+            local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+            local currentRotation = currentWorld.mRotation_.x;
+            local currentYRotation = currentWorld.mRotation_.y;
+
+            //print(currentYRotation);
+
+            local range =
+                (PI * 0.5) - (PI * 0.1);
+            local animOther = (currentYRotation - (PI * 0.1)) / range;
+            //print(animOther);
+
+            local compassOrientation = Quat();
+            compassOrientation *= Quat(PI / 2 + 0.20, ::Vec3_UNIT_X);
+            //compassOrientation *= Quat(animCount % 0.15, ::Vec3_UNIT_X);
+            //compassOrientation *= Quat(PI * 2 * ::animCount, ::Vec3_UNIT_Z);
+            compassOrientation *= Quat(animOther * 0.1, ::Vec3_UNIT_X);
+            //if(currentRotation < 0) currentRotation = -currentRotation;
+            //print(currentRotation);
+            local an = (currentRotation % (PI * 2)) / (PI * 2);
+            //print(an);
+            compassOrientation *= Quat(PI * 2 * (-an), ::Vec3_UNIT_Z);
+
+            // Camera "right" axis in world space
+            local cameraNode = _camera.getCamera().getParentNode();
+            local cameraRight = cameraNode.getOrientation() * Vec3(1,0,0);
+
+            // Transform into plane local space
+            local planeRightLocal = compassOrientation.inverse() * cameraRight;
+            planeRightLocal.normalise();
+
+            // Now build scale vector
+            // Start at (1,1,1), then add extra scale along that local axis
+            // We want 1.5 instead of 1.0 → factor = 0.5
+            local extra = planeRightLocal * 0.5;
+            local scale = Vec3(1,1,1) + extra.abs(); // abs to keep positive scale
+            //print(extra);
+
+            //mCompassNode_.setScale(1.5, 1, 1);
+            mCompassNode_.setOrientation(compassOrientation);
+            //mCompassNode_.setScale(scale.x, scale.z, 1);
+            mCompassNode_.setScale(1.5, 1.5, 1);
+        }
+    }
 
     ExplorationScreenAnimator = class{
         mInventoryParams_ = null;
@@ -330,13 +443,14 @@ enum ExplorationScreenWidgetType{
             mExplorationScreenWidgetType_[ExplorationScreenWidgetType.WIELD_BUTTON] = mWieldActiveButton;
 
             mCameraButton = mWindow_.createButton();
-            mCameraButton.setText("Camera");
+            //mCameraButton.setText("Camera");
             //mCameraButton.setPosition(_window.getWidth() / 2 - mCameraButton.getSize().x/2 - mWieldActiveButton.getSize().x - 20, _window.getHeight() - mWieldActiveButton.getSize().y*2);
             //mCameraButton.setPosition(_window.getWidth() / 2 - mCameraButton.getSize().x/2, _window.getHeight() - mWieldActiveButton.getSize().y*2 - mCameraButton.getSize().y - 20);
             mCameraButton.attachListenerForEvent(function(widget, action){
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
                 currentWorld.requestOrientingCamera();
             }, _GUI_ACTION_PRESSED, this);
+            mCameraButton.setVisualsEnabled(false);
             mScreenInputCheckList_.append(mCameraButton);
             mExplorationScreenWidgetType_[ExplorationScreenWidgetType.CAMERA_BUTTON] = mCameraButton;
 
@@ -436,7 +550,10 @@ enum ExplorationScreenWidgetType{
         ::ScreenManager.transitionToScreen(Screen.WORLD_GENERATION_STATUS_SCREEN, null, 1);
 
         mAnimator_ = ExplorationScreenAnimator();
+        mCompassAnimator_ = ExplorationScreenCompassAnimator(mWindow_, Vec2(400, 300));
         //mAnimator_.animateToInventoryPercentage(0.5);
+        mCameraButton.setPosition(mCompassAnimator_.getPosition());
+        mCameraButton.setSize(mCompassAnimator_.getSize());
 
         {
             local inv = ::Base.mPlayerStats.mInventory_;
@@ -510,6 +627,7 @@ enum ExplorationScreenWidgetType{
         mTooltipManager_.update();
 
         mAnimator_.update();
+        mCompassAnimator_.update();
     }
 
     function getMoneyCounterWindowPos(){
@@ -599,6 +717,7 @@ enum ExplorationScreenWidgetType{
         mDiscoverLevelUpScreen_.shutdown();
         mExplorationPlayerActionsContainer_.shutdown();
         mInventoryWidget_.shutdown();
+        mCompassAnimator_.shutdown();
         base.shutdown();
     }
 
