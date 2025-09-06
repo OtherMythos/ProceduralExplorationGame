@@ -552,8 +552,10 @@ enum ExplorationScreenWidgetType{
         mAnimator_ = ExplorationScreenAnimator();
         mCompassAnimator_ = ExplorationScreenCompassAnimator(mWindow_, Vec2(400, 300));
         //mAnimator_.animateToInventoryPercentage(0.5);
-        mCameraButton.setPosition(mCompassAnimator_.getPosition());
-        mCameraButton.setSize(mCompassAnimator_.getSize());
+        if(mobile){
+            mCameraButton.setPosition(mCompassAnimator_.getPosition());
+            mCameraButton.setSize(mCompassAnimator_.getSize());
+        }
 
         {
             local inv = ::Base.mPlayerStats.mInventory_;
