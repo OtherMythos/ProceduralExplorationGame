@@ -9,6 +9,11 @@
             "dst_alpha_blend_factor": "one"
         }
     },
+    "macroblocks":{
+        "noCull":{
+            "cull_mode" : "none"
+        }
+    },
     "samplers" : {
         "gui/uiSpriteScale" :
         {
@@ -166,6 +171,16 @@
             "blendblock": "gui/uiBlend",
             "diffuse_map0": {
                 "texture": "icon_bag.png"
+            }
+        },
+
+        "guiExplorationCompass" :
+        {
+            "blendblock": "gui/uiBlend",
+            "macroblock": "noCull",
+
+            "diffuse_map0": {
+                "texture": "compass.png"
             }
         }
     }

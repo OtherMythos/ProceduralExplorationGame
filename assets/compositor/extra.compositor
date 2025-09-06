@@ -73,6 +73,25 @@ compositor_node compositor/GamplayInventoryRingNode
     }
 }
 
+compositor_node compositor/GameplayExplorationCompassNode
+{
+    in 0 renderTexture
+    target renderTexture
+    {
+        pass render_scene
+        {
+            load
+            {
+                all clear
+                clear_colour 0 0 0 0
+            }
+
+            rq_first 74
+            rq_last 75
+        }
+    }
+}
+
 workspace renderTextureInventoryWorkspace
 {
     connect_output renderTextureInventoryNode 0
@@ -88,4 +107,8 @@ workspace renderTextureFGEffectWorkspace
 workspace compositor/GamplayInventoryRingWorkspace
 {
     connect_output compositor/GamplayInventoryRingNode 0
+}
+workspace compositor/GamplayExplorationCompassWorkspace
+{
+    connect_output compositor/GameplayExplorationCompassNode 0
 }
