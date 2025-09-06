@@ -182,6 +182,70 @@
             "diffuse_map0": {
                 "texture": "compass.png"
             }
+        },
+
+        "guiExplorationCompassNorth" :
+        {
+            "blendblock": "gui/uiBlend",
+            "macroblock": "noCull",
+
+            "diffuse_map0": {
+                "texture": "compassText.png",
+                "animate": [
+                    [0.25, 0, 0, 0],
+                    [0, 1, 0, 0],
+                    [0, 0, 1, 0],
+                    [0, 0, 0, 1]
+                ]
+            }
+        },
+
+        "guiExplorationCompassEast" :
+        {
+            "blendblock": "gui/uiBlend",
+            "macroblock": "noCull",
+
+            "diffuse_map0": {
+                "texture": "compassText.png",
+                "animate": [
+                    [0.23, 0, 0, 0.24],
+                    [0, 1, 0, 0],
+                    [0, 0, 1, 0],
+                    [0, 0, 0, 1]
+                ]
+            }
+        },
+
+        "guiExplorationCompassSouth" :
+        {
+            "blendblock": "gui/uiBlend",
+            "macroblock": "noCull",
+
+            "diffuse_map0": {
+                "texture": "compassText.png",
+                "animate": [
+                    [0.23, 0, 0, 0.46],
+                    [0, 1, 0, 0],
+                    [0, 0, 1, 0],
+                    [0, 0, 0, 1]
+                ]
+            }
+        },
+
+        "guiExplorationCompassWest" :
+        {
+            "blendblock": "gui/uiBlend",
+            "macroblock": "noCull",
+
+            "diffuse_map0": {
+                "texture": "compassText.png",
+                "animate": [
+                    [0.32, 0, 0, 0.68],
+                    [0, 1, 0, 0],
+                    [0, 0, 1, 0],
+                    [0, 0, 0, 1]
+                ]
+            }
         }
     }
 }

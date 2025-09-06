@@ -58,11 +58,16 @@ enum ExplorationScreenWidgetType{
         mDatablock_ = null;
 
         mCompassPanel_ = null;
+        mParentNode_ = null;
         mCompassNode_ = null;
 
         mRenderWorkspace_ = null;
 
+        mDirectionNodes_ = null;
+
         constructor(window, size){
+
+            mDirectionNodes_ = [];
 
             local texture = _graphics.createTexture("explorationCompassTexture");
             texture.setResolution((size.x * ::resolutionMult.x).tointeger(), (size.y.tointeger() * ::resolutionMult.y).tointeger());
@@ -94,19 +99,73 @@ enum ExplorationScreenWidgetType{
             //mCameraButton.setSize(compassPanel.getSize());
 
             local node = _scene.getRootSceneNode().createChildSceneNode();
+            local compassNode = node.createChildSceneNode();
             local item = _scene.createItem("plane");
             item.setRenderQueueGroup(74);
-            node.attachObject(item);
-            node.setOrientation(Quat(0, 0, 1, sqrt(0.1)));
+            compassNode.attachObject(item);
+            compassNode.setOrientation(Quat(0, 0, 1, sqrt(0.1)));
             node.setPosition(0, 0, -3);
             item.setDatablock("guiExplorationCompass");
-            mCompassNode_ = node;
+            mCompassNode_ = compassNode;
+            mParentNode_ = node;
             compassPanel.setDatablock(mDatablock_);
+
+            for(local i = 0; i < 4; i++){
+                local target = node.createChildSceneNode();
+                local track = mCompassNode_.createChildSceneNode();
+                local dirPlane = _scene.createItem("plane");
+                dirPlane.setDatablock(getDatablock_(i));
+                dirPlane.setRenderQueueGroup(74);
+                target.setScale(0.1, 0.1, 0.1);
+                local pos = getDirection_(i);
+                target.setPosition(pos);
+                track.setPosition(pos);
+                //target.setOrientation(Quat(PI * 0.75, ::Vec3_UNIT_X));
+                //target.setPosition(0, 0, 0);
+                target.attachObject(dirPlane);
+                mDirectionNodes_.append([target, track]);
+                //target.setScale(0.5, 0.5, 0.5);
+            }
+        }
+
+        function getDatablock_(dir){
+            switch(dir){
+                case 0:
+                    return "guiExplorationCompassSouth";
+                case 1:
+                    return "guiExplorationCompassEast";
+                case 2:
+                    return "guiExplorationCompassNorth";
+                case 3:
+                    return "guiExplorationCompassWest";
+                default:
+                    assert(false);
+            }
+        }
+
+        function getDirection_(dir){
+            switch(dir){
+                case 0:
+                    //North
+                    return Vec3(1, 0, 0);
+                case 1:
+                    //East
+                    return Vec3(0, 1, 0);
+                case 2:
+                    //South
+                    return Vec3(-1, 0, 0);
+                case 3:
+                    //East
+                    return Vec3(0, -1, 0);
+
+                default:
+                    return Vec3();
+            }
         }
 
         function shutdown(){
             _compositor.removeWorkspace(mRenderWorkspace_);
-            _gui.destroy(mCompassPanel_);
+            _gui.destroy(mParentNode_);
             _hlms.destroyDatablock(mDatablock_);
             _graphics.destroyTexture(mTexture_);
             mCompassNode_.destroyNodeAndChildren();
@@ -158,10 +217,17 @@ enum ExplorationScreenWidgetType{
             local scale = Vec3(1,1,1) + extra.abs(); // abs to keep positive scale
             //print(extra);
 
+
             //mCompassNode_.setScale(1.5, 1, 1);
             mCompassNode_.setOrientation(compassOrientation);
             //mCompassNode_.setScale(scale.x, scale.z, 1);
             mCompassNode_.setScale(1.5, 1.5, 1);
+
+            foreach(i in mDirectionNodes_){
+                i[0].setPosition(i[1].getDerivedPositionVec3());
+                //i[0].lookAt(_camera.getPosition());
+            }
+
         }
     }
 

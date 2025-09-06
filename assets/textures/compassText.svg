@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="292.43906"
+   height="81.359741"
+   viewBox="0 0 77.374501 21.526431"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="compassText.svg"
+   inkscape:version="1.4.2 (ebf0e940, 2025-05-08)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="2.5978238"
+     inkscape:cx="111.6319"
+     inkscape:cy="121.83274"
+     inkscape:window-width="2560"
+     inkscape:window-height="1332"
+     inkscape:window-x="1728"
+     inkscape:window-y="25"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-52.730987,-59.783722)">
+    <path
+       style="font-size:10.5833px;line-height:1.25;font-family:'Falling Sky';-inkscape-font-specification:'Falling Sky, Normal';fill:#ffffff;stroke-width:0.793749"
+       d="m 52.730987,80.929153 h 3.524241 v -9.080472 c 0,-2.31774 -0.317499,-4.825983 -0.47625,-7.016727 h 0.12699 l 2.127243,4.413237 6.476979,11.683962 h 3.778239 V 60.164719 h -3.524238 v 9.016971 c 0,2.317743 0.317499,4.952985 0.476247,7.080228 h -0.12699 L 62.986205,71.848681 56.509226,60.164719 h -3.778239 z m 20.827938,0 h 12.826959 v -3.111489 h -9.14397 v -6.127731 h 7.461225 v -3.111489 h -7.461225 v -5.302236 h 8.826471 v -3.111489 h -12.50946 z m 15.652704,-2.666991 c 1.968495,1.936743 4.698984,3.047991 7.492977,3.047991 4.667234,0 7.461224,-2.793993 7.461224,-6.15948 0,-3.016242 -1.74624,-4.571988 -4.190984,-5.619732 l -2.825742,-1.174749 c -1.714494,-0.698496 -3.301989,-1.301745 -3.301989,-2.920989 0,-1.523997 1.301745,-2.444742 3.27024,-2.444742 1.777992,0 3.174985,0.666747 4.508485,1.777995 l 1.87324,-2.349495 c -1.61924,-1.619244 -3.968735,-2.635239 -6.381725,-2.635239 -4.063989,0 -6.984978,2.539992 -6.984978,5.841981 0,3.047988 2.158992,4.667235 4.190985,5.524482 l 2.857491,1.238244 c 1.873245,0.793749 3.206737,1.333497 3.206737,3.047991 0,1.619247 -1.269994,2.666991 -3.619486,2.666991 -1.904994,0 -3.905238,-0.952497 -5.397483,-2.349492 z m 20.796191,2.666991 h 4.47673 l 2.50824,-10.921965 c 0.34925,-1.619244 0.66675,-3.206739 0.9525,-4.794234 h 0.12699 c 0.25401,1.587495 0.5715,3.17499 0.92075,4.794234 l 2.57174,10.921965 h 4.57198 l 3.96874,-20.764434 h -3.52424 l -1.80974,10.477467 c -0.3175,2.190744 -0.66675,4.413237 -0.98425,6.63573 h -0.12699 c -0.47624,-2.222493 -0.92074,-4.476738 -1.39699,-6.63573 l -2.54,-10.477467 h -3.20673 l -2.54,10.477467 c -0.47625,2.190744 -0.92074,4.444986 -1.36524,6.63573 h -0.12699 c -0.3175,-2.190744 -0.66675,-4.413237 -1.016,-6.63573 l -1.80974,-10.477467 h -3.77824 z"
+       id="text1"
+       aria-label="NESW" />
+  </g>
+</svg>
