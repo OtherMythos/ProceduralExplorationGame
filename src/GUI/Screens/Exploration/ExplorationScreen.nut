@@ -80,6 +80,14 @@ enum ExplorationScreenWidgetType{
             mZoomLinesPanel_.setPosition(0, -(currentZoom - currentWorld.MIN_ZOOM));
         }
 
+        function getPosition(){
+            return mZoomWindow_.getPosition();
+        }
+
+        function getSize(){
+            return mZoomWindow_.getSize();
+        }
+
         function setPosition(pos){
             mZoomWindow_.setPosition(pos);
         }
@@ -93,6 +101,7 @@ enum ExplorationScreenWidgetType{
         mTexture_ = null;
         mDatablock_ = null;
 
+        mCompassWindow_ = null;
         mCompassPanel_ = null;
         mParentNode_ = null;
         mCompassNode_ = null;
@@ -125,11 +134,18 @@ enum ExplorationScreenWidgetType{
             //mIconBackground_.setDatablock(datablock);
             mDatablock_ = datablock;
 
+            mCompassWindow_ = window.createWindow();
+            mCompassWindow_.setClickable(false);
+            mCompassWindow_.setPosition(0, ::drawable.y - 150);
+            mCompassWindow_.setSize(400, 200);
+            mCompassWindow_.setClipBorders(0, 0, 0, 0);
+            mCompassWindow_.setVisualsEnabled(false);
 
-            local compassPanel = window.createPanel();
-            compassPanel.setPosition(0, ::drawable.y - 250);
+            local compassPanel = mCompassWindow_.createPanel();
+            //compassPanel.setPosition(0, ::drawable.y - 250);
             compassPanel.setClickable(false);
             compassPanel.setSize(400, 300);
+            compassPanel.setPosition(0, -100);
             mCompassPanel_ = compassPanel;
             //mCameraButton.setPosition(compassPanel.getPosition());
             //mCameraButton.setSize(compassPanel.getSize());
@@ -201,11 +217,12 @@ enum ExplorationScreenWidgetType{
 
         function shutdown(){
             _compositor.removeWorkspace(mRenderWorkspace_);
-            _gui.destroy(mCompassPanel_);
+            _gui.destroy(mCompassWindow_);
             _hlms.destroyDatablock(mDatablock_);
             _graphics.destroyTexture(mTexture_);
             mCompassNode_.destroyNodeAndChildren();
 
+            mCompassWindow_ = null;
             mCompassPanel_ = null;
             mTexture_ = null;
             mDatablock_ = null;
@@ -215,11 +232,11 @@ enum ExplorationScreenWidgetType{
         }
 
         function getPosition(){
-            return mCompassPanel_.getPosition();
+            return mCompassWindow_.getPosition();
         }
 
         function getSize(){
-            return mCompassPanel_.getSize();
+            return mCompassWindow_.getSize();
         }
 
         function update(){
@@ -612,10 +629,6 @@ enum ExplorationScreenWidgetType{
             mCameraButton.setSize(_window.getWidth() - zoomWidth, zoomWidth);
             mCameraButton.setSkinPack("ButtonZoom");
 
-            mPlayerDirectButton.setSize(100, 100);
-            mPlayerDirectButton.setPosition(mZoomModifierButton.getPosition().x - 100, mCameraButton.getPosition().y - 100);
-            mPlayerDirectButton.setSkinPack("ButtonZoom");
-
             if(screenshotMode){
                 mWieldActiveButton.setVisible(false);
                 mCameraButton.setVisible(false);
@@ -675,6 +688,16 @@ enum ExplorationScreenWidgetType{
         if(mobile){
             mCameraButton.setPosition(mCompassAnimator_.getPosition());
             mCameraButton.setSize(mCompassAnimator_.getSize());
+
+            mPlayerDirectButton.setSize(100, 100);
+            mPlayerDirectButton.setPosition(mZoomModifierButton.getPosition().x - 100, mCompassAnimator_.getPosition().y - 100);
+            mPlayerDirectButton.setSkinPack("ButtonZoom");
+
+            local zoomLinesSize = mZoomLines_.getSize();
+            zoomLinesSize.y = mCompassAnimator_.getPosition().y - mZoomLines_.getPosition().y;
+            mZoomLines_.setSize(zoomLinesSize);
+            mZoomModifierButton.setPosition(mZoomLines_.getPosition());
+            mZoomModifierButton.setSize(mZoomLines_.getSize());
         }
 
         {
