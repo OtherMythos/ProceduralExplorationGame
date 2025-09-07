@@ -165,10 +165,17 @@ enum ExplorationScreenWidgetType{
 
         function shutdown(){
             _compositor.removeWorkspace(mRenderWorkspace_);
-            _gui.destroy(mParentNode_);
+            _gui.destroy(mCompassPanel_);
             _hlms.destroyDatablock(mDatablock_);
             _graphics.destroyTexture(mTexture_);
             mCompassNode_.destroyNodeAndChildren();
+
+            mCompassPanel_ = null;
+            mTexture_ = null;
+            mDatablock_ = null;
+            mParentNode_ = null;
+            mCompassNode_ = null;
+            mDirectionNodes_ = null;
         }
 
         function getPosition(){
