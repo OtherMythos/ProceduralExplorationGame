@@ -200,6 +200,16 @@
             }
         },
 
+        "guiExplorationZoomLines" :
+        {
+            "blendblock": "gui/uiBlend",
+            "macroblock": "noCull",
+
+            "diffuse_map0": {
+                "texture": "zoomLines.png"
+            }
+        },
+
         "guiExplorationCompassEast" :
         {
             "blendblock": "gui/uiBlend",

@@ -38,6 +38,7 @@ enum ExplorationScreenWidgetType{
     mDiscoverLevelUpScreen_ = null;
     mInventoryWidget_ = null;
     mLayoutLine_ = null;
+    mZoomLines_ = null;
 
     mAnimator_ = null;
     mCompassAnimator_ = null;
@@ -52,6 +53,41 @@ enum ExplorationScreenWidgetType{
     mWorldStatsScreen_ = null;
 
     mExplorationScreenWidgetType_ = null;
+
+    ExplorationScreenZoomLines = class{
+        mZoomLinesPanel_ = null;
+        mZoomWindow_ = null;
+
+        mLineSize_ = null;
+
+        constructor(parent){
+            mLineSize_ = Vec2(70, 1240);
+
+            mZoomWindow_ = parent.createWindow();
+            mZoomWindow_.setVisualsEnabled(false);
+            mZoomLinesPanel_ = mZoomWindow_.createPanel();
+            mZoomLinesPanel_.setDatablock("guiExplorationZoomLines");
+            mZoomLinesPanel_.setSize(mLineSize_);
+            mZoomLinesPanel_.setClickable(false);
+            mZoomWindow_.setClickable(false);
+            mZoomWindow_.setSize(70, 640);
+            mZoomWindow_.setClipBorders(0, 0, 0, 0);
+        }
+
+        function update(){
+            local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+            local currentZoom = currentWorld.mCurrentZoomLevel_;
+            mZoomLinesPanel_.setPosition(0, -(currentZoom - currentWorld.MIN_ZOOM));
+        }
+
+        function setPosition(pos){
+            mZoomWindow_.setPosition(pos);
+        }
+
+        function setSize(size){
+            mZoomWindow_.setSize(size);
+        }
+    }
 
     ExplorationScreenCompassAnimator = class{
         mTexture_ = null;
@@ -555,6 +591,7 @@ enum ExplorationScreenWidgetType{
 
             mZoomModifierButton = mWindow_.createButton();
             mZoomModifierButton.setText("Zoom");
+            mZoomModifierButton.setVisualsEnabled(false);
             local zoomButtonPos = mWorldMapDisplay_.getPosition();
             zoomButtonPos.y += mWorldMapDisplay_.getMapViewerPosition().y + mWorldMapDisplay_.getMapViewerSize().y;
             zoomButtonPos.x += mWorldMapDisplay_.getSize().x - mZoomModifierButton.getSize().x;
@@ -567,6 +604,7 @@ enum ExplorationScreenWidgetType{
                 currentWorld.requestCameraZooming();
             }, _GUI_ACTION_PRESSED, this);
             mZoomModifierButton.setSkinPack("ButtonZoom");
+            mZoomModifierButton.setText("");
             mScreenInputCheckList_.append(mZoomModifierButton);
 
             local zoomWidth = mZoomModifierButton.getSize().x;
@@ -584,6 +622,15 @@ enum ExplorationScreenWidgetType{
                 mZoomModifierButton.setVisible(false);
                 mPlayerDirectButton.setVisible(false);
             }
+        }
+
+        mZoomLines_ = ExplorationScreenZoomLines(mWindow_);
+        if(mobile){
+            mZoomLines_.setSize(mZoomModifierButton.getSize());
+            mZoomLines_.setPosition(mZoomModifierButton.getPosition());
+        }else{
+            mZoomLines_.setSize(Vec2(50, ::drawable.y));
+            mZoomLines_.setPosition(Vec2(::drawable.x - 50, 30));
         }
 
         mExplorationBus_.registerCallback(busCallback, this);
@@ -703,6 +750,7 @@ enum ExplorationScreenWidgetType{
 
         mAnimator_.update();
         mCompassAnimator_.update();
+        mZoomLines_.update();
     }
 
     function getMoneyCounterWindowPos(){

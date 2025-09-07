@@ -1833,7 +1833,7 @@ enum WorldMousePressContexts{
 
         local mouseDelta = processMouseDelta();
         if(mouseDelta != null){
-            setZoomAcceleration(mouseDelta.y * 0.15);
+            setZoomAcceleration(mouseDelta.y * -0.15);
             //setCurrentZoom(mCurrentZoomLevel_ + (mouseDelta.y * 0.1));
         }
     }
