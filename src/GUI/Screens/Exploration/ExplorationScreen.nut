@@ -864,6 +864,7 @@ enum ExplorationScreenWidgetType{
         mExplorationPlayerActionsContainer_.shutdown();
         mInventoryWidget_.shutdown();
         mCompassAnimator_.shutdown();
+        mExplorationStatsContainer_.shutdown();
         base.shutdown();
     }
 

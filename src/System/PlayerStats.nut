@@ -126,6 +126,7 @@
 
         local data = {
             "health": mPlayerCombatStats.mHealth,
+            "max": mPlayerCombatStats.mMaxHealth,
             "percentage": mPlayerCombatStats.getHealthPercentage()
         };
         //mPlayerEntry_.notifyNewHealth(newHealth, percentage);

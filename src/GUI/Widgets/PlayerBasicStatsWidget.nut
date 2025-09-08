@@ -1,5 +1,6 @@
 ::GuiWidgets.PlayerBasicStatsWidget <- class{
 
+    mPlayerHealthBar_ = null;
     mCoinLabel_ = null;
     mEXPOrbLabel_ = null;
 
@@ -65,6 +66,7 @@
             healthBar.setBorder(2);
             healthBar.setPosition(leftCount, statsSize.y / 2 - barHeight / 2);
             healthBar.setLabel("120/240");
+            mPlayerHealthBar_ = healthBar;
             leftCount += barSize;
         }
 
@@ -77,7 +79,7 @@
 
             mEXPOrbLabel_ = window.createLabel();
             mEXPOrbLabel_.setDefaultFontSize(mEXPOrbLabel_.getDefaultFontSize() * 1.2);
-            mEXPOrbLabel_.setText("120");
+            mEXPOrbLabel_.setText("999");
             mEXPOrbLabel_.setPosition(leftCount, 0);
             leftCount += mEXPOrbLabel_.getSize().x;
         }
@@ -91,10 +93,50 @@
 
             mCoinLabel_ = window.createLabel();
             mCoinLabel_.setDefaultFontSize(mCoinLabel_.getDefaultFontSize() * 1.2);
-            mCoinLabel_.setText("240");
+            mCoinLabel_.setText("999");
             mCoinLabel_.setPosition(leftCount, 0);
             leftCount += mCoinLabel_.getSize().x;
         }
+
+        mEXPOrbLabel_.setText("0");
+        mCoinLabel_.setText("0");
+
+        _event.subscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);
+        _event.subscribe(Event.EXP_ORBS_ADDED, receiveEXPAnimFinished, this);
+        _event.subscribe(Event.MONEY_ADDED, receiveMoneyAnimFinished, this);
+        _event.subscribe(Event.MONEY_CHANGED, receiveMoneyChanged, this);
+    }
+
+    function shutdown(){
+        _event.unsubscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);
+        _event.unsubscribe(Event.EXP_ORBS_ADDED, receiveEXPAnimFinished, this);
+        _event.unsubscribe(Event.MONEY_ADDED, receiveMoneyAnimFinished, this);
+        _event.unsubscribe(Event.MONEY_CHANGED, receiveMoneyChanged, this);
+    }
+
+    function receiveMoneyAnimFinished(id, data){
+        //addForAnimation(data);
+        addCoinAmount_(data);
+    }
+
+    function receiveMoneyChanged(id, data){
+        mCoinLabel_.setText(data);
+    }
+
+    function addCoinAmount_(amount){
+        local numCoins = mCoinLabel_.getText().tointeger();
+        mCoinLabel_.setText((numCoins + amount).tostring());
+    }
+
+    function playerHealthChanged(id, data){
+        mPlayerHealthBar_.setPercentage(data.percentage);
+        mPlayerHealthBar_.setLabel(format("%i/%i", data.health, data.max));
+    }
+
+    function receiveEXPAnimFinished(id, data){
+        local numEXP = mEXPOrbLabel_.getText().tointeger();
+        //TODO bit of a hack
+        mEXPOrbLabel_.setText((numEXP + data).tostring());
     }
 
 };

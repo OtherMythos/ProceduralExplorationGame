@@ -719,6 +719,7 @@ enum WorldMousePressContexts{
         mPlayerEntry_ = mEntityFactory_.constructPlayer(mGui_, ::Base.mPlayerStats);
         local data = {
             "health": ::Base.mPlayerStats.getPlayerHealth(),
+            "max": ::Base.mPlayerStats.getPlayerMaxHealth(),
             "percentage": ::Base.mPlayerStats.getPlayerHealthPercentage()
         };
         _event.transmit(Event.PLAYER_HEALTH_CHANGED, data);
@@ -1686,7 +1687,7 @@ enum WorldMousePressContexts{
             //::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"cellSize": 2, "coinScale": 0.1, "numCoins": 5, "start": worldPos, "end": endPos, "money": 100}));
 
             local worldPos = ::EffectManager.getWorldPositionForWindowPos(::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getPosition() + ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getSize() / 2);
-            local endPos = ::Base.mExplorationLogic.mGui_.getEXPCounterWindowPos();
+            local endPos = ::Base.mExplorationLogic.mGui_.getMoneyCounterWindowPos();
 
             ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": 1, "start": worldPos, "end": endPos, "money": 1, "coinScale": 0.2}));
         }
