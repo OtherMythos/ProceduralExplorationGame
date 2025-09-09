@@ -202,6 +202,7 @@ enum GameplayMainMenuComplexWindow{
     mTabWindowYStart_ = 0;
     mPreviousTab_ = null;
     mCurrentTab_ = null;
+    mPlayerStats_ = null;
 
     mAnimCount_ = 0;
     mAnimCountTotal_ = 0;
@@ -219,6 +220,7 @@ enum GameplayMainMenuComplexWindow{
         local stats = ::GuiWidgets.PlayerBasicStatsWidget();
         stats.setup(mWindow_);
         stats.setPosition(Vec2(0, insets.top));
+        mPlayerStats_ = stats;
 
         local tabs = [
             {"icon": "swordsIcon", "label": "Explore"},
@@ -288,6 +290,7 @@ enum GameplayMainMenuComplexWindow{
         foreach(c,i in mTabWindows_){
             i.shutdown();
         }
+        mPlayerStats_.shutdown();
     }
 
     function getWindow(){
@@ -393,6 +396,10 @@ enum GameplayMainMenuComplexWindow{
 
         line.layout();
 
+    }
+
+    function shutdown(){
+        base.shutdown();
     }
 
     function notifyExplorationBegin_(){
