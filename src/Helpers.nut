@@ -50,15 +50,15 @@
     };
 }
 
-::accelerationClampCoordinate_ <- function(coord, change=0.1){
-    if(coord == 0.0) return coord;
+::accelerationClampCoordinate_ <- function(coord, target=0.0, change=0.1){
+    if(coord == target) return coord;
 
-    if(coord > 0){
+    if(coord > target){
         coord -= change;
-        if(coord < 0) coord = 0.0;
+        if(coord < target) coord = target;
     }else{
         coord += change;
-        if(coord > 0) coord = 0.0;
+        if(coord > target) coord = target;
     }
 
     return coord;

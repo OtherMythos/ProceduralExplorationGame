@@ -59,6 +59,13 @@ enum ExplorationScreenWidgetType{
         mZoomWindow_ = null;
 
         mLineSize_ = null;
+        mDatablock_ = null;
+
+        MAX_OPACITY_COUNT = 60;
+        mCurrentOpacityCount_ = 0;
+
+        mCurrentOpacity_ = 0.2;
+        mTargetOpacity_ = 0.2;
 
         constructor(parent){
             mLineSize_ = Vec2(70, 1240);
@@ -66,7 +73,10 @@ enum ExplorationScreenWidgetType{
             mZoomWindow_ = parent.createWindow();
             mZoomWindow_.setVisualsEnabled(false);
             mZoomLinesPanel_ = mZoomWindow_.createPanel();
-            mZoomLinesPanel_.setDatablock("guiExplorationZoomLines");
+            mDatablock_ = _hlms.getDatablock("guiExplorationZoomLines");
+            mDatablock_.setUseColour(true);
+            mDatablock_.setColour(1, 1, 1, 0.2);
+            mZoomLinesPanel_.setDatablock(mDatablock_);
             mZoomLinesPanel_.setSize(mLineSize_);
             mZoomLinesPanel_.setClickable(false);
             mZoomWindow_.setClickable(false);
@@ -78,6 +88,26 @@ enum ExplorationScreenWidgetType{
             local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
             local currentZoom = currentWorld.mCurrentZoomLevel_;
             mZoomLinesPanel_.setPosition(0, -(currentZoom - currentWorld.MIN_ZOOM));
+
+            if(mCurrentOpacityCount_ >= 0){
+                if(currentWorld.getCurrentMouseState() != WorldMousePressContexts.ZOOMING){
+                    mCurrentOpacityCount_--;
+                }
+            }
+
+            if(mCurrentOpacityCount_ <= 0){
+                mTargetOpacity_ = 0.2;
+            }else{
+                mTargetOpacity_ = 1.0;
+            }
+
+            mCurrentOpacity_ = ::accelerationClampCoordinate_(mCurrentOpacity_, mTargetOpacity_);
+
+            mDatablock_.setColour(1, 1, 1, mCurrentOpacity_);
+        }
+
+        function setRecentTouchInteraction(){
+            mCurrentOpacityCount_ = MAX_OPACITY_COUNT;
         }
 
         function getPosition(){
@@ -619,6 +649,7 @@ enum ExplorationScreenWidgetType{
                 //TODO clean up direct access
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
                 currentWorld.requestCameraZooming();
+                mZoomLines_.setRecentTouchInteraction();
             }, _GUI_ACTION_PRESSED, this);
             mZoomModifierButton.setSkinPack("ButtonZoom");
             mZoomModifierButton.setText("");

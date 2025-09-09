@@ -1076,6 +1076,9 @@ enum WorldMousePressContexts{
         local result = mMouseContext_.requestOrientingCamera();
         assert(result);
     }
+    function getCurrentMouseState(){
+        return mMouseContext_.getCurrentState();
+    }
     function checkForFlagPlacement(){
         if(!mGui_) return;
         if(!_input.getMouseButton(_MB_LEFT) || mMouseContext_.getCurrentState() != null) return;
