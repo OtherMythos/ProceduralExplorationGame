@@ -321,6 +321,8 @@ enum GameplayMainMenuComplexWindow{
 //TODO move this out of global space
 ::ExploreWindow <- class extends ::ScreenManager.Screens[Screen.GAMEPLAY_MAIN_MENU_COMPLEX_SCREEN].TabWindow{
 
+    mCompositor_ = null;
+
     function recreate(){
         local line = _gui.createLayoutLine();
         local insets = _window.getScreenSafeAreaInsets();
@@ -370,6 +372,17 @@ enum GameplayMainMenuComplexWindow{
         local explorationMap = mWindow_.createPanel();
         explorationMap.setPosition(MARGIN, currentY);
         explorationMap.setSize(winSize.x - MARGIN * 2, 300);
+
+        _gameCore.setCameraForNode("renderMainGameplayNode", "compositor/camera" + ::CompositorManager.mTotalCompositors_);
+        {
+            local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
+            local size = explorationMap.getSize() * ::resolutionMult;
+            _gameCore.setupCompositorDefs(size.x.tointeger(), size.y.tointeger());
+        }
+        mCompositor_ = ::CompositorManager.createCompositorWorkspace("renderWindowWorkspaceGameplayTexture", explorationMap.getSize() * ::resolutionMult, CompositorSceneType.OVERWORLD);
+        local datablock = ::CompositorManager.getDatablockForCompositor(mCompositor_);
+
+        explorationMap.setDatablock(datablock);
         currentY += explorationMap.getSize().y;
         local explorePanelButton = mWindow_.createButton();
         explorePanelButton.setPosition(explorationMap.getPosition());
@@ -396,13 +409,17 @@ enum GameplayMainMenuComplexWindow{
 
         line.layout();
 
+        ::OverworldLogic.setup();
     }
 
     function shutdown(){
         base.shutdown();
+
+        ::OverworldLogic.shutdown();
     }
 
     function notifyExplorationBegin_(){
+        ::Base.applyCompositorModifications()
         ::ScreenManager.queueTransition(Screen.EXPLORATION_MAP_SELECT_SCREEN, null, 3);
     }
 

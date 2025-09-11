@@ -256,6 +256,11 @@ compositor_node renderWindowNode
     }
 }
 
+workspace renderWindowWorkspaceGameplayTexture
+{
+    connect_external 0 renderMainGameplayNode 0
+}
+
 workspace renderWindowWorkspaceGameplay
 {
     connect_external 0 renderMainGameplayNode 0

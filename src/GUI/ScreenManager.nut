@@ -52,6 +52,12 @@
         processResize();
     }
 
+    function shutdown(){
+        for(local i = 0; i < MAX_SCREENS; i++){
+            _shutdownForLayer(i);
+        }
+    }
+
     function _createScreenForId(screenData){
         if(screenData == null){
             return null;

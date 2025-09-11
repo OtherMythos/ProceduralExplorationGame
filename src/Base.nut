@@ -241,6 +241,8 @@
         _doFile("res://src/Logic/ExplorationLogic.nut");
         _doFile("res://src/Logic/ExplorationProjectileManager.nut");
 
+        _doFile("res://src/Logic/Overworld/OverworldLogic.nut");
+
         _doFile("res://src/Logic/World/Actions/WorldAction.nut");
         _doFile("res://src/Logic/World/Actions/EXPTrailAction.nut");
 
@@ -334,6 +336,7 @@
     }
 
     function applyCompositorModifications(){
+        _gameCore.setCameraForNode("renderMainGameplayNode", "explorationCamera");
         local mobile = (getTargetInterface() == TargetInterface.MOBILE);
         local size = _window.getActualSize();
         if(mobile){
@@ -403,6 +406,7 @@
         mActionManager.shutdown();
         ::MultiTouchManager.shutdown();
         mExplorationLogic.shutdown();
+        ::ScreenManager.shutdown();
 
         ::expOrbMesh = null;
     }

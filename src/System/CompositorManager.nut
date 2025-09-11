@@ -3,6 +3,7 @@
 enum CompositorSceneType{
     EXPLORATION,
     INVENTORY_PLAYER_INSPECTOR,
+    OVERWORLD,
 
     MAX,
     NONE

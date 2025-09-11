@@ -556,6 +556,26 @@ namespace ProceduralExplorationGamePlugin{
         return 0;
     }
 
+    SQInteger GameCoreNamespace::setCameraForNode(HSQUIRRELVM vm){
+        const SQChar *nodeName, *cameraName;
+        sq_getstring(vm, 2, &nodeName);
+        sq_getstring(vm, 3, &cameraName);
+
+        Ogre::CompositorManager2 *compositorManager = Ogre::Root::getSingleton().getCompositorManager2();
+        Ogre::CompositorNodeDef* nodeDef = compositorManager->getNodeDefinitionNonConst(nodeName);
+        for(int i = 0; i < nodeDef->getNumTargetPasses(); i++){
+            Ogre::CompositorTargetDef* def = nodeDef->getTargetPass(i);
+            for(Ogre::CompositorPassDef* p : def->getCompositorPassesNonConst()){
+                if(p->getType() != Ogre::CompositorPassType::PASS_SCENE) continue;
+
+                Ogre::CompositorPassSceneDef* sceneDef = dynamic_cast<Ogre::CompositorPassSceneDef*>(p);
+                sceneDef->mCameraName = Ogre::IdString(cameraName);
+            }
+        }
+
+        return 0;
+    }
+
     SQInteger GameCoreNamespace::setupCompositorDefs(HSQUIRRELVM vm){
         SQInteger width, height;
         sq_getinteger(vm, 2, &width);
@@ -770,6 +790,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, registerMapGenClient, "registerMapGenClient", 4, ".sst|o");
         AV::ScriptUtils::addFunction(vm, recollectMapGenSteps, "recollectMapGenSteps");
         AV::ScriptUtils::addFunction(vm, setCustomPassBufferValue, "setCustomPassBufferValue", -2, ".n|unn");
+        AV::ScriptUtils::addFunction(vm, setCameraForNode, "setCameraForNode", 3, ".ss");
 
         AV::ScriptUtils::addFunction(vm, disableShadows, "disableShadows");
         AV::ScriptUtils::addFunction(vm, setupCompositorDefs, "setupCompositorDefs", 3, ".ii");
