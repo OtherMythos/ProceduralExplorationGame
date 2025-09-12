@@ -102,6 +102,7 @@
         mCurrentData_.playerZoom = zoom;
     }
     function getExplorationCurrentZoom(){
+        if(mCurrentData_ == null) return 0.0;
         return mCurrentData_.playerZoom;
     }
 

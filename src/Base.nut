@@ -233,11 +233,13 @@
         _doFile("res://src/Logic/World/ProceduralExplorationWorld.nut");
         _doFile("res://src/Logic/World/ProceduralDungeonWorld.nut");
         _doFile("res://src/Logic/World/TestingWorld.nut");
+        _doFile("res://src/Logic/Overworld/Overworld.nut");
         _doFile("res://src/Logic/World/WorldPreparer.nut");
         _doFile("res://src/Logic/World/PlacePlacer.nut");
         _doFile("res://src/Logic/World/ProceduralExplorationWorldPreparer.nut");
         _doFile("res://src/Logic/World/ProceduralDungeonWorldPreparer.nut");
         _doFile("res://src/Logic/World/VisitedLocationWorldPreparer.nut");
+        _doFile("res://src/Logic/Overworld/OverworldPreparer.nut");
         _doFile("res://src/Logic/ExplorationLogic.nut");
         _doFile("res://src/Logic/ExplorationProjectileManager.nut");
 

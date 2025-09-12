@@ -555,7 +555,9 @@ enum WorldMousePressContexts{
             i.notifyDestroyed();
         }
         mEntityManager_.destroyAllEntities();
-        mPlayerEntry_.notifyDestroyed();
+        if(mPlayerEntry_ != null){
+            mPlayerEntry_.notifyDestroyed();
+        }
 
         mActiveEnemies_.clear();
 
@@ -715,8 +717,12 @@ enum WorldMousePressContexts{
     function processWorldActiveChange_(active){
     }
 
+    function constructPlayerEntry_(){
+        return mEntityFactory_.constructPlayer(mGui_, ::Base.mPlayerStats);
+    }
+
     function resetSession(){
-        mPlayerEntry_ = mEntityFactory_.constructPlayer(mGui_, ::Base.mPlayerStats);
+        mPlayerEntry_ = constructPlayerEntry_();
         local data = {
             "health": ::Base.mPlayerStats.getPlayerHealth(),
             "max": ::Base.mPlayerStats.getPlayerMaxHealth(),

@@ -256,12 +256,14 @@
         setupPlaces();
         createPlacedItems();
 
-        local startX = (mMapData_.playerStart >> 16) & 0xFFFF;
-        local startY = mMapData_.playerStart & 0xFFFF;
-        local pos = Vec3(startX, 0, -startY);
-        pos.y = getZForPos(pos);
-        mPlayerEntry_.setPosition(pos);
-        notifyPlayerMoved();
+        if(mPlayerEntry_ != null){
+            local startX = (mMapData_.playerStart >> 16) & 0xFFFF;
+            local startY = mMapData_.playerStart & 0xFFFF;
+            local pos = Vec3(startX, 0, -startY);
+            pos.y = getZForPos(pos);
+            mPlayerEntry_.setPosition(pos);
+            notifyPlayerMoved();
+        }
 
         if(false){
             local rel = mMapData_.width / 1024.0;
@@ -644,6 +646,7 @@
             landNode.setScale(1, 1, PROCEDURAL_WORLD_UNIT_MULTIPLIER);
             landNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
             landNode.setVisible(true);
+            item.setDatablock("baseVoxelMaterial");
 
             mRegionEntries_.rawset(c, ProceduralRegionEntry(this, mEntityManager_, landNode, decorationNode));
         }
