@@ -29,6 +29,13 @@
 #include "System/Base.h"
 #include "System/BaseSingleton.h"
 
+#include "MapGen/Mesh/WaterMeshGenerator.h"
+#include "OgreMeshManager2.h"
+#include "OgreMesh2.h"
+#include "OgreRenderSystem.h"
+#include "OgreSubMesh2.h"
+#include "Vao/OgreVaoManager.h"
+
 #include "Ogre.h"
 #include "Ogre/OgreVoxMeshItem.h"
 #include "OgreHlms.h"
@@ -151,6 +158,91 @@ namespace ProceduralExplorationGamePlugin{
         Ogre::HlmsPbsAVCustom* customPbs = dynamic_cast<Ogre::HlmsPbsAVCustom*>(hlmsPbs);
         assert(customPbs);
         customPbs->registerCustomListener(new HlmsGameCoreCustomHlmsListener());
+
+        {
+            ProceduralExplorationGameCore::WaterMeshGenerator gen;
+            std::vector<ProceduralExplorationGameCore::WaterMeshGenerator::Hole> holes;
+            ProceduralExplorationGameCore::ExplorationMapData mapData;
+            mapData.width = 600;
+            mapData.height = 600;
+            mapData.seaLevel = 100;
+            mapData.blueNoiseBuffer = 0;
+            mapData.voxelBuffer = 0;
+            mapData.secondaryVoxelBuffer = 0;
+            ProceduralExplorationGameCore::WaterMeshGenerator::MeshData meshData = gen.generateMesh(100, 100, holes, &mapData);
+
+            ProceduralExplorationGameCore::WaterMeshGenerator::MeshData* data = new ProceduralExplorationGameCore::WaterMeshGenerator::MeshData();
+            data->triangles = std::move(meshData.triangles);
+            data->vertices = std::move(meshData.vertices);
+            //mapData->voidPtr("waterMeshData", reinterpret_cast<void*>(data));
+
+            //WaterMeshGenerator::MeshData* data = mapData->ptr<WaterMeshGenerator::MeshData>("waterMeshData");
+
+            std::string totalName = "simpleWaterPlaneMesh";
+            Ogre::MeshPtr mesh = Ogre::MeshManager::getSingleton().createManual(totalName, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+            Ogre::SubMesh* subMesh = mesh->createSubMesh();
+
+            size_t vertBlocks = data->triangles.size();
+            //TODO properly set the indice stride to either be 16 or 32 bit.
+            static const size_t indiceStride = sizeof(AV::uint32);
+            void* indices = OGRE_MALLOC_SIMD(static_cast<size_t>(vertBlocks * 3 * indiceStride), Ogre::MEMCATEGORY_GEOMETRY);
+            AV::uint32* indicesPtr = static_cast<AV::uint32*>(indices);
+            //size_t indiceStride = (vertBlocks * 6 * 4) + 4 >= 0xFFFF ? 4 : 2;
+            for(const ProceduralExplorationGameCore::WaterMeshGenerator::Triangle& t : data->triangles){
+                *(indicesPtr++) = t.v0;
+                *(indicesPtr++) = t.v2;
+                *(indicesPtr++) = t.v1;
+            }
+
+            Ogre::VertexBufferPacked *vertexBuffer = 0;
+            Ogre::RenderSystem *renderSystem = Ogre::Root::getSingletonPtr()->getRenderSystem();
+            Ogre::VaoManager *vaoManager = renderSystem->getVaoManager();
+            static const Ogre::VertexElement2Vec elemVec = {
+                Ogre::VertexElement2(Ogre::VET_FLOAT3, Ogre::VES_POSITION),
+                Ogre::VertexElement2(Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES),
+                Ogre::VertexElement2(Ogre::VET_FLOAT3, Ogre::VES_NORMAL)
+            };
+
+            void* vertsBuf = OGRE_MALLOC_SIMD( data->vertices.size() * sizeof(float) * 8, Ogre::MEMCATEGORY_GEOMETRY);
+            float* vertsBufPtr = static_cast<float*>(vertsBuf);
+            float* vertsWritePtr = vertsBufPtr;
+            for(const ProceduralExplorationGameCore::WaterMeshGenerator::Vertex& v : data->vertices){
+                *(vertsWritePtr++) = (v.pos.x - 50.0f) / 50.0;
+                *(vertsWritePtr++) = v.pos.y;
+                *(vertsWritePtr++) = (v.pos.z - 50.0f) / 50.0;
+                *(vertsWritePtr++) = v.uv.x;
+                *(vertsWritePtr++) = v.uv.y;
+                *(vertsWritePtr++) = 0.0f;
+                *(vertsWritePtr++) = 1.0f;
+                *(vertsWritePtr++) = 0.0f;
+            }
+
+            try{
+                vertexBuffer = vaoManager->createVertexBuffer(elemVec, data->vertices.size(), Ogre::BT_DEFAULT, vertsBufPtr, true);
+            }catch(Ogre::Exception &e){
+                vertexBuffer = 0;
+            }
+
+            Ogre::IndexBufferPacked* indexBuffer = vaoManager->createIndexBuffer(Ogre::IndexType::IT_32BIT, vertBlocks * 3, Ogre::BT_IMMUTABLE, indices, false);
+
+            Ogre::VertexBufferPackedVec vertexBuffers;
+            vertexBuffers.push_back(vertexBuffer);
+            Ogre::VertexArrayObject* arrayObj = vaoManager->createVertexArrayObject(vertexBuffers, indexBuffer, Ogre::OT_TRIANGLE_LIST);
+
+            subMesh->mVao[Ogre::VpNormal].push_back(arrayObj);
+            subMesh->mVao[Ogre::VpShadow].push_back(arrayObj);
+
+            const Ogre::Vector3 halfBounds(100 / 2, 1 / 2, 100 / 2);
+            const Ogre::Aabb bounds(halfBounds, halfBounds);
+            mesh->_setBounds(bounds);
+            mesh->_setBoundingSphereRadius(bounds.getRadius());
+
+            //subMesh->setMaterialName("baseVoxelMaterial");
+
+            //return mesh;
+
+            delete data;
+        }
     }
 
     void ProceduralExplorationGameCorePlugin::shutdown(){

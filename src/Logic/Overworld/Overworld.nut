@@ -25,8 +25,9 @@
 
     }
 
-    function createScene(){
-
+    #Override
+    function getWaterPlaneMesh(){
+        return "simpleWaterPlaneMesh";
     }
 
     #Override
@@ -54,6 +55,10 @@
 
         _gameCore.update(mCameraPosition_);
         _gameCore.setCustomPassBufferValue(0, 0, 0);
+
+        mAnimIncrement_ += 0.01;
+        updateWaterBlock(mWaterDatablock_);
+        updateWaterBlock(mOutsideWaterDatablock_);
     }
 
     #Override

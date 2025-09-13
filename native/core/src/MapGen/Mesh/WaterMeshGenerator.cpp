@@ -176,13 +176,14 @@ namespace ProceduralExplorationGameCore{
     void WaterMeshGenerator::generateGridTriangles(ExplorationMapData* mapData) {
         const AV::uint32 width = mapData->width;
         const AV::uint32 height = mapData->height;
-        const AV::uint32 seaLevel = mapData->uint32("seaLevel");
+        const AV::uint32 seaLevel = mapData->seaLevel;
 
         std::vector<AV::uint8> resolvedFlags;
         resolvedFlags.resize(gridWidth * gridHeight, 0);
 
         for(int y = 0; y < height; y++){
             for(int x = 0; x < width; x++){
+                if(mapData->voxelBuffer == 0) break;
                 float xFloat = (float(x) / float(width)) * gridWidth;
                 float yFloat = (float(y) / float(height)) * gridHeight;
                 int xa = int(std::floor(xFloat));
