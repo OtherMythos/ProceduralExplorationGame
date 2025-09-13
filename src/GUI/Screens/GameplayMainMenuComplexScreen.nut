@@ -381,6 +381,7 @@ enum GameplayMainMenuComplexWindow{
         }
         mCompositor_ = ::CompositorManager.createCompositorWorkspace("renderWindowWorkspaceGameplayTexture", explorationMap.getSize() * ::resolutionMult, CompositorSceneType.OVERWORLD);
         local datablock = ::CompositorManager.getDatablockForCompositor(mCompositor_);
+        ::overworldCompositor <- mCompositor_;
 
         explorationMap.setDatablock(datablock);
         currentY += explorationMap.getSize().y;

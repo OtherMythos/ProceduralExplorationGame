@@ -29,9 +29,21 @@
         mWorld_.resetSession(data, nativeData);
     }
 
+    function update(){
+        mWorld_.update();
+    }
+
     function shutdown(){
         mParentSceneNode_.destroyNodeAndChildren();
         mWorld_.shutdown();
+    }
+
+    function applyCameraDelta(delta){
+        mWorld_.applyMovementDelta(delta);
+    }
+
+    function applyZoomDelta(delta){
+        mWorld_.applyZoomDelta(delta);
     }
 
 }

@@ -2,16 +2,21 @@
 ::ScreenManager.Screens[Screen.EXPLORATION_MAP_SELECT_SCREEN] = class extends ::Screen{
 
     mMapPanel_ = null;
+    mCompositor_ = null;
 
     mMapPosition_ = null;
     mMapAcceleration_ = null;
+    /*
     mMapPanelWidth_ = 4000;
     mMapPanelHeight_ = 4000;
+    */
 
+    /*
     mDrawableWidthChecked_ = null;
     mDrawableHeightChecked_ = null;
     mMapPanelWidthChecked_ = null;
     mMapPanelHeightChecked_ = null;
+    */
 
     mPrevMouseX_ = null;
     mPrevMouseY_ = null;
@@ -53,6 +58,7 @@
 
         local insets = _window.getScreenSafeAreaInsets();
 
+        /*
         mMapPanel_ = mWindow_.createPanel();
         mMapPanel_.setSize(mMapPanelWidth_, mMapPanelHeight_);
         mMapPanel_.setDatablock("explorationMapPanel");
@@ -60,6 +66,22 @@
         mDrawableHeightChecked_ = ::drawable.y / 2;
         mMapPanelWidthChecked_ = mMapPanelWidth_ - mDrawableWidthChecked_;
         mMapPanelHeightChecked_ = mMapPanelHeight_ - mDrawableHeightChecked_;
+        */
+
+        _gameCore.setCameraForNode("renderMainGameplayNode", "compositor/camera" + ::CompositorManager.mTotalCompositors_);
+        {
+            local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
+            local size = ::drawable * ::resolutionMult;
+            _gameCore.setupCompositorDefs(size.x.tointeger(), size.y.tointeger());
+        }
+        mCompositor_ = ::CompositorManager.createCompositorWorkspace("renderWindowWorkspaceGameplayTexture", ::drawable * ::resolutionMult, CompositorSceneType.OVERWORLD);
+        //local datablock = ::CompositorManager.getDatablockForCompositor(mCompositor_);
+        ::overworldCompositor <- mCompositor_;
+
+        mMapPanel_ = mWindow_.createPanel();
+        mMapPanel_.setSize(::drawable);
+        local datablock = ::CompositorManager.getDatablockForCompositor(::overworldCompositor);
+        mMapPanel_.setDatablock(datablock);
 
         local closeButton = mWindow_.createButton();
         closeButton.setText("Back");
@@ -94,6 +116,14 @@
         mMapInfoPanel_.setPosition(Vec2(::drawable.x - 100 - MARGIN, MARGIN + insets.top));
 
         updateMapPosition_(mMapPosition_);
+
+        ::OverworldLogic.setup();
+    }
+
+    function shutdown(){
+        base.shutdown();
+        ::OverworldLogic.shutdown();
+        ::Base.applyCompositorModifications()
     }
 
     function update(){
@@ -101,27 +131,32 @@
         if(delta != null){
             mMapAcceleration_ = -delta;
         }
-        mMapAcceleration_.x = accelerationClampCoordinate_(mMapAcceleration_.x);
-        mMapAcceleration_.y = accelerationClampCoordinate_(mMapAcceleration_.y);
+        mMapAcceleration_.x = accelerationClampCoordinate_(mMapAcceleration_.x, 0.0, 0.2);
+        mMapAcceleration_.y = accelerationClampCoordinate_(mMapAcceleration_.y, 0.0, 0.2);
 
-        updateMapPosition_(mMapPosition_ + mMapAcceleration_);
+        print(mMapAcceleration_.x);
+
+        ::OverworldLogic.update();
+        ::OverworldLogic.applyCameraDelta(mMapAcceleration_);
+        ::OverworldLogic.applyZoomDelta(_input.getMouseWheelValue());
+        //updateMapPosition_(mMapPosition_ + mMapAcceleration_);
     }
 
     function updateMapPosition_(pos){
-        if(pos.x < -mDrawableWidthChecked_) pos.x = -mDrawableWidthChecked_;
-        if(pos.y < -mDrawableHeightChecked_) pos.y = -mDrawableHeightChecked_;
-        if(pos.x >= mMapPanelWidthChecked_) pos.x = mMapPanelWidthChecked_;
-        if(pos.y >= mMapPanelHeightChecked_) pos.y = mMapPanelHeightChecked_;
+        //if(pos.x < -mDrawableWidthChecked_) pos.x = -mDrawableWidthChecked_;
+        //if(pos.y < -mDrawableHeightChecked_) pos.y = -mDrawableHeightChecked_;
+        //if(pos.x >= mMapPanelWidthChecked_) pos.x = mMapPanelWidthChecked_;
+        //if(pos.y >= mMapPanelHeightChecked_) pos.y = mMapPanelHeightChecked_;
 
         mMapPosition_ = pos;
-        mMapInfoData_ = {
-            "x": ((mMapPosition_.x + mDrawableWidthChecked_) / 100).tointeger(),
-            "y": ((mMapPosition_.y + mDrawableHeightChecked_) / 100).tointeger()
-        };
-        mMapInfoPanel_.setData(mMapInfoData_);
+        //mMapInfoData_ = {
+        //    "x": ((mMapPosition_.x + mDrawableWidthChecked_) / 100).tointeger(),
+        //    "y": ((mMapPosition_.y + mDrawableHeightChecked_) / 100).tointeger()
+        //};
+        //mMapInfoPanel_.setData(mMapInfoData_);
 
         //print(mMapPosition_);
-        mMapPanel_.setPosition(-mMapPosition_);
+        //mMapPanel_.setPosition(-mMapPosition_);
     }
 
     function processMouseDelta(alterPrev=true){

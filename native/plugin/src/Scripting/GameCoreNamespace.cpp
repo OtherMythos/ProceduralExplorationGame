@@ -462,7 +462,7 @@ namespace ProceduralExplorationGamePlugin{
         for(int y = 10; y < data->height - 10; y++){
             for(int x = 10; x < data->width - 10; x++){
                 ProceduralExplorationGameCore::WorldPoint p = ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y);
-                *(VOX_PTR_FOR_COORD(data, p)) = 110 + (x % 10);
+                *(VOX_PTR_FOR_COORD(data, p)) = 110 + (x % 10) * 10;
                 *(VOX_VALUE_PTR_FOR_COORD(data, p)) = 0;
                 //*(WATER_GROUP_PTR_FOR_COORD(data, p)) = 0;
                 //*(LAND_GROUP_PTR_FOR_COORD(data, p)) = 0;

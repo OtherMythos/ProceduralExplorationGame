@@ -25,8 +25,7 @@
         local buttonFunctions = [
             function(widget, action){
                 print("Explore");
-                //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
-                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.GAMEPLAY_MAIN_MENU_COMPLEX_SCREEN, {"logic": ::Base.mExplorationLogic}));
+                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
             },
             function(widget, action){
                 print("Inventory");
