@@ -2,7 +2,7 @@
 
     mCameraPosition_ = null;
     mZoomAmount_ = 0.0;
-    MAX_ZOOM = 50;
+    MAX_ZOOM = 200;
 
     #Override
     function setup(){
@@ -42,6 +42,8 @@
 
     function applyZoomDelta(delta){
         mZoomAmount_ += delta;
+        if(mZoomAmount_ < 0.0) mZoomAmount_ = 0.0;
+        if(mZoomAmount_ >= MAX_ZOOM) mZoomAmount_ = MAX_ZOOM;
     }
 
     #Override

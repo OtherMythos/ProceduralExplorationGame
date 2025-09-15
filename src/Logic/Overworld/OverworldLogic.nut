@@ -20,7 +20,8 @@
 
         local preparer = ::OverworldPreparer();
         mWorld_ = ::Overworld(0, preparer);
-        local dummy = _gameCore.getDummyMapGen();
+        //local dummy = _gameCore.getDummyMapGen();
+        local dummy = _gameCore.loadOverworld("overworld");
         local nativeData = dummy.data;
         local data = nativeData.explorationMapDataToTable();
         data.rawset("placeData", []);

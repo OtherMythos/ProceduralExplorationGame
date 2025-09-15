@@ -19,6 +19,7 @@
 #include "Scripting/ScriptNamespace/Classes/Ogre/Graphics/MeshUserData.h"
 
 #include "VisitedPlaces/VoxMeshSceneDataInserter.h"
+#include "VisitedPlaces/TileDataParser.h"
 #include "Scripting/ScriptNamespace/Classes/Scene/ParsedAvSceneUserData.h"
 #include "Scripting/ScriptNamespace/Classes/Ogre/Scene/SceneNodeUserData.h"
 #include "Scripting/ScriptNamespace/Classes/Vector3UserData.h"
@@ -443,6 +444,88 @@ namespace ProceduralExplorationGamePlugin{
         return 0;
     }
 
+    SQInteger GameCoreNamespace::loadOverworld(HSQUIRRELVM vm){
+        const SQChar *overworldName;
+        sq_getstring(vm, 2, &overworldName);
+
+        sq_newtable(vm);
+
+        ProceduralExplorationGameCore::TileDataParser tileData("res://build/assets/overworld/");
+
+        ProceduralExplorationGameCore::TileDataParser::OutDataContainer outBlend;
+        bool result = tileData.readData(&outBlend, overworldName, "terrainBlend.txt");
+        if(!result){
+            return sq_throwerror(vm, "Error reading terrainBlend.txt");
+        }
+
+        ProceduralExplorationGameCore::TileDataParser::OutDataContainer outTiles;
+        result = tileData.readData(&outTiles, overworldName, "terrain.txt");
+        if(!result){
+            return sq_throwerror(vm, "Error reading terrain.txt");
+        }
+
+        if(outBlend.tilesWidth != outTiles.tilesWidth){
+            return sq_throwerror(vm, "Tiles width do not match");
+        }
+        if(outBlend.tilesHeight != outTiles.tilesHeight){
+            return sq_throwerror(vm, "Tiles height do not match");
+        }
+
+        ProceduralExplorationGameCore::ExplorationMapData* data = new ProceduralExplorationGameCore::ExplorationMapData();
+        data->width = outTiles.tilesWidth;
+        data->height = outTiles.tilesHeight;
+        data->seaLevel = 100;
+        void* voxelBuffer = malloc(data->width * data->height * sizeof(AV::uint32));
+        void* secondaryVoxelBuffer = malloc(data->width * data->height * sizeof(AV::uint32));
+        AV::uint32* v = reinterpret_cast<AV::uint32*>(voxelBuffer);
+        AV::uint32* s = reinterpret_cast<AV::uint32*>(secondaryVoxelBuffer);
+        //memset(v, 0, data->width * data->height * sizeof(AV::uint32));
+        //memset(s, 0, data->width * data->height * sizeof(AV::uint32));
+        AV::uint32* vv = v;
+        for(size_t i = 0; i < outTiles.tilesWidth * outTiles.tilesHeight; i++){
+            *vv = static_cast<AV::uint32>(outTiles.tileValues[i]);
+            vv++;
+        }
+        AV::uint32* ss = s;
+        for(size_t i = 0; i < outBlend.tilesWidth * outBlend.tilesHeight; i++){
+            *ss = static_cast<AV::uint32>(outBlend.tileValues[i]);
+            ss++;
+        }
+        //memcpy(&voxelBuffer, &(outTiles.tileValues[0]), outTiles.tilesWidth * outTiles.tilesHeight);
+        data->voxelBuffer = voxelBuffer;
+        data->secondaryVoxelBuffer = secondaryVoxelBuffer;
+
+        /*
+        for(int y = 10; y < data->height - 10; y++){
+            for(int x = 10; x < data->width - 10; x++){
+                ProceduralExplorationGameCore::WorldPoint p = ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y);
+                *(VOX_PTR_FOR_COORD(data, p)) = 110 + (x % 10) * 10;
+                *(VOX_VALUE_PTR_FOR_COORD(data, p)) = 0;
+                //*(WATER_GROUP_PTR_FOR_COORD(data, p)) = 0;
+                //*(LAND_GROUP_PTR_FOR_COORD(data, p)) = 0;
+            }
+        }
+         */
+
+        std::vector<ProceduralExplorationGameCore::FloodFillEntry*>* e = new std::vector<ProceduralExplorationGameCore::FloodFillEntry*>();
+        data->voidPtr("waterData", e);
+        e = new std::vector<ProceduralExplorationGameCore::FloodFillEntry*>();
+        data->voidPtr("landData", e);
+        data->voidPtr("regionData", new std::vector<ProceduralExplorationGameCore::RegionData>());
+        data->voidPtr("placedItems", new std::vector<ProceduralExplorationGameCore::PlacedItemData>());
+        data->voidPtr("riverData", new std::vector<ProceduralExplorationGameCore::RiverData>());
+
+        data->uint32("width", data->width);
+        data->uint32("height", data->height);
+        data->uint32("seaLevel", data->seaLevel);
+
+        sq_pushstring(vm, "data", -1);
+        ProceduralExplorationGameCore::ExplorationMapDataUserData::ExplorationMapDataToUserData<false>(vm, data);
+        sq_newslot(vm, -3, SQFalse);
+
+        return 1;
+    }
+
     SQInteger GameCoreNamespace::getDummyMapGen(HSQUIRRELVM vm){
         sq_newtable(vm);
 
@@ -837,6 +920,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, setCustomPassBufferValue, "setCustomPassBufferValue", -2, ".n|unn");
         AV::ScriptUtils::addFunction(vm, setCameraForNode, "setCameraForNode", 3, ".ss");
         AV::ScriptUtils::addFunction(vm, getDummyMapGen, "getDummyMapGen");
+        AV::ScriptUtils::addFunction(vm, loadOverworld, "loadOverworld", 2, ".s");
 
         AV::ScriptUtils::addFunction(vm, disableShadows, "disableShadows");
         AV::ScriptUtils::addFunction(vm, setupCompositorDefs, "setupCompositorDefs", 3, ".ii");
