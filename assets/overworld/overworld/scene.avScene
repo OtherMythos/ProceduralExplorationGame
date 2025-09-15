@@ -1,1 +1,7 @@
-<scene/>
+<scene>
+    <user0 value="templeFragmentFirst.templeWall.1.voxMesh">
+        <position x="7.91652" y="-0.0262794" z="-15.6085"/>
+        <scale x="0.5" y="0.5" z="0.5"/>
+        <orientation x="0" y="1" z="0" w="0"/>
+    </user0>
+</scene>

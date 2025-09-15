@@ -8,6 +8,18 @@
     function setup(){
         base.setup();
 
+        local mapsDir = ::BaseHelperFunctions.getOverworldDir();
+
+        local targetMap = "overworld";
+        local path = mapsDir + targetMap + "/scene.avScene";
+        local parsedFile = null;
+        if(_system.exists(path)){
+            printf("Loading scene file with path '%s'", path);
+            parsedFile = _scene.parseSceneFile(path);
+        }
+
+        local animData = _gameCore.insertParsedSceneFileGetAnimInfo(parsedFile, mParentNode_, mCollisionDetectionWorld_);
+
         mCameraPosition_ = Vec3();
     }
 

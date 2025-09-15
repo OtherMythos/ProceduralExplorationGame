@@ -13,6 +13,9 @@ Separated from the Base.nut file so enums can be used.
     function getMapsDir(){
         return "res://build/assets/maps/";
     }
+    function getOverworldDir(){
+        return "res://build/assets/overworld/";
+    }
     function getStartingScreen(){
         return Screen.MAIN_MENU_SCREEN;
     }
