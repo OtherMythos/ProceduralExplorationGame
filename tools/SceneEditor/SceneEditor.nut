@@ -7,6 +7,7 @@ enum TerrainEditState{
 enum SceneEditorMapType{
     MAP,
     PLACE,
+    OVERWORLD,
 
     MAX
 }
@@ -41,6 +42,7 @@ enum SceneEditorMapType{
     mTileSceneNode = null
     mVisitedPlacesMapData = null
     mTileSize = 5
+    mTerrainNodeParent_ = null
 
     mEditingTerrain = false
     mEditingTileGrid = false
@@ -287,6 +289,10 @@ enum SceneEditorMapType{
         if(targetMap.getMapType() == SceneEditorMapType.PLACE){
             targetParent.setPosition(-0.75, 0, 0.75);
         }
+        if(targetMap.getMapType() == SceneEditorMapType.OVERWORLD){
+            targetParent.setPosition(0, -100 * PROCEDURAL_WORLD_UNIT_MULTIPLIER, 0);
+        }
+        mTerrainNodeParent_ = targetParent;
 
         mTileGridPlacer = ::TileGridPlacer([
             "InteriorFloor.voxMesh", "InteriorWall.voxMesh", "InteriorWallCorner.voxMesh"
@@ -395,6 +401,9 @@ enum SceneEditorMapType{
         }
         else if(mapType == SceneEditorMapType.PLACE){
             val = "res://../../assets/places/"
+        }
+        else if(mapType == SceneEditorMapType.OVERWORLD){
+            val = "res://../../assets/overworld/"
         }
         if(val == null){
             throw "Map type could not be determined";
@@ -615,6 +624,11 @@ enum SceneEditorMapType{
             return TargetMapType(editPlace, SceneEditorMapType.PLACE);
         }
 
+        local editPlace = _settings.getUserSetting("editOverworld");
+        if(editPlace != null && typeof editPlace == "string"){
+            return TargetMapType(editPlace, SceneEditorMapType.OVERWORLD);
+        }
+
         return null;
     }
 
@@ -641,7 +655,7 @@ enum SceneEditorMapType{
         if(mVisitedPlacesMapData == null) return;
         local ray = castRay_();
 
-        local outPos = mVisitedPlacesMapData.castRayForTerrain(ray);
+        local outPos = mVisitedPlacesMapData.castRayForTerrain(ray, mTerrainNodeParent_.getPositionVec3());
         return outPos;
     }
 

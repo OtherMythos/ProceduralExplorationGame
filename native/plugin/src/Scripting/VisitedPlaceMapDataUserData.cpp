@@ -316,6 +316,9 @@ namespace ProceduralExplorationGamePlugin{
         Ogre::Ray outRay;
         SCRIPT_CHECK_RESULT(AV::RayUserData::readRayFromUserData(vm, 2, &outRay));
 
+        Ogre::Vector3 offset;
+        SCRIPT_CHECK_RESULT(AV::Vector3UserData::readVector3FromUserData(vm, 3, &offset));
+
         bool collision = false;
         Ogre::Vector3 result(Ogre::Vector3::ZERO);
         for(int i = 0; i < 1000; i++){
@@ -335,7 +338,7 @@ namespace ProceduralExplorationGamePlugin{
             y = static_cast<ProceduralExplorationGameCore::WorldCoord>(point.z);
 
             AV::uint8 altitude = mapData->altitudeValues[x + y * mapData->width];
-            if(point.y < static_cast<float>(altitude)*0.4 && point.y >= 0.0f){
+            if(point.y < (static_cast<float>(altitude)*0.4) + offset.y && point.y >= 0.0f + offset.y){
                 collision = true;
                 result = outPoint;
                 break;
@@ -371,7 +374,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, setVoxelForCoord, "setVoxelForCoord", 4, ".iii");
         AV::ScriptUtils::addFunction(vm, getTileArray, "getTileArray");
 
-        AV::ScriptUtils::addFunction(vm, castRayForTerrain, "castRayForTerrain", 2, ".u");
+        AV::ScriptUtils::addFunction(vm, castRayForTerrain, "castRayForTerrain", 3, ".uu");
 
         sq_resetobject(&VisitedPlaceMapDataDelegateTableObject);
         sq_getstackobj(vm, -1, &VisitedPlaceMapDataDelegateTableObject);
