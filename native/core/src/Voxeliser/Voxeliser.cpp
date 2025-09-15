@@ -271,6 +271,20 @@ namespace ProceduralExplorationGameCore{
                         AV::uint32 yy = (VERTICES_POSITIONS[fv + 1] + yInverse) - yVal;
                         AV::uint32 zz = (VERTICES_POSITIONS[fv + 2] + altitude);
 
+                        if(xx > outBuffer.mMaxX){
+                            outBuffer.mMaxX = xx;
+                        }
+                        if(yy > outBuffer.mMaxY){
+                            outBuffer.mMaxY = yy;
+                        }
+
+                        if(xx < outBuffer.mMinX){
+                            outBuffer.mMinX = xx;
+                        }
+                        if(yy < outBuffer.mMinY){
+                            outBuffer.mMinY = yy;
+                        }
+
                         AV::uint8 ambient = (ambientMask >> 8 * i) & 0xFF;
                         assert(ambient >= 0 && ambient <= 3);
 
