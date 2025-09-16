@@ -178,6 +178,10 @@ enum GameplayMainMenuComplexWindow{
             label.setText("Window " + mId_);
         }
 
+        function update(){
+
+        }
+
         function setPosition(pos){
             mWindow_.setPosition(pos);
         }
@@ -263,6 +267,10 @@ enum GameplayMainMenuComplexWindow{
     }
 
     function update(){
+        foreach(i in mTabWindows_){
+            i.update();
+        }
+
         if(mAnimCount_ == 0){
             updateTabPosition_(1.0);
             return;
@@ -422,6 +430,12 @@ enum GameplayMainMenuComplexWindow{
     function notifyExplorationBegin_(){
         ::Base.applyCompositorModifications()
         ::ScreenManager.queueTransition(Screen.EXPLORATION_MAP_SELECT_SCREEN, null, 3);
+    }
+
+    function update(){
+        base.update();
+
+        ::OverworldLogic.update();
     }
 
 };
