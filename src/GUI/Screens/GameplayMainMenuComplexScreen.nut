@@ -418,13 +418,13 @@ enum GameplayMainMenuComplexWindow{
 
         line.layout();
 
-        ::OverworldLogic.setup();
+        ::OverworldLogic.requestSetup();
     }
 
     function shutdown(){
         base.shutdown();
 
-        ::OverworldLogic.shutdown();
+        ::OverworldLogic.requestShutdown();
     }
 
     function notifyExplorationBegin_(){

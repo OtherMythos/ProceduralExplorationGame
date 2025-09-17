@@ -147,19 +147,22 @@ namespace ProceduralExplorationGameCore{
             Ogre::TextureGpu* tex = 0;
             Ogre::TextureGpuManager* manager = Ogre::Root::getSingletonPtr()->getRenderSystem()->getTextureGpuManager();
             tex = manager->findTextureNoThrow("testTexture");
-            if(!tex){
-                tex = manager->createTexture("testTexture", Ogre::GpuPageOutStrategy::Discard, Ogre::TextureFlags::ManualTexture, Ogre::TextureTypes::Type2DArray);
-                tex->setPixelFormat(Ogre::PixelFormatGpu::PFG_RGBA32_FLOAT);
-                tex->setResolution(mapData->width, mapData->height);
-                tex->scheduleTransitionTo(Ogre::GpuResidency::Resident);
+            if(tex){
+                manager->destroyTexture(tex);
             }
+
+            tex = manager->createTexture("testTexture", Ogre::GpuPageOutStrategy::Discard, Ogre::TextureFlags::ManualTexture, Ogre::TextureTypes::Type2DArray);
+            tex->setPixelFormat(Ogre::PixelFormatGpu::PFG_RGBA32_FLOAT);
+            tex->setResolution(mapData->width, mapData->height);
+            tex->scheduleTransitionTo(Ogre::GpuResidency::Resident);
 
             Ogre::StagingTexture *stagingTexture = manager->getStagingTexture(mapData->width, mapData->height, tex->getDepth(), tex->getNumSlices(), tex->getPixelFormat());
             stagingTexture->startMapRegion();
             Ogre::TextureBox texBox = stagingTexture->mapRegion(mapData->width, mapData->height, tex->getDepth(), tex->getNumSlices(), tex->getPixelFormat());
 
             float* pDest = static_cast<float*>(texBox.at(0, 0, 0));
-            memcpy(pDest, mapData->ptr<float>("waterTextureBuffer"), mapData->width * mapData->height * sizeof(float) * 4);
+            float* buffer = mapData->ptr<float>("waterTextureBuffer");
+            memcpy(pDest, buffer, mapData->width * mapData->height * sizeof(float) * 4);
 
             stagingTexture->stopMapRegion();
             stagingTexture->upload(texBox, tex, 0, 0, 0, false);
@@ -172,12 +175,14 @@ namespace ProceduralExplorationGameCore{
             Ogre::TextureGpu* tex = 0;
             Ogre::TextureGpuManager* manager = Ogre::Root::getSingletonPtr()->getRenderSystem()->getTextureGpuManager();
             tex = manager->findTextureNoThrow("testTextureMask");
-            if(!tex){
-                tex = manager->createTexture("testTextureMask", Ogre::GpuPageOutStrategy::Discard, Ogre::TextureFlags::ManualTexture, Ogre::TextureTypes::Type2DArray);
-                tex->setPixelFormat(Ogre::PixelFormatGpu::PFG_RGBA32_FLOAT);
-                tex->setResolution(mapData->width, mapData->height);
-                tex->scheduleTransitionTo(Ogre::GpuResidency::Resident);
+            if(tex){
+                manager->destroyTexture(tex);
             }
+
+            tex = manager->createTexture("testTextureMask", Ogre::GpuPageOutStrategy::Discard, Ogre::TextureFlags::ManualTexture, Ogre::TextureTypes::Type2DArray);
+            tex->setPixelFormat(Ogre::PixelFormatGpu::PFG_RGBA32_FLOAT);
+            tex->setResolution(mapData->width, mapData->height);
+            tex->scheduleTransitionTo(Ogre::GpuResidency::Resident);
 
             Ogre::StagingTexture *stagingTexture = manager->getStagingTexture(mapData->width, mapData->height, tex->getDepth(), tex->getNumSlices(), tex->getPixelFormat());
             stagingTexture->startMapRegion();
@@ -199,12 +204,13 @@ namespace ProceduralExplorationGameCore{
             Ogre::TextureGpu* tex = 0;
             Ogre::TextureGpuManager* manager = Ogre::Root::getSingletonPtr()->getRenderSystem()->getTextureGpuManager();
             tex = manager->findTextureNoThrow("blueTexture");
-            if(!tex){
-                tex = manager->createTexture("blueTexture", Ogre::GpuPageOutStrategy::Discard, Ogre::TextureFlags::ManualTexture, Ogre::TextureTypes::Type2DArray);
-                tex->setPixelFormat(Ogre::PixelFormatGpu::PFG_RGBA32_FLOAT);
-                tex->setResolution(width, height);
-                tex->scheduleTransitionTo(Ogre::GpuResidency::Resident);
+            if(tex){
+                manager->destroyTexture(tex);
             }
+            tex = manager->createTexture("blueTexture", Ogre::GpuPageOutStrategy::Discard, Ogre::TextureFlags::ManualTexture, Ogre::TextureTypes::Type2DArray);
+            tex->setPixelFormat(Ogre::PixelFormatGpu::PFG_RGBA32_FLOAT);
+            tex->setResolution(width, height);
+            tex->scheduleTransitionTo(Ogre::GpuResidency::Resident);
 
             Ogre::StagingTexture *stagingTexture = manager->getStagingTexture(width, height, tex->getDepth(), tex->getNumSlices(), tex->getPixelFormat());
             stagingTexture->startMapRegion();

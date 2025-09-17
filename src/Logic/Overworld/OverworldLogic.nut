@@ -3,7 +3,30 @@
     mWorld_ = null
     mParentSceneNode_ = null
 
-    function setup(){
+    mActiveCount_ = 0
+
+    function requestSetup(){
+        local active = isActive();
+        mActiveCount_++;
+        if(active) return;
+
+        setup_();
+    }
+
+    function requestShutdown(){
+        mActiveCount_--;
+        if(isActive()) return;
+
+        shutdown_();
+    }
+
+    function isActive(){
+        return mActiveCount_ > 0;
+    }
+
+    function setup_(){
+
+        print("Setting up overworld");
 
         mParentSceneNode_ = _scene.getRootSceneNode().createChildSceneNode();
         /*
@@ -18,6 +41,8 @@
         camera.getParentNode().setPosition(0, 150, 300);
         camera.lookAt(300, 0, -300);
 
+        camera.setFarClipDistance(2000);
+
         local preparer = ::OverworldPreparer();
         mWorld_ = ::Overworld(0, preparer);
         //local dummy = _gameCore.getDummyMapGen();
@@ -31,12 +56,15 @@
     }
 
     function update(){
+        if(!isActive()) return;
         mWorld_.update();
     }
 
-    function shutdown(){
+    function shutdown_(){
         mParentSceneNode_.destroyNodeAndChildren();
         mWorld_.shutdown();
+
+        print("Shutting down overworld");
     }
 
     function applyCameraDelta(delta){

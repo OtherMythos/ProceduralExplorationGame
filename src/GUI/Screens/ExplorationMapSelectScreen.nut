@@ -117,12 +117,12 @@
 
         updateMapPosition_(mMapPosition_);
 
-        ::OverworldLogic.setup();
+        ::OverworldLogic.requestSetup();
     }
 
     function shutdown(){
         base.shutdown();
-        ::OverworldLogic.shutdown();
+        ::OverworldLogic.requestShutdown();
         ::Base.applyCompositorModifications()
     }
 
