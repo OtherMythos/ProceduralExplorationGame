@@ -54,6 +54,7 @@
         mWindow_ = _gui.createWindow("ExplorationMapSelectScreen");
         mWindow_.setSize(::drawable);
         mWindow_.setClipBorders(0, 0, 0, 0);
+        mWindow_.setVisualsEnabled(false);
         local MARGIN = 10;
 
         local insets = _window.getScreenSafeAreaInsets();
@@ -73,10 +74,12 @@
         //local datablock = ::CompositorManager.getDatablockForCompositor(mCompositor_);
         //::overworldCompositor <- mCompositor_;
 
+        /*
         mMapPanel_ = mWindow_.createPanel();
         mMapPanel_.setSize(::drawable);
         local datablock = ::OverworldLogic.getCompositorDatablock();
         mMapPanel_.setDatablock(datablock);
+        */
 
         local closeButton = mWindow_.createButton();
         closeButton.setText("Back");
@@ -122,6 +125,7 @@
         base.shutdown();
         ::OverworldLogic.requestShutdown();
         ::Base.applyCompositorModifications()
+        mScreenData_.data.notifyEvent(GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_MAP, null);
     }
 
     function update(){

@@ -6,6 +6,7 @@
 ::Vec3_NEGATIVE_UNIT_Y <- Vec3(0, -1, 0);
 ::Vec3_NEGATIVE_UNIT_Z <- Vec3(0, 0, -1);
 ::Vec3_UNIT_SCALE <- Vec3(1, 1, 1);
+::Vec2_ZERO <- Vec2(0, 0);
 ::Quat_IDENTITY <- Quat();
 
 ::wrapToString <- function(obj, name, desc=null){
@@ -118,6 +119,13 @@
 
     ::printTextBox(strings);
 
+}
+
+::calculateSimpleAnimation <- function(start, end, anim){
+    if(anim >= 1.0) return end;
+    if(anim <= 0.0) return start;
+
+    return start + ((end - start) * anim);
 }
 
 ::randDistanceFromPoint <- function(pos, radius, minRadius=0.0){

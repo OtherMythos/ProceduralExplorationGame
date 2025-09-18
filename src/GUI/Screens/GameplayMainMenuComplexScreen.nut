@@ -7,7 +7,15 @@ enum GameplayMainMenuComplexWindow{
     MAX
 };
 
+enum GameplayComplexMenuBusEvents{
+    SHOW_EXPLORATION_MAP,
+    CLOSE_EXPLORATION_MAP,
+};
+
 ::ScreenManager.Screens[Screen.GAMEPLAY_MAIN_MENU_COMPLEX_SCREEN] = class extends ::Screen{
+
+    ComplexScreenBus = class extends ::Screen.ScreenBus{
+    };
 
     TabPanel = class{
 
@@ -156,10 +164,12 @@ enum GameplayMainMenuComplexWindow{
     TabWindow = class{
 
         mId_ = null;
+        mBus_ = null;
         mWindow_ = null;
 
-        constructor(id){
+        constructor(id, bus){
             mId_ = id;
+            mBus_ = bus;
 
             mWindow_ = _gui.createWindow("TabWindow" + mId_);
             mWindow_.setVisualsEnabled(false);
@@ -207,11 +217,19 @@ enum GameplayMainMenuComplexWindow{
     mPreviousTab_ = null;
     mCurrentTab_ = null;
     mPlayerStats_ = null;
+    mBus_ = null;
+    mHasShutdown_ = false;
+
+    mMapFullScreen_ = false;
+    mMapMainScreenPanel_ = null;
 
     mAnimCount_ = 0;
     mAnimCountTotal_ = 0;
+    mMapAnimCount_ = 1.0;
 
     function recreate(){
+        mBus_ = ComplexScreenBus();
+        mBus_.registerCallback(busCallback, this);
         mWindow_ = _gui.createWindow("GameplayMainMenuComplex");
         mWindow_.setSize(::drawable.x, ::drawable.y);
         mWindow_.setClipBorders(0, 0, 0, 0);
@@ -250,7 +268,7 @@ enum GameplayMainMenuComplexWindow{
                 targetObj = targetWindows[i];
             }
             //local offset = Vec2(0, 0);
-            local tabWindow = targetObj(i);
+            local tabWindow = targetObj(i, mBus_);
 
             local size = ::drawable.copy();
             size.y -= tabSize.y;
@@ -264,12 +282,17 @@ enum GameplayMainMenuComplexWindow{
 
         mCurrentTab_ = 0;
         notifyTabChange(mCurrentTab_);
+
+        mMapMainScreenPanel_ = mWindow_.createPanel();
+        mMapMainScreenPanel_.setVisible(false);
     }
 
     function update(){
         foreach(i in mTabWindows_){
             i.update();
         }
+
+        updateExplorationMap();
 
         if(mAnimCount_ == 0){
             updateTabPosition_(1.0);
@@ -290,14 +313,18 @@ enum GameplayMainMenuComplexWindow{
         foreach(i in mTabWindows_){
             i.setZOrder(idx + 1);
         }
+
+        mMapMainScreenPanel_.setZOrder(idx + 2);
     }
 
     function shutdown(){
+        mHasShutdown_ = true;
         base.shutdown();
 
         foreach(c,i in mTabWindows_){
             i.shutdown();
         }
+        mTabWindows_.clear();
         mPlayerStats_.shutdown();
     }
 
@@ -324,12 +351,70 @@ enum GameplayMainMenuComplexWindow{
         }
     }
 
+    function setExplorationMapFullscreen(fullscreen){
+        local changed = (mMapFullScreen_ != fullscreen);
+        mMapFullScreen_ = fullscreen;
+
+        if(changed){
+
+            local mapPanel = mTabWindows_[0].getMapPanel();
+            if(mMapFullScreen_){
+                mapPanel.setVisible(false);
+                mMapMainScreenPanel_.setVisible(true);
+                mMapMainScreenPanel_.setClickable(false);
+                mMapMainScreenPanel_.setPosition(0, 0);
+                mMapMainScreenPanel_.setSize(::drawable);
+
+                local datablock = ::OverworldLogic.getCompositorDatablock();
+                mMapMainScreenPanel_.setDatablock(datablock);
+            }else{
+                mapPanel.setVisible(true);
+                mMapMainScreenPanel_.setVisible(false);
+            }
+            mMapAnimCount_ = 0.0;
+
+        }
+    }
+
+    function updateExplorationMap(){
+        print("map " + mMapAnimCount_);
+        if(mMapAnimCount_ == 1.0) return;
+        mMapAnimCount_ = ::accelerationClampCoordinate_(mMapAnimCount_, 1.0, 0.1);
+
+        local mapPanel = mTabWindows_[0].getMapPanel();
+        local startPos = mapPanel.getPosition();
+        local startSize = mapPanel.getSize();
+
+        local endPos = ::Vec2_ZERO;
+        local endSize = ::drawable;
+
+        local animPos = ::calculateSimpleAnimation(startPos, endPos, mMapAnimCount_);
+        local animSize = ::calculateSimpleAnimation(startSize, endSize, mMapAnimCount_);
+
+        mMapMainScreenPanel_.setPosition(animPos);
+        mMapMainScreenPanel_.setSize(animSize);
+
+        //::OverworldLogic.setRenderableSize(animSize * ::resolutionMult);
+    }
+
+    function busCallback(event, data){
+        if(mHasShutdown_) return;
+
+        if(event == GameplayComplexMenuBusEvents.SHOW_EXPLORATION_MAP){
+            setExplorationMapFullscreen(true);
+        }
+        else if(event == GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_MAP){
+            setExplorationMapFullscreen(false);
+        }
+    }
+
 };
 
 //TODO move this out of global space
 ::ExploreWindow <- class extends ::ScreenManager.Screens[Screen.GAMEPLAY_MAIN_MENU_COMPLEX_SCREEN].TabWindow{
 
     mCompositor_ = null;
+    mMapPanel_ = null;
 
     function recreate(){
         local line = _gui.createLayoutLine();
@@ -380,6 +465,7 @@ enum GameplayMainMenuComplexWindow{
         local explorationMap = mWindow_.createPanel();
         explorationMap.setPosition(MARGIN, currentY);
         explorationMap.setSize(winSize.x - MARGIN * 2, 300);
+        mMapPanel_ = explorationMap;
 
         _gameCore.setCameraForNode("renderMainGameplayNode", "compositor/camera" + ::CompositorManager.mTotalCompositors_);
         /*
@@ -424,6 +510,10 @@ enum GameplayMainMenuComplexWindow{
         explorationMap.setDatablock(datablock);
     }
 
+    function getMapPanel(){
+        return mMapPanel_;
+    }
+
     function shutdown(){
         base.shutdown();
 
@@ -431,8 +521,9 @@ enum GameplayMainMenuComplexWindow{
     }
 
     function notifyExplorationBegin_(){
+        mBus_.notifyEvent(GameplayComplexMenuBusEvents.SHOW_EXPLORATION_MAP, null);
         ::Base.applyCompositorModifications()
-        ::ScreenManager.queueTransition(Screen.EXPLORATION_MAP_SELECT_SCREEN, null, 3);
+        ::ScreenManager.queueTransition(::ScreenManager.ScreenData(Screen.EXPLORATION_MAP_SELECT_SCREEN, mBus_), null, 3);
     }
 
     function update(){
