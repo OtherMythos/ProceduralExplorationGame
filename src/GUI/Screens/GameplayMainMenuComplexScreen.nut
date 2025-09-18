@@ -382,16 +382,15 @@ enum GameplayMainMenuComplexWindow{
         explorationMap.setSize(winSize.x - MARGIN * 2, 300);
 
         _gameCore.setCameraForNode("renderMainGameplayNode", "compositor/camera" + ::CompositorManager.mTotalCompositors_);
+        /*
         {
             local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
             local size = explorationMap.getSize() * ::resolutionMult;
             _gameCore.setupCompositorDefs(size.x.tointeger(), size.y.tointeger());
         }
         mCompositor_ = ::CompositorManager.createCompositorWorkspace("renderWindowWorkspaceGameplayTexture", explorationMap.getSize() * ::resolutionMult, CompositorSceneType.OVERWORLD);
-        local datablock = ::CompositorManager.getDatablockForCompositor(mCompositor_);
-        ::overworldCompositor <- mCompositor_;
+        */
 
-        explorationMap.setDatablock(datablock);
         currentY += explorationMap.getSize().y;
         local explorePanelButton = mWindow_.createButton();
         explorePanelButton.setPosition(explorationMap.getPosition());
@@ -418,7 +417,10 @@ enum GameplayMainMenuComplexWindow{
 
         line.layout();
 
+        ::OverworldLogic.setRenderableSize(explorationMap.getSize() * ::resolutionMult);
         ::OverworldLogic.requestSetup();
+        local datablock = ::OverworldLogic.getCompositorDatablock();
+        explorationMap.setDatablock(datablock);
     }
 
     function shutdown(){

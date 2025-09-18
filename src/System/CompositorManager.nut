@@ -28,13 +28,15 @@ enum CompositorSceneType{
         mDatablock = null;
         mType = CompositorSceneType.NONE;
         mCamera = null;
+        mName = null;
 
-        constructor(workspace, texture, datablock, compType, camera){
+        constructor(workspace, texture, datablock, compType, camera, name){
             mWorkspace = workspace;
             mTexture = texture;
             mDatablock = datablock;
             mType = compType;
             mCamera = camera;
+            mName = name;
         }
 
         function destroy(){
@@ -115,7 +117,7 @@ enum CompositorSceneType{
             datablock.setTexture(0, newTex);
         }
 
-        local compDef = CompositorDef(newWorkspace, newTex, datablock, compositorSceneType, newCamera);
+        local compDef = CompositorDef(newWorkspace, newTex, datablock, compositorSceneType, newCamera, workspaceName);
         local id = registerNewCompositor_(compDef, compositorSceneType);
 
         //Add some uniqueness to the names.
@@ -126,6 +128,23 @@ enum CompositorSceneType{
         refreshRenderWindowWorkspace_();
 
         return id;
+    }
+
+    function resizeCompositor(compositor, size){
+        local data = mActiveCompositors_[compositor];
+
+        _compositor.removeWorkspace(data.mWorkspace);
+
+        local tex = data.mTexture;
+        tex.scheduleTransitionTo(_GPU_RESIDENCY_ON_STORAGE);
+        tex.setResolution(size.x.tointeger(), size.y.tointeger());
+        tex.scheduleTransitionTo(_GPU_RESIDENCY_RESIDENT);
+
+        data.mWorkspace = _compositor.addWorkspace([tex], data.mCamera, data.mName, true);
+
+        //data.mDatablock.setTexture(0, tex);
+
+        //data.resize(size);
     }
 
     function destroyCompositorWorkspace(workspaceId){

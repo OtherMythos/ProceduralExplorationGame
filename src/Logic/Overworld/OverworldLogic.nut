@@ -2,6 +2,8 @@
 
     mWorld_ = null
     mParentSceneNode_ = null
+    mCompositor_ = null
+    mRenderableSize_ = null
 
     mActiveCount_ = 0
 
@@ -37,6 +39,9 @@
         */
         //node.setScale(0.1, 0.1, 0.1);
 
+        mRenderableSize_ = ::drawable * ::resolutionMult;
+        setupCompositor_();
+
         local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.OVERWORLD);
         camera.getParentNode().setPosition(0, 150, 300);
         camera.lookAt(300, 0, -300);
@@ -53,6 +58,31 @@
         data.playerStart <- 0;
         mWorld_.setup();
         mWorld_.resetSession(data, nativeData);
+    }
+
+    function getCompositorDatablock(){
+        return ::CompositorManager.getDatablockForCompositor(mCompositor_);
+    }
+
+    function setRenderableSize(size){
+        mRenderableSize_ = size;
+        if(!isActive()) return;
+        //shutdownCompositor_();
+        //setupCompositor_();
+        ::CompositorManager.resizeCompositor(mCompositor_, size);
+    }
+
+    function shutdownCompositor_(){
+        ::CompositorManager.destroyCompositorWorkspace(mCompositor_);
+    }
+
+    function setupCompositor_(){
+        {
+            local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
+            local size = ::drawable * ::resolutionMult;
+            _gameCore.setupCompositorDefs(size.x.tointeger(), size.y.tointeger());
+        }
+        mCompositor_ = ::CompositorManager.createCompositorWorkspace("renderWindowWorkspaceGameplayTexture", mRenderableSize_, CompositorSceneType.OVERWORLD, true);
     }
 
     function update(){

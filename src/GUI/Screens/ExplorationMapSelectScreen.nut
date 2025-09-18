@@ -68,19 +68,14 @@
         mMapPanelHeightChecked_ = mMapPanelHeight_ - mDrawableHeightChecked_;
         */
 
-        _gameCore.setCameraForNode("renderMainGameplayNode", "compositor/camera" + ::CompositorManager.mTotalCompositors_);
-        {
-            local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
-            local size = ::drawable * ::resolutionMult;
-            _gameCore.setupCompositorDefs(size.x.tointeger(), size.y.tointeger());
-        }
-        mCompositor_ = ::CompositorManager.createCompositorWorkspace("renderWindowWorkspaceGameplayTexture", ::drawable * ::resolutionMult, CompositorSceneType.OVERWORLD);
+        _gameCore.setCameraForNode("renderMainGameplayNode", "compositor/camera0");
+
         //local datablock = ::CompositorManager.getDatablockForCompositor(mCompositor_);
-        ::overworldCompositor <- mCompositor_;
+        //::overworldCompositor <- mCompositor_;
 
         mMapPanel_ = mWindow_.createPanel();
         mMapPanel_.setSize(::drawable);
-        local datablock = ::CompositorManager.getDatablockForCompositor(::overworldCompositor);
+        local datablock = ::OverworldLogic.getCompositorDatablock();
         mMapPanel_.setDatablock(datablock);
 
         local closeButton = mWindow_.createButton();
@@ -117,6 +112,7 @@
 
         updateMapPosition_(mMapPosition_);
 
+        ::OverworldLogic.setRenderableSize(::drawable * ::resolutionMult);
         ::OverworldLogic.requestSetup();
     }
 
