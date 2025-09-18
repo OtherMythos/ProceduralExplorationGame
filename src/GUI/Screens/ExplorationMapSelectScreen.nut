@@ -83,6 +83,7 @@
         closeButton.setPosition(MARGIN, MARGIN + insets.top);
         closeButton.attachListenerForEvent(function(widget, action){
             ::ScreenManager.transitionToScreen(null, null, mLayerIdx);
+            ::OverworldLogic.requestState(OverworldStates.ZOOMED_OUT);
         }, _GUI_ACTION_PRESSED, this);
 
         local playIconButton = ::IconButtonComplex(mWindow_, {
@@ -114,6 +115,7 @@
 
         ::OverworldLogic.setRenderableSize(::drawable * ::resolutionMult);
         ::OverworldLogic.requestSetup();
+        ::OverworldLogic.requestState(OverworldStates.ZOOMED_IN);
     }
 
     function shutdown(){

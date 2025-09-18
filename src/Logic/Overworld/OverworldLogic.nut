@@ -1,9 +1,19 @@
+enum OverworldStates{
+    NONE,
+
+    ZOOMED_OUT,
+    ZOOMED_IN,
+
+    MAX
+};
+
 ::OverworldLogic <- {
 
     mWorld_ = null
     mParentSceneNode_ = null
     mCompositor_ = null
     mRenderableSize_ = null
+    mStateMachine_ = null
 
     mActiveCount_ = 0
 
@@ -22,6 +32,10 @@
         shutdown_();
     }
 
+    function requestState(state){
+        mStateMachine_.setState(state);
+    }
+
     function isActive(){
         return mActiveCount_ > 0;
     }
@@ -29,6 +43,8 @@
     function setup_(){
 
         print("Setting up overworld");
+
+        mStateMachine_ = OverworldStateMachine();
 
         mParentSceneNode_ = _scene.getRootSceneNode().createChildSceneNode();
         /*
@@ -43,9 +59,6 @@
         setupCompositor_();
 
         local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.OVERWORLD);
-        camera.getParentNode().setPosition(0, 150, 300);
-        camera.lookAt(300, 0, -300);
-
         camera.setFarClipDistance(2000);
 
         local preparer = ::OverworldPreparer();
@@ -106,3 +119,28 @@
     }
 
 }
+::OverworldLogic.OverworldStateMachine <- class extends ::Util.SimpleStateMachine{
+    mStates_ = array(OverworldStates.MAX);
+};
+
+::OverworldLogic.OverworldStateMachine.mStates_[OverworldStates.ZOOMED_OUT] = class extends ::Util.SimpleState{
+    function start(data){
+        local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.OVERWORLD);
+        camera.getParentNode().setPosition(0, 150, 300);
+        camera.lookAt(300, 0, -300);
+    }
+
+    function update(data){
+
+    }
+};
+
+::OverworldLogic.OverworldStateMachine.mStates_[OverworldStates.ZOOMED_IN] = class extends ::Util.SimpleState{
+    function start(data){
+
+    }
+
+    function update(data){
+
+    }
+};

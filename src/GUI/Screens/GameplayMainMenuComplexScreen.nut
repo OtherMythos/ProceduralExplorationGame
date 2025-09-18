@@ -419,6 +419,7 @@ enum GameplayMainMenuComplexWindow{
 
         ::OverworldLogic.setRenderableSize(explorationMap.getSize() * ::resolutionMult);
         ::OverworldLogic.requestSetup();
+        ::OverworldLogic.requestState(OverworldStates.ZOOMED_OUT);
         local datablock = ::OverworldLogic.getCompositorDatablock();
         explorationMap.setDatablock(datablock);
     }

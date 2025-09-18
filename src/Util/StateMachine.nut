@@ -6,7 +6,7 @@
     mData_ = null;
     mStateInstance_ = null;
 
-    constructor(data){
+    constructor(data=null){
         mData_ = data;
     }
 
@@ -65,6 +65,7 @@
 
 ::Util.SimpleState <- class{
     function start(data) {}
+    function end(data) {}
     function update(data) {}
 };
 
