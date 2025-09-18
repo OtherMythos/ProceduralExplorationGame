@@ -77,12 +77,35 @@ enum OverworldStates{
         return ::CompositorManager.getDatablockForCompositor(mCompositor_);
     }
 
-    function setRenderableSize(size){
+    function setRenderableSize(pos, size){
         mRenderableSize_ = size;
         if(!isActive()) return;
         //shutdownCompositor_();
         //setupCompositor_();
-        ::CompositorManager.resizeCompositor(mCompositor_, size);
+        //::CompositorManager.resizeCompositor(mCompositor_, size);
+
+        local datablock = getCompositorDatablock();
+        {
+            local calcWidth = size.x / ::drawable.x;
+            local calcHeight = size.y / ::drawable.y;
+
+            local calcX = pos.x / ::drawable.x;
+            local calcY = pos.y / ::drawable.y;
+
+            local mAnimMatrix_ = [
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1,
+            ];
+
+            mAnimMatrix_[0] = calcWidth;
+            mAnimMatrix_[5] = calcHeight;
+            mAnimMatrix_[3] = calcX;
+            mAnimMatrix_[7] = calcY;
+            datablock.setEnableAnimationMatrix(0, true);
+            datablock.setAnimationMatrix(0, mAnimMatrix_);
+        }
     }
 
     function shutdownCompositor_(){

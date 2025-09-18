@@ -301,7 +301,6 @@ enum GameplayComplexMenuBusEvents{
 
         mAnimCount_--;
         local percentage = mAnimCount_.tofloat() / mAnimCountTotal_.tofloat();
-        print(percentage);
 
         updateTabPosition_(percentage);
         mTabPanel_.update();
@@ -366,7 +365,7 @@ enum GameplayComplexMenuBusEvents{
                 mMapMainScreenPanel_.setSize(::drawable);
 
                 local datablock = ::OverworldLogic.getCompositorDatablock();
-                mMapMainScreenPanel_.setDatablock(datablock);
+                //mMapMainScreenPanel_.setDatablock(datablock);
             }else{
                 mapPanel.setVisible(true);
                 mMapMainScreenPanel_.setVisible(false);
@@ -377,12 +376,17 @@ enum GameplayComplexMenuBusEvents{
     }
 
     function updateExplorationMap(){
-        print("map " + mMapAnimCount_);
-        if(mMapAnimCount_ == 1.0) return;
-        mMapAnimCount_ = ::accelerationClampCoordinate_(mMapAnimCount_, 1.0, 0.1);
+        if(mMapAnimCount_ == 1.0){
+            if(!mMapFullScreen_){
+                local mapPanel = mTabWindows_[0].getMapPanel();
+                ::OverworldLogic.setRenderableSize(mapPanel.getDerivedPosition(), mapPanel.getSize());
+            }
+            return;
+        }
+        mMapAnimCount_ = ::accelerationClampCoordinate_(mMapAnimCount_, 1.0, 0.005);
 
         local mapPanel = mTabWindows_[0].getMapPanel();
-        local startPos = mapPanel.getPosition();
+        local startPos = mapPanel.getDerivedPosition();
         local startSize = mapPanel.getSize();
 
         local endPos = ::Vec2_ZERO;
@@ -394,7 +398,10 @@ enum GameplayComplexMenuBusEvents{
         mMapMainScreenPanel_.setPosition(animPos);
         mMapMainScreenPanel_.setSize(animSize);
 
-        //::OverworldLogic.setRenderableSize(animSize * ::resolutionMult);
+        local datablock = ::OverworldLogic.getCompositorDatablock();
+        mMapMainScreenPanel_.setDatablock(datablock);
+
+        ::OverworldLogic.setRenderableSize(animPos, animSize);
     }
 
     function busCallback(event, data){
@@ -503,9 +510,10 @@ enum GameplayComplexMenuBusEvents{
 
         line.layout();
 
-        ::OverworldLogic.setRenderableSize(explorationMap.getSize() * ::resolutionMult);
+        //::OverworldLogic.setRenderableSize(::drawable * ::resolutionMult);
         ::OverworldLogic.requestSetup();
         ::OverworldLogic.requestState(OverworldStates.ZOOMED_OUT);
+        ::OverworldLogic.setRenderableSize(explorationMap.getDerivedPosition(), explorationMap.getSize());
         local datablock = ::OverworldLogic.getCompositorDatablock();
         explorationMap.setDatablock(datablock);
     }

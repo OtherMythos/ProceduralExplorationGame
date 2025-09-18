@@ -116,7 +116,7 @@
 
         updateMapPosition_(mMapPosition_);
 
-        ::OverworldLogic.setRenderableSize(::drawable * ::resolutionMult);
+        //::OverworldLogic.setRenderableSize(::drawable * ::resolutionMult);
         ::OverworldLogic.requestSetup();
         ::OverworldLogic.requestState(OverworldStates.ZOOMED_IN);
     }
@@ -136,11 +136,11 @@
         mMapAcceleration_.x = accelerationClampCoordinate_(mMapAcceleration_.x, 0.0, 0.2);
         mMapAcceleration_.y = accelerationClampCoordinate_(mMapAcceleration_.y, 0.0, 0.2);
 
-        print(mMapAcceleration_.x);
+        //print(mMapAcceleration_.x);
 
         ::OverworldLogic.update();
-        ::OverworldLogic.applyCameraDelta(mMapAcceleration_);
-        ::OverworldLogic.applyZoomDelta(_input.getMouseWheelValue());
+        //::OverworldLogic.applyCameraDelta(mMapAcceleration_);
+        //::OverworldLogic.applyZoomDelta(_input.getMouseWheelValue());
         //updateMapPosition_(mMapPosition_ + mMapAcceleration_);
     }
 
