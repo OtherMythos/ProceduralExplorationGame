@@ -222,12 +222,8 @@ enum GameplayComplexMenuBusEvents{
     mBus_ = null;
     mHasShutdown_ = false;
 
-    mMapFullScreen_ = false;
-    mMapMainScreenPanel_ = null;
-
     mAnimCount_ = 0;
     mAnimCountTotal_ = 0;
-    mMapAnimCount_ = 1.0;
 
     function recreate(){
         mBus_ = ComplexScreenBus();
@@ -284,17 +280,12 @@ enum GameplayComplexMenuBusEvents{
 
         mCurrentTab_ = 0;
         notifyTabChange(mCurrentTab_);
-
-        mMapMainScreenPanel_ = mWindow_.createPanel();
-        mMapMainScreenPanel_.setVisible(false);
     }
 
     function update(){
         foreach(i in mTabWindows_){
             i.update();
         }
-
-        updateExplorationMap();
 
         if(mAnimCount_ == 0){
             updateTabPosition_(1.0);
@@ -314,8 +305,6 @@ enum GameplayComplexMenuBusEvents{
         foreach(i in mTabWindows_){
             i.setZOrder(idx + 1);
         }
-
-        mMapMainScreenPanel_.setZOrder(idx + 2);
     }
 
     function shutdown(){
@@ -352,71 +341,19 @@ enum GameplayComplexMenuBusEvents{
         }
     }
 
-    function setExplorationMapFullscreen(fullscreen){
-        local changed = (mMapFullScreen_ != fullscreen);
-        mMapFullScreen_ = fullscreen;
-
-        if(changed){
-
-            local mapPanel = mTabWindows_[0].getMapPanel();
-            if(mMapFullScreen_){
-                mapPanel.setVisible(false);
-                mMapMainScreenPanel_.setVisible(true);
-                mMapMainScreenPanel_.setClickable(false);
-                mMapMainScreenPanel_.setPosition(0, 0);
-                mMapMainScreenPanel_.setSize(::drawable);
-
-                local datablock = ::OverworldLogic.getCompositorDatablock();
-                //mMapMainScreenPanel_.setDatablock(datablock);
-            }else{
-                mapPanel.setVisible(true);
-                mMapMainScreenPanel_.setVisible(false);
-            }
-            mMapAnimCount_ = 0.0;
-
-        }
-    }
-
-    function updateExplorationMap(){
-        if(mMapAnimCount_ == 1.0){
-            if(!mMapFullScreen_){
-                local mapPanel = mTabWindows_[0].getMapPanel();
-                ::OverworldLogic.setRenderableSize(mapPanel.getDerivedPosition(), mapPanel.getSize());
-            }
-            return;
-        }
-        mMapAnimCount_ = ::accelerationClampCoordinate_(mMapAnimCount_, 1.0, 0.005);
-
-        local mapPanel = mTabWindows_[0].getMapPanel();
-        local startPos = mapPanel.getDerivedPosition();
-        local startSize = mapPanel.getSize();
-
-        local endPos = ::Vec2_ZERO;
-        local endSize = ::drawable;
-
-        local animPos = ::calculateSimpleAnimation(startPos, endPos, mMapAnimCount_);
-        local animSize = ::calculateSimpleAnimation(startSize, endSize, mMapAnimCount_);
-
-        mMapMainScreenPanel_.setPosition(animPos);
-        mMapMainScreenPanel_.setSize(animSize);
-
-        local datablock = ::OverworldLogic.getCompositorDatablock();
-        mMapMainScreenPanel_.setDatablock(datablock);
-
-        ::OverworldLogic.setRenderableSize(animPos, animSize);
+    function setExplorationMapVisible(vis){
+        mTabWindows_[0].getMapPanel().setVisible(vis);
     }
 
     function busCallback(event, data){
         if(mHasShutdown_) return;
 
-        /*
         if(event == GameplayComplexMenuBusEvents.SHOW_EXPLORATION_MAP_STARTED){
-            setExplorationMapFullscreen(true);
+            setExplorationMapVisible(false);
         }
-        else if(event == GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_STARTED){
-            setExplorationMapFullscreen(false);
+        else if(event == GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_FINISHED){
+            setExplorationMapVisible(true);
         }
-        */
     }
 
 };

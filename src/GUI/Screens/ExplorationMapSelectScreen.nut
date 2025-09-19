@@ -106,9 +106,7 @@
         closeButton.setText("Back");
         closeButton.setPosition(MARGIN, MARGIN + insets.top);
         closeButton.attachListenerForEvent(function(widget, action){
-            //::ScreenManager.transitionToScreen(null, null, mLayerIdx);
-            ::OverworldLogic.requestState(OverworldStates.ZOOMED_OUT);
-            mScreenData_.data.notifyEvent(GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_STARTED, null);
+            processCloseScreen_();
         }, _GUI_ACTION_PRESSED, this);
 
         local playIconButton = ::IconButtonComplex(mWindow_, {
@@ -123,14 +121,7 @@
         playIconButton.setSize(playSize);
         playIconButton.setPosition(Vec2(MARGIN / 2 + ::drawable.x / 2 - playSize.x / 2, ::drawable.y - MARGIN - playSize.y - insets.bottom));
         playIconButton.attachListenerForEvent(function(widget, action){
-            local viableSaves = ::Base.mSaveManager.findViableSaves();
-            local saveSlot = 0;
-            local save = ::Base.mSaveManager.readSaveAtPath("user://" + viableSaves[saveSlot].tostring());
-            ::Base.mPlayerStats.setSaveData(save, saveSlot);
-
-            ::ScreenManager.transitionToScreen(null, null, 0);
-            ::ScreenManager.transitionToScreen(null, null, mLayerIdx);
-            ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
+            processBeginExploration_();
         }, _GUI_ACTION_PRESSED, this);
 
         mMapInfoPanel_ = MapInfoPanel(mWindow_);
@@ -151,6 +142,26 @@
         base.shutdown();
         ::OverworldLogic.requestShutdown();
         ::Base.applyCompositorModifications()
+    }
+
+    function processCloseScreen_(){
+        if(!mMapAnimFinished_) return;
+
+        ::OverworldLogic.requestState(OverworldStates.ZOOMED_OUT);
+        mScreenData_.data.notifyEvent(GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_STARTED, null);
+    }
+
+    function processBeginExploration_(){
+        if(!mMapAnimFinished_) return;
+
+        local viableSaves = ::Base.mSaveManager.findViableSaves();
+        local saveSlot = 0;
+        local save = ::Base.mSaveManager.readSaveAtPath("user://" + viableSaves[saveSlot].tostring());
+        ::Base.mPlayerStats.setSaveData(save, saveSlot);
+
+        ::ScreenManager.transitionToScreen(null, null, 0);
+        ::ScreenManager.transitionToScreen(null, null, mLayerIdx);
+        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
     }
 
     function getExplorationStartEndValues(){
