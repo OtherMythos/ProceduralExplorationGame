@@ -121,6 +121,18 @@
 
 }
 
+::clampValue <- function(val, min, max){
+    if(val < min) return val;
+    if(val > max) return val;
+    return val;
+}
+
+::calculateSimpleAnimationInRange <- function(start, end, anim, animStart, animEnd){
+    local animCount = ::clampValue(anim, animStart, animEnd) - animStart;
+    animCount = animCount / (animEnd - animStart);
+    return ::calculateSimpleAnimation(start, end, animCount);
+}
+
 ::calculateSimpleAnimation <- function(start, end, anim){
     if(anim >= 1.0) return end;
     if(anim <= 0.0) return start;

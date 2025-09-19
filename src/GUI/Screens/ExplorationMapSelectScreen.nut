@@ -32,6 +32,11 @@
     mMapAnimFinished_ = true;
     mMapPanelCoords_ = null;
 
+    mCloseButton_ = null;
+    mCloseButtonStart_ = null;
+    mExploreButtonStart_ = null;
+    mExploreButton_ = null;
+
     MapInfoPanel = class{
 
         mWindow_ = null;
@@ -108,6 +113,8 @@
         closeButton.attachListenerForEvent(function(widget, action){
             processCloseScreen_();
         }, _GUI_ACTION_PRESSED, this);
+        mCloseButtonStart_ = closeButton.getPosition();
+        mCloseButton_ = closeButton;
 
         local playIconButton = ::IconButtonComplex(mWindow_, {
             "icon": "swordsIcon",
@@ -123,6 +130,8 @@
         playIconButton.attachListenerForEvent(function(widget, action){
             processBeginExploration_();
         }, _GUI_ACTION_PRESSED, this);
+        mExploreButtonStart_ = playIconButton.getPosition();
+        mExploreButton_ = playIconButton;
 
         mMapInfoPanel_ = MapInfoPanel(mWindow_);
         mMapInfoPanel_.setPosition(Vec2(::drawable.x - 100 - MARGIN, MARGIN + insets.top));
@@ -214,21 +223,53 @@
         }
         mMapAnimCount_ = ::accelerationClampCoordinate_(mMapAnimCount_, 1.0, 0.005);
 
-        //local mapPanel = mTabWindows_[0].getMapPanel();
-        local v = getExplorationStartEndValues();
-        local startPos = v.startPos;
-        local startSize = v.startSize;
+        {
+            local animStart = mMapFullScreen_ ? 0.0 : 0.2;
+            local animEnd = mMapFullScreen_ ? 0.8 : 1.0;
 
-        local endPos = v.endPos;
-        local endSize = v.endSize;
+            local v = getExplorationStartEndValues();
+            local startPos = v.startPos;
+            local startSize = v.startSize;
 
-        local animPos = ::calculateSimpleAnimation(startPos, endPos, mMapAnimCount_);
-        local animSize = ::calculateSimpleAnimation(startSize, endSize, mMapAnimCount_);
+            local endPos = v.endPos;
+            local endSize = v.endSize;
 
-        mMapMainScreenPanel_.setPosition(animPos);
-        mMapMainScreenPanel_.setSize(animSize);
+            local animPos = ::calculateSimpleAnimationInRange(startPos, endPos, mMapAnimCount_, animStart, animEnd);
+            local animSize = ::calculateSimpleAnimationInRange(startSize, endSize, mMapAnimCount_, animStart, animEnd);
 
-        ::OverworldLogic.setRenderableSize(animPos, animSize);
+            mMapMainScreenPanel_.setPosition(animPos);
+            mMapMainScreenPanel_.setSize(animSize);
+
+            ::OverworldLogic.setRenderableSize(animPos, animSize);
+        }
+
+        //Back button
+        {
+            local animStart = mMapFullScreen_ ? 0.8 : 0.0;
+            local animEnd = mMapFullScreen_ ? 1.0 : 0.2;
+
+            local offscreenPos = mCloseButtonStart_.copy();
+            offscreenPos.y -= 100;
+            local startPos = mMapFullScreen_ ? offscreenPos : mCloseButtonStart_;
+            local endPos = mMapFullScreen_ ? mCloseButtonStart_ : offscreenPos;
+            local animPos = ::calculateSimpleAnimationInRange(startPos, endPos, mMapAnimCount_, animStart, animEnd);
+
+            mCloseButton_.setPosition(animPos);
+        }
+
+        //Explore button
+        {
+            local animStart = mMapFullScreen_ ? 0.8 : 0.0;
+            local animEnd = mMapFullScreen_ ? 1.0 : 0.2;
+
+            local offscreenPos = mExploreButtonStart_.copy();
+            offscreenPos.y += 200;
+            local startPos = mMapFullScreen_ ? offscreenPos : mExploreButtonStart_;
+            local endPos = mMapFullScreen_ ? mExploreButtonStart_ : offscreenPos;
+            local animPos = ::calculateSimpleAnimationInRange(startPos, endPos, mMapAnimCount_, animStart, animEnd);
+
+            mExploreButton_.setPosition(animPos);
+        }
     }
 
     function update(){
