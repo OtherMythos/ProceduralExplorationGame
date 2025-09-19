@@ -67,6 +67,7 @@
     function start(data) {}
     function end(data) {}
     function update(data) {}
+    function notify(obj, data) {}
 };
 
 ::Util.StateMachine <- class{

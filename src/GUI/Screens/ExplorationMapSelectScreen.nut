@@ -140,7 +140,7 @@
 
         //::OverworldLogic.setRenderableSize(::drawable * ::resolutionMult);
         ::OverworldLogic.requestSetup();
-        ::OverworldLogic.requestState(OverworldStates.ZOOMED_IN);
+        //::OverworldLogic.requestState(OverworldStates.ZOOMED_IN);
     }
 
     function shutdown(){
@@ -156,7 +156,7 @@
     function processCloseScreen_(){
         if(!mMapAnimFinished_) return;
 
-        ::OverworldLogic.requestState(OverworldStates.ZOOMED_OUT);
+        //::OverworldLogic.requestState(OverworldStates.ZOOMED_OUT);
         mScreenData_.data.notifyEvent(GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_STARTED, null);
     }
 
@@ -284,9 +284,9 @@
 
         updateExplorationMapAnimation();
 
-        ::OverworldLogic.update();
-        //::OverworldLogic.applyCameraDelta(mMapAcceleration_);
-        //::OverworldLogic.applyZoomDelta(_input.getMouseWheelValue());
+        //::OverworldLogic.update();
+        ::OverworldLogic.applyCameraDelta(mMapAcceleration_);
+        ::OverworldLogic.applyZoomDelta(_input.getMouseWheelValue());
         //updateMapPosition_(mMapPosition_ + mMapAcceleration_);
     }
 

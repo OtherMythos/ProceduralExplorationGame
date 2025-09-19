@@ -4,6 +4,8 @@
     mZoomAmount_ = 0.0;
     MAX_ZOOM = 200;
 
+    mTargetCameraPosition_ = null;
+
     #Override
     function setup(){
         base.setup();
@@ -21,6 +23,7 @@
         local animData = _gameCore.insertParsedSceneFileGetAnimInfo(parsedFile, mParentNode_, mCollisionDetectionWorld_);
 
         mCameraPosition_ = Vec3();
+        mTargetCameraPosition_ = Vec3();
     }
 
     #Override
@@ -93,7 +96,16 @@
 
         //parentNode.setPosition(Vec3(mPosition_.x, zPos, mPosition_.z) + rot );
         local zoom = Vec3(0, 50 + mZoomAmount_, 50 + mZoomAmount_);
-        parentNode.setPosition(mCameraPosition_ + zoom);
-        camera.lookAt(mCameraPosition_);
+        mTargetCameraPosition_ = (mCameraPosition_ + zoom);
+        //parentNode.setPosition(mCameraPosition_ + zoom);
+        //camera.lookAt(mCameraPosition_);
+    }
+
+    function getCameraPosition(){
+        return mCameraPosition_;
+    }
+
+    function getTargetCameraPosition(){
+        return mTargetCameraPosition_;
     }
 };

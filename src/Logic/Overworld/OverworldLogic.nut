@@ -15,6 +15,9 @@ enum OverworldStates{
     mRenderableSize_ = null
     mStateMachine_ = null
 
+    mCurrentCameraPosition_ = null
+    mCurrentCameraLookAt_ = null
+
     mActiveCount_ = 0
 
     function requestSetup(){
@@ -44,7 +47,7 @@ enum OverworldStates{
 
         print("Setting up overworld");
 
-        mStateMachine_ = OverworldStateMachine();
+        mStateMachine_ = OverworldStateMachine(this);
 
         mParentSceneNode_ = _scene.getRootSceneNode().createChildSceneNode();
         /*
@@ -124,6 +127,7 @@ enum OverworldStates{
     function update(){
         if(!isActive()) return;
         mWorld_.update();
+        mStateMachine_.update();
     }
 
     function shutdown_(){
@@ -134,7 +138,7 @@ enum OverworldStates{
     }
 
     function applyCameraDelta(delta){
-        mWorld_.applyMovementDelta(delta);
+        mStateMachine_.notify(delta);
     }
 
     function applyZoomDelta(delta){
@@ -144,26 +148,76 @@ enum OverworldStates{
 }
 ::OverworldLogic.OverworldStateMachine <- class extends ::Util.SimpleStateMachine{
     mStates_ = array(OverworldStates.MAX);
+    function getLogic(){
+        return mData_;
+    }
+    function getWorld(){
+        return mData_.mWorld_;
+    }
 };
 
 ::OverworldLogic.OverworldStateMachine.mStates_[OverworldStates.ZOOMED_OUT] = class extends ::Util.SimpleState{
+    mAnim_ = 1.0;
     function start(data){
-        local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.OVERWORLD);
-        camera.getParentNode().setPosition(0, 150, 300);
-        camera.lookAt(300, 0, -300);
+        mAnim_ = 0.0;
     }
 
     function update(data){
+        local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.OVERWORLD);
+        local camPos = Vec3(300, 1600, 300);
+        local camLookAt = Vec3(300, 0, -200);
 
+        if(data.getLogic().mCurrentCameraPosition_ == null){
+            data.getLogic().mCurrentCameraPosition_ = camPos;
+        }
+        if(data.getLogic().mCurrentCameraLookAt_ == null){
+            data.getLogic().mCurrentCameraLookAt_ = camLookAt;
+        }
+
+        mAnim_ = ::accelerationClampCoordinate_(mAnim_, 1.0, 0.005);
+        local animPos = ::calculateSimpleAnimation(data.getLogic().mCurrentCameraPosition_, camPos, mAnim_);
+        local animLookAt = ::calculateSimpleAnimation(data.getLogic().mCurrentCameraLookAt_, camLookAt, mAnim_);
+        camera.getParentNode().setPosition(animPos);
+        camera.lookAt(animLookAt);
+
+        if(mAnim_ >= 1.0){
+            data.getLogic().mCurrentCameraPosition_ = camPos;
+            data.getLogic().mCurrentCameraLookAt_ = camLookAt;
+        }
     }
 };
 
 ::OverworldLogic.OverworldStateMachine.mStates_[OverworldStates.ZOOMED_IN] = class extends ::Util.SimpleState{
+    mAnim_ = 1.0;
     function start(data){
-
+        //local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.OVERWORLD);
+        //camera.getParentNode().setPosition(0, 150, 300);
+        //camera.lookAt(0, 0, 0);
+        mAnim_ = 0.0;
     }
 
     function update(data){
+        local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.OVERWORLD);
+        local overworld = data.getWorld();
+        local target = overworld.getTargetCameraPosition();
+        local lookAtTarget = overworld.getCameraPosition();
+        mAnim_ = ::accelerationClampCoordinate_(mAnim_, 1.0, 0.005);
+        local animPos = ::calculateSimpleAnimation(data.getLogic().mCurrentCameraPosition_, target, mAnim_);
+        local animLookAt = ::calculateSimpleAnimation(data.getLogic().mCurrentCameraLookAt_, lookAtTarget, mAnim_);
+        camera.getParentNode().setPosition(animPos);
+        camera.lookAt(animLookAt);
 
+        //data.getLogic().mCurrentCameraPosition_ = target;
+        //data.getLogic().mCurrentCameraLookAt_ = lookAtTarget;
+
+        if(mAnim_ >= 1.0){
+            data.getLogic().mCurrentCameraPosition_ = target;
+            data.getLogic().mCurrentCameraLookAt_ = lookAtTarget;
+        }
+    }
+
+    function notify(obj, data){
+        obj.getWorld().applyMovementDelta(data);
+        //mWorld_.applyMovementDelta(delta);
     }
 };

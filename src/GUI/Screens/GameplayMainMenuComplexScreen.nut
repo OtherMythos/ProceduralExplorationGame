@@ -350,6 +350,10 @@ enum GameplayComplexMenuBusEvents{
 
         if(event == GameplayComplexMenuBusEvents.SHOW_EXPLORATION_MAP_STARTED){
             setExplorationMapVisible(false);
+            ::OverworldLogic.requestState(OverworldStates.ZOOMED_IN);
+        }
+        else if(event == GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_STARTED){
+            ::OverworldLogic.requestState(OverworldStates.ZOOMED_OUT);
         }
         else if(event == GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_FINISHED){
             setExplorationMapVisible(true);
@@ -481,6 +485,9 @@ enum GameplayComplexMenuBusEvents{
 
     function update(){
         base.update();
+
+        //TODO only call this when it's actually needed, because the map select screen also sets this.
+        ::OverworldLogic.setRenderableSize(mMapPanel_.getDerivedPosition(), mMapPanel_.getSize());
 
         ::OverworldLogic.update();
     }
