@@ -1,6 +1,8 @@
 
 ::ScreenManager.Screens[Screen.EXPLORATION_MAP_SELECT_SCREEN] = class extends ::Screen{
 
+    mBusId_ = null;
+
     mMapPanel_ = null;
     mCompositor_ = null;
 
@@ -24,6 +26,12 @@
     mMapInfoPanel_ = null;
     mMapInfoData_ = null;
 
+    mMapFullScreen_ = false;
+    mMapMainScreenPanel_ = null;
+    mMapAnimCount_ = 1.0;
+    mMapAnimFinished_ = true;
+    mMapPanelCoords_ = null;
+
     MapInfoPanel = class{
 
         mWindow_ = null;
@@ -45,6 +53,14 @@
             mWindow_.setPosition(pos);
         }
 
+    }
+
+    function setup(data){
+        base.setup(data);
+
+        if(data != null){
+            mBusId_ = data.registerCallback(busCallback, this);
+        }
     }
 
     function recreate(){
@@ -81,12 +97,18 @@
         mMapPanel_.setDatablock(datablock);
         */
 
+        mMapMainScreenPanel_ = mWindow_.createPanel();
+        mMapMainScreenPanel_.setVisible(false);
+        local datablock = ::OverworldLogic.getCompositorDatablock();
+        mMapMainScreenPanel_.setDatablock(datablock);
+
         local closeButton = mWindow_.createButton();
         closeButton.setText("Back");
         closeButton.setPosition(MARGIN, MARGIN + insets.top);
         closeButton.attachListenerForEvent(function(widget, action){
-            ::ScreenManager.transitionToScreen(null, null, mLayerIdx);
+            //::ScreenManager.transitionToScreen(null, null, mLayerIdx);
             ::OverworldLogic.requestState(OverworldStates.ZOOMED_OUT);
+            mScreenData_.data.notifyEvent(GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_STARTED, null);
         }, _GUI_ACTION_PRESSED, this);
 
         local playIconButton = ::IconButtonComplex(mWindow_, {
@@ -122,10 +144,80 @@
     }
 
     function shutdown(){
+        if(mBusId_ != null){
+            mScreenData_.data.deregisterCallback(mBusId_);
+        }
+        mScreenData_.data.notifyEvent(GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_FINISHED, null);
         base.shutdown();
         ::OverworldLogic.requestShutdown();
         ::Base.applyCompositorModifications()
-        mScreenData_.data.notifyEvent(GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_MAP, null);
+    }
+
+    function getExplorationStartEndValues(){
+        local d = null;
+
+        local panelStart = mMapPanelCoords_;
+        if(panelStart == null){
+            panelStart = {
+                "pos": Vec2(100, 100),
+                "size": Vec2(100, 100)
+            };
+        }
+
+        if(mMapFullScreen_){
+            d = {
+                "startPos": panelStart.pos,
+                "startSize": panelStart.size,
+                "endPos": ::Vec2_ZERO,
+                "endSize": ::drawable,
+            };
+        }else{
+            d = {
+                "endPos": panelStart.pos,
+                "endSize": panelStart.size,
+                "startPos": ::Vec2_ZERO,
+                "startSize": ::drawable,
+            };
+        }
+
+        return d;
+    }
+
+    function updateExplorationMapAnimation(){
+        if(mMapAnimCount_ == 1.0){
+            if(mMapAnimFinished_ == false){
+                if(!mMapFullScreen_){
+                    mScreenData_.data.notifyEvent(GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_FINISHED, null);
+                    ::ScreenManager.transitionToScreen(null, null, mLayerIdx);
+                }else{
+                    mScreenData_.data.notifyEvent(GameplayComplexMenuBusEvents.SHOW_EXPLORATION_MAP_FINISHED, null);
+                }
+            }
+
+            mMapAnimFinished_ = true;
+            if(mMapFullScreen_){
+                //local mapPanel = mTabWindows_[0].getMapPanel();
+                ::OverworldLogic.setRenderableSize(::Vec2_ZERO, ::drawable);
+            }
+            return;
+        }
+        mMapAnimCount_ = ::accelerationClampCoordinate_(mMapAnimCount_, 1.0, 0.005);
+
+        //local mapPanel = mTabWindows_[0].getMapPanel();
+        local v = getExplorationStartEndValues();
+        local startPos = v.startPos;
+        local startSize = v.startSize;
+
+        local endPos = v.endPos;
+        local endSize = v.endSize;
+
+        local animPos = ::calculateSimpleAnimation(startPos, endPos, mMapAnimCount_);
+        local animSize = ::calculateSimpleAnimation(startSize, endSize, mMapAnimCount_);
+
+        mMapMainScreenPanel_.setPosition(animPos);
+        mMapMainScreenPanel_.setSize(animSize);
+
+        ::OverworldLogic.setRenderableSize(animPos, animSize);
     }
 
     function update(){
@@ -137,6 +229,8 @@
         mMapAcceleration_.y = accelerationClampCoordinate_(mMapAcceleration_.y, 0.0, 0.2);
 
         //print(mMapAcceleration_.x);
+
+        updateExplorationMapAnimation();
 
         ::OverworldLogic.update();
         //::OverworldLogic.applyCameraDelta(mMapAcceleration_);
@@ -186,6 +280,44 @@
             }
         }
         return retVal;
+    }
+
+    function setExplorationMapFullscreen(fullscreen){
+        local changed = (mMapFullScreen_ != fullscreen);
+        mMapFullScreen_ = fullscreen;
+
+        if(changed){
+
+            //local mapPanel = mTabWindows_[0].getMapPanel();
+            if(mMapFullScreen_){
+                //mapPanel.setVisible(false);
+                mMapMainScreenPanel_.setVisible(true);
+                mMapMainScreenPanel_.setClickable(false);
+                //mMapMainScreenPanel_.setPosition(0, 0);
+                //mMapMainScreenPanel_.setSize(::drawable);
+
+                //local datablock = ::OverworldLogic.getCompositorDatablock();
+                //mMapMainScreenPanel_.setDatablock(datablock);
+            }else{
+                //mapPanel.setVisible(true);
+                //mMapMainScreenPanel_.setVisible(false);
+            }
+            mMapAnimCount_ = 0.0;
+            mMapAnimFinished_ = false;
+
+        }
+    }
+
+    function busCallback(event, data){
+        //if(mHasShutdown_) return;
+
+        if(event == GameplayComplexMenuBusEvents.SHOW_EXPLORATION_MAP_STARTED){
+            mMapPanelCoords_ = data;
+            setExplorationMapFullscreen(true);
+        }
+        else if(event == GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_STARTED){
+            setExplorationMapFullscreen(false);
+        }
     }
 
 };

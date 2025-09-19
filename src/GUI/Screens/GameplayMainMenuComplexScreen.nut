@@ -8,8 +8,10 @@ enum GameplayMainMenuComplexWindow{
 };
 
 enum GameplayComplexMenuBusEvents{
-    SHOW_EXPLORATION_MAP,
-    CLOSE_EXPLORATION_MAP,
+    SHOW_EXPLORATION_MAP_STARTED,
+    SHOW_EXPLORATION_MAP_FINISHED,
+    CLOSE_EXPLORATION_STARTED,
+    CLOSE_EXPLORATION_FINISHED,
 };
 
 ::ScreenManager.Screens[Screen.GAMEPLAY_MAIN_MENU_COMPLEX_SCREEN] = class extends ::Screen{
@@ -407,12 +409,14 @@ enum GameplayComplexMenuBusEvents{
     function busCallback(event, data){
         if(mHasShutdown_) return;
 
-        if(event == GameplayComplexMenuBusEvents.SHOW_EXPLORATION_MAP){
+        /*
+        if(event == GameplayComplexMenuBusEvents.SHOW_EXPLORATION_MAP_STARTED){
             setExplorationMapFullscreen(true);
         }
-        else if(event == GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_MAP){
+        else if(event == GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_STARTED){
             setExplorationMapFullscreen(false);
         }
+        */
     }
 
 };
@@ -510,10 +514,8 @@ enum GameplayComplexMenuBusEvents{
 
         line.layout();
 
-        //::OverworldLogic.setRenderableSize(::drawable * ::resolutionMult);
         ::OverworldLogic.requestSetup();
         ::OverworldLogic.requestState(OverworldStates.ZOOMED_OUT);
-        ::OverworldLogic.setRenderableSize(explorationMap.getDerivedPosition(), explorationMap.getSize());
         local datablock = ::OverworldLogic.getCompositorDatablock();
         explorationMap.setDatablock(datablock);
     }
@@ -529,9 +531,15 @@ enum GameplayComplexMenuBusEvents{
     }
 
     function notifyExplorationBegin_(){
-        mBus_.notifyEvent(GameplayComplexMenuBusEvents.SHOW_EXPLORATION_MAP, null);
         ::Base.applyCompositorModifications()
-        ::ScreenManager.queueTransition(::ScreenManager.ScreenData(Screen.EXPLORATION_MAP_SELECT_SCREEN, mBus_), null, 3);
+        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_MAP_SELECT_SCREEN, mBus_), null, 3);
+
+        local panel = getMapPanel();
+        local data = {
+            "pos": panel.getDerivedPosition(),
+            "size": panel.getSize()
+        };
+        mBus_.notifyEvent(GameplayComplexMenuBusEvents.SHOW_EXPLORATION_MAP_STARTED, data);
     }
 
     function update(){

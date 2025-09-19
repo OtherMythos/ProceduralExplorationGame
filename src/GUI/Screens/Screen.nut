@@ -25,6 +25,7 @@
 
         function notifyEvent(busEvent, data){
             foreach(i in mCallbacks_){
+                if(i == null) continue;
                 i(busEvent, data);
             }
         }
@@ -34,7 +35,13 @@
             if(env){
                 target = callback.bindenv(env);
             }
+            local id = mCallbacks_.len();
             mCallbacks_.append(target);
+            return id;
+        }
+
+        function deregisterCallback(id){
+            mCallbacks_[id] = null;
         }
     };
 
