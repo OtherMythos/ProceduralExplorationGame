@@ -121,7 +121,7 @@ enum OverworldStates{
             local size = ::drawable * ::resolutionMult;
             _gameCore.setupCompositorDefs(size.x.tointeger(), size.y.tointeger());
         }
-        mCompositor_ = ::CompositorManager.createCompositorWorkspace("renderWindowWorkspaceGameplayTexture", mRenderableSize_, CompositorSceneType.OVERWORLD, true);
+        mCompositor_ = ::CompositorManager.createCompositorWorkspace("renderWindowWorkspaceGameplayTexture", mRenderableSize_, CompositorSceneType.OVERWORLD, true, false);
     }
 
     function update(){

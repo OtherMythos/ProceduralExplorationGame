@@ -90,7 +90,7 @@ enum CompositorSceneType{
         mRenderWindowWorkspace_ = _compositor.addWorkspace(textures, _camera.getCamera(), targetWorkspace, true);
     }
 
-    function createCompositorWorkspace(workspaceName, size, compositorSceneType, pointSampler=false){
+    function createCompositorWorkspace(workspaceName, size, compositorSceneType, pointSampler=false, blend=true){
         //local newTex = _graphics.createTexture("compositor/renderTexture" + mTotalCompositors_);
         local newTex = mTextures_[compositorSceneType];
         //newTex.waitForData();
@@ -104,9 +104,12 @@ enum CompositorSceneType{
 
         local newWorkspace = _compositor.addWorkspace([newTex], newCamera, workspaceName, true);
 
-        local blendBlock = _hlms.getBlendblock({
-            "dst_blend_factor": _HLMS_SBF_ONE_MINUS_SOURCE_ALPHA
-        });
+        local blendBlock = null;
+        if(blend){
+            blendBlock = _hlms.getBlendblock({
+                "dst_blend_factor": _HLMS_SBF_ONE_MINUS_SOURCE_ALPHA
+            });
+        }
         local datablock = _hlms.unlit.createDatablock("renderTextureDatablock" + mTotalCompositors_, blendBlock);
         if(pointSampler){
             local sampler = _hlms.getSamplerblock({
