@@ -62,7 +62,7 @@ enum OverworldStates{
         setupCompositor_();
 
         local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.OVERWORLD);
-        camera.setFarClipDistance(2000);
+        camera.setFarClipDistance(4000);
 
         local preparer = ::OverworldPreparer();
         mWorld_ = ::Overworld(0, preparer);
@@ -164,8 +164,8 @@ enum OverworldStates{
 
     function update(data){
         local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.OVERWORLD);
-        local camPos = Vec3(300, 1600, 300);
-        local camLookAt = Vec3(300, 0, -200);
+        local camPos = Vec3(300, 700, 1500);
+        local camLookAt = Vec3(300, 0, 200);
 
         if(data.getLogic().mCurrentCameraPosition_ == null){
             data.getLogic().mCurrentCameraPosition_ = camPos;
@@ -174,13 +174,14 @@ enum OverworldStates{
             data.getLogic().mCurrentCameraLookAt_ = camLookAt;
         }
 
-        mAnim_ = ::accelerationClampCoordinate_(mAnim_, 1.0, 0.005);
-        local animPos = ::calculateSimpleAnimation(data.getLogic().mCurrentCameraPosition_, camPos, mAnim_);
-        local animLookAt = ::calculateSimpleAnimation(data.getLogic().mCurrentCameraLookAt_, camLookAt, mAnim_);
+        mAnim_ = ::accelerationClampCoordinate_(mAnim_, 0.8, 0.02);
+        local a = mAnim_ / 0.8;
+        local animPos = ::calculateSimpleAnimation(data.getLogic().mCurrentCameraPosition_, camPos, a);
+        local animLookAt = ::calculateSimpleAnimation(data.getLogic().mCurrentCameraLookAt_, camLookAt, a);
         camera.getParentNode().setPosition(animPos);
         camera.lookAt(animLookAt);
 
-        if(mAnim_ >= 1.0){
+        if(mAnim_ >= 0.8){
             data.getLogic().mCurrentCameraPosition_ = camPos;
             data.getLogic().mCurrentCameraLookAt_ = camLookAt;
         }
@@ -201,16 +202,17 @@ enum OverworldStates{
         local overworld = data.getWorld();
         local target = overworld.getTargetCameraPosition();
         local lookAtTarget = overworld.getCameraPosition();
-        mAnim_ = ::accelerationClampCoordinate_(mAnim_, 1.0, 0.005);
-        local animPos = ::calculateSimpleAnimation(data.getLogic().mCurrentCameraPosition_, target, mAnim_);
-        local animLookAt = ::calculateSimpleAnimation(data.getLogic().mCurrentCameraLookAt_, lookAtTarget, mAnim_);
+        mAnim_ = ::accelerationClampCoordinate_(mAnim_, 0.8, 0.02);
+        local a = mAnim_ / 0.8;
+        local animPos = ::calculateSimpleAnimation(data.getLogic().mCurrentCameraPosition_, target, a);
+        local animLookAt = ::calculateSimpleAnimation(data.getLogic().mCurrentCameraLookAt_, lookAtTarget, a);
         camera.getParentNode().setPosition(animPos);
         camera.lookAt(animLookAt);
 
         //data.getLogic().mCurrentCameraPosition_ = target;
         //data.getLogic().mCurrentCameraLookAt_ = lookAtTarget;
 
-        if(mAnim_ >= 1.0){
+        if(mAnim_ >= 0.8){
             data.getLogic().mCurrentCameraPosition_ = target;
             data.getLogic().mCurrentCameraLookAt_ = lookAtTarget;
         }

@@ -173,6 +173,41 @@
                 "texture": "icon_bag.png"
             }
         },
+        "shopIcon" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse_map0": {
+                "texture": "icon_shop.png"
+            }
+        },
+        "helmetSwordsIcon" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse_map0": {
+                "texture": "icon_helmetSwords.png"
+            }
+        },
+        "helmetCoinsIcon" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse_map0": {
+                "texture": "icon_helmetCoins.png"
+            }
+        },
+        "treasureChestIcon" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse_map0": {
+                "texture": "icon_treasureChest.png"
+            }
+        },
+        "newspaperIcon" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse_map0": {
+                "texture": "icon_newspaper.png"
+            }
+        },
 
         "guiExplorationCompass" :
         {

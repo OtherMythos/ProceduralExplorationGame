@@ -245,8 +245,8 @@ enum GameplayComplexMenuBusEvents{
         local tabs = [
             {"icon": "swordsIcon", "label": "Explore"},
             {"icon": "bagIcon", "label": "Inventory"},
-            {"icon": "settingsIcon", "label": "Second"},
-            {"icon": "settingsIcon", "label": "Third"},
+            {"icon": "helmetCoinsIcon", "label": "Shop"},
+            {"icon": "treasureChestIcon", "label": "Offers"},
         ];
         mTabPanel_ = TabPanel(this);
         mTabPanel_.setup(tabs);
@@ -401,14 +401,26 @@ enum GameplayComplexMenuBusEvents{
         line.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
         */
 
-        local iconButton = ::IconButton(mWindow_, "settingsIcon");
-        iconButton.setSize(Vec2(64, 64));
-        iconButton.setPosition(Vec2(10, 10));
-        iconButton.attachListenerForEvent(function(widget, action){
+        local currentY = 0;
+
+        local settingsButton = ::IconButton(mWindow_, "settingsIcon");
+        settingsButton.setSize(Vec2(64, 64));
+        settingsButton.setPosition(Vec2(10, 10));
+        settingsButton.attachListenerForEvent(function(widget, action){
             ::ScreenManager.queueTransition(Screen.SETTINGS_SCREEN, null, 3);
         }, _GUI_ACTION_PRESSED, this);
 
-        local currentY = iconButton.getPosition().y + iconButton.getSize().y;
+        currentY += settingsButton.getPosition().y + settingsButton.getSize().y;
+
+        local newspaperButton = ::IconButton(mWindow_, "newspaperIcon");
+        newspaperButton.setSize(Vec2(64, 64));
+        local newspaperPos = settingsButton.getPosition() + Vec2(10, 0);
+        newspaperPos.x += settingsButton.getSize().x;
+        newspaperButton.setPosition(newspaperPos);
+        newspaperButton.attachListenerForEvent(function(widget, action){
+            ::ScreenManager.queueTransition(Screen.SETTINGS_SCREEN, null, 3);
+        }, _GUI_ACTION_PRESSED, this);
+
 
         local winSize = mWindow_.getSize();
 

@@ -221,7 +221,7 @@
             }
             return;
         }
-        mMapAnimCount_ = ::accelerationClampCoordinate_(mMapAnimCount_, 1.0, 0.005);
+        mMapAnimCount_ = ::accelerationClampCoordinate_(mMapAnimCount_, 1.0, 0.02);
 
         {
             local animStart = mMapFullScreen_ ? 0.0 : 0.2;
@@ -249,7 +249,7 @@
             local animEnd = mMapFullScreen_ ? 1.0 : 0.2;
 
             local offscreenPos = mCloseButtonStart_.copy();
-            offscreenPos.y -= 100;
+            offscreenPos.y = -100;
             local startPos = mMapFullScreen_ ? offscreenPos : mCloseButtonStart_;
             local endPos = mMapFullScreen_ ? mCloseButtonStart_ : offscreenPos;
             local animPos = ::calculateSimpleAnimationInRange(startPos, endPos, mMapAnimCount_, animStart, animEnd);
