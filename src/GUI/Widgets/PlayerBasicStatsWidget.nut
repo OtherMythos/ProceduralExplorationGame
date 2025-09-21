@@ -120,7 +120,7 @@
     }
 
     function receiveMoneyChanged(id, data){
-        mCoinLabel_.setText(data);
+        mCoinLabel_.setText(data.tostring());
     }
 
     function addCoinAmount_(amount){

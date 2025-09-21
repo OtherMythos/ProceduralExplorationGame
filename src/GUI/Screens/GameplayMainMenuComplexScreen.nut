@@ -226,6 +226,13 @@ enum GameplayComplexMenuBusEvents{
     mAnimCountTotal_ = 0;
 
     function recreate(){
+
+        //TODO Load the save in a more robust way when the complex screen becomes the default.
+        local viableSaves = ::Base.mSaveManager.findViableSaves();
+        local saveSlot = 0;
+        local save = ::Base.mSaveManager.readSaveAtPath("user://" + viableSaves[saveSlot].tostring());
+        ::Base.mPlayerStats.setSaveData(save, saveSlot);
+
         mBus_ = ComplexScreenBus();
         mBus_.registerCallback(busCallback, this);
         mWindow_ = _gui.createWindow("GameplayMainMenuComplex");
@@ -378,6 +385,11 @@ enum GameplayComplexMenuBusEvents{
             "disableBackButton": true,
             "disableBackgroundClose": true
         });
+    }
+
+    function setZOrder(idx){
+        base.setZOrder(idx);
+        mInventoryObj_.setZOrder(idx);
     }
 
     function update(){

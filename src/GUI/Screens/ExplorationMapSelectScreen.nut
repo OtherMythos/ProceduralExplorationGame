@@ -163,11 +163,6 @@
     function processBeginExploration_(){
         if(!mMapAnimFinished_) return;
 
-        local viableSaves = ::Base.mSaveManager.findViableSaves();
-        local saveSlot = 0;
-        local save = ::Base.mSaveManager.readSaveAtPath("user://" + viableSaves[saveSlot].tostring());
-        ::Base.mPlayerStats.setSaveData(save, saveSlot);
-
         ::ScreenManager.transitionToScreen(null, null, 0);
         ::ScreenManager.transitionToScreen(null, null, mLayerIdx);
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));
