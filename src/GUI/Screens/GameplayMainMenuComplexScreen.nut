@@ -257,7 +257,8 @@ enum GameplayComplexMenuBusEvents{
         mTabWindowYStart_ = insets.top + stats.getSize().y;
 
         local targetWindows = [
-            ExploreWindow
+            ExploreWindow,
+            InventoryWindow
         ];
         mTabWindows_ = [];
         for(local i = 0; i < GameplayMainMenuComplexWindow.MAX; i++){
@@ -363,6 +364,33 @@ enum GameplayComplexMenuBusEvents{
 };
 
 //TODO move this out of global space
+::InventoryWindow <- class extends ::ScreenManager.Screens[Screen.GAMEPLAY_MAIN_MENU_COMPLEX_SCREEN].TabWindow{
+
+    mInventoryObj_ = null;
+
+    function recreate(){
+        mWindow_.setClipBorders(0, 0, 0, 0);
+
+        mInventoryObj_ = ::InventoryScreenObject();
+        mInventoryObj_.setup(mWindow_, {
+            "stats": ::Base.mPlayerStats,
+            "disableBackground": true,
+            "disableBackButton": true,
+            "disableBackgroundClose": true
+        });
+    }
+
+    function update(){
+        base.update();
+    }
+
+    function shutdown(){
+        base.shutdown();
+
+        mInventoryObj_.shutdown();
+    }
+}
+
 ::ExploreWindow <- class extends ::ScreenManager.Screens[Screen.GAMEPLAY_MAIN_MENU_COMPLEX_SCREEN].TabWindow{
 
     mCompositor_ = null;

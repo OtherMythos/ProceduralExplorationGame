@@ -163,12 +163,16 @@
                         local xa = x + xx;
                         local ya = y + yy;
                         if(xa < 0 || ya < 0){
+                            local backButtonWidget = null;
+                            if(backButton != null){
+                                backButtonWidget = backButton.getWidget();
+                            }
                             if(mInventoryType_ == InventoryGridType.INVENTORY_GRID){
-                                widget = backButton;
+                                widget = backButtonWidget;
                             }else if(mInventoryType_ == InventoryGridType.INVENTORY_EQUIPPABLES){
-                                widget = ya < 0 ? backButton : neighbourGrid.getNeighbourWidgetForIdx(y);
+                                widget = ya < 0 ? backButtonWidget : neighbourGrid.getNeighbourWidgetForIdx(y);
                             }else if(mInventoryType_ == InventoryGridType.INVENTORY_GRID_SECONDARY){
-                                widget = ya < 0 ? backButton : neighbourGrid.getNeighbourWidgetForIdx(y);
+                                widget = ya < 0 ? backButtonWidget : neighbourGrid.getNeighbourWidgetForIdx(y);
                             }
                         }else if(xa >= mInventoryWidth_){
                             if(mInventoryType_ == InventoryGridType.INVENTORY_GRID){

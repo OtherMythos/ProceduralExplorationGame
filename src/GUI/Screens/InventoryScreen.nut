@@ -18,6 +18,47 @@ enum InventoryBusEvents{
 
 ::ScreenManager.Screens[Screen.INVENTORY_SCREEN] = class extends ::Screen{
 
+    mInventoryObj_ = null;
+
+    mActionSetId_ = null;
+
+    function setup(data){
+        if( !(data.rawin("disableBackground") && data.disableBackground) ){
+            createBackgroundScreen_();
+        }
+
+        mWindow_ = _gui.createWindow("InventoryScreen");
+        mWindow_.setSize(::drawable.x, ::drawable.y);
+        mWindow_.setVisualsEnabled(false);
+        mWindow_.setSkinPack("WindowSkinNoBorder");
+        mWindow_.setBreadthFirst(true);
+
+        mInventoryObj_ = ::InventoryScreenObject();
+        mInventoryObj_.mLayerIdx = mLayerIdx;
+        mInventoryObj_.setup(mWindow_, data);
+
+        mActionSetId_ = ::InputManager.pushActionSet(InputActionSets.MENU);
+    }
+
+    function shutdown(){
+        mInventoryObj_.shutdown();
+        base.shutdown();
+        ::InputManager.popActionSet(mActionSetId_);
+    }
+
+    function setZOrder(idx){
+        base.setZOrder(idx);
+        mInventoryObj_.setZOrder(idx);
+    }
+
+    function update(){
+        mInventoryObj_.update();
+    }
+
+};
+
+::InventoryScreenObject <- class{
+
     mWindow_ = null;
     mOverlayWindow_ = null;
     mInventoryGrid_ = null;
@@ -29,12 +70,12 @@ enum InventoryBusEvents{
     mPlayerStats_ = null;
     mPlayerInspector_ = null;
 
+    mLayerIdx = 0;
+
     mUseSecondaryGrid_ = false;
     mSecondaryItems_ = null;
     mSecondaryWidth_ = 0;
     mSecondaryHeight_ = 0;
-
-    mActionSetId_ = null;
 
     mPreviousHighlight_ = null;
 
@@ -157,7 +198,8 @@ enum InventoryBusEvents{
         return mobile ? (::drawable.x / (mInventoryWidth+2)) : 64;
     }
 
-    function setup(data){
+    function setup(window, data){
+        mWindow_ = window;
         _event.subscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent, this);
         _event.subscribe(Event.PLAYER_EQUIP_CHANGED, receivePlayerEquipChangedEvent, this);
 
@@ -170,25 +212,19 @@ enum InventoryBusEvents{
             mUseSecondaryGrid_ = true;
         }
 
-        if( !(data.rawin("disableBackground") && data.disableBackground) ){
-            createBackgroundScreen_();
-        }
-
         mPlayerStats_ = data.stats;
         mInventory_ = mPlayerStats_.mInventory_;
 
         mInventoryBus_ = InventoryInfoBus();
         mInventoryBus_.registerCallback(busCallback, this);
 
-        mWindow_ = _gui.createWindow("InventoryScreen");
-        mWindow_.setSize(::drawable.x, ::drawable.y);
-        mWindow_.setVisualsEnabled(false);
-        mWindow_.setSkinPack("WindowSkinNoBorder");
-        mWindow_.setBreadthFirst(true);
-
         local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
 
-        if(mobile){
+        local disableBackgroundClose = false;
+        if(data.rawin("disableBackgroundClose") && data.disableBackgroundClose){
+            disableBackgroundClose = true;
+        }
+        if(mobile && !disableBackgroundClose){
             local inventoryCloseButton = mWindow_.createButton();
             inventoryCloseButton.setSize(mWindow_.getSize());
             inventoryCloseButton.setVisualsEnabled(false);
@@ -197,10 +233,23 @@ enum InventoryBusEvents{
             }, _GUI_ACTION_PRESSED, this);
         }
 
-        local inventoryButton = mWindow_.createButton();
-        {
+        local inventoryButton = null;
+        local backButtonDisabled = false;
+        if(data.rawin("disableBackButton") && data.disableBackButton){
+            backButtonDisabled = true;
+        }
+        if(!backButtonDisabled){
+            /*
             inventoryButton.setText("Back");
             inventoryButton.setPosition(5, 25);
+            inventoryButton.attachListenerForEvent(function(widget, action){
+                closeInventory();
+            }, _GUI_ACTION_PRESSED, this);
+            */
+
+            inventoryButton = ::IconButton(mWindow_, "backButtonIcon");
+            inventoryButton.setSize(Vec2(64, 64));
+            inventoryButton.setPosition(Vec2(10, 10));
             inventoryButton.attachListenerForEvent(function(widget, action){
                 closeInventory();
             }, _GUI_ACTION_PRESSED, this);
@@ -208,6 +257,7 @@ enum InventoryBusEvents{
 
         local layoutLine = _gui.createLayoutLine();
 
+        /*
         local title = mWindow_.createLabel();
         title.setDefaultFontSize(title.getDefaultFontSize() * 2);
         title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
@@ -215,6 +265,7 @@ enum InventoryBusEvents{
         title.sizeToFit(::drawable.x * 0.9);
         title.setExpandHorizontal(true);
         layoutLine.addCell(title);
+        */
 
         mMoneyCounter_ = ::GuiWidgets.InventoryMoneyCounter(mWindow_);
         mMoneyCounter_.addToLayout(layoutLine);
@@ -265,8 +316,12 @@ enum InventoryBusEvents{
             mInventoryEquippedGrid_.connectNeighbours(mInventoryGrid_, inventoryButton);
         }
 
-        inventoryButton.setNextWidget(mInventoryGrid_.mWidgets_[0], _GUI_BORDER_RIGHT);
-        inventoryButton.setNextWidget(mInventoryGrid_.mWidgets_[0], _GUI_BORDER_BOTTOM);
+        if(inventoryButton){
+            inventoryButton.setNextWidget(mInventoryGrid_.mWidgets_[0], _GUI_BORDER_RIGHT);
+            inventoryButton.setNextWidget(mInventoryGrid_.mWidgets_[0], _GUI_BORDER_BOTTOM);
+
+            inventoryButton.setFocus();
+        }
 
         if(!mobile){
             mPlayerInspector_ = ::GuiWidgets.InventoryPlayerInspector();
@@ -297,10 +352,6 @@ enum InventoryBusEvents{
         if(!mobile){
             mPlayerInspector_.notifyLayout();
         }
-
-        inventoryButton.setFocus();
-
-        mActionSetId_ = ::InputManager.pushActionSet(InputActionSets.MENU);
     }
 
     function highlightPrevious(){
@@ -557,7 +608,6 @@ enum InventoryBusEvents{
     }
 
     function setZOrder(idx){
-        base.setZOrder(idx);
         mOverlayWindow_.setZOrder(idx+1);
     }
 
@@ -567,11 +617,9 @@ enum InventoryBusEvents{
         if(mPlayerInspector_ != null){
             mPlayerInspector_.shutdown();
         }
-        base.shutdown();
+        //base.shutdown();
         _event.unsubscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent);
         _event.unsubscribe(Event.PLAYER_EQUIP_CHANGED, receivePlayerEquipChangedEvent);
-
-        ::InputManager.popActionSet(mActionSetId_);
     }
 
     function update(){

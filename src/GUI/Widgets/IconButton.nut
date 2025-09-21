@@ -32,6 +32,18 @@
         mButton_.attachListenerForEvent(func, id, context);
     }
 
+    function setNextWidget(widget, dir){
+        mButton_.setNextWidget(widget, dir);
+    }
+
+    function setFocus(){
+        mButton_.setFocus();
+    }
+
+    function getWidget(){
+        return mButton_;
+    }
+
 };
 
 ::IconButtonComplex <- class extends IconButton{
