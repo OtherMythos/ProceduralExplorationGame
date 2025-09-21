@@ -75,6 +75,7 @@
         initTime();
         mInventory_.rawSetItems(inventoryData);
         mInventory_.setMoney(data.playerCoins);
+        mPlayerCombatStats.setHealth(data.playerHealth);
         mPlayerCombatStats.mEquippedItems.rawSetItems(equipData);
         mPlayerCombatStats.calculateEquippedStats();
 
@@ -96,6 +97,7 @@
         local questData = ::Base.mQuestManager.getTableForQuests();
         mCurrentData_.rawset("quest", questData);
         mCurrentData_.rawset("playerCoins", mInventory_.getMoney());
+        mCurrentData_.rawset("playerHealth", mPlayerCombatStats.mHealth);
         processTime();
         return mCurrentData_;
     }
