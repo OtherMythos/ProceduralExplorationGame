@@ -153,3 +153,9 @@ variationSeed: %i";
 
     return "Dumped to " + scenePath;
 });
+::DebugConsole.registerCommand("save", "Save the current game state", 0, "", function(command){
+    local saveSlot = ::Base.mPlayerStats.getSaveSlot();
+    ::SaveManager.writeSaveAtPath("user://" + saveSlot, ::Base.mPlayerStats.getSaveData());
+
+    return "Saved to slot " + saveSlot;
+});
