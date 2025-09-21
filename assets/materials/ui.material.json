@@ -208,6 +208,13 @@
                 "texture": "icon_newspaper.png"
             }
         },
+        "backButtonIcon" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse_map0": {
+                "texture": "icon_backButton.png"
+            }
+        },
 
         "guiExplorationCompass" :
         {
