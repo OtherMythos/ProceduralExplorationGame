@@ -66,7 +66,7 @@ enum InventoryBusEvents{
     mSecondaryInventoryGrid_ = null;
     mHoverInfo_ = null;
     mInventory_ = null;
-    mMoneyCounter_ = null;
+    //mMoneyCounter_ = null;
     mPlayerStats_ = null;
     mPlayerInspector_ = null;
 
@@ -267,8 +267,8 @@ enum InventoryBusEvents{
         layoutLine.addCell(title);
         */
 
-        mMoneyCounter_ = ::GuiWidgets.InventoryMoneyCounter(mWindow_);
-        mMoneyCounter_.addToLayout(layoutLine);
+        //mMoneyCounter_ = ::GuiWidgets.InventoryMoneyCounter(mWindow_);
+        //mMoneyCounter_.addToLayout(layoutLine);
 
         //local playerEquip = InventoryPlayerEquip(mWindow_, mPlayerStats_, mInventoryBus_);
         //playerEquip.addToLayout(layoutLine);
@@ -613,7 +613,7 @@ enum InventoryBusEvents{
 
     function shutdown(){
         _gui.destroy(mOverlayWindow_);
-        mMoneyCounter_.shutdown();
+        //mMoneyCounter_.shutdown();
         if(mPlayerInspector_ != null){
             mPlayerInspector_.shutdown();
         }
