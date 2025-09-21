@@ -17,7 +17,7 @@ _tIntegration("GamePlayMainMenuToInventory", "Switch to the inventory screen fro
                 ::_testHelper.queryWindowExists("InventoryScreen");
             },
             function(){
-                ::_testHelper.mousePressWidgetForText("Back");
+                ::_testHelper.mousePressWidgetForDatablock("backButtonIcon");
 
                 ::_testHelper.queryWindowExists("GameplayMainMenu");
             }
