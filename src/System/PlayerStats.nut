@@ -355,9 +355,17 @@
         });
     }
 
+    function getMoney(){
+        return mCurrentData_.playerCoins;
+    }
+
     function getLevel(){
         if(mCurrentData_ == null) return 0;
         return getLevelForEXP_(mCurrentData_.playerEXP);
+    }
+
+    function getPlayerEXP(){
+        return mCurrentData_.playerEXP;
     }
 
     function getPercentageEXP(exp){

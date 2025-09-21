@@ -536,6 +536,7 @@ enum ExplorationScreenWidgetType{
         local statsWidget = ::GuiWidgets.PlayerBasicStatsWidget();
         statsWidget.setup(mWindow_);
         statsWidget.setPosition(Vec2(0, 0));
+        statsWidget.setPlayerStats(::Base.mPlayerStats);
         mExplorationStatsContainer_ = statsWidget;
 
         //mExplorationStatsContainer_ = ExplorationStatsContainer(mWindow_, mExplorationBus_);

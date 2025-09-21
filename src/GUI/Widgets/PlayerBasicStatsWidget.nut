@@ -31,6 +31,12 @@
         return ::EffectManager.getWorldPositionForWindowPos(mCoinLabel_.getDerivedCentre());
     }
 
+    function setPlayerStats(stats){
+        setMoney_(stats.getMoney());
+        setEXP_(stats.getPlayerEXP());
+        setHealth_(stats.getPlayerHealth(), stats.getPlayerMaxHealth(), stats.getPlayerHealthPercentage());
+    }
+
     function setup(parentWindow){
 
         local window = parentWindow.createWindow();
@@ -119,18 +125,28 @@
         addCoinAmount_(data);
     }
 
+    function setMoney_(money){
+        mCoinLabel_.setText(money.tostring());
+    }
+    function setEXP_(exp){
+        mEXPOrbLabel_.setText(exp.tostring());
+    }
+    function setHealth_(health, maxHealth, percentage){
+        mPlayerHealthBar_.setPercentage(percentage);
+        mPlayerHealthBar_.setLabel(format("%i/%i", health, maxHealth));
+    }
+
     function receiveMoneyChanged(id, data){
-        mCoinLabel_.setText(data.tostring());
+        setMoney_(data);
     }
 
     function addCoinAmount_(amount){
         local numCoins = mCoinLabel_.getText().tointeger();
-        mCoinLabel_.setText((numCoins + amount).tostring());
+        setMoney_(numCoins + amount);
     }
 
     function playerHealthChanged(id, data){
-        mPlayerHealthBar_.setPercentage(data.percentage);
-        mPlayerHealthBar_.setLabel(format("%i/%i", data.health, data.max));
+        setHealth_(data.health, data.max, data.percentage);
     }
 
     function receiveEXPAnimFinished(id, data){

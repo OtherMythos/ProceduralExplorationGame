@@ -246,6 +246,7 @@ enum GameplayComplexMenuBusEvents{
 
         local stats = ::GuiWidgets.PlayerBasicStatsWidget();
         stats.setup(mWindow_);
+        stats.setPlayerStats(::Base.mPlayerStats);
         stats.setPosition(Vec2(0, insets.top));
         mPlayerStats_ = stats;
 
