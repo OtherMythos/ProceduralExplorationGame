@@ -198,6 +198,7 @@
 
     function resetExploration_(){
         mExplorationPaused_ = false;
+        mPauseCount_ = 0;
 
         mCurrentTimer_ = Timer();
         mCurrentTimer_.start();
