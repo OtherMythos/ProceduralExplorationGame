@@ -79,7 +79,7 @@ fragment float4 main_metal
 
     if (outline)
     {
-        returnFinalColour(float4(0,0,0,1));
+        returnFinalColour(float4(0,0,0,0.5));
     }
 
     returnFinalColour(float4(0,0,0,0));

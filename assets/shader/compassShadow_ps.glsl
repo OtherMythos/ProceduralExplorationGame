@@ -66,6 +66,14 @@ in block
 vulkan_layout( ogre_t0 ) uniform texture2D Image;
 vulkan( layout( ogre_s0 ) uniform sampler samplerState; )
 
+bool compareVec4(float4 first, float4 second){
+    return
+        (first.x > second.x) &&
+        (first.y > second.y) &&
+        (first.z > second.z) &&
+        (first.w > second.w);
+}
+
 void main()
 {
     float2 texSize     = sizeForTexture(Image);
@@ -74,7 +82,8 @@ void main()
     float4 center = OGRE_Sample(Image, samplerState, inPs.uv0);
 
     // If center pixel is white, just draw it
-    if (center.a > 0.5 && all(center.rgb > float3(0.9)))
+    bool isWhite = (center.x > 0.9) && (center.y > 0.9) && (center.z > 0.9);
+    if (center.w > 0.5 && isWhite)
     {
         returnFinalColour(center);
     }
@@ -87,19 +96,19 @@ void main()
 
     // left
     uv = inPs.uv0 + float2(-texelOffset.x, 0);
-    if (all(OGRE_Sample(Image, samplerState, uv).rgba > checkVal)) outline = true;
+    if (compareVec4(OGRE_Sample(Image, samplerState, uv).xyzw, checkVal)) outline = true;
 
     // right
     uv = inPs.uv0 + float2(texelOffset.x, 0);
-    if (all(OGRE_Sample(Image, samplerState, uv).rgba > checkVal)) outline = true;
+    if (compareVec4(OGRE_Sample(Image, samplerState, uv).xyzw, checkVal)) outline = true;
 
     // up
     uv = inPs.uv0 + float2(0, -texelOffset.y);
-    if (all(OGRE_Sample(Image, samplerState, uv).rgba > checkVal)) outline = true;
+    if (compareVec4(OGRE_Sample(Image, samplerState, uv).xyzw, checkVal)) outline = true;
 
     // down
     uv = inPs.uv0 + float2(0, texelOffset.y);
-    if (all(OGRE_Sample(Image, samplerState, uv).rgba > checkVal)) outline = true;
+    if (compareVec4(OGRE_Sample(Image, samplerState, uv).xyzw, checkVal)) outline = true;
 
 /*
     // diagonals
@@ -118,7 +127,7 @@ void main()
 
     if (outline)
     {
-        returnFinalColour(float4(0,0,0,1));
+        returnFinalColour(float4(0,0,0,0.5));
     }
 
     returnFinalColour(float4(0,0,0,0));
