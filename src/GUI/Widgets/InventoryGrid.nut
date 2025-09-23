@@ -23,6 +23,7 @@
     mBackgrounds_ = null;
     mWidgets_ = null;
     mItemIcons_ = null;
+    mGridPadding_ = null;
 
     mLayout_ = null;
     //mItemHovered_ = false;
@@ -48,6 +49,7 @@
             offset = 1;
         }
 
+        //assert(mInventoryWidth_ * mInventoryHeight_ == inv.len());
         for(local i = offset; i < inv.len() - offset; i++){
             local widget = mItemIcons_[i - offset];
             local item = inv[i];
@@ -75,12 +77,14 @@
         mWindow_ = parentWin.createWindow("InventoryGrid");
         mWindow_.setSkinPack("WindowSkinNoBorder");
         mWindow_.setBreadthFirst(true);
+        mWindow_.setVisualsEnabled(false);
+        mWindow_.setClickable(false);
 
         if(mInventoryType_ == InventoryGridType.INVENTORY_GRID || mInventoryType_ == InventoryGridType.INVENTORY_GRID_SECONDARY){
             mItemIcons_ = array(inventoryWidth * inventoryHeight);
         }else if(mInventoryType_ == InventoryGridType.INVENTORY_EQUIPPABLES){
             inventoryWidth = 1;
-            inventoryHeight = EquippedSlotTypes.MAX-2;
+            inventoryHeight = EquippedSlotTypes.MAX-1;
             mItemIcons_ = array(inventoryHeight);
         }
         mWidgets_ = array(inventoryWidth*inventoryHeight);
@@ -90,6 +94,7 @@
         //Get the size of a grid relative to some universal metric.
         local gridRatio = ::ScreenManager.calculateRatio(gridSize);
         local gridPadding = gridRatio * 0.125;
+        mGridPadding_ = gridPadding;
         local iconSize = ::ScreenManager.calculateRatio(gridSize.tofloat() * 0.75);
         mButtonCover_.setSize(gridRatio, gridRatio);
         for(local y = 0; y < inventoryHeight; y++){
@@ -298,7 +303,27 @@
     function getPosition(){
         return mWindow_.getPosition();
     }
+    function setPosition(pos){
+        mWindow_.setPosition(pos);
+    }
+    function setSize(size){
+        mWindow_.setSize(size);
+    }
+    function calculateChildrenSize(){
+        return mWindow_.calculateChildrenSize();
+    }
     function getPositionForIdx(idx){
         return mWidgets_[idx].getDerivedPosition();
+    }
+    function getWidgetSize(){
+        if(mBackgrounds_.len() < 0){
+            return ::Vec2_ZERO.copy();
+        }
+        return mBackgrounds_[0].getSize();
+    }
+    function setPositionForIdx(idx, pos){
+        mWidgets_[idx].setPosition(pos);
+        mItemIcons_[idx].setPosition(pos + mGridPadding_);
+        mBackgrounds_[idx].setPosition(pos);
     }
 };

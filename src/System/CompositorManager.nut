@@ -107,7 +107,10 @@ enum CompositorSceneType{
         local blendBlock = null;
         if(blend){
             blendBlock = _hlms.getBlendblock({
-                "dst_blend_factor": _HLMS_SBF_ONE_MINUS_SOURCE_ALPHA
+                "src_blend_factor": _HLMS_SBF_SOURCE_ALPHA,
+                "dst_blend_factor": _HLMS_SBF_ONE_MINUS_SOURCE_ALPHA,
+                "src_alpha_blend_factor": _HLMS_SBF_ONE_MINUS_DEST_ALPHA,
+                "dst_alpha_blend_factor": _HLMS_SBF_ONE
             });
         }
         local datablock = _hlms.unlit.createDatablock("renderTextureDatablock" + mTotalCompositors_, blendBlock);

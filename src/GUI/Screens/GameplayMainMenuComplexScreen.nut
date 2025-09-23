@@ -287,7 +287,7 @@ enum GameplayComplexMenuBusEvents{
             mTabWindows_.append(tabWindow);
         }
 
-        mCurrentTab_ = 0;
+        mCurrentTab_ = 1;
         notifyTabChange(mCurrentTab_);
     }
 
@@ -395,12 +395,14 @@ enum GameplayComplexMenuBusEvents{
 
     function update(){
         base.update();
+
+        mInventoryObj_.update();
     }
 
     function shutdown(){
-        base.shutdown();
-
         mInventoryObj_.shutdown();
+
+        base.shutdown();
     }
 }
 

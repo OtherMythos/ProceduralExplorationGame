@@ -44,7 +44,7 @@ compositor_node renderTextureInventoryNode
     {
         pass clear
         {
-            colour_value 0.1 0.1 0.1 0.5
+            colour_value 0.1 0.1 0.1 0.0
         }
         pass render_scene
         {

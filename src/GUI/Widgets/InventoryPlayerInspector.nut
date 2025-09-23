@@ -11,6 +11,10 @@
         mCharacterModel_ = null;
         mRotX = 0;
         mModelAABB_ = null;
+
+        mLeftPos_ = null;
+        mRightPos_ = null;
+
         constructor(){
 
         }
@@ -18,7 +22,7 @@
         function setup(parentPanel){
             local winSize = parentPanel.getSize();
 
-            local compId = ::CompositorManager.createCompositorWorkspace("renderTextureInventoryWorkspace", winSize * ::resolutionMult, CompositorSceneType.INVENTORY_PLAYER_INSPECTOR);
+            local compId = ::CompositorManager.createCompositorWorkspace("renderTextureInventoryWorkspace", winSize * ::resolutionMult, CompositorSceneType.INVENTORY_PLAYER_INSPECTOR, false, false);
             mDatablock_ = ::CompositorManager.getDatablockForCompositor(compId);
             mCompositorId_ = compId;
 
@@ -38,6 +42,21 @@
 
             mModelAABB_ = mCharacterModel_.determineAABB();
             printf("Model aabb: %s", mModelAABB_.tostring());
+
+            {
+                local centre = mModelAABB_.getCentre();
+                local radius = mModelAABB_.getRadius();
+                local left = centre + Vec3(-radius * 0.5, 0, 0);
+                local right = centre + Vec3(radius * 0.5, 0, 0);
+
+                update();
+
+                local l = mCamera_.getWorldPosInWindow(left);
+                local r = mCamera_.getWorldPosInWindow(right);
+
+                mLeftPos_ = Vec2((l.x + 1) / 2, (-l.y + 1) / 2) * winSize;
+                mRightPos_ = Vec2((r.x + 1) / 2, (-r.y + 1) / 2) * winSize;
+            }
         }
         function shutdown(){
             ::CompositorManager.destroyCompositorWorkspace(mCompositorId_);
@@ -65,6 +84,13 @@
         function updateForEquipChange(equippedItems, wieldActive){
             mCharacterModel_.equipDataToCharacterModel(equippedItems, wieldActive);
         }
+
+        function getLeftPos(){
+            return mLeftPos_;
+        }
+        function getRightPos(){
+            return mRightPos_;
+        }
     }
 
     constructor(){
@@ -74,7 +100,7 @@
     function setup(parentWin){
         mParentWin_ = parentWin;
         mRenderPanel_ = mParentWin_.createPanel();
-        local sizeRatio = ::ScreenManager.calculateRatio(500);
+        local sizeRatio = ::ScreenManager.calculateRatio(200);
         mRenderPanel_.setMinSize(sizeRatio, sizeRatio);
 
         _event.subscribe(Event.PLAYER_EQUIP_CHANGED, receivePlayerEquipChangedEvent, this);
@@ -88,8 +114,27 @@
         _event.unsubscribe(Event.PLAYER_EQUIP_CHANGED, receivePlayerEquipChangedEvent, this);
     }
 
+    function getPosition(){
+        return mRenderPanel_.getPosition();
+    }
+
     function receivePlayerEquipChangedEvent(id, data){
         mRenderManager_.updateForEquipChange(data.items, data.wieldActive);
+    }
+
+    function getModelExtentRight(){
+        return mRenderManager_.getRightPos();
+    }
+    function getModelExtentLeft(){
+        return mRenderManager_.getLeftPos();
+    }
+
+    function setSize(size){
+        mRenderPanel_.setSize(size);
+    }
+
+    function getSize(){
+        return mRenderPanel_.getSize();
     }
 
     function addToLayout(layout){

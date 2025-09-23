@@ -299,7 +299,7 @@ enum InventoryBusEvents{
         mInventoryEquippedGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_EQUIPPABLES, mInventoryBus_, mHoverInfo_, buttonCover);
         mInventoryEquippedGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, null, null);
         //mInventoryEquippedGrid_.addToLayout(layoutLine);
-        mInventoryEquippedGrid_.addToLayout(layoutHorizontal);
+        //mInventoryEquippedGrid_.addToLayout(layoutHorizontal);
 
         if(mUseSecondaryGrid_){
             mSecondaryInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID_SECONDARY, mInventoryBus_, mHoverInfo_, buttonCover);
@@ -323,11 +323,11 @@ enum InventoryBusEvents{
             inventoryButton.setFocus();
         }
 
-        if(!mobile){
+        //if(!mobile){
             mPlayerInspector_ = ::GuiWidgets.InventoryPlayerInspector();
             mPlayerInspector_.setup(mWindow_);
             mPlayerInspector_.addToLayout(mobile ? layoutLine : layoutHorizontal);
-        }
+        //}
 
         layoutHorizontal.setMarginForAllCells(10, 0);
         if(mUseSecondaryGrid_){
@@ -337,7 +337,7 @@ enum InventoryBusEvents{
         layoutLine.addCell(layoutHorizontal);
 
         layoutLine.setMarginForAllCells(0, 5);
-        layoutLine.setPosition(::drawable.x * 0.05, 50);
+        layoutLine.setPosition(::drawable.x * 0.05, 0);
         layoutLine.setSize(::drawable.x * 0.9, ::drawable.y * 0.9);
         layoutLine.setHardMaxSize(::drawable.x * 0.9, ::drawable.y * 0.9);
         layoutLine.layout();
@@ -348,10 +348,43 @@ enum InventoryBusEvents{
         if(mUseSecondaryGrid_){
             mSecondaryInventoryGrid_.setNewGridIcons(mSecondaryItems_);
         }
+
+        local inspectorSize = mPlayerInspector_.getSize();
+        //inspectorSize.x = mInventoryGrid_.getSize().x
+        inspectorSize.x = ::drawable.x * 0.9;
+        mPlayerInspector_.setSize(inspectorSize);
         //container.sizeInner();
-        if(!mobile){
+        //if(!mobile){
+            repositionEquippablesGrid();
+
+            inspectorSize.y = mInventoryEquippedGrid_.getSize().y;
+            mPlayerInspector_.setSize(inspectorSize);
             mPlayerInspector_.notifyLayout();
+        //}
+
+        local gridStart = mPlayerInspector_.getPosition() + mPlayerInspector_.getSize();
+        gridStart.x = ::drawable.x * 0.05;
+        mInventoryGrid_.setPosition(gridStart);
+    }
+
+    function repositionEquippablesGrid(){
+        mInventoryEquippedGrid_.setPosition(mPlayerInspector_.getPosition());
+        local widgetSize = mInventoryEquippedGrid_.getWidgetSize();
+        //mInventoryEquippedGrid_.setSize(mInventoryEquippedGrid_.calculateChildrenSize());
+        mInventoryEquippedGrid_.setSize(::drawable);
+        //local rightPos = mPlayerInspector_.getModelExtentRight();
+        //local leftPos = mPlayerInspector_.getModelExtentLeft();
+        local leftPos = Vec2();
+        local rightPos = mPlayerInspector_.getSize();
+        rightPos.x -= widgetSize.x;
+        //leftPos.x -= widgetSize.x;
+        for(local i = 0; i < EquippedSlotTypes.MAX-1; i++){
+            local target = (i < 4 ? leftPos : rightPos).copy();
+            target.y = 0;
+            target.y += (i % 4) * widgetSize.y;
+            mInventoryEquippedGrid_.setPositionForIdx(i, target);
         }
+        mInventoryEquippedGrid_.setSize(mInventoryEquippedGrid_.calculateChildrenSize());
     }
 
     function highlightPrevious(){
