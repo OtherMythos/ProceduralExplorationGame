@@ -32,7 +32,7 @@ namespace ProceduralExplorationGameCore{
     Ogre::ABGR valueColours[(size_t)MapViewerColours::MAX];
 
     ExplorationMapViewer::ExplorationMapViewer(){
-        const float OPACITY = 0.4;
+        const float OPACITY = 0.2;
 
         Ogre::ColourValue cols[(size_t)MapViewerColours::MAX];
         cols[(size_t)MapViewerColours::OCEAN] = Ogre::ColourValue(0, 0, 1.0, OPACITY);
