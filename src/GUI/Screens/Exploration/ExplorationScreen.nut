@@ -251,6 +251,7 @@ enum ExplorationScreenWidgetType{
             _hlms.destroyDatablock(mDatablock_);
             _graphics.destroyTexture(mTexture_);
             mCompassNode_.destroyNodeAndChildren();
+            mParentNode_.destroyNodeAndChildren();
 
             mCompassWindow_ = null;
             mCompassPanel_ = null;
