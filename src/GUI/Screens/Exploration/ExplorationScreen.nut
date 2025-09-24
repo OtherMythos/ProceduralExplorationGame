@@ -9,6 +9,7 @@ enum ExplorationScreenWidgetType{
     MINIMAP,
     WIELD_BUTTON,
     CAMERA_BUTTON,
+    INVENTORY_INDICATOR,
 
     MAX
 }
@@ -591,8 +592,11 @@ enum ExplorationScreenWidgetType{
 
         local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
         if(mobile){
-            mWieldActiveButton = mWindow_.createButton();
-            mWieldActiveButton.setText("Wield");
+            //mWieldActiveButton = mWindow_.createButton();
+            mWieldActiveButton = ::IconButton(mWindow_, "swordsIcon");
+            mWieldActiveButton.setSize(Vec2(100, 100));
+            mWieldActiveButton.setButtonVisualsEnabled(false);
+            //mWieldActiveButton.setText("Wield");
             //mWieldActiveButton.setPosition(_window.getWidth() / 2 - mWieldActiveButton.getSize().x/2, _window.getHeight() - mWieldActiveButton.getSize().y*2);
             mWieldActiveButton.attachListenerForEvent(function(widget, action){
                 ::Base.mPlayerStats.toggleWieldActive();
@@ -702,6 +706,7 @@ enum ExplorationScreenWidgetType{
 
         mInventoryWidget_ = ::GuiWidgets.GameplayInventoryWidget(mWindow_, Vec2(100, 100));
         mInventoryWidget_.setPosition(Vec2(0, statsWidget.getPosition().y + statsWidget.getSize().y));
+        mExplorationScreenWidgetType_[ExplorationScreenWidgetType.INVENTORY_INDICATOR] = mInventoryWidget_;
 
         _event.subscribe(Event.ACTIONS_CHANGED, receiveActionsChanged, this);
         _event.subscribe(Event.WORLD_PREPARATION_STATE_CHANGE, receivePreparationStateChange, this);
@@ -713,6 +718,10 @@ enum ExplorationScreenWidgetType{
         mCompassAnimator_ = ExplorationScreenCompassAnimator(mWindow_, Vec2(400, 300));
         //mAnimator_.animateToInventoryPercentage(0.5);
         if(mobile){
+            local widgetPos = mInventoryWidget_.getPosition();
+            widgetPos.x += 100;
+            mWieldActiveButton.setPosition(widgetPos);
+
             mCameraButton.setPosition(mCompassAnimator_.getPosition());
             mCameraButton.setSize(mCompassAnimator_.getSize());
 
@@ -735,7 +744,7 @@ enum ExplorationScreenWidgetType{
         }
 
         if(mobile){
-            mWieldActiveButton.setPosition(0, mExplorationStatsContainer_.getSize().y + insets.top + 200);
+            //mWieldActiveButton.setPosition(Vec2(0, mExplorationStatsContainer_.getSize().y + insets.top + 200));
             //local newPos = mWieldActiveButton.getPosition();
             //newPos.y += mWieldActiveButton.getSize().y;
             local newPos = mPlayerDirectButton.getPosition().copy();
@@ -969,8 +978,12 @@ enum ExplorationScreenWidgetType{
         if(::Base.isProfileActive(GameProfile.SCREENSHOT_MODE)){
             vis = false;
         }
-        mExplorationStatsContainer_.setVisible(vis);
-        mWorldMapDisplay_.setVisible(vis);
+        mExplorationScreenWidgetType_[ExplorationScreenWidgetType.MINIMAP].setVisible(vis);
+        mExplorationScreenWidgetType_[ExplorationScreenWidgetType.STATS_CONTAINER].setVisible(vis);
+        mExplorationScreenWidgetType_[ExplorationScreenWidgetType.WIELD_BUTTON].setVisible(vis);
+        mExplorationScreenWidgetType_[ExplorationScreenWidgetType.INVENTORY_INDICATOR].setVisible(vis);
+        //mExplorationStatsContainer_.setVisible(vis);
+        //mWorldMapDisplay_.setVisible(vis);
     }
 
     function notifyGatewayEnd(explorationStats){

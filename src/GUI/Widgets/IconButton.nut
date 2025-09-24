@@ -32,6 +32,15 @@
         mButton_.attachListenerForEvent(func, id, context);
     }
 
+    function setButtonVisualsEnabled(enabled){
+        mButton_.setVisualsEnabled(enabled);
+    }
+
+    function setVisible(vis){
+        mButton_.setVisible(vis);
+        mIcon_.setVisible(vis);
+    }
+
     function setNextWidget(widget, dir){
         mButton_.setNextWidget(widget, dir);
     }

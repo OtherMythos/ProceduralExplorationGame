@@ -74,6 +74,16 @@
         mIconButton_.setPosition(mIconBackground_.getPosition());
     }
 
+    function getPosition(){
+        return mIconButton_.getPosition();
+    }
+
+    function setVisible(vis){
+        mIconPanel_.setVisible(vis);
+        mIconBackground_.setVisible(vis);
+        mIconLabel_.setVisible(vis);
+    }
+
     function setInventoryCount(count, total){
         mIconLabel_.setText(format("%i/%i", count, total));
     }
