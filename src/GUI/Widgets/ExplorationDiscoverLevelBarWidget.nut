@@ -4,9 +4,9 @@
     mBar_ = null;
 
     constructor(parent){
-        mLabel_ = parent.createLabel();
-        mLabel_.setText("test");
-        mLabel_.setShadowOutline(true, ColourValue(0, 0, 0), Vec2(2, 2));
+        //mLabel_ = parent.createLabel();
+        //mLabel_.setText("test");
+        //mLabel_.setShadowOutline(true, ColourValue(0, 0, 0), Vec2(2, 2));
 
         mBar_ = ::GuiWidgets.TwoBarProgressBar(parent);
         mBar_.setPercentage(0);
@@ -15,12 +15,12 @@
     }
 
     function addToLayout(layout){
-        layout.addCell(mLabel_);
+        //layout.addCell(mLabel_);
         mBar_.addToLayout(layout);
     }
 
     function setLabel(text){
-        mLabel_.setText(text);
+        //mLabel_.setText(text);
     }
 
     function setCounter(current, total){
@@ -39,7 +39,7 @@
         mBar_.setPercentage(percentage);
     }
     function setText(text){
-        mLabel_.setText(text);
+        //mLabel_.setText(text);
     }
 
     function getDerivedCentre(){

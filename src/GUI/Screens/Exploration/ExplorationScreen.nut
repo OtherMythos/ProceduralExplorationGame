@@ -453,7 +453,7 @@ enum ExplorationScreenWidgetType{
         function setup(){
             mWindow_ = mParent_.createWindow("WorldDiscoverLevelUpScreen");
             mWindow_.setSize(200, 200);
-            mWindow_.setPosition(0, 400);
+            mWindow_.setPosition(0, 0);
             mWindow_.setVisualsEnabled(false);
             mWindow_.setSkinPack("WindowSkinNoBorder");
             mWindow_.setVisible(false);
@@ -696,12 +696,6 @@ enum ExplorationScreenWidgetType{
         }
 
         mExplorationStatsContainer_.setPosition(Vec2(0, insets.top));
-        if(mobile){
-            mWieldActiveButton.setPosition(0, mExplorationStatsContainer_.getSize().y + insets.top + 200);
-            local newPos = mWieldActiveButton.getPosition();
-            newPos.y += mWieldActiveButton.getSize().y;
-            mDiscoverLevelUpScreen_.setPosition(newPos);
-        }
 
         mScreenInputCheckList_.append(mWorldMapDisplay_.mMapViewerWindow_);
 
@@ -737,6 +731,16 @@ enum ExplorationScreenWidgetType{
             local free = inv.getNumSlotsFree();
             local fullSize = inv.getInventorySize();
             setInventoryCount_(fullSize - free, fullSize);
+        }
+
+        if(mobile){
+            mWieldActiveButton.setPosition(0, mExplorationStatsContainer_.getSize().y + insets.top + 200);
+            //local newPos = mWieldActiveButton.getPosition();
+            //newPos.y += mWieldActiveButton.getSize().y;
+            local newPos = mPlayerDirectButton.getPosition().copy();
+            //newPos.y -= 200;
+            newPos.x = 0;
+            mDiscoverLevelUpScreen_.setPosition(newPos);
         }
 
         //TOOD NOTE Workaround! This isn't how the paradigm should fit together
