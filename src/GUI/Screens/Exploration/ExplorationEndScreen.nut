@@ -208,7 +208,7 @@ local ObjAnim = class{
             ::SaveManager.writeSaveAtPath("user://" + ::Base.mPlayerStats.getSaveSlot(), ::Base.mPlayerStats.getSaveData());
 
             ::ScreenManager.queueTransition(null, null, mLayerIdx);
-            ::ScreenManager.queueTransition(Screen.GAMEPLAY_MAIN_MENU_SCREEN);
+            ::ScreenManager.queueTransition(::BaseHelperFunctions.getTargetMainMenu());
         }
     ];
 

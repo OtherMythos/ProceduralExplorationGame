@@ -287,7 +287,7 @@ enum GameplayComplexMenuBusEvents{
             mTabWindows_.append(tabWindow);
         }
 
-        mCurrentTab_ = 1;
+        mCurrentTab_ = 0;
         notifyTabChange(mCurrentTab_);
     }
 

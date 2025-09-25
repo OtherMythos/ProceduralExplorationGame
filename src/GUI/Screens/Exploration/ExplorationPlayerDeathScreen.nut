@@ -8,7 +8,7 @@
         },
         function(widget, action){
             ::ScreenManager.queueTransition(null, null, mLayerIdx);
-            ::ScreenManager.queueTransition(Screen.GAMEPLAY_MAIN_MENU_SCREEN);
+            ::ScreenManager.queueTransition(::BaseHelperFunctions.getTargetMainMenu());
             ::Base.mExplorationLogic.shutdown();
         }
     ];

@@ -16,8 +16,15 @@ Separated from the Base.nut file so enums can be used.
     function getOverworldDir(){
         return "res://build/assets/overworld/";
     }
+    function getTargetMainMenu(){
+        if(::Base.getTargetInterface() == TargetInterface.MOBILE){
+            return Screen.GAMEPLAY_MAIN_MENU_COMPLEX_SCREEN;
+        }else{
+            return Screen.MAIN_MENU_SCREEN;
+        }
+    }
     function getStartingScreen(){
-        return Screen.MAIN_MENU_SCREEN;
+        return getTargetMainMenu();
     }
     function getScreenDataForForcedScreen(screenId){
         local data = null;
