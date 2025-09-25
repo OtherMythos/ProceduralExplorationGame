@@ -23,6 +23,13 @@ Separated from the Base.nut file so enums can be used.
             return Screen.MAIN_MENU_SCREEN;
         }
     }
+    function getTargetGameplayMainMenu(){
+        if(::Base.getTargetInterface() == TargetInterface.MOBILE){
+            return Screen.GAMEPLAY_MAIN_MENU_COMPLEX_SCREEN;
+        }else{
+            return Screen.GAMEPLAY_MAIN_MENU_SCREEN;
+        }
+    }
     function getStartingScreen(){
         return getTargetMainMenu();
     }

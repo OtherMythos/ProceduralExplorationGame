@@ -16,7 +16,7 @@
             ::Base.mExplorationLogic.setGamePaused(false);
             ::Base.mExplorationLogic.shutdown();
             closeScreen();
-            ::ScreenManager.queueTransition(::BaseHelperFunctions.getTargetMainMenu());
+            ::ScreenManager.queueTransition(::BaseHelperFunctions.getTargetGameplayMainMenu());
         }
     ];
     mButtons_ = null;
