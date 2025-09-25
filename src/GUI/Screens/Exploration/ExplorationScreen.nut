@@ -34,6 +34,7 @@ enum ExplorationScreenWidgetType{
     mZoomModifierButton = null;
     mCameraButton = null;
     mPlayerDirectButton = null;
+    mPlayerDirectJoystick_ = null;
     mPlayerTapButton = null;
     mPlayerTapButtonActive = false;
     mDiscoverLevelUpScreen_ = null;
@@ -629,6 +630,8 @@ enum ExplorationScreenWidgetType{
             }, _GUI_ACTION_PRESSED);
             //mScreenInputCheckList_.append(mPlayerTapButton);
 
+            mPlayerDirectJoystick_ = ::PlayerDirectJoystick(mWindow_);
+
             mPlayerDirectButton = mWindow_.createButton();
             local playerSizeButton = Vec2(100, 100);
             mPlayerDirectButton.setText("Direct");
@@ -636,11 +639,12 @@ enum ExplorationScreenWidgetType{
             //mPlayerDirectButton.setPosition(_window.getWidth() / 2 - playerSizeButton.x / 2, _window.getHeight() / 2 - playerSizeButton.y / 2);
             mPlayerDirectButton.setKeyboardNavigable(false);
             //mPlayerDirectButton.setVisualsEnabled(false);
-            mPlayerDirectButton.setPosition(_window.getWidth() / 2 - mPlayerDirectButton.getSize().x/2, mCameraButton.getPosition().y - mPlayerDirectButton.getSize().y - 20);
+            //mPlayerDirectButton.setPosition(_window.getWidth() / 2 - mPlayerDirectButton.getSize().x/2, mCameraButton.getPosition().y - mPlayerDirectButton.getSize().y - 20);
             mPlayerDirectButton.attachListenerForEvent(function(widget, action){
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
                 currentWorld.requestDirectingPlayer();
             }, _GUI_ACTION_PRESSED);
+            mPlayerDirectButton.setVisible(false);
 
             mZoomModifierButton = mWindow_.createButton();
             mZoomModifierButton.setText("Zoom");
@@ -728,6 +732,10 @@ enum ExplorationScreenWidgetType{
             mPlayerDirectButton.setSize(100, 100);
             mPlayerDirectButton.setPosition(mZoomModifierButton.getPosition().x - 100, mCompassAnimator_.getPosition().y - 100);
             mPlayerDirectButton.setSkinPack("ButtonZoom");
+
+            local directSize = mPlayerDirectButton.getSize();
+            mPlayerDirectJoystick_.setSize(directSize + directSize * 0.5);
+            mPlayerDirectJoystick_.setPosition(mPlayerDirectButton.getPosition() - directSize * 0.25);
 
             local zoomLinesSize = mZoomLines_.getSize();
             zoomLinesSize.y = mCompassAnimator_.getPosition().y - mZoomLines_.getPosition().y;
@@ -820,6 +828,10 @@ enum ExplorationScreenWidgetType{
         mAnimator_.update();
         mCompassAnimator_.update();
         mZoomLines_.update();
+
+        if(mPlayerDirectJoystick_ != null){
+            mPlayerDirectJoystick_.update();
+        }
     }
 
     function getMoneyCounterWindowPos(){
@@ -911,6 +923,9 @@ enum ExplorationScreenWidgetType{
         mInventoryWidget_.shutdown();
         mCompassAnimator_.shutdown();
         mExplorationStatsContainer_.shutdown();
+        if(mPlayerDirectJoystick_){
+            mPlayerDirectJoystick_.shutdown();
+        }
         base.shutdown();
     }
 

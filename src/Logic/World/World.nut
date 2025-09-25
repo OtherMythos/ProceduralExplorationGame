@@ -1828,6 +1828,10 @@ enum WorldMousePressContexts{
                     mouseDelta.x * sinA + mouseDelta.y * cosA
                 );
 
+                local dist = mouseDelta.distance(::Vec2_ZERO);
+
+                _event.transmit(Event.PLAYER_DIRECTING_CHANGED, mouseDelta);
+
                 setPlayerDirection(worldDir);
                 mDirectingPlayerSpeedModifier_ = 1.0;
             }else{

@@ -197,6 +197,7 @@
         _doFile("res://src/GUI/Widgets/ExplorationDiscoverLevelBarWidget.nut");
         _doFile("res://src/GUI/Widgets/PlayerBasicStatsWidget.nut");
         _doFile("res://src/GUI/Widgets/GameplayInventoryWidget.nut");
+        _doFile("res://src/GUI/Widgets/PlayerDirectJoystick.nut");
 
         _doFile("res://src/System/SystemSettings.nut");
 

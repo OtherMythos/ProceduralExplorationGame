@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <g fill="none" stroke="white" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+    <!-- North -->
+    <path d="M70 50 L100 20 L130 50" />
+    <!-- East -->
+    <path d="M150 70 L180 100 L150 130" />
+    <!-- South -->
+    <path d="M70 150 L100 180 L130 150" />
+    <!-- West -->
+    <path d="M50 70 L20 100 L50 130" />
+  </g>
+</svg>
