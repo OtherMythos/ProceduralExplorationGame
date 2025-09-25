@@ -203,6 +203,11 @@ enum InventoryBusEvents{
         _event.subscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent, this);
         _event.subscribe(Event.PLAYER_EQUIP_CHANGED, receivePlayerEquipChangedEvent, this);
 
+        local startOffset = 0;
+        if(data.rawin("startOffset")){
+            startOffset = data.rawget("startOffset");
+        }
+
         if(data.rawin("items")){
             //mSecondaryItems_ = array(4 * 4, null);
             //mSecondaryItems_[0] = ::Item(ItemId.APPLE);
@@ -249,7 +254,7 @@ enum InventoryBusEvents{
 
             inventoryButton = ::IconButton(mWindow_, "backButtonIcon");
             inventoryButton.setSize(Vec2(64, 64));
-            inventoryButton.setPosition(Vec2(10, 10));
+            inventoryButton.setPosition(Vec2(10, 10 + startOffset));
             inventoryButton.attachListenerForEvent(function(widget, action){
                 closeInventory();
             }, _GUI_ACTION_PRESSED, this);
@@ -337,7 +342,11 @@ enum InventoryBusEvents{
         layoutLine.addCell(layoutHorizontal);
 
         layoutLine.setMarginForAllCells(0, 5);
-        layoutLine.setPosition(::drawable.x * 0.05, 0);
+        local startPos = 0;
+        if(inventoryButton){
+            startPos = inventoryButton.getPosition().y + inventoryButton.getSize().y;
+        }
+        layoutLine.setPosition(::drawable.x * 0.05, startPos);
         layoutLine.setSize(::drawable.x * 0.9, ::drawable.y * 0.9);
         layoutLine.setHardMaxSize(::drawable.x * 0.9, ::drawable.y * 0.9);
         layoutLine.layout();

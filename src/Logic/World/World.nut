@@ -1537,8 +1537,9 @@ enum WorldMousePressContexts{
 
     function showInventory(data=null){
         local targetData = data;
+        local insets = _window.getScreenSafeAreaInsets();
         if(targetData == null){
-            targetData = {"stats": ::Base.mPlayerStats};
+            targetData = {"stats": ::Base.mPlayerStats, "startOffset": insets.top};
         }
         notifyModalPopupScreen();
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, targetData),
