@@ -87,6 +87,7 @@
             mEXPOrbLabel_.setDefaultFontSize(mEXPOrbLabel_.getDefaultFontSize() * 1.2);
             mEXPOrbLabel_.setText("999");
             mEXPOrbLabel_.setPosition(leftCount, 0);
+            mEXPOrbLabel_.setShadowOutline(true, ColourValue(0, 0, 0), Vec2(2, 2));
             leftCount += mEXPOrbLabel_.getSize().x;
         }
 
@@ -101,6 +102,7 @@
             mCoinLabel_.setDefaultFontSize(mCoinLabel_.getDefaultFontSize() * 1.2);
             mCoinLabel_.setText("999");
             mCoinLabel_.setPosition(leftCount, 0);
+            mCoinLabel_.setShadowOutline(true, ColourValue(0, 0, 0), Vec2(2, 2));
             leftCount += mCoinLabel_.getSize().x;
         }
 
