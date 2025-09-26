@@ -45,7 +45,7 @@ enum GameplayComplexMenuBusEvents{
 
             mHeightOverride_ = 100;
 
-            local win = parentWin.createWindow();
+            local win = parentWin.createWindow("GameplayMainMenuComplex");
             win.setClipBorders(0, 0, 0, 0);
             win.setSize(::drawable.x, SIZE + 10 + mHeightOverride_);
             //win.setVisualsEnabled(false);
