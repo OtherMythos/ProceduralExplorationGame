@@ -995,7 +995,9 @@ enum ExplorationScreenWidgetType{
         }
         mExplorationScreenWidgetType_[ExplorationScreenWidgetType.MINIMAP].setVisible(vis);
         mExplorationScreenWidgetType_[ExplorationScreenWidgetType.STATS_CONTAINER].setVisible(vis);
-        mExplorationScreenWidgetType_[ExplorationScreenWidgetType.WIELD_BUTTON].setVisible(vis);
+        if(mExplorationScreenWidgetType_[ExplorationScreenWidgetType.WIELD_BUTTON]){
+            mExplorationScreenWidgetType_[ExplorationScreenWidgetType.WIELD_BUTTON].setVisible(vis);
+        }
         mExplorationScreenWidgetType_[ExplorationScreenWidgetType.INVENTORY_INDICATOR].setVisible(vis);
         //mExplorationStatsContainer_.setVisible(vis);
         //mWorldMapDisplay_.setVisible(vis);
