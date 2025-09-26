@@ -225,13 +225,24 @@ enum GameplayComplexMenuBusEvents{
     mAnimCount_ = 0;
     mAnimCountTotal_ = 0;
 
+    function bodgeLoadSave(){
+        local viableSaves = ::Base.mSaveManager.findViableSaves();
+        if(viableSaves.len() <= 0){
+            local freeSlot = ::SaveManager.getFreeSaveSlot();
+            local save = ::Base.mSaveManager.produceSave();
+            save.playerName = "test";
+            ::Base.mPlayerStats.setSaveData(save, freeSlot);
+            ::SaveManager.writeSaveAtPath("user://" + freeSlot, ::Base.mPlayerStats.getSaveData());
+        }else{
+            local saveSlot = 0;
+            local save = ::Base.mSaveManager.readSaveAtPath("user://" + viableSaves[saveSlot].tostring());
+            ::Base.mPlayerStats.setSaveData(save, saveSlot);
+        }
+    }
+
     function recreate(){
 
-        //TODO Load the save in a more robust way when the complex screen becomes the default.
-        local viableSaves = ::Base.mSaveManager.findViableSaves();
-        local saveSlot = 0;
-        local save = ::Base.mSaveManager.readSaveAtPath("user://" + viableSaves[saveSlot].tostring());
-        ::Base.mPlayerStats.setSaveData(save, saveSlot);
+        bodgeLoadSave();
 
         mBus_ = ComplexScreenBus();
         mBus_.registerCallback(busCallback, this);
