@@ -53,6 +53,12 @@
         mPopupWin_.setHidden(::Base.isProfileActive(GameProfile.SCREENSHOT_MODE));
     }
 
+    function shutdown(){
+        base.shutdown();
+
+        _event.transmit(Event.REGION_DISCOVERED_POPUP_FINISHED, null);
+    }
+
     function getLabelForRegionType(biomeData){
         if(biomeData == null){
             return "Discovered a place";
@@ -67,10 +73,6 @@
     function update(){
         animateFadeIn();
         local result = tickTimer();
-
-        if(!result){
-            _event.transmit(Event.REGION_DISCOVERED_POPUP_FINISHED, null);
-        }
 
         return result;
     }
