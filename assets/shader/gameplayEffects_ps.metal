@@ -28,8 +28,7 @@ fragment float4 main_metal
 {
     float2 uv = inPs.uv0;
 
-    float anim = (1 - pow(1 - p.amount, 2));
-    //float anim = p.amount;
+    float anim = (1 - pow(1 - readUniform(amount), 2));
 
     // Recenter to [-1,1] space
     float2 centered = uv * 2.0 - 1.0;

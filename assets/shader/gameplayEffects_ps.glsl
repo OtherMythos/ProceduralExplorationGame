@@ -52,16 +52,45 @@ vulkan_layout( location = 0 )
 out vec4 fragColour;
 
 vulkan( layout( ogre_P0 ) uniform params { )
-    uniform float4 colour;
+    uniform float amount;
 vulkan( }; )
 
 vulkan_layout( location = 0 )
 in block
 {
-    vec3 cameraDir;
+    float2 uv0;
 } inPs;
+
+vulkan_layout( ogre_t0 ) uniform texture2D Image;
+vulkan( layout( ogre_s0 ) uniform sampler samplerState; )
 
 void main()
 {
-    fragColour = colour;
+    float2 uv = inPs.uv0;
+
+    float anim = (1 - pow(1 - readUniform(amount), 2));
+
+    // Recenter to [-1,1] space
+    float2 centered = uv * 2.0 - 1.0;
+
+    // Get texture size and compute aspect ratio
+    float2 texSize = sizeForTexture(Image);
+    float aspect = texSize.x / texSize.y;
+
+    // Correct for aspect ratio so gradient is circular
+    //centered.x *= (texSize.y / texSize.x);
+
+    // Compute distance from center
+    float dist = length(centered);
+
+    // Smooth falloff for blending (tweak 0.5, 1.0 for softness/extent)
+    float val = smoothstep(0.4, 2.0, dist);
+
+    // Sample the original texture
+    float4 startValue = OGRE_Sample(Image, samplerState, uv);
+
+    // Mix with red based on gradient
+    float4 result = mix(startValue, float4(1, 0, 0, 1), val * anim);
+
+    returnFinalColour(result);
 }
