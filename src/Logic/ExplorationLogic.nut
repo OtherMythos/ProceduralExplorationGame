@@ -12,6 +12,7 @@
     mExplorationActive_ = false;
 
     mExplorationStats_ = null;
+    mExplorationEffectsManager_ = null;
 
     mCurrentTimer_ = null;
     mRunning_ = false;
@@ -38,6 +39,8 @@
                 _input.getButtonActionHandle("PerformMove4")
             ]
         };
+
+        mExplorationEffectsManager_ = ::ExplorationEffectsManager();
 
         mQueuedWorlds_ = [];
         mIdPool_ = IdPool();
@@ -95,6 +98,10 @@
         mCurrentWorld_.playerHealthChanged(data);
         foreach(i in mQueuedWorlds_){
             i.playerHealthChanged(data);
+        }
+
+        if(data.change < 0){
+            ::Base.mExplorationLogic.activateEffect(ExplorationEffects.HEALTH_DAMAGE);
         }
     }
     function playerWieldActiveChanged(id, data){
@@ -189,6 +196,10 @@
         _event.transmit(Event.ACTIVE_WORLD_CHANGE, mCurrentWorld_);
     }
 
+    function activateEffect(effect){
+        mExplorationEffectsManager_.activateEffect(effect);
+    }
+
     function processPlayerDeath(id, data){
         print("Received player death");
         pauseExploration();
@@ -229,6 +240,8 @@
 
         //TODO reset the exploration.
         mCurrentWorld_.update();
+
+        mExplorationEffectsManager_.update();
     }
 
     function tickPreparation(){

@@ -726,7 +726,8 @@ enum WorldMousePressContexts{
         local data = {
             "health": ::Base.mPlayerStats.getPlayerHealth(),
             "max": ::Base.mPlayerStats.getPlayerMaxHealth(),
-            "percentage": ::Base.mPlayerStats.getPlayerHealthPercentage()
+            "percentage": ::Base.mPlayerStats.getPlayerHealthPercentage(),
+            "change": 0
         };
         _event.transmit(Event.PLAYER_HEALTH_CHANGED, data);
 
@@ -937,19 +938,20 @@ enum WorldMousePressContexts{
         mCurrentHighlightEnemy_ = enemy;
     }
 
-    function notifyNewEntityHealth(entity, newHealth, newPercentage){
+    function notifyNewEntityHealth(entity, newHealth, oldHealth, newPercentage){
         //TODO the health node should notify all entities rather than doing it here.
         if(mActiveEnemies_.rawin(entity)){
             local enemy = mActiveEnemies_[entity];
             enemy.notifyNewHealth(newHealth, newPercentage);
         }
 
-        checkEntityHealthImportant(entity, newHealth, newPercentage);
+        checkEntityHealthImportant(entity, newHealth, oldHealth, newPercentage);
     }
 
-    function checkEntityHealthImportant(entity, newHealth, percentage){
+    function checkEntityHealthImportant(entity, newHealth, oldHealth, percentage){
         if(entity == mPlayerEntry_.getEntity()){
-            ::Base.mPlayerStats.setPlayerHealth(newHealth);
+            local change = newHealth - oldHealth;
+            ::Base.mPlayerStats.setPlayerHealth(newHealth, change);
         }
     }
 

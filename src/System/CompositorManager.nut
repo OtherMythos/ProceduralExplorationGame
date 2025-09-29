@@ -21,6 +21,7 @@ enum CompositorSceneType{
     mExplorationCamera = null
 
     mGameplayActive_ = false
+    mGameplayEffectsActive_ = false
 
     CompositorDef = class{
         mWorkspace = null;
@@ -78,6 +79,24 @@ enum CompositorSceneType{
         refreshRenderWindowWorkspace_();
     }
 
+    function setGameplayEffectsActive(active){
+        if(mGameplayEffectsActive_ == active) return;
+        mGameplayEffectsActive_ = active;
+        refreshRenderWindowWorkspace_();
+    }
+
+    function getRenderWorkspace_(){
+        if(mGameplayActive_){
+            if(mGameplayEffectsActive_){
+                return "renderWindowWorkspaceGameplayWithEffects";
+            }else{
+                return "renderWindowWorkspaceGameplay";
+            }
+        }else{
+            return "renderWindowWorkspace";
+        }
+    }
+
     function refreshRenderWindowWorkspace_(){
         if(mRenderWindowWorkspace_ != null){
             _compositor.removeWorkspace(mRenderWindowWorkspace_);
@@ -86,7 +105,7 @@ enum CompositorSceneType{
         foreach(i in mTextures_){
             textures.append(i);
         }
-        local targetWorkspace = mGameplayActive_ ? "renderWindowWorkspaceGameplay" : "renderWindowWorkspace";
+        local targetWorkspace = getRenderWorkspace_();
         mRenderWindowWorkspace_ = _compositor.addWorkspace(textures, _camera.getCamera(), targetWorkspace, true);
     }
 

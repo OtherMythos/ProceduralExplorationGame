@@ -120,19 +120,20 @@
     function alterPlayerHealth(amount){
         printf("Altering player health by %i", amount);
         mPlayerCombatStats.alterHealth(amount);
-        setPlayerHealth_(mPlayerCombatStats.mHealth);
+        setPlayerHealth_(mPlayerCombatStats.mHealth, amount);
     }
-    function setPlayerHealth(health){
+    function setPlayerHealth(health, change=0){
         printf("Setting player health to %i", health);
-        setPlayerHealth_(health);
+        setPlayerHealth_(health, change);
     }
-    function setPlayerHealth_(health){
+    function setPlayerHealth_(health, change=0){
         mPlayerCombatStats.setHealth(health);
 
         local data = {
             "health": mPlayerCombatStats.mHealth,
             "max": mPlayerCombatStats.mMaxHealth,
-            "percentage": mPlayerCombatStats.getHealthPercentage()
+            "percentage": mPlayerCombatStats.getHealthPercentage(),
+            "change": change
         };
         //mPlayerEntry_.notifyNewHealth(newHealth, percentage);
         _event.transmit(Event.PLAYER_HEALTH_CHANGED, data);

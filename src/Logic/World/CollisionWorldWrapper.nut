@@ -3,7 +3,8 @@
 ::_applyHealthChangeOther <- function(manager, entity, damage){
     if(!manager.entityValid(entity)) return;
     local component = manager.getComponent(entity, EntityComponents.HEALTH);
-    local newHealth = component.mHealth + damage;
+    local oldHealth = component.mHealth;
+    local newHealth = oldHealth + damage;
     if(newHealth > component.mMaxHealth){
         newHealth = component.mMaxHealth;
     }
@@ -21,7 +22,7 @@
     print("new health " + newHealth);
 
     //TODO get rid of this.
-    ::Base.mExplorationLogic.mCurrentWorld_.notifyNewEntityHealth(entity, newHealth, newPercentage);
+    ::Base.mExplorationLogic.mCurrentWorld_.notifyNewEntityHealth(entity, newHealth, oldHealth, newPercentage);
 
     if(newHealth <= 0){
         manager.destroyEntity(entity);
