@@ -41,6 +41,7 @@ enum ExplorationScreenWidgetType{
     mInventoryWidget_ = null;
     mLayoutLine_ = null;
     mZoomLines_ = null;
+    mMobileActionInfo_ = null;
 
     mAnimator_ = null;
     mCompassAnimator_ = null;
@@ -323,6 +324,108 @@ enum ExplorationScreenWidgetType{
 
         }
     }
+
+    ExplorationScreenMobileActionInfo = class{
+
+        mParent_ = null;
+        mLabel_ = null;
+        mAnimationPanel_ = null;
+        mAnimationPanelBackground_ = null;
+
+        mLottieAnimation_ = null;
+        mLottieAnimationSecond_ = null;
+
+        mDatablock_ = null;
+        mBackgroundDatablock_ = null;
+
+        mTargetAnimation_ = 0.0;
+        mAnim_ = 1.0;
+
+        constructor(parent){
+            mParent_ = parent;
+            mLabel_ = parent.createLabel();
+            mLabel_.setShadowOutline(true, ColourValue(0, 0, 0, 1), Vec2(2, 2));
+            //mLabel_.setDefaultFontSize(mLabel_.getDefaultFontSize() * 1.5);
+            mLabel_.setText("Descend");
+
+            local animSize = Vec2(64, 64);
+            mAnimationPanelBackground_ = parent.createPanel();
+            mAnimationPanelBackground_.setSize(animSize);
+            mAnimationPanel_ = parent.createPanel();
+            mAnimationPanel_.setSize(animSize);
+
+            animSize *= ::resolutionMult;
+
+            local lottieMan = ::Base.mLottieManager;
+            local blendBlock = _hlms.getBlendblock({
+                "blend_operation": _HLMS_SBO_MAX,
+            });
+            mLottieAnimation_ = lottieMan.createAnimation(LottieAnimationType.SPRITE_SHEET, "res://build/assets/lottie/mobileTouch.json", animSize.x.tointeger(), animSize.y.tointeger(), true, blendBlock);
+
+            local blendBlock = _hlms.getBlendblock({
+                "dst_blend_factor": _HLMS_SBF_ONE_MINUS_SOURCE_COLOUR,
+                "blend_operation": _HLMS_SBF_DEST_COLOUR,
+            });
+            mLottieAnimationSecond_ = lottieMan.createAnimation(LottieAnimationType.SPRITE_SHEET, "res://build/assets/lottie/mobileTouch.json", animSize.x.tointeger(), animSize.y.tointeger(), true, blendBlock);
+
+            local datablock = lottieMan.getDatablockForAnim(mLottieAnimation_);
+            mAnimationPanel_.setDatablock(datablock);
+            mDatablock_ = datablock;
+            datablock = lottieMan.getDatablockForAnim(mLottieAnimationSecond_);
+            mAnimationPanelBackground_.setDatablock(datablock);
+            mBackgroundDatablock_ = datablock;
+
+            reposition_();
+        }
+
+        function reposition_(){
+            local winPos = mParent_.getSize() / 2;
+            winPos.y -= 100;
+            winPos.x += mAnimationPanel_.getSize().x / 4;
+            mLabel_.setCentre(winPos);
+
+            winPos = mLabel_.getPosition();
+            winPos.x -= mAnimationPanel_.getSize().x * 0.9;
+            winPos.y -= mAnimationPanel_.getSize().y / 8;
+            mAnimationPanel_.setPosition(winPos);
+            winPos += Vec2(1, 1);
+            mAnimationPanelBackground_.setPosition(winPos);
+        }
+
+        function setOpacity(opacity){
+            //mLabel_.setVisible(visible);
+            //mAnimationPanel_.setVisible(visible);
+            //mAnimationPanelBackground_.setVisible(visible);
+            mLabel_.setTextColour(ColourValue(1, 1, 1, opacity));
+            mLabel_.setShadowOutline(true, ColourValue(0, 0, 0, opacity), Vec2(2, 2));
+
+            //mDatablock_.setUseColour(true);
+            //mAnimationPanel_.setColour(ColourValue(1, 1, 1, opacity));
+            //TODO I wasn't able to fade in the opacity due to how the blendblocks are setup.
+            mAnimationPanel_.setVisible(opacity >= 0.5);
+            mAnimationPanelBackground_.setVisible(opacity >= 0.5);
+            //mBackgroundDatablock_.setUseColour(true);
+            //mAnimationPanelBackground_.setColour(ColourValue(1, 1, 1, opacity));
+        }
+
+        function update(){
+            mAnim_ = ::accelerationClampCoordinate_(mAnim_, mTargetAnimation_, 0.1);
+            setOpacity(mAnim_);
+        }
+
+        function actionsChanged(data, allEmpty){
+            //setVisible_(!allEmpty);
+            if(allEmpty){
+                mTargetAnimation_ = 0.0;
+                return;
+            }
+            mTargetAnimation_ = 1.0;
+
+            mLabel_.setText(data[0].tostring());
+            reposition_();
+        }
+
+    };
 
     ExplorationScreenAnimator = class{
         mInventoryParams_ = null;
@@ -742,6 +845,8 @@ enum ExplorationScreenWidgetType{
             mZoomLines_.setSize(zoomLinesSize);
             mZoomModifierButton.setPosition(mZoomLines_.getPosition());
             mZoomModifierButton.setSize(mZoomLines_.getSize());
+
+            mMobileActionInfo_ = ExplorationScreenMobileActionInfo(mWindow_);
         }
 
         {
@@ -812,6 +917,7 @@ enum ExplorationScreenWidgetType{
         }
         if(::Base.getTargetInterface() == TargetInterface.MOBILE){
             mPlayerTapButton.setVisible(!allEmpty);
+            mMobileActionInfo_.actionsChanged(data, allEmpty);
         }
         mPlayerTapButtonActive = !allEmpty;
     }
@@ -831,6 +937,9 @@ enum ExplorationScreenWidgetType{
 
         if(mPlayerDirectJoystick_ != null){
             mPlayerDirectJoystick_.update();
+        }
+        if(mMobileActionInfo_ != null){
+            mMobileActionInfo_.update();
         }
     }
 

@@ -36,6 +36,10 @@
             mLabels_[i] = label;
         }
 
+        if(mTouchInterface_){
+            mWindow_.setVisible(false);
+        }
+
         _event.subscribe(Event.ACTIONS_CHANGED, actionsChanged, this);
     }
 
@@ -85,6 +89,7 @@
     }
 
     function setVisible(visible){
+        if(mTouchInterface_) return;
         mWindow_.setVisible(visible);
     }
 

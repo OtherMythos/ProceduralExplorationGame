@@ -38,7 +38,7 @@ const LOTTIE_MANAGER_SPRITES_WIDTH = 10;
         mCalcWidth_ = 0.0;
         mCalcHeight_ = 0.0;
         mDatablock_ = null;
-        constructor(id, width, height, animType, anim, surface, texture, stagingTexture, repeat, totalWidth=1, totalHeight=1){
+        constructor(id, width, height, animType, anim, surface, texture, stagingTexture, repeat, totalWidth=1, totalHeight=1, blendblock=null){
             mId_ = id;
             mWidth_ = width;
             mHeight_ = height;
@@ -52,7 +52,7 @@ const LOTTIE_MANAGER_SPRITES_WIDTH = 10;
             mTotalWidth_ = totalWidth;
             mTotalHeight_ = totalHeight;
 
-            createDatablock_();
+            createDatablock_(blendblock);
             if(mAnimType_ == LottieAnimationType.SPRITE_SHEET){
                 generateSpriteSheet_();
                 mCalcWidth_ = mWidth_.tofloat() / mTotalWidth_.tofloat();
@@ -122,10 +122,18 @@ const LOTTIE_MANAGER_SPRITES_WIDTH = 10;
             mTexture_.barrierSolveTexture();
         }
 
-        function createDatablock_(){
-            local blendBlock = _hlms.getBlendblock({
-                "dst_blend_factor": _HLMS_SBF_ONE_MINUS_SOURCE_ALPHA
-            });
+        function createDatablock_(blend){
+            local blendBlock = null;
+            if(blend == null){
+                blendBlock = _hlms.getBlendblock({
+                    "src_blend_factor": _HLMS_SBF_SOURCE_ALPHA,
+                    "dst_blend_factor": _HLMS_SBF_ONE_MINUS_SOURCE_ALPHA,
+                    "src_alpha_blend_factor": _HLMS_SBF_ONE_MINUS_DEST_ALPHA,
+                    "dst_alpha_blend_factor": _HLMS_SBF_ONE
+                });
+            }else{
+                blendBlock = blend;
+            }
             local datablock = _hlms.unlit.createDatablock("lottieManagerDatablock" + mId_, blendBlock);
             datablock.setTexture(0, mTexture_);
             mTexture_.barrierSolveTexture();
@@ -149,7 +157,7 @@ const LOTTIE_MANAGER_SPRITES_WIDTH = 10;
         mVersionPool_ = ::VersionPool();
     }
 
-    function createAnimation(animationType, animPath, width, height, repeat=true){
+    function createAnimation(animationType, animPath, width, height, repeat=true, blendblock=null){
         local lottieAnim = _lottie.createAnimation(animPath);
 
         local surfaceWidth = width;
@@ -168,7 +176,7 @@ const LOTTIE_MANAGER_SPRITES_WIDTH = 10;
         texture.scheduleTransitionTo(_GPU_RESIDENCY_RESIDENT);
         local stagingTexture = _graphics.getStagingTexture(surfaceWidth, surfaceHeight, 1, 1, _PFG_RGBA8_UNORM);
 
-        local a = LottieAnimation(mTotalAnims_, width, height, animationType, lottieAnim, surface, texture, stagingTexture, repeat, surfaceWidth, surfaceHeight);
+        local a = LottieAnimation(mTotalAnims_, width, height, animationType, lottieAnim, surface, texture, stagingTexture, repeat, surfaceWidth, surfaceHeight, blendblock);
 
         local id = mVersionPool_.store(a);
         mTotalAnims_++;
