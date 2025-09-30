@@ -1,24 +1,25 @@
 ::GuiWidgets.GameplayProgressBar <- class extends ::GuiWidgets.ProgressBar{
-    BACKGROUND_DATABLOCK = "gui/gameplayProgressBarBackground";
-    BAR_DATABLOCK = "gui/gameplayProgressBarLevel1";
+    BACKGROUND_COLOUR = ColourValue(0.05, 0.05, 0.05, 0.8);
+    BAR_LEVEL_1 = ColourValue(0.9, 0.1, 0.1, 1.0);
+    BAR_LEVEL_2 = ColourValue(0.8, 0.6, 0.2, 1.0);
 
     function getDatablock(level){
         if(level < 0){
-            return BACKGROUND_DATABLOCK;
+            return BACKGROUND_COLOUR;
         }
         switch(level){
             case 1:
-                return "gui/gameplayProgressBarLevel2";
+                return BAR_LEVEL_2;
             case 0:
             default:
-                return BAR_DATABLOCK;
+                return BAR_LEVEL_1;
         }
     }
 
     function setLevel(level){
         local target = getDatablock(level);
         local background = getDatablock(level-1);
-        mChildBar_.setDatablock(target);
-        mParentContainer_.setDatablock(background);
+        mChildBar_.setColour(target);
+        mParentContainer_.setColour(background);
     }
 };

@@ -43,6 +43,9 @@ enum ExplorationScreenWidgetType{
     mZoomLines_ = null;
     mMobileActionInfo_ = null;
 
+    mTargetTopInfoOpacity_ = 1.0;
+    mTopInfoAnim_ = 1.0;
+
     mAnimator_ = null;
     mCompassAnimator_ = null;
 
@@ -912,7 +915,8 @@ enum ExplorationScreenWidgetType{
     }
 
     function receiveRegionDiscoveredPopupFinished(id, data){
-        setTopInfoVisible(true);
+        //setTopInfoVisible(true);
+        mTargetTopInfoOpacity_ = 1.0;
     }
 
     function receivePreparationStateChange(id, data){
@@ -951,6 +955,8 @@ enum ExplorationScreenWidgetType{
         mAnimator_.update();
         mCompassAnimator_.update();
         mZoomLines_.update();
+
+        updateTopInfoVisibility();
 
         if(mPlayerDirectJoystick_ != null){
             mPlayerDirectJoystick_.update();
@@ -1106,12 +1112,21 @@ enum ExplorationScreenWidgetType{
                 local insets = _window.getScreenSafeAreaInsets();
                 yPos = insets.top + 20;
 
-                setTopInfoVisible(false);
+                //setTopInfoVisible(false);
+                mTargetTopInfoOpacity_ = 0.25;
             }
             popupData.data.pos <- Vec2(0, yPos);
         }
 
         ::PopupManager.displayPopup(popupData);
+    }
+
+    function updateTopInfoVisibility(){
+        local old = mTopInfoAnim_;
+        mTopInfoAnim_ = ::accelerationClampCoordinate_(mTopInfoAnim_, mTargetTopInfoOpacity_, 0.1);
+        if(old != mTopInfoAnim_){
+            setTopInfoOpacity(mTopInfoAnim_);
+        }
     }
 
     function setTopInfoVisible(visible){
@@ -1127,6 +1142,17 @@ enum ExplorationScreenWidgetType{
         mExplorationScreenWidgetType_[ExplorationScreenWidgetType.INVENTORY_INDICATOR].setVisible(vis);
         //mExplorationStatsContainer_.setVisible(vis);
         //mWorldMapDisplay_.setVisible(vis);
+    }
+
+    function setTopInfoOpacity(opacity){
+        local target = ColourValue(1, 1, 1, opacity);
+
+        if(mExplorationScreenWidgetType_[ExplorationScreenWidgetType.WIELD_BUTTON]){
+            mExplorationScreenWidgetType_[ExplorationScreenWidgetType.WIELD_BUTTON].setColour(target);
+        }
+        mExplorationScreenWidgetType_[ExplorationScreenWidgetType.INVENTORY_INDICATOR].setColour(target);
+        mExplorationScreenWidgetType_[ExplorationScreenWidgetType.STATS_CONTAINER].setColour(target);
+        mExplorationScreenWidgetType_[ExplorationScreenWidgetType.MINIMAP].setColour(target);
     }
 
     function notifyGatewayEnd(explorationStats){

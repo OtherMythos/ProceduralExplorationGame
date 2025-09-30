@@ -81,6 +81,10 @@
         mVisible_ = visible;
     }
 
+    function setColour(colour){
+        mMapViewerPanel_.setColour(colour);
+    }
+
     function notifyPlaceDiscovered(id, data){
         mMapViewer_.notifyNewPlaceFound(data.id, data.pos);
     }

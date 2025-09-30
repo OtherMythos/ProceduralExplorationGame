@@ -15,17 +15,20 @@
     BACKGROUND_DATABLOCK = "gui/progressBarBackground";
     BAR_DATABLOCK = "gui/progressBarRed";
 
+    BACKGROUND_COLOUR = ColourValue(0.05, 0.05, 0.05, 1.0);
+    BAR_COLOUR = ColourValue(0.9, 0.1, 0.1, 1.0);
+
     constructor(parent){
         mParentWin_ = parent;
         mSize_ = Vec2(200, 40);
 
         mParentContainer_ = parent.createPanel();
         mParentContainer_.setSize(mSize_);
-        mParentContainer_.setDatablock(BACKGROUND_DATABLOCK);
+        mParentContainer_.setColour(BACKGROUND_COLOUR);
 
         mChildBar_ = parent.createPanel();
         mChildBar_.setSize(mSize_);
-        mChildBar_.setDatablock(BAR_DATABLOCK);
+        mChildBar_.setColour(BAR_COLOUR);
 
         mParentContainer_.setClickable(false);
         mChildBar_.setClickable(false);
@@ -52,6 +55,14 @@
             return;
         }
         mLabelObject_.setShadowOutline(true, colour, offset);
+    }
+
+    function setColour(colour){
+        mParentContainer_.setColour(ColourValue(0.05, 0.05, 0.05, colour.a));
+        mChildBar_.setColour(ColourValue(0.9, 0.1, 0.1, colour.a));
+        if(mLabelObject_ != null){
+            mLabelObject_.setColour(colour);
+        }
     }
 
     function setZOrder(zOrder){

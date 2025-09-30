@@ -1,5 +1,9 @@
 ::GuiWidgets.PlayerBasicStatsWidget <- class{
 
+    mHeartIcon_ = null;
+    mOrbsIcon_ = null;
+    mMoneyIcon_ = null;
+
     mPlayerHealthBar_ = null;
     mCoinLabel_ = null;
     mEXPOrbLabel_ = null;
@@ -62,6 +66,7 @@
             heartIcon.setDatablock("healthIcon");
             heartIcon.setSize(48, 48);
             heartIcon.setPosition(0, 0);
+            mHeartIcon_ = heartIcon;
             leftCount += 50;
 
             local healthBar = ::GuiWidgets.ProgressBar(window);
@@ -81,6 +86,7 @@
             orbIcon.setDatablock("orbsIcon");
             orbIcon.setSize(48, 48);
             orbIcon.setPosition(leftCount, 0);
+            mOrbsIcon_ = orbIcon;
             leftCount += 48;
 
             mEXPOrbLabel_ = window.createLabel();
@@ -96,6 +102,7 @@
             coinIcon.setDatablock("coinsIcon");
             coinIcon.setSize(48, 48);
             coinIcon.setPosition(leftCount, 0);
+            mMoneyIcon_ = coinIcon;
             leftCount += 48;
 
             mCoinLabel_ = window.createLabel();
@@ -155,6 +162,16 @@
         local numEXP = mEXPOrbLabel_.getText().tointeger();
         //TODO bit of a hack
         mEXPOrbLabel_.setText((numEXP + data).tostring());
+    }
+
+    function setColour(colour){
+        mHeartIcon_.setColour(colour);
+        mOrbsIcon_.setColour(colour);
+        mMoneyIcon_.setColour(colour);
+
+        mEXPOrbLabel_.setColour(colour);
+        mCoinLabel_.setColour(colour);
+        mPlayerHealthBar_.setColour(colour);
     }
 
 };

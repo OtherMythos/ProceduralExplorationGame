@@ -78,6 +78,12 @@
         return mIconButton_.getPosition();
     }
 
+    function setColour(colour){
+        mIconPanel_.setColour(colour);
+        mIconBackground_.setColour(colour);
+        mIconLabel_.setColour(colour);
+    }
+
     function setVisible(vis){
         mIconPanel_.setVisible(vis);
         mIconBackground_.setVisible(vis);

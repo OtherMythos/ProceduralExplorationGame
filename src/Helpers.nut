@@ -8,6 +8,7 @@
 ::Vec3_UNIT_SCALE <- Vec3(1, 1, 1);
 ::Vec2_ZERO <- Vec2(0, 0);
 ::Quat_IDENTITY <- Quat();
+::Colour_WHITE <- ColourValue(1, 1, 1, 1);
 
 ::wrapToString <- function(obj, name, desc=null){
     return (desc == null ?

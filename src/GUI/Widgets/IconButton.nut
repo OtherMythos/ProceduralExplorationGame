@@ -41,6 +41,10 @@
         mIcon_.setVisible(vis);
     }
 
+    function setColour(colour){
+        mIcon_.setColour(colour);
+    }
+
     function setNextWidget(widget, dir){
         mButton_.setNextWidget(widget, dir);
     }

@@ -7,16 +7,24 @@
     constructor(parent){
         base.constructor(parent);
 
+        mParentContainer_.setDatablock(BACKGROUND_DATABLOCK);
+        mParentContainer_.setColour(::Colour_WHITE);
+        mChildBar_.setDatablock(BAR_DATABLOCK);
+        mChildBar_.setColour(::Colour_WHITE);
+
         local secondaryBar = parent.createPanel();
         secondaryBar.setSize(mSize_);
         secondaryBar.setDatablock(SECONDARY_BAR_DATABLOCK);
+        //secondaryBar.setColour(ColourValue(0.98, 1.0, 0.25, 1.0));
         secondaryBar.setClickable(false);
 
         mSecondaryBar_ = mChildBar_;
         mChildBar_ = secondaryBar;
 
         mChildBar_.setDatablock(BAR_DATABLOCK);
+        //mChildBar_.setColour(ColourValue(0.05, 0.05, 0.05, 1.0));
         mSecondaryBar_.setDatablock(SECONDARY_BAR_DATABLOCK);
+        //mSecondaryBar_.setColour(ColourValue(0.98, 1.0, 0.25, 1.0));
 
         setPercentage(0.0);
         setSecondaryPercentage(0.0);
