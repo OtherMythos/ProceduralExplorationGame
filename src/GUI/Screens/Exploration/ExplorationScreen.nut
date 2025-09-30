@@ -331,6 +331,7 @@ enum ExplorationScreenWidgetType{
         mLabel_ = null;
         mAnimationPanel_ = null;
         mAnimationPanelBackground_ = null;
+        mButton_ = null;
 
         mLottieAnimation_ = null;
         mLottieAnimationSecond_ = null;
@@ -342,6 +343,13 @@ enum ExplorationScreenWidgetType{
         mAnim_ = 1.0;
 
         constructor(parent){
+            mButton_ = parent.createButton();
+            mButton_.attachListenerForEvent(function(widget, action){
+                ::Base.mActionManager.executeSlot(0);
+            }, _GUI_ACTION_PRESSED);
+            mButton_.setSize(10, 10);
+            mButton_.setVisualsEnabled(false);
+
             mParent_ = parent;
             mLabel_ = parent.createLabel();
             mLabel_.setShadowOutline(true, ColourValue(0, 0, 0, 1), Vec2(2, 2));
@@ -353,6 +361,10 @@ enum ExplorationScreenWidgetType{
             mAnimationPanelBackground_.setSize(animSize);
             mAnimationPanel_ = parent.createPanel();
             mAnimationPanel_.setSize(animSize);
+
+            mLabel_.setClickable(false);
+            mAnimationPanel_.setClickable(false);
+            mAnimationPanelBackground_.setClickable(false);
 
             animSize *= ::resolutionMult;
 
@@ -390,6 +402,10 @@ enum ExplorationScreenWidgetType{
             mAnimationPanel_.setPosition(winPos);
             winPos += Vec2(1, 1);
             mAnimationPanelBackground_.setPosition(winPos);
+
+            local totalSize =  (mLabel_.getPosition() + mLabel_.getSize()) - mAnimationPanel_.getPosition();
+            mButton_.setSize(totalSize);
+            mButton_.setPosition(mAnimationPanel_.getPosition());
         }
 
         function setOpacity(opacity){
@@ -404,6 +420,7 @@ enum ExplorationScreenWidgetType{
             //TODO I wasn't able to fade in the opacity due to how the blendblocks are setup.
             mAnimationPanel_.setVisible(opacity >= 0.5);
             mAnimationPanelBackground_.setVisible(opacity >= 0.5);
+            mButton_.setVisible(opacity >= 0.5);
             //mBackgroundDatablock_.setUseColour(true);
             //mAnimationPanelBackground_.setColour(ColourValue(1, 1, 1, opacity));
         }
@@ -729,7 +746,7 @@ enum ExplorationScreenWidgetType{
             mPlayerTapButton.setVisualsEnabled(false);
             //mPlayerTapButton.setPosition(_window.getWidth() / 2 - mPlayerTapButton.getSize().x/2, mCameraButton.getPosition().y - mPlayerTapButton.getSize().y - 20);
             mPlayerTapButton.attachListenerForEvent(function(widget, action){
-                ::Base.mActionManager.executeSlot(0);
+                //::Base.mActionManager.executeSlot(0);
             }, _GUI_ACTION_PRESSED);
             //mScreenInputCheckList_.append(mPlayerTapButton);
 
