@@ -26,6 +26,14 @@
     function resetSession(mapData){
         base.resetSession();
 
+        //Remove the health bar from the player.
+        {
+            local component = mEntityManager_.getComponent(mPlayerEntry_.getEID(), EntityComponents.BILLBOARD);
+            //TODO this is duplicated from the entity manager, and also is horrible.
+            ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.mBillboardManager_.untrackNode(component.mBillboard);
+            mEntityManager_.removeComponent(mPlayerEntry_.getEID(), EntityComponents.BILLBOARD);
+        }
+
         //print(mPlayerEntry_.getPosition());
         //assert(false);
 
