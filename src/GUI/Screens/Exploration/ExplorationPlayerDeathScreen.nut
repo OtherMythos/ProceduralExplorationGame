@@ -72,6 +72,7 @@ local ExplorationPlayerDeathScreenAnimStateMachine = class extends ::Util.StateM
 
         local winWidth = ::drawable.x;
         local winHeight = ::drawable.y;
+        local insets = _window.getScreenSafeAreaInsets();
 
         //Create a window to block inputs for when the popup appears.
         //createBackgroundScreen_();
@@ -91,12 +92,11 @@ local ExplorationPlayerDeathScreenAnimStateMachine = class extends ::Util.StateM
         title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
         title.setText("You Died!");
         title.setSize(winWidth, title.getSize().y);
+        title.setPosition(0, insets.top);
         mScreenComponents_[ExplorationPlayerDeathScreenComponents.TITLE] <- title;
         //title.setOrientation(PI * -0.01);
         //title.setTextColour(0, 0, 0, 1);
         //layoutLine.addCell(title);
-
-        local insets = _window.getScreenSafeAreaInsets();
 
         //Add the buttons.
         foreach(i,c in buttonOptions){

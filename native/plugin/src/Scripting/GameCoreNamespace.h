@@ -31,6 +31,7 @@ namespace ProceduralExplorationGamePlugin{
         static SQInteger writeFlagsToItem(HSQUIRRELVM vm);
         static SQInteger setCustomPassBufferValue(HSQUIRRELVM vm);
         static SQInteger setCameraForNode(HSQUIRRELVM vm);
+        static SQInteger setPassBufferFogValue(HSQUIRRELVM vm);
 
         static SQInteger disableShadows(HSQUIRRELVM vm);
         static SQInteger setupCompositorDefs(HSQUIRRELVM vm);

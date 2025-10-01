@@ -196,6 +196,8 @@
     constructor(worldId, preparer){
         base.constructor(worldId, preparer);
 
+        setBackgroundColour(Vec3(0.5, 0.89, 1));
+
         mTerrain_ = [];
 
         local requestedZoom = ::Base.mPlayerStats.getExplorationCurrentZoom();

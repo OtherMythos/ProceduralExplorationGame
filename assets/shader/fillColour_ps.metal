@@ -19,7 +19,7 @@ struct PS_INPUT
 
 struct Params
 {
-    float4 colour;
+    float3 colour;
 };
 
 fragment float4 main_metal
@@ -28,5 +28,5 @@ fragment float4 main_metal
     constant Params &p [[buffer(PARAMETER_SLOT)]]
 )
 {
-    returnFinalColour(p.colour);
+    returnFinalColour(float4(p.colour, 1));
 }

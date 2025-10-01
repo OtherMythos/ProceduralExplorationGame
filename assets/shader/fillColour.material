@@ -40,7 +40,7 @@ material Postprocess/FillColour
 
 			fragment_program_ref Postprocess/fillColour_ps
 			{
-				param_named colour float4 0.5 0.89 1 1
+				param_named colour float3 0.5 0.89 1
 			}
 
 		}

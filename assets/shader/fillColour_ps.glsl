@@ -52,7 +52,7 @@ vulkan_layout( location = 0 )
 out vec4 fragColour;
 
 vulkan( layout( ogre_P0 ) uniform params { )
-    uniform float4 colour;
+    uniform float3 colour;
 vulkan( }; )
 
 vulkan_layout( location = 0 )
@@ -63,5 +63,5 @@ in block
 
 void main()
 {
-    fragColour = colour;
+    fragColour = float4(colour, 1);
 }

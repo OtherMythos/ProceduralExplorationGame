@@ -40,6 +40,10 @@
         createScene();
         updateCameraPosition();
 
+        ::CompositorManager.setGameplayEffectsActive(false);
+
+        setBackgroundColour(Vec3(0, 0, 0));
+
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLAYER_DEATH_SCREEN, null), null, 3);
     }
 
