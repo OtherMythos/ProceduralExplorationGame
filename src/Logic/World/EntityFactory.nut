@@ -52,7 +52,7 @@
         return billboard;
     }
 
-    function constructPlayer(explorationScreen, playerStats){
+    function constructPlayer(explorationScreen, playerStats, ghostPlayer=false){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = Vec3();
         local en = manager.createEntity(targetPos);
@@ -70,7 +70,7 @@
 
         playerEntry.setId(-1);
 
-        if(!::Base.isProfileActive(GameProfile.PLAYER_GHOST)){
+        if(!::Base.isProfileActive(GameProfile.PLAYER_GHOST) && !ghostPlayer){
             local triggerWorld = mConstructorWorld_.getTriggerWorld();
             local collisionPoint = triggerWorld.addCollisionReceiver(null, 0, 0, 1.5, _COLLISION_PLAYER);
 

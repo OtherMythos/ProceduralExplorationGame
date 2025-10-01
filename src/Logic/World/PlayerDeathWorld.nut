@@ -3,8 +3,18 @@
     mMapData_ = null;
     mVoxMesh_ = null;
 
+    mLostMoney_ = 0;
+    mLostEXP_ = 0;
+    mLostItems_ = null;
+
     constructor(worldId, preparer){
         base.constructor(worldId, preparer);
+
+        mLostMoney_ = 50;
+        mLostEXP_ = 50;
+        mLostItems_ = [
+            ::Item(ItemId.SIMPLE_SWORD)
+        ];
     }
 
     #Override
@@ -21,6 +31,10 @@
         mReady_ = true;
         base.setup();
         resetSession(null);
+    }
+
+    function constructPlayerEntry_(){
+        return mEntityFactory_.constructPlayer(mGui_, ::Base.mPlayerStats, true);
     }
 
     function resetSession(mapData){
@@ -42,7 +56,8 @@
 
         ::CompositorManager.setGameplayEffectsActive(false);
 
-        setBackgroundColour(Vec3(0, 0, 0));
+        setBackgroundColour(Vec3(0.2, 0.2, 0.2));
+        _state.setPauseState(0x0);
 
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLAYER_DEATH_SCREEN, null), null, 3);
     }
@@ -52,7 +67,66 @@
     }
 
     function createScene(){
+    }
 
+    function update(){
+        updateWorldActions();
+
+        local worldAction = getActionForSpawn_();
+        if(worldAction != null){
+            pushWorldAction(worldAction);
+        }
+    }
+
+    function determineObjectType_(){
+        local count = mLostMoney_ + mLostEXP_ + mLostItems_.len();
+        if(count == 0) return null;
+        local idx = _random.randInt(0, count);
+
+        local objectType = 0;
+        if(idx < mLostMoney_){
+            mLostMoney_--;
+            objectType = 0;
+        }
+        else if(idx >= mLostMoney_ && idx <= mLostMoney_ + mLostEXP_){
+            mLostEXP_--;
+            objectType = 1;
+        }
+        else{
+            objectType = 2;
+        }
+
+        return objectType;
+    }
+
+    function getActionForSpawn_(){
+        local spread = 4 + _random.rand() * 4;
+        local randDir = (_random.rand()*2-1) * PI;
+        local targetPos = (Vec3(sin(randDir) * spread, 0, cos(randDir) * spread));
+
+        local worldItem = null;
+        local objectType = determineObjectType_();
+        if(objectType == null) return null;
+
+        if(objectType == 0){
+            worldItem = mEntityFactory_.constructMoneyObject(targetPos);
+        }else if(objectType == 1){
+            worldItem = mEntityFactory_.constructEXPOrb(targetPos);
+        }else if(objectType == 2){
+            local item = mLostItems_.top();
+            mLostItems_.pop();
+            worldItem = mEntityFactory_.constructCollectableItemObject(targetPos, item);
+        }else{
+            assert(false);
+        }
+
+        if(mEntityManager_.hasComponent(worldItem, EntityComponents.LIFETIME)){
+            mEntityManager_.removeComponent(worldItem, EntityComponents.LIFETIME);
+        }
+
+        local action = ::ObjectDropAction(worldItem, this, ::Vec3_ZERO, targetPos);
+
+        return action;
     }
 
     function updateCameraPosition(){
