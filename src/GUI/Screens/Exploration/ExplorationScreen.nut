@@ -10,6 +10,9 @@ enum ExplorationScreenWidgetType{
     WIELD_BUTTON,
     CAMERA_BUTTON,
     INVENTORY_INDICATOR,
+    COMPASS,
+    ZOOM_SLIDER,
+    DIRECTION_JOYSTICK,
 
     MAX
 }
@@ -42,6 +45,8 @@ enum ExplorationScreenWidgetType{
     mLayoutLine_ = null;
     mZoomLines_ = null;
     mMobileActionInfo_ = null;
+
+    mPlayerDied_ = 0;
 
     mTargetTopInfoOpacity_ = 1.0;
     mTopInfoAnim_ = 1.0;
@@ -110,6 +115,10 @@ enum ExplorationScreenWidgetType{
             mCurrentOpacity_ = ::accelerationClampCoordinate_(mCurrentOpacity_, mTargetOpacity_);
 
             mDatablock_.setColour(1, 1, 1, mCurrentOpacity_);
+        }
+
+        function setVisible(visible){
+            mZoomWindow_.setVisible(visible);
         }
 
         function setRecentTouchInteraction(){
@@ -214,6 +223,10 @@ enum ExplorationScreenWidgetType{
                 mDirectionNodes_.append([target, track]);
                 //target.setScale(0.5, 0.5, 0.5);
             }
+        }
+
+        function setVisible(visible){
+            mCompassWindow_.setVisible(visible);
         }
 
         function getDatablock_(dir){
@@ -754,6 +767,7 @@ enum ExplorationScreenWidgetType{
             //mScreenInputCheckList_.append(mPlayerTapButton);
 
             mPlayerDirectJoystick_ = ::PlayerDirectJoystick(mWindow_);
+            mExplorationScreenWidgetType_[ExplorationScreenWidgetType.DIRECTION_JOYSTICK] = mPlayerDirectJoystick_;
 
             mPlayerDirectButton = mWindow_.createButton();
             local playerSizeButton = Vec2(100, 100);
@@ -802,6 +816,7 @@ enum ExplorationScreenWidgetType{
         }
 
         mZoomLines_ = ExplorationScreenZoomLines(mWindow_);
+        mExplorationScreenWidgetType_[ExplorationScreenWidgetType.ZOOM_SLIDER] = mZoomLines_;
         if(mobile){
             mZoomLines_.setSize(mZoomModifierButton.getSize());
             mZoomLines_.setPosition(mZoomModifierButton.getPosition());
@@ -843,6 +858,7 @@ enum ExplorationScreenWidgetType{
 
         mAnimator_ = ExplorationScreenAnimator();
         mCompassAnimator_ = ExplorationScreenCompassAnimator(mWindow_, Vec2(400, 300));
+        mExplorationScreenWidgetType_[ExplorationScreenWidgetType.COMPASS] = mCompassAnimator_;
         //mAnimator_.animateToInventoryPercentage(0.5);
         if(mobile){
             local widgetPos = mInventoryWidget_.getPosition();
@@ -963,6 +979,21 @@ enum ExplorationScreenWidgetType{
         }
         if(mMobileActionInfo_ != null){
             mMobileActionInfo_.update();
+        }
+
+        //Defer the player death check until the end of the frame.
+        if(mPlayerDied_ == 1){
+            mPlayerDied_++;
+
+            local worldType = WorldTypes.PLAYER_DEATH;
+            local worldInstance = ::Base.mExplorationLogic.createWorldInstance(worldType, {});
+            ::Base.mExplorationLogic.pushWorld(worldInstance);
+
+            mExplorationScreenWidgetType_[ExplorationScreenWidgetType.COMPASS].setVisible(false);
+            mExplorationScreenWidgetType_[ExplorationScreenWidgetType.ZOOM_SLIDER].setVisible(false);
+            if(mExplorationScreenWidgetType_[ExplorationScreenWidgetType.DIRECTION_JOYSTICK]){
+                mExplorationScreenWidgetType_[ExplorationScreenWidgetType.DIRECTION_JOYSTICK].setVisible(false);
+            }
         }
     }
 
@@ -1160,7 +1191,10 @@ enum ExplorationScreenWidgetType{
     }
 
     function notifyPlayerDeath(){
-        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLAYER_DEATH_SCREEN, null), null, 1);
+        mPlayerDied_++;
+
+        mTargetTopInfoOpacity_ = 0.0;
+
         _window.grabCursor(false);
     }
 

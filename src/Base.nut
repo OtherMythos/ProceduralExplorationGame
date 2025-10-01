@@ -233,6 +233,7 @@
         _doFile("res://src/Logic/World/VisitedLocationWorld.nut");
         _doFile("res://src/Logic/World/ProceduralExplorationWorld.nut");
         _doFile("res://src/Logic/World/ProceduralDungeonWorld.nut");
+        _doFile("res://src/Logic/World/PlayerDeathWorld.nut");
         _doFile("res://src/Logic/World/TestingWorld.nut");
         _doFile("res://src/Logic/Overworld/Overworld.nut");
         _doFile("res://src/Logic/World/WorldPreparer.nut");

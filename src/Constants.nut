@@ -58,7 +58,8 @@ enum WorldTypes{
     PROCEDURAL_DUNGEON_WORLD,
     VISITED_LOCATION_WORLD,
     TESTING_WORLD,
-    OVERWORLD
+    OVERWORLD,
+    PLAYER_DEATH
 };
 ::WorldTypeStrings <- [
     "World",
@@ -67,6 +68,7 @@ enum WorldTypes{
     "VisitedLocationWorld",
     "TestingWorld",
     "Overworld",
+    "PlayerDeath"
 ];
 
 enum ObjectType{

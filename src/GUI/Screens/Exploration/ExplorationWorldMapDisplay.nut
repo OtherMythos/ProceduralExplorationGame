@@ -47,7 +47,7 @@
         else if(worldType == WorldTypes.VISITED_LOCATION_WORLD){
             mMapViewer_ = VisitedLocationMapViewer();
         }
-        else if(worldType == WorldTypes.TESTING_WORLD){
+        else if(worldType == WorldTypes.TESTING_WORLD || worldType == WorldTypes.PLAYER_DEATH){
             mMapViewer_ = MapViewer();
         }else{
             assert(false);

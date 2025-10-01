@@ -593,6 +593,7 @@ enum WorldMousePressContexts{
     function playerHealthChanged(data){
         //TODO remove this duplication.
         //Have a single place to store health and make sure it's set from a single function.
+        if(mPlayerEntry_ == null) return;
         local component = mEntityManager_.getComponent(mPlayerEntry_.getEntity(), EntityComponents.HEALTH);
         component.mHealth = data.health;
         mPlayerEntry_.notifyNewHealth(data.health, data.percentage);
@@ -723,13 +724,6 @@ enum WorldMousePressContexts{
 
     function resetSession(){
         mPlayerEntry_ = constructPlayerEntry_();
-        local data = {
-            "health": ::Base.mPlayerStats.getPlayerHealth(),
-            "max": ::Base.mPlayerStats.getPlayerMaxHealth(),
-            "percentage": ::Base.mPlayerStats.getPlayerHealthPercentage(),
-            "change": 0
-        };
-        _event.transmit(Event.PLAYER_HEALTH_CHANGED, data);
 
         if(mProjectileManager_ != null) mProjectileManager_.shutdown();
         mProjectileManager_ = ExplorationProjectileManager(this, mDamageCollisionWorld_);

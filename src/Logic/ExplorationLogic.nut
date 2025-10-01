@@ -138,6 +138,9 @@
             case WorldTypes.TESTING_WORLD:
                 created = TestingWorld(id, WorldPreparer());
                 break;
+            case WorldTypes.PLAYER_DEATH:
+                created = PlayerDeathWorld(id, WorldPreparer());
+                break;
             default:
                 assert(false);
         }
@@ -224,6 +227,14 @@
             "totalDefeated": 0,
             "foundEXPOrbs": 0,
         };
+
+        local data = {
+            "health": ::Base.mPlayerStats.getPlayerHealth(),
+            "max": ::Base.mPlayerStats.getPlayerMaxHealth(),
+            "percentage": ::Base.mPlayerStats.getPlayerHealthPercentage(),
+            "change": 0
+        };
+        _event.transmit(Event.PLAYER_HEALTH_CHANGED, data);
     }
     function resetExploration(){
         //TODO find a better way than the direct lookup.

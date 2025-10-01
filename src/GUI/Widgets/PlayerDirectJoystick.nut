@@ -41,6 +41,12 @@
         _event.unsubscribe(Event.PLAYER_DIRECTING_CHANGED, receivePlayerDirectingChanged, this);
     }
 
+    function setVisible(visible){
+        mButton_.setVisible(visible);
+        mBackgroundPanel_.setVisible(visible);
+        mHandle_.setVisible(visible);
+    }
+
     function setSize(size){
         mButton_.setSize(size);
         mBackgroundPanel_.setSize(size);
