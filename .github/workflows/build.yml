@@ -433,7 +433,6 @@ jobs:
 
   buildiOS:
     runs-on: macos-latest
-    if: false
     needs: build
     strategy:
       matrix:
