@@ -562,6 +562,7 @@
         local item = _scene.createItem(::expOrbMesh);
         _gameCore.writeFlagsToItem(item, 0x1);
         item.setDatablock("baseVoxelMaterial");
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         local animNode = placeNode.createChildSceneNode();
         animNode.attachObject(item);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](placeNode, true));
