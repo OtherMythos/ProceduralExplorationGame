@@ -300,6 +300,7 @@ enum GameplayComplexMenuBusEvents{
 
         mCurrentTab_ = 0;
         notifyTabChange(mCurrentTab_);
+        updateTabPosition_(1.0);
     }
 
     function update(){
