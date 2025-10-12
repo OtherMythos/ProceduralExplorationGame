@@ -21,6 +21,7 @@
     READABLE_CONTENT_SCREEN,
     GAMEPLAY_MAIN_MENU_COMPLEX_SCREEN,
     EXPLORATION_MAP_SELECT_SCREEN,
+    OTHER_MYTHOS_SPLASH_SCREEN,
 
 ");
 
@@ -45,5 +46,6 @@
     "settingsScreen",
     "readableContentScreen",
     "gameplayMainMenuComplex",
-    "explorationMapSelectScreen"
+    "explorationMapSelectScreen",
+    "OtherMythosSplashScreen"
 ]);

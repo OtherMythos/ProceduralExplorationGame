@@ -30,6 +30,9 @@ Separated from the Base.nut file so enums can be used.
             return Screen.GAMEPLAY_MAIN_MENU_SCREEN;
         }
     }
+    function getSplashScreen(){
+        return Screen.OTHER_MYTHOS_SPLASH_SCREEN;
+    }
     function getStartingScreen(){
         return getTargetMainMenu();
     }

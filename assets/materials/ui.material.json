@@ -316,6 +316,14 @@
             "diffuse_map0": {
                 "texture": "joystickHandle.png"
             }
+        },
+
+        "OtherMythosLogo" :
+        {
+            "diffuse_map0" :
+            {
+                "texture": "OtherMythosLogo.jpg"
+            }
         }
     }
 }

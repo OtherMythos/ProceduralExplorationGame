@@ -375,7 +375,10 @@
         local forcedScreen = determineForcedScreen();
         if(forcedScreen == null && ::ScreenManager.getScreenForLayer() == null){
             //If nothing was setup then switch to the main menu.
-            ::ScreenManager.transitionToScreen(::BaseHelperFunctions.getScreenDataForForcedScreen(::BaseHelperFunctions.getStartingScreen()));
+            if(getTargetInterface() == TargetInterface.MOBILE){
+                ::ScreenManager.transitionToScreen(::BaseHelperFunctions.getSplashScreen(), null, 2);
+            }
+            ::ScreenManager.transitionToScreen(::BaseHelperFunctions.getScreenDataForForcedScreen(::BaseHelperFunctions.getStartingScreen()), null, 0);
         }
         if(forcedScreen != null){
             ::ScreenManager.transitionToScreen(::BaseHelperFunctions.getScreenDataForForcedScreen(forcedScreen));

@@ -51,6 +51,7 @@
         _doFile("res://src/GUI/Screens/GameplayMainMenuComplexScreen.nut");
         _doFile("res://src/GUI/Screens/ExplorationMapSelectScreen.nut");
         _doFile("res://src/GUI/Screens/SettingsScreen.nut");
+        _doFile("res://src/GUI/Screens/OtherMythosSplashScreen.nut");
     }
 
     function setupSecondary(){
