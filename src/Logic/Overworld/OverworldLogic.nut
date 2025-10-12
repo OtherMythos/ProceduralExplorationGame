@@ -83,9 +83,6 @@ enum OverworldStates{
     function setRenderableSize(pos, size){
         mRenderableSize_ = size;
         if(!isActive()) return;
-        //shutdownCompositor_();
-        //setupCompositor_();
-        //::CompositorManager.resizeCompositor(mCompositor_, size);
 
         local datablock = getCompositorDatablock();
         {

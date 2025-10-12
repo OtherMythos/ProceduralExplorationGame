@@ -902,6 +902,12 @@ enum ExplorationScreenWidgetType{
             mDiscoverLevelUpScreen_.setPosition(newPos);
         }
 
+        if(screenshotMode){
+            mCompassAnimator_.setVisible(false);
+            mZoomLines_.setVisible(false);
+            mInventoryWidget_.setVisible(false);
+        }
+
         //TOOD NOTE Workaround! This isn't how the paradigm should fit together
         //Screen shouldn't dictate what the logic does other than let it know of events happening.
         ::Base.mExplorationLogic.resetExploration_();

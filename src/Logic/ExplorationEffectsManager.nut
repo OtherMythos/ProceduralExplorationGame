@@ -48,6 +48,9 @@ enum ExplorationEffects{
     }
 
     function activateEffect(effect){
+        if(::Base.isProfileActive(GameProfile.SCREENSHOT_MODE)){
+            return;
+        }
         ::CompositorManager.setGameplayEffectsActive(true);
 
         mActiveEffects_[effect] = Effects[effect].time;
