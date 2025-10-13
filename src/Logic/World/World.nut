@@ -383,9 +383,13 @@ enum WorldMousePressContexts{
 
         function update(){
             if(mAnim_ >= 1.0) return;
-            mAnim_ = ::accelerationClampCoordinate_(mAnim_, 1.0, 0.001);
+            mAnim_ = ::accelerationClampCoordinate_(mAnim_, 1.0, 0.004);
+            //local a = sin((mAnim_ * PI) / 2);
+            //EaseOutExpo
+            local x = mAnim_;
+            local a = (x == 1 ? 1 : 1 - pow(2, -10 * x));
 
-            mCurrentWorldColour_ = ::calculateSimpleAnimation(mStartWorldColour_, mTargetWorldColour_, mAnim_);
+            mCurrentWorldColour_ = ::calculateSimpleAnimation(mStartWorldColour_, mTargetWorldColour_, a);
             refreshSkyColour();
         }
 
@@ -407,6 +411,11 @@ enum WorldMousePressContexts{
         }
 
         function animateSkyToColour(colour){
+            /*
+            if(mTargetWorldColour_ <=> colour){
+                return;
+            }
+            */
             mStartWorldColour_ = mCurrentWorldColour_;
             mTargetWorldColour_ = colour;
             mAnim_ = 0.0;

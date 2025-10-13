@@ -769,6 +769,35 @@
                 processFoundNewRegion(c);
             }
         }
+
+        if(foundRegions.len() == 1){
+            local regionId = null;
+            foreach(c,i in foundRegions){
+                regionId = c;
+                break;
+            }
+
+            local skyColour = null;
+            if(regionId == 253){
+                // print("Ocean");
+                skyColour = getDefaultSkyColour();
+            }else if(regionId == 255){
+                //print("invalid");
+            }else{
+                local regionData = mMapData_.regionData[regionId];
+                local biomeType = ::MapGenHelpers.getBiomeForRegionType(regionData.type);
+                local biomeColour = ::Biomes[biomeType].getSkyColour();
+                if(biomeColour == null){
+                    biomeColour = getDefaultSkyColour();
+                }
+                skyColour = biomeColour;
+            }
+            if(skyColour != null){
+                mSkyAnimator_.animateSkyToColour(skyColour);
+            }
+
+            //print("type " + regionData.type);
+        }
     }
     function _checkRectCircleCollision(tileX, tileY, radius, circleX, circleY){
         local distX = abs(circleX - (tileX)-0.5);
