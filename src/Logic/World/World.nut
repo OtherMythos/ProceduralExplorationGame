@@ -366,6 +366,53 @@ enum WorldMousePressContexts{
         }
     };
 
+    WorldSkyAnimator_ = class{
+        mWorld_ = null;
+
+        mCurrentWorldColour_ = null;
+        mStartWorldColour_ = null;
+        mTargetWorldColour_ = null;
+
+        mAnim_ = 1.0;
+
+        constructor(parent, startColour){
+            mWorld_ = parent;
+
+            setSkyColour_(startColour);
+        }
+
+        function update(){
+            if(mAnim_ >= 1.0) return;
+            mAnim_ = ::accelerationClampCoordinate_(mAnim_, 1.0, 0.001);
+
+            mCurrentWorldColour_ = ::calculateSimpleAnimation(mStartWorldColour_, mTargetWorldColour_, mAnim_);
+            refreshSkyColour();
+        }
+
+        function setSkyColour_(colour){
+            mStartWorldColour_ = colour;
+            mCurrentWorldColour_ = colour;
+            mTargetWorldColour_ = colour;
+
+            mAnim_ = 1.0;
+        }
+
+        function setSkyColour(colour){
+            setSkyColour_(colour);
+            refreshSkyColour();
+        }
+
+        function refreshSkyColour(){
+            mWorld_.setBackgroundColour(mCurrentWorldColour_);
+        }
+
+        function animateSkyToColour(colour){
+            mStartWorldColour_ = mCurrentWorldColour_;
+            mTargetWorldColour_ = colour;
+            mAnim_ = 0.0;
+        }
+    };
+
     mParentNode_ = null;
 
     mWorldId_ = null;
@@ -407,6 +454,8 @@ enum WorldMousePressContexts{
     mMovementCooldown_ = 0;
     mMovementCooldownTotal_ = 30;
     mMostRecentMovementType_ = null;
+
+    mSkyAnimator_ = null;
 
     mLocationFlagIds_ = 0;
     mLocationFlagNodes_ = null;
@@ -475,6 +524,8 @@ enum WorldMousePressContexts{
 
         mQueuedFlags_ = array(NUM_PLAYER_QUEUED_FLAGS, null);
 
+        mSkyAnimator_ = WorldSkyAnimator_(this, getDefaultSkyColour());
+
         mInputs_ = {
             "move": _input.getAxisActionHandle("Move"),
             "camera": _input.getAxisActionHandle("Camera"),
@@ -501,6 +552,9 @@ enum WorldMousePressContexts{
     }
     function getWorldTypeString(){
         return "World";
+    }
+    function getDefaultSkyColour(){
+        return Vec3(0.5, 0.89, 1);
     }
     function getDamageWorld(){
         return mDamageCollisionWorld_;
@@ -665,6 +719,7 @@ enum WorldMousePressContexts{
 
         mProjectileManager_.update();
         mEntityManager_.update();
+        mSkyAnimator_.update();
 
         if(!_input.getMouseButton(_MB_LEFT)){
             mMouseContext_.notifyMouseEnded();

@@ -713,10 +713,14 @@
         foreach(i in mRegionEntries_){
             i.setWorldActive(active);
         }
+
+        //mSkyAnimator_.animateSkyToColour(Vec3(0, 0, 0));
     }
     #Override
     function processWorldCurrentChange_(current){
         if(mParentNode_ != null) mParentNode_.setVisible(current);
+
+        mSkyAnimator_.refreshSkyColour();
     }
 
     function notifyPlayerVoxelChange(){

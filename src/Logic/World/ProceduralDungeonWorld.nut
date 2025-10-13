@@ -18,6 +18,10 @@
     function getWorldTypeString(){
         return "Dungeon";
     }
+    #Override
+    function getDefaultSkyColour(){
+        return ::Vec3_ZERO;
+    }
 
     #Override
     function notifyPreparationComplete_(){
@@ -77,6 +81,8 @@
     #Override
     function processWorldCurrentChange_(current){
         if(mParentNode_ != null) mParentNode_.setVisible(current);
+
+        mSkyAnimator_.setSkyColour(getDefaultSkyColour());
     }
 
     function processCameraMove(x, y){
