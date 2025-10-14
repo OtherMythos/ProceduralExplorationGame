@@ -373,12 +373,28 @@ enum WorldMousePressContexts{
         mStartWorldColour_ = null;
         mTargetWorldColour_ = null;
 
+        mCurrentAmbientModifier_ = null;
+        mStartAmbientModifier_ = null;
+        mTargetAmbientModifier_ = null;
+
+        mCurrentLightModifier_ = null;
+        mStartLightModifier_ = null;
+        mTargetLightModifier_ = null;
+
         mAnim_ = 1.0;
 
         constructor(parent, startColour){
             mWorld_ = parent;
 
             setSkyColour_(startColour);
+
+            mCurrentAmbientModifier_ = ::Vec3_UNIT_SCALE;
+            mStartAmbientModifier_ = ::Vec3_UNIT_SCALE;
+            mTargetAmbientModifier_ = ::Vec3_UNIT_SCALE;
+
+            mCurrentLightModifier_ = 1.0;
+            mStartLightModifier_ = 1.0;
+            mTargetLightModifier_ = 1.0;
         }
 
         function update(){
@@ -390,7 +406,11 @@ enum WorldMousePressContexts{
             local a = (x == 1 ? 1 : 1 - pow(2, -10 * x));
 
             mCurrentWorldColour_ = ::calculateSimpleAnimation(mStartWorldColour_, mTargetWorldColour_, a);
+            mCurrentAmbientModifier_ = ::calculateSimpleAnimation(mStartAmbientModifier_, mTargetAmbientModifier_, a);
+            mCurrentLightModifier_ = ::calculateSimpleAnimation(mStartLightModifier_, mTargetLightModifier_, a);
             refreshSkyColour();
+            refreshAmbientModifier();
+            refreshLightModifier();
         }
 
         function setSkyColour_(colour){
@@ -409,6 +429,12 @@ enum WorldMousePressContexts{
         function refreshSkyColour(){
             mWorld_.setBackgroundColour(mCurrentWorldColour_);
         }
+        function refreshAmbientModifier(){
+            mWorld_.setBiomeAmbientModifier(mCurrentAmbientModifier_);
+        }
+        function refreshLightModifier(){
+            ::Base.mGlobalDirectionLight.setPowerScale(PI * mCurrentLightModifier_);
+        }
 
         function animateSkyToColour(colour){
             /*
@@ -418,6 +444,18 @@ enum WorldMousePressContexts{
             */
             mStartWorldColour_ = mCurrentWorldColour_;
             mTargetWorldColour_ = colour;
+            mAnim_ = 0.0;
+        }
+
+        function animateAmbientToModifier(modifier){
+            mStartAmbientModifier_ = mCurrentAmbientModifier_;
+            mTargetAmbientModifier_ = modifier;
+            mAnim_ = 0.0;
+        }
+
+        function animateLightModifier(modifier){
+            mStartLightModifier_ = mCurrentLightModifier_;
+            mTargetLightModifier_ = modifier;
             mAnim_ = 0.0;
         }
     };
@@ -564,6 +602,12 @@ enum WorldMousePressContexts{
     }
     function getDefaultSkyColour(){
         return Vec3(0.5, 0.89, 1);
+    }
+    function getDefaultAmbientModifier(){
+        return ::Vec3_UNIT_SCALE;
+    }
+    function getDefaultLightModifier(){
+        return 1.0;
     }
     function getDamageWorld(){
         return mDamageCollisionWorld_;
@@ -1704,6 +1748,12 @@ enum WorldMousePressContexts{
 
     function setShadowFarDistance(distance){
         ::Base.mGlobalDirectionLight.setShadowFarDistance(distance);
+    }
+
+    function setBiomeAmbientModifier(modifier){
+        local value = 2;
+        local col = ColourValue(value * modifier.x, value * modifier.y, value * modifier.z, 1.0);
+        _scene.setAmbientLight(col, col, ::Vec3_UNIT_Y);
     }
 
     function actuateSpoils(en, data, position){

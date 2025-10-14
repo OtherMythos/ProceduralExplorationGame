@@ -22,6 +22,10 @@
     function getDefaultSkyColour(){
         return ::Vec3_ZERO;
     }
+    #Override
+    function getDefaultAmbientModifier(){
+        return Vec3(0.25, 0.25, 0.25);
+    }
 
     #Override
     function notifyPreparationComplete_(){
@@ -83,6 +87,7 @@
         if(mParentNode_ != null) mParentNode_.setVisible(current);
 
         mSkyAnimator_.setSkyColour(getDefaultSkyColour());
+        setBiomeAmbientModifier(getDefaultAmbientModifier());
     }
 
     function processCameraMove(x, y){

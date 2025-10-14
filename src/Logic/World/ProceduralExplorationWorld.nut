@@ -778,9 +778,13 @@
             }
 
             local skyColour = null;
+            local ambientModifier = null;
+            local lightModifier = null;
             if(regionId == 253){
                 // print("Ocean");
                 skyColour = getDefaultSkyColour();
+                ambientModifier = getDefaultAmbientModifier();
+                lightModifier = getDefaultLightModifier();
             }else if(regionId == 255){
                 //print("invalid");
             }else{
@@ -790,10 +794,28 @@
                 if(biomeColour == null){
                     biomeColour = getDefaultSkyColour();
                 }
+
+                local biomeAmbient = ::Biomes[biomeType].getAmbientModifier();
+                if(biomeAmbient == null){
+                    biomeAmbient = getDefaultAmbientModifier();
+                }
+
+                local biomeLight = ::Biomes[biomeType].getLightModifier();
+                if(biomeLight == null){
+                    biomeLight = getDefaultLightModifier();
+                }
                 skyColour = biomeColour;
+                ambientModifier = biomeAmbient;
+                lightModifier = biomeLight;
             }
             if(skyColour != null){
                 mSkyAnimator_.animateSkyToColour(skyColour);
+            }
+            if(ambientModifier != null){
+                mSkyAnimator_.animateAmbientToModifier(ambientModifier);
+            }
+            if(lightModifier != null){
+                mSkyAnimator_.animateLightModifier(lightModifier);
             }
 
             //print("type " + regionData.type);
