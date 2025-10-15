@@ -283,6 +283,15 @@
 ::_testHelper <- {
 
     mDefaultWaitFrames = -1
+    mQueryText = ""
+
+    function setQueryText(text){
+        mQueryText = text;
+    }
+
+    function getQueryText(){
+        return mQueryText;
+    }
 
     function queryWindow(windowName){
         local numWindows = _gui.getNumWindows();

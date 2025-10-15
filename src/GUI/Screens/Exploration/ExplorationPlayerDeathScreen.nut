@@ -126,7 +126,7 @@ local ExplorationPlayerDeathScreenAnimStateMachine = class extends ::Util.StateM
 
         //Bit of a workaround.
         if(::Base.mExplorationLogic.mCurrentWorld_){
-            ::Base.mExplorationLogic.update();
+            ::Base.mExplorationLogic.mCurrentWorld_.update();
         }
     }
 }

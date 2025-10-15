@@ -39,6 +39,18 @@
     }
 };
 
+::_testHelper.STEPS_WAIT_FOR_WIDGET_WITH_TEXT <- function(){
+    local w = ::_testHelper.getWidgetForText(::_testHelper.getQueryText());
+    if(w == null){
+        ::_testHelper.repeatStep();
+        return;
+    }
+    if(!w.getVisible()){
+        ::_testHelper.repeatStep();
+        return;
+    }
+};
+
 ::_testHelper.STEPS_MAIN_MENU_TO_EXPLORATION_GAMEPLAY <- [
     function(){
         ::_testHelper.mousePressWidgetForText("Play");
