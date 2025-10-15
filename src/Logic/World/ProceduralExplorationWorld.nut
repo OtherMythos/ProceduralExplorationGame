@@ -582,6 +582,9 @@
     function getWaterPlaneMesh(){
         return "waterPlaneMesh";
     }
+    function getSurroundingWaterPlaneMesh(){
+        return "simpleWaterPlaneMesh";
+    }
 
     function createScene(){
         //mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
@@ -596,6 +599,9 @@
             //parentNode.setPosition(mMapData_.width / 2, 40, -mMapData_.height / 2);
         }
 
+        local middleMesh = getWaterPlaneMesh();
+        local surroundingMesh = getSurroundingWaterPlaneMesh();
+
         local planes = [];
         local waterBlock = getWaterDatablock_("waterBlock");
         local surroundBlock = getWaterDatablock_("outsideWaterBlock", true);
@@ -603,7 +609,8 @@
         for(local x = 0; x < 3; x++){
             //Create the ocean plane
             local oceanNode = mParentNode_.createChildSceneNode(_SCENE_STATIC);
-            local oceanItem = _scene.createItem(getWaterPlaneMesh(), _SCENE_STATIC);
+            local targetMesh = ((x == 1 && y == 1) ? middleMesh : surroundingMesh);
+            local oceanItem = _scene.createItem(targetMesh, _SCENE_STATIC);
             oceanItem.setCastsShadows(false);
             _gameCore.writeFlagsToItem(oceanItem, HLMS_OCEAN_VERTICES | HLMS_FLOOR_DECALS);
             oceanItem.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_WATER);

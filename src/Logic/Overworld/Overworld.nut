@@ -44,6 +44,10 @@
     function getWaterPlaneMesh(){
         return "simpleWaterPlaneMesh";
     }
+    #Override
+    function getSurroundingWaterPlaneMesh(){
+        return getWaterPlaneMesh();
+    }
 
     #Override
     function constructPlayerEntry_(){
