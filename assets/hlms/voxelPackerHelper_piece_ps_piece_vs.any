@@ -251,10 +251,9 @@
 		@property(oceanVertices)
 			float animFlag = inVs_vertex.y;
 			float animMod = 1.0 - animFlag;
-			inVs_vertex.y += sin(inVs_vertex.x*600 + passBuf.time) * 0.25 * animMod;
 			inVs_vertex.y = 0.0;
-			inVs_vertex.y += cos(inVs_vertex.z*600 + passBuf.time) * 0.25 * animMod;
-			inVs_vertex.x += sin(inVs_vertex.x*600 + passBuf.time) * 0.001 * animMod;
+			inVs_vertex.y += cos(inVs_vertex.z * 3.14159265 * 200 + passBuf.time) * 0.25 * animMod;
+			inVs_vertex.x += sin(inVs_vertex.x * 3.14159265 * 200 + passBuf.time) * 0.001 * animMod;
 		@end
 
 		@property(windStreaks)

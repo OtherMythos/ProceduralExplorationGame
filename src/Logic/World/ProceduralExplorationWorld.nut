@@ -610,8 +610,10 @@
             oceanItem.setDatablock(surroundBlock);
             oceanNode.attachObject(oceanItem);
             //NOTE: As we're re-orientating later 1 must be the scale for z
-            oceanNode.setScale(300 + (1.0/100.0) * 300, 1, 300 + (1.0/100.0) * 300);
-            oceanNode.setPosition((x * 600) - 300 + ((1.0/100.0) * 300), 0, (y * 600) + -300 + ((1.0/100.0) * 300) - 600);
+            oceanNode.setScale(300, 1, 300);
+            oceanNode.setPosition((x * 600) - 300, 0, (y * 600) + -300 - 600);
+            //oceanNode.setScale(300 + (1.0/98.0) * 300, 1, 300 + (1.0/98.0) * 300);
+            //oceanNode.setPosition((x * 600) - 300 - ((1.0/100.0)*0.5) * x, 0, (y * 600) + -300 - ((1.0/100)*0.5) * y - 600);
             //oceanNode.setOrientation(Quat(-sqrt(0.5), 0, 0, sqrt(0.5)));
             planes.append(oceanItem);
             //oceanNode.setVisible(false);

@@ -207,9 +207,9 @@ namespace ProceduralExplorationGamePlugin{
             float* vertsBufPtr = static_cast<float*>(vertsBuf);
             float* vertsWritePtr = vertsBufPtr;
             for(const ProceduralExplorationGameCore::WaterMeshGenerator::Vertex& v : data->vertices){
-                *(vertsWritePtr++) = (v.pos.x - 50.0f) / 50.0;
+                *(vertsWritePtr++) = ((100.0 / 99.0) * v.pos.x - 50.0f) / 50.0;
                 *(vertsWritePtr++) = v.pos.y;
-                *(vertsWritePtr++) = (v.pos.z - 50.0f) / 50.0;
+                *(vertsWritePtr++) = ((100.0 / 99.0) * v.pos.z - 50.0f) / 50.0;
                 *(vertsWritePtr++) = v.uv.x;
                 *(vertsWritePtr++) = v.uv.y;
                 *(vertsWritePtr++) = 0.0f;
