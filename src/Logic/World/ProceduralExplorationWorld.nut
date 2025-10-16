@@ -789,11 +789,13 @@
             local skyColour = null;
             local ambientModifier = null;
             local lightModifier = null;
+            local fogStartEndModifier = null;
             if(regionId == 253){
                 // print("Ocean");
                 skyColour = getDefaultSkyColour();
                 ambientModifier = getDefaultAmbientModifier();
                 lightModifier = getDefaultLightModifier();
+                fogStartEndModifier = getDefaultFogStartEnd();
             }else if(regionId == 255){
                 //print("invalid");
             }else{
@@ -813,9 +815,15 @@
                 if(biomeLight == null){
                     biomeLight = getDefaultLightModifier();
                 }
+
+                local biomeFogStartEnd = ::Biomes[biomeType].getFogStartEnd();
+                if(biomeFogStartEnd == null){
+                    biomeFogStartEnd = getDefaultFogStartEnd();
+                }
                 skyColour = biomeColour;
                 ambientModifier = biomeAmbient;
                 lightModifier = biomeLight;
+                fogStartEndModifier = biomeFogStartEnd;
             }
             if(skyColour != null){
                 mSkyAnimator_.animateSkyToColour(skyColour);
@@ -825,6 +833,9 @@
             }
             if(lightModifier != null){
                 mSkyAnimator_.animateLightModifier(lightModifier);
+            }
+            if(fogStartEndModifier != null){
+                mSkyAnimator_.animateFogStartEnd(fogStartEndModifier);
             }
 
             //print("type " + regionData.type);

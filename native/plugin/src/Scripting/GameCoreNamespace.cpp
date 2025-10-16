@@ -327,6 +327,16 @@ namespace ProceduralExplorationGamePlugin{
         return 0;
     }
 
+    SQInteger GameCoreNamespace::setPassBufferFogStartEnd(HSQUIRRELVM vm){
+        Ogre::Vector2 val;
+        SQInteger result = AV::ScriptGetterUtils::read2FloatsOrVec2(vm, &val);
+        if(result != 0) return result;
+
+        GameCorePBSHlmsListener::mFogStartEnd = val;
+
+        return 0;
+    }
+
     SQInteger GameCoreNamespace::registerVoxel(HSQUIRRELVM vm){
         ProceduralExplorationGameCore::MapGen* mapGen = ProceduralExplorationGameCore::PluginBaseSingleton::getMapGen();
         assert(mapGen);
@@ -929,6 +939,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, recollectMapGenSteps, "recollectMapGenSteps");
         AV::ScriptUtils::addFunction(vm, setCustomPassBufferValue, "setCustomPassBufferValue", -2, ".n|unn");
         AV::ScriptUtils::addFunction(vm, setPassBufferFogValue, "setPassBufferFogValue", -2, ".n|unn");
+        AV::ScriptUtils::addFunction(vm, setPassBufferFogStartEnd, "setPassBufferFogStartEnd", -2, ".n|un");
         AV::ScriptUtils::addFunction(vm, setCameraForNode, "setCameraForNode", 3, ".ss");
         AV::ScriptUtils::addFunction(vm, getDummyMapGen, "getDummyMapGen");
         AV::ScriptUtils::addFunction(vm, loadOverworld, "loadOverworld", 2, ".s");

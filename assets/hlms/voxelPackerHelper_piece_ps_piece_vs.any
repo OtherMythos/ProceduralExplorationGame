@@ -27,6 +27,9 @@
 	float fogR;
 	float fogG;
 	float fogB;
+
+	float fogStart;
+	float fogEnd;
 @end
 
 @piece( custom_ps_preLights )
@@ -128,8 +131,8 @@
 		*/
 
 		//Sigmoid fog
-		float fogStart = 200.0;
-		float fogEnd = 600.0;
+		float fogStart = passBuf.fogStart;
+		float fogEnd = passBuf.fogEnd;
 		float visibility = smoothstep(fogEnd, fogStart, dist);
 
 		visibility = clamp(visibility, 0.0, 1.0);

@@ -14,6 +14,7 @@ namespace ProceduralExplorationGamePlugin
         static Ogre::Vector3 mPlayerPosition;
         static Ogre::Vector3 mCustomValues;
         static Ogre::Vector3 mFogColour;
+        static Ogre::Vector2 mFogStartEnd;
 
         virtual Ogre::uint32 getPassBufferSize(const Ogre::CompositorShadowNode *shadowNode, bool casterPass, bool dualParaboloid, Ogre::SceneManager *sceneManager) const;
 

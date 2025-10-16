@@ -381,6 +381,10 @@ enum WorldMousePressContexts{
         mStartLightModifier_ = null;
         mTargetLightModifier_ = null;
 
+        mCurrentFogStartEnd_ = null;
+        mStartFogStartEnd_ = null;
+        mTargetFogStartEnd_ = null;
+
         mAnim_ = 1.0;
 
         constructor(parent, startColour){
@@ -395,6 +399,10 @@ enum WorldMousePressContexts{
             mCurrentLightModifier_ = 1.0;
             mStartLightModifier_ = 1.0;
             mTargetLightModifier_ = 1.0;
+
+            mCurrentFogStartEnd_ = Vec2(200, 600);
+            mStartFogStartEnd_ = mCurrentFogStartEnd_.copy();
+            mTargetFogStartEnd_ = mCurrentFogStartEnd_.copy();
         }
 
         function update(){
@@ -408,9 +416,11 @@ enum WorldMousePressContexts{
             mCurrentWorldColour_ = ::calculateSimpleAnimation(mStartWorldColour_, mTargetWorldColour_, a);
             mCurrentAmbientModifier_ = ::calculateSimpleAnimation(mStartAmbientModifier_, mTargetAmbientModifier_, a);
             mCurrentLightModifier_ = ::calculateSimpleAnimation(mStartLightModifier_, mTargetLightModifier_, a);
+            mCurrentFogStartEnd_ = ::calculateSimpleAnimation(mStartFogStartEnd_, mTargetFogStartEnd_, a);
             refreshSkyColour();
             refreshAmbientModifier();
             refreshLightModifier();
+            refreshFogStartEnd();
         }
 
         function setSkyColour_(colour){
@@ -435,6 +445,9 @@ enum WorldMousePressContexts{
         function refreshLightModifier(){
             ::Base.mGlobalDirectionLight.setPowerScale(PI * mCurrentLightModifier_);
         }
+        function refreshFogStartEnd(){
+            mWorld_.setFogStartEnd(mCurrentFogStartEnd_.x, mCurrentFogStartEnd_.y);
+        }
 
         function animateSkyToColour(colour){
             /*
@@ -456,6 +469,12 @@ enum WorldMousePressContexts{
         function animateLightModifier(modifier){
             mStartLightModifier_ = mCurrentLightModifier_;
             mTargetLightModifier_ = modifier;
+            mAnim_ = 0.0;
+        }
+
+        function animateFogStartEnd(startEnd){
+            mStartFogStartEnd_ = mCurrentFogStartEnd_;
+            mTargetFogStartEnd_ = startEnd;
             mAnim_ = 0.0;
         }
     };
@@ -608,6 +627,9 @@ enum WorldMousePressContexts{
     }
     function getDefaultLightModifier(){
         return 1.0;
+    }
+    function getDefaultFogStartEnd(){
+        return Vec2(200, 600);
     }
     function getDamageWorld(){
         return mDamageCollisionWorld_;
@@ -1859,6 +1881,10 @@ enum WorldMousePressContexts{
             local gpuParams = material.getFragmentProgramParameters(0, 0);
             gpuParams.setNamedConstant("colour", backgroundColour);
         }
+    }
+
+    function setFogStartEnd(start, end){
+        _gameCore.setPassBufferFogStartEnd(start, end);
     }
 
     function checkOrientatingCamera(){
