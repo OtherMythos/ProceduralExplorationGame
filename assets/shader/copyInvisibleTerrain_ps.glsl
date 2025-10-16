@@ -69,7 +69,7 @@ void main()
     float4 startValue = OGRE_Sample(Image, samplerState, inPs.uv0);
 
     if(startValue.w == 0.0){
-        returnFinalColour(float4(p.colour, 1.0));
+        returnFinalColour(float4(readUniform(colour), 1.0));
     }else{
         float3 terrainColour = float3(0.1, 0.1, 1.0);
 
@@ -77,7 +77,7 @@ void main()
         float finalAlpha = alpha / (startValue.z);
 
         float3 targetTerrainColour = terrainColour + float3(startValue.r);
-        float3 colValue = mix(p.colour, targetTerrainColour, finalAlpha);
+        float3 colValue = mix(readUniform(colour), targetTerrainColour, finalAlpha);
 
         returnFinalColour(float4(colValue, startValue.z));
     }
