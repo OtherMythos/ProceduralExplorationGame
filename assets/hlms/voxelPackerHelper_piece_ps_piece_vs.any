@@ -53,7 +53,13 @@
 	@else
 		@property( !disableFog )
 			float3 fogColour = float3(passBuf.fogR, passBuf.fogG, passBuf.fogB);
-			outPs_colour0.xyz = mix(fogColour, outPs_colour0.xyz, inPs.fog);
+			@property(invisibleTerrain)
+				outPs_colour0.xyz *= inPs.fog;
+				outPs_colour0.z = 1;
+				outPs_colour0.w = inPs.fog;
+			@else
+				outPs_colour0.xyz = mix(fogColour, outPs_colour0.xyz, inPs.fog);
+			@end
 		@end
 	@end
 

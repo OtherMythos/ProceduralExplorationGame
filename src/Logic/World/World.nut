@@ -1854,9 +1854,11 @@ enum WorldMousePressContexts{
 
     function setBackgroundColour(backgroundColour){
         _gameCore.setPassBufferFogValue(backgroundColour);
-        local material = _graphics.getMaterialByName("Postprocess/FillColour");
-        local gpuParams = material.getFragmentProgramParameters(0, 0);
-        gpuParams.setNamedConstant("colour", backgroundColour);
+        foreach(i in ["Postprocess/FillColour", "Postprocess/CopyInvisibleTerrain"]){
+            local material = _graphics.getMaterialByName(i);
+            local gpuParams = material.getFragmentProgramParameters(0, 0);
+            gpuParams.setNamedConstant("colour", backgroundColour);
+        }
     }
 
     function checkOrientatingCamera(){

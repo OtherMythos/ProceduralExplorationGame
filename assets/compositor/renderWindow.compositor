@@ -35,7 +35,8 @@ compositor_node renderMainGameplayNode
     texture finalSceneRender          1920 1080 PFG_RGBA32_FLOAT depth_pool 2
     texture windTexture               1920 1080 PFG_R32_FLOAT
 
-    target finalSceneRender
+    //Re-use the texture to render the invisible terrain to.
+    target sceneRenderDecorations
     {
         //Render invisible terrain
         pass render_scene
@@ -43,7 +44,7 @@ compositor_node renderMainGameplayNode
             load
             {
                 all clear
-                clear_colour 0.1 0.1 1 1
+                clear_colour 0 0 0 0
             }
             store
             {
@@ -57,6 +58,26 @@ compositor_node renderMainGameplayNode
             camera explorationCamera
 
             identifier 11
+        }
+    }
+
+    target finalSceneRender
+    {
+        pass render_quad
+        {
+            load {
+                colour clear
+            }
+            store
+            {
+                colour    store
+                depth    store
+                stencil    dont_care
+            }
+
+            material Postprocess/CopyInvisibleTerrain
+
+            input 0 sceneRenderDecorations
         }
         pass render_scene
         {
@@ -76,13 +97,13 @@ compositor_node renderMainGameplayNode
         pass render_scene
         {
 
-			load { all dont_care }
-			store
-			{
-				colour	dont_care
-				depth	store
-				stencil	dont_care
-			}
+            load { all dont_care }
+            store
+            {
+                colour    dont_care
+                depth    store
+                stencil    dont_care
+            }
 
             camera explorationCamera
             shadows default_simpleShadowNode
@@ -119,15 +140,15 @@ compositor_node renderMainGameplayNode
     {
         pass render_scene
         {
-			load {
+            load {
                 colour clear
             }
-			store
-			{
-				colour	store
-				depth	dont_care
-				stencil	dont_care
-			}
+            store
+            {
+                colour    store
+                depth    dont_care
+                stencil    dont_care
+            }
 
             overlays    off
 
