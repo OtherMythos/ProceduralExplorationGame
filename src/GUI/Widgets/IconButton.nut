@@ -57,6 +57,11 @@
         return mButton_;
     }
 
+    function setZOrder(zOrder){
+        mButton_.setZOrder(zOrder);
+        mIcon_.setZOrder(zOrder);
+    }
+
 };
 
 ::IconButtonComplex <- class extends IconButton{

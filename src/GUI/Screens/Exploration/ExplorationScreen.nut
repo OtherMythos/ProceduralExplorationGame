@@ -403,6 +403,10 @@ enum ExplorationScreenWidgetType{
             mAnimationPanelBackground_.setDatablock(datablock);
             mBackgroundDatablock_ = datablock;
 
+            mLabel_.setZOrder(WIDGET_SAFE_FOR_BILLBOARD_Z);
+            mAnimationPanel_.setZOrder(WIDGET_SAFE_FOR_BILLBOARD_Z);
+            mAnimationPanelBackground_.setZOrder(WIDGET_SAFE_FOR_BILLBOARD_Z);
+
             reposition_();
         }
 
@@ -733,6 +737,7 @@ enum ExplorationScreenWidgetType{
             mWieldActiveButton = ::IconButton(mWindow_, "swordsIcon");
             mWieldActiveButton.setSize(Vec2(100, 100));
             mWieldActiveButton.setButtonVisualsEnabled(false);
+            mWieldActiveButton.setZOrder(WIDGET_SAFE_FOR_BILLBOARD_Z);
             //mWieldActiveButton.setText("Wield");
             //mWieldActiveButton.setPosition(_window.getWidth() / 2 - mWieldActiveButton.getSize().x/2, _window.getHeight() - mWieldActiveButton.getSize().y*2);
             mWieldActiveButton.attachListenerForEvent(function(widget, action){

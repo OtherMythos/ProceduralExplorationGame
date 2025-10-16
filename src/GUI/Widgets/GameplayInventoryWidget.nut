@@ -55,6 +55,9 @@
         mIconButton_.attachListenerForEvent(function(widget, action){
             ::Base.mExplorationLogic.mCurrentWorld_.showInventory();
         }, _GUI_ACTION_PRESSED, this);
+
+        mIconPanel_.setZOrder(WIDGET_SAFE_FOR_BILLBOARD_Z);
+        mIconLabel_.setZOrder(WIDGET_SAFE_FOR_BILLBOARD_Z);
     }
 
     function shutdown(){
