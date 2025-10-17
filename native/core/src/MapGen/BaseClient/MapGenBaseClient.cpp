@@ -198,41 +198,6 @@ namespace ProceduralExplorationGameCore{
             stagingTexture = 0;
         }
 
-        {
-            int width = 50;
-            int height = 50;
-            Ogre::TextureGpu* tex = 0;
-            Ogre::TextureGpuManager* manager = Ogre::Root::getSingletonPtr()->getRenderSystem()->getTextureGpuManager();
-            tex = manager->findTextureNoThrow("blueTexture");
-            if(tex){
-                manager->destroyTexture(tex);
-            }
-            tex = manager->createTexture("blueTexture", Ogre::GpuPageOutStrategy::Discard, Ogre::TextureFlags::ManualTexture, Ogre::TextureTypes::Type2DArray);
-            tex->setPixelFormat(Ogre::PixelFormatGpu::PFG_RGBA32_FLOAT);
-            tex->setResolution(width, height);
-            tex->scheduleTransitionTo(Ogre::GpuResidency::Resident);
-
-            Ogre::StagingTexture *stagingTexture = manager->getStagingTexture(width, height, tex->getDepth(), tex->getNumSlices(), tex->getPixelFormat());
-            stagingTexture->startMapRegion();
-            Ogre::TextureBox texBox = stagingTexture->mapRegion(width, height, tex->getDepth(), tex->getNumSlices(), tex->getPixelFormat());
-
-            float* pDest = static_cast<float*>(texBox.at(0, 0, 0));
-            float* itPtr = pDest;
-            for(int i = 0; i < width * height; i++){
-                *itPtr++ = 0.0 / 255.0;
-                *itPtr++ = 102.0 / 255.0;
-                *itPtr++ = 255.0 / 255.0;
-                *itPtr++ = 255.0 / 255.0;
-            }
-            //memcpy(pDest, mapData->waterTextureBufferMask, width * height * sizeof(float) * 4);
-
-            stagingTexture->stopMapRegion();
-            stagingTexture->upload(texBox, tex, 0, 0, 0, false);
-
-            manager->removeStagingTexture( stagingTexture );
-            stagingTexture = 0;
-        }
-
         //Destroy the buffers here as they're not needed anymore
         float* waterTextureBuffer = (mapData->ptr<float>("waterTextureBuffer"));
         delete waterTextureBuffer;
