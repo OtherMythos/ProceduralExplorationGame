@@ -24,6 +24,11 @@
 
         mCameraPosition_ = Vec3();
         mTargetCameraPosition_ = Vec3();
+
+        setFogStartEnd(1000, 10000);
+        setBackgroundColour(getDefaultSkyColour());
+        setBiomeAmbientModifier(getDefaultAmbientModifier());
+        setBiomeLightModifier(getDefaultLightModifier());
     }
 
     #Override

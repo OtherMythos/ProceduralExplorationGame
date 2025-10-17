@@ -443,7 +443,7 @@ enum WorldMousePressContexts{
             mWorld_.setBiomeAmbientModifier(mCurrentAmbientModifier_);
         }
         function refreshLightModifier(){
-            ::Base.mGlobalDirectionLight.setPowerScale(PI * mCurrentLightModifier_);
+            mWorld_.setBiomeLightModifier(mCurrentLightModifier_);
         }
         function refreshFogStartEnd(){
             mWorld_.setFogStartEnd(mCurrentFogStartEnd_.x, mCurrentFogStartEnd_.y);
@@ -1771,6 +1771,10 @@ enum WorldMousePressContexts{
         local value = 2;
         local col = ColourValue(value * modifier.x, value * modifier.y, value * modifier.z, 1.0);
         _scene.setAmbientLight(col, col, ::Vec3_UNIT_Y);
+    }
+
+    function setBiomeLightModifier(modifier){
+        ::Base.mGlobalDirectionLight.setPowerScale(PI * modifier);
     }
 
     function actuateSpoils(en, data, position){
