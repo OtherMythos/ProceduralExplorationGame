@@ -633,6 +633,10 @@
 
     }
 
+    function getTerrainRenderQueueStart(){
+        return RENDER_QUEUE_EXPLORATION_TERRRAIN_UNDISCOVERED;
+    }
+
     function voxeliseMap(){
         assert(mMapData_ != null);
 
@@ -654,7 +658,7 @@
 
             local item = _scene.createItem(i, _SCENE_STATIC);
             _gameCore.writeFlagsToItem(item, HLMS_PACKED_VOXELS | HLMS_TERRAIN | HLMS_FLOOR_DECALS);
-            item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_TERRRAIN_UNDISCOVERED);
+            item.setRenderQueueGroup(getTerrainRenderQueueStart());
             item.setCastsShadows(false);
             local landNode = regionNode.createChildSceneNode(_SCENE_STATIC);
             landNode.attachObject(item);

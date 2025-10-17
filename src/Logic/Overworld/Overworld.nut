@@ -83,6 +83,11 @@
     }
 
     #Override
+    function getTerrainRenderQueueStart(){
+        return RENDER_QUEUE_EXPLORATION_TERRRAIN_DISCOVERED;
+    }
+
+    #Override
     function isActive(){
         return true;
     }
