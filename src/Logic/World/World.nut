@@ -683,10 +683,10 @@ enum WorldMousePressContexts{
         foreach(i in mActiveEnemies_){
             i.notifyDestroyed();
         }
-        mEntityManager_.destroyAllEntities();
         if(mPlayerEntry_ != null){
             mPlayerEntry_.notifyDestroyed();
         }
+        mEntityManager_.destroyAllEntities();
 
         mActiveEnemies_.clear();
 
@@ -725,7 +725,7 @@ enum WorldMousePressContexts{
         if(mPlayerEntry_ == null) return;
         local component = mEntityManager_.getComponent(mPlayerEntry_.getEntity(), EntityComponents.HEALTH);
         component.mHealth = data.health;
-        mPlayerEntry_.notifyNewHealth(data.health, data.percentage);
+        mPlayerEntry_.notifyNewHealth(data.health, data.percentage, -1);
     }
     function playerEquipChanged(data){
         printf("Player equip changed '%s'", data.items.tostring());
@@ -1059,8 +1059,9 @@ enum WorldMousePressContexts{
     function notifyNewEntityHealth(entity, newHealth, oldHealth, newPercentage){
         //TODO the health node should notify all entities rather than doing it here.
         if(mActiveEnemies_.rawin(entity)){
+            local change = newHealth - oldHealth;
             local enemy = mActiveEnemies_[entity];
-            enemy.notifyNewHealth(newHealth, newPercentage);
+            enemy.notifyNewHealth(newHealth, newPercentage, change);
         }
 
         checkEntityHealthImportant(entity, newHealth, oldHealth, newPercentage);

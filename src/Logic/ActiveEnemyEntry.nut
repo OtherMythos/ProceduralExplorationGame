@@ -359,7 +359,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         mCreatorWorld_.mTargetManager_.notifyEntityDestroyed(this);
         mCreatorWorld_.mProjectileTargetManager_.notifyEntityDestroyed(this);
     }
-    function notifyNewHealth(newHealth, newPercentage){
+    function notifyNewHealth(newHealth, newPercentage, change){
         local entityManager = mCreatorWorld_.getEntityManager();
         local billboardIdx = -1;
         if(entityManager.hasComponent(mEntity_, EntityComponents.BILLBOARD)){
@@ -374,6 +374,31 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
                 mCreatorWorld_.mGui_.mWorldMapDisplay_.mBillboardManager_.updateHealth(billboardIdx, newHealth);
             }
         }
+
+        if(change < 0){
+            //Apply the red flash effect.
+            applyDatablockColourAnimation(Vec3(10, 0, 0));
+        }
+    }
+    function applyDatablockColourAnimation(colour){
+        local manager = mCreatorWorld_.getEntityManager();
+        if(!manager.hasComponent(mEntity_, EntityComponents.DATABLOCK)){
+            return;
+        }
+        local block = manager.getComponent(mEntity_, EntityComponents.DATABLOCK);
+
+        local comp = null;
+        if(manager.hasComponent(mEntity_, EntityComponents.DATABLOCK_ANIMATOR)){
+            comp = manager.getComponent(mEntity_, EntityComponents.DATABLOCK_ANIMATOR);
+        }else{
+            comp = ::EntityManager.Components[EntityComponents.DATABLOCK_ANIMATOR]();
+            manager.assignComponent(mEntity_, EntityComponents.DATABLOCK_ANIMATOR, comp);
+        }
+
+        block.mDiffuseOverride = Vec3(10, 0, 0);
+        block.mDiffuseOverrideStrength = 1.0;
+        comp.mAnim = 1.0;
+        block.refreshDiffuseModifiers();
     }
     function setGizmo(gizmo){
         //if(mGizmo_ != null){

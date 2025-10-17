@@ -160,3 +160,7 @@
 
     return maxHeight;
 }
+
+::mix <- function(a, b, amount) {
+    return a * (1.0 - amount) + b * amount;
+}

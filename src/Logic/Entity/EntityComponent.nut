@@ -184,6 +184,8 @@
 
     mDatablock = null;
     mDiffuseModifiers = null;
+    mDiffuseOverride = null;
+    mDiffuseOverrideStrength = 0;
 
     constructor(datablock){
         mDatablock = datablock;
@@ -205,19 +207,28 @@
 
     function refreshDiffuseModifiers(){
         if(mDiffuseModifiers == null){
-            mDatablock.setDiffuse(1, 1, 1);
+            refreshDiffuseModifiers_(1, 1, 1);
             return;
         }
 
         if(mDiffuseModifiers.len() == 0){
-            mDatablock.setDiffuse(1, 1, 1);
+            refreshDiffuseModifiers_(1, 1, 1);
         }else{
             local finalDiffuse = Vec3();
             foreach(i in mDiffuseModifiers){
                 finalDiffuse += i;
             }
             local d = finalDiffuse / mDiffuseModifiers.len();
-            mDatablock.setDiffuse(d.x, d.y, d.z);
+            refreshDiffuseModifiers_(d.x, d.y, d.z);
+        }
+    }
+
+    function refreshDiffuseModifiers_(r, g, b){
+        if(mDiffuseOverride != null){
+            local final = mix(Vec3(r, g, b), mDiffuseOverride, mDiffuseOverrideStrength);
+            mDatablock.setDiffuse(final.x, final.y, final.z);
+        }else{
+            mDatablock.setDiffuse(r, g, b);
         }
     }
 
@@ -301,6 +312,15 @@
 
     constructor(){
         mGizmo = array(ExplorationGizmos.MAX, null);
+    }
+
+};
+
+::EntityManager.Components[EntityComponents.DATABLOCK_ANIMATOR] = class extends ::EntityManager.Component{
+
+    mAnim = 0.0;
+
+    constructor(){
     }
 
 };

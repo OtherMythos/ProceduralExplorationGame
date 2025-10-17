@@ -58,8 +58,11 @@
         local en = manager.createEntity(targetPos);
         local playerEntry = ActiveEnemyEntry(mConstructorWorld_, EnemyId.NONE, targetPos, en);
 
+        local clonedBlock = ::DatablockManager.quickCloneDatablock("baseVoxelMaterial");
+        manager.assignComponent(en, EntityComponents.DATABLOCK, ::EntityManager.Components[EntityComponents.DATABLOCK](clonedBlock));
+
         local playerNode = mBaseSceneNode_.createChildSceneNode();
-        local playerModel = mCharacterGenerator_.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, RENDER_QUEUE_EXPLORATION);
+        local playerModel = mCharacterGenerator_.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, RENDER_QUEUE_EXPLORATION, 0, clonedBlock);
         playerNode.setScale(0.5, 0.5, 0.5);
         //_component.sceneNode.add(en, playerNode);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](playerNode));

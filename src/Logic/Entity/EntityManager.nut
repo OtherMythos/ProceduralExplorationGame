@@ -24,6 +24,7 @@ enum EntityComponents{
     MOVEMENT,
     STATUS_AFFLICTION,
     GIZMO,
+    DATABLOCK_ANIMATOR,
 
     MAX
 
@@ -195,6 +196,17 @@ EntityManager.EntityManager <- class{
             foreach(y in i.mGizmo){
                 if(y == null) continue;
                 y.update();
+            }
+        }
+        foreach(i in mComponents_[EntityComponents.DATABLOCK_ANIMATOR].mComps_){
+            if(i == null) continue;
+            i.mAnim = ::accelerationClampCoordinate_(i.mAnim, 0.0, 0.05);
+
+            local comp = getComponent(i.eid, EntityComponents.DATABLOCK);
+            comp.mDiffuseOverrideStrength = i.mAnim;
+            comp.refreshDiffuseModifiers();
+            if(i.mAnim <= 0){
+                removeComponent(i.eid, EntityComponents.DATABLOCK_ANIMATOR);
             }
         }
 
