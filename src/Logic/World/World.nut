@@ -863,20 +863,18 @@ enum WorldMousePressContexts{
     function processStatusAfflictionChange_(entity){
         local block = null;
         if(mEntityManager_.hasComponent(entity, EntityComponents.DATABLOCK)){
-            block = mEntityManager_.getComponent(entity, EntityComponents.DATABLOCK).mDatablock;
+            block = mEntityManager_.getComponent(entity, EntityComponents.DATABLOCK);
         }
+        if(block != null) block.clearDiffuseModifier();
         //In this case just reset everything back to what it was.
         if(!mEntityManager_.hasComponent(entity, EntityComponents.STATUS_AFFLICTION)){
             for(local afflictionId = 0; afflictionId < StatusAfflictionType.MAX; afflictionId++){
                 removeGizmoFromEntity(entity, afflictionId);
             }
-            if(block != null) block.setDiffuse(1, 1, 1);
             return;
         }
 
         local c = mEntityManager_.getComponent(entity, EntityComponents.STATUS_AFFLICTION);
-        local finalDiffuse = Vec3(0, 0, 0);
-        local totalDiffuseUsed = 0;
         for(local afflictionId = 0; afflictionId < StatusAfflictionType.MAX; afflictionId++){
             local present = false;
             foreach(a in c.mAfflictions){
@@ -890,20 +888,16 @@ enum WorldMousePressContexts{
             local afflictionType = ::StatusAfflictions[afflictionId];
             if(present){
                 assignGizmoToEntity(entity, afflictionType.mGizmo);
-                finalDiffuse += afflictionType.mDiffuse;
-                totalDiffuseUsed++;
+                if(block != null){
+                    block.applyDiffuseModifier(afflictionType.mDiffuse);
+                }
             }else{
                 removeGizmoFromEntity(entity, afflictionType.mGizmo);
             }
         }
 
         if(block != null){
-            if(totalDiffuseUsed){
-                local d = finalDiffuse / totalDiffuseUsed;
-                block.setDiffuse(d.x, d.y, d.z);
-            }else{
-                block.setDiffuse(1, 1, 1);
-            }
+            block.refreshDiffuseModifiers();
         }
     }
     function applyStatusAffliction(entity, afflictionType, lifetime){

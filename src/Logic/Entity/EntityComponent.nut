@@ -183,9 +183,42 @@
 ::EntityManager.Components[EntityComponents.DATABLOCK] = class extends ::EntityManager.Component{
 
     mDatablock = null;
+    mDiffuseModifiers = null;
 
     constructor(datablock){
         mDatablock = datablock;
+    }
+
+    function clearDiffuseModifier(){
+        if(mDiffuseModifiers != null){
+            mDiffuseModifiers.clear();
+        }
+        refreshDiffuseModifiers();
+    }
+
+    function applyDiffuseModifier(diffuse){
+        if(mDiffuseModifiers == null){
+            mDiffuseModifiers = [];
+        }
+        mDiffuseModifiers.append(diffuse);
+    }
+
+    function refreshDiffuseModifiers(){
+        if(mDiffuseModifiers == null){
+            mDatablock.setDiffuse(1, 1, 1);
+            return;
+        }
+
+        if(mDiffuseModifiers.len() == 0){
+            mDatablock.setDiffuse(1, 1, 1);
+        }else{
+            local finalDiffuse = Vec3();
+            foreach(i in mDiffuseModifiers){
+                finalDiffuse += i;
+            }
+            local d = finalDiffuse / mDiffuseModifiers.len();
+            mDatablock.setDiffuse(d.x, d.y, d.z);
+        }
     }
 
 };
