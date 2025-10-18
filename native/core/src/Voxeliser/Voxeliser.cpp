@@ -239,6 +239,93 @@ namespace ProceduralExplorationGameCore{
             }
         }
     }
+    void Voxeliser::createTerrainFromVisitedPlaceMapDataAlteredValues(const std::string& meshName, VisitedPlaceMapData* mapData, Ogre::MeshPtr* outMesh, AV::uint32 xVal, AV::uint32 yVal, AV::uint32 widthVal, AV::uint32 heightVal){
+        //Probably no need to go through and collect the altitude values, they're already close enough.
+        //All the same destination.
+
+        RegionBufferEntry outBuffer;
+
+        outBuffer.mNumActiveVox = widthVal * heightVal;
+        outBuffer.prepareVertBuffer();
+
+        AV::uint32 seaLevel = 100;
+        static const AV::uint32 WORLD_DEPTH = 20;
+        static const AV::uint32 ABOVE_GROUND = 0xFF - seaLevel;
+
+        std::vector<AV::uint8> alteredAltitudes = mapData->altitudeValues;
+        for(size_t i = 0; i < alteredAltitudes.size(); i++){
+            AV::uint8 altitude = alteredAltitudes[i];
+            if(altitude < seaLevel){
+                alteredAltitudes[i] = 0;
+                continue;
+            }
+            float voxFloat = static_cast<float>(altitude);
+
+            alteredAltitudes[i] = static_cast<AV::uint8>(((voxFloat - (float)seaLevel) / (float)ABOVE_GROUND) * (float)WORLD_DEPTH) + 1;
+        }
+
+        int maxAltitude = 1;
+        for(AV::uint32 y = yVal; y < yVal + heightVal; y++){
+            for(AV::uint32 x = xVal; x < xVal + widthVal; x++){
+                //AV::uint8 altitude = mapData->altitudeValues[x + y * mapData->width];
+                AV::uint8 altitude = alteredAltitudes[x + y * mapData->width];
+                AV::uint8 v = mapData->voxelValues[x + y * mapData->width];
+                if(altitude == 0) continue;
+
+                if(altitude > maxAltitude) maxAltitude = altitude;
+
+                AV::uint32 yInverse = y;
+
+                //float texCoordX = (static_cast<float>(v % COLS_WIDTH) / COLS_WIDTH) + TILE_WIDTH;
+                //float texCoordY = (static_cast<float>((static_cast<AV::uint32>(static_cast<float>(v) / COLS_WIDTH))) / COLS_HEIGHT) + TILE_HEIGHT;
+
+                {
+                    AV::uint32 f = 3;
+                    AV::uint32 ambientMask = getVerticeBorderTerrainVisitedPlaces(altitude, alteredAltitudes, f, x, y, mapData->width, mapData->height);
+                    for(AV::uint32 i = 0; i < 4; i++){
+                        AV::uint32 fv = FACES_VERTICES[f * 4 + i]*3;
+                        AV::uint32 xx = (VERTICES_POSITIONS[fv] + x) - xVal;
+                        AV::uint32 yy = (VERTICES_POSITIONS[fv + 1] + yInverse) - yVal;
+                        AV::uint32 zz = (VERTICES_POSITIONS[fv + 2] + altitude);
+
+                        if(xx > outBuffer.mMaxX){
+                            outBuffer.mMaxX = xx;
+                        }
+                        if(yy > outBuffer.mMaxY){
+                            outBuffer.mMaxY = yy;
+                        }
+
+                        if(xx < outBuffer.mMinX){
+                            outBuffer.mMinX = xx;
+                        }
+                        if(yy < outBuffer.mMinY){
+                            outBuffer.mMinY = yy;
+                        }
+
+                        AV::uint8 ambient = (ambientMask >> 8 * i) & 0xFF;
+                        assert(ambient >= 0 && ambient <= 3);
+
+                        AV::uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
+                        (*outBuffer.mVertsWritePtr++) = val;
+                        val = f << 29 | v;
+                        (*outBuffer.mVertsWritePtr++) = val;
+                        (*outBuffer.mVertsWritePtr++) = 0x0;
+                        //(*outBuffer.mVertsWritePtr++) = 0x0;
+                        //*reinterpret_cast<float*>(outBuffer.mVertsWritePtr++) = texCoordX;
+                        //*reinterpret_cast<float*>(outBuffer.mVertsWritePtr++) = texCoordY;
+                    }
+                    outBuffer.mNumTris += 2;
+                    outBuffer.mNumVerts += 4;
+                }
+                writeFaceToMeshVisitedPlace(x, (int)y-1, xVal, yVal, x, yInverse, 0, altitude, alteredAltitudes, widthVal, heightVal, v, mapData->width, mapData->height, outBuffer);
+                writeFaceToMeshVisitedPlace(x, (int)y+1, xVal, yVal, x, yInverse, 1, altitude, alteredAltitudes, widthVal, heightVal, v, mapData->width, mapData->height, outBuffer);
+                writeFaceToMeshVisitedPlace((int)x+1, y, xVal, yVal, x, yInverse, 4, altitude, alteredAltitudes, widthVal, heightVal, v, mapData->width, mapData->height, outBuffer);
+                writeFaceToMeshVisitedPlace((int)x-1, y, xVal, yVal, x, yInverse, 5, altitude, alteredAltitudes, widthVal, heightVal, v, mapData->width, mapData->height, outBuffer);
+            }
+        }
+
+        *outMesh = outBuffer.generateMesh(meshName, widthVal, heightVal, maxAltitude);
+    }
     void Voxeliser::createTerrainFromVisitedPlaceMapData(const std::string& meshName, VisitedPlaceMapData* mapData, Ogre::MeshPtr* outMesh, AV::uint32 xVal, AV::uint32 yVal, AV::uint32 widthVal, AV::uint32 heightVal){
         //Probably no need to go through and collect the altitude values, they're already close enough.
         //All the same destination.

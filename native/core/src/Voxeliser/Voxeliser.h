@@ -113,6 +113,7 @@ namespace ProceduralExplorationGameCore{
         void createMeshForVoxelData(const std::string& meshName, VoxelId* data, AV::uint32 width, AV::uint32 height, AV::uint32 depth, Ogre::MeshPtr* outMesh);
 
         void createTerrainFromVisitedPlaceMapData(const std::string& meshName, VisitedPlaceMapData* mapData, Ogre::MeshPtr* outMeshes, AV::uint32 x, AV::uint32 y, AV::uint32 width, AV::uint32 height);
+        void createTerrainFromVisitedPlaceMapDataAlteredValues(const std::string& meshName, VisitedPlaceMapData* mapData, Ogre::MeshPtr* outMesh, AV::uint32 xVal, AV::uint32 yVal, AV::uint32 widthVal, AV::uint32 heightVal);
 
 
 

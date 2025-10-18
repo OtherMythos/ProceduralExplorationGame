@@ -4,6 +4,12 @@
 
     mCurrentAction_ = null
 
+    constructor(worldId, alterValues){
+        base.constructor(worldId);
+
+        mAlterValues_ = alterValues;
+    }
+
     function drawVoxTypeValues(x, y, width, height, values){
         //Must be 0 so there's a centre voxel.
         assert(width % 2 == 1 && height % 2 == 1);

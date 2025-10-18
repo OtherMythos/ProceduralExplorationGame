@@ -281,16 +281,13 @@ enum SceneEditorMapType{
         }
         mVisitedPlacesMapData = mapClaim;
 
-        mTerrainChunkManager = ::SceneEditorTerrainChunkManager(0);
+        mTerrainChunkManager = ::SceneEditorTerrainChunkManager(0, targetMap.getMapType() == SceneEditorMapType.OVERWORLD);
         mTerrainChunkManager.setup(mapClaim, targetMap.getMapType() == SceneEditorMapType.PLACE ? 1 : 4);
         mTerrainChunkManager.generateInitialItems();
         local targetParent = _scene.getRootSceneNode().createChildSceneNode();
         mTerrainChunkManager.setupParentNode(targetParent);
         if(targetMap.getMapType() == SceneEditorMapType.PLACE){
             targetParent.setPosition(-0.75, 0, 0.75);
-        }
-        if(targetMap.getMapType() == SceneEditorMapType.OVERWORLD){
-            targetParent.setPosition(0, -100 * PROCEDURAL_WORLD_UNIT_MULTIPLIER, 0);
         }
         mTerrainNodeParent_ = targetParent;
 

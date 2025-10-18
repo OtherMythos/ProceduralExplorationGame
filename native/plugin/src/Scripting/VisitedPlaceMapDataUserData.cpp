@@ -116,12 +116,15 @@ namespace ProceduralExplorationGamePlugin{
         sq_getinteger(vm, 5, &width);
         sq_getinteger(vm, 6, &height);
 
+        SQBool alterValues;
+        sq_getbool(vm, 7, &alterValues);
+
         ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
         SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
 
         Ogre::MeshPtr outPtr;
         ProceduralExplorationGameCore::VisitedPlaceMapDataHelper helper(mapData);
-        helper.voxeliseToTerrainMeshes(meshName, &outPtr, x, y, width, height);
+        helper.voxeliseToTerrainMeshes(meshName, &outPtr, x, y, width, height, alterValues);
 
         if(!outPtr){
             sq_pushnull(vm);
@@ -338,7 +341,14 @@ namespace ProceduralExplorationGamePlugin{
             y = static_cast<ProceduralExplorationGameCore::WorldCoord>(point.z);
 
             AV::uint8 altitude = mapData->altitudeValues[x + y * mapData->width];
-            if(point.y < (static_cast<float>(altitude)*0.4) + offset.y && point.y >= 0.0f + offset.y){
+            AV::uint32 seaLevel = 100;
+            static const AV::uint32 WORLD_DEPTH = 20;
+            static const AV::uint32 ABOVE_GROUND = 0xFF - seaLevel;
+
+            float voxFloat = static_cast<float>(altitude);
+            AV::uint8 alteredAltitude = static_cast<AV::uint8>(((voxFloat - (float)seaLevel) / (float)ABOVE_GROUND) * (float)WORLD_DEPTH) + 1;
+
+            if(point.y < (static_cast<float>(alteredAltitude)*0.4) + offset.y && point.y >= 0.0f + offset.y){
                 collision = true;
                 result = outPoint;
                 break;
@@ -359,7 +369,7 @@ namespace ProceduralExplorationGamePlugin{
 
         AV::ScriptUtils::addFunction(vm, getAltitudeForPos, "getAltitudeForPos", 2, ".u");
         AV::ScriptUtils::addFunction(vm, getIsWaterForPos, "getIsWaterForPos", 2, ".u");
-        AV::ScriptUtils::addFunction(vm, voxeliseTerrainMeshForData, "voxeliseTerrainMeshForData", 6, ".siiii");
+        AV::ScriptUtils::addFunction(vm, voxeliseTerrainMeshForData, "voxeliseTerrainMeshForData", 7, ".siiiib");
 
         AV::ScriptUtils::addFunction(vm, getWidth, "getWidth");
         AV::ScriptUtils::addFunction(vm, getHeight, "getHeight");

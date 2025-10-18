@@ -12,7 +12,7 @@ namespace ProceduralExplorationGameCore{
         VisitedPlaceMapDataHelper(VisitedPlaceMapData* data);
         ~VisitedPlaceMapDataHelper();
 
-        bool voxeliseToTerrainMeshes(const std::string& meshName, Ogre::MeshPtr* outMesh, AV::uint32 x, AV::uint32 y, AV::uint32 width, AV::uint32 height);
+        bool voxeliseToTerrainMeshes(const std::string& meshName, Ogre::MeshPtr* outMesh, AV::uint32 x, AV::uint32 y, AV::uint32 width, AV::uint32 height, bool alterValues);
 
     private:
         VisitedPlaceMapData* mMapData;
