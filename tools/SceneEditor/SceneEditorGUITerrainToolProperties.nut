@@ -1,6 +1,7 @@
 ::SceneEditorGUITerrainToolProperties <- class extends ::SceneEditorFramework.GUIPanel{
 
     mEditTerrain_ = null;
+    mEditTerrainBrushSize_ = null;
     mEditTerrainHeight_ = null;
     mEditTerrainColour_ = null;
 
@@ -22,6 +23,15 @@
             return;
         }
             */
+
+        mEditTerrainBrushSize_ = ::EditorGUIFramework.Widget.NumericInput(mParent_, false, "Brush size");
+        mEditTerrainBrushSize_.attachListener(::EditorGUIFramework.Listener(function(widget, action){
+            if(action == EditorGUIFramework_WidgetCallbackEvent.VALUE_CHANGED){
+                local val = widget.getValue();
+                ::Base.setEditTerrainBrushSize(val);
+            }
+        }));
+        mEditTerrainBrushSize_.addToLayout(layout);
 
         mEditTerrain_ = mParent_.createCheckbox();
         mEditTerrain_.setText("Edit terrain");
@@ -50,7 +60,7 @@
         mEditTerrainHeightValue_.attachListener(::EditorGUIFramework.Listener(function(widget, action){
             if(action == EditorGUIFramework_WidgetCallbackEvent.VALUE_CHANGED){
                 local val = widget.getValue();
-                ::Base.setEditTerrainHeightValue(val);
+                ::Base.setEditTerrainBrushSize(val);
             }
         }));
         mEditTerrainHeightValue_.addToLayout(layout);
@@ -79,6 +89,7 @@
     function refreshButtons(){
         local state = ::Base.getTerrainEditState();
         mEditTerrain_.setValue(::Base.getEditingTerrain());
+        mEditTerrainBrushSize_.setValue(::Base.getTerrainBrushSize())
         mEditTerrainHeight_.setValue(state == TerrainEditState.HEIGHT);
         mEditTerrainColour_.setValue(state == TerrainEditState.COLOUR);
         mEditTerrainHeightValue_.setValue(::Base.getTerrainEditHeight());

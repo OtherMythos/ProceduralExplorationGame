@@ -49,6 +49,7 @@ enum SceneEditorMapType{
     mEditingTerrainMode = TerrainEditState.NONE
     mEditTerrainColourValue = 0
     mEditTerrainHeightValue = 0
+    mEditTerrainBrushSize = 1
     mTileGridBoxNode_ = null
     mTileGridIndicatorNode_ = null
     mCurrentSceneRightClick_ = null
@@ -459,6 +460,12 @@ enum SceneEditorMapType{
         return false;
     }
 
+    function getTerrainEditArray(value, width, height){
+        local a = array(width * height, value);
+
+        return a;
+    }
+
     function update(){
         checkKeyCommands();
         ::SceneEditorFPSCamera.update();
@@ -512,11 +519,17 @@ enum SceneEditorMapType{
                             mTerrainEditActive_ = true;
                             mTerrainChunkManager.notifyActionStart(getTerrainEditState() == TerrainEditState.HEIGHT);
                         }
+                        local width = mEditTerrainBrushSize;
+                        local height = mEditTerrainBrushSize;
+                        local drawWidth = width * 2 + 1;
+                        local drawHeight = height * 2 + 1;
                         if(getTerrainEditState() == TerrainEditState.HEIGHT){
-                            mTerrainChunkManager.drawHeightValues(chunkX, chunkY, 1, 1, [mEditTerrainHeightValue]);
+                            local vals = getTerrainEditArray(mEditTerrainHeightValue, drawWidth, drawHeight);
+                            mTerrainChunkManager.drawHeightValues(chunkX, chunkY, drawWidth, drawHeight, vals);
                         }
                         else if(getTerrainEditState() == TerrainEditState.COLOUR){
-                            mTerrainChunkManager.drawVoxTypeValues(chunkX, chunkY, 1, 1, [mEditTerrainColourValue]);
+                            local vals = getTerrainEditArray(mEditTerrainColourValue, drawWidth, drawHeight);
+                            mTerrainChunkManager.drawVoxTypeValues(chunkX, chunkY, drawWidth, drawHeight, vals);
                         }
                     }
                 }
@@ -701,6 +714,10 @@ enum SceneEditorMapType{
         mEditTerrainHeightValue = height;
     }
 
+    function setEditTerrainBrushSize(size){
+        mEditTerrainBrushSize = size;
+    }
+
     function getEditingTerrain(){
         return mEditingTerrain;
     }
@@ -727,6 +744,10 @@ enum SceneEditorMapType{
 
     function getTerrainEditHeight(){
         return mEditTerrainHeightValue;
+    }
+
+    function getTerrainBrushSize(){
+        return mEditTerrainBrushSize;
     }
 
     function getTerrainEditColour(){
