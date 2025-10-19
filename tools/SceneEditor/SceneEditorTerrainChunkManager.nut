@@ -10,27 +10,7 @@
         mAlterValues_ = alterValues;
     }
 
-    function drawVoxTypeValues(x, y, width, height, values){
-        //Must be 0 so there's a centre voxel.
-        assert(width % 2 == 1 && height % 2 == 1);
-
-        if(width == 1 && height == 1){
-            local chunkX = (x / mChunkWidth_).tointeger();
-            local chunkY = (y / mChunkHeight_).tointeger();
-            local targetIdx = chunkX << 4 | chunkY;
-            local targetX = x - (chunkX * mChunkWidth_);
-            local targetY = y - (chunkY * mChunkHeight_);
-
-            assert(mCurrentAction_ != null);
-            local voxVal = mMapData_.getVoxelForCoord(x, y);
-            if(voxVal == null) return;
-            mCurrentAction_.populateForCoord(x, y, chunkX, chunkY, voxVal, values[0]);
-            mMapData_.setVoxelForCoord(x, y, values[0]);
-            recreateChunkItem(chunkX, chunkY);
-        }
-    }
-
-    function drawHeightValues(x, y, width, height, values){
+    function drawValue_(x, y, width, height, values, altitude){
         //Must be 0 so there's a centre voxel.
         assert(width % 2 == 1 && height % 2 == 1);
 
@@ -51,11 +31,21 @@
                 local targetY = coordY - (chunkY * mChunkHeight_);
 
                 assert(mCurrentAction_ != null);
-                local altitudeVal = mMapData_.getAltitudeForCoord(coordX, coordY);
+
+                local altitudeVal = null;
+                if(altitude){
+                    altitudeVal = mMapData_.getAltitudeForCoord(coordX, coordY);
+                }else{
+                    altitudeVal = mMapData_.getVoxelForCoord(coordX, coordY);
+                }
                 if(altitudeVal == null) return;
                 local writeValue = values[xx + yy * width];
                 mCurrentAction_.populateForCoord(coordX, coordY, chunkX, chunkY, altitudeVal, writeValue);
-                mMapData_.setAltitudeForCoord(coordX, coordY, writeValue);
+                if(altitude){
+                    mMapData_.setAltitudeForCoord(coordX, coordY, writeValue);
+                }else{
+                    mMapData_.setVoxelForCoord(coordX, coordY, writeValue);
+                }
 
                 drawVal.rawset(targetIdx, true);
             }
@@ -66,6 +56,15 @@
             local chunkY = c & 0xF;
             recreateChunkItem(chunkX, chunkY);
         }
+
+    }
+
+    function drawVoxTypeValues(x, y, width, height, values){
+        drawValue_(x, y, width, height, values, false);
+    }
+
+    function drawHeightValues(x, y, width, height, values){
+        drawValue_(x, y, width, height, values, true);
     }
 
     function notifyActionStart(altitude){
