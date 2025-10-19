@@ -508,7 +508,7 @@ namespace ProceduralExplorationGamePlugin{
         }
         AV::uint32* ss = s;
         for(size_t i = 0; i < outBlend.tilesWidth * outBlend.tilesHeight; i++){
-            *ss = static_cast<AV::uint32>(outBlend.tileValues[i]);
+            *ss = 0;
             ss++;
         }
         //memcpy(&voxelBuffer, &(outTiles.tileValues[0]), outTiles.tilesWidth * outTiles.tilesHeight);
@@ -540,6 +540,17 @@ namespace ProceduralExplorationGamePlugin{
         data->uint32("seaLevel", data->seaLevel);
 
         sq_pushstring(vm, "data", -1);
+
+        for(ProceduralExplorationGameCore::WorldPoint y = 0; y < outBlend.tilesHeight; y++){
+            for(ProceduralExplorationGameCore::WorldPoint x = 0; x < outBlend.tilesWidth; x++){
+                AV::uint32* secondary = ProceduralExplorationGameCore::FULL_PTR_FOR_COORD_SECONDARY(data, ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y));
+                *secondary |= ProceduralExplorationGameCore::DRAW_COLOUR_VOXEL_FLAG;
+
+                AV::uint8* voxPtr = ProceduralExplorationGameCore::VOX_VALUE_PTR_FOR_COORD(data, ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y));
+                *voxPtr = static_cast<AV::uint8>(outBlend.tileValues[x + y * outBlend.tilesWidth]);
+            }
+        }
+
         ProceduralExplorationGameCore::ExplorationMapDataUserData::ExplorationMapDataToUserData<false>(vm, data);
         sq_newslot(vm, -3, SQFalse);
 
