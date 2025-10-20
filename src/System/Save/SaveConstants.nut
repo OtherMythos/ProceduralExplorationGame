@@ -18,3 +18,6 @@ enum OBJECT_TYPE{
     ARRAY = "array",
     BOOL = "bool"
 };
+
+const MAX_OVERWORLD_REGIONS = 256;
+const MAX_OVERWORLD_REGION_COUNT = 0;

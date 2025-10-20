@@ -110,6 +110,14 @@
         return mCurrentData_.playerZoom;
     }
 
+    function getRegionIdDiscovery(region){
+        local d = mCurrentData_.overworldDiscovered;
+        if(region < 0 || region >= d.len()){
+            return 0;
+        }
+        return d[region];
+    }
+
     function addToInventory(item){
         mInventory_.addToInventory(item);
     }

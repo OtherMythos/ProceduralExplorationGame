@@ -59,6 +59,25 @@
 
     }
 
+    #Override
+    function resetSession(mapData, nativeMapData){
+        base.resetSession(mapData, nativeMapData);
+
+        foreach(c,i in mRegionEntries_){
+            local discoveryCount = ::Base.mPlayerStats.getRegionIdDiscovery(c);
+
+            local terrainRenderQueue = RENDER_QUEUE_EXPLORATION_TERRRAIN_DISCOVERED;
+            if(discoveryCount == 0){
+                terrainRenderQueue = RENDER_QUEUE_EXPLORATION_TERRRAIN_UNDISCOVERED;
+            }
+
+            local e = mRegionEntries_[c];
+            if(e.mLandItem_){
+                e.mLandItem_.setRenderQueueGroup(terrainRenderQueue);
+            }
+        }
+    }
+
     function applyMovementDelta(delta){
         mCameraPosition_ += (Vec3(delta.x, 0, delta.y) * 0.1);
         updateCameraPosition();

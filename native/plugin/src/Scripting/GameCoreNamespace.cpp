@@ -531,7 +531,14 @@ namespace ProceduralExplorationGamePlugin{
         data->voidPtr("waterData", e);
         e = new std::vector<ProceduralExplorationGameCore::FloodFillEntry*>();
         data->voidPtr("landData", e);
-        data->voidPtr("regionData", new std::vector<ProceduralExplorationGameCore::RegionData>());
+        std::vector<ProceduralExplorationGameCore::RegionData>* regionData = new std::vector<ProceduralExplorationGameCore::RegionData>();
+        regionData->push_back({
+            0
+        });
+        regionData->push_back({
+            1
+        });
+        data->voidPtr("regionData", regionData);
         data->voidPtr("placedItems", new std::vector<ProceduralExplorationGameCore::PlacedItemData>());
         data->voidPtr("riverData", new std::vector<ProceduralExplorationGameCore::RiverData>());
 
@@ -548,6 +555,13 @@ namespace ProceduralExplorationGamePlugin{
 
                 AV::uint8* voxPtr = ProceduralExplorationGameCore::VOX_VALUE_PTR_FOR_COORD(data, ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y));
                 *voxPtr = static_cast<AV::uint8>(outBlend.tileValues[x + y * outBlend.tilesWidth]);
+
+                AV::uint8* regionPtr = ProceduralExplorationGameCore::REGION_PTR_FOR_COORD(data, ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y));
+                if(x > outBlend.tilesWidth / 2){
+                    *regionPtr = 1;
+                }else{
+                    *regionPtr = 0;
+                }
             }
         }
 
