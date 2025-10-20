@@ -2,6 +2,7 @@ enum KeyScancode{
     LCTRL = 224,
     LCOMMAND = 231,
     LSHIFT = 225,
+    LALT = 226
 
     NUMBER_1 = 30,
     NUMBER_2 = 31,

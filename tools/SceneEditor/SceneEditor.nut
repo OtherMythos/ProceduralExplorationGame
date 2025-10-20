@@ -470,7 +470,15 @@ enum SceneEditorMapType{
         checkKeyCommands();
         ::SceneEditorFPSCamera.update();
         //_input.(i, _INPUT_PRESSED)
-        ::SceneEditorFPSCamera.setSpeedModifier(_input.getRawKeyScancodeInput(KeyScancode.LSHIFT));
+
+        local speedModifier = 1.0;
+        if(_input.getRawKeyScancodeInput(KeyScancode.LSHIFT)){
+            speedModifier = 3.0;
+        }
+        if(_input.getRawKeyScancodeInput(KeyScancode.LALT)){
+            speedModifier = 16.0;
+        }
+        ::SceneEditorFPSCamera.setSpeedModifier(speedModifier);
 
         if(_input.getRawKeyScancodeInput(KeyScancode.NUMBER_1)){
             mEditorBase.getActiveSceneTree().setObjectTransformCoordinateType(SceneEditorFramework_BasicCoordinateType.POSITION);

@@ -2,7 +2,7 @@
 
 ::SceneEditorFPSCamera <- {
 
-    mSpeedModifier = false
+    mSpeedModifier = 1.0
 
     function radians(value){
         return value * (3.14159 / 180);
@@ -112,7 +112,7 @@
         // if(yVal > 0) thing.
 
         local target = Vec3();
-        local speed = mSpeedModifier ? 1.0 : 0.3;
+        local speed = 0.3 * mSpeedModifier;
         if(yVal > 0.2){
             target = -front;
             target *= speed;
