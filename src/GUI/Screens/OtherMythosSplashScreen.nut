@@ -4,7 +4,7 @@
 
     function recreate(){
         mWindow_ = _gui.createWindow("OtherMythosSplashScreen");
-        mWindow_.setSize(::drawable);
+        mWindow_.setSize(::drawable * 1.1);
         //mWindow_.setVisualsEnabled(false);
         mWindow_.setSkinPack("WindowSkinBlack");
 
