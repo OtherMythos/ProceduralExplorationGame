@@ -34,6 +34,9 @@
         mHandle_.setColour(ColourValue(1, 1, 1, 0.2));
         mHandle_.setClickable(false);
 
+        mBackgroundPanel_.setZOrder(WIDGET_SAFE_FOR_BILLBOARD_Z);
+        mHandle_.setZOrder(WIDGET_SAFE_FOR_BILLBOARD_Z);
+
         _event.subscribe(Event.PLAYER_DIRECTING_CHANGED, receivePlayerDirectingChanged, this);
     }
 
