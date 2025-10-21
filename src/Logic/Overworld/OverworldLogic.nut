@@ -15,10 +15,17 @@ enum OverworldStates{
     mRenderableSize_ = null
     mStateMachine_ = null
 
+    mOverworldRegionMeta_ = null
+
     mCurrentCameraPosition_ = null
     mCurrentCameraLookAt_ = null
 
     mActiveCount_ = 0
+
+    function loadMeta(){
+        local regionMeta = _system.readJSONAsTable("res://build/assets/overworld/overworld/meta.json");
+        mOverworldRegionMeta_ = regionMeta;
+    }
 
     function requestSetup(){
         local active = isActive();
@@ -220,3 +227,5 @@ enum OverworldStates{
         //mWorld_.applyMovementDelta(delta);
     }
 };
+
+::OverworldLogic.loadMeta();

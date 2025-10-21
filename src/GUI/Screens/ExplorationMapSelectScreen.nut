@@ -46,12 +46,38 @@
             mWindow_ = parent.createWindow();
             mWindow_.setSize(100, 100);
             mWindow_.setDatablock("simpleGrey");
+            mWindow_.setVisualsEnabled(false);
 
             mLabel_ = mWindow_.createLabel();
+            mLabel_.setTextHorizontalAlignment(_TEXT_ALIGN_RIGHT);
+            mLabel_.setShadowOutline(true, ColourValue(0.05, 0.05, 0.05, 1.0), Vec2(1, 1));
+
+            _event.subscribe(Event.OVERWORLD_SELECTED_REGION_CHANGED, receiveSelectionChangeEvent, this);
         }
 
-        function setData(data){
-            mLabel_.setText(format("%i, %i", data.x, data.y));
+        function shutdown(){
+            _event.unsubscribe(Event.OVERWORLD_SELECTED_REGION_CHANGED, receiveSelectionChangeEvent, this);
+        }
+
+        function receiveSelectionChangeEvent(id, data){
+            print("Overworld selected region changed");
+
+            local text = "";
+            if(data != null){
+                text += data.name + "\n";
+                text += format("unlock amount: %i\n", data.unlockAmount);
+            }
+            mLabel_.setText(text);
+
+            local newSize = mWindow_.calculateChildrenSize();
+            mWindow_.setSize(newSize);
+            reposition();
+        }
+
+        function reposition(){
+            local insets = _window.getScreenSafeAreaInsets();
+            local MARGIN = 10;
+            mWindow_.setPosition(Vec2(::drawable.x - mWindow_.getSize().x - MARGIN, MARGIN + insets.top));
         }
 
         function setPosition(pos){
@@ -134,7 +160,8 @@
         mExploreButton_ = playIconButton;
 
         mMapInfoPanel_ = MapInfoPanel(mWindow_);
-        mMapInfoPanel_.setPosition(Vec2(::drawable.x - 100 - MARGIN, MARGIN + insets.top));
+        //mMapInfoPanel_.setPosition(Vec2(::drawable.x - 100 - MARGIN, MARGIN + insets.top));
+        mMapInfoPanel_.reposition();
 
         updateMapPosition_(mMapPosition_);
 
@@ -151,6 +178,7 @@
         base.shutdown();
         ::OverworldLogic.requestShutdown();
         ::Base.applyCompositorModifications()
+        mMapInfoPanel_.shutdown();
     }
 
     function processCloseScreen_(){

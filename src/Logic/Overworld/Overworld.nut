@@ -4,6 +4,9 @@
     mZoomAmount_ = 0.0;
     MAX_ZOOM = 200;
 
+    mRegionPicker_ = null;
+    mCurrentSelectedRegion_ = null;
+
     mTargetCameraPosition_ = null;
 
     #Override
@@ -76,6 +79,10 @@
                 e.mLandItem_.setRenderQueueGroup(terrainRenderQueue);
             }
         }
+
+        mRegionPicker_ = mParentNode_.createChildSceneNode();
+        mRegionPicker_.attachObject(_scene.createItem("cube"));
+        mRegionPicker_.setScale(1, 10, 1);
     }
 
     function applyMovementDelta(delta){
@@ -132,6 +139,28 @@
         mTargetCameraPosition_ = (mCameraPosition_ + zoom);
         //parentNode.setPosition(mCameraPosition_ + zoom);
         //camera.lookAt(mCameraPosition_);
+
+        mRegionPicker_.setPosition(mCameraPosition_);
+        updateSelectedRegion_();
+    }
+
+    function updateSelectedRegion_(){
+        local region = ::currentNativeMapData.getRegionForPos(mCameraPosition_);
+
+        if(region == mCurrentSelectedRegion_){
+            return;
+        }
+        mCurrentSelectedRegion_ = region;
+
+        local regionMeta = ::OverworldLogic.mOverworldRegionMeta_;
+        local checkRegion = region.tostring();
+
+        local regionEntry = null;
+        if(regionMeta.rawin(checkRegion)){
+            regionEntry = ::OverworldLogic.mOverworldRegionMeta_[region.tostring()];
+        }
+
+        _event.transmit(Event.OVERWORLD_SELECTED_REGION_CHANGED, regionEntry);
     }
 
     function getCameraPosition(){

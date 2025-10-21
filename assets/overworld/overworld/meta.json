@@ -1,0 +1,10 @@
+{
+    "0": {
+        "name": "first region",
+        "unlockAmount": 10
+    },
+    "1": {
+        "name": "second region",
+        "unlockAmount": 10
+    }
+}
