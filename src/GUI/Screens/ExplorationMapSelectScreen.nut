@@ -37,6 +37,8 @@
     mExploreButtonStart_ = null;
     mExploreButton_ = null;
 
+    mCurrentTargetRegion_ = 0;
+
     MapInfoPanel = class{
 
         mWindow_ = null;
@@ -51,17 +53,9 @@
             mLabel_ = mWindow_.createLabel();
             mLabel_.setTextHorizontalAlignment(_TEXT_ALIGN_RIGHT);
             mLabel_.setShadowOutline(true, ColourValue(0.05, 0.05, 0.05, 1.0), Vec2(1, 1));
-
-            _event.subscribe(Event.OVERWORLD_SELECTED_REGION_CHANGED, receiveSelectionChangeEvent, this);
         }
 
-        function shutdown(){
-            _event.unsubscribe(Event.OVERWORLD_SELECTED_REGION_CHANGED, receiveSelectionChangeEvent, this);
-        }
-
-        function receiveSelectionChangeEvent(id, data){
-            print("Overworld selected region changed");
-
+        function updateForData(data){
             local text = "";
             if(data != null){
                 text += data.name + "\n";
@@ -92,6 +86,8 @@
         if(data != null){
             mBusId_ = data.registerCallback(busCallback, this);
         }
+
+        _event.subscribe(Event.OVERWORLD_SELECTED_REGION_CHANGED, receiveSelectionChangeEvent, this);
     }
 
     function recreate(){
@@ -154,7 +150,7 @@
         playIconButton.setSize(playSize);
         playIconButton.setPosition(Vec2(MARGIN / 2 + ::drawable.x / 2 - playSize.x / 2, ::drawable.y - MARGIN - playSize.y - insets.bottom));
         playIconButton.attachListenerForEvent(function(widget, action){
-            processBeginExploration_();
+            processExplorationActionButtonPressed_();
         }, _GUI_ACTION_PRESSED, this);
         mExploreButtonStart_ = playIconButton.getPosition();
         mExploreButton_ = playIconButton;
@@ -178,7 +174,19 @@
         base.shutdown();
         ::OverworldLogic.requestShutdown();
         ::Base.applyCompositorModifications()
-        mMapInfoPanel_.shutdown();
+
+        _event.unsubscribe(Event.OVERWORLD_SELECTED_REGION_CHANGED, receiveSelectionChangeEvent, this);
+    }
+
+    function receiveSelectionChangeEvent(id, data){
+        print("Overworld selected region changed");
+
+        mCurrentTargetRegion_ = data.id;
+        if(data.data == null){
+            mCurrentTargetRegion_ = null;
+        }
+
+        refreshWidgets_();
     }
 
     function processCloseScreen_(){
@@ -188,9 +196,43 @@
         mScreenData_.data.notifyEvent(GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_STARTED, null);
     }
 
-    function processBeginExploration_(){
+    function processExplorationActionButtonPressed_(){
         if(!mMapAnimFinished_) return;
 
+        local discoveryCount = ::Base.mPlayerStats.getRegionIdDiscovery(mCurrentTargetRegion_);
+        if(discoveryCount == 0){
+            unlockRegionForId_(mCurrentTargetRegion_);
+        }else{
+            beginExplorationForRegion_(mCurrentTargetRegion_);
+        }
+
+    }
+
+    function refreshWidgets_(){
+        if(mCurrentTargetRegion_ == null){
+            mExploreButton_.setText("Invalid");
+            return;
+        }
+
+        local discoveryCount = ::Base.mPlayerStats.getRegionIdDiscovery(mCurrentTargetRegion_);
+
+        if(discoveryCount == 0){
+            mExploreButton_.setText("Unlock");
+        }else{
+            mExploreButton_.setText("Explore");
+        }
+
+        //mMapInfoPanel_.updateForData(data.data);
+    }
+
+    function unlockRegionForId_(regionId){
+        ::Base.mPlayerStats.incrementRegionIdDiscovery(regionId);
+
+        ::SaveManager.writeSaveAtPath("user://" + ::Base.mPlayerStats.getSaveSlot(), ::Base.mPlayerStats.getSaveData());
+        refreshWidgets_();
+    }
+
+    function beginExplorationForRegion_(regionId){
         ::ScreenManager.transitionToScreen(null, null, 0);
         ::ScreenManager.transitionToScreen(null, null, mLayerIdx);
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_SCREEN, {"logic": ::Base.mExplorationLogic}));

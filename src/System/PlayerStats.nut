@@ -118,6 +118,14 @@
         return d[region];
     }
 
+    function incrementRegionIdDiscovery(region){
+        local d = mCurrentData_.overworldDiscovered;
+        if(region < 0 || region >= d.len()){
+            return;
+        }
+        d[region] = d[region] + 1;
+    }
+
     function addToInventory(item){
         mInventory_.addToInventory(item);
     }

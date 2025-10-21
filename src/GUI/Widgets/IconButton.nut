@@ -89,6 +89,12 @@
         }
     }
 
+    function setText(text){
+        if(mLabel_ != null){
+            mLabel_.setText(text);
+        }
+    }
+
     function setPosition(pos){
         base.setPosition(pos);
         if(mData_.rawin("iconPosition")){

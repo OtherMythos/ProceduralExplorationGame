@@ -160,7 +160,7 @@
             regionEntry = ::OverworldLogic.mOverworldRegionMeta_[region.tostring()];
         }
 
-        _event.transmit(Event.OVERWORLD_SELECTED_REGION_CHANGED, regionEntry);
+        _event.transmit(Event.OVERWORLD_SELECTED_REGION_CHANGED, {"id": region, "data": regionEntry});
     }
 
     function getCameraPosition(){
