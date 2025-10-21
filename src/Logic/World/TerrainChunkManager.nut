@@ -206,45 +206,5 @@
 
     }
 
-    function writeValueToFile_(filePath, altitude){
-        printf("Writing %s to file %s", altitude ? "terrain altitude" : "terrain blend", filePath);
-        if(_system.exists(filePath)){
-            _system.remove(filePath);
-            _system.createBlankFile(filePath);
-        }
-
-        local outFile = File();
-        outFile.open(filePath);
-        local width = mMapData_.getWidth();
-        local height = mMapData_.getHeight();
-        for(local y = 0; y < height; y++){
-            for(local x = 0; x < width; x++){
-                local val = altitude ? mMapData_.getAltitudeForCoord(x, y) : mMapData_.getVoxelForCoord(x, y);
-                if(
-                    x == 0 ||
-                    y == 0 ||
-                    x == width - 1 ||
-                    y == height - 1
-                ){
-                    val = 0;
-                }
-                outFile.write(val.tostring() + ",");
-            }
-            outFile.write("\n");
-        }
-    }
-
-    function performAltitudeSave(filePath){
-        writeValueToFile_(filePath, true);
-    }
-
-    function performBlendSave(filePath){
-        writeValueToFile_(filePath, false);
-    }
-
-    function performSave(mapName){
-        writeValueToFile_(mapName, true);
-        writeValueToFile_(mapName, false);
-    }
 
 };

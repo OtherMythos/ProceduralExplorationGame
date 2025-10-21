@@ -1,7 +1,8 @@
 enum TerrainEditState{
     NONE,
     HEIGHT,
-    COLOUR
+    COLOUR,
+    REGION
 };
 
 enum SceneEditorMapType{
@@ -50,6 +51,7 @@ enum SceneEditorMapType{
     mEditTerrainColourValue = 0
     mEditTerrainHeightValue = 0
     mEditTerrainBrushSize = 1
+    mEditTerrainRegionValue = 0
     mTileGridBoxNode_ = null
     mTileGridIndicatorNode_ = null
     mCurrentSceneRightClick_ = null
@@ -539,6 +541,10 @@ enum SceneEditorMapType{
                             local vals = getTerrainEditArray(mEditTerrainColourValue, drawWidth, drawHeight);
                             mTerrainChunkManager.drawVoxTypeValues(chunkX, chunkY, drawWidth, drawHeight, vals);
                         }
+                        else if(getTerrainEditState() == TerrainEditState.REGION){
+                            local vals = getTerrainEditArray(mEditTerrainRegionValue, drawWidth, drawHeight);
+                            mTerrainChunkManager.drawRegionValues(chunkX, chunkY, drawWidth, drawHeight, vals);
+                        }
                     }
                 }
             }
@@ -712,6 +718,9 @@ enum SceneEditorMapType{
     function setEditTerrainColour(edit){
         mEditingTerrainMode = edit ? TerrainEditState.COLOUR : null;
     }
+    function setEditTerrainRegion(edit){
+        mEditingTerrainMode = edit ? TerrainEditState.REGION : null;
+    }
 
     function setEditTerrainColourValue(value){
         mEditTerrainColourValue = value;
@@ -724,6 +733,14 @@ enum SceneEditorMapType{
 
     function setEditTerrainBrushSize(size){
         mEditTerrainBrushSize = size;
+    }
+
+    function setEditTerrainRegionValue(region){
+        mEditTerrainRegionValue = region;
+    }
+
+    function getEditTerrainRegionValue(){
+        return mEditTerrainRegionValue;
     }
 
     function getEditingTerrain(){
@@ -789,6 +806,9 @@ enum SceneEditorMapType{
             if(mVisitedPlacesMapData.terrainActive()){
                 mTerrainChunkManager.performAltitudeSave(getFileForMapTarget(mTargetMap, "terrain.txt"));
                 mTerrainChunkManager.performBlendSave(getFileForMapTarget(mTargetMap, "terrainBlend.txt"));
+                if(getTargetMapType().getMapType() == SceneEditorMapType.OVERWORLD){
+                    mTerrainChunkManager.performMetaSave(getFileForMapTarget(mTargetMap, "terrainRegion.txt"));
+                }
                 //mTerrainChunkManager.performSave(mTargetMap.getName());
             }
 

@@ -36,6 +36,8 @@ namespace ProceduralExplorationGamePlugin{
         static SQInteger getAltitudeForCoord(HSQUIRRELVM vm);
         static SQInteger getVoxelForCoord(HSQUIRRELVM vm);
         static SQInteger setAltitudeForCoord(HSQUIRRELVM vm);
+        static SQInteger setMetaForCoord(HSQUIRRELVM vm);
+        static SQInteger getMetaForCoord(HSQUIRRELVM vm);
         static SQInteger setVoxelForCoord(HSQUIRRELVM vm);
         static SQInteger getTileArray(HSQUIRRELVM vm);
 

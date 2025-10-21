@@ -274,6 +274,37 @@ namespace ProceduralExplorationGamePlugin{
         return 0;
     }
 
+    SQInteger VisitedPlaceMapDataUserData::getMetaForCoord(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
+        SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
+
+        AV::uint32* voxVal;
+        bool result = _getDataForVec<AV::uint32>(vm, mapData->voxelMeta, mapData->width, mapData->height, &voxVal);
+        if(!result){
+            sq_pushnull(vm);
+            return 1;
+        }
+
+        sq_pushinteger(vm, *voxVal);
+
+        return 1;
+    }
+
+    SQInteger VisitedPlaceMapDataUserData::setMetaForCoord(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
+        SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger newMeta;
+        sq_getinteger(vm, 4, &newMeta);
+
+        AV::uint32* outVal;
+        _getDataForVec<AV::uint32>(vm, mapData->voxelMeta, mapData->width, mapData->height, &outVal);
+
+        *outVal = static_cast<AV::uint32>(newMeta);
+
+        return 0;
+    }
+
     template<typename T>
     inline void pushArray(HSQUIRRELVM vm, const std::vector<T>& vec){
         sq_newarray(vm, vec.size());
@@ -381,6 +412,8 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, getAltitudeForCoord, "getAltitudeForCoord", 3, ".ii");
         AV::ScriptUtils::addFunction(vm, getVoxelForCoord, "getVoxelForCoord", 3, ".ii");
         AV::ScriptUtils::addFunction(vm, setAltitudeForCoord, "setAltitudeForCoord", 4, ".iii");
+        AV::ScriptUtils::addFunction(vm, setMetaForCoord, "setMetaForCoord", 4, ".iii");
+        AV::ScriptUtils::addFunction(vm, getMetaForCoord, "getMetaForCoord", 3, ".ii");
         AV::ScriptUtils::addFunction(vm, setVoxelForCoord, "setVoxelForCoord", 4, ".iii");
         AV::ScriptUtils::addFunction(vm, getTileArray, "getTileArray");
 

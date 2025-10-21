@@ -4,9 +4,11 @@
     mEditTerrainBrushSize_ = null;
     mEditTerrainHeight_ = null;
     mEditTerrainColour_ = null;
+    mEditTerrainRegion_ = null;
 
     mEditTerrainColourValue_ = null;
     mEditTerrainHeightValue_ = null;
+    mEditTerrainRegionValue_ = null;
 
     constructor(parent, baseObj, bus){
         base.constructor(parent, baseObj, bus);
@@ -56,6 +58,14 @@
         }, _GUI_ACTION_RELEASED, this);
         layout.addCell(mEditTerrainColour_);
 
+        mEditTerrainRegion_ = mParent_.createCheckbox();
+        mEditTerrainRegion_.setText("Edit terrain region");
+        mEditTerrainRegion_.attachListenerForEvent(function(widget, action){
+            ::Base.setEditTerrainRegion(widget.getValue());
+            refreshButtons();
+        }, _GUI_ACTION_RELEASED, this);
+        layout.addCell(mEditTerrainRegion_);
+
         mEditTerrainHeightValue_ = ::EditorGUIFramework.Widget.NumericInput(mParent_, false, "Height");
         mEditTerrainHeightValue_.attachListener(::EditorGUIFramework.Listener(function(widget, action){
             if(action == EditorGUIFramework_WidgetCallbackEvent.VALUE_CHANGED){
@@ -73,6 +83,15 @@
             }
         }));
         mEditTerrainColourValue_.addToLayout(layout);
+
+        mEditTerrainRegionValue_ = ::EditorGUIFramework.Widget.NumericInput(mParent_, false, "Region");
+        mEditTerrainRegionValue_.attachListener(::EditorGUIFramework.Listener(function(widget, action){
+            if(action == EditorGUIFramework_WidgetCallbackEvent.VALUE_CHANGED){
+                local val = widget.getValue();
+                ::Base.setEditTerrainRegionValue(val);
+            }
+        }));
+        mEditTerrainRegionValue_.addToLayout(layout);
 
         local createPopup = mParent_.createButton();
         createPopup.setText("Select voxel");
@@ -92,8 +111,10 @@
         mEditTerrainBrushSize_.setValue(::Base.getTerrainBrushSize())
         mEditTerrainHeight_.setValue(state == TerrainEditState.HEIGHT);
         mEditTerrainColour_.setValue(state == TerrainEditState.COLOUR);
+        mEditTerrainRegion_.setValue(state == TerrainEditState.REGION);
         mEditTerrainHeightValue_.setValue(::Base.getTerrainEditHeight());
         mEditTerrainColourValue_.setValue(::Base.getTerrainEditColour());
+        mEditTerrainRegionValue_.setValue(::Base.getEditTerrainRegionValue());
     }
 
 };

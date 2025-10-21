@@ -484,10 +484,16 @@ namespace ProceduralExplorationGamePlugin{
             return sq_throwerror(vm, "Error reading terrain.txt");
         }
 
-        if(outBlend.tilesWidth != outTiles.tilesWidth){
+        ProceduralExplorationGameCore::TileDataParser::OutDataContainer outRegions;
+        result = tileData.readData(&outRegions, overworldName, "terrainRegion.txt");
+        if(!result){
+            return sq_throwerror(vm, "Error reading terrainRegion.txt");
+        }
+
+        if(outBlend.tilesWidth != outTiles.tilesWidth && outBlend.tilesWidth != outRegions.tilesWidth){
             return sq_throwerror(vm, "Tiles width do not match");
         }
-        if(outBlend.tilesHeight != outTiles.tilesHeight){
+        if(outBlend.tilesHeight != outTiles.tilesHeight && outBlend.tilesWidth != outRegions.tilesWidth){
             return sq_throwerror(vm, "Tiles height do not match");
         }
 
@@ -557,11 +563,7 @@ namespace ProceduralExplorationGamePlugin{
                 *voxPtr = static_cast<AV::uint8>(outBlend.tileValues[x + y * outBlend.tilesWidth]);
 
                 AV::uint8* regionPtr = ProceduralExplorationGameCore::REGION_PTR_FOR_COORD(data, ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y));
-                if(x > outBlend.tilesWidth / 2){
-                    *regionPtr = 1;
-                }else{
-                    *regionPtr = 0;
-                }
+                *regionPtr = static_cast<AV::uint8>(outRegions.tileValues[x + y * outRegions.tilesWidth]);
             }
         }
 

@@ -98,6 +98,8 @@ namespace ProceduralExplorationGameCore{
             if(outData->altitudeValues.size() != outData->voxelValues.size()) return false;
         }
 
+        outData->voxelMeta.assign(outData->altitudeValues.size(), 0);
+
         return true;
     }
 
