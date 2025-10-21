@@ -115,6 +115,13 @@ enum OverworldStates{
         }
     }
 
+    function unlockRegion(regionId){
+        ::Base.mPlayerStats.incrementRegionIdDiscovery(regionId);
+        mWorld_.animateRegionDiscovery(regionId);
+
+        ::SaveManager.writeSaveAtPath("user://" + ::Base.mPlayerStats.getSaveSlot(), ::Base.mPlayerStats.getSaveData());
+    }
+
     function shutdownCompositor_(){
         ::CompositorManager.destroyCompositorWorkspace(mCompositor_);
     }

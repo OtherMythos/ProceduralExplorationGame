@@ -226,9 +226,8 @@
     }
 
     function unlockRegionForId_(regionId){
-        ::Base.mPlayerStats.incrementRegionIdDiscovery(regionId);
+        ::OverworldLogic.unlockRegion(regionId);
 
-        ::SaveManager.writeSaveAtPath("user://" + ::Base.mPlayerStats.getSaveSlot(), ::Base.mPlayerStats.getSaveData());
         refreshWidgets_();
     }
 

@@ -108,6 +108,10 @@
         _gameCore.update(mCameraPosition_);
         _gameCore.setCustomPassBufferValue(0, 0, 0);
 
+        foreach(c,i in mRegionEntries_){
+            i.update();
+        }
+
         mAnimIncrement_ += 0.01;
         updateWaterBlock(mWaterDatablock_);
         updateWaterBlock(mOutsideWaterDatablock_);
@@ -161,6 +165,15 @@
         }
 
         _event.transmit(Event.OVERWORLD_SELECTED_REGION_CHANGED, {"id": region, "data": regionEntry});
+    }
+
+    function animateRegionDiscovery(regionId){
+        local regionEntry = mRegionEntries_[regionId]
+        if(regionEntry != null){
+            regionEntry.mWorldActive_ = true;
+            regionEntry.setVisible(true);
+            regionEntry.performArrival();
+        }
     }
 
     function getCameraPosition(){
