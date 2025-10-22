@@ -77,12 +77,18 @@
         }
         local target = minimapVisible && visible && !::Base.isProfileActive(GameProfile.SCREENSHOT_MODE);
         mMapViewerWindow_.setVisible(target);
+        if(mMapViewer_ != null){
+            mMapViewer_.setVisible(target);
+        }
 
         mVisible_ = visible;
     }
 
     function setColour(colour){
         mMapViewerPanel_.setColour(colour);
+        if(mMapViewer_ != null){
+            mMapViewer_.setColour(colour);
+        }
     }
 
     function notifyPlaceDiscovered(id, data){

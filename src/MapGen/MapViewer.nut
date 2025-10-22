@@ -27,7 +27,8 @@
             mPanel_ = parentWin.createPanel();
             mPanel_.setSize(size, size);
             mPanel_.setPosition(0, 0);
-            setDatablock("placeMapIndicator");
+            mPanel_.setDatablock("gui/basicTransparentFull");
+            setColour(ColourValue(1, 0, 0, 1.0));
         }
         function setCentre(x, y){
             printf("x: %f y: %f", x, y);
@@ -36,8 +37,11 @@
             mPanel_.setCentre(intendedPos.x / mMapScale_, intendedPos.y / mMapScale_);
             //mPanel_.setCentre(intendedPos.x, -intendedPos.y);
         }
-        function setDatablock(datablock){
-            mPanel_.setDatablock(datablock);
+        function setColour(colour){
+            mPanel_.setColour(ColourValue(1, 0, 0, colour.a));
+        }
+        function setVisible(visible){
+            mPanel_.setVisible(visible);
         }
         function setZOrder(zOrder){
             mPanel_.setZOrder(zOrder);
@@ -203,13 +207,24 @@
         }
     }
 
+    function setColour(colour){
+        if(mPlayerLocationPanel_ != null){
+            mPlayerLocationPanel_.setColour(colour);
+        }
+    }
+
+    function setVisible(visible){
+        if(mPlayerLocationPanel_ != null){
+            mPlayerLocationPanel_.setVisible(visible);
+        }
+    }
+
     function setPlayerPosition(x, y, worldScale=1){
         if(mMapData_ == null) return;
         if(mLabelWindow_ == null) return;
 
         if(mPlayerLocationPanel_ == null){
             mPlayerLocationPanel_ = PlaceMarkerIcon(mLabelWindow_, mMapData_, 5, worldScale);
-            mPlayerLocationPanel_.setDatablock("playerMapIndicator");
         }
         mPlayerLocationPanel_.setCentre(x, y);
     }
