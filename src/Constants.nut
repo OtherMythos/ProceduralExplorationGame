@@ -109,6 +109,7 @@ enum GameProfile{
     DEBUG_OVERLAY_INPUT,
     FORCE_SMALL_WORLD,
     PLAYER_GHOST,
+    DISABLE_SAVE,
 
     MAX
 };
@@ -126,7 +127,8 @@ enum GameProfile{
     "DebugOverlayCombat",
     "DebugOverlayInput",
     "ForceSmallWorld",
-    "PlayerGhost"
+    "PlayerGhost",
+    "DisableSave"
 ];
 
 enum CollisionWorldTriggerResponses{

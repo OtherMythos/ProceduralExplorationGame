@@ -78,6 +78,12 @@
     }
 
     function writeSaveAtPath(path, data){
+
+        if(::Base.isProfileActive(GameProfile.DISABLE_SAVE)){
+            print("Skipping save write due to profile.");
+            return;
+        }
+
         /*
         The writing procedure follows the steps of:
             Write the files to a temporary directory,
