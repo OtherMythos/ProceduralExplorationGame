@@ -37,7 +37,7 @@
     mExploreButtonStart_ = null;
     mExploreButton_ = null;
 
-    mCurrentTargetRegion_ = 0;
+    mCurrentTargetRegion_ = null;
 
     MapInfoPanel = class{
 
@@ -76,6 +76,10 @@
 
         function setPosition(pos){
             mWindow_.setPosition(pos);
+        }
+
+        function setOpacity(opacity){
+            mLabel_.setTextColour(1, 1, 1, opacity);
         }
 
     }
@@ -164,6 +168,10 @@
         //::OverworldLogic.setRenderableSize(::drawable * ::resolutionMult);
         ::OverworldLogic.requestSetup();
         //::OverworldLogic.requestState(OverworldStates.ZOOMED_IN);
+
+        mCurrentTargetRegion_ = ::OverworldLogic.getCurrentSelectedRegion();
+
+        refreshWidgets_();
     }
 
     function shutdown(){
@@ -211,6 +219,8 @@
     function refreshWidgets_(){
         if(mCurrentTargetRegion_ == null){
             mExploreButton_.setText("Invalid");
+            mMapInfoPanel_.updateForData(null);
+            mExploreButton_.setVisible(false);
             return;
         }
 
@@ -222,7 +232,10 @@
             mExploreButton_.setText("Explore");
         }
 
-        //mMapInfoPanel_.updateForData(data.data);
+        mExploreButton_.setVisible(true);
+
+        local regionEntry = ::OverworldLogic.mOverworldRegionMeta_[mCurrentTargetRegion_.tostring()];
+        mMapInfoPanel_.updateForData(regionEntry);
     }
 
     function unlockRegionForId_(regionId){
@@ -333,6 +346,18 @@
             local animPos = ::calculateSimpleAnimationInRange(startPos, endPos, mMapAnimCount_, animStart, animEnd);
 
             mExploreButton_.setPosition(animPos);
+        }
+
+        //Info panel
+        {
+            local animStart = mMapFullScreen_ ? 0.8 : 0.0;
+            local animEnd = mMapFullScreen_ ? 1.0 : 0.2;
+
+            local startCol = mMapFullScreen_ ? 0.0 : 1.0;
+            local endCol = mMapFullScreen_ ? 1.0 : 0.0;
+            local animCol = ::calculateSimpleAnimationInRange(startCol, endCol, mMapAnimCount_, animStart, animEnd);
+
+            mMapInfoPanel_.setOpacity(animCol);
         }
     }
 

@@ -167,6 +167,10 @@
         _event.transmit(Event.OVERWORLD_SELECTED_REGION_CHANGED, {"id": region, "data": regionEntry});
     }
 
+    function getCurrentSelectedRegion(){
+        return mCurrentSelectedRegion_;
+    }
+
     function animateRegionDiscovery(regionId){
         local regionEntry = mRegionEntries_[regionId]
         if(regionEntry != null){

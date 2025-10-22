@@ -135,6 +135,10 @@ enum OverworldStates{
         mCompositor_ = ::CompositorManager.createCompositorWorkspace("renderWindowWorkspaceGameplayTexture", mRenderableSize_, CompositorSceneType.OVERWORLD, true, false);
     }
 
+    function getCurrentSelectedRegion(){
+        return mWorld_.getCurrentSelectedRegion();
+    }
+
     function update(){
         if(!isActive()) return;
         mWorld_.update();

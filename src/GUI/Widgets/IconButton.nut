@@ -95,6 +95,11 @@
         }
     }
 
+    function setVisible(visible){
+        base.setVisible(visible);
+        mLabel_.setVisible(visible);
+    }
+
     function setPosition(pos){
         base.setPosition(pos);
         if(mData_.rawin("iconPosition")){
