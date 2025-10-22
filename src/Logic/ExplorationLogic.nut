@@ -435,7 +435,8 @@
 
         if(newlyFound){
             ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.FOUND_ORB_SCREEN, {"orbId": orbId}), null, 3);
-            mGui_.mTargetTopInfoOpacity_ = 0.0;
+            //mGui_.mTargetTopInfoOpacity_ = 0.0;
+            mGui_.setAllWidgetsVisible(false);
             pauseExploration();
         }else{
             mCurrentWorld_.spawnEXPOrbs(mCurrentWorld_.getPlayerPosition(), 20);

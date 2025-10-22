@@ -859,6 +859,7 @@ enum ExplorationScreenWidgetType{
         _event.subscribe(Event.WORLD_PREPARATION_STATE_CHANGE, receivePreparationStateChange, this);
         _event.subscribe(Event.REGION_DISCOVERED_POPUP_FINISHED, receiveRegionDiscoveredPopupFinished, this);
         _event.subscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent, this);
+        _event.subscribe(Event.EXPLORATION_SCREEN_HIDE_WIDGETS_FINISHED, receiveExplorationHideWidgetsFinished, this);
         ::ScreenManager.transitionToScreen(Screen.WORLD_GENERATION_STATUS_SCREEN, null, 1);
 
         mAnimator_ = ExplorationScreenAnimator();
@@ -934,6 +935,10 @@ enum ExplorationScreenWidgetType{
             if(i != null) count++;
         }
         setInventoryCount_(count, data.len());
+    }
+
+    function receiveExplorationHideWidgetsFinished(id, data){
+        setAllWidgetsVisible(true);
     }
 
     function setInventoryCount_(count, size){
@@ -1088,6 +1093,7 @@ enum ExplorationScreenWidgetType{
         _event.unsubscribe(Event.ACTIONS_CHANGED, receiveActionsChanged, this);
         _event.unsubscribe(Event.REGION_DISCOVERED_POPUP_FINISHED, receiveRegionDiscoveredPopupFinished, this);
         _event.unsubscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent, this);
+        _event.unsubscribe(Event.EXPLORATION_SCREEN_HIDE_WIDGETS_FINISHED, receiveExplorationHideWidgetsFinished, this);
         mLogicInterface_.shutdown();
         //mLogicInterface_.notifyLeaveExplorationScreen();
         //mExplorationStatsContainer_.shutdown();
@@ -1184,6 +1190,19 @@ enum ExplorationScreenWidgetType{
         mExplorationScreenWidgetType_[ExplorationScreenWidgetType.INVENTORY_INDICATOR].setVisible(vis);
         //mExplorationStatsContainer_.setVisible(vis);
         //mWorldMapDisplay_.setVisible(vis);
+    }
+
+    function setAllWidgetsVisible(visible){
+        setTopInfoVisible(visible);
+
+        local vis = visible;
+        if(::Base.isProfileActive(GameProfile.SCREENSHOT_MODE)){
+            vis = false;
+        }
+
+        mCompassAnimator_.setVisible(vis);
+        mPlayerDirectJoystick_.setVisible(vis);
+        mZoomLines_.setVisible(vis);
     }
 
     function setTopInfoOpacity(opacity){

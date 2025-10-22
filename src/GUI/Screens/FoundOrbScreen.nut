@@ -124,4 +124,10 @@ local FoundOrbScreenStateMachine = class extends ::Util.StateMachine{
     function update(){
         mStateMachine_.update();
     }
+
+    function shutdown(){
+        base.shutdown();
+
+        _event.transmit(Event.EXPLORATION_SCREEN_HIDE_WIDGETS_FINISHED, null);
+    }
 };
