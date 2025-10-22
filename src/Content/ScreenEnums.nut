@@ -22,6 +22,7 @@
     GAMEPLAY_MAIN_MENU_COMPLEX_SCREEN,
     EXPLORATION_MAP_SELECT_SCREEN,
     OTHER_MYTHOS_SPLASH_SCREEN,
+    FOUND_ORB_SCREEN,
 
 ");
 
@@ -47,5 +48,6 @@
     "readableContentScreen",
     "gameplayMainMenuComplex",
     "explorationMapSelectScreen",
-    "OtherMythosSplashScreen"
+    "OtherMythosSplashScreen",
+    "FoundOrbScreen"
 ]);

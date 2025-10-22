@@ -57,6 +57,20 @@
             }
         },
 
+        "foundOrbMaterial" :
+        {
+            "workflow": "metallic",
+            "blendblock": "blend",
+
+            "shadow_const_bias": 0.0075,
+
+            "transparency" :
+            {
+                "value" : 0.9,
+                "mode" : "Transparent"
+            }
+        },
+
         "statusEffectFlame" :
         {
             "workflow": "specular_fresnel",

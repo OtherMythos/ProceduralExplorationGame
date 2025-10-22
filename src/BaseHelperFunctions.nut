@@ -53,6 +53,9 @@ Separated from the Base.nut file so enums can be used.
         else if(screenId == Screen.VISITED_PLACES_SCREEN){
             data = {"stats": ::Base.mPlayerStats}
         }
+        else if(screenId == Screen.FOUND_ORB_SCREEN){
+            data = {"orbId": OrbId.IN_THE_CHERRY_BLOSSOM};
+        }
         return ::ScreenManager.ScreenData(screenId, data);
     }
     function setupForProfilePost_(profile){

@@ -427,6 +427,21 @@
         pauseExploration();
     }
 
+    function givePlayerOrb(orbId){
+        printf("Giving player orb '%s'", ::Orbs[orbId].getDescription());
+        local newlyFound = ::Base.mPlayerStats.registerOrbFound(orbId);
+
+        ::SaveManager.writeSaveAtPath("user://" + ::Base.mPlayerStats.getSaveSlot(), ::Base.mPlayerStats.getSaveData());
+
+        if(newlyFound){
+            ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.FOUND_ORB_SCREEN, {"orbId": orbId}), null, 3);
+            mGui_.mTargetTopInfoOpacity_ = 0.0;
+            pauseExploration();
+        }else{
+            mCurrentWorld_.spawnEXPOrbs(mCurrentWorld_.getPlayerPosition(), 20);
+        }
+    }
+
     function toggleWieldActive(){
         ::Base.mExplorationLogic.toggleWieldActive();
     }

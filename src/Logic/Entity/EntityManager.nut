@@ -46,7 +46,8 @@ enum SpoilsComponentType{
     ADD_HEALTH,
     GIVE_MONEY,
     SPAWN_EXP_ORBS,
-    PICK_KEEP_PLACED_ITEM
+    PICK_KEEP_PLACED_ITEM,
+    GIVE_ORB
 };
 enum ProximityComponentType{
     PLAYER,

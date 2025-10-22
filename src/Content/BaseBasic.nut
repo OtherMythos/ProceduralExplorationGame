@@ -13,6 +13,7 @@
         _doFile("script://EnemyEnums.nut");
         _doFile("script://PlaceEnums.nut");
         _doFile("script://ScreenEnums.nut");
+        _doFile("script://OrbEnums.nut");
         _doFile("script://StatusAfflictionEnums.nut");
         _doFile("script://VoxelEnums.nut");
         _doFile("script://PlacedItemEnums.nut");
@@ -21,6 +22,8 @@
     function loadContentFiles(){
         _doFile("res://src/Content/ItemDefs.nut");
         _doFile("res://src/Content/EnemyDefs.nut");
+        _doFile("res://src/Content/Orb.nut");
+        _doFile("res://src/Content/OrbDefs.nut");
         _doFile("res://src/Content/StatusAfflictionDefs.nut");
         _doFile("res://src/Content/PlaceDefs.nut");
         _doFile("res://src/Content/PlacedItemDefs.nut");
@@ -52,6 +55,7 @@
         _doFile("res://src/GUI/Screens/ExplorationMapSelectScreen.nut");
         _doFile("res://src/GUI/Screens/SettingsScreen.nut");
         _doFile("res://src/GUI/Screens/OtherMythosSplashScreen.nut");
+        _doFile("res://src/GUI/Screens/FoundOrbScreen.nut");
     }
 
     function setupSecondary(){

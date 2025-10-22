@@ -374,6 +374,19 @@
         });
     }
 
+    function registerOrbFound(orbId){
+        local idx = mCurrentData_.foundOrbs.find(orbId);
+        if(idx != null) return false;
+
+        mCurrentData_.foundOrbs.append(orbId);
+        return true;
+    }
+
+    function isOrbFound(orbId){
+        local idx = mCurrentData_.foundOrbs.find(orbId);
+        return (idx != null);
+    }
+
     function getMoney(){
         return mCurrentData_.playerCoins;
     }

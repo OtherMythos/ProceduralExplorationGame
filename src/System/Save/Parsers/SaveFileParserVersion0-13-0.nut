@@ -11,6 +11,7 @@
 
         mJSONSchema_.playerHealth <- OBJECT_TYPE.INTEGER;
         mJSONSchema_.overworldDiscovered <- OBJECT_TYPE.ARRAY;
+        mJSONSchema_.foundOrbs <- OBJECT_TYPE.ARRAY;
         updateData(mDefaultData_);
     }
 
@@ -19,6 +20,7 @@
         data.version = getVersionString();
         data.playerHealth <- 200;
         data.overworldDiscovered <- array(MAX_OVERWORLD_REGIONS, 0);
+        data.foundOrbs <- [];
         return data;
     }
 

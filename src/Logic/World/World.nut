@@ -1851,6 +1851,9 @@ enum WorldMousePressContexts{
                 };
                 mEntityFactory_.constructPlacedItem(targetNode, data, null);
         }
+        else if(data.mType == SpoilsComponentType.GIVE_ORB){
+            ::Base.mExplorationLogic.givePlayerOrb(data.mFirst);
+        }
     }
 
     function getStatsString(){

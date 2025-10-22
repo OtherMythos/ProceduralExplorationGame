@@ -659,6 +659,43 @@
         return en;
     }
 
+    function constructOrb(orbId, pos){
+        local manager = mConstructorWorld_.getEntityManager();
+        local targetPos = pos.copy();
+        targetPos.y = getZForPos(targetPos);
+
+        local en = manager.createEntity(targetPos);
+
+        local found = ::Base.mPlayerStats.isOrbFound(orbId);
+
+        local parentNode = mBaseSceneNode_.createChildSceneNode();
+        parentNode.setPosition(targetPos);
+        local item = _scene.createItem(::expOrbMesh);
+        _gameCore.writeFlagsToItem(item, 0x1);
+        if(!found){
+            item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
+        }
+        item.setDatablock(found ? "foundOrbMaterial" : "baseVoxelMaterial");
+        parentNode.setScale(1.5, 1.5, 1.5);
+        local animNode = parentNode.createChildSceneNode();
+        animNode.attachObject(item);
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](parentNode, true));
+
+        local animationInfo = _animation.createAnimationInfo([animNode]);
+        local anim = _animation.createAnimation("EXPOrbAnim", animationInfo);
+        anim.setTime(_random.randInt(0, 180));
+        manager.assignComponent(en, EntityComponents.ANIMATION, ::EntityManager.Components[EntityComponents.ANIMATION](anim));
+
+        local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.GIVE_ORB, orbId, null, null);
+        manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
+
+        local triggerWorld = mConstructorWorld_.getTriggerWorld();
+        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.DIE, en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
+
+        return en;
+    }
+
     function constructHealthOrbEncounter(pos){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = pos.copy();
