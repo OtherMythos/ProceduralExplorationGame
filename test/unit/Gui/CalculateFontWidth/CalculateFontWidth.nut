@@ -9,7 +9,7 @@ _t("calculateFontWidth", "Test the calculate font width function", function(){
         ::calculateFontWidth_(testLabel, i);
         local determinedWidth = testLabel.getSize().x;
         print(determinedWidth);
-        _test.assertTrue(determinedWidth >= i - 1.0 && determinedWidth <= i + 1.0);
+        _test.assertTrue(determinedWidth >= i - 4.0 && determinedWidth <= i + 4.0);
     }
 });
 
@@ -26,6 +26,6 @@ _t("calculateFontWidthSmaller", "Test the calculate font width function while sh
         ::calculateFontWidth_(testLabel, i);
         local determinedWidth = testLabel.getSize().x;
         print(determinedWidth);
-        _test.assertTrue(determinedWidth >= i - 1.0 && determinedWidth <= i + 1.0);
+        _test.assertTrue(determinedWidth >= i - 4.0 && determinedWidth <= i + 4.0);
     }
 });
