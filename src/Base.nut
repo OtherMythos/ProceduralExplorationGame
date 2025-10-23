@@ -376,7 +376,9 @@
         if(forcedScreen == null && ::ScreenManager.getScreenForLayer() == null){
             //If nothing was setup then switch to the main menu.
             if(getTargetInterface() == TargetInterface.MOBILE){
-                ::ScreenManager.transitionToScreen(::BaseHelperFunctions.getSplashScreen(), null, 2);
+                if(!isProfileActive(GameProfile.DISABLE_SPLASH_SCREEN)){
+                    ::ScreenManager.transitionToScreen(::BaseHelperFunctions.getSplashScreen(), null, 2);
+                }
             }
             ::ScreenManager.transitionToScreen(::BaseHelperFunctions.getScreenDataForForcedScreen(::BaseHelperFunctions.getStartingScreen()), null, 0);
         }

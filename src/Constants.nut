@@ -110,6 +110,7 @@ enum GameProfile{
     FORCE_SMALL_WORLD,
     PLAYER_GHOST,
     DISABLE_SAVE,
+    DISABLE_SPLASH_SCREEN,
 
     MAX
 };
@@ -128,7 +129,8 @@ enum GameProfile{
     "DebugOverlayInput",
     "ForceSmallWorld",
     "PlayerGhost",
-    "DisableSave"
+    "DisableSave",
+    "DisableSplashScreen"
 ];
 
 enum CollisionWorldTriggerResponses{
