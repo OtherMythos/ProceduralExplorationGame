@@ -58,6 +58,7 @@
 
         mIconPanel_.setZOrder(WIDGET_SAFE_FOR_BILLBOARD_Z);
         mIconLabel_.setZOrder(WIDGET_SAFE_FOR_BILLBOARD_Z);
+        mIconButton_.setZOrder(WIDGET_SAFE_FOR_BILLBOARD_Z);
     }
 
     function shutdown(){
