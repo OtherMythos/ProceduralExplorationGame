@@ -66,6 +66,36 @@
     return coord;
 }
 
+//Calculate an approximate max width for the label.
+::calculateFontWidth_ <- function(label, targetWidth)
+{
+    local minSize = 1.0;
+    //Upper bound
+    local maxSize = label.getDefaultFontSize() * 16.0;
+    local bestSize = label.getDefaultFontSize();
+
+    //Binary search
+    while((maxSize - minSize) > 0.5){
+        local midSize = (minSize + maxSize) * 0.5;
+
+        label.setDefaultFontSize(midSize);
+        label.setText(label.getText());
+        local labelSize = label.getSize();
+
+        if(labelSize.x < targetWidth){
+            bestSize = midSize;
+            minSize = midSize;
+        }else{
+            maxSize = midSize;
+        }
+    }
+
+    //Apply final best size
+    label.setDefaultFontSize(bestSize);
+    label.setText(label.getText());
+}
+
+
 ::toggleDrawWireframe <- function(){
     ::drawWireframe = !::drawWireframe;
     ::setDrawWireframe(::drawWireframe);
