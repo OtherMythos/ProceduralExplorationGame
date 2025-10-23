@@ -221,6 +221,13 @@
                 "texture": "icon_backButton.png"
             }
         },
+        "largeOrbIcon" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse_map0": {
+                "texture": "icon_largeOrb.png"
+            }
+        },
 
         "guiExplorationCompass" :
         {

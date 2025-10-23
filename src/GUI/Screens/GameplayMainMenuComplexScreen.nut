@@ -422,6 +422,7 @@ enum GameplayComplexMenuBusEvents{
 
     mCompositor_ = null;
     mMapPanel_ = null;
+    mOrbCounter_ = null;
 
     function recreate(){
         local line = _gui.createLayoutLine();
@@ -519,6 +520,25 @@ enum GameplayComplexMenuBusEvents{
         playIconButton.attachListenerForEvent(function(widget, action){
             notifyExplorationBegin_();
         }, _GUI_ACTION_PRESSED, this);
+
+        {
+            local orbCount = ::Base.mPlayerStats.getNumFoundOrbs();
+            local orbCounter = ::IconButtonComplex(mWindow_, {
+                "icon": "largeOrbIcon",
+                "iconSize": Vec2(50, 50),
+                "iconPosition": Vec2(5, 5),
+                "label": orbCount.tostring(),
+                "labelPosition": Vec2(60, -10),
+                "labelSizeModifier": 2,
+                "usePanelForButton": true
+            });
+            //orbCounter.setSize(Vec2(140, 60));
+            orbCounter.setPosition(explorationMap.getPosition());
+            local minSize = orbCounter.getMinimumSize();
+            orbCounter.setSize(Vec2(minSize.x + 10, 60));
+            orbCounter.setButtonColour(ColourValue(0.2, 0.2, 0.2, 0.8));
+            mOrbCounter_ = orbCounter;
+        }
 
         line.layout();
 

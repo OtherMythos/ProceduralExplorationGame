@@ -387,6 +387,10 @@
         return (idx != null);
     }
 
+    function getNumFoundOrbs(){
+        return mCurrentData_.foundOrbs.len();
+    }
+
     function getMoney(){
         return mCurrentData_.playerCoins;
     }

@@ -282,8 +282,6 @@
                 }
             }
         }
-
-        mEntityFactory_.constructOrb(OrbId.IN_THE_CHERRY_BLOSSOM, Vec3(20, 0, 0));
     }
 
     function shutdown(){

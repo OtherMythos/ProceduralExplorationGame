@@ -3,8 +3,12 @@
     mButton_ = null;
     mIcon_ = null;
 
-    constructor(window, iconDatablock){
-        mButton_ = window.createButton();
+    constructor(window, iconDatablock, usePanelForButton=false){
+        if(usePanelForButton){
+            mButton_ = window.createPanel();
+        }else{
+            mButton_ = window.createButton();
+        }
         mIcon_ = window.createPanel();
         mIcon_.setClickable(false);
         mIcon_.setDatablock(iconDatablock);
@@ -41,6 +45,10 @@
         mIcon_.setVisible(vis);
     }
 
+    function setButtonColour(colour){
+        mButton_.setColour(colour);
+    }
+
     function setColour(colour){
         mIcon_.setColour(colour);
     }
@@ -71,7 +79,11 @@
 
     constructor(window, data){
         mData_ = data;
-        base.constructor(window, data.icon);
+        local usePanel = false;
+        if(data.rawin("usePanelForButton")){
+            usePanel = data.rawget("usePanelForButton");
+        }
+        base.constructor(window, data.icon, usePanel);
 
         if(data.rawin("label")){
             mLabel_ = window.createLabel();
@@ -87,6 +99,10 @@
         if(mData_.rawin("iconSize")){
             mIcon_.setSize(mData_.rawget("iconSize"));
         }
+    }
+
+    function getMinimumSize(){
+        return (mLabel_.getPosition() + mLabel_.getSize()) - mButton_.getPosition();
     }
 
     function setText(text){
