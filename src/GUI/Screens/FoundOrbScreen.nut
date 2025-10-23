@@ -31,7 +31,7 @@ local FoundOrbScreenStateMachine = class extends ::Util.StateMachine{
             local title = data.components[FoundOrbScreenComponents.TITLE];
             local animAmount = ::calculateSimpleAnimation(0.0, 1.0, p);
             title.setColour(ColourValue(1, 1, 1, animAmount));
-            title.setDefaultFontSize(::calculateSimpleAnimation(mStartSize_ - 10, mStartSize_, p));
+            //title.setDefaultFontSize(::calculateSimpleAnimation(mStartSize_ - 10, mStartSize_, p));
             local animStart = mStartPos_.copy();
             animStart.y -= 10;
             title.setCentre(::calculateSimpleAnimation(animStart, mStartPos_, p));
@@ -84,11 +84,13 @@ local FoundOrbScreenStateMachine = class extends ::Util.StateMachine{
         mWindow_.setVisualsEnabled(false);
 
         local title = mWindow_.createLabel();
-        title.setDefaultFontSize(title.getDefaultFontSize() * 4);
         title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
-        title.setText("Orb found!");
         title.setSize(winWidth, title.getSize().y);
-        title.setPosition(0, insets.top);
+        title.setText("Orb found!");
+        ::calculateFontWidth_(title, winWidth * 0.95);
+        title.setCentre(winWidth / 2, 0);
+        title.setPosition(title.getPosition().x, insets.top);
+        title.setShadowOutline(true, ColourValue(0, 0, 0, 1), Vec2(2, 2));
         mScreenComponents_[FoundOrbScreenComponents.TITLE] <- title;
 
         local description = mWindow_.createLabel();
@@ -97,7 +99,9 @@ local FoundOrbScreenStateMachine = class extends ::Util.StateMachine{
         description.setText(orbData.getDescription());
         description.sizeToFit(::drawable.x * 0.9);
         description.setSize(winWidth, description.getSize().y);
-        description.setPosition(0, title.getPosition().y + title.getSize().y);
+        description.setCentre(winWidth / 2, 0);
+        description.setPosition(description.getPosition().x, title.getPosition().y + title.getSize().y);
+        description.setShadowOutline(true, ColourValue(0, 0, 0, 1), Vec2(2, 2));
         mScreenComponents_[FoundOrbScreenComponents.DESCRIPTION] <- description;
 
         local button = mWindow_.createButton();
