@@ -9,7 +9,9 @@
     GARRITON,
 
     TEMPLE,
-    GRAVEYARD
+    GRAVEYARD,
+
+    CHERRY_BLOSSOM_ORB
 ");
 
 enum PlaceType{
