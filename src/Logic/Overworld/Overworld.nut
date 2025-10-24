@@ -150,6 +150,15 @@
 
     function updateSelectedRegion_(){
         local region = ::currentNativeMapData.getRegionForPos(mCameraPosition_);
+        local altitude = ::currentNativeMapData.getAltitudeForPos(mCameraPosition_);
+
+        if(altitude < 100){
+            if(mCurrentSelectedRegion_ != null){
+                _event.transmit(Event.OVERWORLD_SELECTED_REGION_CHANGED, {"id": 0, "data": null});
+            }
+            mCurrentSelectedRegion_ = null;
+            return;
+        }
 
         if(region == mCurrentSelectedRegion_){
             return;
