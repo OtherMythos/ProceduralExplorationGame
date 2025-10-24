@@ -70,7 +70,7 @@
         mEditTerrainHeightValue_.attachListener(::EditorGUIFramework.Listener(function(widget, action){
             if(action == EditorGUIFramework_WidgetCallbackEvent.VALUE_CHANGED){
                 local val = widget.getValue();
-                ::Base.setEditTerrainBrushSize(val);
+                ::Base.setEditTerrainHeightValue(val);
             }
         }));
         mEditTerrainHeightValue_.addToLayout(layout);
