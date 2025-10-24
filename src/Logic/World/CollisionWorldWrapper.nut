@@ -24,7 +24,9 @@
     //TODO get rid of this.
     ::Base.mExplorationLogic.mCurrentWorld_.notifyNewEntityHealth(entity, newHealth, oldHealth, newPercentage);
 
-    if(newHealth <= 0){
+    //The player entity needs a special case for destruction.
+    //The world will manage player destruction by itself.
+    if(newHealth <= 0 && entity != 0){
         manager.destroyEntity(entity);
     }
 }
