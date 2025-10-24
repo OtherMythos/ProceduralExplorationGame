@@ -754,7 +754,7 @@ namespace ProceduralExplorationGameCore{
     }
 
     Ogre::MeshPtr RegionBufferEntry::generateMesh(const std::string& meshName, AV::uint32 width, AV::uint32 height, int maxAltitude){
-        if(mNumActiveVox == 0){
+        if(mNumActiveVox == 0 || mNumVerts == 0){
             Ogre::MeshPtr out;
             out.reset();
             return out;

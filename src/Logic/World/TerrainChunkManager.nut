@@ -146,16 +146,17 @@
         local oldItemName = null;
         if(itemExists){
             //Get the item name before it's destroyed.
-            oldItemName = mItemsForChunk_[targetIdx].getName();
+            if(mItemsForChunk_[targetIdx] != null){
+                oldItemName = mItemsForChunk_[targetIdx].getName();
+            }
         }
         if(nodeExists){
             local targetNode = mNodesForChunk_.rawget(targetIdx);
-            assert(targetNode.getNumAttachedObjects() == 1);
+            //assert(targetNode.getNumAttachedObjects() == 1);
             mNodesForChunk_[targetIdx].destroyNodeAndChildren();
             mNodesForChunk_.rawdelete(targetIdx);
         }
-        if(itemExists){
-            assert(oldItemName != null);
+        if(oldItemName != null){
             _graphics.removeManualMesh(oldItemName);
         }
 
