@@ -16,6 +16,7 @@
     mChunkHeight_ = null;
 
     mAlterValues_ = false;
+    mSwapVoxelForMeta_ = false;
 
     PADDING = 1;
     PADDING_BOTH = null;
@@ -120,7 +121,7 @@
         //local vox = VoxToMesh(Timer(), 1 << 2);
         //local meshObj = vox.createMeshForVoxelData(format("terrainChunkManager-%i-%i", mWorldId_, targetIdx), targetChunkArray, widthWithPadding, heightWithPadding, mMapData_.voxHeight.greatest);
         //local meshObj = _gameCore.voxeliseMeshForVoxelData(format("terrainChunkManager-%i-%i", mWorldId_, targetIdx), targetChunkArray, widthWithPadding, heightWithPadding, mMapData_.voxHeight.greatest);
-        local meshObj = mMapData_.voxeliseTerrainMeshForData(format("terrainChunkManager-%i-%i", mWorldId_, targetIdx), x, y, width, height, mAlterValues_);
+        local meshObj = mMapData_.voxeliseTerrainMeshForData(format("terrainChunkManager-%i-%i", mWorldId_, targetIdx), x, y, width, height, mAlterValues_, mSwapVoxelForMeta_);
         //local meshObj = _gameCore.voxeliseToTerrainMeshes(format("terrainChunkManager-%i-%i", mWorldId_, targetIdx), targetChunkArray, widthWithPadding, heightWithPadding, mMapData_.voxHeight.greatest);
         if(meshObj == null) return null;
 

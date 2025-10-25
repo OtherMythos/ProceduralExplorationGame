@@ -239,7 +239,7 @@ namespace ProceduralExplorationGameCore{
             }
         }
     }
-    void Voxeliser::createTerrainFromVisitedPlaceMapDataAlteredValues(const std::string& meshName, VisitedPlaceMapData* mapData, Ogre::MeshPtr* outMesh, AV::uint32 xVal, AV::uint32 yVal, AV::uint32 widthVal, AV::uint32 heightVal){
+    void Voxeliser::createTerrainFromVisitedPlaceMapDataAlteredValues(const std::string& meshName, VisitedPlaceMapData* mapData, Ogre::MeshPtr* outMesh, AV::uint32 xVal, AV::uint32 yVal, AV::uint32 widthVal, AV::uint32 heightVal, bool swapVoxelForMeta){
         //Probably no need to go through and collect the altitude values, they're already close enough.
         //All the same destination.
 
@@ -269,8 +269,13 @@ namespace ProceduralExplorationGameCore{
             for(AV::uint32 x = xVal; x < xVal + widthVal; x++){
                 //AV::uint8 altitude = mapData->altitudeValues[x + y * mapData->width];
                 AV::uint8 altitude = alteredAltitudes[x + y * mapData->width];
-                AV::uint8 v = mapData->voxelValues[x + y * mapData->width];
                 if(altitude == 0) continue;
+                AV::uint8 v = 0;
+                if(swapVoxelForMeta){
+                    v = static_cast<AV::uint8>(mapData->voxelMeta[x + y * mapData->width]);
+                }else{
+                    v = mapData->voxelValues[x + y * mapData->width];
+                }
 
                 if(altitude > maxAltitude) maxAltitude = altitude;
 

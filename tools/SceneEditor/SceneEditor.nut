@@ -713,13 +713,26 @@ enum SceneEditorMapType{
         if(mWindowTileGrid_ != null) mWindowTileGrid_.refreshButtons();
     }
     function setEditTerrainHeight(edit){
+        processEditModeChanged_(TerrainEditState.HEIGHT, mEditingTerrainMode);
         mEditingTerrainMode = edit ? TerrainEditState.HEIGHT : null;
     }
     function setEditTerrainColour(edit){
+        processEditModeChanged_(TerrainEditState.COLOUR, mEditingTerrainMode);
         mEditingTerrainMode = edit ? TerrainEditState.COLOUR : null;
     }
     function setEditTerrainRegion(edit){
+        processEditModeChanged_(TerrainEditState.REGION, mEditingTerrainMode);
         mEditingTerrainMode = edit ? TerrainEditState.REGION : null;
+    }
+
+    function processEditModeChanged_(current, prev){
+        if(current == TerrainEditState.REGION){
+            mTerrainChunkManager.setEditTerrainRegion(true);
+        }else{
+            if(prev == TerrainEditState.REGION){
+                mTerrainChunkManager.setEditTerrainRegion(false);
+            }
+        }
     }
 
     function setEditTerrainColourValue(value){

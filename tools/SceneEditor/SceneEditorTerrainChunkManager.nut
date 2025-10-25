@@ -93,6 +93,15 @@ enum EditorTerrainType{
         mCurrentAction_ = null;
     }
 
+    function setEditTerrainRegion(editRegion){
+        mSwapVoxelForMeta_ = editRegion;
+        for(local y = 0; y < mChunkDivisions_; y++){
+            for(local x = 0; x < mChunkDivisions_; x++){
+                recreateChunkItem(x, y);
+            }
+        }
+    }
+
     function writeValueToFile_(filePath, editType){
         //TODO finish plugging these values in.
         //printf("Writing %s to file %s", altitude ? "terrain altitude" : "terrain blend", filePath);

@@ -118,13 +118,15 @@ namespace ProceduralExplorationGamePlugin{
 
         SQBool alterValues;
         sq_getbool(vm, 7, &alterValues);
+        SQBool swapVoxelForMeta;
+        sq_getbool(vm, 8, &swapVoxelForMeta);
 
         ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
         SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
 
         Ogre::MeshPtr outPtr;
         ProceduralExplorationGameCore::VisitedPlaceMapDataHelper helper(mapData);
-        helper.voxeliseToTerrainMeshes(meshName, &outPtr, x, y, width, height, alterValues);
+        helper.voxeliseToTerrainMeshes(meshName, &outPtr, x, y, width, height, alterValues, swapVoxelForMeta);
 
         if(!outPtr){
             sq_pushnull(vm);
@@ -400,7 +402,7 @@ namespace ProceduralExplorationGamePlugin{
 
         AV::ScriptUtils::addFunction(vm, getAltitudeForPos, "getAltitudeForPos", 2, ".u");
         AV::ScriptUtils::addFunction(vm, getIsWaterForPos, "getIsWaterForPos", 2, ".u");
-        AV::ScriptUtils::addFunction(vm, voxeliseTerrainMeshForData, "voxeliseTerrainMeshForData", 7, ".siiiib");
+        AV::ScriptUtils::addFunction(vm, voxeliseTerrainMeshForData, "voxeliseTerrainMeshForData", 8, ".siiiibb");
 
         AV::ScriptUtils::addFunction(vm, getWidth, "getWidth");
         AV::ScriptUtils::addFunction(vm, getHeight, "getHeight");
