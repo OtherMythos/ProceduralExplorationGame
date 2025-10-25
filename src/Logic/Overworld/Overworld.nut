@@ -25,13 +25,20 @@
 
         local animData = _gameCore.insertParsedSceneFileGetAnimInfo(parsedFile, mParentNode_, mCollisionDetectionWorld_);
 
-        mCameraPosition_ = Vec3();
-        mTargetCameraPosition_ = Vec3();
+        mCameraPosition_ = getOverworldStartPosition();
+        mTargetCameraPosition_ = getOverworldStartPosition();
 
         setFogStartEnd(1000, 10000);
         setBackgroundColour(getDefaultSkyColour());
         setBiomeAmbientModifier(getDefaultAmbientModifier());
         setBiomeLightModifier(getDefaultLightModifier());
+    }
+
+    #Override
+    function shutdown(){
+        base.shutdown();
+
+        ::Base.mPlayerStats.setOverworldStartPosition(mCameraPosition_);
     }
 
     #Override
@@ -46,6 +53,18 @@
     #Override
     function notifyPlayerMoved(){
 
+    }
+
+    function getOverworldStartPosition(){
+        local startPosition = ::Base.mPlayerStats.getOverworldStartPosition();
+        if(startPosition != null){
+            return startPosition;
+        }
+        return getDefaultOverworldStartPosition();
+    }
+
+    function getDefaultOverworldStartPosition(){
+        return Vec3(476.48, 0, -113.84);
     }
 
     #Override

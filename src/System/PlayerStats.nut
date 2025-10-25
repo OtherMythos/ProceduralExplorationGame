@@ -225,6 +225,21 @@
         return mPlayerCombatStats.getHealthPercentage();
     }
 
+    function getOverworldStartPosition(){
+        //Convert from a string to a Vec3.
+        local pos = mCurrentData_.currentOverworldPosition;
+        local ret = Vec3(pos);
+        print(ret);
+        if(ret.x == 0 && ret.y == 0 && ret.z == 0){
+            return null;
+        }
+        return ret;
+    }
+
+    function setOverworldStartPosition(pos){
+        mCurrentData_.currentOverworldPosition = format("%f %f %f", pos.x, pos.y, pos.z);
+    }
+
     function getLevelForCount(count){
         if(count == 0) return 0;
         local counter = count;
