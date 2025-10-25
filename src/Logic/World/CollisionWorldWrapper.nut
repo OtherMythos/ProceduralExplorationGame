@@ -4,11 +4,16 @@
     if(!manager.entityValid(entity)) return;
     local component = manager.getComponent(entity, EntityComponents.HEALTH);
     local oldHealth = component.mHealth;
+    if(oldHealth <= 0) return;
     local newHealth = oldHealth + damage;
     if(newHealth > component.mMaxHealth){
         newHealth = component.mMaxHealth;
     }
+    if(newHealth < 0){
+        newHealth = 0;
+    }
     local newPercentage = newHealth.tofloat() / component.mMaxHealth.tofloat();
+    assert(newHealth >= 0);
 
     if(manager.hasComponent(entity, EntityComponents.SCRIPT)){
         local scriptComponent = manager.getComponent(entity, EntityComponents.SCRIPT);
