@@ -18,5 +18,8 @@ _tIntegration("PlayerDeathFromAttack", "Test to check the player dies properly i
             ::_testHelper.setQueryText("Return to menu");
         },
         ::_testHelper.STEPS_WAIT_FOR_WIDGET_WITH_TEXT,
+        function(){
+            ::_testHelper.waitFrames(100);
+        },
     ]
 });

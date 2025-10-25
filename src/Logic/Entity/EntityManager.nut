@@ -224,6 +224,10 @@ EntityManager.EntityManager <- class{
         return true;
     }
 
+    function isPlayerEntity(eid){
+        return ((eid & 0xFFFFFFFFFFFFFFF) == 0);
+    }
+
     function createEntity(position){
         local entityIdx = -1;
         local entityVersion = 0;
