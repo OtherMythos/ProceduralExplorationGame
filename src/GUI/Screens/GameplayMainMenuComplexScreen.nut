@@ -503,7 +503,8 @@ enum GameplayComplexMenuBusEvents{
         explorePanelButton.setSize(explorationMap.getSize());
         explorePanelButton.setVisualsEnabled(false);
         explorePanelButton.attachListenerForEvent(function(widget, action){
-            notifyExplorationBegin_();
+            local startPos = Vec2(_input.getMouseX(), _input.getMouseY()) / ::drawable;
+            notifyExplorationBegin_(startPos);
         }, _GUI_ACTION_PRESSED, this);
 
         currentY -= 20;
@@ -518,7 +519,7 @@ enum GameplayComplexMenuBusEvents{
         playIconButton.setSize(Vec2(240, 80));
         playIconButton.setPosition(Vec2(MARGIN + explorationMap.getSize().x / 2 - playIconButton.getSize().x / 2, currentY));
         playIconButton.attachListenerForEvent(function(widget, action){
-            notifyExplorationBegin_();
+            notifyExplorationBegin_(null);
         }, _GUI_ACTION_PRESSED, this);
 
         {
@@ -558,9 +559,11 @@ enum GameplayComplexMenuBusEvents{
         ::OverworldLogic.requestShutdown();
     }
 
-    function notifyExplorationBegin_(){
+    function notifyExplorationBegin_(startScreenPos){
         ::Base.applyCompositorModifications()
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_MAP_SELECT_SCREEN, mBus_), null, 3);
+
+        ::OverworldLogic.setMapPositionFromPress(startScreenPos);
 
         local panel = getMapPanel();
         local data = {

@@ -115,6 +115,19 @@ enum OverworldStates{
         }
     }
 
+    function setMapPositionFromPress(pos){
+        if(pos == null) return;
+        local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.OVERWORLD);
+
+        local ray = camera.getCameraToViewportRay(pos.x, pos.y);
+        local testPlane = Plane(::Vec3_UNIT_Y, ::Vec3_ZERO)
+        local dist = ray.intersects(testPlane);
+        if(dist != false){
+            local worldPoint = ray.getPoint(dist);
+            mWorld_.mCameraPosition_ = worldPoint;
+        }
+    }
+
     function unlockRegion(regionId){
         ::Base.mPlayerStats.incrementRegionIdDiscovery(regionId);
         mWorld_.animateRegionDiscovery(regionId);
