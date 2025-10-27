@@ -1889,6 +1889,10 @@ enum WorldMousePressContexts{
         _gameCore.setPassBufferFogStartEnd(start, end);
     }
 
+    function notifyNewOrbFound(){
+        mMouseContext_.notifyMouseEnded();
+    }
+
     function checkOrientatingCamera(){
 
         /*
