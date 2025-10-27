@@ -85,9 +85,13 @@
     #Override
     function processWorldCurrentChange_(current){
         if(mParentNode_ != null) mParentNode_.setVisible(current);
+    }
 
-        mSkyAnimator_.setSkyColour(getDefaultSkyColour());
-        setBiomeAmbientModifier(getDefaultAmbientModifier());
+    #Override
+    function processWorldActiveChange_(active){
+        if(active){
+            resetAtmosphereToDefaults();
+        }
     }
 
     function processCameraMove(x, y){
