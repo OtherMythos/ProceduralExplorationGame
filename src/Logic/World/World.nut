@@ -663,6 +663,14 @@ enum WorldMousePressContexts{
         notifyPlayerMoved();
     }
 
+    function resetAtmosphereToDefaults(){
+        local fogStartEnd = getDefaultFogStartEnd();
+        setFogStartEnd(fogStartEnd.x, fogStartEnd.y);
+        setBackgroundColour(getDefaultSkyColour());
+        setBiomeAmbientModifier(getDefaultAmbientModifier());
+        setBiomeLightModifier(getDefaultLightModifier());
+    }
+
     function processPreparation(){
         local result = mWorldPreparer_.processPreparation();
         if(result){

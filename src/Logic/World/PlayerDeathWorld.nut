@@ -33,6 +33,18 @@
         resetSession(null);
     }
 
+    #Override
+    function getDefaultSkyColour(){
+        return Vec3(0.2, 0.2, 0.2);
+    }
+
+    #Override
+    function processWorldActiveChange_(active){
+        if(active){
+            resetAtmosphereToDefaults();
+        }
+    }
+
     function constructPlayerEntry_(){
         return mEntityFactory_.constructPlayer(mGui_, ::Base.mPlayerStats, true);
     }
