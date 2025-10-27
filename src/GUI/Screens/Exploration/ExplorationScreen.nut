@@ -1223,7 +1223,8 @@ enum ExplorationScreenWidgetType{
     function notifyPlayerDeath(){
         mPlayerDied_++;
 
-        mTargetTopInfoOpacity_ = 0.0;
+        //mTargetTopInfoOpacity_ = 0.0;
+        setAllWidgetsVisible(false);
 
         _window.grabCursor(false);
     }
