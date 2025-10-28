@@ -1201,7 +1201,9 @@ enum ExplorationScreenWidgetType{
         }
 
         mCompassAnimator_.setVisible(vis);
-        mPlayerDirectJoystick_.setVisible(vis);
+        if(mPlayerDirectJoystick_){
+            mPlayerDirectJoystick_.setVisible(vis);
+        }
         mZoomLines_.setVisible(vis);
     }
 
