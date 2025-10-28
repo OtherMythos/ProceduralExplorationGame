@@ -372,11 +372,28 @@
             return;
         }
         //appearEnemy(_random.randInt(EnemyId.GOBLIN, EnemyId.MAX-1));
-        local pos = MapGenHelpers.findRandomPointOnLand(mMapData_, mPlayerEntry_.getPosition(), 50);
+        local pos = findRandomPointOnLandDiscoveredRegion(50);
         if(pos == null){
             return;
         }
         appearEnemy(pos);
+    }
+
+    function findRandomPointOnLandDiscoveredRegion(radius){
+        local pos = null;
+        for(local i = 0; i < 10; i++){
+            local landPos = MapGenHelpers.findRandomPointOnLand(mMapData_, mPlayerEntry_.getPosition(), radius);
+            if(landPos == null) continue;
+
+            local regionId = ::MapGenHelpers.getRegionForData(mMapData_, landPos);
+            local regionData = mMapData_.regionData[regionId];
+            local regionFound = mCurrentFoundRegions_.rawin(regionId);
+            if(regionFound){
+                pos = landPos;
+                break;
+            }
+        }
+        return pos;
     }
 
     function checkForDistractionAppear(){
