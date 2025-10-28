@@ -56,6 +56,9 @@ namespace ProceduralExplorationGameCore{
                 if(altitude < seaLevel){
                     continue;
                 }
+                if(fullSecondaryVox & DO_NOT_CHANGE_VOXEL){
+                    continue;
+                }
 
                 AV::uint8 moisture = fullSecondaryVox & 0xFF;
                 RegionId regionId = (fullSecondaryVox >> 8) & 0xFF;

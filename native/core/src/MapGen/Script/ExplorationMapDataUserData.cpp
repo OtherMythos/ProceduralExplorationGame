@@ -818,7 +818,7 @@ namespace ProceduralExplorationGameCore{
                 *voxPtr = out.tileValues[x + y * out.tilesWidth];
 
                 AV::uint32* secondaryVoxPtr = FULL_PTR_FOR_COORD_SECONDARY(mapData, WRAP_WORLD_POINT(xxx, yyy));
-                *secondaryVoxPtr |= DRAW_COLOUR_VOXEL_FLAG;
+                *secondaryVoxPtr |= (DRAW_COLOUR_VOXEL_FLAG | DO_NOT_CHANGE_VOXEL);
             }
         }
 
