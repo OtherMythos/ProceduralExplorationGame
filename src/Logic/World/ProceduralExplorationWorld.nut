@@ -30,6 +30,7 @@
         mDecoratioNode_ = null;
         mVisible_ = false;
         mWorldActive_ = false;
+        mEverBeenVisible_ = false;
 
         //TODO consider tying this into a class.
         mPlaceIds_ = null;
@@ -95,7 +96,7 @@
 
                     //TODO nasty duplication
                     local scriptPath = "res://build/assets/places/" + placeFileName + "/script.nut";
-                    if(_system.exists(scriptPath)){
+                    if(!mEverBeenVisible_ && _system.exists(scriptPath)){
                         _doFile(scriptPath);
                         if(::PlaceScriptObject.rawin("appear")){
 
@@ -123,6 +124,7 @@
                         }
                     }
                 }
+                mEverBeenVisible_ = true;
             }
 
             foreach(i in mPlaces_){
