@@ -12,6 +12,8 @@
 
 #include "VisitedPlaces/VisitedPlacesPrerequisites.h"
 #include "VisitedPlaces/VisitedPlaceMapDataHelper.h"
+#include "VisitedPlaces/TileDataParser.h"
+#include "VisitedPlaces/VisitedPlacesParser.h"
 
 #include "Ogre.h"
 
@@ -330,6 +332,33 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger VisitedPlaceMapDataUserData::loadTileDataAsMeta(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
+        SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
+
+        const SQChar *mapName;
+        sq_getstring(vm, 2, &mapName);
+
+        const SQChar *fileName;
+        sq_getstring(vm, 3, &fileName);
+
+        ProceduralExplorationGameCore::TileDataParser tileData(ProceduralExplorationGameCore::VisitedPlacesParser::mMapsDirectory);
+        ProceduralExplorationGameCore::TileDataParser::OutDataContainer out;
+        tileData.readData(&out, mapName, fileName);
+
+        if(out.tilesWidth != mapData->width || out.tilesHeight != mapData->height){
+            return sq_throwerror(vm, "Tile size mismatch");
+        }
+
+        for(int y = 0; y < out.tilesHeight; y++){
+            for(int x = 0; x < out.tilesWidth; x++){
+                mapData->voxelMeta[x + y * out.tilesWidth] = static_cast<AV::uint32>(out.tileValues[x + y * out.tilesWidth]);
+            }
+        }
+
+        return 0;
+    }
+
     SQInteger VisitedPlaceMapDataUserData::setVoxelForCoord(HSQUIRRELVM vm){
         ProceduralExplorationGameCore::VisitedPlaceMapData* mapData;
         SCRIPT_ASSERT_RESULT(VisitedPlaceMapDataUserData::readVisitedPlaceMapDataFromUserData(vm, 1, &mapData));
@@ -418,6 +447,8 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, getMetaForCoord, "getMetaForCoord", 3, ".ii");
         AV::ScriptUtils::addFunction(vm, setVoxelForCoord, "setVoxelForCoord", 4, ".iii");
         AV::ScriptUtils::addFunction(vm, getTileArray, "getTileArray");
+
+        AV::ScriptUtils::addFunction(vm, loadTileDataAsMeta, "loadTileDataAsMeta", 3, ".ss");
 
         AV::ScriptUtils::addFunction(vm, castRayForTerrain, "castRayForTerrain", 3, ".uu");
 

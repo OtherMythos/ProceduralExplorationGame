@@ -283,6 +283,7 @@ enum SceneEditorMapType{
             mapClaim = _gameCore.checkClaimParsedVisitedLocation();
         }
         mVisitedPlacesMapData = mapClaim;
+        mVisitedPlacesMapData.loadTileDataAsMeta(targetMap.getName(), "terrainRegion.txt");
 
         mTerrainChunkManager = ::SceneEditorTerrainChunkManager(0, targetMap.getMapType() == SceneEditorMapType.OVERWORLD);
         mTerrainChunkManager.setup(mapClaim, targetMap.getMapType() == SceneEditorMapType.PLACE ? 1 : 4);

@@ -40,6 +40,7 @@ namespace ProceduralExplorationGamePlugin{
         static SQInteger getMetaForCoord(HSQUIRRELVM vm);
         static SQInteger setVoxelForCoord(HSQUIRRELVM vm);
         static SQInteger getTileArray(HSQUIRRELVM vm);
+        static SQInteger loadTileDataAsMeta(HSQUIRRELVM vm);
 
         static SQInteger castRayForTerrain(HSQUIRRELVM vm);
 
