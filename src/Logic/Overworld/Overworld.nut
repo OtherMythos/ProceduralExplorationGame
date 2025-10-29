@@ -97,13 +97,16 @@
             local discoveryCount = ::Base.mPlayerStats.getRegionIdDiscovery(c);
 
             local terrainRenderQueue = RENDER_QUEUE_EXPLORATION_TERRRAIN_DISCOVERED;
+            local terrainDatablock = "baseVoxelMaterial";
             if(discoveryCount == 0){
                 terrainRenderQueue = RENDER_QUEUE_EXPLORATION_TERRRAIN_UNDISCOVERED;
+                terrainDatablock = "MaskedWorld";
             }
 
             local e = mRegionEntries_[c];
             if(e.mLandItem_){
                 e.mLandItem_.setRenderQueueGroup(terrainRenderQueue);
+                e.mLandItem_.setDatablock(terrainDatablock);
             }
         }
 
