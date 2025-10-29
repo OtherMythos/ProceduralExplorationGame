@@ -110,6 +110,7 @@
         mRegionPicker_ = mParentNode_.createChildSceneNode();
         mRegionPicker_.attachObject(_scene.createItem("cube"));
         mRegionPicker_.setScale(1, 10, 1);
+        mRegionPicker_.setVisible(false);
     }
 
     function applyMovementDelta(delta){
@@ -201,6 +202,10 @@
         }
 
         _event.transmit(Event.OVERWORLD_SELECTED_REGION_CHANGED, {"id": region, "data": regionEntry});
+    }
+
+    function setOverworldSelectionActive(active){
+        mRegionPicker_.setVisible(active);
     }
 
     function getCurrentSelectedRegion(){

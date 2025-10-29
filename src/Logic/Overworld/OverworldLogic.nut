@@ -223,6 +223,14 @@ enum OverworldStates{
         //camera.getParentNode().setPosition(0, 150, 300);
         //camera.lookAt(0, 0, 0);
         mAnim_ = 0.0;
+
+        local overworld = data.getWorld();
+        overworld.setOverworldSelectionActive(true);
+    }
+
+    function end(data){
+        local overworld = data.getWorld();
+        overworld.setOverworldSelectionActive(false);
     }
 
     function update(data){
