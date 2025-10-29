@@ -190,7 +190,10 @@
     }
     function receivePlayerDiedEvent(id, data){
         //If the player dies, reset the health to 100%
+        print("Resetting health to player max as part of player death");
         mPlayerCombatStats.setHealthToMax();
+
+        ::SaveManager.writeSaveAtPath("user://" + getSaveSlot(), getSaveData());
     }
 
     function receiveGameplaySessionStarted(id, data){

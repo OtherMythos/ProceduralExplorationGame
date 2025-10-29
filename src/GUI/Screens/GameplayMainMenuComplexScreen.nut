@@ -226,6 +226,14 @@ enum GameplayComplexMenuBusEvents{
     mAnimCountTotal_ = 0;
 
     function bodgeLoadSave(){
+        if(!getroottable().rawin("saveLoadedBefore")){
+            ::saveLoadedBefore <- false;
+        }
+        if(::saveLoadedBefore){
+            return;
+        }
+        ::saveLoadedBefore = true;
+
         local viableSaves = ::Base.mSaveManager.findViableSaves();
         if(viableSaves.len() <= 0){
             local freeSlot = ::SaveManager.getFreeSaveSlot();
