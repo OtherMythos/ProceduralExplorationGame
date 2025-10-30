@@ -1,7 +1,34 @@
 <scene>
     <user0 value="templeFragmentFirst.templeWall.1.voxMesh">
-        <position x="7.91652" y="-0.0262794" z="-15.6085"/>
+        <position x="156.255" y="-7.62939e-06" z="-118.529"/>
         <scale x="0.5" y="0.5" z="0.5"/>
         <orientation x="0" y="1" z="0" w="0"/>
+    </user0>
+    <user0 value="house1.voxMesh">
+        <position x="466.982" y="1.19786" z="-119.868"/>
+        <scale x="0.166779" y="0.166779" z="0.166779"/>
+        <orientation x="0" y="0.2" z="0" w="1"/>
+    </user0>
+    <user0 value="house1.voxMesh">
+        <position x="474.892" y="0.692051" z="-119.868"/>
+        <scale x="0.136304" y="0.136304" z="0.136304"/>
+        <orientation x="0" y="-0.2" z="0" w="1"/>
+    </user0>
+    <user0 value="house1.voxMesh">
+        <position x="466.116" y="0.692051" z="-110.728"/>
+        <scale x="0.144703" y="0.144703" z="0.144703"/>
+        <orientation x="0" y="3" z="0" w="1"/>
+    </user0>
+    <user0 value="tree.voxMesh">
+        <position x="471.59" y="0.692051" z="-109.102"/>
+        <scale x="0.498166" y="0.498166" z="0.498166"/>
+    </user0>
+    <user0 value="tree.voxMesh">
+        <position x="469.524" y="0.692051" z="-123.579"/>
+        <scale x="0.498166" y="0.498166" z="0.498166"/>
+    </user0>
+    <user0 value="tree.voxMesh">
+        <position x="480.303" y="0.692051" z="-116.306"/>
+        <scale x="0.498166" y="0.498166" z="0.498166"/>
     </user0>
 </scene>

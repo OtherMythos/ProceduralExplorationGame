@@ -1,10 +1,124 @@
 {
     "0": {
-        "name": "first region",
-        "unlockAmount": 10
+        "name": "Wilderness",
+        "unlockAmount": 10000
     },
     "1": {
-        "name": "second region",
+        "name": "Marrowmore",
+        "unlockAmount": 0
+    },
+    "2": {
+        "name": "Fallowcombe Bay",
         "unlockAmount": 10
+    },
+
+    "3": {
+        "name": "Marshback Forest",
+        "unlockAmount": 10
+    },
+
+    "8": {
+        "name": "Grassland",
+        "unlockAmount": 10
+    },
+
+    "9": {
+        "name": "SouthBeach",
+        "unlockAmount": 10
+    },
+
+    "10": {
+        "name": "Desert",
+        "unlockAmount": 10
+    },
+
+    "14": {
+        "name": "Deep Desert",
+        "unlockAmount": 10
+    },
+
+    "18": {
+        "name": "Windy Plane",
+        "unlockAmount": 10
+    },
+
+    "22": {
+        "name": "Goblin Fields",
+        "unlockAmount": 10
+    },
+
+    "25": {
+        "name": "Deep Mountain",
+        "unlockAmount": 10
+    },
+
+    "33": {
+        "name": "Honey Hive",
+        "unlockAmount": 10
+    },
+
+    "50": {
+        "name": "Swamp",
+        "unlockAmount": 10
+    },
+
+    "130": {
+        "name": "Sand dunes",
+        "unlockAmount": 10
+    },
+
+    "78": {
+        "name": "Grass land",
+        "unlockAmount": 10
+    },
+
+    "132": {
+        "name": "SpiderWicke forest",
+        "unlockAmount": 10
+    },
+
+    "235": {
+        "name": "Surf Beach",
+        "unlockAmount": 10
+    },
+
+    "240": {
+        "name": "Blue next to wasteland",
+        "unlockAmount": 10
+    },
+
+    "53": {
+        "name": "Orange west side",
+        "unlockAmount": 10
+    },
+
+    "65": {
+        "name": "Red west side",
+        "unlockAmount": 10
+    },
+
+    "42": {
+        "name": "Next to the mountain",
+        "unlockAmount": 10
+    },
+
+    "230": {
+        "name": "Other Next to the mountain",
+        "unlockAmount": 10
+    },
+
+    "221": {
+        "name": "Next to the desert",
+        "unlockAmount": 10
+    },
+
+    "36": {
+        "name": "Next to the desert",
+        "unlockAmount": 10
+    },
+
+    "40": {
+        "name": "The Un-Dead Wasteland",
+        "unlockAmount": 30
     }
 }
