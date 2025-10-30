@@ -538,12 +538,9 @@ namespace ProceduralExplorationGamePlugin{
         e = new std::vector<ProceduralExplorationGameCore::FloodFillEntry*>();
         data->voidPtr("landData", e);
         std::vector<ProceduralExplorationGameCore::RegionData>* regionData = new std::vector<ProceduralExplorationGameCore::RegionData>();
-        regionData->push_back({
-            0
-        });
-        regionData->push_back({
-            1
-        });
+        for(size_t i = 0; i < 0xFF; i++){
+            regionData->push_back({static_cast<ProceduralExplorationGameCore::RegionId>(i)});
+        }
         data->voidPtr("regionData", regionData);
         data->voidPtr("placedItems", new std::vector<ProceduralExplorationGameCore::PlacedItemData>());
         data->voidPtr("riverData", new std::vector<ProceduralExplorationGameCore::RiverData>());
