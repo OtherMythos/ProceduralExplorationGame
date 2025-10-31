@@ -9,6 +9,16 @@
 
     mTargetCameraPosition_ = null;
 
+    mRegionUndiscoveredDatablocks_ = null;
+    mRegionDiscoveredDatablocks_ = null;
+
+    constructor(worldId, preparer){
+        base.constructor(worldId, preparer);
+
+        mRegionUndiscoveredDatablocks_ = {};
+        mRegionDiscoveredDatablocks_ = {};
+    }
+
     #Override
     function setup(){
         base.setup();
@@ -39,6 +49,15 @@
         base.shutdown();
 
         ::Base.mPlayerStats.setOverworldStartPosition(mCameraPosition_);
+
+        foreach(c,i in mRegionUndiscoveredDatablocks_){
+            _hlms.destroyDatablock(i);
+        }
+        foreach(c,i in mRegionDiscoveredDatablocks_){
+            _hlms.destroyDatablock(i);
+        }
+        mRegionUndiscoveredDatablocks_.clear();
+        mRegionDiscoveredDatablocks_.clear();
     }
 
     #Override
@@ -96,11 +115,15 @@
         foreach(c,i in mRegionEntries_){
             local discoveryCount = ::Base.mPlayerStats.getRegionIdDiscovery(c);
 
+            createDatablockForRegion(c);
+
             local terrainRenderQueue = RENDER_QUEUE_EXPLORATION_TERRRAIN_DISCOVERED;
-            local terrainDatablock = "baseVoxelMaterial";
+            local terrainDatablock = null;
             if(discoveryCount == 0){
                 terrainRenderQueue = RENDER_QUEUE_EXPLORATION_TERRRAIN_UNDISCOVERED;
-                terrainDatablock = "MaskedWorld";
+                terrainDatablock = mRegionUndiscoveredDatablocks_[c];
+            }else{
+                terrainDatablock = mRegionDiscoveredDatablocks_[c];
             }
 
             local e = mRegionEntries_[c];
@@ -130,6 +153,19 @@
     #Override
     function processCameraMove(x, y){
 
+    }
+
+    function createDatablockForRegion(c){
+        local first = ::DatablockManager.quickCloneDatablock("baseVoxelMaterial");
+        mRegionDiscoveredDatablocks_.rawset(c, first);
+
+        local second = ::DatablockManager.quickCloneDatablock("MaskedWorld");
+        mRegionUndiscoveredDatablocks_.rawset(c, second);
+
+        local startDiffuse = second.getDiffuse();
+        //Use the id rather than a random number so you always get the same colour.
+        local col = mix(Vec3(1, 1, 1), startDiffuse, 0.8 + ((c.tofloat() % 24) / 24) * 0.2);
+        second.setDiffuse(col.x, col.y, col.z);
     }
 
     function update(){
