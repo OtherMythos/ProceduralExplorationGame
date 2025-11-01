@@ -9,14 +9,122 @@
 
     mTargetCameraPosition_ = null;
 
-    mRegionUndiscoveredDatablocks_ = null;
-    mRegionDiscoveredDatablocks_ = null;
+    mRegionAnimator_ = null;
+
+    OverworldRegionAnimator = class{
+        mRegionUndiscoveredDatablocks_ = null;
+        mRegionDiscoveredDatablocks_ = null;
+        mRegionAnimationCount_ = null;
+
+        mStartDiffuse_ = null;
+
+        mPreviousSelectedRegion_ = null;
+
+        mAnim_ = 0.0;
+
+        constructor(){
+            mRegionUndiscoveredDatablocks_ = {};
+            mRegionDiscoveredDatablocks_ = {};
+            mRegionAnimationCount_ = {};
+
+            mStartDiffuse_ = _hlms.getDatablock("MaskedWorld").getDiffuse().copy();
+        }
+
+        function update(){
+            local finishedRegions = null;
+
+            foreach(c,i in mRegionAnimationCount_){
+                local anim = ::accelerationClampCoordinate_(i, 1.0, 0.05);
+                mRegionAnimationCount_[c] = anim;
+                if(anim >= 1.0){
+                    if(finishedRegions == null){
+                        finishedRegions = [];
+                    }
+                    finishedRegions.append(c);
+                }
+
+                update_(anim, c);
+
+            }
+
+            if(finishedRegions != null){
+                foreach(i in finishedRegions){
+                    mRegionAnimationCount_.rawdelete(i);
+                }
+            }
+        }
+
+        function update_(anim, regionId){
+            //Temporary
+            return;
+            local baseColour = calculateBaseDiffuse_(regionId);
+            baseColour = mix(::Vec3_UNIT_SCALE, baseColour, anim);
+            mRegionUndiscoveredDatablocks_[regionId].setDiffuse(baseColour.x, baseColour.y, baseColour.z);
+        }
+
+        function updateSelectedRegionAnim(regionId){
+            if(mPreviousSelectedRegion_ != null && mPreviousSelectedRegion_ != regionId){
+                local targetDiffuse = calculateBaseDiffuse_(regionId);
+                mRegionUndiscoveredDatablocks_[mPreviousSelectedRegion_].
+                    setDiffuse(targetDiffuse.x, targetDiffuse.y, targetDiffuse.z);
+                mPreviousSelectedRegion_ = null;
+                mAnim_ = PI;
+            }
+
+            mPreviousSelectedRegion_ = regionId;
+
+            local block = mRegionUndiscoveredDatablocks_[regionId]
+            local startDiffuse = calculateBaseDiffuse_(regionId);
+            local baseColour = mix(startDiffuse + (startDiffuse * 0.2), startDiffuse, sin(mAnim_));
+            block.setDiffuse(baseColour.x, baseColour.y, baseColour.z);
+            mAnim_ += 0.05;
+        }
+
+        function calculateBaseDiffuse_(id){
+            return mStartDiffuse_;
+            //return mix(::Vec3_UNIT_SCALE, mStartDiffuse_, 0.9 + ((id.tofloat() % 24) / 24) * 0.1);
+        }
+
+        function shutdown(){
+            foreach(c,i in mRegionUndiscoveredDatablocks_){
+                _hlms.destroyDatablock(i);
+            }
+            foreach(c,i in mRegionDiscoveredDatablocks_){
+                _hlms.destroyDatablock(i);
+            }
+            mRegionUndiscoveredDatablocks_.clear();
+            mRegionDiscoveredDatablocks_.clear();
+        }
+
+        function createDatablockForRegion(c){
+            local first = ::DatablockManager.quickCloneDatablock("baseVoxelMaterial");
+            mRegionDiscoveredDatablocks_.rawset(c, first);
+
+            local second = ::DatablockManager.quickCloneDatablock("MaskedWorld");
+            mRegionUndiscoveredDatablocks_.rawset(c, second);
+
+            //Use the id rather than a random number so you always get the same colour.
+            local col = calculateBaseDiffuse_(c);
+            second.setDiffuse(col.x, col.y, col.z);
+        }
+
+        function getDatablockForRegion(region, discovered){
+            if(discovered){
+                return mRegionDiscoveredDatablocks_[region];
+            }else{
+                return mRegionUndiscoveredDatablocks_[region];
+            }
+        }
+
+        function notifyRegionJustHighlighted(id){
+            mRegionAnimationCount_.rawset(id, 0.0);
+        }
+    };
 
     constructor(worldId, preparer){
         base.constructor(worldId, preparer);
 
-        mRegionUndiscoveredDatablocks_ = {};
-        mRegionDiscoveredDatablocks_ = {};
+        mRegionAnimator_ = OverworldRegionAnimator();
     }
 
     #Override
@@ -50,14 +158,7 @@
 
         ::Base.mPlayerStats.setOverworldStartPosition(mCameraPosition_);
 
-        foreach(c,i in mRegionUndiscoveredDatablocks_){
-            _hlms.destroyDatablock(i);
-        }
-        foreach(c,i in mRegionDiscoveredDatablocks_){
-            _hlms.destroyDatablock(i);
-        }
-        mRegionUndiscoveredDatablocks_.clear();
-        mRegionDiscoveredDatablocks_.clear();
+        mRegionAnimator_.shutdown();
     }
 
     #Override
@@ -115,16 +216,14 @@
         foreach(c,i in mRegionEntries_){
             local discoveryCount = ::Base.mPlayerStats.getRegionIdDiscovery(c);
 
-            createDatablockForRegion(c);
+            mRegionAnimator_.createDatablockForRegion(c);
 
             local terrainRenderQueue = RENDER_QUEUE_EXPLORATION_TERRRAIN_DISCOVERED;
             local terrainDatablock = null;
             if(discoveryCount == 0){
                 terrainRenderQueue = RENDER_QUEUE_EXPLORATION_TERRRAIN_UNDISCOVERED;
-                terrainDatablock = mRegionUndiscoveredDatablocks_[c];
-            }else{
-                terrainDatablock = mRegionDiscoveredDatablocks_[c];
             }
+            terrainDatablock = mRegionAnimator_.getDatablockForRegion(c, discoveryCount != 0);
 
             local e = mRegionEntries_[c];
             if(e.mLandItem_){
@@ -155,25 +254,17 @@
 
     }
 
-    function createDatablockForRegion(c){
-        local first = ::DatablockManager.quickCloneDatablock("baseVoxelMaterial");
-        mRegionDiscoveredDatablocks_.rawset(c, first);
-
-        local second = ::DatablockManager.quickCloneDatablock("MaskedWorld");
-        mRegionUndiscoveredDatablocks_.rawset(c, second);
-
-        local startDiffuse = second.getDiffuse();
-        //Use the id rather than a random number so you always get the same colour.
-        local col = mix(Vec3(1, 1, 1), startDiffuse, 0.8 + ((c.tofloat() % 24) / 24) * 0.2);
-        second.setDiffuse(col.x, col.y, col.z);
-    }
-
     function update(){
         mCloudManager_.update();
         mWindStreakManager_.update();
 
         _gameCore.update(mCameraPosition_);
         _gameCore.setCustomPassBufferValue(0, 0, 0);
+
+        mRegionAnimator_.update();
+        if(mCurrentSelectedRegion_ != null){
+            mRegionAnimator_.updateSelectedRegionAnim(mCurrentSelectedRegion_);
+        }
 
         foreach(c,i in mRegionEntries_){
             i.update();
@@ -239,6 +330,8 @@
         if(regionMeta.rawin(checkRegion)){
             regionEntry = ::OverworldLogic.mOverworldRegionMeta_[region.tostring()];
         }
+
+        mRegionAnimator_.notifyRegionJustHighlighted(region);
 
         _event.transmit(Event.OVERWORLD_SELECTED_REGION_CHANGED, {"id": region, "data": regionEntry});
     }
