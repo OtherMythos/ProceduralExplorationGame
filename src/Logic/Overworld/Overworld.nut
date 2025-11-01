@@ -67,15 +67,21 @@
                 local targetDiffuse = calculateBaseDiffuse_(regionId);
                 mRegionUndiscoveredDatablocks_[mPreviousSelectedRegion_].
                     setDiffuse(targetDiffuse.x, targetDiffuse.y, targetDiffuse.z);
+                mRegionDiscoveredDatablocks_[mPreviousSelectedRegion_].
+                    setDiffuse(1, 1, 1);
                 mPreviousSelectedRegion_ = null;
                 mAnim_ = PI;
             }
 
             mPreviousSelectedRegion_ = regionId;
 
-            local block = mRegionUndiscoveredDatablocks_[regionId]
+            local block = mRegionUndiscoveredDatablocks_[regionId];
             local startDiffuse = calculateBaseDiffuse_(regionId);
             local baseColour = mix(startDiffuse + (startDiffuse * 0.2), startDiffuse, sin(mAnim_));
+            block.setDiffuse(baseColour.x, baseColour.y, baseColour.z);
+
+            block = mRegionDiscoveredDatablocks_[regionId];
+            baseColour = mix(Vec3(0.8, 0.8, 0.8), ::Vec3_UNIT_SCALE, sin(mAnim_));
             block.setDiffuse(baseColour.x, baseColour.y, baseColour.z);
             mAnim_ += 0.05;
         }
