@@ -3,6 +3,7 @@ enum OverworldStates{
 
     ZOOMED_OUT,
     ZOOMED_IN,
+    REGION_UNLOCK,
 
     MAX
 };
@@ -130,7 +131,7 @@ enum OverworldStates{
 
     function unlockRegion(regionId){
         ::Base.mPlayerStats.incrementRegionIdDiscovery(regionId);
-        mWorld_.animateRegionDiscovery(regionId);
+        requestState(OverworldStates.REGION_UNLOCK);
 
         ::SaveManager.writeSaveAtPath("user://" + ::Base.mPlayerStats.getSaveSlot(), ::Base.mPlayerStats.getSaveData());
     }
@@ -257,6 +258,76 @@ enum OverworldStates{
     function notify(obj, data){
         obj.getWorld().applyMovementDelta(data);
         //mWorld_.applyMovementDelta(delta);
+    }
+};
+
+::OverworldLogic.OverworldStateMachine.mStates_[OverworldStates.REGION_UNLOCK] = class extends ::Util.SimpleState{
+    mStage_ = 0;
+    mAnim_ = 0.0;
+
+    mAnimCamPos_ = null;
+    mAnimCamLookAt_ = null;
+
+    function start(data){
+        local overworld = data.getWorld();
+        mAnim_ = 0.0;
+
+        local regionId = overworld.getCurrentSelectedRegion();
+        local aabb = overworld.getAABBForRegion(regionId);
+        local halfBounds = aabb.getHalfSize();
+        local centre = aabb.getCentre();
+        local targetPos = centre.copy();
+        targetPos.z += halfBounds.z * 6;
+        targetPos.y += 40 * 4;
+        mAnimCamPos_ = targetPos;
+        //mAnimCamPos_.z += 40;
+        mAnimCamLookAt_ = centre;
+    }
+
+    function end(data){
+        local overworld = data.getWorld();
+    }
+
+    function update(data){
+        if(mStage_ == 0){
+            local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.OVERWORLD);
+
+            mAnim_ = ::accelerationClampCoordinate_(mAnim_, 1.0, 0.06);
+            local animPos = ::calculateSimpleAnimation(data.getLogic().mCurrentCameraPosition_, mAnimCamPos_, mAnim_);
+            local animLookAt = ::calculateSimpleAnimation(data.getLogic().mCurrentCameraLookAt_, mAnimCamLookAt_, mAnim_);
+            camera.getParentNode().setPosition(animPos);
+            camera.lookAt(animLookAt);
+
+            if(mAnim_ >= 1.0){
+                mAnim_ = 0.0;
+                mStage_++;
+            }
+        }
+        else if(mStage_ == 1){
+            if(mAnim_ == 0.0){
+                local overworld = data.getWorld();
+                overworld.animateRegionDiscovery(overworld.getCurrentSelectedRegion());
+            }
+            mAnim_ = ::accelerationClampCoordinate_(mAnim_, 1.0, 0.02);
+            if(mAnim_ >= 1.0){
+                mAnim_ = 0.0;
+                mStage_++;
+            }
+        }
+        else if(mStage_ == 2){
+            local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.OVERWORLD);
+
+            mAnim_ = ::accelerationClampCoordinate_(mAnim_, 1.0, 0.06);
+            local animPos = ::calculateSimpleAnimation(mAnimCamPos_, data.getLogic().mCurrentCameraPosition_, mAnim_);
+            local animLookAt = ::calculateSimpleAnimation(mAnimCamLookAt_, data.getLogic().mCurrentCameraLookAt_, mAnim_);
+            camera.getParentNode().setPosition(animPos);
+            camera.lookAt(animLookAt);
+
+            if(mAnim_ >= 1.0){
+                return OverworldStates.ZOOMED_IN;
+            }
+        }
+
     }
 };
 

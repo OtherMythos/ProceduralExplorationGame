@@ -350,6 +350,10 @@
         return mCurrentSelectedRegion_;
     }
 
+    function getAABBForRegion(regionId){
+        return mRegionEntries_[regionId].calculateAABB();
+    }
+
     function animateRegionDiscovery(regionId){
         local regionEntry = mRegionEntries_[regionId]
         if(regionEntry != null){
