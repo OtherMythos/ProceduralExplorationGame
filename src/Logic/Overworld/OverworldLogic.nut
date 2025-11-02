@@ -292,9 +292,11 @@ enum OverworldStates{
         if(mStage_ == 0){
             local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.OVERWORLD);
 
-            mAnim_ = ::accelerationClampCoordinate_(mAnim_, 1.0, 0.06);
-            local animPos = ::calculateSimpleAnimation(data.getLogic().mCurrentCameraPosition_, mAnimCamPos_, mAnim_);
-            local animLookAt = ::calculateSimpleAnimation(data.getLogic().mCurrentCameraLookAt_, mAnimCamLookAt_, mAnim_);
+            mAnim_ = ::accelerationClampCoordinate_(mAnim_, 1.0, 0.03);
+            local a = ::Easing.easeInQuart(mAnim_);
+
+            local animPos = ::calculateSimpleAnimation(data.getLogic().mCurrentCameraPosition_, mAnimCamPos_, a);
+            local animLookAt = ::calculateSimpleAnimation(data.getLogic().mCurrentCameraLookAt_, mAnimCamLookAt_, a);
             camera.getParentNode().setPosition(animPos);
             camera.lookAt(animLookAt);
 
@@ -304,11 +306,11 @@ enum OverworldStates{
             }
         }
         else if(mStage_ == 1){
-            if(mAnim_ == 0.0){
-                local overworld = data.getWorld();
-                overworld.animateRegionDiscovery(overworld.getCurrentSelectedRegion());
-            }
-            mAnim_ = ::accelerationClampCoordinate_(mAnim_, 1.0, 0.02);
+            mAnim_ = ::accelerationClampCoordinate_(mAnim_, 1.0, 0.008);
+
+            local overworld = data.getWorld();
+            overworld.updateRegionDiscoveryAnimation(overworld.getCurrentSelectedRegion(), mAnim_);
+
             if(mAnim_ >= 1.0){
                 mAnim_ = 0.0;
                 mStage_++;

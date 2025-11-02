@@ -10,6 +10,7 @@
     mTargetCameraPosition_ = null;
 
     mRegionAnimator_ = null;
+    mRegionUnlockAnimData_ = null;
 
     OverworldRegionAnimator = class{
         mRegionUndiscoveredDatablocks_ = null;
@@ -360,6 +361,52 @@
             regionEntry.mWorldActive_ = true;
             regionEntry.setVisible(true);
             regionEntry.performArrival();
+        }
+    }
+
+    function updateRegionDiscoveryAnimation(regionId, anim){
+        local regionEntry = mRegionEntries_[regionId]
+        if(regionEntry == null) return;
+
+        local node = regionEntry.mLandNode_;
+        local item = regionEntry.mLandItem_;
+
+        if(mRegionUnlockAnimData_ == null){
+            local block = mRegionAnimator_.getDatablockForRegion(regionId, false);
+            mRegionUnlockAnimData_ = {
+                "startPos": node.getPositionVec3(),
+                "startDiffuse": block.getDiffuse(),
+                "stage": 0
+            };
+        }
+
+        if(anim <= 0.8){
+            local block = mRegionAnimator_.getDatablockForRegion(regionId, false);
+
+            local aa = anim / 0.8;
+            local a = ::Easing.easeInOutQuad(aa);
+            local colAnim = 0.3 + 2 * a;
+            block.setDiffuse(colAnim, colAnim, colAnim);
+
+            local mov = _random.randVec3();
+            node.setPosition(mRegionUnlockAnimData_.startPos + (mov * a * 0.6));
+            _scene.notifyStaticDirty(node);
+
+        }
+        else if(anim >= 0.8 && anim <= 1.0){
+            if(mRegionUnlockAnimData_.stage == 0){
+                mRegionUnlockAnimData_.stage++;
+            }
+            local block = mRegionAnimator_.getDatablockForRegion(regionId, true);
+            item.setDatablock(block);
+            item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_TERRRAIN_DISCOVERED);
+
+            node.setPosition(mRegionUnlockAnimData_.startPos);
+            _scene.notifyStaticDirty(node);
+        }
+
+        if(anim == 1.0){
+            mRegionUnlockAnimData_ = null;
         }
     }
 
