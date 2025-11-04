@@ -12,6 +12,8 @@
     mRegionAnimator_ = null;
     mRegionUnlockAnimData_ = null;
 
+    mNodeData_ = null;
+
     OverworldRegionAnimator = class{
         mRegionUndiscoveredDatablocks_ = null;
         mRegionDiscoveredDatablocks_ = null;
@@ -148,7 +150,7 @@
             parsedFile = _scene.parseSceneFile(path);
         }
 
-        local animData = _gameCore.insertParsedSceneFileGetAnimInfo(parsedFile, mParentNode_, mCollisionDetectionWorld_);
+        mNodeData_ = _gameCore.insertParsedSceneFileGetAnimInfoOverworld(parsedFile, mParentNode_);
 
         mCameraPosition_ = getOverworldStartPosition();
         mTargetCameraPosition_ = getOverworldStartPosition();
@@ -227,7 +229,9 @@
 
             local terrainRenderQueue = RENDER_QUEUE_EXPLORATION_TERRRAIN_DISCOVERED;
             local terrainDatablock = null;
+            local sceneObjectsVisible = true;
             if(discoveryCount == 0){
+                sceneObjectsVisible = false;
                 terrainRenderQueue = RENDER_QUEUE_EXPLORATION_TERRRAIN_UNDISCOVERED;
             }
             terrainDatablock = mRegionAnimator_.getDatablockForRegion(c, discoveryCount != 0);
@@ -236,6 +240,11 @@
             if(e.mLandItem_){
                 e.mLandItem_.setRenderQueueGroup(terrainRenderQueue);
                 e.mLandItem_.setDatablock(terrainDatablock);
+            }
+
+            local testId = c.tostring();
+            if(mNodeData_.rawin(testId)){
+                mNodeData_[testId].setVisible(sceneObjectsVisible);
             }
         }
 
@@ -403,6 +412,12 @@
 
             node.setPosition(mRegionUnlockAnimData_.startPos);
             _scene.notifyStaticDirty(node);
+
+            local targetId = mCurrentSelectedRegion_.tostring();
+            if(mNodeData_.rawin(targetId)){
+                local targetNode = mNodeData_.rawget(targetId);
+                targetNode.setVisible(true);
+            }
         }
 
         if(anim == 1.0){

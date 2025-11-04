@@ -63,6 +63,7 @@ namespace ProceduralExplorationGamePlugin{
         static SQInteger voxeliseMeshForVoxelData(HSQUIRRELVM vm);
 
         static SQInteger insertParsedSceneFileVoxMeshGetAnimInfo(HSQUIRRELVM vm);
+        static SQInteger insertParsedSceneFileVoxMeshGetAnimInfoOverworld(HSQUIRRELVM vm);
 
         static SQInteger dumpSceneToObj(HSQUIRRELVM vm);
 

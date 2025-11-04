@@ -34,6 +34,8 @@
 #include "Compositor/OgreCompositorNodeDef.h"
 #include "Compositor/Pass/PassScene/OgreCompositorPassSceneDef.h"
 
+#include "VisitedPlaces/OverworldVoxMeshSceneDataInserter.h"
+
 #include "Scripting/DataPointFileUserData.h"
 
 #include "MapGen/ExplorationMapViewer.h"
@@ -895,6 +897,44 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger GameCoreNamespace::insertParsedSceneFileVoxMeshGetAnimInfoOverworld(HSQUIRRELVM vm){
+        AV::ParsedSceneFile* file = 0;
+        AV::ParsedAvSceneUserData::readSceneObjectFromUserData(vm, 2, &file);
+
+        Ogre::SceneNode* node = 0;
+        SQInteger top = sq_gettop(vm);
+        Ogre::SceneManager* sceneManager = AV::BaseSingleton::getSceneManager();
+        SCRIPT_CHECK_RESULT(AV::SceneNodeUserData::readSceneNodeFromUserData(vm, 3, &node));
+
+        //TODO remove the offset obtain
+        Ogre::Vector3 offset = Ogre::Vector3::ZERO;
+        if(sq_gettop(vm) >= 5){
+            SCRIPT_CHECK_RESULT(AV::Vector3UserData::readVector3FromUserData(vm, 5, &offset));
+        }
+
+        ProceduralExplorationGameCore::OverworldVoxMeshSceneDataInserter inserter(sceneManager);
+        AV::AnimationInfoBlockPtr animData = inserter.insertSceneDataGetAnimInfo(file, node);
+
+        const std::map<int,Ogre::SceneNode*>& values = inserter.getRegionNodes();
+        sq_newtable(vm);
+        for(const std::pair<int,Ogre::SceneNode*>& v : values){
+            const std::string s = std::to_string(v.first);
+            sq_pushstring(vm, s.c_str(), -1);
+            AV::SceneNodeUserData::sceneNodeToUserData(vm, v.second);
+            sq_rawset(vm, -3);
+        }
+
+        /*
+        if(!animData){
+            sq_pushnull(vm);
+            return 1;
+        }
+        AV::AnimationInfoUserData::blockPtrToUserData(vm, animData);
+         */
+
+        return 1;
+    }
+
     SQInteger GameCoreNamespace::deepCopyToMapGenVM(HSQUIRRELVM vm){
         ProceduralExplorationGameCore::MapGenScriptManager* manager = ProceduralExplorationGameCore::PluginBaseSingleton::getScriptManager();
         ProceduralExplorationGameCore::MapGenScriptVM* scriptVM = manager->getScriptVM();
@@ -987,6 +1027,7 @@ namespace ProceduralExplorationGamePlugin{
 
         AV::ScriptUtils::addFunction(vm, voxeliseMeshForVoxelData, "voxeliseMeshForVoxelData", 6, ".saiii");
         AV::ScriptUtils::addFunction(vm, insertParsedSceneFileVoxMeshGetAnimInfo, "insertParsedSceneFileGetAnimInfo", -4, ".uuuu");
+        AV::ScriptUtils::addFunction(vm, insertParsedSceneFileVoxMeshGetAnimInfoOverworld, "insertParsedSceneFileGetAnimInfoOverworld", -3, ".uuu");
 
         AV::ScriptUtils::addFunction(vm, dumpSceneToObj, "dumpSceneToObj");
 
