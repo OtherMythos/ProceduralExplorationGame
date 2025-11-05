@@ -45,7 +45,8 @@ float2 computeLineForImage(float center, float left, float right, float top, flo
     if(inner){
         edgeFactor = !allEqual(round(left), round(right), round(top), round(bottom), round(center));
     }else{
-        edgeFactor = (round(center) + round(left) + round(right) + round(top) + round(bottom)) < 5;
+        //Really check for 5.0, but some drivers had floating point precision issues.
+        edgeFactor = (center + left + right + top + bottom) < 4.9;
     }
     float edgeStrength = 0.0;
     if(edgeFactor){

@@ -70,6 +70,7 @@
 		//float colVal = float(inPs.passDrawId % uint(100)) / 100.0;
 		outPs_colour0.xyz = inPs.decorationColour;
 		outPs_colour0.z = inPs.passDrawColour;
+		outPs_colour0.w = 1.0;
 	@end
 
 	@property(floorDecals)
@@ -153,7 +154,7 @@
 		float colVal = float(finalDrawId % uint(100));
 		float4 positionRelativeToCam = mul(worldPos, passBuf.viewProj);
 		float dist = length(positionRelativeToCam.xyz);
-		outVs.decorationColour = float3(1, dist, 0);
+		outVs.decorationColour = float3(1.0, dist, 0);
 		outVs.passDrawColour = colVal;
 	@end
 
