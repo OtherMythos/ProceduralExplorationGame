@@ -156,6 +156,12 @@
 		float dist = length(positionRelativeToCam.xyz);
 		outVs.decorationColour = float3(1.0, dist, 0);
 		outVs.passDrawColour = colVal;
+
+		@property( treeVertices )
+			//Workaround an issue found on the iPhone XR, where vertice animations were being applied causing some values to fail the depth buffer test.
+			//Basically prioritise the line drawing algorithm slightly
+			outVs_Position.z += 0.00001;
+		@end
 	@end
 
 @end
