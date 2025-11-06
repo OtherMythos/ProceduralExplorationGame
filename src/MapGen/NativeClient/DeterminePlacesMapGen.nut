@@ -83,7 +83,7 @@
             for(local x = originX - halfX; x < originX + halfX; x++){
                 local val = mMapData_.secondaryValueForCoord(x, y);
 
-                val = val | DO_NOT_PLACE_ITEMS_VOXEL_FLAG;
+                val = val | (DO_NOT_PLACE_ITEMS_VOXEL_FLAG | DO_NOT_PLACE_RIVERS_VOXEL_FLAG);
                 mMapData_.writeSecondaryValueForCoord(x, y, val);
             }
         }
