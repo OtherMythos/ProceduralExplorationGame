@@ -504,6 +504,39 @@ enum SceneEditorMapType{
         ::guiFrameworkBase.setMouseButton(0, _input.getMouseButton(_MB_LEFT));
         ::guiFrameworkBase.setMouseButton(1, _input.getMouseButton(_MB_RIGHT));
 
+        if(!::guiFrameworkBase.mouseInteracting()){
+            if(_input.getRawKeyScancodeInput(KeyScancode.LALT)){
+                if(_input.getMouseButton(_MB_LEFT)){
+                    //print("checking terrain");
+                    local point = mCurrentHitPosition;
+                    if(point == null){
+                        point = mCurrentHitPositionPlane;
+                    }
+                    if(point != null){
+                        local coordX = (point.x.tointeger());
+                        local coordY = (-(point.z.tointeger()));
+
+                        if(getTerrainEditState() == TerrainEditState.HEIGHT){
+                            local altitudeVal = mVisitedPlacesMapData.getAltitudeForCoord(coordX, coordY);
+                            print("Copying altitude " + altitudeVal);
+                            setEditTerrainHeightValue(altitudeVal);
+                        }
+                        else if(getTerrainEditState() == TerrainEditState.COLOUR){
+                            local voxelVal = mVisitedPlacesMapData.getVoxelForCoord(coordX, coordY);
+                            print("Copying voxel " + voxelVal);
+                            setEditTerrainColourValue(voxelVal);
+                        }
+                        else if(getTerrainEditState() == TerrainEditState.REGION){
+                            local metaVal = mVisitedPlacesMapData.getMetaForCoord(coordX, coordY);
+                            print("Copying region " + metaVal);
+                            setEditTerrainRegionValue(metaVal);
+                        }
+                        if(mWindowTerrainTool_ != null) mWindowTerrainTool_.refreshButtons();
+                    }
+                }
+            }
+        }
+
         if(!::guiFrameworkBase.mouseInteracting() && mEditingTerrain){
             //local mousePos = Vec2(_input.getMouseX(), _input.getMouseY())
             if(::SceneEditorFramework.HelperFunctions.sceneEditorInteractable()){
