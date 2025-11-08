@@ -100,6 +100,13 @@
         }, _GUI_ACTION_PRESSED, this);
         layout.addCell(createPopup);
 
+        local showTerrainRegions = mParent_.createButton();
+        showTerrainRegions.setText("Show regions");
+        showTerrainRegions.attachListenerForEvent(function(widget, action){
+            ::Base.showRegionForTerrains();
+        }, _GUI_ACTION_PRESSED, this);
+        layout.addCell(showTerrainRegions);
+
         layout.layout();
 
         refreshButtons();

@@ -9,11 +9,17 @@ enum EditorTerrainType{
 ::SceneEditorTerrainChunkManager <- class extends ::TerrainChunkManager{
 
     mCurrentAction_ = null
+    mTerrainChunkPrefix_ = "sceneEditorTerrainChunkManager"
 
     constructor(worldId, alterValues){
         base.constructor(worldId);
 
         mAlterValues_ = alterValues;
+    }
+
+    #Override
+    function getTerrainChunkPrefix_(){
+        return mTerrainChunkPrefix_;
     }
 
     function drawValue_(x, y, width, height, values, editType){

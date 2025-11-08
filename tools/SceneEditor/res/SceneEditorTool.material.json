@@ -17,6 +17,11 @@
         {
             "dst_blend_factor" : "one",
             "src_blend_factor" : "one"
+        },
+        "blend" :
+        {
+            "src_blend_factor" : "one",
+            "dst_blend_factor" : "one_minus_src_alpha"
         }
     },
 
@@ -34,6 +39,21 @@
             "transparency" :
             {
                 "value" : 2,
+                "mode" : "Transparent"
+            }
+        },
+        "SceneEditorTool/TerrainRegionTransparency" :
+        {
+            "workflow": "metallic",
+            "blendblock": "blend",
+
+            "diffuse" :
+            {
+                "texture" : "voxelPalette.png"
+            },
+            "transparency" :
+            {
+                "value" : 0.8,
                 "mode" : "Transparent"
             }
         }

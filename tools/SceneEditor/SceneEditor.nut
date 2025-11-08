@@ -57,6 +57,10 @@ enum SceneEditorMapType{
     mCurrentSceneRightClick_ = null
     mSceneButtons_ = null
 
+    mTerrainRegionsVisualised_ = false
+    mTerrainRegionsCurrentlyVisualised_ = false
+    mTerrainRegionVisualisationNode_ = null
+
     mWindowTileGrid_ = null
     mWindowTerrainTool_ = null
 
@@ -824,6 +828,33 @@ enum SceneEditorMapType{
 
     function getTerrainEditColour(){
         return mEditTerrainColourValue;
+    }
+
+    function showRegionForTerrains(){
+        if(mTargetMap.getMapType() != SceneEditorMapType.OVERWORLD) return;
+
+        if(!mTerrainRegionsVisualised_){
+            local chunkManager = ::SceneEditorTerrainChunkManager(0, mTargetMap.getMapType() == SceneEditorMapType.OVERWORLD);
+            chunkManager.setup(mVisitedPlacesMapData, mTargetMap.getMapType() == SceneEditorMapType.PLACE ? 1 : 4);
+            chunkManager.mTerrainChunkPrefix_ = "sceneEditorRegionChunkManager";
+            chunkManager.mSwapVoxelForMeta_ = true;
+            chunkManager.generateInitialItems();
+            local targetParent = _scene.getRootSceneNode().createChildSceneNode();
+            chunkManager.setupParentNode(targetParent);
+            targetParent.setPosition(0, 0.1, 0);
+            mTerrainRegionVisualisationNode_ = targetParent;
+            //mTerrainNodeParent_ = targetParent;
+            foreach(c,i in chunkManager.mItemsForChunk_){
+                if(i == null) continue;
+                i.setDatablock("SceneEditorTool/TerrainRegionTransparency");
+            }
+
+            mTerrainRegionsVisualised_ = true;
+        }
+
+        mTerrainRegionsCurrentlyVisualised_ = !mTerrainRegionsCurrentlyVisualised_;
+
+        mTerrainRegionVisualisationNode_.setVisible(mTerrainRegionsCurrentlyVisualised_);
     }
 
     function writeEditorMetaFile_(path){
