@@ -28,4 +28,46 @@
             <scale x="0.498166" y="0.498166" z="0.498166"/>
         </user0>
     </empty>
+    <empty name="region-10">
+        <user0 value="cactus1.voxMesh">
+            <position x="365.473" y="0.9203" z="-268.899"/>
+            <scale x="0.3" y="0.3" z="0.3"/>
+        </user0>
+        <user0 value="cactus1.voxMesh">
+            <position x="356.352" y="1.34779" z="-279.417"/>
+            <scale x="0.3" y="0.3" z="0.3"/>
+        </user0>
+        <user0 value="cactus1.voxMesh">
+            <position x="376.708" y="1.02484" z="-297.198"/>
+            <scale x="0.3" y="0.3" z="0.3"/>
+        </user0>
+        <user0 value="cactus1.voxMesh">
+            <position x="383.932" y="1.43423" z="-265.381"/>
+            <scale x="0.3" y="0.3" z="0.3"/>
+        </user0>
+        <user0 value="cactus1.voxMesh">
+            <position x="421.083" y="1.50321" z="-309.159"/>
+            <scale x="0.3" y="0.3" z="0.3"/>
+        </user0>
+        <user0 value="cactus1.voxMesh">
+            <position x="431.498" y="1.38864" z="-265.925"/>
+            <scale x="0.3" y="0.3" z="0.3"/>
+        </user0>
+        <user0 value="cactus1.voxMesh">
+            <position x="445.191" y="1.37504" z="-294.713"/>
+            <scale x="0.3" y="0.3" z="0.3"/>
+        </user0>
+        <user0 value="cactus1.voxMesh">
+            <position x="333.507" y="0.94243" z="-309.731"/>
+            <scale x="0.3" y="0.3" z="0.3"/>
+        </user0>
+        <user0 value="cactus1.voxMesh">
+            <position x="446.678" y="1.04867" z="-254.332"/>
+            <scale x="0.3" y="0.3" z="0.3"/>
+        </user0>
+        <user0 value="cactus1.voxMesh">
+            <position x="456.022" y="1.47193" z="-318.67"/>
+            <scale x="0.3" y="0.3" z="0.3"/>
+        </user0>
+    </empty>
 </scene>
