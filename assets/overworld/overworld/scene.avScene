@@ -17,15 +17,816 @@
         </user0>
         <user0 value="tree.voxMesh">
             <position x="471.59" y="0.692051" z="-109.102"/>
-            <scale x="0.498166" y="0.498166" z="0.498166"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
         </user0>
         <user0 value="tree.voxMesh">
             <position x="469.524" y="0.692051" z="-123.579"/>
-            <scale x="0.498166" y="0.498166" z="0.498166"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
         </user0>
         <user0 value="tree.voxMesh">
             <position x="480.303" y="0.692051" z="-116.306"/>
-            <scale x="0.498166" y="0.498166" z="0.498166"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+    </empty>
+    <empty name="region-50">
+        <user0 value="house1.voxMesh">
+            <position x="216.314" y="1.24526" z="-177.869"/>
+            <scale x="0.153052" y="0.153052" z="0.153052"/>
+            <orientation x="0" y="-0.4" z="0" w="1"/>
+        </user0>
+        <user0 value="swampPlants.tree1.voxMesh">
+            <position x="230.242" y="1.24526" z="-183.614"/>
+            <scale x="0.269672" y="0.269672" z="0.269672"/>
+        </user0>
+        <user0 value="swampPlants.tree1.voxMesh">
+            <position x="217.293" y="0.692051" z="-211.135"/>
+            <scale x="0.321125" y="0.321125" z="0.321125"/>
+        </user0>
+        <user0 value="swampPlants.tree1.voxMesh">
+            <position x="195.318" y="0.692051" z="-236.876"/>
+            <scale x="0.269672" y="0.269672" z="0.269672"/>
+        </user0>
+        <user0 value="swampPlants.tree1.voxMesh">
+            <position x="213.726" y="0.692051" z="-169.963"/>
+            <scale x="0.269672" y="0.269672" z="0.269672"/>
+        </user0>
+        <user0 value="swampPlants.tree2.voxMesh">
+            <position x="202.472" y="0.692051" z="-220.335"/>
+            <scale x="0.269672" y="0.269672" z="0.269672"/>
+        </user0>
+        <user0 value="swampPlants.tree2.voxMesh">
+            <position x="195.318" y="0.692051" z="-200.277"/>
+            <scale x="0.269672" y="0.269672" z="0.269672"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="195.016" y="1.19331" z="-195.648"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="187.616" y="1.19331" z="-195.648"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="191.68" y="1.19331" z="-204.52"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="184.276" y="1.19331" z="-200.274"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="182.455" y="1.19331" z="-193.263"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="189.436" y="1.19331" z="-184.016"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="189.436" y="1.19331" z="-184.016"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="189.436" y="1.19331" z="-184.016"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="189.436" y="1.19331" z="-184.016"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="196.402" y="1.19331" z="-181.824"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="209.97" y="1.19331" z="-184.016"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="204.734" y="1.19331" z="-181.793"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="204.552" y="1.19331" z="-190.108"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="201.57" y="1.19331" z="-174.295"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="205.738" y="1.19331" z="-176.147"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="207.902" y="1.00035" z="-171.793"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="212.065" y="0.866755" z="-196.644"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="214.886" y="0.399208" z="-193.587"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="206.815" y="0.35474" z="-203.174"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="210.109" y="0.347733" z="-206.486"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="220.568" y="0.345562" z="-200.202"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="223.484" y="0.723448" z="-172.179"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="226.436" y="0.787378" z="-168.404"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="231.703" y="0.942111" z="-177.464"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="232.974" y="7.62939e-06" z="-171.759"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="199.253" y="0.576576" z="-208.17"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="205.025" y="0.767048" z="-212.259"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="195.352" y="0.391968" z="-217.25"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="200.907" y="0.392347" z="-217.213"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="209.381" y="1.02024" z="-220.629"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="207.809" y="0.324673" z="-229.776"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="219" y="0.805104" z="-221.2"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="221.745" y="0.323528" z="-231.469"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="202.377" y="0.398876" z="-236.081"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="197.624" y="0.389904" z="-243.483"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="195.724" y="0.391975" z="-251.91"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="221.595" y="0.671825" z="-243.616"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="222.794" y="0.19331" z="-254.094"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="216.724" y="0.73346" z="-262.463"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="205.089" y="1.18682" z="-265.518"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="199.559" y="0.882885" z="-262.44"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.waterBush1.voxMesh">
+            <position x="225.207" y="0.19331" z="-219.22"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.lilypad.voxMesh">
+            <position x="228.439" y="0.19331" z="-215.402"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.lilypad.voxMesh">
+            <position x="211.027" y="0.19331" z="-203.397"/>
+            <scale x="0.170771" y="0.170771" z="0.170771"/>
+        </user0>
+        <user0 value="swampPlants.lilypad.voxMesh">
+            <position x="215.973" y="0.19331" z="-199.389"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.lilypad.voxMesh">
+            <position x="199.486" y="0.19331" z="-213.442"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.lilypad.voxMesh">
+            <position x="203.192" y="0.19331" z="-254.641"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.lilypad.voxMesh">
+            <position x="214.194" y="0.19331" z="-250.585"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.lilypad.voxMesh">
+            <position x="214.194" y="0.19331" z="-237.832"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.lilypad.voxMesh">
+            <position x="207.93" y="0.19331" z="-244.967"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.lilypad.voxMesh">
+            <position x="212.932" y="0.19331" z="-226.812"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.lilypad.voxMesh">
+            <position x="200.992" y="0.19331" z="-227.452"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.lilypad.voxMesh">
+            <position x="188.028" y="0.19331" z="-202.412"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.lilypad.voxMesh">
+            <position x="187.071" y="0.19331" z="-189.607"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.lilypad.voxMesh">
+            <position x="206.279" y="0.19331" z="-186.02"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.lilypad.voxMesh">
+            <position x="205.23" y="0.19331" z="-173.822"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.lilypad.voxMesh">
+            <position x="229.367" y="0.19331" z="-173.508"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.lilypad.voxMesh">
+            <position x="217.616" y="0.19331" z="-230.007"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+        <user0 value="swampPlants.lilypad.voxMesh">
+            <position x="217.616" y="0.19331" z="-230.007"/>
+            <scale x="0.197071" y="0.197071" z="0.197071"/>
+        </user0>
+    </empty>
+    <empty name="region-3">
+        <user0 value="tree.voxMesh">
+            <position x="435.038" y="1.4778" z="-174.747"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="432.809" y="1.4778" z="-172.007"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="430.237" y="1.4778" z="-172.491"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="434.033" y="1.4778" z="-168.407"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="432.122" y="1.4778" z="-177.224"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="428.442" y="1.4778" z="-166.487"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="431.5" y="1.4778" z="-168.176"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="435.648" y="1.4778" z="-170.874"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="438.501" y="1.4778" z="-171.591"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="436.617" y="1.4778" z="-168.771"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="439.284" y="1.4778" z="-168.284"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="441.835" y="1.4778" z="-169.491"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="430.786" y="1.4778" z="-165.768"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="429.097" y="1.4778" z="-164.166"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="433.743" y="1.4778" z="-165.538"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="435.93" y="1.4778" z="-166.331"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="437.95" y="1.4778" z="-165.15"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="440.682" y="1.4778" z="-165.927"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="431.781" y="1.4778" z="-163.338"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="434.609" y="1.4778" z="-163.183"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="429.292" y="1.4778" z="-168.957"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="436.506" y="1.4778" z="-162.931"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="443.013" y="1.4778" z="-164.943"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="431.589" y="1.4778" z="-170.533"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="430.169" y="1.4778" z="-161.592"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="432.44" y="1.4778" z="-160.602"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="434.816" y="1.4778" z="-160.296"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="437.052" y="1.4778" z="-159.686"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="439.062" y="1.4778" z="-162.206"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="441.609" y="1.4778" z="-162.538"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="444.314" y="1.4778" z="-161.576"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="444.314" y="1.08397" z="-157.457"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="441.272" y="1.08397" z="-156.968"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="447.203" y="1.08397" z="-156.971"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="445.641" y="1.08397" z="-154.39"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="439.431" y="1.08397" z="-154.413"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="443.199" y="1.08397" z="-155.002"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="437.476" y="1.08397" z="-156.214"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="434.919" y="1.08397" z="-155.459"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="432.448" y="1.08397" z="-157.042"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="429.981" y="1.08397" z="-158.605"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="429.814" y="1.08397" z="-156.463"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="427.73" y="1.08397" z="-159.722"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="449.721" y="1.08397" z="-159.071"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="449.507" y="1.08397" z="-156.333"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="452.14" y="1.08397" z="-157.457"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="450.266" y="1.08397" z="-162.395"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="451.988" y="1.08397" z="-160.145"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="452.679" y="1.08397" z="-155.194"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="448.874" y="1.08397" z="-164.721"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="447.163" y="1.08397" z="-167.395"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="444.63" y="1.08397" z="-169.292"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="443.881" y="1.08397" z="-172.823"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="449.344" y="1.08397" z="-169.292"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="447.008" y="1.08397" z="-170.66"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="441.847" y="1.08397" z="-173.768"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="445.958" y="1.08397" z="-173.655"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="450.474" y="1.08397" z="-167.319"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="451.818" y="1.08397" z="-165.078"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="439.716" y="1.08397" z="-175.956"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="443.115" y="1.08397" z="-176.164"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="441.577" y="1.08397" z="-178.843"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="439.14" y="1.08397" z="-178.723"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="437.47" y="1.08397" z="-177.105"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="448.931" y="1.08397" z="-173.101"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="436.45" y="1.08397" z="-180.018"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="438.861" y="1.08397" z="-181.678"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="433.831" y="1.08397" z="-180.657"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="429.7" y="1.08397" z="-176.179"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="427.622" y="1.08397" z="-175.497"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="426.284" y="1.08397" z="-172.966"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="425.63" y="1.08397" z="-170.525"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="425.758" y="1.08397" z="-166.985"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="425.458" y="1.08397" z="-164.604"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="425.879" y="1.08397" z="-162.23"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="423.39" y="1.08397" z="-168.985"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="423.812" y="1.08397" z="-171.558"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="425.228" y="1.08397" z="-175.425"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="424.051" y="1.08397" z="-173.586"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="423.753" y="1.08397" z="-166.498"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="423.431" y="1.08397" z="-164.079"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="425.63" y="1.08397" z="-159.893"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="424.124" y="1.08397" z="-161.608"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="425.63" y="1.08397" z="-177.79"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="427.671" y="1.08397" z="-177.371"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="426.292" y="1.08397" z="-180.053"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="429.276" y="1.08397" z="-178.938"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="428.287" y="1.08397" z="-181.36"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="431.264" y="1.08397" z="-181.744"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="427.313" y="1.08397" z="-183.809"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="429.843" y="1.08397" z="-184.294"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="432.773" y="1.08397" z="-184.179"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="432.773" y="1.08397" z="-153.56"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="435.959" y="1.08397" z="-152.735"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="439.022" y="1.08397" z="-152.003"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="430.115" y="1.08397" z="-153.085"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="428.059" y="1.08397" z="-157.319"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="441.325" y="1.08397" z="-152.954"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="444.328" y="1.08397" z="-152.56"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="431.528" y="1.08397" z="-151.254"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="433.74" y="1.08397" z="-150.661"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="436.378" y="1.08397" z="-150.065"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="448.072" y="1.08397" z="-154.143"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="450.653" y="1.08397" z="-153.25"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="442.457" y="1.08397" z="-150.559"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="439.066" y="1.08397" z="-149.029"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="447.467" y="1.08397" z="-151.4"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="451.274" y="1.08397" z="-150.756"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="453.835" y="1.08397" z="-152.332"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="455.65" y="1.08397" z="-154.736"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="456.242" y="1.08397" z="-151.784"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="454.481" y="1.08397" z="-149.89"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="449.484" y="1.08397" z="-149.34"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="447.004" y="1.08397" z="-148.751"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="444.925" y="1.08397" z="-147.61"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="451.57" y="1.08397" z="-148.021"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="448.843" y="1.08397" z="-146.413"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="457.063" y="1.08397" z="-149.049"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="454.906" y="1.08397" z="-147.77"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="453.583" y="1.08397" z="-145.627"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="459.087" y="1.08397" z="-149.825"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="458.106" y="1.08397" z="-147.17"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="460.193" y="1.08397" z="-147.51"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="449.484" y="1.08397" z="-149.34"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="455.554" y="1.08397" z="-145.144"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="458.439" y="1.08397" z="-144.784"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="460.905" y="1.08397" z="-145.091"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="461.935" y="1.08397" z="-149.34"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="460.843" y="1.08397" z="-152.183"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="458.558" y="1.08397" z="-152.843"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="458.186" y="1.08397" z="-155.63"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="454.477" y="1.08397" z="-157.783"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
+        </user0>
+        <user0 value="tree.voxMesh">
+            <position x="463.394" y="1.08397" z="-143.258"/>
+            <scale x="0.5" y="0.5" z="0.5"/>
         </user0>
     </empty>
     <empty name="region-10">
