@@ -5,7 +5,7 @@
 
 _tIntegration("EnemiesDontSpawnInCollisionZones", "Check if the system attempts to spawn an enemy in an area that the enemy wouldn't be able to move, the spawn fails.", {
     "start": function(){
-        ::_testHelper.setDefaultWaitFrames(20);
+        ::_testHelper.setDefaultWaitFrames(5);
     },
 
     "steps": [
@@ -51,7 +51,43 @@ _tIntegration("EnemiesDontSpawnInCollisionZones", "Check if the system attempts 
 
             _destroyEnemy(enemy);
             _destroyEnemy(secondEnemy);
-        }
-        //TODO check grid collision also.
+        },
+        function(){
+            //Setup some collision grid data and try and spawn some enemies in a collided place.
+            local world = ::Base.mExplorationLogic.mCurrentWorld_;
+            local collisionWorld = world.getCollisionDetectionWorld();
+
+            local enemy = world.createEnemyCheckCollision(EnemyId.GOBLIN, Vec3(10, 0, 0));
+            _test.assertNotEqual(enemy, null);
+
+            local collisionData = array(100*100, true);
+            _gameCore.setupCollisionDataForWorld(collisionWorld, collisionData, 100, 100);
+
+            local secondEnemy = world.createEnemyCheckCollision(EnemyId.GOBLIN, Vec3(10, 0, 0));
+            _test.assertEqual(secondEnemy, null);
+
+            _destroyEnemy(enemy);
+        },
+        function(){
+            //Setup some more permissive collision data and check some spawns can still be succesful.
+            local world = ::Base.mExplorationLogic.mCurrentWorld_;
+            local collisionWorld = world.getCollisionDetectionWorld();
+
+            local collisionData = array(100*100, false);
+            for(local y = 0; y < 100; y++){
+                for(local x = 0; x < 100; x++){
+                    collisionData[x + y * 100] = (x < 50 ? 1 : false);
+                }
+            }
+            _gameCore.setupCollisionDataForWorld(collisionWorld, collisionData, 100, 100);
+
+            local enemy = world.createEnemyCheckCollision(EnemyId.GOBLIN, Vec3(0, 0, 0) * 5);
+            _test.assertNotEqual(enemy, null);
+
+            local secondEnemy = world.createEnemyCheckCollision(EnemyId.GOBLIN, Vec3(55, 0, 0) * 5);
+            _test.assertEqual(secondEnemy, null);
+
+            _destroyEnemy(enemy);
+        },
     ]
 });
