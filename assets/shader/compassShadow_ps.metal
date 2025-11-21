@@ -41,45 +41,30 @@ fragment float4 main_metal
     }
 
     // Otherwise, check the 8 surrounding pixels explicitly
-    bool outline = false;
-
     float2 uv;
-    float4 checkVal = float4(0.9,0.9,0.9,0.5);
 
     // left
     uv = inPs.uv0 + float2(-texelOffset.x, 0);
-    if (all(OGRE_Sample(Image, samplerState, uv).rgba > checkVal)) outline = true;
+    if(OGRE_Sample(Image, samplerState, uv).r > 0.9){
+        returnFinalColour(float4(0, 0, 0, 0.5));
+    }
 
     // right
     uv = inPs.uv0 + float2(texelOffset.x, 0);
-    if (all(OGRE_Sample(Image, samplerState, uv).rgba > checkVal)) outline = true;
+    if(OGRE_Sample(Image, samplerState, uv).r > 0.9){
+        returnFinalColour(float4(0, 0, 0, 0.5));
+    }
 
     // up
     uv = inPs.uv0 + float2(0, -texelOffset.y);
-    if (all(OGRE_Sample(Image, samplerState, uv).rgba > checkVal)) outline = true;
+    if(OGRE_Sample(Image, samplerState, uv).r > 0.9){
+        returnFinalColour(float4(0, 0, 0, 0.5));
+    }
 
     // down
     uv = inPs.uv0 + float2(0, texelOffset.y);
-    if (all(OGRE_Sample(Image, samplerState, uv).rgba > checkVal)) outline = true;
-
-/*
-    // diagonals
-    uv = inPs.uv0 + float2(-texelOffset.x, -texelOffset.y);
-    if (all(OGRE_Sample(Image, samplerState, uv).rgba > checkVal)) outline = true;
-
-    uv = inPs.uv0 + float2(texelOffset.x, -texelOffset.y);
-    if (all(OGRE_Sample(Image, samplerState, uv).rgba > checkVal)) outline = true;
-
-    uv = inPs.uv0 + float2(-texelOffset.x, texelOffset.y);
-    if (all(OGRE_Sample(Image, samplerState, uv).rgba > checkVal)) outline = true;
-
-    uv = inPs.uv0 + float2(texelOffset.x, texelOffset.y);
-    if (all(OGRE_Sample(Image, samplerState, uv).rgba > checkVal)) outline = true;
-*/
-
-    if (outline)
-    {
-        returnFinalColour(float4(0,0,0,0.5));
+    if(OGRE_Sample(Image, samplerState, uv).r > 0.9){
+        returnFinalColour(float4(0, 0, 0, 0.5));
     }
 
     returnFinalColour(float4(0,0,0,0));

@@ -82,52 +82,36 @@ void main()
     float4 center = OGRE_Sample(Image, samplerState, inPs.uv0);
 
     // If center pixel is white, just draw it
-    bool isWhite = (center.x > 0.9) && (center.y > 0.9) && (center.z > 0.9);
-    if (center.w > 0.5 && isWhite)
+    if (center.a > 0.5 && all(center.rgb > float3(0.9)))
     {
         returnFinalColour(center);
     }
 
     // Otherwise, check the 8 surrounding pixels explicitly
-    bool outline = false;
-
     float2 uv;
-    float4 checkVal = float4(0.9,0.9,0.9,0.5);
 
     // left
     uv = inPs.uv0 + float2(-texelOffset.x, 0);
-    if (compareVec4(OGRE_Sample(Image, samplerState, uv).xyzw, checkVal)) outline = true;
+    if(OGRE_Sample(Image, samplerState, uv).r > 0.9){
+        returnFinalColour(float4(0, 0, 0, 0.5));
+    }
 
     // right
     uv = inPs.uv0 + float2(texelOffset.x, 0);
-    if (compareVec4(OGRE_Sample(Image, samplerState, uv).xyzw, checkVal)) outline = true;
+    if(OGRE_Sample(Image, samplerState, uv).r > 0.9){
+        returnFinalColour(float4(0, 0, 0, 0.5));
+    }
 
     // up
     uv = inPs.uv0 + float2(0, -texelOffset.y);
-    if (compareVec4(OGRE_Sample(Image, samplerState, uv).xyzw, checkVal)) outline = true;
+    if(OGRE_Sample(Image, samplerState, uv).r > 0.9){
+        returnFinalColour(float4(0, 0, 0, 0.5));
+    }
 
     // down
     uv = inPs.uv0 + float2(0, texelOffset.y);
-    if (compareVec4(OGRE_Sample(Image, samplerState, uv).xyzw, checkVal)) outline = true;
-
-/*
-    // diagonals
-    uv = inPs.uv0 + float2(-texelOffset.x, -texelOffset.y);
-    if (all(OGRE_Sample(Image, samplerState, uv).rgba > checkVal)) outline = true;
-
-    uv = inPs.uv0 + float2(texelOffset.x, -texelOffset.y);
-    if (all(OGRE_Sample(Image, samplerState, uv).rgba > checkVal)) outline = true;
-
-    uv = inPs.uv0 + float2(-texelOffset.x, texelOffset.y);
-    if (all(OGRE_Sample(Image, samplerState, uv).rgba > checkVal)) outline = true;
-
-    uv = inPs.uv0 + float2(texelOffset.x, texelOffset.y);
-    if (all(OGRE_Sample(Image, samplerState, uv).rgba > checkVal)) outline = true;
-*/
-
-    if (outline)
-    {
-        returnFinalColour(float4(0,0,0,0.5));
+    if(OGRE_Sample(Image, samplerState, uv).r > 0.9){
+        returnFinalColour(float4(0, 0, 0, 0.5));
     }
 
     returnFinalColour(float4(0,0,0,0));
