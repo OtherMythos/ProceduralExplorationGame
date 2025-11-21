@@ -198,8 +198,8 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
     function checkVoxelChange(){
         local changed = false;
         local voxX = (mPos_.x).tointeger();
-        local voxY = (mPos_.y).tointeger();
-        changed = mVoxX_ != voxX || mVoxY_ != voxY;
+        local voxY = (mPos_.z).tointeger();
+        changed = ((mVoxX_ != voxX) || (mVoxY_ != voxY));
         mVoxX_ = voxX;
         mVoxY_ = voxY;
         return changed;
