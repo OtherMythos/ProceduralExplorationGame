@@ -733,7 +733,7 @@ enum WorldMousePressContexts{
         if(mPlayerEntry_ == null) return;
         local component = mEntityManager_.getComponent(mPlayerEntry_.getEntity(), EntityComponents.HEALTH);
         component.mHealth = data.health;
-        mPlayerEntry_.notifyNewHealth(data.health, data.percentage, -1);
+        mPlayerEntry_.notifyNewHealth(data.health, data.percentage, data.change);
     }
     function playerEquipChanged(data){
         printf("Player equip changed '%s'", data.items.tostring());
