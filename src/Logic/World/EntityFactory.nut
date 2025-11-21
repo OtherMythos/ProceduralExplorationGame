@@ -4,6 +4,8 @@
     mConstructorWorld_ = null;
     mMobScale_ = Vec3(0.2, 0.2, 0.2)
 
+    COLLISION_DETECTION_RADIUS = 1;
+
     constructor(constructorWorld, parentSceneNode, characterGenerator){
         mConstructorWorld_ = constructorWorld;
         mBaseSceneNode_ = parentSceneNode;
@@ -163,6 +165,11 @@
         return entry;
     }
 
+    function checkEnemyCollisionPlacement(x, y){
+        local collisionWorld = mConstructorWorld_.getCollisionDetectionWorld();
+        return !(collisionWorld.checkCollisionPoint(x, y, COLLISION_DETECTION_RADIUS));
+    }
+
     function constructEnemyBase_(enemyType, pos, explorationScreen){
         local enemyDef = ::Enemies[enemyType];
         local enemyStats = enemyDef.getStats();
@@ -218,8 +225,8 @@
 
         manager.assignComponent(en, EntityComponents.LIFETIME, ::EntityManager.Components[EntityComponents.LIFETIME](3000 + _random.randInt(100)));
 
-        local collisionRadius = 1;
-        manager.assignComponent(en, EntityComponents.COLLISION_DETECTION, ::EntityManager.Components[EntityComponents.COLLISION_DETECTION](collisionRadius));
+        //local collisionRadius = 1;
+        manager.assignComponent(en, EntityComponents.COLLISION_DETECTION, ::EntityManager.Components[EntityComponents.COLLISION_DETECTION](COLLISION_DETECTION_RADIUS));
 
         /*
         local worldMask = (0x1 << mConstructorWorld_.getWorldId());

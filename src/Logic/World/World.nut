@@ -1491,6 +1491,17 @@ enum WorldMousePressContexts{
         mActiveEnemies_.rawset(enemyEntry.mEntity_, enemyEntry);
         return enemyEntry;
     }
+    function createEnemyCheckCollision(enemyType, pos){
+        local placementValid = checkEnemyCollisionPlacement(pos);
+        if(!placementValid){
+            return null;
+        }
+        return createEnemy(enemyType, pos);
+    }
+    function checkEnemyCollisionPlacement(pos){
+        local placed = mEntityFactory_.checkEnemyCollisionPlacement(pos.x, pos.z);
+        return placed;
+    }
     function appearEnemy(pos){
         local regionId = ::MapGenHelpers.getRegionForData(mMapData_, pos);
         local regionData = mMapData_.regionData[regionId];
@@ -1499,13 +1510,21 @@ enum WorldMousePressContexts{
         if(spawnable.len() <= 0) return;
         local idx = _random.randIndex(spawnable);
         local targetEnemy = spawnable[idx];
-        createEnemy(targetEnemy, pos);
+
+        createEnemyCheckCollision(targetEnemy, pos);
     }
     function createEnemyFromPlayer(enemyType, distance=20){
-        local target = getPlayerPosition().copy();
-        target += _random.randVec3() * distance;
-        if(target == null) return;
-        createEnemy(enemyType, target);
+        //Try a few times incase the enemy collides with something, causing it to be cancelled.
+        for(local i = 0; i < 20; i++){
+            local target = getPlayerPosition().copy();
+            target += _random.randVec3() * distance;
+            if(target == null) return;
+
+            local enemy = createEnemyCheckCollision(enemyType, target);
+            if(enemy != null){
+                break;
+            }
+        }
     }
     /*
     function appearEnemy(enemyType){
@@ -1815,7 +1834,7 @@ enum WorldMousePressContexts{
                     local offset = ((_random.randVec3()-0.5) * 16);
                     offset.y = 0;
                     playerPos += offset;
-                    createEnemy(targetData.mSecondaryType, playerPos);
+                    createEnemyCheckCollision(targetData.mSecondaryType, playerPos);
                 }
             }
         }
