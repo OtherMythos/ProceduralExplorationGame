@@ -1933,7 +1933,7 @@ enum WorldMousePressContexts{
         */
 
         if(mMouseContext_.getCurrentState() != WorldMousePressContexts.ORIENTING_CAMERA && mMouseContext_.getCurrentState() != WorldMousePressContexts.ORIENTING_CAMERA_WITH_MOVEMENT) return;
-        print("orientating");
+        //print("orientating");
 
         local mouseDelta = processMouseDelta();
         if(mouseDelta != null){
@@ -1953,7 +1953,7 @@ enum WorldMousePressContexts{
             if(mPrevMouseX_ != null && mPrevMouseY_ != null){
                 local deltaX = mouseX - mPrevMouseX_;
                 local deltaY = mouseY - mPrevMouseY_;
-                printf("delta x: %f y: %f", deltaX, deltaY);
+                //printf("delta x: %f y: %f", deltaX, deltaY);
                 retVal = Vec2(deltaX, deltaY);
                 //processCameraMove(deltaX*-0.2, deltaY*-0.2);
             }

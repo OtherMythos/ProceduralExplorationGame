@@ -31,7 +31,7 @@
             setColour(ColourValue(1, 0, 0, 1.0));
         }
         function setCentre(x, y){
-            printf("x: %f y: %f", x, y);
+            //printf("x: %f y: %f", x, y);
             local intendedPos = Vec2(x.tofloat() / mMapData_.width.tofloat(), y.tofloat() / mMapData_.height.tofloat());
             intendedPos *= mParent_.getSize();
             mPanel_.setCentre(intendedPos.x / mMapScale_, intendedPos.y / mMapScale_);
