@@ -230,7 +230,10 @@ local commonScale = Vec3(1.4, 1.4, 1.0);
         else if(itemType == ItemType.CONSUMABLE){
             local itemStats = item.toStats();
             assert(itemStats.mRestorativeHealth != 0);
-            ::Base.mPlayerStats.alterPlayerHealth(itemStats.mRestorativeHealth);
+            //::Base.mPlayerStats.alterPlayerHealth(itemStats.mRestorativeHealth);
+            local world = ::Base.mExplorationLogic.mCurrentWorld_;
+            local entityManager = world.getEntityManager();
+            ::_applyHealthChangeOther(entityManager, world.getPlayerEID(), itemStats.mRestorativeHealth);
         }
         else if(itemType == ItemType.MONEY){
             local data = item.getData();
