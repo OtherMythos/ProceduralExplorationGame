@@ -1,7 +1,7 @@
 ::GuiWidgets.GameplayProgressBar <- class{
-    BACKGROUND_COLOUR = ColourValue(0.05, 0.05, 0.05, 0.8);
-    BAR_LEVEL_1 = ColourValue(0.9, 0.1, 0.1, 1.0);
-    BAR_LEVEL_2 = ColourValue(0.8, 0.6, 0.2, 1.0);
+    BACKGROUND_COLOUR = ColourValue(0.05, 0.05, 0.05, 0.7);
+    BAR_LEVEL_1 = ColourValue(0.9, 0.1, 0.1, 0.8);
+    BAR_LEVEL_2 = ColourValue(0.8, 0.6, 0.2, 0.8);
 
     mParentWin_ = null;
 
@@ -27,7 +27,7 @@
         mParentContainer_.setClickable(false);
         mChildBar_.setClickable(false);
 
-        setPercentage(0.0);
+        //setPercentage(0.0);
     }
 
     function getDatablock(level){
@@ -54,9 +54,13 @@
     }
 
     function setCentre(x, y){
-        mParentContainer_.setCentre(x, y);
-        mPos_ = mParentContainer_.getPosition();
-        mChildBar_.setPosition(mPos_);
+        //mParentContainer_.setCentre(x, y);
+        //mPos_ = mParentContainer_.getPosition();
+        //mChildBar_.setPosition(mPos_);
+
+        local halfSize = mSize_.x / 2;
+        mParentContainer_.setPosition(x + mChildBar_.getSize().x - halfSize, y);
+        mChildBar_.setPosition(x - halfSize, y);
     }
 
     function setSize(x, y){
@@ -65,7 +69,8 @@
     }
 
     function processSize_(){
-        mParentContainer_.setSize(mSize_);
+        local xSize = mSize_.x * (1.0 - mPercentage_);
+        mParentContainer_.setSize(xSize, mSize_.y);
         mChildBar_.setSize(mSize_.x * mPercentage_, mSize_.y);
     }
 
