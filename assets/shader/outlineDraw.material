@@ -15,6 +15,7 @@ fragment_program Postprocess/outlineDraw_ps_GLSL glsl
 fragment_program Postprocess/outlineDraw_ps_VK glslvk
 {
 	source outlineDraw_ps.glsl
+	root_layout high
 }
 
 fragment_program Postprocess/outlineDraw_ps_Metal metal
