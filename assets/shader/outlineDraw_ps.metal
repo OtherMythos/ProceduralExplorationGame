@@ -80,7 +80,7 @@ fragment float4 main_metal
 
     float4 secondShadow = OGRE_Sample( ShadowSecond, ShadowSecondSampler, inPs.uv0);
 
-    if(secondShadow.x){
+    if(secondShadow.x > 0.1){
         float4 firstShadow = OGRE_Sample( ShadowFirst, ShadowFirstSampler, inPs.uv0);
         if(firstShadow.x < 0.1){
             startValue = mix(startValue, float4(0, 0, 0, 1), 0.5);
