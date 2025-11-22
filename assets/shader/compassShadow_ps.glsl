@@ -82,7 +82,8 @@ void main()
     float4 center = OGRE_Sample(Image, samplerState, inPs.uv0);
 
     // If center pixel is white, just draw it
-    if (center.a > 0.5 && all(center.rgb > float3(0.9)))
+    bool isWhite = (center.x > 0.9) && (center.y > 0.9) && (center.z > 0.9);
+    if (center.w > 0.5 && isWhite)
     {
         returnFinalColour(center);
     }
