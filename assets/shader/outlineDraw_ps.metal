@@ -62,9 +62,13 @@ fragment float4 main_metal
     texture2d<float> Image [[texture(0)]],
     texture2d<float> Depth [[texture(1)]],
     texture2d<float> Wind [[texture(2)]],
+    texture2d<float> ShadowFirst [[texture(3)]],
+    texture2d<float> ShadowSecond [[texture(4)]],
     sampler samplerState [[sampler(0)]],
     sampler DepthSampler [[sampler(1)]],
-    sampler WindSampler [[sampler(2)]]
+    sampler WindSampler [[sampler(2)]],
+    sampler ShadowFirstSampler [[sampler(3)]],
+    sampler ShadowSecondSampler [[sampler(4)]]
 )
 {
 
@@ -73,6 +77,15 @@ fragment float4 main_metal
     float4 WindValue = OGRE_Sample( Wind, WindSampler, inPs.uv0);
 
     startValue = mix(startValue, float4(1, 1, 1, 1), 0.5 * WindValue.x);
+
+    float4 secondShadow = OGRE_Sample( ShadowSecond, ShadowSecondSampler, inPs.uv0);
+
+    if(secondShadow.x){
+        float4 firstShadow = OGRE_Sample( ShadowFirst, ShadowFirstSampler, inPs.uv0);
+        if(firstShadow.x < 0.1){
+            startValue = mix(startValue, float4(0, 0, 0, 1), 0.5);
+        }
+    }
 
     if(Center.x == 0){
         returnFinalColour(startValue);

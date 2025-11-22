@@ -64,7 +64,7 @@
         manager.assignComponent(en, EntityComponents.DATABLOCK, ::EntityManager.Components[EntityComponents.DATABLOCK](clonedBlock));
 
         local playerNode = mBaseSceneNode_.createChildSceneNode();
-        local playerModel = mCharacterGenerator_.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, RENDER_QUEUE_EXPLORATION, 0, clonedBlock);
+        local playerModel = mCharacterGenerator_.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, RENDER_QUEUE_EXPLORATION_SHADOW_VISIBILITY, 0, clonedBlock);
         playerNode.setScale(0.5, 0.5, 0.5);
         //_component.sceneNode.add(en, playerNode);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](playerNode));
@@ -125,7 +125,7 @@
 
         local enemyNode = mBaseSceneNode_.createChildSceneNode();
         local mesh = _gameCore.createVoxMeshItem("beeHive.voxMesh");
-        mesh.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
+        mesh.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_SHADOW_VISIBILITY);
         enemyNode.attachObject(mesh);
         enemyNode.setScale(0.15, 0.15, 0.15);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](enemyNode, true));
@@ -186,7 +186,7 @@
         local enemyNode = mBaseSceneNode_.createChildSceneNode();
 
         local modelType = enemyDef.getModelType();
-        local characterModel = mCharacterGenerator_.createCharacterModel(enemyNode, {"type": modelType}, RENDER_QUEUE_EXPLORATION, 1 << 4, clonedBlock);
+        local characterModel = mCharacterGenerator_.createCharacterModel(enemyNode, {"type": modelType}, RENDER_QUEUE_EXPLORATION_SHADOW_VISIBILITY, 1 << 4, clonedBlock);
 
         entry.setTargetCollisionWorld(_COLLISION_PLAYER);
 

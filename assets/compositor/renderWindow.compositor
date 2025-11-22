@@ -31,9 +31,11 @@ compositor_node renderMainGameplayNode
     in 0 renderTexture
 
     //Note: These width and height values will be changed later by code to match the device screen size
-    texture sceneRenderDecorations    1920 1080 PFG_RGBA32_FLOAT depth_pool 2
-    texture finalSceneRender          1920 1080 PFG_RGBA32_FLOAT depth_pool 2
-    texture windTexture               1920 1080 PFG_R32_FLOAT
+    texture sceneRenderDecorations         1920 1080 PFG_RGBA32_FLOAT depth_pool 2
+    texture finalSceneRender               1920 1080 PFG_RGBA32_FLOAT depth_pool 2
+    texture sceneRenderEnemyShadowsFirst   1920 1080 PFG_R32_FLOAT depth_pool 2
+    texture sceneRenderEnemyShadowsSecond  1920 1080 PFG_R32_FLOAT
+    texture windTexture                    1920 1080 PFG_R32_FLOAT
 
     //Re-use the texture to render the invisible terrain to.
     target sceneRenderDecorations
@@ -135,6 +137,50 @@ compositor_node renderMainGameplayNode
         }
     }
 
+    target sceneRenderEnemyShadowsFirst
+    {
+        pass render_scene
+        {
+            load {
+                colour clear
+            }
+            store
+            {
+                colour    store
+                depth    dont_care
+                stencil    dont_care
+            }
+
+            rq_first 14
+            rq_last 15
+            camera explorationCamera
+
+            identifier 14
+        }
+    }
+
+    target sceneRenderEnemyShadowsSecond
+    {
+        pass render_scene
+        {
+            load
+            {
+                all clear
+                clear_colour 0 0 0 0
+            }
+            store
+            {
+                all store_or_resolve
+            }
+
+            rq_first 14
+            rq_last 15
+            camera explorationCamera
+
+            identifier 14
+        }
+    }
+
     //Render just decorations (trees, houses, enemies) for the line drawing algorithm
     target sceneRenderDecorations
     {
@@ -155,7 +201,7 @@ compositor_node renderMainGameplayNode
             identifier 12
             camera explorationCamera
 
-            rq_first 15
+            rq_first 14
             rq_last 16
         }
         //Render particles
@@ -202,6 +248,8 @@ compositor_node renderMainGameplayNode
             input 0 finalSceneRender
             input 1 sceneRenderDecorations
             input 2 windTexture
+            input 3 sceneRenderEnemyShadowsFirst
+            input 4 sceneRenderEnemyShadowsSecond
         }
     }
 

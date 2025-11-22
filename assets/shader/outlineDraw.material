@@ -7,6 +7,8 @@ fragment_program Postprocess/outlineDraw_ps_GLSL glsl
 		param_named Image int 0
 		param_named Depth int 1
 		param_named Wind int 2
+		param_named ShadowFirst int 3
+		param_named ShadowSecond int 4
 	}
 }
 
@@ -59,6 +61,16 @@ material Postprocess/OutlineDraw
 				filtering trilinear
 			}
 			texture_unit Wind
+			{
+				tex_address_mode clamp
+				filtering trilinear
+			}
+			texture_unit ShadowFirst
+			{
+				tex_address_mode clamp
+				filtering trilinear
+			}
+			texture_unit ShadowSecond
 			{
 				tex_address_mode clamp
 				filtering trilinear

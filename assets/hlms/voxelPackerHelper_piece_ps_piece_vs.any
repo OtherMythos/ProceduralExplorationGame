@@ -64,6 +64,10 @@
 				outPs_colour0.xyz = mix(fogColour, outPs_colour0.xyz, inPs.fog);
 			@end
 		@end
+
+		@property(renderShadowVisibility)
+			outPs_colour0.xyz = float3(1, 1, 1);
+		@end
 	@end
 
 	@property( renderSceneDecorations )

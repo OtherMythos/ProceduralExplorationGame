@@ -60,10 +60,14 @@ in block
 vulkan_layout( ogre_t0 ) uniform texture2D Image;
 vulkan_layout( ogre_t1 ) uniform texture2D Depth;
 vulkan_layout( ogre_t2 ) uniform texture2D Wind;
+vulkan_layout( ogre_t3 ) uniform texture2D ShadowFirst;
+vulkan_layout( ogre_t4 ) uniform texture2D ShadowSecond;
 
 vulkan( layout( ogre_s0 ) uniform sampler samplerState; )
 vulkan( layout( ogre_s1 ) uniform sampler DepthSampler; )
 vulkan( layout( ogre_s2 ) uniform sampler WindSampler; )
+vulkan( layout( ogre_s3 ) uniform sampler ShadowFirstSampler; )
+vulkan( layout( ogre_s4 ) uniform sampler ShadowSecondSampler; )
 
 float calculateLineStrengthForDistance(float distance){
 
@@ -111,6 +115,15 @@ void main()
     float4 WindValue = OGRE_Sample( Wind, WindSampler, inPs.uv0);
 
     startValue = mix(startValue, float4(1, 1, 1, 1), 0.5 * WindValue.x);
+
+    float4 secondShadow = OGRE_Sample( ShadowSecond, ShadowSecondSampler, inPs.uv0);
+
+    if(secondShadow.x){
+        float4 firstShadow = OGRE_Sample( ShadowFirst, ShadowFirstSampler, inPs.uv0);
+        if(firstShadow.x < 0.1){
+            startValue = mix(startValue, float4(0, 0, 0, 1), 0.5);
+        }
+    }
 
     if(Center.x == 0){
         returnFinalColour(startValue);
