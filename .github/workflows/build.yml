@@ -762,10 +762,34 @@ jobs:
         rendersystem: [OpenGL, Vulkan]
 
     steps:
-      - name: Setup OpenGL
+      - name: Setup Dependencies (OpenGL or Vulkan)
         run: |
           sudo apt update
-          sudo apt install mesa-utils xvfb fuse libfuse2
+
+          if [[ "${{ matrix.rendersystem }}" == "OpenGL" ]]; then
+            echo "Setting up OpenGL environment…"
+            sudo apt install -y mesa-utils xvfb fuse libfuse2
+
+          elif [[ "${{ matrix.rendersystem }}" == "Vulkan" ]]; then
+            sudo apt install -y \
+              mesa-vulkan-drivers \
+              libvulkan1 \
+              vulkan-validationlayers \
+              vulkan-tools \
+              libx11-6 \
+              libxcb1 \
+              libxrandr2 \
+              xvfb \
+              fuse libfuse2
+
+            echo "Starting Xvfb for Vulkan WSI..."
+            Xvfb :99 -screen 0 1280x720x24 &
+            echo "export DISPLAY=:99" >> $GITHUB_ENV
+
+            echo "Checking Vulkan capabilities…"
+            vulkaninfo | grep -E "xcb|xlib|surface" || true
+          fi
+
       - name: Clone Build
         uses: dawidd6/action-download-artifact@v3
         with:
@@ -786,6 +810,8 @@ jobs:
         with:
           name: distribution-${{ needs.build.outputs.sha_short }}
       - name: Run tests
+        env:
+          DISPLAY: ${{ env.DISPLAY }}
         run: |
           cp -r checkout/test .
           chmod +x ./av-x86_64.AppImage
@@ -794,9 +820,7 @@ jobs:
       - name: Check results
         if: always()
         run: |
-          pwd
           cp /home/runner/work/results.xml .
-          ls
           cat results.xml
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
