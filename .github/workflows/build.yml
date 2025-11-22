@@ -781,13 +781,6 @@ jobs:
               libxrandr2 \
               xvfb \
               fuse libfuse2
-
-            echo "Starting Xvfb for Vulkan WSI..."
-            Xvfb :99 -screen 0 1280x720x24 &
-            echo "export DISPLAY=:99" >> $GITHUB_ENV
-
-            echo "Checking Vulkan capabilities…"
-            vulkaninfo | grep -E "xcb|xlib|surface" || true
           fi
 
       - name: Clone Build
