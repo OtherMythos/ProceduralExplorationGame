@@ -43,7 +43,7 @@ material Postprocess/OutlineDraw
 
 			cull_hardware none
 
-			vertex_program_ref Ogre/Compositor/Quad_vs
+			vertex_program_ref Ogre/Compositor/Quad_HIGH_vs
 			{
 			}
 

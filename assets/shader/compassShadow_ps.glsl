@@ -54,9 +54,6 @@
 vulkan_layout( location = 0 )
 out vec4 fragColour;
 
-vulkan( layout( ogre_P0 ) uniform params { )
-vulkan( }; )
-
 vulkan_layout( location = 0 )
 in block
 {
