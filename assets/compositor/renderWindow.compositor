@@ -113,30 +113,9 @@ compositor_node renderMainGameplayNode
             rq_first 10
             rq_last 15
         }
-        //Render water
-        pass render_scene
-        {
-            rq_first 18
-            rq_last 19
-
-            camera explorationCamera
-            shadows default_simpleShadowNode
-        }
-        //Render effects without lines
-        pass render_scene
-        {
-            rq_first 16
-            rq_last 17
-            camera explorationCamera
-        }
-
-        //Render the sky
-        pass render_quad
-        {
-            material Postprocess/FillColour
-        }
     }
 
+    //Ensure the enemy obscure shadows are rendered before the water so you can't see the shadow through the water.
     target sceneRenderEnemyShadowsFirst
     {
         pass render_scene
@@ -178,6 +157,31 @@ compositor_node renderMainGameplayNode
             camera explorationCamera
 
             identifier 14
+        }
+    }
+
+    target finalSceneRender{
+        //Render water
+        pass render_scene
+        {
+            rq_first 18
+            rq_last 19
+
+            shadows default_simpleShadowNode
+            camera explorationCamera
+        }
+        //Render effects without lines
+        pass render_scene
+        {
+            rq_first 16
+            rq_last 17
+            camera explorationCamera
+        }
+
+        //Render the sky
+        pass render_quad
+        {
+            material Postprocess/FillColour
         }
     }
 
