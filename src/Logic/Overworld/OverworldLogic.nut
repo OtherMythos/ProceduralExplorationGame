@@ -162,6 +162,7 @@ enum OverworldStates{
     function shutdown_(){
         mParentSceneNode_.destroyNodeAndChildren();
         mWorld_.shutdown();
+        shutdownCompositor_()
 
         print("Shutting down overworld");
     }

@@ -564,6 +564,7 @@ enum GameplayComplexMenuBusEvents{
     function shutdown(){
         base.shutdown();
 
+        mMapPanel_.setDatablock("simpleGrey");
         ::OverworldLogic.requestShutdown();
     }
 

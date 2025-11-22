@@ -180,6 +180,7 @@
         }
         mScreenData_.data.notifyEvent(GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_FINISHED, null);
         base.shutdown();
+        mMapMainScreenPanel_.setDatablock("simpleGrey");
         ::OverworldLogic.requestShutdown();
         ::Base.applyCompositorModifications()
 
