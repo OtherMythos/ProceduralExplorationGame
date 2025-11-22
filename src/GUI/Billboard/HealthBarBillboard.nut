@@ -9,7 +9,7 @@
         mMaxHealth_ = totalHealth;
         base.constructor(parent, mask);
         local panel = ::GuiWidgets.GameplayProgressBar(parent);
-        panel.setBorder(0);
+        //panel.setBorder(0);
         //panel.setHidden(false);
         //local width = 2 + ((totalHealth * totalHealth) *0.002);
         local width = 2 + (totalHealth / 2);
