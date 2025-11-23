@@ -94,7 +94,7 @@ enum InventoryBusEvents{
         mActive_ = false;
 
         constructor(overlayWindow){
-            mHoverWin_ = overlayWindow.createWindow("InventoryOverlayWindow");
+            mHoverWin_ = overlayWindow.createWindow("InventoryHoverInfoWindow");
             mHoverWin_.setSize(400, 200);
             mHoverWin_.setHidden(true);
             mHoverWin_.setPosition(0, 0);
@@ -597,8 +597,12 @@ enum InventoryBusEvents{
         local size = Vec2(::ScreenManager.calculateRatio(200), targetGrid.getSize().y);
         local posForIdx = targetGrid.getPositionForIdx(idx);
         if(mobile){
-            size = ::drawable * 0.75;
-            pos = ::drawable / 2 - size / 2;
+            //size = ::drawable * 0.75;
+            size = Vec2();
+            //pos = ::drawable / 2 - size / 2;
+            local sizeForIdx = targetGrid.getSizeForIdx(idx);
+            pos = posForIdx.copy();
+            pos.x += sizeForIdx.x;
         }else{
             pos = Vec2(posForIdx.x + ::ScreenManager.calculateRatio(calculateGridSize()), posForIdx.y);
         }

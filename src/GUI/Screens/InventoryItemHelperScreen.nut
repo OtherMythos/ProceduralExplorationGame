@@ -35,7 +35,6 @@ enum InventoryItemHelperScreenFunctions{
         mWindow_.setSize(800, 800);
         mWindow_.setPosition(data.pos);
         mWindow_.setClipBorders(10, 10, 10, 10);
-        mWindow_.setZOrder(61);
 
         local layoutLine = _gui.createLayoutLine();
 

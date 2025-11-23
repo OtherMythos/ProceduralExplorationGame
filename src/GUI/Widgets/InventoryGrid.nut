@@ -315,6 +315,9 @@
     function getPositionForIdx(idx){
         return mWidgets_[idx].getDerivedPosition();
     }
+    function getSizeForIdx(idx){
+        return mWidgets_[idx].getSize();
+    }
     function getWidgetSize(){
         if(mBackgrounds_.len() < 0){
             return ::Vec2_ZERO.copy();
