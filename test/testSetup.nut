@@ -306,14 +306,15 @@
     function iterateComparisonFunction(first, second){
         return second.tolower().find(first) != null;
     }
-    function iterateWindow_(win, checkString, comparisonFunc){
+    function iterateWindowForList_(win, checkString, comparisonFunc){
+        local retVal = [];
         for(local i = 0; i < win.getNumChildren(); i++){
             local child = win.getChildForIdx(i);
             local childType = child.getType();
             if(childType == _GUI_WIDGET_WINDOW){
                 local result = iterateWindow_(child, checkString, comparisonFunc);
                 if(result != null){
-                    return result;
+                    retVal.extend(result);
                 }
                 continue;
             }
@@ -326,12 +327,19 @@
                 childType == _GUI_WIDGET_SPINNER
             ){
                 if(comparisonFunc(checkString, child.getText())){
-                    return child;
+                    retVal.append(child);
                 }
             }
         }
 
-        return null;
+        return retVal;
+    }
+    function iterateWindow_(win, checkString, comparisonFunc){
+        local result = iterateWindowForList_(win, checkString, comparisonFunc);
+        if(result.len() <= 0){
+            return null;
+        }
+        return result[0];
     }
     function iterateWindowForDatablock_(win, checkString, comparisonFunc){
         for(local i = 0; i < win.getNumChildren(); i++){
@@ -393,6 +401,19 @@
 
         return foundWidget;
     }
+    function collectWidgetsForText(text){
+        local targetText = text.tolower();
+        local numWindows = _gui.getNumWindows();
+        local foundWidgets = [];
+        for(local i = 0; i < numWindows; i++){
+            local window = _gui.getWindowForIdx(i);
+            if(window.getQueryName() == "DebugConsole") continue;
+            local result = iterateWindowForList_(window, targetText, iterateComparisonFunction);
+            foundWidgets.extend(result);
+        }
+
+        return foundWidgets;
+    }
 
     function queryTextExists(text){
         if(getWidgetForText(text) == null){
@@ -422,9 +443,20 @@
         _gui.simulateMousePosition(targetButton.getDerivedCentre());
     }
 
-    function mousePressWidgetForText(text){
-        focusMouseToWidgetForText(text);
-        _gui.simulateMouseButton(_MB_LEFT, true);
+    function mousePressWidgetForText(text, targetIdx=null){
+        if(targetIdx == null){
+            focusMouseToWidgetForText(text);
+            _gui.simulateMouseButton(_MB_LEFT, true);
+        }else{
+            local widgets = collectWidgetsForText(text);
+            if(targetIdx < widgets.len()){
+                local targetWidget = widgets[targetIdx];
+                _gui.simulateMousePosition(targetWidget.getDerivedCentre());
+                _gui.simulateMouseButton(_MB_LEFT, true);
+            }else{
+                throw format("No widget found for text '%s' with id %i", text, targetIdx);
+            }
+        }
     }
 
     function mousePressWidgetForDatablock(text){
