@@ -179,8 +179,8 @@
             mScreenData_.data.deregisterCallback(mBusId_);
         }
         mScreenData_.data.notifyEvent(GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_FINISHED, null);
-        base.shutdown();
         mMapMainScreenPanel_.setDatablock("simpleGrey");
+        base.shutdown();
         ::OverworldLogic.requestShutdown();
         ::Base.applyCompositorModifications()
 
