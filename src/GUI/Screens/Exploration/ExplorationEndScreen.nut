@@ -196,14 +196,18 @@ local ObjAnim = class{
 
     mStateMachine_ = null;
 
-    buttonOptions = ["Explore again", "Return to menu"];
+    buttonOptions = [
+        //"Explore again",
+        "Return to menu"];
     buttonFunctions = [
+        /*
         function(widget, action){
             ::SaveManager.writeSaveAtPath("user://" + ::Base.mPlayerStats.getSaveSlot(), ::Base.mPlayerStats.getSaveData());
 
             ::Base.mExplorationLogic.resetExploration();
             ::ScreenManager.queueTransition(null, null, mLayerIdx);
         },
+        */
         function(widget, action){
             ::SaveManager.writeSaveAtPath("user://" + ::Base.mPlayerStats.getSaveSlot(), ::Base.mPlayerStats.getSaveData());
 
@@ -366,12 +370,18 @@ local ObjAnim = class{
     function wrapBulletText_(text){
         return "    • " + text;
     }
+    function getTimeDescription(minutes, seconds){
+        if(minutes <= 0){
+            return format("%i seconds", seconds);
+        }
+        return format("%i:%i minutes", minutes, seconds);
+    }
     function getTextForExploration(data){
         local outText = [];
 
         local minutes = (data.explorationTimeTaken / 60.0).tointeger();
         local seconds = (data.explorationTimeTaken % 60.0).tointeger();
-        outText.append(format("Exploration completed in %i:%i minutes.", minutes, seconds));
+        outText.append(format("Exploration completed in %s.", getTimeDescription(minutes, seconds)));
         outText.append(format(wrapBulletText_("Found %i places"), data.totalDiscoveredPlaces));
         outText.append(format(wrapBulletText_("Defeated %i enemies"), data.totalDefeated));
         outText.append(format(wrapBulletText_("Found %i EXP orbs"), data.foundEXPOrbs));
