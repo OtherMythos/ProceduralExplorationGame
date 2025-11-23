@@ -83,6 +83,8 @@
         current.shutdown();
         if(effectPrevStack) _queuePrevScreen(layerId, current.getScreenData());
 
+        mActiveScreens_[layerId] = null;
+
         return currentIdx;
     }
 
