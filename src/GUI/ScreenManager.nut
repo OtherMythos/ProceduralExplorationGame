@@ -76,7 +76,11 @@
 
     function _shutdownForLayer(layerId, effectPrevStack = false){
         local current = mActiveScreens_[layerId];
-        if(current == null) return null;
+        if(current == null){
+            if(effectPrevStack) _queuePrevScreen(layerId, null);
+            return null;
+        }
+        //Transitioning to null does not queue the correct prev screen.
         local currentIdx = current.getScreenData().id;
 
         print("Calling shutdown for layer " + layerId);
@@ -145,7 +149,7 @@
         }
         local screenData = target.top();
         target.pop();
-        print("returning data " + screenData.id);
+        print("Previous screen is " + (screenData == null ? null : screenData.id));
         _debugPrintStack(layerId);
         return screenData;
     }
@@ -156,14 +160,14 @@
         if(target.len() > MAX_PREV_SCREENS){
             target.remove(0);
         }
-        printf("Queuing screen %i for layer %i", screenData.id, layerId);
+        printf("Queuing screen %s for layer %i", (screenData == null ? "null" : screenData.id.tostring()), layerId);
         _debugPrintStack(layerId);
     }
 
     function _debugPrintStack(layerId){
         local target = mPreviousScreens_[layerId];
         foreach(c,i in target){
-            print(c.tostring() + ": " + i.id);
+            print(c.tostring() + ": " + (i == null ? "null" : i.id));
         }
     }
 
