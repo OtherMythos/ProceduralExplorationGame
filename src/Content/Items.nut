@@ -232,8 +232,12 @@ local commonScale = Vec3(1.4, 1.4, 1.0);
             assert(itemStats.mRestorativeHealth != 0);
             //::Base.mPlayerStats.alterPlayerHealth(itemStats.mRestorativeHealth);
             local world = ::Base.mExplorationLogic.mCurrentWorld_;
-            local entityManager = world.getEntityManager();
-            ::_applyHealthChangeOther(entityManager, world.getPlayerEID(), itemStats.mRestorativeHealth);
+            if(world == null){
+                ::Base.mPlayerStats.alterPlayerHealth(itemStats.mRestorativeHealth);
+            }else{
+                local entityManager = world.getEntityManager();
+                ::_applyHealthChangeOther(entityManager, world.getPlayerEID(), itemStats.mRestorativeHealth);
+            }
         }
         else if(itemType == ItemType.MONEY){
             local data = item.getData();

@@ -12,6 +12,26 @@ _tIntegration("MainMenuMobileInventory", "Test to check the inventory system wor
             ::_testHelper.mousePressWidgetForText("Inventory");
         },
         function(){
+            ::Base.mPlayerStats.setPlayerHealth(10);
+            ::Base.mPlayerStats.addToInventory(::Item(ItemId.APPLE));
+        },
+        function(){
+            local screen = ::ScreenManager.getScreenForLayer(0);
+            local inventoryWindow = screen.mTabWindows_[1];
+            local inventoryObj = inventoryWindow.mInventoryObj_;
+            local invPos = inventoryObj.mInventoryGrid_.getPositionForIdx(0);
+
+            _gui.simulateMousePosition(invPos);
+        },
+        function(){
+            ::_testHelper.mousePressWidgetForText("Use");
+        },
+        function(){
+            //The health should've changed because the apple was consumed.
+            local health = ::Base.mPlayerStats.getPlayerHealth();
+            _test.assertNotEqual(health, 10);
+        },
+        function(){
             ::Base.mPlayerStats.addToInventory(::Item(ItemId.APPLE));
         },
         function(){
