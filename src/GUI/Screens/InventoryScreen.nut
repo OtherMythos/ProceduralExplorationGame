@@ -82,6 +82,7 @@ enum InventoryBusEvents{
     mInventoryWidth = 5;
 
     mInventoryBus_ = null;
+    mBusCallbackId_ = null;
 
     HoverItemInfo = class{
         mHoverWin_ = null;
@@ -221,7 +222,7 @@ enum InventoryBusEvents{
         mInventory_ = mPlayerStats_.mInventory_;
 
         mInventoryBus_ = InventoryInfoBus();
-        mInventoryBus_.registerCallback(busCallback, this);
+        mBusCallbackId_ = mInventoryBus_.registerCallback(busCallback, this);
 
         local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
 
@@ -656,6 +657,7 @@ enum InventoryBusEvents{
     function shutdown(){
         _gui.destroy(mOverlayWindow_);
         //mMoneyCounter_.shutdown();
+        mInventoryBus_.deregisterCallback(mBusCallbackId_);
         if(mPlayerInspector_ != null){
             mPlayerInspector_.shutdown();
         }

@@ -68,3 +68,10 @@
     },
     ::_testHelper.STEPS_WAIT_FOR_MAP_GEN_COMPLETE
 ];
+
+::_testHelper.STEPS_WAIT_FOR_SPLASH_SCREEN <- function(){
+    local exists = ::_testHelper.queryWindow("OtherMythosSplashScreen");
+    if(exists){
+        ::_testHelper.repeatStep();
+    }
+};
