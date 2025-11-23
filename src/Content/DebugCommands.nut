@@ -76,7 +76,8 @@ variationSeed: %i";
         print(queryName);
         local pos = window.getPosition();
         local size = window.getSize();
-        output += format("%s - x:%i,y:%i - width:%i,height:%i - %s\n", queryName, pos.x, pos.y, size.x, size.y, window.getVisible() ? "visible" : "hidden");
+        local zOrder = window.getZOrder();
+        output += format("%s - x:%i,y:%i - width:%i,height:%i - Z:%i - %s\n", queryName, pos.x, pos.y, size.x, size.y, zOrder, window.getVisible() ? "visible" : "hidden");
     }
 
     return output;

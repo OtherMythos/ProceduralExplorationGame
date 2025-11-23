@@ -127,7 +127,7 @@
         screenObject.mLayerIdx = layerId;
         _gui.simulateGuiPrimary(false);
         screenObject.setup(screenData.data);
-        screenObject.setZOrder(mScreensZOrder + layerId + 1);
+        screenObject.setZOrder(mScreensZOrder + (layerId * 5) + 1);
         if(!screenObject.mCustomPosition_) screenObject.setPositionCentre(_window.getWidth()/2, _window.getHeight()/2);
 
         _event.transmit(Event.SCREEN_CHANGED, {"old": oldId, "new": screenId});
@@ -154,7 +154,7 @@
         if(target.len() > MAX_PREV_SCREENS){
             target.remove(0);
         }
-        print(screenData.id);
+        printf("Queuing screen %i for layer %i", screenData.id, layerId);
         _debugPrintStack(layerId);
     }
 
