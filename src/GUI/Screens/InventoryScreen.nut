@@ -594,15 +594,15 @@ enum InventoryBusEvents{
 
         local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
         local pos = null;
+        local gridItemSize = targetGrid.getSizeForIdx(idx);
         local size = Vec2(::ScreenManager.calculateRatio(200), targetGrid.getSize().y);
         local posForIdx = targetGrid.getPositionForIdx(idx);
         if(mobile){
             //size = ::drawable * 0.75;
             size = Vec2();
             //pos = ::drawable / 2 - size / 2;
-            local sizeForIdx = targetGrid.getSizeForIdx(idx);
             pos = posForIdx.copy();
-            pos.x += sizeForIdx.x;
+            pos.x += gridItemSize.x;
         }else{
             pos = Vec2(posForIdx.x + ::ScreenManager.calculateRatio(calculateGridSize()), posForIdx.y);
         }
@@ -610,9 +610,11 @@ enum InventoryBusEvents{
         local data = {
             "pos": pos,
             "size": size,
+            "gridItemPos": posForIdx,
+            "gridItemSize": gridItemSize,
             "item": selectedItem,
             "idx": idx,
-            "gridType": inventoryData.gridType
+            "gridType": inventoryData.gridType,
             "bus": mInventoryBus_,
             "secondaryGrid": mUseSecondaryGrid_
         };

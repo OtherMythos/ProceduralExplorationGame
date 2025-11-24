@@ -34,7 +34,7 @@ enum InventoryItemHelperScreenFunctions{
         mWindow_ = _gui.createWindow("InventoryItemHelperScreen");
         //Start it quite big so that labels or buttons expand as expected.
         mWindow_.setSize(800, 800);
-        mWindow_.setPosition(data.pos);
+        //mWindow_.setPosition(data.pos);
         mWindow_.setClipBorders(10, 10, 10, 10);
 
         local layoutLine = _gui.createLayoutLine();
@@ -59,10 +59,40 @@ enum InventoryItemHelperScreenFunctions{
 
         layoutLine.layout();
 
-        local childrenSize = mWindow_.calculateChildrenSize();
-        mWindow_.setSize(childrenSize.x, childrenSize.y >= data.size.y ? childrenSize.y : data.size.y);
+        local windowSize = mWindow_.calculateChildrenSize();
+        //mWindow_.setSize(childrenSize.x, childrenSize.y >= data.size.y ? childrenSize.y : data.size.y);
+        mWindow_.setSize(windowSize);
+
+        local targetPos = data.gridItemPos.copy();
+        targetPos.x += data.gridItemSize.x;
+        //Check if the window is now over the end of the screen.
+        local winPos = determinePositionForScreen_(targetPos, windowSize, data);
+        mWindow_.setPosition(winPos);
 
         mData_.bus.notifyEvent(InventoryBusEvents.ITEM_HELPER_SCREEN_BEGAN, null);
+    }
+
+    function determinePositionForScreen_(targetPos, windowSize, data){
+        local windowBottomRight = targetPos + windowSize;
+        local newPos = targetPos.copy();
+
+        local repositionX = (windowBottomRight.x >= _window.getWidth());
+        local repositionY = (windowBottomRight.y >= _window.getHeight());
+        if(repositionX){
+            local newX = data.gridItemPos.x - windowSize.x;
+            newPos.x = newX;
+        }
+        if(repositionY){
+            local newY = data.gridItemPos.y - windowSize.y;
+            newPos.y = newY;
+        }
+
+        if(repositionX && repositionY){
+            newPos.x += data.gridItemSize.x;
+        }else if(repositionY){
+            newPos.x -= data.gridItemSize.x;
+        }
+        return newPos;
     }
 
     function shutdown(){
