@@ -648,7 +648,8 @@ enum InventoryBusEvents{
     function setHoverMenuToItem(item){
         //TODO this might be getting called twice.
         //print(item);
-        if(item == null){
+        local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
+        if(item == null || mobile){
             mHoverInfo_.setVisible(false);
             return;
         }

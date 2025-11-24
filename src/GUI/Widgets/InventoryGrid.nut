@@ -244,12 +244,12 @@
             local derivedPos = widget.getDerivedPosition();
             mButtonCover_.setPosition(derivedPos);
             //buttonCover_.setPosition(0, 0);
-            mButtonCover_.setHidden(false);
+            setButtonCoverHidden(false);
             mBus_.notifyEvent(InventoryBusEvents.ITEM_HOVER_BEGAN, wrappedData);
             //local success = setToMenuItem(targetItemIndex);
             //if(!success) mItemHovered_ = false
         }else if(action == _GUI_ACTION_CANCEL){ //hover ended
-            mButtonCover_.setHidden(true);
+            setButtonCoverHidden(true);
             mBus_.notifyEvent(InventoryBusEvents.ITEM_HOVER_ENDED, wrappedData);
         }else if(action == _GUI_ACTION_PRESSED){ //Pressed
             /*
@@ -261,7 +261,7 @@
                 this.actionMenu_.show(true);
             }
             */
-            mButtonCover_.setHidden(true);
+            setButtonCoverHidden(true);
             mBus_.notifyEvent(InventoryBusEvents.ITEM_SELECTED, wrappedData);
         }
 
@@ -270,6 +270,14 @@
 
         //mHoverInfo_.setVisible(mItemHovered_);
         //mButtonCover_.setVisible(mItemHovered_);
+    }
+
+    function setButtonCoverHidden(hidden){
+        local target = hidden;
+        if(::Base.getTargetInterface() == TargetInterface.MOBILE){
+            target = true;
+        }
+        mButtonCover_.setHidden(target);
     }
 
     function setToMenuItem(idx){
