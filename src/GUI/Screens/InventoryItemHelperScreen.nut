@@ -17,6 +17,8 @@ enum InventoryItemHelperScreenFunctions{
 
     mData_ = null;
 
+    mPanelContainerWindow_ = null;
+
     mButtonFunctions_ = array(InventoryItemHelperScreenFunctions.MAX);
 
     function setup(data){
@@ -70,6 +72,36 @@ enum InventoryItemHelperScreenFunctions{
         mWindow_.setPosition(winPos);
 
         mData_.bus.notifyEvent(InventoryBusEvents.ITEM_HELPER_SCREEN_BEGAN, null);
+
+        createIconPanel(mData_.item);
+    }
+
+    function setZOrder(idx){
+        base.setZOrder(idx);
+        mPanelContainerWindow_.setZOrder(idx);
+    }
+
+    function createIconPanel(item){
+        local panelContainerWindow = _gui.createWindow("InventoryItemHelperScreenPanelContainer");
+        panelContainerWindow.setClipBorders(0, 0, 0, 0);
+        panelContainerWindow.setVisualsEnabled(false);
+
+        local panelSize = mData_.gridItemSize;
+        local gridPadding = panelSize * 0.125;
+        local iconSize = panelSize * 0.75;
+
+        local background = panelContainerWindow.createPanel();
+        background.setSize(panelSize);
+        background.setSkin("inventory_slot");
+
+        local iconPanel = panelContainerWindow.createPanel();
+        iconPanel.setSize(panelSize * 0.75);
+        iconPanel.setPosition(gridPadding);
+        iconPanel.setSkin(item.getIcon());
+
+        panelContainerWindow.setSize(panelSize);
+        panelContainerWindow.setPosition(mData_.gridItemPos);
+        mPanelContainerWindow_ = panelContainerWindow;
     }
 
     function determinePositionForScreen_(targetPos, windowSize, data){
@@ -98,6 +130,7 @@ enum InventoryItemHelperScreenFunctions{
     function shutdown(){
         base.shutdown();
         mData_.bus.notifyEvent(InventoryBusEvents.ITEM_HELPER_SCREEN_ENDED, null);
+        _gui.destroy(mPanelContainerWindow_);
     }
 
     function getButtonOptionsForItem(item){
