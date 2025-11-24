@@ -406,6 +406,11 @@ enum GameplayComplexMenuBusEvents{
             "disableBackButton": true,
             "disableBackgroundClose": true
         });
+
+        mWindow_.sizeScrollToFit();
+        local maxScroll = mWindow_.getMaxScroll();
+        maxScroll.y += 50;
+        mWindow_.setMaxScroll(maxScroll);
     }
 
     function setZOrder(idx){

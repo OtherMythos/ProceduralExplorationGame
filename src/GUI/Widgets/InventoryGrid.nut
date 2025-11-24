@@ -74,11 +74,12 @@
     }
 
     function initialise(parentWin, gridSize, overlayWin, inventoryWidth, inventoryHeight){
-        mWindow_ = parentWin.createWindow("InventoryGrid");
-        mWindow_.setSkinPack("WindowSkinNoBorder");
-        mWindow_.setBreadthFirst(true);
-        mWindow_.setVisualsEnabled(false);
-        mWindow_.setClickable(false);
+        //mWindow_ = parentWin.createWindow("InventoryGrid");
+        //mWindow_.setSkinPack("WindowSkinNoBorder");
+        //mWindow_.setBreadthFirst(true);
+        //mWindow_.setVisualsEnabled(false);
+        //mWindow_.setClickable(false);
+        mWindow_ = parentWin;
 
         if(mInventoryType_ == InventoryGridType.INVENTORY_GRID || mInventoryType_ == InventoryGridType.INVENTORY_GRID_SECONDARY){
             mItemIcons_ = array(inventoryWidth * inventoryHeight);
@@ -99,20 +100,20 @@
         mButtonCover_.setSize(gridRatio, gridRatio);
         for(local y = 0; y < inventoryHeight; y++){
             for(local x = 0; x < inventoryWidth; x++){
-                local background = mWindow_.createPanel();
+                local background = parentWin.createPanel();
                 background.setSize(gridRatio, gridRatio);
                 background.setPosition(x * gridRatio, y * gridRatio);
                 background.setSkin("inventory_slot");
                 mBackgrounds_.append(background);
 
-                local iconPanel = mWindow_.createPanel();
+                local iconPanel = parentWin.createPanel();
                 iconPanel.setSize(iconSize, iconSize);
                 iconPanel.setPosition(x * gridRatio + gridPadding, y * gridRatio + gridPadding);
                 iconPanel.setSkin("item_none");
                 iconPanel.setVisible(false);
                 mItemIcons_[x + y * inventoryWidth] = iconPanel;
 
-                local item = mWindow_.createButton();
+                local item = parentWin.createButton();
                 item.setHidden(false);
                 //item.setSize(48, 48);
                 //item.setPosition(x * 64 + 8, y * 64 + 8);
@@ -289,12 +290,12 @@
     }
 
     function addToLayout(layout){
-        mLayout_ = layout;
-        mLayout_.addCell(mWindow_);
+        //mLayout_ = layout;
+        //mLayout_.addCell(mWindow_);
     }
 
     function notifyLayout(){
-        mResolvedPos_ = mWindow_.getDerivedPosition();
+        mResolvedPos_ = mBackgrounds_[0].getDerivedPosition();
     }
 
     function shutdown(){
@@ -306,22 +307,38 @@
     }
 
     function getSize(){
-        return mWindow_.getSize();
+        return calculateChildrenSize();
     }
     function getPosition(){
-        return mWindow_.getPosition();
+        return mBackgrounds_[0].getPosition();
     }
     function setPosition(pos){
-        mWindow_.setPosition(pos);
+        //mWindow_.setPosition(pos);
+        //TODO this could be improved.
+        foreach(i in mBackgrounds_){
+            i.setPosition(i.getPosition() + pos);
+        }
+        foreach(i in mWidgets_){
+            i.setPosition(i.getPosition() + pos);
+        }
+        foreach(i in mItemIcons_){
+            i.setPosition(i.getPosition() + pos);
+        }
     }
     function setSize(size){
-        mWindow_.setSize(size);
+        //assert(false);
+        //mWindow_.setSize(size);
     }
     function calculateChildrenSize(){
-        return mWindow_.calculateChildrenSize();
+        //return Vec2(100, 100);
+        //return mWindow_.calculateChildrenSize();
+        local panelSize = mBackgrounds_[0].getSize() / 2;
+        local ret = Vec2(mInventoryWidth_ * panelSize.x, mInventoryHeight_ * panelSize.y);
+        return ret;
     }
     function getPositionForIdx(idx){
-        return mWidgets_[idx].getDerivedPosition();
+        local currentScroll = mWindow_.getCurrentScroll();
+        return mWidgets_[idx].getDerivedPosition() - currentScroll;
     }
     function getSizeForIdx(idx){
         return mWidgets_[idx].getSize();

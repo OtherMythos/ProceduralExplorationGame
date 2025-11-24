@@ -295,6 +295,9 @@ enum InventoryBusEvents{
         //Add one for the equippables slot and another for general padding.
         local gridSize = calculateGridSize();
 
+            mPlayerInspector_ = ::GuiWidgets.InventoryPlayerInspector();
+            mPlayerInspector_.setup(mWindow_);
+
         local layoutHorizontal = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
         mInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID, mInventoryBus_, mHoverInfo_, buttonCover);
         local inventoryHeight = mInventory_.getInventorySize() / mInventoryWidth;
@@ -330,9 +333,8 @@ enum InventoryBusEvents{
         }
 
         //if(!mobile){
-            mPlayerInspector_ = ::GuiWidgets.InventoryPlayerInspector();
-            mPlayerInspector_.setup(mWindow_);
-            mPlayerInspector_.addToLayout(mobile ? layoutLine : layoutHorizontal);
+            //mPlayerInspector_.setPosition(mInventoryEquippedGrid_.calculateChildrenSize().x * 2, 0);
+            //mPlayerInspector_.addToLayout(mobile ? layoutLine : layoutHorizontal);
         //}
 
         layoutHorizontal.setMarginForAllCells(10, 0);
@@ -381,7 +383,7 @@ enum InventoryBusEvents{
         mInventoryEquippedGrid_.setPosition(mPlayerInspector_.getPosition());
         local widgetSize = mInventoryEquippedGrid_.getWidgetSize();
         //mInventoryEquippedGrid_.setSize(mInventoryEquippedGrid_.calculateChildrenSize());
-        mInventoryEquippedGrid_.setSize(::drawable);
+        //mInventoryEquippedGrid_.setSize(::drawable);
         //local rightPos = mPlayerInspector_.getModelExtentRight();
         //local leftPos = mPlayerInspector_.getModelExtentLeft();
         local leftPos = Vec2();
@@ -394,7 +396,7 @@ enum InventoryBusEvents{
             target.y += (i % 4) * widgetSize.y;
             mInventoryEquippedGrid_.setPositionForIdx(i, target);
         }
-        mInventoryEquippedGrid_.setSize(mInventoryEquippedGrid_.calculateChildrenSize());
+        //mInventoryEquippedGrid_.setSize(mInventoryEquippedGrid_.calculateChildrenSize());
     }
 
     function highlightPrevious(){

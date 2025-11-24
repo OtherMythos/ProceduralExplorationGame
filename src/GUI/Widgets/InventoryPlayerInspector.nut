@@ -137,6 +137,10 @@
         return mRenderPanel_.getSize();
     }
 
+    function setPosition(x, y){
+        mRenderPanel_.setPosition(x, y);
+    }
+
     function addToLayout(layout){
         layout.addCell(mRenderPanel_);
     }
