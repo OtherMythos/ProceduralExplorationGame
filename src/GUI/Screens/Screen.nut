@@ -81,6 +81,16 @@
         mBackgroundWindow_ = win;
     }
 
+    function createBackgroundCloseButton_(){
+        assert(mBackgroundWindow_ != null);
+        local backgroundCloseButton = mBackgroundWindow_.createButton();
+        backgroundCloseButton.setSize(mBackgroundWindow_.getSize());
+        backgroundCloseButton.setVisualsEnabled(false);
+        backgroundCloseButton.attachListenerForEvent(function(widget, action){
+            closeScreen();
+        }, _GUI_ACTION_PRESSED, this);
+    }
+
     function setZOrder(idx){
         if(mBackgroundWindow_) mBackgroundWindow_.setZOrder(idx-1);
         if(mWindow_ != null) mWindow_.setZOrder(idx);
@@ -101,6 +111,10 @@
         mWindow_ = null;
 
         recreate_();
+    }
+
+    function closeScreen(){
+        ::ScreenManager.transitionToScreen(null, null, mLayerIdx);
     }
 
     function recreate_(){

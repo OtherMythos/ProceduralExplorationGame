@@ -28,6 +28,7 @@ enum InventoryItemHelperScreenFunctions{
 
         //Create a window to block inputs for when the popup appears.
         createBackgroundScreen_();
+        createBackgroundCloseButton_();
         mBackgroundWindow_.setColour(ColourValue(1, 1, 1, 0.8));
 
         mWindow_ = _gui.createWindow("InventoryItemHelperScreen");
@@ -117,10 +118,6 @@ enum InventoryItemHelperScreenFunctions{
         buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.CANCEL]);
 
         return [buttonOptions, buttonFunctions];
-    }
-
-    function closeScreen(){
-        ::ScreenManager.transitionToScreen(null, null, mLayerIdx);
     }
 }
 
