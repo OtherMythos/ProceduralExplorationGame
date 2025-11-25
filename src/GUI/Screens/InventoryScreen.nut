@@ -365,6 +365,7 @@ enum InventoryBusEvents{
         //inspectorSize.x = mInventoryGrid_.getSize().x
         inspectorSize.x = ::drawable.x * 0.9;
         mPlayerInspector_.setSize(inspectorSize);
+        mPlayerInspector_.setPosition(0, startPos);
         //container.sizeInner();
         //if(!mobile){
             repositionEquippablesGrid();
@@ -380,7 +381,7 @@ enum InventoryBusEvents{
     }
 
     function repositionEquippablesGrid(){
-        mInventoryEquippedGrid_.setPosition(mPlayerInspector_.getPosition());
+        local startPos = mPlayerInspector_.getPosition();
         local widgetSize = mInventoryEquippedGrid_.getWidgetSize();
         //mInventoryEquippedGrid_.setSize(mInventoryEquippedGrid_.calculateChildrenSize());
         //mInventoryEquippedGrid_.setSize(::drawable);
@@ -394,6 +395,7 @@ enum InventoryBusEvents{
             local target = (i < 4 ? leftPos : rightPos).copy();
             target.y = 0;
             target.y += (i % 4) * widgetSize.y;
+            target.y += startPos.y;
             mInventoryEquippedGrid_.setPositionForIdx(i, target);
         }
         //mInventoryEquippedGrid_.setSize(mInventoryEquippedGrid_.calculateChildrenSize());
