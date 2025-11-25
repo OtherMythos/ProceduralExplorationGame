@@ -56,9 +56,10 @@
         changeMoney(money);
     }
     function changeMoney(change){
-        print(format("Changing money by %i from %i, new is %i", change, mMoney_, mMoney_+change));
+        local oldMoney = mMoney_;
         mMoney_ += change;
         if(mMoney_ < 0) mMoney_ = 0;
+        print(format("Changing money by %i from %i, new is %i", change, oldMoney, mMoney_));
         _event.transmit(Event.MONEY_CHANGED, mMoney_);
     }
     function setMoney(money){

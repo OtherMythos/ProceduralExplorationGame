@@ -413,6 +413,26 @@
         return mCurrentData_.playerCoins;
     }
 
+    function getBankMoney(){
+        return mCurrentData_.bankCoins;
+    }
+
+    function moveMoneyFromInventoryToBank(amount){
+        if(mInventory_.getMoney() < amount) return;
+        mInventory_.changeMoney(-amount);
+        mCurrentData_.bankCoins += amount;
+
+        _event.transmit(Event.BANK_MONEY_CHANGED, mCurrentData_.bankCoins);
+    }
+
+    function moveMoneyFromBankToInventory(amount){
+        if(mCurrentData_.bankCoins < amount) return;
+        mCurrentData_.bankCoins -= amount;
+        mInventory_.changeMoney(amount);
+
+        _event.transmit(Event.BANK_MONEY_CHANGED, mCurrentData_.bankCoins);
+    }
+
     function getLevel(){
         if(mCurrentData_ == null) return 0;
         return getLevelForEXP_(mCurrentData_.playerEXP);

@@ -39,7 +39,7 @@
 
         mSavingsCounter_ = mParent_.createLabel();
         mSavingsCounter_.setDefaultFontSize(mTitle_.getDefaultFontSize() * 1.8);
-        mSavingsCounter_.setText("£100");
+        setMoneyCount_(::Base.mPlayerStats.getBankMoney());
         mSavingsCounter_.setPosition(xPos, yPos);
 
         local moneyIcon = mParent_.createPanel();
@@ -59,7 +59,7 @@
             local size = withdrawButton.getSize();
             withdrawButton.setSize(mInnerPanel_.getSize().x / 2, size.y * 1.5);
             withdrawButton.attachListenerForEvent(function(widget, action){
-                print("withdrawing");
+                ::Base.mPlayerStats.moveMoneyFromBankToInventory(10);
             }, _GUI_ACTION_PRESSED, this);
 
             local depositButton = mParent_.createButton();
@@ -68,10 +68,26 @@
             depositButton.setDefaultFontSize(depositButton.getDefaultFontSize() * 1.8);
             local size = depositButton.getSize();
             depositButton.setSize(mInnerPanel_.getSize().x / 2, size.y * 1.5);
+            depositButton.attachListenerForEvent(function(widget, action){
+                ::Base.mPlayerStats.moveMoneyFromInventoryToBank(10);
+            }, _GUI_ACTION_PRESSED, this);
 
             ::evenOutButtonsForHeight([withdrawButton, depositButton]);
         }
 
+        _event.subscribe(Event.BANK_MONEY_CHANGED, receiveBankMoneyChanged, this);
+    }
+
+    function shutdown(){
+        _event.unsubscribe(Event.BANK_MONEY_CHANGED, receiveBankMoneyChanged, this);
+    }
+
+    function receiveBankMoneyChanged(id, data){
+        setMoneyCount_(data);
+    }
+
+    function setMoneyCount_(money){
+        mSavingsCounter_.setText("£" + money);
     }
 
 };
