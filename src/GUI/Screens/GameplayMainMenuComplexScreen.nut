@@ -285,7 +285,8 @@ enum GameplayComplexMenuBusEvents{
 
         local targetWindows = [
             ExploreWindow,
-            InventoryWindow
+            InventoryWindow,
+            ShopWindow
         ];
         mTabWindows_ = [];
         for(local i = 0; i < GameplayMainMenuComplexWindow.MAX; i++){
@@ -389,6 +390,15 @@ enum GameplayComplexMenuBusEvents{
         }
     }
 
+};
+
+::ShopWindow <- class extends ::ScreenManager.Screens[Screen.GAMEPLAY_MAIN_MENU_COMPLEX_SCREEN].TabWindow{
+    mBankPanel_ = null;
+
+    function recreate(){
+        mBankPanel_ = ::BankWidget(mWindow_);
+        mBankPanel_.setup();
+    }
 };
 
 //TODO move this out of global space
