@@ -410,7 +410,7 @@
     }
 
     function getMoney(){
-        return mCurrentData_.playerCoins;
+        return mInventory_.getMoney();
     }
 
     function getBankMoney(){
@@ -427,6 +427,7 @@
 
     function moveMoneyFromBankToInventory(amount){
         if(mCurrentData_.bankCoins < amount) return;
+        printf("Moving %i from bank to inventory", amount);
         mCurrentData_.bankCoins -= amount;
         mInventory_.changeMoney(amount);
 

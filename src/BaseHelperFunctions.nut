@@ -56,6 +56,9 @@ Separated from the Base.nut file so enums can be used.
         else if(screenId == Screen.FOUND_ORB_SCREEN){
             data = {"orbId": OrbId.IN_THE_CHERRY_BLOSSOM};
         }
+        else if(screenId == Screen.BANK_DEPOSIT_WITHDRAW_SCREEN){
+            data = {"deposit": true};
+        }
         return ::ScreenManager.ScreenData(screenId, data);
     }
     function setupForProfilePost_(profile){

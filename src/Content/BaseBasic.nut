@@ -56,6 +56,7 @@
         _doFile("res://src/GUI/Screens/SettingsScreen.nut");
         _doFile("res://src/GUI/Screens/OtherMythosSplashScreen.nut");
         _doFile("res://src/GUI/Screens/FoundOrbScreen.nut");
+        _doFile("res://src/GUI/Screens/BankDepositWithdrawScreen.nut");
     }
 
     function setupSecondary(){

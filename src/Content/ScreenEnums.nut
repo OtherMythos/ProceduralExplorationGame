@@ -23,6 +23,7 @@
     EXPLORATION_MAP_SELECT_SCREEN,
     OTHER_MYTHOS_SPLASH_SCREEN,
     FOUND_ORB_SCREEN,
+    BANK_DEPOSIT_WITHDRAW_SCREEN,
 
 ");
 
@@ -49,5 +50,6 @@
     "gameplayMainMenuComplex",
     "explorationMapSelectScreen",
     "OtherMythosSplashScreen",
-    "FoundOrbScreen"
+    "FoundOrbScreen",
+    "BankDepositWithdrawScreen"
 ]);
