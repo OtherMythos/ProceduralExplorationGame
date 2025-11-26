@@ -70,6 +70,7 @@ enum BankDepositWithdrawAmount{
         local actionButton = mWindow_.createButton();
         actionButton.setText(getTitleString_());
         actionButton.attachListenerForEvent(actionButtonCallback, _GUI_ACTION_PRESSED, this);
+        actionButton.setSize(mWindow_.getSizeAfterClipping().x, actionButton.getSize().y * 1.4);
         actionButton.setPosition(0, mWindow_.getSizeAfterClipping().y - actionButton.getSize().y);
         mActionButton_ = actionButton;
 
@@ -143,12 +144,22 @@ enum BankDepositWithdrawAmount{
         return "£" + ret;
     }
 
-    function updateCalculationLabel_(){
+    function getStringForCalculationLabel_(){
+        if(!checkIsOptionAvailable_(mSelectedAmount_)){
+            return format("You don't have enough money to %s anything.", getTitleString_().tolower());
+        }
+
         local text = format("%s %s?", getTitleString_(), wrapOptionLabel_(mSelectedAmount_).tolower());
         if(mDeposit_){
             text += "\n";
             text += "+ £100 deposit fee"
         }
+
+        return text;
+    }
+    function updateCalculationLabel_(){
+        local text = getStringForCalculationLabel_();
+
         mCalculationLabel_.setText(text);
         mCalculationLabel_.sizeToFit(mWindow_.getSizeAfterClipping().x);
     }
