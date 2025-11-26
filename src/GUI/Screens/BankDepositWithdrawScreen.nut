@@ -3,7 +3,9 @@ enum BankDepositWithdrawAmount{
     VAL_200,
     VAL_500,
     VAL_1000,
-    EVERYTHING
+    EVERYTHING,
+
+    MAX
 };
 
 ::ScreenManager.Screens[Screen.BANK_DEPOSIT_WITHDRAW_SCREEN] = class extends ::Screen{
@@ -11,6 +13,7 @@ enum BankDepositWithdrawAmount{
     mSettingsWidgets_ = null;
     mDeposit_ = false;
     mCalculationLabel_ = null;
+    mActionButton_ = null;
 
     mSelectedAmount_ = BankDepositWithdrawAmount.EVERYTHING;
 
@@ -46,20 +49,17 @@ enum BankDepositWithdrawAmount{
         description.sizeToFit(mWindow_.getSizeAfterClipping().x);
         layoutLine.addCell(description);
 
-        local buttonOptions = [
-            wrapOptionLabel_(BankDepositWithdrawAmount.VAL_100),
-            wrapOptionLabel_(BankDepositWithdrawAmount.VAL_200),
-            wrapOptionLabel_(BankDepositWithdrawAmount.VAL_500),
-            wrapOptionLabel_(BankDepositWithdrawAmount.VAL_1000),
-            wrapOptionLabel_(BankDepositWithdrawAmount.EVERYTHING),
-        ];
-        foreach(c,i in buttonOptions){
+        for(local i = 0; i < BankDepositWithdrawAmount.MAX; i++){
             local button = mWindow_.createButton();
-            button.setText(i);
+            button.setText(wrapOptionLabel_(i));
             button.attachListenerForEvent(depositAmountButtonCallback, _GUI_ACTION_PRESSED, this);
-            button.setUserId(c);
+            button.setUserId(i);
+
+            local hasEnoughMoney = checkIsOptionAvailable_(i);
+
+            button.setDisabled(!hasEnoughMoney);
             layoutLine.addCell(button);
-            if(c==0) button.setFocus();
+            if(i==0) button.setFocus();
         }
 
         local calculationLabel = mWindow_.createLabel();
@@ -70,27 +70,45 @@ enum BankDepositWithdrawAmount{
         local actionButton = mWindow_.createButton();
         actionButton.setText(getTitleString_());
         actionButton.attachListenerForEvent(actionButtonCallback, _GUI_ACTION_PRESSED, this);
-
         actionButton.setPosition(0, mWindow_.getSizeAfterClipping().y - actionButton.getSize().y);
+        mActionButton_ = actionButton;
 
         layoutLine.setSize(mWindow_.getSizeAfterClipping());
         layoutLine.setMarginForAllCells(0, 5);
         layoutLine.layout();
+
+        updateActionButtonActive_();
+    }
+
+    function checkIsOptionAvailable_(option){
+        local amount = getAmountForOption_(option);
+        local moneyVal = getCurrentMoneyValue();
+        local hasEnoughMoney = (moneyVal >= amount);
+        if(moneyVal == 0 && amount == 0){
+            hasEnoughMoney = false;
+        }
+        return hasEnoughMoney;
+    }
+
+    function getCurrentMoneyValue(){
+        if(mDeposit_){
+            return ::Base.mPlayerStats.getMoney();
+        }else{
+            return ::Base.mPlayerStats.getBankMoney();
+        }
     }
 
     function depositAmountButtonCallback(widget, action){
-        local vals = [
-            BankDepositWithdrawAmount.VAL_100,
-            BankDepositWithdrawAmount.VAL_200,
-            BankDepositWithdrawAmount.VAL_500,
-            BankDepositWithdrawAmount.VAL_1000,
-            BankDepositWithdrawAmount.EVERYTHING
-        ];
-
-        mSelectedAmount_ = vals[widget.getUserId()];
+        mSelectedAmount_ = widget.getUserId();
         printf("Changing withdraw deposit amount %i", mSelectedAmount_);
 
+        updateActionButtonActive_();
         updateCalculationLabel_();
+    }
+
+    function updateActionButtonActive_(){
+        local hasEnoughMoney = checkIsOptionAvailable_(mSelectedAmount_);
+        mActionButton_.setDisabled(!hasEnoughMoney);
     }
 
     function getAmountForOption_(option){
@@ -141,8 +159,6 @@ enum BankDepositWithdrawAmount{
     }
 
     function _bankAction(amount){
-        print("djksfjslkfjdkls");
-        print(amount);
         if(mDeposit_){
             ::Base.mPlayerStats.moveMoneyFromInventoryToBank(amount);
         }else{
