@@ -141,7 +141,7 @@ enum BankDepositWithdrawAmount{
         if(option == BankDepositWithdrawAmount.EVERYTHING){
             return ret;
         }
-        return "£" + ret;
+        return "\uE000 " + ret;
     }
 
     function getStringForCalculationLabel_(){
@@ -152,7 +152,7 @@ enum BankDepositWithdrawAmount{
         local text = format("%s %s?", getTitleString_(), wrapOptionLabel_(mSelectedAmount_).tolower());
         if(mDeposit_){
             text += "\n";
-            text += "+ £100 deposit fee"
+            text += "+ \uE000100 deposit fee"
         }
 
         return text;
@@ -186,7 +186,7 @@ enum BankDepositWithdrawAmount{
 
     function getDescriptionString_(){
         return mDeposit_ ?
-            "Choose how much you'd like to deposit. £100 charge is applied when depositing money." :
+            "Choose how much you'd like to deposit. \uE000100 charge is applied when depositing money." :
             "Choose how much you'd like to withdraw.";
     }
 }

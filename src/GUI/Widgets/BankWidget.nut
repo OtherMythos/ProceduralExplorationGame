@@ -89,7 +89,7 @@
     }
 
     function setMoneyCount_(money){
-        mSavingsCounter_.setText("£" + money);
+        mSavingsCounter_.setText(money.tostring());
     }
 
 };
