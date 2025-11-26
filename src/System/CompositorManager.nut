@@ -20,6 +20,8 @@ enum CompositorSceneType{
     mEffectCam = null
     mExplorationCamera = null
 
+    mExtraTextures = null
+
     mGameplayActive_ = false
     mGameplayEffectsActive_ = false
 
@@ -48,6 +50,8 @@ enum CompositorSceneType{
     }
 
     function setup(){
+        mExtraTextures = ::VersionPool();
+
         for(local i = 0; i < CompositorSceneType.MAX; i++){
             local newTex = _graphics.createTexture("compositor/renderTexture" + i);
             newTex.setResolution(100, 100);
@@ -72,6 +76,14 @@ enum CompositorSceneType{
         ::FGEffectCamera <- mEffectCam;
 
         setGameplayActive(false);
+    }
+
+    function addExtraTexture(texture){
+        return mExtraTextures.store(texture);
+    }
+    function removeExtraTexture(textureId){
+        mExtraTextures.unstore(textureId);
+        refreshRenderWindowWorkspace_();
     }
 
     function setGameplayActive(active){
@@ -105,6 +117,12 @@ enum CompositorSceneType{
         foreach(i in mTextures_){
             textures.append(i);
         }
+
+        foreach(i in mExtraTextures.mObject_){
+            if(i == null) continue;
+            textures.append(i);
+        }
+
         local targetWorkspace = getRenderWorkspace_();
         mRenderWindowWorkspace_ = _compositor.addWorkspace(textures, _camera.getCamera(), targetWorkspace, true);
     }

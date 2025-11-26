@@ -100,13 +100,14 @@
     }
 
     function loadFiles(){
+        _doFile("res://src/Util/VersionPool.nut");
+
         _doFile("res://src/System/CompositorManager.nut");
         ::CompositorManager.setup();
 
         _doFile("res://src/System/EnumDef.nut");
         _doFile("res://src/System/InputManager.nut");
         _doFile("res://src/Util/IdPool.nut");
-        _doFile("res://src/Util/VersionPool.nut");
 
         _doFile("res://src/System/LottieAnimationManager.nut");
         mLottieManager = ::LottieAnimationManager();

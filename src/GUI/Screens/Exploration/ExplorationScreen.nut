@@ -144,6 +144,7 @@ enum ExplorationScreenWidgetType{
 
     ExplorationScreenCompassAnimator = class{
         mTexture_ = null;
+        mStoredTexture_ = null;
         mDatablock_ = null;
 
         mCompassWindow_ = null;
@@ -223,6 +224,8 @@ enum ExplorationScreenWidgetType{
                 mDirectionNodes_.append([target, track]);
                 //target.setScale(0.5, 0.5, 0.5);
             }
+
+            mStoredTexture_ = ::CompositorManager.addExtraTexture(texture);
         }
 
         function setVisible(visible){
@@ -268,6 +271,7 @@ enum ExplorationScreenWidgetType{
             _compositor.removeWorkspace(mRenderWorkspace_);
             _gui.destroy(mCompassWindow_);
             _hlms.destroyDatablock(mDatablock_);
+            ::CompositorManager.removeExtraTexture(mStoredTexture_);
             _graphics.destroyTexture(mTexture_);
             mCompassNode_.destroyNodeAndChildren();
             mParentNode_.destroyNodeAndChildren();

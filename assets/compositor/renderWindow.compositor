@@ -309,6 +309,10 @@ compositor_node renderWindowNode
     in 1 otherTex1
     in 2 otherTex2
 
+    in 3 texture1
+    in 4 texture2
+    in 5 texture3
+
     target renderWindowTexture
     {
         pass custom colibri_gui
@@ -316,6 +320,10 @@ compositor_node renderWindowNode
 
             expose otherTex1
             expose otherTex2
+
+            expose texture1
+            expose texture2
+            expose texture3
 
             load
             {
@@ -368,6 +376,10 @@ workspace renderWindowWorkspaceGameplay
     //connect_external 0 renderWindowNode 0
     connect_external 1 renderWindowNode 1
     connect_external 2 renderWindowNode 2
+
+    connect_external 3 renderWindowNode 3
+    connect_external 4 renderWindowNode 4
+    connect_external 5 renderWindowNode 5
 }
 
 workspace renderWindowWorkspaceGameplayWithEffects
@@ -379,6 +391,10 @@ workspace renderWindowWorkspaceGameplayWithEffects
     connect_external 0 renderGameplayEffects 1
     connect_external 1 renderWindowNode 1
     connect_external 2 renderWindowNode 2
+
+    connect_external 3 renderWindowNode 3
+    connect_external 4 renderWindowNode 4
+    connect_external 5 renderWindowNode 5
 }
 
 workspace renderWindowWorkspace
@@ -389,4 +405,8 @@ workspace renderWindowWorkspace
     //connect_external 0 renderWindowNode 0
     connect_external 1 renderWindowNode 1
     connect_external 2 renderWindowNode 2
+
+    connect_external 3 renderWindowNode 3
+    connect_external 3 renderWindowNode 4
+    connect_external 3 renderWindowNode 5
 }

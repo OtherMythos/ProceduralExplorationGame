@@ -8,6 +8,7 @@
     mIconButton_ = null;
 
     mTexture_ = null;
+    mStoredTexture_ = null;
     mDatablock_ = null;
 
     mRenderWorkspace_ = null;
@@ -39,6 +40,8 @@
             datablock.setTexture(0, texture);
             mIconBackground_.setDatablock(datablock);
             mDatablock_ = datablock;
+
+            mStoredTexture_ = ::CompositorManager.addExtraTexture(texture);
         }
 
         mIconPanel_ = mWindow_.createPanel();
@@ -66,6 +69,7 @@
         _compositor.removeWorkspace(mRenderWorkspace_);
         _gui.destroy(mIconBackground_);
         _hlms.destroyDatablock(mDatablock_);
+        ::CompositorManager.removeExtraTexture(mStoredTexture_);
         _graphics.destroyTexture(mTexture_);
     }
 
