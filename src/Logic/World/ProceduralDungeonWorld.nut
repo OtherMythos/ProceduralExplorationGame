@@ -141,8 +141,9 @@
 
     function spawnEnemies(){
         local enemyType = enemyTypeSpawn_();
-        for(local i = 0; i < 3 + _random.randInt(3); i++){
-            createEnemy(enemyType, findPosInDungeon_());
+        foreach(pos in mMapData_.objectPositions.enemies){
+            local scaledPos = pos * mWorldScaleSize_ + mOffset_;
+            createEnemy(enemyType, scaledPos);
         }
     }
 
@@ -152,22 +153,26 @@
         gridNode.setPosition(mOffset_);
 
         //Place some decorations around the dungeon
-        for(local i = 0; i < 10 + _random.randInt(10); i++){
-            local targetPos = findPosInDungeon_();
+        foreach(decoration in mMapData_.objectPositions.decorations){
+            local targetPos = decoration.pos * mWorldScaleSize_ + mOffset_;
 
-            local orientation = Quat(-PI/(_random.rand()*1.5+1), ::Vec3_UNIT_X);
-            orientation *= Quat(_random.rand()*PI - PI/2, ::Vec3_UNIT_Y);
-            local model = _random.randInt(3) == 0 ? "skeletonBody.voxMesh" : "skeletonHead.voxMesh";
+            local orientation = Quat(-PI/(decoration.orientation.rotX), ::Vec3_UNIT_X);
+            orientation *= Quat(decoration.orientation.rotY, ::Vec3_UNIT_Y);
+            local model = decoration.orientation.isSkeletonBody ? "skeletonBody.voxMesh" : "skeletonHead.voxMesh";
             mEntityFactory_.constructSimpleItem(mParentNode_, model, targetPos, 0.25, null, null, 10, orientation);
         }
 
-        mEntityFactory_.constructChestObject(findPosInDungeon_());
+        local chestPos = mMapData_.objectPositions.chest * mWorldScaleSize_ + mOffset_;
+        mEntityFactory_.constructChestObject(chestPos);
 
-        mEntityFactory_.constructSimpleTeleportItem(mParentNode_, "ladderUp.voxMesh", findPosInDungeon_(), 0.5, {
+        local ladderUpPos = mMapData_.objectPositions.ladderUp * mWorldScaleSize_ + mOffset_;
+        mEntityFactory_.constructSimpleTeleportItem(mParentNode_, "ladderUp.voxMesh", ladderUpPos, 0.5, {
             "actionType": ActionSlotType.ASCEND,
             "popWorld": true
         });
-        local en = mEntityFactory_.constructSimpleTeleportItem(mParentNode_, "ladderDown.voxMesh", findPosInDungeon_(), 0.5, {
+
+        local ladderDownPos = mMapData_.objectPositions.ladderDown * mWorldScaleSize_ + mOffset_;
+        local en = mEntityFactory_.constructSimpleTeleportItem(mParentNode_, "ladderDown.voxMesh", ladderDownPos, 0.5, {
             "actionType": ActionSlotType.DESCEND,
             "worldType": WorldTypes.PROCEDURAL_DUNGEON_WORLD,
             "dungeonType": ProceduralDungeonTypes.DUST_MITE_NEST,
@@ -180,17 +185,6 @@
         mEntityManager_.setEntityPosition(en, pos);
     }
 
-    function findPosInDungeon_(){
-        local roomId = mMapData_.weighted[_random.randIndex(mMapData_.weighted)];
-        local targetRoom = mMapData_.rooms[roomId].foundPoints;
-        local point = targetRoom[_random.randIndex(targetRoom)];
-
-        local targetPos = Vec3( (point & 0xFFFF), 0, (point >> 16) & 0xFFFF );
-        targetPos *= 5;
-        targetPos += mOffset_;
-
-        return targetPos;
-    }
 
     #Override
     function getMapData(){

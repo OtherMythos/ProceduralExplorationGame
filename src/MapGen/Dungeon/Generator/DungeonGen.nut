@@ -25,6 +25,8 @@
 
         local resolvedTiles = _resolveTiles(outVals, data.width, data.height);
 
+        local objectPositions = _generateObjectPositions(floodRooms);
+
         _random.seed(_system.time());
 
         local outData = {
@@ -36,7 +38,8 @@
             "dungeonType": data.dungeonType,
             "resolvedTiles": resolvedTiles,
             "weighted": roomWeighted,
-            "seed": data.seed
+            "seed": data.seed,
+            "objectPositions": objectPositions
         };
         return outData;
     }
@@ -357,5 +360,58 @@
         }
 
         return outVals;
+    }
+
+    function _generateObjectPositions(floodRooms){
+        local objectPositions = {
+            "enemies": [],
+            "decorations": [],
+            "chest": null,
+            "ladderUp": null,
+            "ladderDown": null
+        };
+
+        //Generate enemy positions (3 to 5 enemies)
+        local enemyCount = 3 + _random.randInt(3);
+        for(local i = 0; i < enemyCount; i++){
+            objectPositions.enemies.append(_getRandomRoomPosition(floodRooms));
+        }
+
+        //Generate decoration positions (10 to 19 decorations)
+        local decorationCount = 10 + _random.randInt(10);
+        for(local i = 0; i < decorationCount; i++){
+            local pos = _getRandomRoomPosition(floodRooms);
+            local orientation = {
+                "rotX": -PI/(_random.rand()*1.5+1),
+                "rotY": _random.rand()*PI - PI/2,
+                "isSkeletonBody": _random.randInt(3) == 0
+            };
+            objectPositions.decorations.append({
+                "pos": pos,
+                "orientation": orientation
+            });
+        }
+
+        //Generate chest position
+        objectPositions.chest = _getRandomRoomPosition(floodRooms);
+
+        //Generate ladder up position
+        objectPositions.ladderUp = _getRandomRoomPosition(floodRooms);
+
+        //Generate ladder down position
+        objectPositions.ladderDown = _getRandomRoomPosition(floodRooms);
+
+        return objectPositions;
+    }
+
+    function _getRandomRoomPosition(floodRooms){
+        local roomId = floodRooms.len() > 0 ? _random.randIndex(floodRooms) : 0;
+        if(roomId >= floodRooms.len()) roomId = floodRooms.len() - 1;
+
+        local targetRoom = floodRooms[roomId].foundPoints;
+        if(targetRoom.len() == 0) return Vec3(0, 0, 0);
+
+        local point = targetRoom[_random.randIndex(targetRoom)];
+        return Vec3( (point & 0xFFFF), 0, (point >> 16) & 0xFFFF );
     }
 };
