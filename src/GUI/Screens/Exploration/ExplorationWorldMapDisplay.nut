@@ -161,7 +161,8 @@
         targetSize.y = targetSize.x;
         mMapViewerWindow_.setSkinPack("WindowSkinNoBorder");
         mMapViewerWindow_.setSize(targetSize);
-        mMapViewerWindow_.setPosition((basePos.x + winSize.x) - mMapViewerWindow_.getSize().x, 0);
+        //Apply a 0.5 offset to prevent some devices rendering the map with a 1 pixel border.
+        mMapViewerWindow_.setPosition((basePos.x + winSize.x) - mMapViewerWindow_.getSize().x + 0.5, 0);
         mMapViewerPanel_.setSize(targetSize);
 
         mMapViewerTapButton_.setSize(mMapViewerWindow_.getSize());
