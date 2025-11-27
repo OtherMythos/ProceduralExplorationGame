@@ -827,3 +827,116 @@ jobs:
         with:
           name: testLogs-${{ matrix.buildType }}-${{ matrix.rendersystem }}
           path: /tmp/testLogs
+
+  runUnitTestsWindows:
+      runs-on: windows-latest
+      needs: build
+      permissions:
+        checks: write
+        pull-requests: write
+      strategy:
+        matrix:
+          buildType: [Debug, Release]
+          rendersystem: [OpenGL]
+      steps:
+        - name: Install Vulkan SDK
+          uses: humbletim/install-vulkan-sdk@v1.2
+          with:
+            version: 1.4.309.0
+            cache: true
+        - name: Setup Dependencies (OpenGL or Vulkan)
+          shell: pwsh
+          run: |
+            if ("${{ matrix.rendersystem }}" -eq "OpenGL") {
+              Write-Host "Setting up OpenGL software renderer (Mesa)..."
+
+              # Download and extract Mesa3D software renderer
+              $mesaUrl = "https://github.com/pal1000/mesa-dist-win/releases/download/25.2.7/mesa3d-25.2.7-release-msvc.7z"
+              Invoke-WebRequest -Uri $mesaUrl -OutFile mesa.7z
+              7z x mesa.7z -o"$env:RUNNER_TEMP\mesa"
+
+              # Copy Mesa OpenGL software renderer DLLs to system path
+              Copy-Item "$env:RUNNER_TEMP\mesa\x64\opengl32.dll" -Destination "." -Force
+              Copy-Item "$env:RUNNER_TEMP\mesa\x64\libgallium_wgl.dll" -Destination "." -Force
+
+            } elseif ("${{ matrix.rendersystem }}" -eq "Vulkan") {
+              Write-Host "Setting up Vulkan software renderer (lavapipe)..."
+
+              # Download Mesa3D with lavapipe (Vulkan software renderer)
+              $mesaUrl = "https://github.com/pal1000/mesa-dist-win/releases/download/25.2.7/mesa3d-25.2.7-release-msvc.7z"
+              Invoke-WebRequest -Uri $mesaUrl -OutFile mesa.7z
+              7z x mesa.7z -o"$env:RUNNER_TEMP\mesa"
+
+              # Create directory for Vulkan ICD manifest
+              $icdPath = "$env:RUNNER_TEMP\vulkan\icd.d"
+              New-Item -ItemType Directory -Path $icdPath -Force
+
+              # Driver is already in the extracted location
+              $driverPath = "$env:RUNNER_TEMP\mesa\x64"
+
+              # Create ICD manifest file for lavapipe using a hashtable
+              $manifest = @{
+                file_format_version = "1.0.0"
+                ICD = @{
+                  library_path = "$driverPath\vulkan_lvp.dll"
+                  api_version = "1.3.0"
+                }
+              }
+
+              $manifest | ConvertTo-Json -Depth 3 | Out-File -FilePath "$icdPath\lvp_icd.x86_64.json" -Encoding utf8
+
+              # Set environment variable to point to ICD manifest
+              echo "VK_ICD_FILENAMES=$icdPath\lvp_icd.x86_64.json" >> $env:GITHUB_ENV
+
+              Write-Host "Lavapipe ICD manifest created at: $icdPath\lvp_icd.x86_64.json"
+              Write-Host "VK_ICD_FILENAMES set to: $icdPath\lvp_icd.x86_64.json"
+            }
+        - name: Checkout Game Code
+          uses: actions/checkout@v4
+          with:
+            path: ./checkout
+
+        - name: Checkout avTools
+          uses: actions/checkout@v4
+          with:
+            path: ./avTools
+            repository: OtherMythos/avTools
+
+        - name: Download Artifact
+          uses: actions/download-artifact@v4
+          with:
+            name: distribution-${{ needs.build.outputs.sha_short }}
+
+        - name: Download Windows Build
+          uses: dawidd6/action-download-artifact@v3
+          with:
+            name: avEngineWindows-${{ matrix.buildType }}.zip
+            repo: OtherMythos/avEngine
+            workflow: buildWindows.yml
+
+        - name: Run tests
+          shell: pwsh
+          run: |
+            Copy-Item -Recurse checkout/test .
+            $logPath = "${{ github.workspace }}\testLogs"
+            New-Item -ItemType Directory -Path $logPath -Force
+
+            python avTools/testRunner/testRunner.py `
+              -l $logPath `
+              -e ".\av.exe" `
+              -p "test\avTests.cfg" `
+              -o "${{ github.workspace }}\results.xml" `
+              --flags="--rendersystem ${{ matrix.rendersystem }}"
+
+        - name: Check results
+          if: always()
+          shell: pwsh
+          run: |
+            Get-Content results.xml
+
+        - name: Upload Logs Artifact
+          uses: actions/upload-artifact@v4
+          if: always()
+          with:
+            name: testLogs-Windows-${{ matrix.buildType }}-${{ matrix.rendersystem }}
+            path: ${{ github.workspace }}\testLogs
