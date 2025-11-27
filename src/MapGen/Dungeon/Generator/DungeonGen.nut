@@ -14,8 +14,23 @@
         }else{
             _setupRooms(outVals, data.width, data.height);
         }
-        //Use a flood fill algorithm to collect combined rooms together.
-        local floodRooms = _determineTotalRooms(outVals, data.width, data.height);
+
+        //Use a flood fill algorithm to collect combined rooms together (returns boolean map).
+        local booleanMap = array(data.width * data.height, false);
+        for(local i = 0; i < outVals.len(); i++){
+            booleanMap[i] = outVals[i];
+        }
+        local floodRooms = _determineTotalRooms(booleanMap, data.width, data.height);
+
+        //Connect the merged rooms together with corridors
+        _connectMergedRooms(outVals, floodRooms, data.width, data.height);
+
+        //Perform sanity check to ensure all rooms are connected
+        _performSanityCheck(outVals, data.width, data.height);
+
+        //Assign room IDs after corridors are added
+        _assignRoomIds(outVals, floodRooms, data.width, data.height);
+
         local roomWeighted = _weightAndSortRooms(floodRooms);
 
         //_debugPrintData(outVals, data.width, data.height);
@@ -233,6 +248,151 @@
             }
         }
 
+    }
+
+    function _connectMergedRooms(d, floodRooms, w, h){
+        if(floodRooms.len() <= 1) return;
+
+        //Calculate the center point of each merged room
+        local roomCenters = [];
+        foreach(roomIdx, room in floodRooms){
+            local centerX = 0;
+            local centerY = 0;
+            local pointCount = room.foundPoints.len();
+
+            //Calculate average position of all points in the room
+            foreach(point in room.foundPoints){
+                centerX += (point & 0xFFFF);
+                centerY += ((point >> 16) & 0xFFFF);
+            }
+
+            centerX = (centerX / pointCount).tointeger();
+            centerY = (centerY / pointCount).tointeger();
+
+            roomCenters.append({
+                "idx": roomIdx,
+                "x": centerX,
+                "y": centerY
+            });
+        }
+
+        //Connect each room to the next nearest room using L-shaped corridors
+        for(local i = 0; i < roomCenters.len() - 1; i++){
+            local start = roomCenters[i];
+            local end = roomCenters[i + 1];
+
+            local fromX = start.x;
+            local fromY = start.y;
+            local toX = end.x;
+            local toY = end.y;
+
+            local corridorPoints = [];
+
+            //Horizontal corridor first - collect all points
+            local minX = (fromX < toX) ? fromX : toX;
+            local maxX = (fromX < toX) ? toX : fromX;
+            for(local x = minX; x <= maxX; x++){
+                corridorPoints.append([x, fromY]);
+            }
+
+            //Vertical corridor - collect all points
+            local minY = (fromY < toY) ? fromY : toY;
+            local maxY = (fromY < toY) ? toY : fromY;
+            for(local y = minY; y <= maxY; y++){
+                corridorPoints.append([toX, y]);
+            }
+
+            //Now apply thickness to all corridor points
+            foreach(point in corridorPoints){
+                local px = point[0];
+                local py = point[1];
+
+                //Draw 1 tile radius around each point
+                for(local yy = py - 1; yy <= py + 1; yy++){
+                    for(local xx = px - 1; xx <= px + 1; xx++){
+                        if(yy >= 0 && yy < h && xx >= 0 && xx < w){
+                            d[xx + yy * w] = true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    function _performSanityCheck(d, w, h){
+        //Re-perform flood fill and verify only one connected room exists
+        local testData = array(w * h, 0);
+
+        //Copy the data
+        for(local i = 0; i < w * h; i++){
+            testData[i] = (d[i] != false) ? true : false;
+        }
+
+        //Perform flood fill to count connected regions
+        local roomCount = 0;
+        for(local y = 0; y < h; y++){
+            for(local x = 0; x < w; x++){
+                if(testData[x + y * w] == true){
+                    local entry = {
+                        "tileCount": 0,
+                        "foundPoints": []
+                    };
+                    _floodFillData(testData, x, y, w, h, roomCount, entry);
+                    roomCount++;
+                }
+            }
+        }
+
+        if(roomCount != 1){
+            print("SANITY CHECK FAILED: Expected 1 connected room but found " + roomCount + " rooms!");
+            assert(false);
+        }
+
+        print("Sanity check passed: All rooms are connected (1 connected region found)");
+    }
+
+    function _assignRoomIds(d, floodRooms, w, h){
+        //Create a boolean map of all walkable tiles
+        local boolMap = array(w * h, false);
+        for(local i = 0; i < w * h; i++){
+            boolMap[i] = (d[i] != false);
+        }
+
+        //Now perform flood fill on the final connected map to assign room IDs
+        local roomIndex = 0;
+        for(local y = 0; y < h; y++){
+            for(local x = 0; x < w; x++){
+                if(boolMap[x + y * w] == true){
+                    local entry = {
+                        "tileCount": 0,
+                        "foundPoints": []
+                    };
+                    //Assign room ID to all connected tiles
+                    _floodFillDataAssignId(boolMap, d, x, y, w, h, roomIndex, entry);
+                    roomIndex++;
+
+                    //Update the flood room data if this is the main connected region
+                    if(roomIndex == 1){
+                        floodRooms[0] = entry;
+                    }
+                }
+            }
+        }
+    }
+
+    function _floodFillDataAssignId(boolMap, d, x, y, w, h, i, entry){
+        entry.foundPoints.append((x & 0xFFFF) | ((y & 0xFFFF) << 16));
+        d[x + y * w] = i;
+        boolMap[x + y * w] = false;  //Mark as visited to avoid infinite recursion
+        entry.tileCount++;
+
+        //Flood fill through connected boolean tiles
+        if(y > 0 && boolMap[x + (y - 1) * w] == true) { _floodFillDataAssignId(boolMap, d, x, y - 1, w, h, i, entry); }
+        if(x > 0 && boolMap[(x - 1) + y * w] == true) { _floodFillDataAssignId(boolMap, d, x - 1, y, w, h, i, entry); }
+        if(x < w-1 && boolMap[(x + 1) + y * w] == true) { _floodFillDataAssignId(boolMap, d, x + 1, y, w, h, i, entry); }
+        if(y < h-1 && boolMap[x + (y + 1) * w] == true) { _floodFillDataAssignId(boolMap, d, x, y + 1, w, h, i, entry); }
+
+        return true;
     }
 
     function _floodFillData(d, x, y, w, h, i, entry){
