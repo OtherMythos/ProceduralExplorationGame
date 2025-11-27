@@ -97,7 +97,7 @@
         local gridPadding = gridRatio * 0.125;
         mGridPadding_ = gridPadding;
         local iconSize = ::ScreenManager.calculateRatio(gridSize.tofloat() * 0.75);
-        mButtonCover_.setSize(gridRatio, gridRatio);
+        if(mButtonCover_) mButtonCover_.setSize(gridRatio, gridRatio);
         for(local y = 0; y < inventoryHeight; y++){
             for(local x = 0; x < inventoryWidth; x++){
                 local background = parentWin.createPanel();
@@ -243,7 +243,7 @@
             //mItemHovered_ = true;
             //mButtonCover_.setPosition(mResolvedPos_.x + x * 64, mResolvedPos_.y + y * 64);
             local derivedPos = widget.getDerivedPosition();
-            mButtonCover_.setPosition(derivedPos);
+            if(mButtonCover_) mButtonCover_.setPosition(derivedPos);
             //buttonCover_.setPosition(0, 0);
             setButtonCoverHidden(false);
             mBus_.notifyEvent(InventoryBusEvents.ITEM_HOVER_BEGAN, wrappedData);
@@ -274,10 +274,8 @@
     }
 
     function setButtonCoverHidden(hidden){
+        if(mButtonCover_ == null) return;
         local target = hidden;
-        if(::Base.getTargetInterface() == TargetInterface.MOBILE){
-            target = true;
-        }
         mButtonCover_.setHidden(target);
     }
 

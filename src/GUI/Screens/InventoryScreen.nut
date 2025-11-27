@@ -289,7 +289,10 @@ enum InventoryBusEvents{
         mOverlayWindow_.setConsumeCursor(false);
         mOverlayWindow_.setSkinPack("WindowSkinNoBorder");
 
-        local buttonCover = createButtonCover(mOverlayWindow_);
+        local buttonCover = null;
+        if(!mobile){
+            buttonCover = createButtonCover(mOverlayWindow_);
+        }
         mHoverInfo_ = HoverItemInfo(mOverlayWindow_);
 
         //Add one for the equippables slot and another for general padding.
