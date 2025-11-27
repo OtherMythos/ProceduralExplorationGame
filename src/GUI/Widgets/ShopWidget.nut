@@ -53,15 +53,17 @@
         mInventoryGrid_.setPosition(mInnerPanel_.getPosition());
 
         local items = array(mInventoryWidth_ * mInventoryHeight_, null);
-        items[0] = ::Item(ItemId.APPLE);
+        items[0] = ::Item(ItemId.APPLE, 100);
         mInventory_ = items;
-        mInventoryGrid_.setNewGridIcons(items);
+        refreshGrid_()
 
     }
 
     function busCallback(event, data){
         if(event == InventoryBusEvents.ITEM_SELECTED){
             selectItem(data);
+        }else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_BUY){
+            handleBuyEvent(data);
         }
     }
 
@@ -108,15 +110,37 @@
             "idx": idx,
             "gridType": inventoryData.gridType,
             "bus": mInventoryBus_,
-            "secondaryGrid": false
+            "secondaryGrid": false,
+            "isShop": true,
+            "playerMoney": ::Base.mPlayerStats.getMoney()
         };
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_ITEM_HELPER_SCREEN, data), null, 3);
+    }
+
+    function handleBuyEvent(data){
+        local idx = data.idx;
+        local shopItem = mInventory_[idx];
+        if(shopItem == null) return;
+
+        local price = shopItem.mData_;
+        local playerMoney = ::Base.mPlayerStats.getMoney();
+
+        if(playerMoney < price) return;
+
+        ::Base.mPlayerStats.mInventory_.changeMoney(-price);
+        ::Base.mPlayerStats.addToInventory(shopItem);
+        mInventory_[idx] = null;
+        refreshGrid_();
     }
 
     function calculateGridSize(){
         local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
 
         return mobile ? (::drawable.x / (mInventoryWidth_+2)) : 64;
+    }
+
+    function refreshGrid_(){
+        mInventoryGrid_.setNewGridIcons(mInventory_);
     }
 
     function shutdown(){

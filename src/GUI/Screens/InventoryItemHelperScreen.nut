@@ -9,6 +9,7 @@ enum InventoryItemHelperScreenFunctions{
     READ,
     MOVE_TO_INVENTORY,
     MOVE_OUT_OF_INVENTORY,
+    BUY,
 
     MAX
 };
@@ -49,14 +50,22 @@ enum InventoryItemHelperScreenFunctions{
         layoutLine.addCell(title);
 
         local buttonData = getButtonOptionsForItem(data.item);
-        foreach(c,i in buttonData[0]){
+        local buttonOptions = buttonData[0];
+        local buttonFunctions = buttonData[1];
+        local buttonEnabled = buttonData[2];
+
+        foreach(c,i in buttonOptions){
             local button = mWindow_.createButton();
             button.setDefaultFontSize(button.getDefaultFontSize() * 1.1);
             button.setText(i);
-            button.attachListenerForEvent(buttonData[1][c], _GUI_ACTION_PRESSED, this);
+            button.attachListenerForEvent(buttonFunctions[c], _GUI_ACTION_PRESSED, this);
             button.setExpandHorizontal(true);
             layoutLine.addCell(button);
             if(c == 0) button.setFocus();
+
+            if(!buttonEnabled[c]){
+                button.setDisabled(true);
+            }
         }
 
         layoutLine.layout();
@@ -138,11 +147,22 @@ enum InventoryItemHelperScreenFunctions{
 
         local buttonOptions = [];
         local buttonFunctions = [];
+        local buttonEnabled = [];
 
-        if(itemType == ItemType.EQUIPPABLE){
+        local isShop = mData_.rawin("isShop") && mData_.isShop;
+
+        if(isShop){
+            buttonOptions.append("Buy");
+            buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.BUY]);
+            // Check if player can afford the item
+            local itemPrice = mData_.item.mData_;
+            local playerMoney = mData_.rawin("playerMoney") ? mData_.playerMoney : 0;
+            buttonEnabled.append(playerMoney >= itemPrice);
+        }else if(itemType == ItemType.EQUIPPABLE){
             if(mData_.gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
                 buttonOptions.append("UnEquip");
                 buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.UNEQUIP]);
+                buttonEnabled.append(true);
             }else{
                 local equipData = ::Equippables[item.getEquippableData()];
                 local equipSlot = equipData.getEquippedSlot();
@@ -151,36 +171,48 @@ enum InventoryItemHelperScreenFunctions{
                     buttonOptions.append("Equip Right Hand");
                     buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.EQUIP_LEFT_HAND]);
                     buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.EQUIP_RIGHT_HAND]);
+                    buttonEnabled.append(true);
+                    buttonEnabled.append(true);
                 }else{
                     buttonOptions.append("Equip");
                     buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.EQUIP]);
+                    buttonEnabled.append(true);
                 }
             }
         }else if(itemType == ItemType.LORE_CONTENT){
             buttonOptions.append("Read");
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.READ]);
+            buttonEnabled.append(true);
         }else{
             buttonOptions.append("Use");
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.USE]);
+            buttonEnabled.append(true);
         }
 
-        buttonOptions.append("Scrap");
-        buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.SCRAP]);
+        if(!isShop){
+            buttonOptions.append("Scrap");
+            buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.SCRAP]);
+            buttonEnabled.append(true);
 
-        if(mData_.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
-            buttonOptions.append("Move to Inventory");
-            buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.MOVE_TO_INVENTORY]);
+            if(mData_.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
+                buttonOptions.append("Move to Inventory");
+                buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.MOVE_TO_INVENTORY]);
+                buttonEnabled.append(true);
+            }
+
+            if(mData_.secondaryGrid && mData_.gridType == InventoryGridType.INVENTORY_GRID){
+                buttonOptions.append("Move out of Inventory");
+                buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.MOVE_OUT_OF_INVENTORY]);
+                buttonEnabled.append(true);
+            }
         }
 
-        if(mData_.secondaryGrid && mData_.gridType == InventoryGridType.INVENTORY_GRID){
-            buttonOptions.append("Move out of Inventory");
-            buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.MOVE_OUT_OF_INVENTORY]);
-        }
 
         buttonOptions.append("Cancel");
         buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.CANCEL]);
+        buttonEnabled.append(true);
 
-        return [buttonOptions, buttonFunctions];
+        return [buttonOptions, buttonFunctions, buttonEnabled];
     }
 }
 
@@ -230,5 +262,10 @@ b[InventoryItemHelperScreenFunctions.MOVE_TO_INVENTORY] = function(widget, actio
 b[InventoryItemHelperScreenFunctions.MOVE_OUT_OF_INVENTORY] = function(widget, action){
     local data = {"idx": mData_.idx, "gridType": mData_.gridType};
     mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_OUT_OF_INVENTORY, data);
+    closeScreen();
+};
+b[InventoryItemHelperScreenFunctions.BUY] = function(widget, action){
+    local data = {"idx": mData_.idx, "gridType": mData_.gridType};
+    mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_BUY, data);
     closeScreen();
 };

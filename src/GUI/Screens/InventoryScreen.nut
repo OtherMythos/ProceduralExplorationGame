@@ -14,6 +14,7 @@ enum InventoryBusEvents{
     ITEM_INFO_REQUEST_MOVE_TO_INVENTORY,
     ITEM_INFO_REQUEST_MOVE_OUT_OF_INVENTORY,
     ITEM_INFO_REQUEST_READ,
+    ITEM_INFO_REQUEST_BUY,
 };
 
 ::ScreenManager.Screens[Screen.INVENTORY_SCREEN] = class extends ::Screen{
