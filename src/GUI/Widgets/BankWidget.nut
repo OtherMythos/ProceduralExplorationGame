@@ -92,4 +92,12 @@
         mSavingsCounter_.setText(money.tostring());
     }
 
+    function getPosition(){
+        return mBackgroundPanel_.getPosition();
+    }
+
+    function getSize(){
+        return mBackgroundPanel_.getSize();
+    }
+
 };

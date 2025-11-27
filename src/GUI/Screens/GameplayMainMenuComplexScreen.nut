@@ -394,10 +394,16 @@ enum GameplayComplexMenuBusEvents{
 
 ::ShopWindow <- class extends ::ScreenManager.Screens[Screen.GAMEPLAY_MAIN_MENU_COMPLEX_SCREEN].TabWindow{
     mBankPanel_ = null;
+    mShopPanel_ = null;
 
     function recreate(){
         mBankPanel_ = ::BankWidget(mWindow_);
         mBankPanel_.setup();
+
+        mShopPanel_ = ::ShopWidget(mWindow_);
+        local shopStart = mBankPanel_.getSize() + 10;
+        shopStart.x = 0;
+        mShopPanel_.setup(shopStart);
     }
 };
 

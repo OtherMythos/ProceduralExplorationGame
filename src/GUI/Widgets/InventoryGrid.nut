@@ -336,7 +336,7 @@
     }
     function getPositionForIdx(idx){
         local currentScroll = mWindow_.getCurrentScroll();
-        return mWidgets_[idx].getDerivedPosition() - currentScroll;
+        return mWidgets_[idx].getDerivedPosition() - currentScroll - (mWindow_.getSizeAfterClipping() - mWindow_.getSize()) / 2;
     }
     function getSizeForIdx(idx){
         return mWidgets_[idx].getSize();
