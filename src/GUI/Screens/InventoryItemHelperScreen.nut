@@ -24,65 +24,14 @@ enum InventoryItemHelperScreenFunctions{
 
     mButtonFunctions_ = array(InventoryItemHelperScreenFunctions.MAX);
 
-    ItemInfoPanel = class{
-        mInfoWindow_ = null;
-
-        mTitleLabel_ = null;
-        mDescriptionLabel_ = null;
-        mStatsLabel_ = null;
-
-        constructor(parentWindow){
-            mInfoWindow_ = parentWindow;
-
-            local layout = _gui.createLayoutLine();
-
-            mTitleLabel_ = mInfoWindow_.createLabel();
-            mTitleLabel_.setText(" ");
-            layout.addCell(mTitleLabel_);
-
-            mDescriptionLabel_ = mInfoWindow_.createLabel();
-            mDescriptionLabel_.setText(" ");
-            layout.addCell(mDescriptionLabel_);
-
-            mStatsLabel_ = mInfoWindow_.createLabel();
-            mStatsLabel_.setText(" ");
-            layout.addCell(mStatsLabel_);
-
-            layout.setMarginForAllCells(0, -20);
-
-            layout.layout();
-        }
-
-        function setItem(item){
-            mTitleLabel_.setText(" ");
-            local descText = item.getDescription();
-
-            mDescriptionLabel_.setText(descText);
-
-            local stats = item.toStats();
-            local richTextDesc = stats.getDescriptionWithRichText();
-            mStatsLabel_.setText(richTextDesc[0]);
-            mStatsLabel_.setRichText(richTextDesc[1]);
-        }
-
-        function setPosition(x, y){
-            //mInfoWindow_.setPosition(x, y);
-            mTitleLabel_.setPosition(mTitleLabel_.getPosition() + Vec2(x, y));
-            mDescriptionLabel_.setPosition(mDescriptionLabel_.getPosition() + Vec2(x, y));
-            mStatsLabel_.setPosition(mStatsLabel_.getPosition() + Vec2(x, y));
-        }
-
-        function getWindow(){
-            return mInfoWindow_;
-        }
-    };
-
     function setup(data){
         mData_ = data;
         mCustomPosition_ = true;
 
         local winWidth = ::drawable.x * 0.8;
         local winHeight = ::drawable.y * 0.8;
+
+        local showItemInfo = data.rawin("showItemInfo") && data.showItemInfo;
 
         //Create a window to block inputs for when the popup appears.
         createBackgroundScreen_();
@@ -97,19 +46,19 @@ enum InventoryItemHelperScreenFunctions{
 
         local layoutLine = _gui.createLayoutLine();
 
-        local title = mWindow_.createLabel();
-        //title.setGridLocation(_GRID_LOCATION_CENTER);
-        title.setText(data.item.getName());
-        title.sizeToFit(mWindow_.getSizeAfterClipping().x);
-        title.setTextColour(0, 0, 0, 1);
-        layoutLine.addCell(title);
+        if(!showItemInfo){
+            local title = mWindow_.createLabel();
+            title.setText(data.item.getName());
+            title.sizeToFit(mWindow_.getSizeAfterClipping().x);
+            title.setTextColour(0, 0, 0, 1);
+            layoutLine.addCell(title);
+        }
 
         local buttonData = getButtonOptionsForItem(data.item);
         local buttonOptions = buttonData[0];
         local buttonFunctions = buttonData[1];
         local buttonEnabled = buttonData[2];
 
-        local maxButtonWidth = 0;
         foreach(c,i in buttonOptions){
             local button = mWindow_.createButton();
             button.setDefaultFontSize(button.getDefaultFontSize() * 1.1);
@@ -121,12 +70,6 @@ enum InventoryItemHelperScreenFunctions{
 
             if(!buttonEnabled[c]){
                 button.setDisabled(true);
-            }
-
-            // Track maximum button width
-            local buttonSize = button.getSize();
-            if(buttonSize.x > maxButtonWidth){
-                maxButtonWidth = buttonSize.x;
             }
         }
 
@@ -147,14 +90,16 @@ enum InventoryItemHelperScreenFunctions{
         createIconPanel(mData_.item);
 
         // Create item info panel if enabled
-        local showItemInfo = data.rawin("showItemInfo") && data.showItemInfo;
         if(showItemInfo){
-            mItemInfoPanel_ = ItemInfoPanel(mWindow_);
+            mItemInfoPanel_ = ::InventoryHoverItemInfo(null);
             mItemInfoPanel_.setItem(data.item);
             // Position the info panel to the right of the buttons
-            local infoPanelPos = Vec2(maxButtonWidth + 20, 20);
-            mItemInfoPanel_.setPosition(infoPanelPos.x, infoPanelPos.y);
-            mWindow_.setSize(mWindow_.calculateChildrenSize());
+            //local infoPanelPos = Vec2(maxButtonWidth + 20, 20);
+            local targetPos = winPos.copy();
+            targetPos.y -= mItemInfoPanel_.getSize().y;
+            targetPos.x -= mData_.gridItemSize.x;
+            mItemInfoPanel_.setPosition(targetPos.x, targetPos.y);
+            mItemInfoPanel_.setVisible(true);
         }
     }
 
@@ -213,6 +158,9 @@ enum InventoryItemHelperScreenFunctions{
         base.shutdown();
         mData_.bus.notifyEvent(InventoryBusEvents.ITEM_HELPER_SCREEN_ENDED, null);
         _gui.destroy(mPanelContainerWindow_);
+        if(mItemInfoPanel_){
+            mItemInfoPanel_.destroy();
+        }
     }
 
     function getButtonOptionsForItem(item){

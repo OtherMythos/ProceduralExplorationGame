@@ -59,6 +59,7 @@
 
         _doFile("res://src/GUI/Widgets/BankWidget.nut");
         _doFile("res://src/GUI/Widgets/ShopWidget.nut");
+        _doFile("res://src/GUI/Widgets/InventoryHoverItemInfo.nut");
     }
 
     function setupSecondary(){
