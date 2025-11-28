@@ -640,7 +640,7 @@ jobs:
           #cd squashfs-root/usr/bin
           #ls
           #cd /tmp
-          appimagetool squashfs-root
+          ARCH=x86_64 appimagetool squashfs-root
           rm -rf squashfs-root
           mv av-x86_64.AppImage buildLinux-${{ matrix.buildType }}-${{ needs.build.outputs.sha_short }}.AppImage
       - name: Upload Artifact
