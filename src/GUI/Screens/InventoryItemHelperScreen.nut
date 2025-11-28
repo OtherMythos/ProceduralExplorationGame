@@ -65,6 +65,7 @@ enum InventoryItemHelperScreenFunctions{
             button.setText(i);
             button.attachListenerForEvent(buttonFunctions[c], _GUI_ACTION_PRESSED, this);
             button.setExpandHorizontal(true);
+            button.setTextHorizontalAlignment(_TEXT_ALIGN_LEFT);
             layoutLine.addCell(button);
             if(c == 0) button.setFocus();
 
@@ -173,7 +174,7 @@ enum InventoryItemHelperScreenFunctions{
         local isShop = mData_.rawin("isShop") && mData_.isShop;
 
         if(isShop){
-            buttonOptions.append("Buy");
+            buttonOptions.append(UNICODE_COINS + " Buy");
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.BUY]);
             // Check if player can afford the item
             local itemPrice = mData_.item.mData_;
@@ -181,21 +182,21 @@ enum InventoryItemHelperScreenFunctions{
             buttonEnabled.append(playerMoney >= itemPrice);
         }else if(itemType == ItemType.EQUIPPABLE){
             if(mData_.gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
-                buttonOptions.append("UnEquip");
+                buttonOptions.append(UNICODE_HELMET + " UnEquip");
                 buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.UNEQUIP]);
                 buttonEnabled.append(true);
             }else{
                 local equipData = ::Equippables[item.getEquippableData()];
                 local equipSlot = equipData.getEquippedSlot();
                 if(equipSlot == EquippedSlotTypes.HAND){
-                    buttonOptions.append("Equip Left Hand");
-                    buttonOptions.append("Equip Right Hand");
+                    buttonOptions.append(UNICODE_LEFT_HAND + " Equip Left Hand");
+                    buttonOptions.append(UNICODE_RIGHT_HAND + " Equip Right Hand");
                     buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.EQUIP_LEFT_HAND]);
                     buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.EQUIP_RIGHT_HAND]);
                     buttonEnabled.append(true);
                     buttonEnabled.append(true);
                 }else{
-                    buttonOptions.append("Equip");
+                    buttonOptions.append(UNICODE_HELMET + " Equip");
                     buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.EQUIP]);
                     buttonEnabled.append(true);
                 }
@@ -205,31 +206,31 @@ enum InventoryItemHelperScreenFunctions{
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.READ]);
             buttonEnabled.append(true);
         }else{
-            buttonOptions.append("Use");
+            buttonOptions.append(UNICODE_EAT + " Use");
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.USE]);
             buttonEnabled.append(true);
         }
 
         if(!isShop){
-            buttonOptions.append("Scrap");
+            buttonOptions.append(UNICODE_COINS + " Scrap");
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.SCRAP]);
             buttonEnabled.append(true);
 
             if(mData_.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
-                buttonOptions.append("Move to Inventory");
+                buttonOptions.append(UNICODE_INTO_INVENTORY + " Move to Inventory");
                 buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.MOVE_TO_INVENTORY]);
                 buttonEnabled.append(true);
             }
 
             if(mData_.secondaryGrid && mData_.gridType == InventoryGridType.INVENTORY_GRID){
-                buttonOptions.append("Move out of Inventory");
+                buttonOptions.append(UNICODE_LEAVE_INVENTORY + " Move out of Inventory");
                 buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.MOVE_OUT_OF_INVENTORY]);
                 buttonEnabled.append(true);
             }
         }
 
 
-        buttonOptions.append("Cancel");
+        buttonOptions.append(UNICODE_CROSS + " Cancel");
         buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.CANCEL]);
         buttonEnabled.append(true);
 

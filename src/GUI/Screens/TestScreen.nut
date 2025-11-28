@@ -9,6 +9,22 @@
         mWindow_.setVisualsEnabled(false);
         mWindow_.setSkinPack("WindowSkinNoBorder");
 
+        local label = mWindow_.createLabel();
+        label.setText(
+            UNICODE_COINS + " hello\n" +
+            UNICODE_CROSS + " hello\n" +
+            UNICODE_EAT + " hello\n" +
+            UNICODE_LEFT_HAND + " hello\n" +
+            UNICODE_RIGHT_HAND + " hello\n" +
+            UNICODE_HELMET + " hello\n" +
+            UNICODE_INTO_INVENTORY + " hello\n" +
+            UNICODE_LEAVE_INVENTORY + " hello\n" +
+            UNICODE_DRINK + " hello\n" +
+            UNICODE_ATTACK_UP + " hello\n" +
+            UNICODE_ATTACK_DOWN + " hello\n" +
+            UNICODE_HEART + " hello\n"
+        );
+
         local layoutLine = _gui.createLayoutLine();
 
         local buttonOptions = [

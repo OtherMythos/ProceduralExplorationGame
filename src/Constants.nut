@@ -369,6 +369,20 @@ enum CharacterModelPartType{
     MAX
 };
 
+const UNICODE_COINS = "\uE000";
+const UNICODE_CROSS = "\uE001";
+const UNICODE_EAT = "\uE002";
+const UNICODE_LEFT_HAND = "\uE003";
+const UNICODE_RIGHT_HAND = "\uE004";
+const UNICODE_HELMET = "\uE005";
+const UNICODE_INTO_INVENTORY = "\uE006";
+const UNICODE_LEAVE_INVENTORY = "\uE007";
+const UNICODE_DRINK = "\uE008";
+const UNICODE_ATTACK_UP = "\uE009";
+const UNICODE_ATTACK_DOWN = "\uE00A";
+const UNICODE_HEART = "\uE00B";
+//Heart up and down, Sword up and down
+
 //TODO change this to be a bitmask so the same node can perform multiple destinations.
 enum CharacterModelEquipNodeType{
     NONE,

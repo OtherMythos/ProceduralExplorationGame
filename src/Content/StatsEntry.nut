@@ -41,13 +41,13 @@
     function getDescriptionForStat(stat){
         switch(stat){
             case StatType.RESTORATIVE_HEALTH:{
-                return format("Restores %i health.", mRestorativeHealth);
+                return format("%s Restores %i health.", UNICODE_HEART, mRestorativeHealth);
             }
             case StatType.ATTACK:{
-                return format("Increases attack by %i.", mAttack);
+                return format("%s Increases attack by %i.", UNICODE_ATTACK_UP, mAttack);
             }
             case StatType.DEFENSE:{
-                return format("Increases defense by %i.", mDefense);
+                return format("%s Increases defense by %i.", UNICODE_ATTACK_UP, mDefense);
             }
             default:
                 assert(false);
