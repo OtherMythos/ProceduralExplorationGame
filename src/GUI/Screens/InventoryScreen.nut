@@ -624,7 +624,8 @@ enum InventoryBusEvents{
             "idx": idx,
             "gridType": inventoryData.gridType,
             "bus": mInventoryBus_,
-            "secondaryGrid": mUseSecondaryGrid_
+            "secondaryGrid": mUseSecondaryGrid_,
+            "showItemInfo": mobile
         };
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_ITEM_HELPER_SCREEN, data), null, mLayerIdx+1);
     }

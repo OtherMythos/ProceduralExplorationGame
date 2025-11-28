@@ -112,7 +112,8 @@
             "bus": mInventoryBus_,
             "secondaryGrid": false,
             "isShop": true,
-            "playerMoney": ::Base.mPlayerStats.getMoney()
+            "playerMoney": ::Base.mPlayerStats.getMoney(),
+            "showItemInfo": true
         };
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_ITEM_HELPER_SCREEN, data), null, 3);
     }
