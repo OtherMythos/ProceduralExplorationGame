@@ -4,6 +4,7 @@
     mTitleLabel_ = null;
     mDescriptionLabel_ = null;
     mStatsLabel_ = null;
+    mLayoutLine_ = null;
 
     mActive_ = false;
 
@@ -32,6 +33,11 @@
         mStatsLabel_ = mHoverWin_.createLabel();
         mStatsLabel_.setText(" ");
         layout.addCell(mStatsLabel_);
+
+        layout.setMarginForAllCells(0, -10);
+        //mTitleLabel_.setMargin(0, 0);
+        layout.setPosition(0, 10);
+        mLayoutLine_ = layout;
 
         layout.layout();
     }
@@ -62,16 +68,23 @@
     }
 
     function setItem(item){
+        //Set to a big size so the sizers don't try and steal from neighbour widgets.
+        mHoverWin_.setSize(1000, 1000);
+
         mTitleLabel_.setText(item.getName());
+        mTitleLabel_.setDefaultFont(3);
         local descText = item.getDescription();
 
+        mDescriptionLabel_.setDefaultFont(6);
         mDescriptionLabel_.setText(descText);
+        mDescriptionLabel_.sizeToFit(::drawable.x * 0.5);
 
         local stats = item.toStats();
         local richTextDesc = stats.getDescriptionWithRichText();
         mStatsLabel_.setText(richTextDesc[0]);
         mStatsLabel_.setRichText(richTextDesc[1]);
 
+        mLayoutLine_.layout();
         mHoverWin_.setSize(mHoverWin_.calculateChildrenSize());
     }
 };

@@ -68,7 +68,7 @@
             local appendString = getDescriptionForStat(i) + "\n";
 
             local colour = getColourForStat(i);
-            outRichText.append({"offset": outString.len(), "len": appendString.len(), "col": colour});
+            outRichText.append({"offset": outString.len(), "len": appendString.len(), "col": colour, "font": 6});
             outString += appendString;
         }
 
