@@ -40,7 +40,6 @@
         _doFile("res://src/GUI/Screens/SaveSelectionScreen.nut");
         _doFile("res://src/GUI/Screens/GameplayMainMenuScreen.nut");
         _doFile("res://src/GUI/Screens/Exploration/ExplorationScreen.nut");
-        _doFile("res://src/GUI/Screens/ItemInfoScreen.nut");
         _doFile("res://src/GUI/Screens/InventoryScreen.nut");
         _doFile("res://src/GUI/Screens/VisitedPlacesScreen.nut");
         _doFile("res://src/GUI/Screens/DialogScreen.nut");
