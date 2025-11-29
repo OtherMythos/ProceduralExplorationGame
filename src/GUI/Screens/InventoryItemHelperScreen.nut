@@ -38,6 +38,9 @@ enum InventoryItemHelperScreenFunctions{
         createBackgroundCloseButton_();
         mBackgroundWindow_.setColour(ColourValue(1, 1, 1, 0.8));
 
+        //Do this first so the icon has a lower z position.
+        createIconPanel(mData_.item);
+
         mWindow_ = _gui.createWindow("InventoryItemHelperScreen");
         //Start it quite big so that labels or buttons expand as expected.
         mWindow_.setSize(800, 800);
@@ -80,28 +83,26 @@ enum InventoryItemHelperScreenFunctions{
         //mWindow_.setSize(childrenSize.x, childrenSize.y >= data.size.y ? childrenSize.y : data.size.y);
         mWindow_.setSize(windowSize);
 
-        local targetPos = data.gridItemPos.copy();
-        targetPos.x += data.gridItemSize.x;
-        //Check if the window is now over the end of the screen.
-        local winPos = determinePositionForScreen_(targetPos, windowSize, data);
-        mWindow_.setPosition(winPos);
-
-        mData_.bus.notifyEvent(InventoryBusEvents.ITEM_HELPER_SCREEN_BEGAN, null);
-
-        createIconPanel(mData_.item);
-
         // Create item info panel if enabled
         if(showItemInfo){
             mItemInfoPanel_ = ::InventoryHoverItemInfo(null);
             mItemInfoPanel_.setItem(data.item);
-            // Position the info panel to the right of the buttons
-            //local infoPanelPos = Vec2(maxButtonWidth + 20, 20);
-            local targetPos = winPos.copy();
-            targetPos.y -= mItemInfoPanel_.getSize().y;
-            targetPos.x -= mData_.gridItemSize.x;
-            mItemInfoPanel_.setPosition(targetPos.x, targetPos.y);
             mItemInfoPanel_.setVisible(true);
         }
+
+        local targetPos = data.gridItemPos.copy();
+        targetPos.x += data.gridItemSize.x;
+        //Check if the window is now over the end of the screen.
+        local screenPosData = determinePositionForScreen_(targetPos, windowSize, data);
+        local winPos = screenPosData[0];
+        local itemInfoPos = screenPosData[1];
+        mWindow_.setPosition(winPos);
+
+        if(mItemInfoPanel_){
+            mItemInfoPanel_.setPosition(itemInfoPos.x, itemInfoPos.y);
+        }
+
+        mData_.bus.notifyEvent(InventoryBusEvents.ITEM_HELPER_SCREEN_BEGAN, null);
     }
 
     function setZOrder(idx){
@@ -113,6 +114,7 @@ enum InventoryItemHelperScreenFunctions{
         local panelContainerWindow = _gui.createWindow("InventoryItemHelperScreenPanelContainer");
         panelContainerWindow.setClipBorders(0, 0, 0, 0);
         panelContainerWindow.setVisualsEnabled(false);
+        panelContainerWindow.setClickable(false);
 
         local panelSize = mData_.gridItemSize;
         local gridPadding = panelSize * 0.125;
@@ -121,11 +123,13 @@ enum InventoryItemHelperScreenFunctions{
         local background = panelContainerWindow.createPanel();
         background.setSize(panelSize);
         background.setSkin("inventory_slot");
+        background.setClickable(false);
 
         local iconPanel = panelContainerWindow.createPanel();
         iconPanel.setSize(panelSize * 0.75);
         iconPanel.setPosition(gridPadding);
         iconPanel.setSkin(item.getIcon());
+        iconPanel.setClickable(false);
 
         panelContainerWindow.setSize(panelSize);
         panelContainerWindow.setPosition(mData_.gridItemPos);
@@ -135,16 +139,22 @@ enum InventoryItemHelperScreenFunctions{
     function determinePositionForScreen_(targetPos, windowSize, data){
         local windowBottomRight = targetPos + windowSize;
         local newPos = targetPos.copy();
+        local itemInfoPos = newPos.copy();
 
         local repositionX = (windowBottomRight.x >= _window.getWidth());
         local repositionY = (windowBottomRight.y >= _window.getHeight());
         if(repositionX){
             local newX = data.gridItemPos.x - windowSize.x;
+            if(newX < 0){
+                newX = 0;
+            }
             newPos.x = newX;
         }
         if(repositionY){
             local newY = data.gridItemPos.y - windowSize.y;
             newPos.y = newY;
+
+            itemInfoPos.y = newY;
         }
 
         if(repositionX && repositionY){
@@ -152,7 +162,16 @@ enum InventoryItemHelperScreenFunctions{
         }else if(repositionY){
             newPos.x -= data.gridItemSize.x;
         }
-        return newPos;
+
+        // Position the info panel to the right of the buttons
+        //local infoPanelPos = Vec2(maxButtonWidth + 20, 20);
+        itemInfoPos.y -= mItemInfoPanel_.getSize().y;
+        itemInfoPos.x -= mData_.gridItemSize.x;
+        if(repositionX || repositionY){
+            itemInfoPos.x = newPos.x;
+        }
+
+        return [newPos, itemInfoPos];
     }
 
     function shutdown(){
