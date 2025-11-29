@@ -91,6 +91,7 @@ enum InventoryBusEvents{
 
     mInventoryBus_ = null;
     mBusCallbackId_ = null;
+    mStorageToggleButton_ = null;
 
 
     InventoryContainer = class{
@@ -210,18 +211,6 @@ enum InventoryBusEvents{
             inventoryButton.setPosition(Vec2(10, 10 + startOffset));
             inventoryButton.attachListenerForEvent(function(widget, action){
                 closeInventory();
-            }, _GUI_ACTION_PRESSED, this);
-        }
-
-        local storageToggleButton = null;
-        if(mSupportsStorage_){
-            storageToggleButton = mWindow_.createButton();
-            storageToggleButton.setText("Storage");
-            storageToggleButton.setSize(Vec2(100, 40));
-            storageToggleButton.setPosition(Vec2(0, 300));
-            storageToggleButton.setZOrder(200);
-            storageToggleButton.attachListenerForEvent(function(widget, action){
-                toggleStorageVisibility();
             }, _GUI_ACTION_PRESSED, this);
         }
 
@@ -359,6 +348,15 @@ enum InventoryBusEvents{
         if(mStorageGrid_ != null){
             mStorageGrid_.setPosition(gridStart);
         }
+
+        if(mSupportsStorage_){
+            mStorageToggleButton_ = mWindow_.createButton();
+            updateStorageToggleButtonText_();
+            mStorageToggleButton_.attachListenerForEvent(function(widget, action){
+                toggleStorageVisibility();
+            }, _GUI_ACTION_PRESSED, this);
+        }
+
     }
 
     function repositionEquippablesGrid(){
@@ -389,6 +387,18 @@ enum InventoryBusEvents{
 
         mInventoryGrid_.setHidden(mShowingStorage_);
         mStorageGrid_.setHidden(!mShowingStorage_);
+        updateStorageToggleButtonText_();
+    }
+
+    function updateStorageToggleButtonText_(){
+        if(mStorageToggleButton_ != null){
+            mStorageToggleButton_.setText(!mShowingStorage_ ? "Inventory" : "Storage");
+
+            local targetPos = mPlayerInspector_.getPosition() + mPlayerInspector_.getSize();
+            targetPos.x = mPlayerInspector_.getSize().x / 2 - mStorageToggleButton_.getSize().x / 2;
+            targetPos.y -= mStorageToggleButton_.getSize().y;
+            mStorageToggleButton_.setPosition(targetPos);
+        }
     }
 
     function getTargetInventory_(){
