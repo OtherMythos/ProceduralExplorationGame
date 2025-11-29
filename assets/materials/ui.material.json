@@ -333,6 +333,8 @@
 
         "OtherMythosLogo" :
         {
+            "blendblock": "gui/uiBlend",
+
             "diffuse_map0" :
             {
                 "texture": "OtherMythosLogo.jpg"
