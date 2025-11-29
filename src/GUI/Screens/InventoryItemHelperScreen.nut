@@ -257,7 +257,7 @@ enum InventoryItemHelperScreenFunctions{
             }
 
             // Add storage transfer options if storage is supported
-            if(mData_.supportsStorage){
+            if(mData_.supportsStorage && mData_.gridType != InventoryGridType.INVENTORY_EQUIPPABLES){
                 local sourceInv = mData_.isShowingStorage ? mData_.storage : mData_.inventory;
                 local targetInv = mData_.isShowingStorage ? mData_.inventory : mData_.storage;
                 local buttonFunc = mData_.isShowingStorage ?
