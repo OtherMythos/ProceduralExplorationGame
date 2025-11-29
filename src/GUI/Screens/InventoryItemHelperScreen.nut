@@ -9,6 +9,8 @@ enum InventoryItemHelperScreenFunctions{
     READ,
     MOVE_TO_INVENTORY,
     MOVE_OUT_OF_INVENTORY,
+    MOVE_TO_STORAGE,
+    MOVE_FROM_STORAGE,
     BUY,
 
     MAX
@@ -253,6 +255,23 @@ enum InventoryItemHelperScreenFunctions{
                 buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.MOVE_OUT_OF_INVENTORY]);
                 buttonEnabled.append(true);
             }
+
+            // Add storage transfer options if storage is supported
+            if(mData_.supportsStorage){
+                local sourceInv = mData_.isShowingStorage ? mData_.storage : mData_.inventory;
+                local targetInv = mData_.isShowingStorage ? mData_.inventory : mData_.storage;
+                local buttonFunc = mData_.isShowingStorage ?
+                    InventoryItemHelperScreenFunctions.MOVE_FROM_STORAGE :
+                    InventoryItemHelperScreenFunctions.MOVE_TO_STORAGE;
+                local buttonIcon = mData_.isShowingStorage ? UNICODE_INTO_INVENTORY : UNICODE_LEAVE_INVENTORY;
+                local buttonText = mData_.isShowingStorage ? " Move to Inventory" : " Move to Storage";
+
+                buttonOptions.append(buttonIcon + buttonText);
+                buttonFunctions.append(mButtonFunctions_[buttonFunc]);
+                local sourceItem = sourceInv.getItemForIdx(mData_.idx);
+                local hasTargetSpace = targetInv.getNumSlotsFree() > 0;
+                buttonEnabled.append(sourceItem != null && hasTargetSpace);
+            }
         }
 
 
@@ -310,6 +329,16 @@ b[InventoryItemHelperScreenFunctions.MOVE_TO_INVENTORY] = function(widget, actio
 b[InventoryItemHelperScreenFunctions.MOVE_OUT_OF_INVENTORY] = function(widget, action){
     local data = {"idx": mData_.idx, "gridType": mData_.gridType};
     mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_OUT_OF_INVENTORY, data);
+    closeScreen();
+};
+b[InventoryItemHelperScreenFunctions.MOVE_TO_STORAGE] = function(widget, action){
+    local data = {"idx": mData_.idx, "gridType": mData_.gridType};
+    mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_TO_STORAGE, data);
+    closeScreen();
+};
+b[InventoryItemHelperScreenFunctions.MOVE_FROM_STORAGE] = function(widget, action){
+    local data = {"idx": mData_.idx, "gridType": mData_.gridType};
+    mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_FROM_STORAGE, data);
     closeScreen();
 };
 b[InventoryItemHelperScreenFunctions.BUY] = function(widget, action){

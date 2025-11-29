@@ -13,6 +13,8 @@ enum InventoryBusEvents{
     ITEM_INFO_REQUEST_SCRAP,
     ITEM_INFO_REQUEST_MOVE_TO_INVENTORY,
     ITEM_INFO_REQUEST_MOVE_OUT_OF_INVENTORY,
+    ITEM_INFO_REQUEST_MOVE_TO_STORAGE,
+    ITEM_INFO_REQUEST_MOVE_FROM_STORAGE,
     ITEM_INFO_REQUEST_READ,
     ITEM_INFO_REQUEST_BUY,
 };
@@ -548,6 +550,14 @@ enum InventoryBusEvents{
 
             ::Base.mExplorationLogic.readLoreContentForItem(item);
         }
+        else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_TO_STORAGE){
+            if(!mSupportsStorage_) return;
+            transferItemBetweenInventories_(getTargetInventory_(), mItemStorage_, data.idx);
+        }
+        else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_FROM_STORAGE){
+            if(!mSupportsStorage_) return;
+            transferItemBetweenInventories_(mItemStorage_, mInventory_, data.idx);
+        }
         else if(event == InventoryBusEvents.ITEM_HELPER_SCREEN_ENDED){
             highlightPrevious();
         }
@@ -571,6 +581,24 @@ enum InventoryBusEvents{
         printf("Adding scrap value for item: %s", targetItem.tostring());
         local scrapValue = targetItem.getScrapVal();
         mInventory_.addMoney(scrapValue);
+    }
+
+    function transferItemBetweenInventories_(sourceInventory, targetInventory, itemIdx){
+        local item = sourceInventory.getItemForIdx(itemIdx);
+        if(item == null) return;
+
+        // Check if target inventory has space
+        if(targetInventory.getNumSlotsFree() <= 0){
+            return;
+        }
+
+        sourceInventory.removeFromInventory(itemIdx);
+        local success = targetInventory.addToInventory(item);
+        if(!success){
+            // Item could not be added to target, put it back in source
+            sourceInventory.addToInventory(item);
+            return;
+        }
     }
 
     function selectItem(inventoryData){
@@ -618,7 +646,11 @@ enum InventoryBusEvents{
             "gridType": inventoryData.gridType,
             "bus": mInventoryBus_,
             "secondaryGrid": mUseSecondaryGrid_,
-            "showItemInfo": mobile
+            "showItemInfo": mobile,
+            "supportsStorage": mSupportsStorage_,
+            "isShowingStorage": mShowingStorage_,
+            "inventory": mInventory_,
+            "storage": mItemStorage_
         };
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_ITEM_HELPER_SCREEN, data), null, mLayerIdx+1);
     }
