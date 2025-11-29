@@ -4,11 +4,12 @@
     mTitleLabel_ = null;
     mDescriptionLabel_ = null;
     mStatsLabel_ = null;
+    mPriceLabel_ = null;
     mLayoutLine_ = null;
 
     mActive_ = false;
 
-    constructor(overlayWindow){
+    constructor(overlayWindow, isBuyable = false){
         if(overlayWindow == null){
             mHoverWin_ = _gui.createWindow("InventoryHoverInfoWindow");
         }else{
@@ -33,6 +34,12 @@
         mStatsLabel_ = mHoverWin_.createLabel();
         mStatsLabel_.setText(" ");
         layout.addCell(mStatsLabel_);
+
+        if(isBuyable){
+            mPriceLabel_ = mHoverWin_.createLabel();
+            mPriceLabel_.setText(" ");
+            layout.addCell(mPriceLabel_);
+        }
 
         layout.setMarginForAllCells(0, -10);
         //mTitleLabel_.setMargin(0, 0);
@@ -83,6 +90,11 @@
         local richTextDesc = stats.getDescriptionWithRichText();
         mStatsLabel_.setText(richTextDesc[0]);
         mStatsLabel_.setRichText(richTextDesc[1]);
+
+        if(mPriceLabel_ != null){
+            mPriceLabel_.setText(UNICODE_COINS + " " + item.mData_);
+            mPriceLabel_.setDefaultFont(6);
+        }
 
         mLayoutLine_.layout();
         mHoverWin_.setSize(mHoverWin_.calculateChildrenSize());

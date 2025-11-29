@@ -85,7 +85,8 @@ enum InventoryItemHelperScreenFunctions{
 
         // Create item info panel if enabled
         if(showItemInfo){
-            mItemInfoPanel_ = ::InventoryHoverItemInfo(null);
+            local isShop = mData_.rawin("isShop") && mData_.isShop;
+            mItemInfoPanel_ = ::InventoryHoverItemInfo(null, isShop);
             mItemInfoPanel_.setItem(data.item);
             mItemInfoPanel_.setVisible(true);
         }
