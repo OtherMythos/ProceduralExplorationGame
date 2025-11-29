@@ -10,6 +10,7 @@
         local winHeight = _window.getHeight() * 0.8;
 
         createBackgroundScreen_();
+        createBackgroundCloseButton_();
 
         mWindow_ = _gui.createWindow("SettingsScreen");
         mWindow_.setSize(winWidth, winHeight);
@@ -27,13 +28,6 @@
         title.setText("Settings");
         title.sizeToFit(mWindow_.getSizeAfterClipping().x);
         layoutLine.addCell(title);
-
-        local backButton = mWindow_.createButton();
-        backButton.setText("Back");
-        backButton.attachListenerForEvent(function(widget, action){
-            closeSettings();
-        }, _GUI_ACTION_PRESSED, this);
-        layoutLine.addCell(backButton);
 
         local invertCamera = mWindow_.createCheckbox();
         invertCamera.setText("Invert Camera");
@@ -59,12 +53,21 @@
         layoutLine.addCell(renderStatsButton);
         mSettingsWidgets_[SystemSetting.TOGGLE_WIREFRAME] = renderStatsButton;
 
-        backButton.setFocus();
-
         layoutLine.setMarginForAllCells(0, 20);
         //layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
         layoutLine.setSize(winWidth, winHeight);
         layoutLine.layout();
+
+        local backButton = mWindow_.createButton();
+        backButton.setDefaultFontSize(backButton.getDefaultFontSize() * 1.5);
+        backButton.setText("Back");
+        backButton.attachListenerForEvent(function(widget, action){
+            closeSettings();
+        }, _GUI_ACTION_PRESSED, this);
+        local winSizeClipping = mWindow_.getSizeAfterClipping();
+        backButton.setPosition(0, winSizeClipping.y - backButton.getSize().y);
+        backButton.setSize(winSizeClipping.x, backButton.getSize().y);
+        backButton.setFocus();
 
 
         setupValuesFromSystemSettings();
