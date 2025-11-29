@@ -62,6 +62,7 @@ enum InventoryItemHelperScreenFunctions{
         local buttonFunctions = buttonData[1];
         local buttonEnabled = buttonData[2];
 
+        local firstEnabledButton = null;
         foreach(c,i in buttonOptions){
             local button = mWindow_.createButton();
             button.setDefaultFontSize(button.getDefaultFontSize() * 1.1);
@@ -70,11 +71,16 @@ enum InventoryItemHelperScreenFunctions{
             button.setExpandHorizontal(true);
             button.setTextHorizontalAlignment(_TEXT_ALIGN_LEFT);
             layoutLine.addCell(button);
-            if(c == 0) button.setFocus();
 
             if(!buttonEnabled[c]){
                 button.setDisabled(true);
+            }else if(firstEnabledButton == null){
+                firstEnabledButton = button;
             }
+        }
+
+        if(firstEnabledButton != null){
+            firstEnabledButton.setFocus();
         }
 
         layoutLine.layout();
