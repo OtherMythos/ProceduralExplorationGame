@@ -10,6 +10,7 @@
         mDefaultData_ = clone prev.mDefaultData_;
 
         mJSONSchema_.bankCoins <- OBJECT_TYPE.INTEGER;
+        mJSONSchema_.storage <- OBJECT_TYPE.ARRAY;
         updateData(mDefaultData_);
     }
 
@@ -17,6 +18,7 @@
     function updateData(data){
         data.version = getVersionString();
         data.bankCoins <- 0;
+        data.storage <- array(35, null);
         return data;
     }
 
