@@ -7,7 +7,9 @@ enum ItemType{
     EQUIPPABLE,
     CONSUMABLE,
     MONEY,
-    LORE_CONTENT
+    LORE_CONTENT,
+    EAT,
+    DRINK
 };
 
 //Separate rotation parameters into re-useable objects.
@@ -227,7 +229,7 @@ local commonScale = Vec3(1.4, 1.4, 1.0);
             equipSlot = EquippedSlotTypes.LEFT_HAND;
             ::Base.mPlayerStats.equipItem(item, equipSlot);
         }
-        else if(itemType == ItemType.CONSUMABLE){
+        else if(itemType == ItemType.CONSUMABLE || itemType == ItemType.DRINK || itemType == ItemType.EAT){
             local itemStats = item.toStats();
             assert(itemStats.mRestorativeHealth != 0);
             //::Base.mPlayerStats.alterPlayerHealth(itemStats.mRestorativeHealth);

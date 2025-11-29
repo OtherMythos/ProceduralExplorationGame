@@ -233,6 +233,14 @@ enum InventoryItemHelperScreenFunctions{
             buttonOptions.append("Read");
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.READ]);
             buttonEnabled.append(true);
+        }else if(itemType == ItemType.EAT){
+            buttonOptions.append(UNICODE_EAT + " Eat");
+            buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.USE]);
+            buttonEnabled.append(true);
+        }else if(itemType == ItemType.DRINK){
+            buttonOptions.append(UNICODE_DRINK + " Drink");
+            buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.USE]);
+            buttonEnabled.append(true);
         }else{
             buttonOptions.append(UNICODE_EAT + " Use");
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.USE]);

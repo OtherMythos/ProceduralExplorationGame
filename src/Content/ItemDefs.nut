@@ -4,8 +4,8 @@
 //-------------------------------
 ::Items[ItemId.NONE] = ItemDef("None", "None", null, null ItemType.NONE, 1, EquippableId.NONE);
 
-::Items[ItemId.HEALTH_POTION] = ItemDef("Health Potion", "A potion of health. Bubbles gently inside a cast glass flask.", "smallPotion.voxMesh", "item_healthPotion", ItemType.CONSUMABLE, 5, null, EquippableId.NONE);
-::Items[ItemId.LARGE_HEALTH_POTION] = ItemDef("Large Health Potion", "A large potion of health.", "largePotion.voxMesh", "item_largeHealthPotion", ItemType.CONSUMABLE, 10, null, EquippableId.NONE);
+::Items[ItemId.HEALTH_POTION] = ItemDef("Health Potion", "A potion of health. Bubbles gently inside a cast glass flask.", "smallPotion.voxMesh", "item_healthPotion", ItemType.DRINK, 5, null, EquippableId.NONE);
+::Items[ItemId.LARGE_HEALTH_POTION] = ItemDef("Large Health Potion", "A large potion of health.", "largePotion.voxMesh", "item_largeHealthPotion", ItemType.DRINK, 10, null, EquippableId.NONE);
 
 ::Items[ItemId.SIMPLE_SWORD] = ItemDef("Simple Sword", "A cheap, weak sword. Relatively blunt for something claiming to be a sword.", "simpleSword.voxMesh", "item_simpleSword", ItemType.EQUIPPABLE, 5, null, EquippableId.REGULAR_SWORD, ItemEquipTransformType.BASIC_SWORD);
 ::Items[ItemId.SIMPLE_SHIELD] = ItemDef("Simple Shield", "An un-interesting shield. Provides minimal protection.", "simpleShield.voxMesh", "item_simpleShield", ItemType.EQUIPPABLE, 5, null, EquippableId.REGULAR_SHIELD, ItemEquipTransformType.BASIC_SHIELD);
@@ -14,12 +14,12 @@
 ::Items[ItemId.SIMPLE_STAFF] = ItemDef("Simple Staff", "A rickety magic staff", "simpleStaff.voxMesh", "item_simpleSword", ItemType.EQUIPPABLE, 5, null, EquippableId.REGULAR_STAFF, ItemEquipTransformType.BASIC_STAFF);
 
 ::Items[ItemId.BOOK_OF_GOBLIN_STORIES] = ItemDef("Book of Goblin Stories", "A crudely written tomb of popular goblin stories", "boneMace.voxMesh", "item_bookBrown", ItemType.LORE_CONTENT, 0, "BookOfGoblinTales.nut", EquippableId.NONE);
-::Items[ItemId.APPLE] = ItemDef("Apple", "Fibrous fruit", "apple.voxMesh", "item_apple", ItemType.CONSUMABLE, 5, null, EquippableId.NONE);
-::Items[ItemId.COCONUT] = ItemDef("Coconut", "Weirdly milky for a fruit", "apple.voxMesh", "item_coconut", ItemType.CONSUMABLE, 5, null, EquippableId.NONE);
-::Items[ItemId.RED_BERRIES] = ItemDef("Red Berries", "Red and fruity", "apple.voxMesh", "item_redberries", ItemType.CONSUMABLE, 5, null, EquippableId.NONE);
-::Items[ItemId.FLOWER_WHITE] = ItemDef("White Flower", "A white delecate flower", "flower.flowerWhite.voxMesh", "item_flowerWhite", ItemType.CONSUMABLE, 5, null, EquippableId.NONE);
-::Items[ItemId.FLOWER_RED] = ItemDef("Red Flower", "A red delecate flower", "flower.flowerRed.voxMesh", "item_flowerRed", ItemType.CONSUMABLE, 5, null, EquippableId.NONE);
-::Items[ItemId.FLOWER_PURPLE] = ItemDef("Purple Flower", "A purple delecate flower", "flower.flowerPurple.voxMesh", "item_flowerPurple", ItemType.CONSUMABLE, 5, null, EquippableId.NONE);
+::Items[ItemId.APPLE] = ItemDef("Apple", "Fibrous fruit", "apple.voxMesh", "item_apple", ItemType.EAT, 5, null, EquippableId.NONE);
+::Items[ItemId.COCONUT] = ItemDef("Coconut", "Weirdly milky for a fruit", "apple.voxMesh", "item_coconut", ItemType.EAT, 5, null, EquippableId.NONE);
+::Items[ItemId.RED_BERRIES] = ItemDef("Red Berries", "Red and fruity", "apple.voxMesh", "item_redberries", ItemType.EAT, 5, null, EquippableId.NONE);
+::Items[ItemId.FLOWER_WHITE] = ItemDef("White Flower", "A white delecate flower", "flower.flowerWhite.voxMesh", "item_flowerWhite", ItemType.EAT, 5, null, EquippableId.NONE);
+::Items[ItemId.FLOWER_RED] = ItemDef("Red Flower", "A red delecate flower", "flower.flowerRed.voxMesh", "item_flowerRed", ItemType.EAT, 5, null, EquippableId.NONE);
+::Items[ItemId.FLOWER_PURPLE] = ItemDef("Purple Flower", "A purple delecate flower", "flower.flowerPurple.voxMesh", "item_flowerPurple", ItemType.EAT, 5, null, EquippableId.NONE);
 //-------------------------------
 
 ::ItemHelper.itemToStats <- function(item){
