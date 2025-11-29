@@ -3,11 +3,13 @@
     mMoney_ = 0;
 
     mInventorySize_ = 35;
+    mInventoryType_ = null;
 
-    constructor(){
+    constructor(inventoryType = InventoryType.INVENTORY){
         local items = array(mInventorySize_, null);
 
         rawSetItems(items);
+        mInventoryType_ = inventoryType;
     }
 
     //Set the initial items, not transmitting events upon change.
@@ -49,7 +51,8 @@
     }
 
     function contentsChanged(){
-        _event.transmit(Event.INVENTORY_CONTENTS_CHANGED, mInventoryItems_);
+        local eventType = (mInventoryType_ == InventoryType.STORAGE) ? Event.STORAGE_CONTENTS_CHANGED : Event.INVENTORY_CONTENTS_CHANGED;
+        _event.transmit(eventType, mInventoryItems_);
     }
 
     function addMoney(money){

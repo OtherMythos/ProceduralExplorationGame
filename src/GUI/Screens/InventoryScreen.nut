@@ -65,8 +65,10 @@ enum InventoryBusEvents{
     mInventoryGrid_ = null;
     mInventoryEquippedGrid_ = null;
     mSecondaryInventoryGrid_ = null;
+    mStorageGrid_ = null;
     mHoverInfo_ = null;
     mInventory_ = null;
+    mItemStorage_ = null;
     //mMoneyCounter_ = null;
     mPlayerStats_ = null;
     mPlayerInspector_ = null;
@@ -77,6 +79,9 @@ enum InventoryBusEvents{
     mSecondaryItems_ = null;
     mSecondaryWidth_ = 0;
     mSecondaryHeight_ = 0;
+
+    mSupportsStorage_ = false;
+    mShowingStorage_ = false;
 
     mPreviousHighlight_ = null;
 
@@ -121,6 +126,11 @@ enum InventoryBusEvents{
     function receiveInventoryChangedEvent(id, data){
         mInventoryGrid_.setNewGridIcons(data);
     }
+    function receiveStorageChangedEvent(id, data){
+        if(mStorageGrid_ != null){
+            mStorageGrid_.setNewGridIcons(data);
+        }
+    }
     function receivePlayerEquipChangedEvent(id, data){
         mInventoryEquippedGrid_.setNewGridIcons(data.items.mItems);
     }
@@ -134,11 +144,18 @@ enum InventoryBusEvents{
     function setup(window, data){
         mWindow_ = window;
         _event.subscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent, this);
+        _event.subscribe(Event.STORAGE_CONTENTS_CHANGED, receiveStorageChangedEvent, this);
         _event.subscribe(Event.PLAYER_EQUIP_CHANGED, receivePlayerEquipChangedEvent, this);
 
         local startOffset = 0;
         if(data.rawin("startOffset")){
             startOffset = data.rawget("startOffset");
+        }
+
+        // Check if this inventory screen supports storage
+        mSupportsStorage_ = false;
+        if(data.rawin("supportsStorage")){
+            mSupportsStorage_ = data.supportsStorage;
         }
 
         if(data.rawin("items")){
@@ -152,6 +169,7 @@ enum InventoryBusEvents{
 
         mPlayerStats_ = data.stats;
         mInventory_ = mPlayerStats_.mInventory_;
+        mItemStorage_ = mPlayerStats_.mItemStorage_;
 
         mInventoryBus_ = InventoryInfoBus();
         mBusCallbackId_ = mInventoryBus_.registerCallback(busCallback, this);
@@ -190,6 +208,18 @@ enum InventoryBusEvents{
             inventoryButton.setPosition(Vec2(10, 10 + startOffset));
             inventoryButton.attachListenerForEvent(function(widget, action){
                 closeInventory();
+            }, _GUI_ACTION_PRESSED, this);
+        }
+
+        local storageToggleButton = null;
+        if(mSupportsStorage_){
+            storageToggleButton = mWindow_.createButton();
+            storageToggleButton.setText("Storage");
+            storageToggleButton.setSize(Vec2(100, 40));
+            storageToggleButton.setPosition(Vec2(0, 300));
+            storageToggleButton.setZOrder(200);
+            storageToggleButton.attachListenerForEvent(function(widget, action){
+                toggleStorageVisibility();
             }, _GUI_ACTION_PRESSED, this);
         }
 
@@ -252,6 +282,13 @@ enum InventoryBusEvents{
             mSecondaryInventoryGrid_.addToLayout(layoutHorizontal);
         }
 
+        if(mSupportsStorage_){
+            mStorageGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID, mInventoryBus_, mHoverInfo_, buttonCover);
+            local storageHeight = mItemStorage_.getInventorySize() / mInventoryWidth;
+            mStorageGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, mInventoryWidth, storageHeight);
+            mStorageGrid_.addToLayout(layoutHorizontal);
+        }
+
         mInventoryGrid_.connectNeighbours(mInventoryEquippedGrid_, inventoryButton);
         if(mSecondaryInventoryGrid_ != null){
             mInventoryEquippedGrid_.connectNeighbours([mInventoryGrid_, mSecondaryInventoryGrid_], inventoryButton);
@@ -295,6 +332,10 @@ enum InventoryBusEvents{
         if(mUseSecondaryGrid_){
             mSecondaryInventoryGrid_.setNewGridIcons(mSecondaryItems_);
         }
+        if(mSupportsStorage_){
+            mStorageGrid_.setNewGridIcons(mItemStorage_.mInventoryItems_);
+            mStorageGrid_.setHidden(true);
+        }
 
         local inspectorSize = mPlayerInspector_.getSize();
         //inspectorSize.x = mInventoryGrid_.getSize().x
@@ -313,6 +354,9 @@ enum InventoryBusEvents{
         local gridStart = mPlayerInspector_.getPosition() + mPlayerInspector_.getSize();
         gridStart.x = ::drawable.x * 0.05;
         mInventoryGrid_.setPosition(gridStart);
+        if(mStorageGrid_ != null){
+            mStorageGrid_.setPosition(gridStart);
+        }
     }
 
     function repositionEquippablesGrid(){
@@ -334,6 +378,19 @@ enum InventoryBusEvents{
             mInventoryEquippedGrid_.setPositionForIdx(i, target);
         }
         //mInventoryEquippedGrid_.setSize(mInventoryEquippedGrid_.calculateChildrenSize());
+    }
+
+    function toggleStorageVisibility(){
+        if(mStorageGrid_ == null) return;
+
+        mShowingStorage_ = !mShowingStorage_;
+
+        mInventoryGrid_.setHidden(mShowingStorage_);
+        mStorageGrid_.setHidden(!mShowingStorage_);
+    }
+
+    function getTargetInventory_(){
+        return mShowingStorage_ ? mItemStorage_ : mInventory_;
     }
 
     function highlightPrevious(){
@@ -377,9 +434,10 @@ enum InventoryBusEvents{
         }
         else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_USE){
             if(data.gridType == InventoryGridType.INVENTORY_GRID){
-                local itemForIdx = mInventory_.getItemForIdx(data.idx);
+                local targetInventory = getTargetInventory_();
+                local itemForIdx = targetInventory.getItemForIdx(data.idx);
                 ::ItemHelper.actuateItem(itemForIdx);
-                mInventory_.removeFromInventory(data.idx);
+                targetInventory.removeFromInventory(data.idx);
             }else if(data.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
                 local item = mSecondaryItems_[data.idx];
                 mSecondaryItems_[data.idx] = null;
@@ -427,8 +485,9 @@ enum InventoryBusEvents{
 
             local item =null;
             if(data.gridType == InventoryGridType.INVENTORY_GRID){
-                item = mInventory_.getItemForIdx(data.idx);
-                mInventory_.removeFromInventory(data.idx);
+                local targetInventory = getTargetInventory_();
+                item = targetInventory.getItemForIdx(data.idx);
+                targetInventory.removeFromInventory(data.idx);
             }else if(data.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
                 item = mSecondaryItems_[data.idx];
                 mSecondaryItems_[data.idx] = null;
@@ -480,7 +539,8 @@ enum InventoryBusEvents{
         else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_READ){
             local item = null;
             if(data.gridType == InventoryGridType.INVENTORY_GRID){
-                item = mInventory_.getItemForIdx(data.idx);
+                local targetInventory = getTargetInventory_();
+                item = targetInventory.getItemForIdx(data.idx);
             }else if(data.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
                 item = mSecondaryItems_[data.idx];
             }
@@ -504,8 +564,9 @@ enum InventoryBusEvents{
             mSecondaryItems_[idx] = null;
             mSecondaryInventoryGrid_.setNewGridIcons(mSecondaryItems_);
         }else{
-            targetItem = mInventory_.getItemForIdx(idx);
-            mInventory_.removeFromInventory(idx);
+            local targetInventory = getTargetInventory_();
+            targetItem = targetInventory.getItemForIdx(idx);
+            targetInventory.removeFromInventory(idx);
         }
         printf("Adding scrap value for item: %s", targetItem.tostring());
         local scrapValue = targetItem.getScrapVal();
@@ -524,8 +585,9 @@ enum InventoryBusEvents{
             selectedItem = mSecondaryItems_[idx];
             targetGrid = mSecondaryInventoryGrid_;
         }else{
-            selectedItem = mInventory_.getItemForIdx(idx);
-            targetGrid = mInventoryGrid_;
+            local targetInventory = getTargetInventory_();
+            selectedItem = targetInventory.getItemForIdx(idx);
+            targetGrid = mShowingStorage_ ? mStorageGrid_ : mInventoryGrid_;
         }
         if(selectedItem == null) return;
         print("Selected item " + selectedItem.tostring());
@@ -581,7 +643,8 @@ enum InventoryBusEvents{
             setHoverMenuToItem(item);
         }
         else{
-            local item = mInventory_.getItemForIdx(idx);
+            local targetInventory = getTargetInventory_();
+            local item = targetInventory.getItemForIdx(idx);
             setHoverMenuToItem(item);
         }
     }
@@ -610,6 +673,7 @@ enum InventoryBusEvents{
         }
         //base.shutdown();
         _event.unsubscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent);
+        _event.unsubscribe(Event.STORAGE_CONTENTS_CHANGED, receiveStorageChangedEvent);
         _event.unsubscribe(Event.PLAYER_EQUIP_CHANGED, receivePlayerEquipChangedEvent);
     }
 

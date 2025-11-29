@@ -3,6 +3,7 @@
     mCurrentData_ = null;
     mCurrentSaveSlot_ = -1;
     mInventory_ = null;
+    mItemStorage_ = null;
 
     mLastSaveTime_ = -1;
 
@@ -20,7 +21,8 @@
 
         mPlacesVisited_ = array(PlaceId.MAX, false);
         mLeanPlacesVisited_ = [];
-        mInventory_ = ::Inventory();
+        mInventory_ = ::Inventory(InventoryType.INVENTORY);
+        mItemStorage_ = ::Inventory(InventoryType.STORAGE);
 
         mPlayerCombatStats = ::Combat.CombatStats(EnemyId.NONE, 200);
         mPlayerCombatStats.calculateEquippedStats();
@@ -79,6 +81,14 @@
         mPlayerCombatStats.mEquippedItems.rawSetItems(equipData);
         mPlayerCombatStats.calculateEquippedStats();
 
+        // Handle storage if it exists in save data
+        if(data.rawin("storage")){
+            local storageData = data.storage.apply(function(itemVal){
+                return itemVal == null ? null : ::Item(itemVal);
+            });
+            mItemStorage_.rawSetItems(storageData);
+        }
+
         copyQuestData_(data.quest);
     }
     function getSaveSlot(){
@@ -94,6 +104,12 @@
             if(i == null) continue;
             mCurrentData_.playerEquipped[c] = (i == null ? null : i.getId());
         }
+
+        // Sync storage items to data
+        foreach(c,i in mItemStorage_.mInventoryItems_){
+            mCurrentData_.storage[c] = (i == null ? null : i.getId());
+        }
+
         local questData = ::Base.mQuestManager.getTableForQuests();
         mCurrentData_.rawset("quest", questData);
         mCurrentData_.rawset("playerCoins", mInventory_.getMoney());

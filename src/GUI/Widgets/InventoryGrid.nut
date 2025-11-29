@@ -25,6 +25,8 @@
     mItemIcons_ = null;
     mGridPadding_ = null;
 
+    mStoredHiddenStates_ = null;
+
     mLayout_ = null;
     //mItemHovered_ = false;
 
@@ -37,6 +39,7 @@
         mHoverInfo_ = hoverInfo;
         mButtonCover_ = buttonCover;
         mBackgrounds_ = [];
+        mStoredHiddenStates_ = {};
     }
 
     /**
@@ -271,6 +274,59 @@
 
         //mHoverInfo_.setVisible(mItemHovered_);
         //mButtonCover_.setVisible(mItemHovered_);
+    }
+
+    //TODO this code is disgusting, clean it up
+    function setHidden(hidden){
+        // Store hidden states before hiding so we can restore them later
+        if(hidden){
+            // Save current states
+            foreach(idx, bg in mBackgrounds_){
+                mStoredHiddenStates_["bg_" + idx] <- !bg.getVisible();
+            }
+            foreach(idx, widget in mWidgets_){
+                mStoredHiddenStates_["widget_" + idx] <- !widget.getVisible();
+            }
+            foreach(idx, icon in mItemIcons_){
+                if(icon != null){
+                    mStoredHiddenStates_["icon_" + idx] <- !icon.getVisible();
+                }
+            }
+        }
+
+        // Set hidden state for all widgets
+        foreach(bg in mBackgrounds_){
+            bg.setHidden(hidden);
+        }
+        foreach(widget in mWidgets_){
+            widget.setHidden(hidden);
+        }
+        foreach(icon in mItemIcons_){
+            if(icon != null){
+                icon.setHidden(hidden);
+            }
+        }
+
+        // Restore previous hidden states if showing
+        if(!hidden){
+            foreach(idx, bg in mBackgrounds_){
+                if(mStoredHiddenStates_.rawin("bg_" + idx)){
+                    bg.setHidden(mStoredHiddenStates_["bg_" + idx]);
+                }
+            }
+            foreach(idx, widget in mWidgets_){
+                if(mStoredHiddenStates_.rawin("widget_" + idx)){
+                    widget.setHidden(mStoredHiddenStates_["widget_" + idx]);
+                }
+            }
+            foreach(idx, icon in mItemIcons_){
+                if(icon != null && mStoredHiddenStates_.rawin("icon_" + idx)){
+                    icon.setHidden(mStoredHiddenStates_["icon_" + idx]);
+                }
+            }
+            // Clear stored states after restoring
+            mStoredHiddenStates_.clear();
+        }
     }
 
     function setButtonCoverHidden(hidden){

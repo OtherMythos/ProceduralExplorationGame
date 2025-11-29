@@ -420,7 +420,8 @@ enum GameplayComplexMenuBusEvents{
             "stats": ::Base.mPlayerStats,
             "disableBackground": true,
             "disableBackButton": true,
-            "disableBackgroundClose": true
+            "disableBackgroundClose": true,
+            "supportsStorage": true
         });
 
         mWindow_.sizeScrollToFit();
