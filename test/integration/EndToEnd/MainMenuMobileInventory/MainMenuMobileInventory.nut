@@ -24,7 +24,7 @@ _tIntegration("MainMenuMobileInventory", "Test to check the inventory system wor
             _gui.simulateMousePosition(invPos);
         },
         function(){
-            ::_testHelper.mousePressWidgetForText("Use");
+            ::_testHelper.mousePressWidgetForText("Eat");
         },
         function(){
             //The health should've changed because the apple was consumed.
