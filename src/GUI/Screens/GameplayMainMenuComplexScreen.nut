@@ -310,6 +310,15 @@ enum GameplayComplexMenuBusEvents{
         mCurrentTab_ = 0;
         notifyTabChange(mCurrentTab_);
         updateTabPosition_(1.0);
+
+        //Transition to title screen at layer 2 with panel coordinates for animation
+        local panel = mTabWindows_[0].getMapPanel();
+        local titleData = {
+            "pos": panel.getDerivedPosition(),
+            "size": panel.getSize(),
+            "bus": mBus_
+        };
+        ::ScreenManager.transitionToScreen( ::ScreenManager.ScreenData( Screen.GAME_TITLE_SCREEN, titleData ), null, 2 );
     }
 
     function update(){

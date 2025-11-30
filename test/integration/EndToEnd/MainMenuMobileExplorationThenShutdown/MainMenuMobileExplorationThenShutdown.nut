@@ -6,6 +6,7 @@ _tIntegration("MainMenuMobileExplorationThenShutdown", "Test to check the mobile
             ::_testHelper.setDefaultWaitFrames(20);
         },
         ::_testHelper.STEPS_WAIT_FOR_SPLASH_SCREEN,
+        ::_testHelper.STEPS_CLOSE_TITLE_SCREEN,
         function(){
             ::_testHelper.queryWindowExists("GameplayMainMenuComplex");
         },

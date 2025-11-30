@@ -5,6 +5,7 @@ _tIntegration("MainMenuMobileInventory", "Test to check the inventory system wor
             ::_testHelper.setDefaultWaitFrames(20);
         },
         ::_testHelper.STEPS_WAIT_FOR_SPLASH_SCREEN,
+        ::_testHelper.STEPS_CLOSE_TITLE_SCREEN,
         function(){
             ::_testHelper.queryWindowExists("GameplayMainMenuComplex");
         },

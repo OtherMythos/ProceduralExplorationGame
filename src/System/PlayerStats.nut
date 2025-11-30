@@ -127,6 +127,7 @@
     }
 
     function getRegionIdDiscovery(region){
+        if(mCurrentData_ == null) return 0;
         local d = mCurrentData_.overworldDiscovered;
         if(region < 0 || region >= d.len()){
             return 0;
@@ -245,6 +246,7 @@
     }
 
     function getOverworldStartPosition(){
+        if(mCurrentData_ == null) return null;
         //Convert from a string to a Vec3.
         local pos = mCurrentData_.currentOverworldPosition;
         local ret = Vec3(pos);

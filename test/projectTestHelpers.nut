@@ -75,3 +75,16 @@
         ::_testHelper.repeatStep();
     }
 };
+::_testHelper.STEPS_CLOSE_TITLE_SCREEN <- function(){
+    local exists = ::_testHelper.queryWindow("GameTitleScreen");
+    if(!exists){
+        return;
+    }
+
+    _gui.simulateMousePosition(::drawable / 2);
+    _gui.simulateMouseButton(_MB_LEFT, true);
+    exists = ::_testHelper.queryWindow("GameTitleScreen");
+    if(exists){
+        ::_testHelper.repeatStep();
+    }
+};
