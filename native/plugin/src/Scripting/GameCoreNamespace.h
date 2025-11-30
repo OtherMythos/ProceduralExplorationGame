@@ -67,6 +67,12 @@ namespace ProceduralExplorationGamePlugin{
 
         static SQInteger dumpSceneToObj(HSQUIRRELVM vm);
 
+        static SQInteger triggerLightHapticFeedback(HSQUIRRELVM vm);
+        static SQInteger triggerMediumHapticFeedback(HSQUIRRELVM vm);
+        static SQInteger triggerHeavyHapticFeedback(HSQUIRRELVM vm);
+        static SQInteger triggerSelectionHapticFeedback(HSQUIRRELVM vm);
+        static SQInteger triggerNotificationHapticFeedback(HSQUIRRELVM vm);
+
         static ProceduralExplorationGameCore::VisitedPlacesParser* currentVisitedPlacesParser;
 
         static SQInteger update(HSQUIRRELVM vm);

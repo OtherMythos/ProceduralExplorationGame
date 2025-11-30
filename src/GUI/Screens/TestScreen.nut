@@ -36,7 +36,14 @@
             "Trigger linear orb effect",
             "Trigger single text popup",
             "Read book",
-            "Generate render icon"
+            "Generate render icon",
+            "Haptic Light",
+            "Haptic Medium",
+            "Haptic Heavy",
+            "Haptic Selection",
+            "Haptic Notification Success",
+            "Haptic Notification Warning",
+            "Haptic Notification Error"
         ];
         local buttonFunctions = [
             function(widget, action){
@@ -84,6 +91,27 @@
                 local secondPanel = mWindow_.createPanel();
                 secondPanel.setPosition(Vec2(40, 40));
                 secondPanel.setSize(Vec2(10, 10));
+            },
+            function(widget, action){
+                _gameCore.triggerLightHapticFeedback();
+            },
+            function(widget, action){
+                _gameCore.triggerMediumHapticFeedback();
+            },
+            function(widget, action){
+                _gameCore.triggerHeavyHapticFeedback();
+            },
+            function(widget, action){
+                _gameCore.triggerSelectionHapticFeedback();
+            },
+            function(widget, action){
+                _gameCore.triggerNotificationHapticFeedback(0);
+            },
+            function(widget, action){
+                _gameCore.triggerNotificationHapticFeedback(1);
+            },
+            function(widget, action){
+                _gameCore.triggerNotificationHapticFeedback(2);
             }
         ]
 

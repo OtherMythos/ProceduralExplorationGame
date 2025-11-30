@@ -12,6 +12,7 @@
 #include "MapGen/MapGenScriptClient.h"
 #include "MapGen/Script/MapGenScriptVM.h"
 #include "PluginBaseSingleton.h"
+#include "Platform/iOS/HapticFeedback.h"
 
 #include "System/Util/PathUtils.h"
 
@@ -979,6 +980,35 @@ namespace ProceduralExplorationGamePlugin{
         return 0;
     }
 
+    SQInteger GameCoreNamespace::triggerLightHapticFeedback(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::triggerLightHapticFeedback();
+        return 0;
+    }
+
+    SQInteger GameCoreNamespace::triggerMediumHapticFeedback(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::triggerMediumHapticFeedback();
+        return 0;
+    }
+
+    SQInteger GameCoreNamespace::triggerHeavyHapticFeedback(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::triggerHeavyHapticFeedback();
+        return 0;
+    }
+
+    SQInteger GameCoreNamespace::triggerSelectionHapticFeedback(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::triggerSelectionHapticFeedback();
+        return 0;
+    }
+
+    SQInteger GameCoreNamespace::triggerNotificationHapticFeedback(HSQUIRRELVM vm){
+        SQInteger notificationType = 0;
+        if(sq_gettype(vm, 2) == OT_INTEGER){
+            sq_getinteger(vm, 2, &notificationType);
+        }
+        ProceduralExplorationGameCore::triggerNotificationHapticFeedback((int)notificationType);
+        return 0;
+    }
+
     void GameCoreNamespace::setupNamespace(HSQUIRRELVM vm){
         AV::ScriptUtils::addFunction(vm, getGameCoreVersion, "getGameCoreVersion");
 
@@ -1030,6 +1060,12 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, insertParsedSceneFileVoxMeshGetAnimInfoOverworld, "insertParsedSceneFileGetAnimInfoOverworld", -3, ".uuu");
 
         AV::ScriptUtils::addFunction(vm, dumpSceneToObj, "dumpSceneToObj");
+
+        AV::ScriptUtils::addFunction(vm, triggerLightHapticFeedback, "triggerLightHapticFeedback");
+        AV::ScriptUtils::addFunction(vm, triggerMediumHapticFeedback, "triggerMediumHapticFeedback");
+        AV::ScriptUtils::addFunction(vm, triggerHeavyHapticFeedback, "triggerHeavyHapticFeedback");
+        AV::ScriptUtils::addFunction(vm, triggerSelectionHapticFeedback, "triggerSelectionHapticFeedback");
+        AV::ScriptUtils::addFunction(vm, triggerNotificationHapticFeedback, "triggerNotificationHapticFeedback", -1, ".");
 
         AV::ScriptUtils::addFunction(vm, createDataPointFileParser, "DataPointFile");
     }

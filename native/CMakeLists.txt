@@ -21,6 +21,10 @@ if(PLATFORM STREQUAL "android")
     add_definitions(-DTARGET_ANDROID)
 endif()
 
+if(PLATFORM STREQUAL "OS64")
+    add_definitions(-DTARGET_IPHONE)
+endif()
+
 include_directories(${ENGINE_SOURCE_PATH}/src)
 list(APPEND CMAKE_MODULE_PATH ${ENGINE_SOURCE_PATH}/CMake)
 add_subdirectory(${ENGINE_SOURCE_PATH}/CMake avEngineSource)
