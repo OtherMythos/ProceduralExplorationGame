@@ -4,6 +4,8 @@ _tIntegration("MainMenuToExplorationMobile", "Test the exploration mobile interf
             ::_testHelper.generateSimpleSaves(5);
             ::_testHelper.setDefaultWaitFrames(20);
         },
+        ::_testHelper.STEPS_WAIT_FOR_SPLASH_SCREEN,
+        ::_testHelper.STEPS_CLOSE_TITLE_SCREEN,
         function(){
             ::_testHelper.queryWindowExists("GameplayMainMenuComplex");
             ::_testHelper.waitFrames(30);
