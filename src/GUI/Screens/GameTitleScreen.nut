@@ -140,6 +140,10 @@
                     if(!mAnimateIn_ ){
                         ::ScreenManager.transitionToScreen( null, null, mLayerIdx );
                     }
+                    mTitleFullScreen_ = true;
+                    if( mAnimateIn_ ){
+                        mAnimateIn_ = false;
+                    }
                 }else{
                     if( mScreenData_.data.bus != null ){
                         mScreenData_.data.bus.notifyEvent( GameplayComplexMenuBusEvents.SHOW_EXPLORATION_MAP_FINISHED, null );
