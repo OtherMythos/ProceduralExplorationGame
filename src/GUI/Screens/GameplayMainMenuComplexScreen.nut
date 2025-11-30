@@ -316,7 +316,8 @@ enum GameplayComplexMenuBusEvents{
         local titleData = {
             "pos": panel.getDerivedPosition(),
             "size": panel.getSize(),
-            "bus": mBus_
+            "bus": mBus_,
+            "animateIn": false
         };
         ::ScreenManager.transitionToScreen( ::ScreenManager.ScreenData( Screen.GAME_TITLE_SCREEN, titleData ), null, 2 );
     }
@@ -462,6 +463,7 @@ enum GameplayComplexMenuBusEvents{
     mCompositor_ = null;
     mMapPanel_ = null;
     mOrbCounter_ = null;
+    mReturnToTitleButton_ = null;
 
     function recreate(){
         local line = _gui.createLayoutLine();
@@ -580,12 +582,31 @@ enum GameplayComplexMenuBusEvents{
             mOrbCounter_ = orbCounter;
         }
 
+        //Add button to return to title screen
+        local returnToTitleButton = ::IconButton(mWindow_, "backButtonIcon");
+        returnToTitleButton.setSize(Vec2(64, 64));
+        local returnButtonPos = newspaperButton.getPosition() + Vec2(newspaperButton.getSize().x + 10, 0);
+        returnToTitleButton.setPosition(returnButtonPos);
+        returnToTitleButton.attachListenerForEvent(function(widget, action){
+            returnToTitleScreen_();
+        }, _GUI_ACTION_PRESSED, this);
+        mReturnToTitleButton_ = returnToTitleButton;
+
         line.layout();
 
         ::OverworldLogic.requestSetup();
         ::OverworldLogic.requestState(OverworldStates.ZOOMED_OUT);
         local datablock = ::OverworldLogic.getCompositorDatablock();
         explorationMap.setDatablock(datablock);
+
+        //Transition to title screen at layer 2 with panel coordinates for animation
+        local titleData = {
+            "pos": explorationMap.getDerivedPosition(),
+            "size": explorationMap.getSize(),
+            "bus": mBus_,
+            "animateIn": false
+        };
+        ::ScreenManager.transitionToScreen( ::ScreenManager.ScreenData( Screen.GAME_TITLE_SCREEN, titleData ), null, 2 );
     }
 
     function getMapPanel(){
@@ -616,10 +637,19 @@ enum GameplayComplexMenuBusEvents{
     function update(){
         base.update();
 
-        //TODO only call this when it's actually needed, because the map select screen also sets this.
-        ::OverworldLogic.setRenderableSize(mMapPanel_.getDerivedPosition(), mMapPanel_.getSize());
-
         ::OverworldLogic.update();
+    }
+
+    function returnToTitleScreen_(){
+        //Re-setup the title screen on layer 2 with panel coordinates
+        local explorationMap = getMapPanel();
+        local titleData = {
+            "pos": explorationMap.getDerivedPosition(),
+            "size": explorationMap.getSize(),
+            "bus": mBus_,
+            "animateIn": true
+        };
+        ::ScreenManager.transitionToScreen( ::ScreenManager.ScreenData( Screen.GAME_TITLE_SCREEN, titleData ), null, 2 );
     }
 
 };

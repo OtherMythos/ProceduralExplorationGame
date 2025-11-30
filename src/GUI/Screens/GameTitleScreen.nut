@@ -10,21 +10,19 @@
     mTitleFullScreen_ = false;
     mTitleMainScreenPanel_ = null;
     mTitlePanelCoords_ = null;
+    mAnimateIn_ = false;
 
     function setup( data ){
-        base.setup( data );
+        mBusId_ = data.bus.registerCallback( busCallback, this );
 
-        if( data != null ){
-            if( data.rawin( "bus" ) ){
-                mBusId_ = data.bus.registerCallback( busCallback, this );
-            }
-            if( data.rawin( "pos" ) && data.rawin( "size" ) ){
-                mTitlePanelCoords_ = {
-                    "pos": data.pos,
-                    "size": data.size
-                };
-            }
-        }
+        mTitlePanelCoords_ = {
+            "pos": data.pos,
+            "size": data.size
+        };
+
+        mAnimateIn_ = data.animateIn;
+
+        base.setup( data );
     }
 
     function recreate(){
@@ -32,9 +30,6 @@
         mWindow_.setSize( ::drawable );
         mWindow_.setClipBorders( 0, 0, 0, 0 );
         mWindow_.setVisualsEnabled( false );
-        local MARGIN = 10;
-
-        local insets = _window.getScreenSafeAreaInsets();
 
         _gameCore.setCameraForNode( "renderMainGameplayNode", "compositor/camera0" );
 
@@ -48,6 +43,7 @@
         local labelSize = titleLabel.getSize();
         titleLabel.setPosition( Vec2( ::drawable.x / 2 - labelSize.x / 2, ::drawable.y / 2 - labelSize.y / 2 ) );
         mTitleLabel_ = titleLabel;
+        setTitleOpacity_(mAnimateIn_ ? 0.0 : 1.0);
 
         ::OverworldLogic.requestSetup();
 
@@ -67,10 +63,12 @@
         }, _GUI_ACTION_PRESSED, this );
         mScreenButton_ = screenButton;
 
-        mTitleFullScreen_ = true;
-        mAnimCount_ = 1.0;
-        mAnimFinished_ = true;
-        ::OverworldLogic.setRenderableSize( ::Vec2_ZERO, ::drawable );
+        if( mAnimateIn_ ){
+            setTitleFullscreen( false );
+        }else{
+            setTitleFullscreen( true );
+            mAnimCount_ = 1.0;
+        }
     }
 
     function shutdown(){
@@ -104,16 +102,8 @@
         local changed = (mTitleFullScreen_ != fullscreen);
         mTitleFullScreen_ = fullscreen;
 
-        if( changed ){
-            if( mTitleFullScreen_ ){
-                mTitleMainScreenPanel_.setVisible( true );
-                mTitleMainScreenPanel_.setClickable( false );
-            }else{
-                //mTitleMainScreenPanel_.setVisible(false);
-            }
-            mAnimCount_ = 0.0;
-            mAnimFinished_ = false;
-        }
+        mAnimCount_ = 0.0;
+        mAnimFinished_ = false;
     }
 
     function getTitleStartEndValues(){
@@ -121,7 +111,7 @@
 
         local panelStart = mTitlePanelCoords_;
 
-        if( mTitleFullScreen_ ){
+        if( mAnimateIn_ ){
             d = {
                 "startPos": panelStart.pos,
                 "startSize": panelStart.size,
@@ -147,7 +137,9 @@
                     if( mScreenData_.data.bus != null ){
                         mScreenData_.data.bus.notifyEvent( GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_FINISHED, null );
                     }
-                    ::ScreenManager.transitionToScreen( null, null, mLayerIdx );
+                    if(!mAnimateIn_ ){
+                        ::ScreenManager.transitionToScreen( null, null, mLayerIdx );
+                    }
                 }else{
                     if( mScreenData_.data.bus != null ){
                         mScreenData_.data.bus.notifyEvent( GameplayComplexMenuBusEvents.SHOW_EXPLORATION_MAP_FINISHED, null );
@@ -156,9 +148,6 @@
             }
 
             mAnimFinished_ = true;
-            if( mTitleFullScreen_ ){
-                ::OverworldLogic.setRenderableSize( ::Vec2_ZERO, ::drawable );
-            }
             return;
         }
         mAnimCount_ = ::accelerationClampCoordinate_( mAnimCount_, 1.0, 0.02 );
@@ -185,15 +174,19 @@
 
         //Title label
         {
-            local animStart = mTitleFullScreen_ ? 0.8 : 0.0;
-            local animEnd = mTitleFullScreen_ ? 1.0 : 0.2;
+            local animStart = mAnimateIn_ ? 0.8 : 0.0;
+            local animEnd = mAnimateIn_ ? 1.0 : 0.2;
 
-            local startCol = mTitleFullScreen_ ? 0.0 : 1.0;
-            local endCol = mTitleFullScreen_ ? 1.0 : 0.0;
+            local startCol = mAnimateIn_ ? 0.0 : 1.0;
+            local endCol = mAnimateIn_ ? 1.0 : 0.0;
             local animCol = ::calculateSimpleAnimationInRange( startCol, endCol, mAnimCount_, animStart, animEnd );
 
-            mTitleLabel_.setTextColour( 1, 1, 1, animCol );
+            setTitleOpacity_(animCol);
         }
+    }
+
+    function setTitleOpacity_(opacity){
+        mTitleLabel_.setTextColour(1, 1, 1, opacity);
     }
 
     function update(){
