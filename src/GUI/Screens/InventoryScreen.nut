@@ -354,6 +354,7 @@ enum InventoryBusEvents{
             updateStorageToggleButtonText_();
             mStorageToggleButton_.attachListenerForEvent(function(widget, action){
                 toggleStorageVisibility();
+                ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
             }, _GUI_ACTION_PRESSED, this);
         }
 
@@ -436,6 +437,7 @@ enum InventoryBusEvents{
 
     function busCallback(event, data){
         if(event == InventoryBusEvents.ITEM_SELECTED){
+            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
             selectItem(data);
         }
         else if(event == InventoryBusEvents.ITEM_HOVER_BEGAN){

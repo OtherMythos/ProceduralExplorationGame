@@ -73,6 +73,7 @@ enum GameplayComplexMenuBusEvents{
                 button.setVisualsEnabled(false);
                 button.attachListenerForEvent(function(widget, action){
                     local tabId = widget.getUserId();
+                    ::HapticManager.triggerSimpleHaptic(HapticType.SELECTION);
                     notifyTabChange_(tabId);
                     mParent_.notifyTabChange(tabId);
                 }, _GUI_ACTION_PRESSED, this);
@@ -505,6 +506,7 @@ enum GameplayComplexMenuBusEvents{
         settingsButton.setPosition(Vec2(10, 10));
         settingsButton.attachListenerForEvent(function(widget, action){
             ::ScreenManager.queueTransition(Screen.SETTINGS_SCREEN, null, 3);
+            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
         }, _GUI_ACTION_PRESSED, this);
 
         currentY += settingsButton.getPosition().y + settingsButton.getSize().y;
@@ -516,6 +518,7 @@ enum GameplayComplexMenuBusEvents{
         newspaperButton.setPosition(newspaperPos);
         newspaperButton.attachListenerForEvent(function(widget, action){
             ::ScreenManager.queueTransition(Screen.SETTINGS_SCREEN, null, 3);
+            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
         }, _GUI_ACTION_PRESSED, this);
 
 
@@ -589,6 +592,7 @@ enum GameplayComplexMenuBusEvents{
         returnToTitleButton.setPosition(returnButtonPos);
         returnToTitleButton.attachListenerForEvent(function(widget, action){
             returnToTitleScreen_();
+            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
         }, _GUI_ACTION_PRESSED, this);
         mReturnToTitleButton_ = returnToTitleButton;
 

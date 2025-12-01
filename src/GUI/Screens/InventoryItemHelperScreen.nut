@@ -289,6 +289,12 @@ enum InventoryItemHelperScreenFunctions{
 
         return [buttonOptions, buttonFunctions, buttonEnabled];
     }
+
+    function closeInventoryScreen_(){
+        ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
+        closeScreen();
+    }
+
 }
 
 local b = ::ScreenManager.Screens[Screen.INVENTORY_ITEM_HELPER_SCREEN].mButtonFunctions_;
@@ -296,61 +302,61 @@ local b = ::ScreenManager.Screens[Screen.INVENTORY_ITEM_HELPER_SCREEN].mButtonFu
 b[InventoryItemHelperScreenFunctions.USE] = function(widget, action){
     local data = {"idx": mData_.idx, "gridType": mData_.gridType};
     mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_USE, data);
-    closeScreen();
+    closeInventoryScreen_();
 };
 b[InventoryItemHelperScreenFunctions.SCRAP] =function(widget, action){
     local data = {"idx": mData_.idx, "gridType": mData_.gridType};
     mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_SCRAP, data);
-    closeScreen();
+    closeInventoryScreen_();
 };
 b[InventoryItemHelperScreenFunctions.CANCEL] = function(widget, action){
-    closeScreen();
+    closeInventoryScreen_();
 };
 b[InventoryItemHelperScreenFunctions.EQUIP] = function(widget, action){
     mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP, mData_.idx);
-    closeScreen();
+    closeInventoryScreen_();
 };
 b[InventoryItemHelperScreenFunctions.EQUIP_LEFT_HAND] = function(widget, action){
     local data = {"idx": mData_.idx, "gridType": mData_.gridType};
     mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP_LEFT_HAND, data);
-    closeScreen();
+    closeInventoryScreen_();
 };
 b[InventoryItemHelperScreenFunctions.EQUIP_RIGHT_HAND] = function(widget, action){
     local data = {"idx": mData_.idx, "gridType": mData_.gridType};
     mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_EQUIP_RIGHT_HAND, data);
-    closeScreen();
+    closeInventoryScreen_();
 };
 b[InventoryItemHelperScreenFunctions.UNEQUIP] = function(widget, action){
     mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_UNEQUIP, mData_.idx);
-    closeScreen();
+    closeInventoryScreen_();
 };
 b[InventoryItemHelperScreenFunctions.READ] = function(widget, action){
     local data = {"idx": mData_.idx, "gridType": mData_.gridType};
     mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_READ, data);
-    closeScreen();
+    closeInventoryScreen_();
 };
 b[InventoryItemHelperScreenFunctions.MOVE_TO_INVENTORY] = function(widget, action){
     local data = {"idx": mData_.idx, "gridType": mData_.gridType};
     mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_TO_INVENTORY, data);
-    closeScreen();
+    closeInventoryScreen_();
 };
 b[InventoryItemHelperScreenFunctions.MOVE_OUT_OF_INVENTORY] = function(widget, action){
     local data = {"idx": mData_.idx, "gridType": mData_.gridType};
     mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_OUT_OF_INVENTORY, data);
-    closeScreen();
+    closeInventoryScreen_();
 };
 b[InventoryItemHelperScreenFunctions.MOVE_TO_STORAGE] = function(widget, action){
     local data = {"idx": mData_.idx, "gridType": mData_.gridType};
     mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_TO_STORAGE, data);
-    closeScreen();
+    closeInventoryScreen_();
 };
 b[InventoryItemHelperScreenFunctions.MOVE_FROM_STORAGE] = function(widget, action){
     local data = {"idx": mData_.idx, "gridType": mData_.gridType};
     mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_FROM_STORAGE, data);
-    closeScreen();
+    closeInventoryScreen_();
 };
 b[InventoryItemHelperScreenFunctions.BUY] = function(widget, action){
     local data = {"idx": mData_.idx, "gridType": mData_.gridType};
     mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_BUY, data);
-    closeScreen();
+    closeInventoryScreen_();
 };
