@@ -980,6 +980,11 @@ namespace ProceduralExplorationGamePlugin{
         return 0;
     }
 
+    SQInteger GameCoreNamespace::initialiseHapticFeedbackSystem(HSQUIRRELVM vm){
+        ProceduralExplorationGameCore::initialiseHapticFeedbackSystem();
+        return 0;
+    }
+
     SQInteger GameCoreNamespace::triggerLightHapticFeedback(HSQUIRRELVM vm){
         ProceduralExplorationGameCore::triggerLightHapticFeedback();
         return 0;
@@ -1061,6 +1066,7 @@ namespace ProceduralExplorationGamePlugin{
 
         AV::ScriptUtils::addFunction(vm, dumpSceneToObj, "dumpSceneToObj");
 
+        AV::ScriptUtils::addFunction(vm, initialiseHapticFeedbackSystem, "initialiseHapticFeedbackSystem");
         AV::ScriptUtils::addFunction(vm, triggerLightHapticFeedback, "triggerLightHapticFeedback");
         AV::ScriptUtils::addFunction(vm, triggerMediumHapticFeedback, "triggerMediumHapticFeedback");
         AV::ScriptUtils::addFunction(vm, triggerHeavyHapticFeedback, "triggerHeavyHapticFeedback");

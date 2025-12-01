@@ -3,6 +3,7 @@
 namespace ProceduralExplorationGameCore{
 
 #ifdef TARGET_IPHONE
+    void initialiseHapticFeedbackSystem();
     void triggerLightHapticFeedback();
     void triggerMediumHapticFeedback();
     void triggerHeavyHapticFeedback();
@@ -10,6 +11,7 @@ namespace ProceduralExplorationGameCore{
     void triggerNotificationHapticFeedback(int notificationType);
 #else
     //No-op stubs for non-iOS platforms
+    inline void initialiseHapticFeedbackSystem(){}
     inline void triggerLightHapticFeedback(){}
     inline void triggerMediumHapticFeedback(){}
     inline void triggerHeavyHapticFeedback(){}

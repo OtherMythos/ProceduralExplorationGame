@@ -177,6 +177,9 @@
         mActionManager = ::ActionManager();
         mActionManager.setup();
 
+        _doFile("res://src/System/HapticManager.nut");
+        ::HapticManager.initialise();
+
         _doFile("res://src/MapGen/Exploration/Generator/Biomes.nut");
         _doFile("res://src/MapGen/MapViewer.nut");
         _doFile("res://src/MapGen/VisitedLocationMapViewer.nut");

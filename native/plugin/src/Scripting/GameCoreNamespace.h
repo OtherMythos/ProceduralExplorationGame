@@ -67,6 +67,7 @@ namespace ProceduralExplorationGamePlugin{
 
         static SQInteger dumpSceneToObj(HSQUIRRELVM vm);
 
+        static SQInteger initialiseHapticFeedbackSystem(HSQUIRRELVM vm);
         static SQInteger triggerLightHapticFeedback(HSQUIRRELVM vm);
         static SQInteger triggerMediumHapticFeedback(HSQUIRRELVM vm);
         static SQInteger triggerHeavyHapticFeedback(HSQUIRRELVM vm);
