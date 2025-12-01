@@ -36,6 +36,8 @@
     mCloseButtonStart_ = null;
     mExploreButtonStart_ = null;
     mExploreButton_ = null;
+    mAnimationIds_ = [];
+    mJumpAnimatorAdded_ = false;
 
     mCurrentTargetRegion_ = null;
 
@@ -175,6 +177,10 @@
     }
 
     function shutdown(){
+        foreach(animId in mAnimationIds_){
+            ::Base.mIconButtonComplexAnimationManager.unstoreAnimation(animId);
+        }
+
         if(mBusId_ != null){
             mScreenData_.data.deregisterCallback(mBusId_);
         }
@@ -249,6 +255,15 @@
         refreshWidgets_();
     }
 
+    function addJumpAnimationToExploreButton_(){
+        if(mJumpAnimatorAdded_) return;
+
+        local jumpAnimator = ::IconButtonComplexJumpAnimator(2.8, 4.0);
+        local animId = ::Base.mIconButtonComplexAnimationManager.addAnimationToButton(jumpAnimator, mExploreButton_);
+        mAnimationIds_.append(animId);
+        mJumpAnimatorAdded_ = true;
+    }
+
     function beginExplorationForRegion_(regionId){
         ::ScreenManager.transitionToScreen(null, null, 0);
         ::ScreenManager.transitionToScreen(null, null, mLayerIdx);
@@ -293,6 +308,10 @@
                     ::ScreenManager.transitionToScreen(null, null, mLayerIdx);
                 }else{
                     mScreenData_.data.notifyEvent(GameplayComplexMenuBusEvents.SHOW_EXPLORATION_MAP_FINISHED, null);
+                    //Add jump animation once the map animation finishes
+                    if(!mJumpAnimatorAdded_){
+                        addJumpAnimationToExploreButton_();
+                    }
                 }
             }
 
