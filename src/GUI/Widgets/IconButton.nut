@@ -131,3 +131,189 @@
     }
 
 };
+
+//Base class for IconButtonComplex animators
+::IconButtonComplexAnimator <- class{
+    function update(button, deltaTime){
+        //Override this to implement animation logic
+    }
+};
+
+//Wrapper class for animation data
+::IconButtonComplexAnimator.WrappedAnimation <- class{
+    animator = null;
+    button = null;
+
+    constructor(animator, button){
+        this.animator = animator;
+        this.button = button;
+    }
+};
+
+//Test animator that moves the icon up and down with a sin wave
+::IconButtonComplexSinWaveAnimator <- class extends ::IconButtonComplexAnimator{
+    mTime_ = 0.0;
+    mAmplitude_ = 0.0;
+    mFrequency_ = 0.0;
+    mOriginalIconPosition_ = null;
+
+    constructor(amplitude=20.0, frequency=2.0){
+        mAmplitude_ = amplitude;
+        mFrequency_ = frequency;
+    }
+
+    function update(button, deltaTime){
+        mTime_ += deltaTime;
+
+        if(mOriginalIconPosition_ == null){
+            mOriginalIconPosition_ = button.mIcon_.getPosition().copy();
+        }
+
+        local offset = sin(mTime_ * mFrequency_) * mAmplitude_;
+        local newPos = mOriginalIconPosition_.copy();
+        newPos.y += offset;
+        button.mIcon_.setPosition(newPos);
+    }
+};
+
+//Glittering particle effect animator
+::IconButtonComplexGlitterAnimator <- class extends ::IconButtonComplexAnimator{
+    mParticles_ = null;
+    mParticleData_ = null;
+    mNumParticles_ = 0;
+    mParticleLifetime_ = 0.0;
+    mSpawnRate_ = 0.0;
+    mTimeSinceLastSpawn_ = 0.0;
+
+    constructor(window, numParticles=8, particleLifetime=1.0, spawnRate=0.15){
+        mNumParticles_ = numParticles;
+        mParticleLifetime_ = particleLifetime;
+        mSpawnRate_ = spawnRate;
+        mParticles_ = [];
+        mParticleData_ = [];
+
+        //Create particle panels
+        for(local i = 0; i < mNumParticles_; i++){
+            local particle = window.createPanel();
+            particle.setSize(Vec2(32, 32));
+            particle.setVisible(false);
+            particle.setClickable(false);
+            particle.setDatablock("glimmerParticle");
+            mParticles_.append(particle);
+            //Initialize with random lifetime to stagger particles
+            mParticleData_.append({
+                "age": _random.rand() * mParticleLifetime_,
+                "startX": 0.0,
+                "startY": 0.0,
+                "startRotation": 0.0,
+                "endRotation": 0.0
+            });
+        }
+    }
+
+    function update(button, deltaTime){
+        mTimeSinceLastSpawn_ += deltaTime;
+
+        //Spawn new particles
+        if(mTimeSinceLastSpawn_ >= mSpawnRate_){
+            mTimeSinceLastSpawn_ -= mSpawnRate_;
+
+            //Find an inactive particle to spawn
+            for(local i = 0; i < mNumParticles_; i++){
+                if(mParticleData_[i].age >= mParticleLifetime_){
+                    //Spawn this particle at a random position on the button
+                    local buttonPos = button.mButton_.getPosition();
+                    local buttonSize = button.mButton_.getSize();
+
+                    local randomX = _random.rand() * buttonSize.x;
+                    local randomY = _random.rand() * buttonSize.y;
+
+                    mParticles_[i].setCentre(buttonPos.x + randomX, buttonPos.y + randomY);
+                    mParticles_[i].setVisible(true);
+
+                    mParticleData_[i].age = 0.0;
+                    mParticleData_[i].startX = buttonPos.x + randomX;
+                    mParticleData_[i].startY = buttonPos.y + randomY;
+
+                    //Set rotation: random start and end within a quarter turn (PI/2)
+                    local maxRotationDeviation = PI / 2.0;
+                    mParticleData_[i].startRotation = _random.rand() * (2.0 * PI);
+                    mParticleData_[i].endRotation = mParticleData_[i].startRotation + (_random.rand() - 0.5) * maxRotationDeviation;
+                    break;
+                }
+            }
+        }
+
+        //Update particles
+        for(local i = 0; i < mNumParticles_; i++){
+            local data = mParticleData_[i];
+            if(data.age >= mParticleLifetime_) continue;
+
+            data.age += deltaTime;
+
+            //Calculate animation progress (0 to 1)
+            local progress = data.age / mParticleLifetime_;
+
+            //Fade in then out using easing
+            local opacity = 0.0;
+            if(progress < 0.5){
+                //Fade in first half
+                opacity = ::Easing.easeOutQuad(progress * 2.0);
+            }else{
+                //Fade out second half
+                opacity = 1.0 - ::Easing.easeInQuad((progress - 0.5) * 2.0);
+            }
+
+            //Set opacity
+            mParticles_[i].setColour(ColourValue(1.0, 1.0, 1.0, opacity));
+
+            //Interpolate rotation between start and end
+            local rotation = ::mix(data.startRotation, data.endRotation, progress);
+            mParticles_[i].setOrientation(rotation);
+
+            //Optional: slight movement
+            if(data.age >= mParticleLifetime_){
+                mParticles_[i].setVisible(false);
+            }
+        }
+    }
+
+    function shutdown(){
+        foreach(particle in mParticles_){
+            particle.destroyChild(particle);
+        }
+        mParticles_.clear();
+        mParticleData_.clear();
+    }
+};
+
+//Manager for IconButtonComplex animations
+::IconButtonComplexAnimationManager <- class{
+    mAnimations_ = null;
+
+    constructor(){
+        mAnimations_ = ::VersionPool();
+    }
+
+    function addAnimationToButton(animator, button){
+        local wrappedAnimation = ::IconButtonComplexAnimator.WrappedAnimation(animator, button);
+        return mAnimations_.store(wrappedAnimation);
+    }
+
+    function update(){
+        for(local i = 0; i < mAnimations_.mObject_.len(); i++){
+            local anim = mAnimations_.mObject_[i];
+            if(anim != null){
+                anim.animator.update(anim.button, 0.02);
+            }
+        }
+    }
+
+    function unstoreAnimation(animId){
+        mAnimations_.unstore(animId);
+    }
+
+    function shutdown(){
+        mAnimations_ = null;
+    }
+};

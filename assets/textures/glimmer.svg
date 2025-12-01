@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="200" height="200"
+     viewBox="0 0 200 200"
+     preserveAspectRatio="xMidYMid meet"
+     role="img" aria-label="Pointy glimmer perfectly fitting canvas">
+  <path
+    d="
+      M 100 0
+      C 100 100, 100 100, 200 100
+      C 100 100, 100 100, 100 200
+      C 100 100, 100 100, 0 100
+      C 100 100, 100 100, 100 0
+      Z"
+    fill="white" />
+</svg>

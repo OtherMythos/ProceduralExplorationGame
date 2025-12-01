@@ -339,6 +339,16 @@
             {
                 "texture": "OtherMythosLogo.jpg"
             }
+        },
+
+        "glimmerParticle" :
+        {
+            "blendblock": "gui/uiBlend",
+
+            "diffuse_map0" :
+            {
+                "texture": "glimmer.png"
+            }
         }
     }
 }

@@ -465,10 +465,13 @@ enum GameplayComplexMenuBusEvents{
     mMapPanel_ = null;
     mOrbCounter_ = null;
     mReturnToTitleButton_ = null;
+    mAnimationIds_ = null;
 
     function recreate(){
         local line = _gui.createLayoutLine();
         local insets = _window.getScreenSafeAreaInsets();
+
+        mAnimationIds_ = [];
 
         mWindow_.setClipBorders(0, 0, 0, 0);
 
@@ -566,6 +569,11 @@ enum GameplayComplexMenuBusEvents{
             notifyExplorationBegin_(null);
         }, _GUI_ACTION_PRESSED, this);
 
+        //Add animation to the Explore button
+        local glitterAnimator = ::IconButtonComplexGlitterAnimator(mWindow_, 3, 4.0, 0.15);
+        local animId = ::Base.mIconButtonComplexAnimationManager.addAnimationToButton(glitterAnimator, playIconButton);
+        mAnimationIds_.append(animId);
+
         {
             local orbCount = ::Base.mPlayerStats.getNumFoundOrbs();
             local orbCounter = ::IconButtonComplex(mWindow_, {
@@ -620,6 +628,11 @@ enum GameplayComplexMenuBusEvents{
     function shutdown(){
         mMapPanel_.setDatablock("simpleGrey");
         base.shutdown();
+
+        //Cleanup animations
+        foreach(animId in mAnimationIds_){
+            ::Base.mIconButtonComplexAnimationManager.unstoreAnimation(animId);
+        }
 
         ::OverworldLogic.requestShutdown();
     }

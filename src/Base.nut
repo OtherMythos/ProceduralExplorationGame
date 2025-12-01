@@ -15,6 +15,7 @@
     mActionManager = null
     mSystemSettings = null
     mLottieManager = null
+    mIconButtonComplexAnimationManager = null
 
     mGlobalDirectionLight = null
 
@@ -196,6 +197,7 @@
         _doFile("res://src/GUI/Widgets/TargetEnemyWidget.nut");
         _doFile("res://src/GUI/Widgets/ProgressBar.nut");
         _doFile("res://src/GUI/Widgets/IconButton.nut");
+        mIconButtonComplexAnimationManager = ::IconButtonComplexAnimationManager();
         _doFile("res://src/GUI/Widgets/TwoBarProgressBar.nut");
         _doFile("res://src/GUI/Widgets/GameplayProgressBar.nut");
         _doFile("res://src/GUI/Widgets/ExplorationDiscoverLevelBarWidget.nut");
@@ -432,6 +434,7 @@
         ::EffectManager.update();
         ::DebugConsole.update();
         mLottieManager.update();
+        mIconButtonComplexAnimationManager.update();
     }
 
     function createLights(){
