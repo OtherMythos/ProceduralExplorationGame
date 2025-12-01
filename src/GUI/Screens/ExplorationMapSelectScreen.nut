@@ -133,9 +133,9 @@
         local datablock = ::OverworldLogic.getCompositorDatablock();
         mMapMainScreenPanel_.setDatablock(datablock);
 
-        local closeButton = mWindow_.createButton();
-        closeButton.setText("Back");
-        closeButton.setPosition(MARGIN, MARGIN + insets.top);
+        local closeButton = ::IconButton(mWindow_, "backButtonIcon");
+        closeButton.setSize(Vec2(64, 64));
+        closeButton.setPosition(Vec2(MARGIN, MARGIN + insets.top));
         closeButton.attachListenerForEvent(function(widget, action){
             processCloseScreen_();
         }, _GUI_ACTION_PRESSED, this);
@@ -201,12 +201,16 @@
     function processCloseScreen_(){
         if(!mMapAnimFinished_) return;
 
+        ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
+
         //::OverworldLogic.requestState(OverworldStates.ZOOMED_OUT);
         mScreenData_.data.notifyEvent(GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_STARTED, null);
     }
 
     function processExplorationActionButtonPressed_(){
         if(!mMapAnimFinished_) return;
+
+        ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
 
         local discoveryCount = ::Base.mPlayerStats.getRegionIdDiscovery(mCurrentTargetRegion_);
         if(discoveryCount == 0){

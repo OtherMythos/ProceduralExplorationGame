@@ -56,6 +56,7 @@
         mIconButton_.setSize(mIconBackground_.getSize());
         mIconButton_.setVisualsEnabled(false);
         mIconButton_.attachListenerForEvent(function(widget, action){
+            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
             ::Base.mExplorationLogic.mCurrentWorld_.showInventory();
         }, _GUI_ACTION_PRESSED, this);
 

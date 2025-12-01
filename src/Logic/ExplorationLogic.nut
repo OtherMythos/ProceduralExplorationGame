@@ -274,6 +274,8 @@
     function notifyFoundEXPOrb(){
         mExplorationStats_.foundEXPOrbs++;
 
+        ::HapticManager.triggerSimpleHaptic(HapticType.SELECTION);
+
         local worldPos = ::EffectManager.getWorldPositionForWindowPos(::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getPosition() + ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getSize() / 2);
         local endPos = ::Base.mExplorationLogic.mGui_.getEXPCounterWindowPos();
 

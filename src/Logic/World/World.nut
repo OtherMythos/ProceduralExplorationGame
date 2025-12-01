@@ -1856,12 +1856,14 @@ enum WorldMousePressContexts{
 
             local worldPos = ::EffectManager.getWorldPositionForWindowPos(::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getPosition() + ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.getSize() / 2);
             local endPos = ::Base.mExplorationLogic.mGui_.getMoneyCounterWindowPos();
+            ::HapticManager.triggerSimpleHaptic(HapticType.SELECTION);
 
             ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": 1, "start": worldPos, "end": endPos, "money": 1, "coinScale": 0.2}));
         }
         else if(data.mType == SpoilsComponentType.GIVE_ITEM){
             printf("Giving player item %s", data.mFirst.tostring());
             ::Base.mPlayerStats.addToInventory(data.mFirst);
+            ::HapticManager.triggerSimpleHaptic(HapticType.HEAVY);
         }
         else if(data.mType == SpoilsComponentType.PICK_KEEP_PLACED_ITEM){
             ::Base.mPlayerStats.addToInventory(data.mFirst);

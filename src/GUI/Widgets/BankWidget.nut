@@ -59,7 +59,7 @@
             local size = withdrawButton.getSize();
             withdrawButton.setSize(mInnerPanel_.getSize().x / 2, size.y * 1.5);
             withdrawButton.attachListenerForEvent(function(widget, action){
-                //::Base.mPlayerStats.moveMoneyFromBankToInventory(10);
+                ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
                 ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.BANK_DEPOSIT_WITHDRAW_SCREEN, {"deposit": false}), null, 3);
             }, _GUI_ACTION_PRESSED, this);
 
@@ -70,7 +70,7 @@
             local size = depositButton.getSize();
             depositButton.setSize(mInnerPanel_.getSize().x / 2, size.y * 1.5);
             depositButton.attachListenerForEvent(function(widget, action){
-                //::Base.mPlayerStats.moveMoneyFromInventoryToBank(10);
+                ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
                 ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.BANK_DEPOSIT_WITHDRAW_SCREEN, {"deposit": true}), null, 3);
             }, _GUI_ACTION_PRESSED, this);
 

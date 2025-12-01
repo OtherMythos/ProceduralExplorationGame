@@ -32,6 +32,7 @@
         local invertCamera = mWindow_.createCheckbox();
         invertCamera.setText("Invert Camera");
         invertCamera.attachListenerForEvent(function(widget, action){
+            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
             ::SystemSettings.setSettingsValue(SystemSetting.INVERT_CAMERA_CONTROLLER, widget.getValue());
         }, _GUI_ACTION_RELEASED);
         layoutLine.addCell(invertCamera);
@@ -40,6 +41,7 @@
         local wireframeButton = mWindow_.createButton();
         wireframeButton.setText("Toggle wireframe");
         wireframeButton.attachListenerForEvent(function(widget, action){
+            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
             ::toggleDrawWireframe();
         }, _GUI_ACTION_PRESSED);
         layoutLine.addCell(wireframeButton);
@@ -48,6 +50,7 @@
         local renderStatsButton = mWindow_.createButton();
         renderStatsButton.setText("Toggle Render Stats");
         renderStatsButton.attachListenerForEvent(function(widget, action){
+            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
             _window.toggleRenderStats();
         }, _GUI_ACTION_PRESSED);
         layoutLine.addCell(renderStatsButton);
@@ -62,6 +65,7 @@
         backButton.setDefaultFontSize(backButton.getDefaultFontSize() * 1.5);
         backButton.setText("Back");
         backButton.attachListenerForEvent(function(widget, action){
+            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
             closeSettings();
         }, _GUI_ACTION_PRESSED, this);
         local winSizeClipping = mWindow_.getSizeAfterClipping();

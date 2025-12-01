@@ -60,6 +60,7 @@ local ExplorationPlayerDeathScreenAnimStateMachine = class extends ::Util.StateM
     buttonOptions = ["Return to menu"];
     buttonFunctions = [
         function(widget, action){
+            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
             ::ScreenManager.queueTransition(null, null, mLayerIdx);
             ::ScreenManager.queueTransition(::BaseHelperFunctions.getTargetGameplayMainMenu());
             ::Base.mExplorationLogic.shutdown();

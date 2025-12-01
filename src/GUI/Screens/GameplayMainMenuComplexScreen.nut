@@ -638,6 +638,8 @@ enum GameplayComplexMenuBusEvents{
     }
 
     function notifyExplorationBegin_(startScreenPos){
+        ::HapticManager.triggerSimpleHaptic(HapticType.MEDIUM);
+
         ::Base.applyCompositorModifications()
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.EXPLORATION_MAP_SELECT_SCREEN, mBus_), null, 3);
 

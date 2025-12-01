@@ -103,6 +103,8 @@ enum BankDepositWithdrawAmount{
         mSelectedAmount_ = widget.getUserId();
         printf("Changing withdraw deposit amount %i", mSelectedAmount_);
 
+        ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
+
         updateActionButtonActive_();
         updateCalculationLabel_();
     }
@@ -165,6 +167,7 @@ enum BankDepositWithdrawAmount{
     }
 
     function actionButtonCallback(widget, action){
+        ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
         _actuateBankAction();
         closeScreen();
     }

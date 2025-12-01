@@ -91,6 +91,7 @@
     function processCloseScreen_(){
         if( !mAnimFinished_ ) return;
 
+        ::HapticManager.triggerSimpleHaptic(HapticType.MEDIUM);
         setTitleFullscreen( false );
     }
 
