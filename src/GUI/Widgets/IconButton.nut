@@ -265,7 +265,7 @@
             }
 
             //Set opacity
-            mParticles_[i].setColour(ColourValue(1.0, 1.0, 1.0, opacity));
+            mParticles_[i].setColour(ColourValue(1.0, 1.0, 1.0, 0.8 * opacity));
 
             //Interpolate rotation between start and end
             local rotation = ::mix(data.startRotation, data.endRotation, progress);

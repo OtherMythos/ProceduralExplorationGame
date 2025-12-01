@@ -569,11 +569,6 @@ enum GameplayComplexMenuBusEvents{
             notifyExplorationBegin_(null);
         }, _GUI_ACTION_PRESSED, this);
 
-        //Add animation to the Explore button
-        local glitterAnimator = ::IconButtonComplexGlitterAnimator(mWindow_, 3, 4.0, 0.15);
-        local animId = ::Base.mIconButtonComplexAnimationManager.addAnimationToButton(glitterAnimator, playIconButton);
-        mAnimationIds_.append(animId);
-
         {
             local orbCount = ::Base.mPlayerStats.getNumFoundOrbs();
             local orbCounter = ::IconButtonComplex(mWindow_, {
@@ -591,6 +586,11 @@ enum GameplayComplexMenuBusEvents{
             orbCounter.setSize(Vec2(minSize.x + 10, 60));
             orbCounter.setButtonColour(ColourValue(0.2, 0.2, 0.2, 0.8));
             mOrbCounter_ = orbCounter;
+
+            //Add animation to the Explore button
+            local glitterAnimator = ::IconButtonComplexGlitterAnimator(mWindow_, 2, 6.0, 0.15);
+            local animId = ::Base.mIconButtonComplexAnimationManager.addAnimationToButton(glitterAnimator, orbCounter);
+            mAnimationIds_.append(animId);
         }
 
         //Add button to return to title screen
