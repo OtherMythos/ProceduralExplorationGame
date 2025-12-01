@@ -287,6 +287,64 @@
     }
 };
 
+//Jump animator that makes the icon and label jump upward then rest
+::IconButtonComplexJumpAnimator <- class extends ::IconButtonComplexAnimator{
+    mTime_ = 0.0;
+    mCycleDuration_ = 0.0;
+    mJumpHeight_ = 0.0;
+    mOriginalIconPosition_ = null;
+    mOriginalLabelPosition_ = null;
+
+    constructor(cycleDuration=0.9, jumpHeight=20.0){
+        mCycleDuration_ = cycleDuration;
+        mJumpHeight_ = jumpHeight;
+    }
+
+    function update(button, deltaTime){
+        mTime_ += deltaTime;
+
+        //Loop the animation
+        if(mTime_ >= mCycleDuration_){
+            mTime_ -= mCycleDuration_;
+        }
+
+        //Store original positions on first update
+        if(mOriginalIconPosition_ == null){
+            mOriginalIconPosition_ = button.mIcon_.getPosition().copy();
+        }
+        if(mOriginalLabelPosition_ == null && button.mLabel_ != null){
+            mOriginalLabelPosition_ = button.mLabel_.getPosition().copy();
+        }
+
+        //Calculate animation phase (0 to 1)
+        local phase = mTime_ / mCycleDuration_;
+
+        //Animation breakdown:
+        //0.0-0.333: Jumping phase (icon and label move up)
+        //0.333-1.0: Resting phase (stationary)
+        local offset = 0.0;
+        if(phase < 0.333){
+            //Jumping phase - use easeOutQuad for smooth upward motion
+            local jumpProgress = phase / 0.333;
+            //Move up then back down in the jump phase
+            local jumpCurve = sin(jumpProgress * PI);
+            offset = jumpCurve * mJumpHeight_;
+        }
+
+        //Apply offset to icon
+        local newIconPos = mOriginalIconPosition_.copy();
+        newIconPos.y -= offset;
+        button.mIcon_.setPosition(newIconPos);
+
+        //Apply offset to label if it exists
+        if(button.mLabel_ != null && mOriginalLabelPosition_ != null){
+            local newLabelPos = mOriginalLabelPosition_.copy();
+            newLabelPos.y -= offset;
+            button.mLabel_.setPosition(newLabelPos);
+        }
+    }
+};
+
 //Manager for IconButtonComplex animations
 ::IconButtonComplexAnimationManager <- class{
     mAnimations_ = null;

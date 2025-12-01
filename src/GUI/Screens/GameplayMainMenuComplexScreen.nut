@@ -569,6 +569,11 @@ enum GameplayComplexMenuBusEvents{
             notifyExplorationBegin_(null);
         }, _GUI_ACTION_PRESSED, this);
 
+        //Add jump animation to the Explore button
+        local jumpAnimator = ::IconButtonComplexJumpAnimator(2.8, 4.0);
+        local animId = ::Base.mIconButtonComplexAnimationManager.addAnimationToButton(jumpAnimator, playIconButton);
+        mAnimationIds_.append(animId);
+
         {
             local orbCount = ::Base.mPlayerStats.getNumFoundOrbs();
             local orbCounter = ::IconButtonComplex(mWindow_, {
