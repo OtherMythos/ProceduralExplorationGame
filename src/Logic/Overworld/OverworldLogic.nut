@@ -4,6 +4,7 @@ enum OverworldStates{
     ZOOMED_OUT,
     ZOOMED_IN,
     REGION_UNLOCK,
+    TITLE_SCREEN,
 
     MAX
 };
@@ -134,6 +135,45 @@ enum OverworldStates{
         requestState(OverworldStates.REGION_UNLOCK);
 
         ::SaveManager.writeSaveAtPath("user://" + ::Base.mPlayerStats.getSaveSlot(), ::Base.mPlayerStats.getSaveData());
+    }
+
+    function setTitleScreenMode(){
+        requestState(OverworldStates.TITLE_SCREEN);
+    }
+
+    function calculateOverworldCentre_(){
+        //Calculate the merged AABB of all regions to find the center
+        local minBounds = null;
+        local maxBounds = null;
+
+        foreach(c,i in mWorld_.mRegionEntries_){
+            local aabb = i.calculateAABB();
+            if(aabb == null) continue;
+
+            local centre = aabb.getCentre();
+            local halfSize = aabb.getHalfSize();
+            local min = centre - halfSize;
+            local max = centre + halfSize;
+
+            if(minBounds == null){
+                minBounds = min.copy();
+                maxBounds = max.copy();
+            }else{
+                if(min.x < minBounds.x) minBounds.x = min.x;
+                if(min.y < minBounds.y) minBounds.y = min.y;
+                if(min.z < minBounds.z) minBounds.z = min.z;
+
+                if(max.x > maxBounds.x) maxBounds.x = max.x;
+                if(max.y > maxBounds.y) maxBounds.y = max.y;
+                if(max.z > maxBounds.z) maxBounds.z = max.z;
+            }
+        }
+
+        if(minBounds == null || maxBounds == null){
+            return Vec3(0.0, 0.0, 0.0);
+        }
+
+        return (minBounds + maxBounds) * 0.5;
     }
 
     function shutdownCompositor_(){
@@ -331,6 +371,144 @@ enum OverworldStates{
             }
         }
 
+    }
+};
+
+::OverworldLogic.OverworldStateMachine.mStates_[OverworldStates.TITLE_SCREEN] = class extends ::Util.SimpleState{
+    mStage_ = 0;
+    mTime_ = 0.0;
+    mOrbitRadius_ = 500.0;
+    mOrbitHeight_ = 200.0;
+    mOrbitSpeed_ = 1.0;
+    mCentrePosition_ = null;
+    mOrbitAngleRange_ = PI / 2.0;
+
+    mTargetPosition_ = null;
+    mMovementTime_ = 0.0;
+    mMovementDuration_ = 5.0;
+    mStartCentrePosition_ = null;
+
+    mInitialOrbitRadius_ = 2000.0;
+    mZoomInDuration_ = 4.0;
+    mZoomAnimTime_ = 0.0;
+
+    function start(data){
+        mStage_ = 0;
+        mTime_ = 0.0;
+        mZoomAnimTime_ = 0.0;
+        mCentrePosition_ = data.getLogic().calculateOverworldCentre_();
+        mStartCentrePosition_ = mCentrePosition_.copy();
+        pickNewTargetRegion_(data);
+    }
+
+    function pickNewTargetRegion_(data){
+        local regionEntries = data.getWorld().mRegionEntries_;
+        if(regionEntries.len() == 0){
+            mTargetPosition_ = mCentrePosition_.copy();
+            return;
+        }
+
+        //Update start position to current position for smooth transition (only if target exists)
+        if(mStartCentrePosition_ != null && mTargetPosition_ != null){
+            mStartCentrePosition_ = ::calculateSimpleAnimation(mStartCentrePosition_, mTargetPosition_, 1.0);
+        }
+
+        //Pick a random region
+        local regionArray = [];
+        foreach(c,i in regionEntries){
+            if(i != null){
+                regionArray.append(i);
+            }
+        }
+
+        if(regionArray.len() > 0){
+            local randomRegion = regionArray[_random.randIndex(regionArray)];
+            local aabb = randomRegion.calculateAABB();
+            if(aabb != null){
+                mTargetPosition_ = aabb.getCentre();
+            }else{
+                mTargetPosition_ = mCentrePosition_.copy();
+            }
+        }else{
+            mTargetPosition_ = mCentrePosition_.copy();
+        }
+
+        mMovementTime_ = 0.0;
+    }
+
+    function update(data){
+        local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.OVERWORLD);
+
+        //Stage 0: Zoom in from wide view
+        if(mStage_ == 0){
+            mZoomAnimTime_ += 0.02;
+
+            if(mZoomAnimTime_ >= mZoomInDuration_){
+                mZoomAnimTime_ = mZoomInDuration_;
+                mStage_ = 1;
+            }
+
+            local zoomProgress = mZoomAnimTime_ / mZoomInDuration_;
+            zoomProgress = ::Easing.easeInOutQuad(zoomProgress);
+
+            local currentOrbitRadius = ::mix(mInitialOrbitRadius_, mOrbitRadius_, zoomProgress);
+
+            //Apply sin wave for smooth oscillation within the segment
+            local oscillation = sin(mTime_ * mOrbitSpeed_);
+            local angle = oscillation * mOrbitAngleRange_ * 0.5;
+
+            //Start from a position inside/beyond the ocean edges
+            local oceanOffsetRadius = mInitialOrbitRadius_ * 1.2;
+            local startAngle = -PI / 4.0;
+            local startCamX = sin(startAngle) * oceanOffsetRadius + mCentrePosition_.x;
+            local startCamZ = cos(startAngle) * oceanOffsetRadius + mCentrePosition_.z;
+            local startCamPos = Vec3(startCamX, mCentrePosition_.y + mOrbitHeight_, startCamZ);
+
+            //Calculate camera position in an arc with interpolated radius
+            local camX = sin(angle) * currentOrbitRadius + mCentrePosition_.x;
+            local camZ = cos(angle) * currentOrbitRadius + mCentrePosition_.z;
+            local camPos = Vec3(camX, mCentrePosition_.y + mOrbitHeight_, camZ);
+
+            //Interpolate from the ocean position to the final position
+            local finalCamPos = ::calculateSimpleAnimation(startCamPos, camPos, zoomProgress);
+
+            camera.getParentNode().setPosition(finalCamPos);
+            camera.lookAt(mCentrePosition_);
+
+            mTime_ += 0.001;
+        }
+        //Stage 1: Move around and explore
+        else if(mStage_ == 1){
+            mTime_ += 0.001;
+            mMovementTime_ += 0.02;
+
+            //Check if we need to pick a new target
+            if(mMovementTime_ >= mMovementDuration_){
+                pickNewTargetRegion_(data);
+            }
+
+            //Apply easing to the movement progress
+            local movementProgress = mMovementTime_ / mMovementDuration_;
+            movementProgress = ::Easing.easeInOutQuad(movementProgress);
+
+            //Interpolate centre position towards target
+            local currentCentre = ::calculateSimpleAnimation(mStartCentrePosition_, mTargetPosition_, movementProgress);
+
+            //Apply sin wave for smooth oscillation within the segment
+            local oscillation = sin(mTime_ * mOrbitSpeed_);
+            local angle = oscillation * mOrbitAngleRange_ * 0.5;
+
+            //Calculate camera position in an arc around the current centre
+            local camX = sin(angle) * mOrbitRadius_ + currentCentre.x;
+            local camZ = cos(angle) * mOrbitRadius_ + currentCentre.z;
+            local camPos = Vec3(camX, currentCentre.y + mOrbitHeight_, camZ);
+
+            //Look at the current centre
+            local lookAtPos = currentCentre.copy();
+
+            camera.getParentNode().setPosition(camPos);
+            camera.lookAt(lookAtPos);
+        }
     }
 };
 

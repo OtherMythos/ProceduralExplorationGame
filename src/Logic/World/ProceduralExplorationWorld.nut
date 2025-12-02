@@ -76,7 +76,7 @@
         }
         function calculateAABB(){
             assert(mLandItem_ != null);
-            return mLandItem_.getWorldAabb();
+            return mLandItem_.getWorldAabbUpdated();
         }
         //Workaround to resolve the recursive setVisible from the world.
         function setVisible_(){

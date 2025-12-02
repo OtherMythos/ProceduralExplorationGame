@@ -46,6 +46,7 @@
         setTitleOpacity_(mAnimateIn_ ? 0.0 : 1.0);
 
         ::OverworldLogic.requestSetup();
+        ::OverworldLogic.setTitleScreenMode();
 
         local datablock = ::OverworldLogic.getCompositorDatablock();
         mTitleMainScreenPanel_.setDatablock( datablock );
@@ -140,6 +141,7 @@
                     }
                     if(!mAnimateIn_ ){
                         ::ScreenManager.transitionToScreen( null, null, mLayerIdx );
+                        ::OverworldLogic.requestState(OverworldStates.ZOOMED_OUT);
                     }
                     mTitleFullScreen_ = true;
                     if( mAnimateIn_ ){
