@@ -102,6 +102,16 @@ enum GameplayComplexMenuBusEvents{
                 labelPos.y = button.getPosition().y + button.getSize().y - tabLabel.getSize().y * 0.8;
                 tabLabel.setPosition(labelPos);
 
+                //Apply calculated width only if label exceeds grid size
+                local gridSize = SIZE;
+                if(tabLabel.getSize().x > gridSize){
+                    ::calculateFontWidth_(tabLabel, gridSize);
+                    tabLabel.setCentre(button.getCentre());
+                    labelPos = tabLabel.getPosition();
+                    labelPos.y = button.getPosition().y + button.getSize().y - tabLabel.getSize().y * 0.8;
+                    tabLabel.setPosition(labelPos);
+                }
+
                 mButtons_.append({
                     "button": button,
                     "icon": icon,
