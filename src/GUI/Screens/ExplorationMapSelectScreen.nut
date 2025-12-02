@@ -177,9 +177,6 @@
     }
 
     function shutdown(){
-        foreach(animId in mAnimationIds_){
-            ::Base.mIconButtonComplexAnimationManager.unstoreAnimation(animId);
-        }
 
         if(mBusId_ != null){
             mScreenData_.data.deregisterCallback(mBusId_);
@@ -466,6 +463,10 @@
             }else{
                 //mapPanel.setVisible(true);
                 //mMapMainScreenPanel_.setVisible(false);
+
+                foreach(animId in mAnimationIds_){
+                    ::Base.mIconButtonComplexAnimationManager.unstoreAnimation(animId);
+                }
             }
             mMapAnimCount_ = 0.0;
             mMapAnimFinished_ = false;
