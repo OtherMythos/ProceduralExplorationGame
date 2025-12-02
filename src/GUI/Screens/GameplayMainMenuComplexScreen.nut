@@ -30,6 +30,8 @@ enum GameplayComplexMenuBusEvents{
         mNumPanels_ = 1;
         mHeightOverride_ = 0;
         SIZE = 75;
+        mCurrentSelectedTab_ = 0;
+        mPulseTime_ = 0.0;
 
         constructor(parent){
             mParent_ = parent;
@@ -115,31 +117,34 @@ enum GameplayComplexMenuBusEvents{
         }
 
         function update(){
-            foreach(i in mButtons_){
+            mPulseTime_ += 0.025;
+            if(mPulseTime_ > PI*2){
+                mPulseTime_ = 0;
+            }
+
+            foreach(idx, i in mButtons_){
                 local current = i.currentAnim;
                 local target = i.targetAnim;
-                if(current == target) continue;
+                if(current == target && idx != mCurrentSelectedTab_) continue;
 
-                if(current >= target){
-                    current -= 0.1;
-                    if(current <= target){
-                        current = target;
-                    }
-                }
-                else if(current <= target){
-                    current += 0.1;
-                    if(current >= target){
-                        current = target;
-                    }
-                }
+                current = ::accelerationClampCoordinate_(current, target, 0.1);
+
                 i.currentAnim = current;
                 local startPos = i.startPos;
-                i.icon.setPosition(startPos.x, startPos.y - current * 20);
+                local pulseOffset = 0.0;
+
+                //Add subtle pulse effect to selected tab icon
+                if(idx == mCurrentSelectedTab_){
+                    pulseOffset = sin(mPulseTime_) * 1.5; //Sine wave pulse, max 2.0 pixels
+                }
+
+                i.icon.setPosition(startPos.x, startPos.y - current * 20 + pulseOffset);
                 i.label.setTextColour(1, 1, 1, current);
             }
         }
 
         function notifyTabChange_(id, animate=true){
+            mCurrentSelectedTab_ = id;
             foreach(i in mButtons_){
                 i.label.setVisible(false);
                 i.targetAnim = 0.0;
@@ -328,6 +333,8 @@ enum GameplayComplexMenuBusEvents{
             i.update();
         }
 
+        mTabPanel_.update();
+
         if(mAnimCount_ == 0){
             updateTabPosition_(1.0);
             return;
@@ -337,7 +344,6 @@ enum GameplayComplexMenuBusEvents{
         local percentage = mAnimCount_.tofloat() / mAnimCountTotal_.tofloat();
 
         updateTabPosition_(percentage);
-        mTabPanel_.update();
     }
 
     function setZOrder(idx){
