@@ -3,6 +3,8 @@
 
     mTitlePanel_ = null;
     mTitleLabel_ = null;
+    mCreditLabel_ = null;
+    mTapToStartLabel_ = null;
     mScreenButton_ = null;
 
     mAnimCount_ = 1.0;
@@ -11,6 +13,10 @@
     mTitleMainScreenPanel_ = null;
     mTitlePanelCoords_ = null;
     mAnimateIn_ = false;
+
+    mPulseTime_ = 0.0;
+    mTapStartBaseFontSize_ = null;
+    mTapStartBaseCentre_ = null;
 
     function setup( data ){
         mBusId_ = data.bus.registerCallback( busCallback, this );
@@ -39,10 +45,34 @@
         local titleLabel = mWindow_.createLabel();
         titleLabel.setTextHorizontalAlignment( _TEXT_ALIGN_CENTER );
         titleLabel.setText( "Procedural Exploration Game", false );
+        titleLabel.setShadowOutline(true, ColourValue(0, 0, 0), Vec2(2, 2));
         ::calculateFontWidth_( titleLabel, ::drawable.x * 0.9 );
         local labelSize = titleLabel.getSize();
-        titleLabel.setPosition( Vec2( ::drawable.x / 2 - labelSize.x / 2, ::drawable.y / 2 - labelSize.y / 2 ) );
+        titleLabel.setPosition( Vec2( ::drawable.x / 2 - labelSize.x / 2, ::drawable.y * 0.2 - labelSize.y / 2 ) );
         mTitleLabel_ = titleLabel;
+
+        //Credit label
+        local creditLabel = mWindow_.createLabel();
+        creditLabel.setTextHorizontalAlignment( _TEXT_ALIGN_CENTER );
+        creditLabel.setShadowOutline(true, ColourValue(0, 0, 0), Vec2(2, 2));
+        creditLabel.setDefaultFontSize( creditLabel.getDefaultFontSize() * 1.2 );
+        creditLabel.setDefaultFont(6);
+        creditLabel.setText( "By Edward Herbert");
+        creditLabel.setCentre( titleLabel.getCentre() + Vec2(0, labelSize.y) );
+        mCreditLabel_ = creditLabel;
+
+        //Tap to start label
+        local tapLabel = mWindow_.createLabel();
+        tapLabel.setTextHorizontalAlignment( _TEXT_ALIGN_CENTER );
+        tapLabel.setText( "Tap to Start");
+        tapLabel.setDefaultFontSize( tapLabel.getDefaultFontSize() * 0.8 );
+        tapLabel.setShadowOutline(true, ColourValue(0, 0, 0), Vec2(2, 2));
+        mTapStartBaseFontSize_ = tapLabel.getDefaultFontSize();
+        local tapSize = tapLabel.getSize();
+        local tapPos = Vec2( ::drawable.x / 2 - tapSize.x / 2, ::drawable.y * 0.85 - tapSize.y / 2 );
+        tapLabel.setPosition( tapPos );
+        mTapStartBaseCentre_ = tapLabel.getCentre();
+        mTapToStartLabel_ = tapLabel;
         setTitleOpacity_(mAnimateIn_ ? 0.0 : 1.0);
 
         ::OverworldLogic.requestSetup();
@@ -194,9 +224,22 @@
 
     function setTitleOpacity_(opacity){
         mTitleLabel_.setTextColour(1, 1, 1, opacity);
+        mCreditLabel_.setTextColour(1, 1, 1, opacity);
+        mTapToStartLabel_.setTextColour(1, 1, 1, opacity);
     }
 
     function update(){
+        mPulseTime_ += 0.05;
+
+        //Update pulse animation for tap to start label with size
+        local val = sin(mPulseTime_) * 0.15;
+        if(val < 0) val = -val;
+        local pulseAmount = val + 2;
+        local newFontSize = mTapStartBaseFontSize_ * pulseAmount;
+        mTapToStartLabel_.setDefaultFontSize(newFontSize);
+        mTapToStartLabel_.sizeToFit();
+        mTapToStartLabel_.setCentre(mTapStartBaseCentre_);
+
         updateTitleAnimation();
 
         ::OverworldLogic.applyCameraDelta( Vec2( 0.0, 0.0 ) );
