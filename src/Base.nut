@@ -386,7 +386,9 @@
                     ::ScreenManager.transitionToScreen(::BaseHelperFunctions.getSplashScreen(), null, 3);
                 }
             }
-            ::ScreenManager.transitionToScreen(::BaseHelperFunctions.getScreenDataForForcedScreen(::BaseHelperFunctions.getStartingScreen()), null, 0);
+            local screenData = ::BaseHelperFunctions.getScreenDataForForcedScreen(::BaseHelperFunctions.getStartingScreen());
+            screenData.data.createTitleScreen = true;
+            ::ScreenManager.transitionToScreen(screenData, null, 0);
         }
         if(forcedScreen != null){
             ::ScreenManager.transitionToScreen(::BaseHelperFunctions.getScreenDataForForcedScreen(forcedScreen));

@@ -184,10 +184,12 @@ enum GameplayComplexMenuBusEvents{
         mId_ = null;
         mBus_ = null;
         mWindow_ = null;
+        mParent_ = null;
 
-        constructor(id, bus){
+        constructor(id, bus, parent=null){
             mId_ = id;
             mBus_ = bus;
+            mParent_ = parent;
 
             mWindow_ = _gui.createWindow("TabWindow" + mId_);
             mWindow_.setVisualsEnabled(false);
@@ -237,9 +239,18 @@ enum GameplayComplexMenuBusEvents{
     mPlayerStats_ = null;
     mBus_ = null;
     mHasShutdown_ = false;
+    mCreateTitleScreen_ = false;
 
     mAnimCount_ = 0;
     mAnimCountTotal_ = 0;
+
+    function setup(data){
+        mCreateTitleScreen_ = false;
+        if(data != null && data.rawin("createTitleScreen")){
+            mCreateTitleScreen_ = data.createTitleScreen;
+        }
+        base.setup(data);
+    }
 
     function bodgeLoadSave(){
         if(!getroottable().rawin("saveLoadedBefore")){
@@ -311,7 +322,7 @@ enum GameplayComplexMenuBusEvents{
                 targetObj = targetWindows[i];
             }
             //local offset = Vec2(0, 0);
-            local tabWindow = targetObj(i, mBus_);
+            local tabWindow = targetObj(i, mBus_, this);
 
             local size = ::drawable.copy();
             size.y -= tabSize.y;
@@ -326,16 +337,6 @@ enum GameplayComplexMenuBusEvents{
         mCurrentTab_ = 0;
         notifyTabChange(mCurrentTab_);
         updateTabPosition_(1.0);
-
-        //Transition to title screen at layer 2 with panel coordinates for animation
-        local panel = mTabWindows_[0].getMapPanel();
-        local titleData = {
-            "pos": panel.getDerivedPosition(),
-            "size": panel.getSize(),
-            "bus": mBus_,
-            "animateIn": false
-        };
-        ::ScreenManager.transitionToScreen( ::ScreenManager.ScreenData( Screen.GAME_TITLE_SCREEN, titleData ), null, 2 );
     }
 
     function update(){
@@ -633,13 +634,15 @@ enum GameplayComplexMenuBusEvents{
         explorationMap.setDatablock(datablock);
 
         //Transition to title screen at layer 2 with panel coordinates for animation
-        local titleData = {
-            "pos": explorationMap.getDerivedPosition(),
-            "size": explorationMap.getSize(),
-            "bus": mBus_,
-            "animateIn": false
-        };
-        ::ScreenManager.transitionToScreen( ::ScreenManager.ScreenData( Screen.GAME_TITLE_SCREEN, titleData ), null, 2 );
+        if(mParent_ && mParent_.mCreateTitleScreen_){
+            local titleData = {
+                "pos": explorationMap.getDerivedPosition(),
+                "size": explorationMap.getSize(),
+                "bus": mBus_,
+                "animateIn": false
+            };
+            ::ScreenManager.transitionToScreen( ::ScreenManager.ScreenData( Screen.GAME_TITLE_SCREEN, titleData ), null, 2 );
+        }
     }
 
     function getMapPanel(){

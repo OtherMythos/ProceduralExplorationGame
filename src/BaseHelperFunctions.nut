@@ -38,7 +38,10 @@ Separated from the Base.nut file so enums can be used.
     }
     function getScreenDataForForcedScreen(screenId){
         local data = null;
-        if(screenId == Screen.INVENTORY_SCREEN){
+        if(screenId == Screen.GAMEPLAY_MAIN_MENU_COMPLEX_SCREEN){
+            data = {"createTitleScreen": false};
+        }
+        else if(screenId == Screen.INVENTORY_SCREEN){
             //data = {"stats": ::Base.mPlayerStats}
             data = {
                 "stats": ::Base.mPlayerStats,
