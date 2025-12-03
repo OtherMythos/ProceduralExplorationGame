@@ -50,6 +50,8 @@ namespace ProceduralExplorationGameCore{
 
         static SQInteger getIsWaterForCoord(HSQUIRRELVM vm);
 
+        static SQInteger calculateEdgeVoxels(HSQUIRRELVM vm);
+
         static SQInteger ExplorationMapDataObjectReleaseHook(SQUserPointer p, SQInteger size);
     };
 }

@@ -825,6 +825,92 @@ namespace ProceduralExplorationGameCore{
         return 0;
     }
 
+    SQInteger ExplorationMapDataUserData::calculateEdgeVoxels(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        AV::uint32 width = mapData->uint32("width");
+        AV::uint32 height = mapData->uint32("height");
+
+        //Create a table to return the edge voxel positions
+        sq_newtable(vm);
+
+        //Helper lambda to check if a position has land
+        auto hasLand = [mapData](AV::uint32 x, AV::uint32 y)->bool{
+            const AV::uint8* voxPtr = VOX_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y));
+            return *voxPtr >= 100;
+        };
+
+        //Helper lambda to push a Vec3 to the stack
+        auto pushVec3 = [vm](const char* key, float x, float y, float z){
+            sq_pushstring(vm, key, -1);
+            AV::Vector3UserData::vector3ToUserData(vm, Ogre::Vector3(x, y, z));
+            sq_rawset(vm, -3);
+        };
+
+        //Find top edge (largest y in world space, smallest gridY, scan from left to right)
+        sq_pushstring(vm, "top", -1);
+        bool foundTop = false;
+        for(AV::uint32 y = 0; y < height && !foundTop; y++){
+            for(AV::uint32 x = 0; x < width; x++){
+                if(hasLand(x, y)){
+                    float worldY = -(static_cast<float>(height - 1 - y));
+                    AV::Vector3UserData::vector3ToUserData(vm, Ogre::Vector3(static_cast<float>(x), 0.0f, worldY));
+                    foundTop = true;
+                    break;
+                }
+            }
+        }
+        sq_rawset(vm, -3);
+
+        //Find bottom edge (smallest y in world space, largest gridY, scan from left to right)
+        sq_pushstring(vm, "bottom", -1);
+        bool foundBottom = false;
+        for(int y = static_cast<int>(height) - 1; y >= 0 && !foundBottom; y--){
+            for(AV::uint32 x = 0; x < width; x++){
+                if(hasLand(x, static_cast<AV::uint32>(y))){
+                    float worldY = -(static_cast<float>(height - 1 - y));
+                    AV::Vector3UserData::vector3ToUserData(vm, Ogre::Vector3(static_cast<float>(x), 0.0f, worldY));
+                    foundBottom = true;
+                    break;
+                }
+            }
+        }
+        sq_rawset(vm, -3);
+
+        //Find left edge (smallest x in world space, smallest x index, scan from top to bottom)
+        sq_pushstring(vm, "left", -1);
+        bool foundLeft = false;
+        for(AV::uint32 x = 0; x < width && !foundLeft; x++){
+            for(AV::uint32 y = 0; y < height; y++){
+                if(hasLand(x, y)){
+                    float worldY = -(static_cast<float>(height - 1 - y));
+                    AV::Vector3UserData::vector3ToUserData(vm, Ogre::Vector3(static_cast<float>(x), 0.0f, worldY));
+                    foundLeft = true;
+                    break;
+                }
+            }
+        }
+        sq_rawset(vm, -3);
+
+        //Find right edge (largest x in world space, largest x index, scan from top to bottom)
+        sq_pushstring(vm, "right", -1);
+        bool foundRight = false;
+        for(int x = static_cast<int>(width) - 1; x >= 0 && !foundRight; x--){
+            for(AV::uint32 y = 0; y < height; y++){
+                if(hasLand(static_cast<AV::uint32>(x), y)){
+                    float worldY = -(static_cast<float>(height - 1 - y));
+                    AV::Vector3UserData::vector3ToUserData(vm, Ogre::Vector3(static_cast<float>(x), 0.0f, worldY));
+                    foundRight = true;
+                    break;
+                }
+            }
+        }
+        sq_rawset(vm, -3);
+
+        return 1;
+    }
+
     template <bool B>
     void ExplorationMapDataUserData::setupDelegateTable(HSQUIRRELVM vm){
         sq_newtable(vm);
@@ -857,6 +943,7 @@ namespace ProceduralExplorationGameCore{
         AV::ScriptUtils::addFunction(vm, averageOutAltitudeRectangle, "averageOutAltitudeRectangle", 7, ".iiiiii");
         AV::ScriptUtils::addFunction(vm, averageOutAltitudeRadius, "averageOutAltitudeRadius", 6, ".iiiii");
         AV::ScriptUtils::addFunction(vm, applyTerrainVoxelsForPlace, "applyTerrainVoxelsForPlace", 5, ".ssii");
+        AV::ScriptUtils::addFunction(vm, calculateEdgeVoxels, "calculateEdgeVoxels");
 
         SQObject* tableObj = 0;
         if(B){

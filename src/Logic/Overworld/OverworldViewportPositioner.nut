@@ -159,82 +159,15 @@
                visBox.max.z >= aabb.max.z;
     }
 
-    //Helper function to check if a position has land (non-zero value)
-    function hasLand(x, y){
-        //TODO find a way to do this without the vec2.
-        local native = ::currentNativeMapData;
-        return native.getAltitudeForPos(Vec3(x, 0, y)) >= 100;
-    }
-
     //Calculate and cache edge voxels for the four sides of the overworld
-    //Returns a table with keys "top", "bottom", "left", "right" containing Vec3 world positions
+    //Calls the native C++ implementation which is more efficient than script loops
     function calculateAndCacheEdgeVoxels_(){
         if(!mWorld_ || !mWorld_.mMapData_) return;
 
         local mapData = mWorld_.mMapData_;
-        local width = mapData.width;
-        local height = mapData.height;
 
-        mEdgeVoxels_ = {};
-
-        //Map coordinate system: top-left is (0, 600), bottom-right is (600, 0)
-        //Convert grid indices to world coordinates: x stays same, y becomes (height - 1 - gridY)
-
-        //Find top edge (largest y in world space, smallest gridY, scan from left to right)
-        local topPos = null;
-        for(local y = 0; y < height; y++){
-            for(local x = 0; x < width; x++){
-                local worldY = -(height - 1 - y);
-                if(hasLand(x, worldY)){
-                    topPos = Vec3(x, 0, worldY);
-                    break;
-                }
-            }
-            if(topPos != null) break;
-        }
-        mEdgeVoxels_.top <- topPos;
-
-        //Find bottom edge (smallest y in world space, largest gridY, scan from left to right)
-        local bottomPos = null;
-        for(local y = height-1; y >= 0; y--){
-            for(local x = 0; x < width; x++){
-                local worldY = -(height - 1 - y);
-                if(hasLand(x, worldY)){
-                    bottomPos = Vec3(x, 0, worldY);
-                    break;
-                }
-            }
-            if(bottomPos != null) break;
-        }
-        mEdgeVoxels_.bottom <- bottomPos;
-
-        //Find left edge (smallest x in world space, smallest x index, scan from top to bottom)
-        local leftPos = null;
-        for(local x = 0; x < width; x++){
-            for(local y = 0; y < height; y++){
-                local worldY = -(height - 1 - y);
-                if(hasLand(x, worldY)){
-                    leftPos = Vec3(x, 0, worldY);
-                    break;
-                }
-            }
-            if(leftPos != null) break;
-        }
-        mEdgeVoxels_.left <- leftPos;
-
-        //Find right edge (largest x in world space, largest x index, scan from top to bottom)
-        local rightPos = null;
-        for(local x = width-1; x >= 0; x--){
-            for(local y = 0; y < height; y++){
-                local worldY = -(height - 1 - y);
-                if(hasLand(x, worldY)){
-                    rightPos = Vec3(x, 0, worldY);
-                    break;
-                }
-            }
-            if(rightPos != null) break;
-        }
-        mEdgeVoxels_.right <- rightPos;
+        //Call the native function to calculate edge voxels
+        mEdgeVoxels_ = ::currentNativeMapData.calculateEdgeVoxels();
     }
 
     //Check if the four edge voxels are all visible within the viewport
