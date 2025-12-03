@@ -5,12 +5,13 @@
     mCurrentState_ = null;
     mData_ = null;
     mStateInstance_ = null;
+    mStateData_ = null;
 
     constructor(data=null){
         mData_ = data;
     }
 
-    function setState(state){
+    function setState(state, stateData=null){
         assert(state < mStates_.len());
         if(state == mCurrentState_) return false;
 
@@ -23,6 +24,7 @@
             return false;
         }
 
+        mStateData_ = stateData;
         local entry = mStates_[state];
         assert(entry != null);
         mStateInstance_ = entry();

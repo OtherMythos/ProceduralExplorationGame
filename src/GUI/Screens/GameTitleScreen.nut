@@ -13,6 +13,7 @@
     mTitleMainScreenPanel_ = null;
     mTitlePanelCoords_ = null;
     mAnimateIn_ = false;
+    mSkipWindupAnimation_ = false;
 
     mPulseTime_ = 0.0;
     mTapStartBaseFontSize_ = null;
@@ -27,6 +28,7 @@
         };
 
         mAnimateIn_ = data.animateIn;
+        mSkipWindupAnimation_ = ("skipWindupAnimation" in data) && data.skipWindupAnimation;
 
         base.setup( data );
     }
@@ -76,7 +78,7 @@
         setTitleOpacity_(mAnimateIn_ ? 0.0 : 1.0);
 
         ::OverworldLogic.requestSetup();
-        ::OverworldLogic.setTitleScreenMode();
+        ::OverworldLogic.setTitleScreenMode(mSkipWindupAnimation_);
 
         local datablock = ::OverworldLogic.getCompositorDatablock();
         mTitleMainScreenPanel_.setDatablock( datablock );

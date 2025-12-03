@@ -687,7 +687,8 @@ enum GameplayComplexMenuBusEvents{
             "pos": explorationMap.getDerivedPosition(),
             "size": explorationMap.getSize(),
             "bus": mBus_,
-            "animateIn": true
+            "animateIn": true,
+            "skipWindupAnimation": true
         };
         ::ScreenManager.transitionToScreen( ::ScreenManager.ScreenData( Screen.GAME_TITLE_SCREEN, titleData ), null, 2 );
     }

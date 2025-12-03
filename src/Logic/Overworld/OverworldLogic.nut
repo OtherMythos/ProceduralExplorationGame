@@ -51,8 +51,8 @@ enum OverworldStates{
         shutdown_();
     }
 
-    function requestState(state){
-        mStateMachine_.setState(state);
+    function requestState(state, stateData = null){
+        mStateMachine_.setState(state, stateData);
     }
 
     function isActive(){
@@ -151,8 +151,8 @@ enum OverworldStates{
         ::SaveManager.writeSaveAtPath("user://" + ::Base.mPlayerStats.getSaveSlot(), ::Base.mPlayerStats.getSaveData());
     }
 
-    function setTitleScreenMode(){
-        requestState(OverworldStates.TITLE_SCREEN);
+    function setTitleScreenMode(skipWindupAnimation = false){
+        requestState(OverworldStates.TITLE_SCREEN, {skipWindupAnimation = skipWindupAnimation});
     }
 
     function calculateOverworldCentre_(){
@@ -438,12 +438,28 @@ enum OverworldStates{
     mCamPos_ = null;
     mLookAtPos_ = null;
 
+    mTransitionInProgress_ = false;
+    mTransitionTime_ = 0.0;
+    mTransitionDuration_ = 0.5;
+    mTransitionStartCamPos_ = null;
+    mTransitionStartLookAt_ = null;
+
     function start(data){
         mStage_ = 0;
         mTime_ = 0.0;
         mZoomAnimTime_ = 0.0;
         mCentrePosition_ = data.getLogic().calculateOverworldCentre_();
         mStartCentrePosition_ = mCentrePosition_.copy();
+
+        //Skip the windup animation if requested
+        if(data.mStateData_ != null && data.mStateData_.skipWindupAnimation){
+            mStage_ = 1;
+            mTransitionInProgress_ = true;
+            mTransitionTime_ = 0.0;
+            mTransitionStartCamPos_ = data.getLogic().mCurrentCameraPosition_.copy();
+            mTransitionStartLookAt_ = data.getLogic().mCurrentCameraLookAt_.copy();
+        }
+
         pickNewTargetRegion_(data);
     }
 
@@ -559,6 +575,19 @@ enum OverworldStates{
 
             //Look at the current centre
             local lookAtPos = currentCentre.copy();
+
+            //If transition is in progress, interpolate from the previous camera position
+            if(mTransitionInProgress_){
+                mTransitionTime_ += 0.02;
+                local transitionProgress = mTransitionTime_ / mTransitionDuration_;
+                if(transitionProgress >= 1.0){
+                    transitionProgress = 1.0;
+                    mTransitionInProgress_ = false;
+                }
+
+                camPos = ::calculateSimpleAnimation(mTransitionStartCamPos_, camPos, transitionProgress);
+                lookAtPos = ::calculateSimpleAnimation(mTransitionStartLookAt_, lookAtPos, transitionProgress);
+            }
 
             camera.getParentNode().setPosition(camPos);
             camera.lookAt(lookAtPos);
