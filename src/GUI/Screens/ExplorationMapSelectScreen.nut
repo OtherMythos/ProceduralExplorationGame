@@ -178,6 +178,8 @@
 
     function shutdown(){
 
+        unstoreAnimations_();
+
         if(mBusId_ != null){
             mScreenData_.data.deregisterCallback(mBusId_);
         }
@@ -464,14 +466,19 @@
                 //mapPanel.setVisible(true);
                 //mMapMainScreenPanel_.setVisible(false);
 
-                foreach(animId in mAnimationIds_){
-                    ::Base.mIconButtonComplexAnimationManager.unstoreAnimation(animId);
-                }
+                unstoreAnimations_();
             }
             mMapAnimCount_ = 0.0;
             mMapAnimFinished_ = false;
 
         }
+    }
+
+    function unstoreAnimations_(){
+        foreach(animId in mAnimationIds_){
+            ::Base.mIconButtonComplexAnimationManager.unstoreAnimation(animId);
+        }
+        mAnimationIds_.clear();
     }
 
     function busCallback(event, data){
