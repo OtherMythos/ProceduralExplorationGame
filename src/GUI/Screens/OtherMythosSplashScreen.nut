@@ -49,6 +49,7 @@
         if(mCount_ >= 120 && !mMovingDown_){
             mMovingDown_ = true;
             mMoveDownStartFrame_ = mCount_;
+            _event.transmit(Event.SPLASH_SCREEN_FINISHED, null);
         }
 
         if(mMovingDown_){

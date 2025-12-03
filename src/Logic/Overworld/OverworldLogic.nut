@@ -229,6 +229,11 @@ enum OverworldStates{
         mWorld_.applyZoomDelta(delta);
     }
 
+    function notifyTitleScreenAnimationReady(){
+        //TODO magic number for now.
+        mStateMachine_.notify(0xFF);
+    }
+
     //Calculate the optimal camera position for viewing the entire overworld
     //This is calculated once at startup and stored, never changing
     function calculateAndApplyOptimalCameraZoom_(){
@@ -444,8 +449,10 @@ enum OverworldStates{
     mTransitionStartCamPos_ = null;
     mTransitionStartLookAt_ = null;
 
+    mWaitingForAnimationReady_ = false;
+
     function start(data){
-        mStage_ = 0;
+        mStage_ = -1;
         mTime_ = 0.0;
         mZoomAnimTime_ = 0.0;
         mCentrePosition_ = data.getLogic().calculateOverworldCentre_();
@@ -458,6 +465,10 @@ enum OverworldStates{
             mTransitionTime_ = 0.0;
             mTransitionStartCamPos_ = data.getLogic().mCurrentCameraPosition_.copy();
             mTransitionStartLookAt_ = data.getLogic().mCurrentCameraLookAt_.copy();
+            mWaitingForAnimationReady_ = false;
+        }else{
+            //Wait for the splash screen to finish before starting animation
+            mWaitingForAnimationReady_ = true;
         }
 
         pickNewTargetRegion_(data);
@@ -466,6 +477,13 @@ enum OverworldStates{
     function end(data){
         data.getLogic().mCurrentCameraPosition_ = mCamPos_;
         data.getLogic().mCurrentCameraLookAt_ = mLookAtPos_;
+    }
+
+    function notify(obj, data){
+        if(mWaitingForAnimationReady_ && data == 0xFF){
+            mWaitingForAnimationReady_ = false;
+            mStage_ = 0;
+        }
     }
 
     function pickNewTargetRegion_(data){
@@ -506,8 +524,12 @@ enum OverworldStates{
     function update(data){
         local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.OVERWORLD);
 
+        //Stage -1: Waiting for animation ready signal
+        if(mStage_ == -1){
+            return;
+        }
         //Stage 0: Zoom in from wide view
-        if(mStage_ == 0){
+        else if(mStage_ == 0){
             mZoomAnimTime_ += 0.02;
 
             if(mZoomAnimTime_ >= mZoomInDuration_){

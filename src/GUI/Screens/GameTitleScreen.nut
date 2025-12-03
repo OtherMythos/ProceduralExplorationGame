@@ -30,7 +30,19 @@
         mAnimateIn_ = data.animateIn;
         mSkipWindupAnimation_ = ("skipWindupAnimation" in data) && data.skipWindupAnimation;
 
+        //Subscribe to splash screen finished event
+        if(!::Base.isProfileActive(GameProfile.DISABLE_SPLASH_SCREEN)){
+            _event.subscribe(Event.SPLASH_SCREEN_FINISHED, receiveSplashScreenEnded, this);
+        }else{
+            //If splash screen is disabled, notify immediately
+            ::OverworldLogic.notifyTitleScreenAnimationReady();
+        }
+
         base.setup( data );
+    }
+
+    function receiveSplashScreenEnded(widget, action){
+        ::OverworldLogic.notifyTitleScreenAnimationReady();
     }
 
     function recreate(){
@@ -108,6 +120,7 @@
         if( mBusId_ != null ){
             mScreenData_.data.bus.deregisterCallback( mBusId_ );
         }
+        _event.unsubscribe(Event.SPLASH_SCREEN_FINISHED, receiveSplashScreenEnded, this);
         if( mScreenData_.data != null ){
             mScreenData_.data.bus.notifyEvent( GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_FINISHED, null );
         }
