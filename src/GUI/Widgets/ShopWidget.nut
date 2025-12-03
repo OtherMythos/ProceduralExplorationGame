@@ -61,6 +61,7 @@
 
     function busCallback(event, data){
         if(event == InventoryBusEvents.ITEM_SELECTED){
+            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
             selectItem(data);
         }else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_BUY){
             handleBuyEvent(data);

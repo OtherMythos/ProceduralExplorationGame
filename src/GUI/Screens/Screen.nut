@@ -87,6 +87,7 @@
         backgroundCloseButton.setSize(mBackgroundWindow_.getSize());
         backgroundCloseButton.setVisualsEnabled(false);
         backgroundCloseButton.attachListenerForEvent(function(widget, action){
+            ::HapticManager.triggerSimpleHaptic(HapticType.SELECTION);
             closeScreen();
         }, _GUI_ACTION_PRESSED, this);
     }

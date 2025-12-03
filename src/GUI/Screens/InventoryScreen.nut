@@ -188,6 +188,7 @@ enum InventoryBusEvents{
             inventoryCloseButton.setSize(mWindow_.getSize());
             inventoryCloseButton.setVisualsEnabled(false);
             inventoryCloseButton.attachListenerForEvent(function(widget, action){
+                ::HapticManager.triggerSimpleHaptic(HapticType.SELECTION);
                 closeInventory();
             }, _GUI_ACTION_PRESSED, this);
         }
@@ -210,6 +211,7 @@ enum InventoryBusEvents{
             inventoryButton.setSize(Vec2(64, 64));
             inventoryButton.setPosition(Vec2(10, 10 + startOffset));
             inventoryButton.attachListenerForEvent(function(widget, action){
+                ::HapticManager.triggerSimpleHaptic(HapticType.SELECTION);
                 closeInventory();
             }, _GUI_ACTION_PRESSED, this);
         }
