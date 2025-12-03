@@ -24,6 +24,10 @@ enum OverworldStates{
 
     mActiveCount_ = 0
 
+    //Optimal camera position calculated once at startup (never changes)
+    mOptimalCameraPosition_ = null
+    mOptimalCameraLookAt_ = null
+
     //Viewport positioning system
     mViewportPositioner_ = null
 
@@ -226,7 +230,7 @@ enum OverworldStates{
     }
 
     //Calculate the optimal camera position for viewing the entire overworld
-    //This should be called once the world is loaded to establish the base camera position
+    //This is calculated once at startup and stored, never changing
     function calculateAndApplyOptimalCameraZoom_(){
         if(!isActive()) return;
         if(!mViewportPositioner_) return;
@@ -239,8 +243,8 @@ enum OverworldStates{
         //Calculate optimal zoom using the viewport positioner
         local cameraData = mViewportPositioner_.calculateAndApplyOptimalCameraZoom_(camera, targetHeight);
         if(cameraData != null){
-            mCurrentCameraPosition_ = cameraData.cameraPos;
-            mCurrentCameraLookAt_ = cameraData.lookAtPos;
+            mOptimalCameraPosition_ = cameraData.cameraPos;
+            mOptimalCameraLookAt_ = cameraData.lookAtPos;
         }
     }
 
@@ -257,38 +261,30 @@ enum OverworldStates{
 
 ::OverworldLogic.OverworldStateMachine.mStates_[OverworldStates.ZOOMED_OUT] = class extends ::Util.SimpleState{
     mAnim_ = 1.0;
-    mInitialised_ = false;
 
     function start(data){
         mAnim_ = 0.0;
-        mInitialised_ = false;
+        //Calculate optimal camera position if not yet cached
+        if(data.getLogic().mOptimalCameraPosition_ == null){
+            data.getLogic().calculateAndApplyOptimalCameraZoom_();
+        }
+        local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.OVERWORLD);
+        camera.getParentNode().setPosition(data.getLogic().mCurrentCameraPosition_);
+        camera.lookAt(data.getLogic().mCurrentCameraLookAt_);
     }
 
     function update(data){
         local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.OVERWORLD);
 
-        //Calculate optimal camera on first update if not yet done
-        if(!mInitialised_){
-            data.getLogic().calculateAndApplyOptimalCameraZoom_();
-            mInitialised_ = true;
-        }
-
-        //Use calculated camera position, or fallback to hardcoded values if calculation failed
-        local camPos = data.getLogic().mCurrentCameraPosition_;
-        local camLookAt = data.getLogic().mCurrentCameraLookAt_;
+        //Use the cached optimal camera position
+        local camPos = data.getLogic().mOptimalCameraPosition_;
+        local camLookAt = data.getLogic().mOptimalCameraLookAt_;
 
         if(camPos == null){
-            camPos = Vec3(300, 700, 1500);
+            camPos = Vec3(300, 0, 1500);
         }
         if(camLookAt == null){
             camLookAt = Vec3(300, 0, 200);
-        }
-
-        if(data.getLogic().mCurrentCameraPosition_ == null){
-            data.getLogic().mCurrentCameraPosition_ = camPos;
-        }
-        if(data.getLogic().mCurrentCameraLookAt_ == null){
-            data.getLogic().mCurrentCameraLookAt_ = camLookAt;
         }
 
         mAnim_ = ::accelerationClampCoordinate_(mAnim_, 0.8, 0.02);
@@ -439,6 +435,9 @@ enum OverworldStates{
     mZoomInDuration_ = 4.0;
     mZoomAnimTime_ = 0.0;
 
+    mCamPos_ = null;
+    mLookAtPos_ = null;
+
     function start(data){
         mStage_ = 0;
         mTime_ = 0.0;
@@ -446,6 +445,11 @@ enum OverworldStates{
         mCentrePosition_ = data.getLogic().calculateOverworldCentre_();
         mStartCentrePosition_ = mCentrePosition_.copy();
         pickNewTargetRegion_(data);
+    }
+
+    function end(data){
+        data.getLogic().mCurrentCameraPosition_ = mCamPos_;
+        data.getLogic().mCurrentCameraLookAt_ = mLookAtPos_;
     }
 
     function pickNewTargetRegion_(data){
@@ -522,6 +526,9 @@ enum OverworldStates{
             camera.getParentNode().setPosition(finalCamPos);
             camera.lookAt(mCentrePosition_);
 
+            mCamPos_ = finalCamPos;
+            mLookAtPos_ = mCentrePosition_.copy();
+
             mTime_ += 0.001;
         }
         //Stage 1: Move around and explore
@@ -555,6 +562,9 @@ enum OverworldStates{
 
             camera.getParentNode().setPosition(camPos);
             camera.lookAt(lookAtPos);
+
+            mCamPos_ = camPos;
+            mLookAtPos_ = lookAtPos;
         }
     }
 };

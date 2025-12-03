@@ -628,7 +628,7 @@ enum GameplayComplexMenuBusEvents{
         line.layout();
 
         ::OverworldLogic.requestSetup();
-        ::OverworldLogic.requestState(OverworldStates.ZOOMED_OUT);
+        ::OverworldLogic.requestState(OverworldStates.TITLE_SCREEN);
         local datablock = ::OverworldLogic.getCompositorDatablock();
         explorationMap.setDatablock(datablock);
 
