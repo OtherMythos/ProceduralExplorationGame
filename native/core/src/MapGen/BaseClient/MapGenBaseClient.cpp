@@ -37,6 +37,7 @@
 #include "Steps/GenerateWaterMeshMapGenStep.h"
 
 #include "MapGen/Mesh/WaterMeshGenerator.h"
+#include "System/OgreResourceHelper.h"
 #include "OgreMeshManager2.h"
 #include "OgreMesh2.h"
 #include "OgreRenderSystem.h"
@@ -44,9 +45,6 @@
 #include "Vao/OgreVaoManager.h"
 
 #include "Ogre.h"
-#include "OgreStagingTexture.h"
-#include "OgreTextureBox.h"
-#include "OgreTextureGpuManager.h"
 
 namespace ProceduralExplorationGameCore{
     MapGenBaseClient::MapGenBaseClient() : MapGenClient("Base Client") {
@@ -143,65 +141,15 @@ namespace ProceduralExplorationGameCore{
     }
 
     bool MapGenBaseClient::notifyClaimed(HSQUIRRELVM vm, ExplorationMapData* mapData){
-        {
-            Ogre::TextureGpu* tex = 0;
-            Ogre::TextureGpuManager* manager = Ogre::Root::getSingletonPtr()->getRenderSystem()->getTextureGpuManager();
-            tex = manager->findTextureNoThrow("testTexture");
-            if(tex){
-                manager->destroyTexture(tex);
-            }
+        OgreResourceHelper textureHelper;
+        float* waterTextureBuffer = mapData->ptr<float>("waterTextureBuffer");
+        float* waterTextureBufferMask = mapData->ptr<float>("waterTextureBufferMask");
 
-            tex = manager->createTexture("testTexture", Ogre::GpuPageOutStrategy::Discard, Ogre::TextureFlags::ManualTexture, Ogre::TextureTypes::Type2DArray);
-            tex->setPixelFormat(Ogre::PixelFormatGpu::PFG_RGBA32_FLOAT);
-            tex->setResolution(mapData->width, mapData->height);
-            tex->scheduleTransitionTo(Ogre::GpuResidency::Resident);
-
-            Ogre::StagingTexture *stagingTexture = manager->getStagingTexture(mapData->width, mapData->height, tex->getDepth(), tex->getNumSlices(), tex->getPixelFormat());
-            stagingTexture->startMapRegion();
-            Ogre::TextureBox texBox = stagingTexture->mapRegion(mapData->width, mapData->height, tex->getDepth(), tex->getNumSlices(), tex->getPixelFormat());
-
-            float* pDest = static_cast<float*>(texBox.at(0, 0, 0));
-            float* buffer = mapData->ptr<float>("waterTextureBuffer");
-            memcpy(pDest, buffer, mapData->width * mapData->height * sizeof(float) * 4);
-
-            stagingTexture->stopMapRegion();
-            stagingTexture->upload(texBox, tex, 0, 0, 0, false);
-
-            manager->removeStagingTexture( stagingTexture );
-            stagingTexture = 0;
-        }
-
-        {
-            Ogre::TextureGpu* tex = 0;
-            Ogre::TextureGpuManager* manager = Ogre::Root::getSingletonPtr()->getRenderSystem()->getTextureGpuManager();
-            tex = manager->findTextureNoThrow("testTextureMask");
-            if(tex){
-                manager->destroyTexture(tex);
-            }
-
-            tex = manager->createTexture("testTextureMask", Ogre::GpuPageOutStrategy::Discard, Ogre::TextureFlags::ManualTexture, Ogre::TextureTypes::Type2DArray);
-            tex->setPixelFormat(Ogre::PixelFormatGpu::PFG_RGBA32_FLOAT);
-            tex->setResolution(mapData->width, mapData->height);
-            tex->scheduleTransitionTo(Ogre::GpuResidency::Resident);
-
-            Ogre::StagingTexture *stagingTexture = manager->getStagingTexture(mapData->width, mapData->height, tex->getDepth(), tex->getNumSlices(), tex->getPixelFormat());
-            stagingTexture->startMapRegion();
-            Ogre::TextureBox texBox = stagingTexture->mapRegion(mapData->width, mapData->height, tex->getDepth(), tex->getNumSlices(), tex->getPixelFormat());
-
-            float* pDest = static_cast<float*>(texBox.at(0, 0, 0));
-            memcpy(pDest, mapData->ptr<float>("waterTextureBufferMask"), mapData->width * mapData->height * sizeof(float) * 4);
-
-            stagingTexture->stopMapRegion();
-            stagingTexture->upload(texBox, tex, 0, 0, 0, false);
-
-            manager->removeStagingTexture( stagingTexture );
-            stagingTexture = 0;
-        }
+        textureHelper.createTextureFromBuffer("testTexture", mapData->width, mapData->height, waterTextureBuffer);
+        textureHelper.createTextureFromBuffer("testTextureMask", mapData->width, mapData->height, waterTextureBufferMask);
 
         //Destroy the buffers here as they're not needed anymore
-        float* waterTextureBuffer = (mapData->ptr<float>("waterTextureBuffer"));
         delete waterTextureBuffer;
-        float* waterTextureBufferMask = (mapData->ptr<float>("waterTextureBufferMask"));
         delete waterTextureBufferMask;
 
         {
