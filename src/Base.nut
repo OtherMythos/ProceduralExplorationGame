@@ -387,7 +387,9 @@
                 }
             }
             local screenData = ::BaseHelperFunctions.getScreenDataForForcedScreen(::BaseHelperFunctions.getStartingScreen());
-            screenData.data.createTitleScreen = true;
+            if(screenData.data != null){
+                screenData.data.createTitleScreen = true;
+            }
             ::ScreenManager.transitionToScreen(screenData, null, 0);
         }
         if(forcedScreen != null){
