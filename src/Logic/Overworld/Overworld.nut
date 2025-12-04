@@ -184,14 +184,6 @@
 
     }
 
-    #Override
-    function getWaterDatablock_(name, outside=false){
-        local block = base.getWaterDatablock_(name, outside);
-        block.setTexture(_PBSM_DIFFUSE, "blueTexture");
-        block.setTexture(_PBSM_DETAIL_WEIGHT, null);
-        return block;
-    }
-
     function getOverworldStartPosition(){
         local startPosition = ::Base.mPlayerStats.getOverworldStartPosition();
         if(startPosition != null){

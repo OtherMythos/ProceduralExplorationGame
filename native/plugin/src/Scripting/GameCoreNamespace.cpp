@@ -41,6 +41,7 @@
 
 #include "MapGen/ExplorationMapViewer.h"
 #include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
+#include "MapGen/BaseClient/OverworldMapTextureGenerator.h"
 #include "MapGen/MapGen.h"
 
 #include "VisitedPlaces/VisitedPlacesParser.h"
@@ -53,6 +54,10 @@
 #include "Ogre/OgreVoxMeshItem.h"
 #include "Ogre/OgreVoxMeshManager.h"
 #include "Hlms/Pbs/OgreHlmsPbsDatablock.h"
+
+#include "OgreStagingTexture.h"
+#include "OgreTextureBox.h"
+#include "OgreTextureGpuManager.h"
 
 #include "GameCorePBSHlmsListener.h"
 
@@ -566,6 +571,72 @@ namespace ProceduralExplorationGamePlugin{
                 *regionPtr = static_cast<AV::uint8>(outRegions.tileValues[x + y * outRegions.tilesWidth]);
             }
         }
+
+        //Generate water texture for overworld
+        ProceduralExplorationGameCore::OverworldMapTextureGenerator textureGenerator;
+        textureGenerator.generateTexture(data);
+
+        //Create Ogre textures for the water texture buffers
+        {
+            Ogre::TextureGpu* tex = 0;
+            Ogre::TextureGpuManager* manager = Ogre::Root::getSingletonPtr()->getRenderSystem()->getTextureGpuManager();
+            tex = manager->findTextureNoThrow("testTexture");
+            if(tex){
+                manager->destroyTexture(tex);
+            }
+
+            tex = manager->createTexture("testTexture", Ogre::GpuPageOutStrategy::Discard, Ogre::TextureFlags::ManualTexture, Ogre::TextureTypes::Type2DArray);
+            tex->setPixelFormat(Ogre::PixelFormatGpu::PFG_RGBA32_FLOAT);
+            tex->setResolution(data->width, data->height);
+            tex->scheduleTransitionTo(Ogre::GpuResidency::Resident);
+
+            Ogre::StagingTexture *stagingTexture = manager->getStagingTexture(data->width, data->height, tex->getDepth(), tex->getNumSlices(), tex->getPixelFormat());
+            stagingTexture->startMapRegion();
+            Ogre::TextureBox texBox = stagingTexture->mapRegion(data->width, data->height, tex->getDepth(), tex->getNumSlices(), tex->getPixelFormat());
+
+            float* pDest = static_cast<float*>(texBox.at(0, 0, 0));
+            float* buffer = data->ptr<float>("waterTextureBuffer");
+            memcpy(pDest, buffer, data->width * data->height * sizeof(float) * 4);
+
+            stagingTexture->stopMapRegion();
+            stagingTexture->upload(texBox, tex, 0, 0, 0, false);
+
+            manager->removeStagingTexture(stagingTexture);
+            stagingTexture = 0;
+        }
+
+        {
+            Ogre::TextureGpu* tex = 0;
+            Ogre::TextureGpuManager* manager = Ogre::Root::getSingletonPtr()->getRenderSystem()->getTextureGpuManager();
+            tex = manager->findTextureNoThrow("testTextureMask");
+            if(tex){
+                manager->destroyTexture(tex);
+            }
+
+            tex = manager->createTexture("testTextureMask", Ogre::GpuPageOutStrategy::Discard, Ogre::TextureFlags::ManualTexture, Ogre::TextureTypes::Type2DArray);
+            tex->setPixelFormat(Ogre::PixelFormatGpu::PFG_RGBA32_FLOAT);
+            tex->setResolution(data->width, data->height);
+            tex->scheduleTransitionTo(Ogre::GpuResidency::Resident);
+
+            Ogre::StagingTexture *stagingTexture = manager->getStagingTexture(data->width, data->height, tex->getDepth(), tex->getNumSlices(), tex->getPixelFormat());
+            stagingTexture->startMapRegion();
+            Ogre::TextureBox texBox = stagingTexture->mapRegion(data->width, data->height, tex->getDepth(), tex->getNumSlices(), tex->getPixelFormat());
+
+            float* pDest = static_cast<float*>(texBox.at(0, 0, 0));
+            memcpy(pDest, data->ptr<float>("waterTextureBufferMask"), data->width * data->height * sizeof(float) * 4);
+
+            stagingTexture->stopMapRegion();
+            stagingTexture->upload(texBox, tex, 0, 0, 0, false);
+
+            manager->removeStagingTexture(stagingTexture);
+            stagingTexture = 0;
+        }
+
+        //Destroy the buffers as they're not needed anymore
+        float* waterTextureBuffer = data->ptr<float>("waterTextureBuffer");
+        delete waterTextureBuffer;
+        float* waterTextureBufferMask = data->ptr<float>("waterTextureBufferMask");
+        delete waterTextureBufferMask;
 
         ProceduralExplorationGameCore::ExplorationMapDataUserData::ExplorationMapDataToUserData<false>(vm, data);
         sq_newslot(vm, -3, SQFalse);
