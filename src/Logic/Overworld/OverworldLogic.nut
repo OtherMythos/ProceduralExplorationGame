@@ -234,6 +234,51 @@ enum OverworldStates{
         mStateMachine_.notify(0xFF);
     }
 
+    //Calculate the landmass AABB and return its centre and radius
+    function calculateLandmassAABBData_(){
+        local minBounds = null;
+        local maxBounds = null;
+
+        foreach(c,i in mWorld_.mRegionEntries_){
+            local aabb = i.calculateAABB();
+            if(aabb == null) continue;
+
+            local centre = aabb.getCentre();
+            local halfSize = aabb.getHalfSize();
+            local min = centre - halfSize;
+            local max = centre + halfSize;
+
+            if(minBounds == null){
+                minBounds = min.copy();
+                maxBounds = max.copy();
+            }else{
+                if(min.x < minBounds.x) minBounds.x = min.x;
+                if(min.y < minBounds.y) minBounds.y = min.y;
+                if(min.z < minBounds.z) minBounds.z = min.z;
+
+                if(max.x > maxBounds.x) maxBounds.x = max.x;
+                if(max.y > maxBounds.y) maxBounds.y = max.y;
+                if(max.z > maxBounds.z) maxBounds.z = max.z;
+            }
+        }
+
+        if(minBounds == null || maxBounds == null){
+            return {
+                centre = Vec3(0.0, 0.0, 0.0),
+                radius = 0.0
+            };
+        }
+
+        local centre = (minBounds + maxBounds) * 0.5;
+        local size = maxBounds - minBounds;
+        local radius = (size.x + size.z) * 0.5;
+
+        return {
+            centre = centre,
+            radius = radius
+        };
+    }
+
     //Calculate the optimal camera position for viewing the entire overworld
     //This is calculated once at startup and stored, never changing
     function calculateAndApplyOptimalCameraZoom_(){
@@ -437,7 +482,7 @@ enum OverworldStates{
     mStartCentrePosition_ = null;
 
     mInitialOrbitRadius_ = 2000.0;
-    mZoomInDuration_ = 4.0;
+    mZoomInDuration_ = 6.0;
     mZoomAnimTime_ = 0.0;
 
     mCamPos_ = null;
@@ -445,18 +490,28 @@ enum OverworldStates{
 
     mTransitionInProgress_ = false;
     mTransitionTime_ = 0.0;
-    mTransitionDuration_ = 0.5;
+    mTransitionDuration_ = 2.0;
     mTransitionStartCamPos_ = null;
     mTransitionStartLookAt_ = null;
 
     mWaitingForAnimationReady_ = false;
 
+    mStage0EndCamPos_ = null;
+    mTransitionSetupDone_ = false;
+
     function start(data){
         mStage_ = -1;
         mTime_ = 0.0;
         mZoomAnimTime_ = 0.0;
-        mCentrePosition_ = data.getLogic().calculateOverworldCentre_();
+
+        //Calculate landmass AABB data for positioning
+        local aabbData = data.getLogic().calculateLandmassAABBData_();
+        mCentrePosition_ = aabbData.centre;
         mStartCentrePosition_ = mCentrePosition_.copy();
+
+        //Set initial orbit radius based on landmass size
+        mOrbitRadius_ = aabbData.radius;
+        mInitialOrbitRadius_ = aabbData.radius * 3.0;
 
         //Skip the windup animation if requested
         if(data.mStateData_ != null && data.mStateData_.skipWindupAnimation){
@@ -528,38 +583,38 @@ enum OverworldStates{
         if(mStage_ == -1){
             return;
         }
-        //Stage 0: Zoom in from wide view
+        //Stage 0: Zoom in from wide view to bird's eye position above landmass
         else if(mStage_ == 0){
             mZoomAnimTime_ += 0.02;
 
+            local zoomProgress = mZoomAnimTime_ / mZoomInDuration_;
+            local zoomProgressEasedX = ::Easing.easeInOutSine(zoomProgress);
+            local zoomProgressEasedY = ::Easing.easeInOutCubic(zoomProgress);
+            local zoomProgressEasedZ = ::Easing.easeInOutSine(zoomProgress);
+
+            //Start from a far position on the negative X side
+            local startCamX = mCentrePosition_.x - mInitialOrbitRadius_;
+            local startCamZ = mCentrePosition_.z + mInitialOrbitRadius_;
+            local startCamY = mCentrePosition_.y + mOrbitHeight_ * 0.2;
+            local startCamPos = Vec3(startCamX, startCamY, startCamZ);
+
+            //Target: bird's eye view with slight Z offset for better perspective
+            local targetCamX = mCentrePosition_.x - mOrbitRadius_ * 0.1;
+            local targetCamZ = mCentrePosition_.z + mOrbitRadius_ * 2.0;
+            local targetCamY = mCentrePosition_.y + mOrbitRadius_ * 2.0;
+            local targetCamPos = Vec3(targetCamX, targetCamY, targetCamZ);
+
+            //Interpolate with different easing curves for each axis
+            local finalCamX = ::mix(startCamPos.x, targetCamPos.x, zoomProgressEasedX);
+            local finalCamY = ::mix(startCamPos.y, targetCamPos.y, zoomProgressEasedY);
+            local finalCamZ = ::mix(startCamPos.z, targetCamPos.z, zoomProgressEasedZ);
+            local finalCamPos = Vec3(finalCamX, finalCamY, finalCamZ);
+
             if(mZoomAnimTime_ >= mZoomInDuration_){
                 mZoomAnimTime_ = mZoomInDuration_;
+                mStage0EndCamPos_ = finalCamPos.copy();
                 mStage_ = 1;
             }
-
-            local zoomProgress = mZoomAnimTime_ / mZoomInDuration_;
-            zoomProgress = ::Easing.easeInOutQuad(zoomProgress);
-
-            local currentOrbitRadius = ::mix(mInitialOrbitRadius_, mOrbitRadius_, zoomProgress);
-
-            //Apply sin wave for smooth oscillation within the segment
-            local oscillation = sin(mTime_ * mOrbitSpeed_);
-            local angle = oscillation * mOrbitAngleRange_ * 0.5;
-
-            //Start from a position inside/beyond the ocean edges
-            local oceanOffsetRadius = mInitialOrbitRadius_ * 1.2;
-            local startAngle = -PI / 4.0;
-            local startCamX = sin(startAngle) * oceanOffsetRadius + mCentrePosition_.x;
-            local startCamZ = cos(startAngle) * oceanOffsetRadius + mCentrePosition_.z;
-            local startCamPos = Vec3(startCamX, mCentrePosition_.y + mOrbitHeight_, startCamZ);
-
-            //Calculate camera position in an arc with interpolated radius
-            local camX = sin(angle) * currentOrbitRadius + mCentrePosition_.x;
-            local camZ = cos(angle) * currentOrbitRadius + mCentrePosition_.z;
-            local camPos = Vec3(camX, mCentrePosition_.y + mOrbitHeight_, camZ);
-
-            //Interpolate from the ocean position to the final position
-            local finalCamPos = ::calculateSimpleAnimation(startCamPos, camPos, zoomProgress);
 
             camera.getParentNode().setPosition(finalCamPos);
             camera.lookAt(mCentrePosition_);
@@ -571,6 +626,28 @@ enum OverworldStates{
         }
         //Stage 1: Move around and explore
         else if(mStage_ == 1){
+            //If transition setup needed, do it first without updating animation
+            if(mStage0EndCamPos_ != null && !mTransitionSetupDone_){
+                mTransitionInProgress_ = true;
+                mTransitionTime_ = 0.0;
+                mTransitionStartCamPos_ = mStage0EndCamPos_;
+                mTransitionStartLookAt_ = mCentrePosition_.copy();
+                mStage0EndCamPos_ = null;
+                mTransitionSetupDone_ = true;
+
+                //Reset movement time so orbital animation starts fresh
+                mMovementTime_ = 0.0;
+                mTime_ = 0.0;
+
+                //Keep camera at Stage 0 end position for this frame
+                camera.getParentNode().setPosition(mTransitionStartCamPos_);
+                camera.lookAt(mTransitionStartLookAt_);
+
+                mCamPos_ = mTransitionStartCamPos_;
+                mLookAtPos_ = mTransitionStartLookAt_;
+                return;
+            }
+
             mTime_ += 0.001;
             mMovementTime_ += 0.02;
 
@@ -591,14 +668,14 @@ enum OverworldStates{
             local angle = oscillation * mOrbitAngleRange_ * 0.5;
 
             //Calculate camera position in an arc around the current centre
-            local camX = sin(angle) * mOrbitRadius_ + currentCentre.x;
-            local camZ = cos(angle) * mOrbitRadius_ + currentCentre.z;
-            local camPos = Vec3(camX, currentCentre.y + mOrbitHeight_, camZ);
+            local camX = sin(angle) * (mOrbitRadius_ * 0.8) + currentCentre.x;
+            local camZ = cos(angle) * (mOrbitRadius_ * 0.8) + currentCentre.z;
+            local camPos = Vec3(camX, currentCentre.y + (mOrbitHeight_ * 0.8), camZ);
 
             //Look at the current centre
             local lookAtPos = currentCentre.copy();
 
-            //If transition is in progress, interpolate from the previous camera position
+            //If transition is in progress, blend between transition and orbital positions
             if(mTransitionInProgress_){
                 mTransitionTime_ += 0.02;
                 local transitionProgress = mTransitionTime_ / mTransitionDuration_;
@@ -607,8 +684,27 @@ enum OverworldStates{
                     mTransitionInProgress_ = false;
                 }
 
-                camPos = ::calculateSimpleAnimation(mTransitionStartCamPos_, camPos, transitionProgress);
-                lookAtPos = ::calculateSimpleAnimation(mTransitionStartLookAt_, lookAtPos, transitionProgress);
+                //Apply easing for smoother transition: slow start then fast
+                local transitionProgressEased = ::Easing.easeInQuad(transitionProgress);
+
+                //Blend factor: 1.0 at start (full transition), 0.0 at end (full orbital)
+                local blendFactor = 1.0 - transitionProgressEased;
+
+                //Interpolate from Stage 0 end position to orbital position during transition
+                local transitionCamPos = ::calculateSimpleAnimation(mTransitionStartCamPos_, camPos, transitionProgressEased);
+                local transitionLookAt = ::calculateSimpleAnimation(mTransitionStartLookAt_, lookAtPos, transitionProgressEased);
+
+                //Blend between the two states
+                camPos = Vec3(
+                    ::mix(transitionCamPos.x, camPos.x, transitionProgressEased),
+                    ::mix(transitionCamPos.y, camPos.y, transitionProgressEased),
+                    ::mix(transitionCamPos.z, camPos.z, transitionProgressEased)
+                );
+                lookAtPos = Vec3(
+                    ::mix(transitionLookAt.x, lookAtPos.x, transitionProgressEased),
+                    ::mix(transitionLookAt.y, lookAtPos.y, transitionProgressEased),
+                    ::mix(transitionLookAt.z, lookAtPos.z, transitionProgressEased)
+                );
             }
 
             camera.getParentNode().setPosition(camPos);
