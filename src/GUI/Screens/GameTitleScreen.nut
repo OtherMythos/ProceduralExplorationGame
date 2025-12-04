@@ -30,10 +30,9 @@
         mAnimateIn_ = data.animateIn;
         mSkipWindupAnimation_ = ("skipWindupAnimation" in data) && data.skipWindupAnimation;
 
+        _event.subscribe(Event.SPLASH_SCREEN_FINISHED, receiveSplashScreenEnded, this);
         //Subscribe to splash screen finished event
-        if(!::Base.isProfileActive(GameProfile.DISABLE_SPLASH_SCREEN)){
-            _event.subscribe(Event.SPLASH_SCREEN_FINISHED, receiveSplashScreenEnded, this);
-        }else{
+        if(::Base.isProfileActive(GameProfile.DISABLE_SPLASH_SCREEN)){
             //If splash screen is disabled, notify immediately
             ::OverworldLogic.notifyTitleScreenAnimationReady();
         }
@@ -42,6 +41,8 @@
     }
 
     function receiveSplashScreenEnded(widget, action){
+        if(::Base.isProfileActive(GameProfile.DISABLE_SPLASH_SCREEN)) return;
+
         ::OverworldLogic.notifyTitleScreenAnimationReady();
     }
 
