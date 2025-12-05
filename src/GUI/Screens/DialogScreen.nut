@@ -4,6 +4,8 @@
     mNextDialogButton_ = null;
 
     mContainerWindow_ = null;
+    mFullScreenInputWindow_ = null;
+    mFullScreenInputButton_ = null;
 
     mDialogOptionsButtons_ = null;
     mActionSetId_ = null;
@@ -15,6 +17,15 @@
     mTotalGlyphs_ = 0;
     mGlyphsPerFrame_ = 1.0;
     mAnimating_ = false;
+
+    mLottieAnimationPanel_ = null;
+    mLottieAnimationPanelBackground_ = null;
+    mLottieAnimation_ = null;
+    mLottieAnimationSecond_ = null;
+    mLottieDatablock_ = null;
+    mLottieBackgroundDatablock_ = null;
+    mShowLottieAnimation_ = false;
+    mMobileInterface_ = false;
 
     function receiveDialogSpokenEvent(id, data){
         setNewDialogText(data);
@@ -73,6 +84,25 @@
         _event.unsubscribe(Event.DIALOG_SPOKEN, receiveDialogSpokenEvent, this);
         _event.unsubscribe(Event.DIALOG_OPTION, receiveDialogOptionEvent, this);
         _event.unsubscribe(Event.DIALOG_META, receiveDialogMetaEvent, this);
+
+        //Cleanup Lottie animations
+        if(mLottieAnimation_ != null){
+            ::Base.mLottieManager.destroyForId(mLottieAnimation_);
+        }
+        if(mLottieAnimationSecond_ != null){
+            ::Base.mLottieManager.destroyForId(mLottieAnimationSecond_);
+        }
+
+        if(mFullScreenInputWindow_ != null){
+            _gui.destroy(mFullScreenInputWindow_);
+        }
+    }
+
+    function setZOrder(idx){
+        base.setZOrder(idx);
+        if(mFullScreenInputWindow_ != null){
+            mFullScreenInputWindow_.setZOrder(idx + 1);
+        }
     }
 
     function update(){
@@ -81,6 +111,8 @@
             if(mAnimationProgress_ >= mTotalGlyphs_){
                 mAnimationProgress_ = mTotalGlyphs_.tofloat();
                 mAnimating_ = false;
+                //Text animation complete, show Lottie animation if on mobile
+                checkShowAnimation_();
             }
             updateTextAnimation_();
         }
@@ -91,10 +123,19 @@
                 mAnimationProgress_ = mTotalGlyphs_.tofloat();
                 mAnimating_ = false;
                 updateTextAnimation_();
+                checkShowAnimation_();
             }else{
                 requestNextDialog();
             }
         }
+    }
+
+    function checkShowAnimation_(){
+        if(!mMobileInterface_) return;
+
+        mShowLottieAnimation_ = true;
+        mLottieAnimationPanel_.setVisible(true);
+        mLottieAnimationPanelBackground_.setVisible(true);
     }
 
     function recreate(){
@@ -111,6 +152,7 @@
         mWindow_.setSize(winSize);
 
         local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
+        mMobileInterface_ = mobile;
 
         mContainerWindow_ = mWindow_.createWindow("DialogTextScreen");
         if(mobile){
@@ -121,12 +163,15 @@
             mContainerWindow_.setPosition(winSize.x * 0.20, winSize.y * 0.65);
         }
 
+        mContainerWindow_.setClickable(!mobile);
+
         mTextContainer_ = mContainerWindow_.createAnimatedLabel();
         mTextContainer_.setText(" ");
 
         mNextDialogButton_ = mContainerWindow_.createButton();
         mNextDialogButton_.setText("Next");
         mNextDialogButton_.attachListenerForEvent(nextButtonPressed, _GUI_ACTION_PRESSED, this);
+        mNextDialogButton_.setVisible(!mobile);
 
         local buttonSize = mNextDialogButton_.getSize();
         //buttonSize *= 2;
@@ -140,6 +185,58 @@
             button.setUserId(i);
             button.attachListenerForEvent(optionButtonPressed, _GUI_ACTION_PRESSED, this);
             mDialogOptionsButtons_[i] = button;
+        }
+
+        //Setup Lottie animations
+        local animSize = Vec2(64, 64);
+        mLottieAnimationPanelBackground_ = mContainerWindow_.createPanel();
+        mLottieAnimationPanelBackground_.setSize(animSize);
+        mLottieAnimationPanel_ = mContainerWindow_.createPanel();
+        mLottieAnimationPanel_.setSize(animSize);
+
+        mLottieAnimationPanel_.setClickable(false);
+        mLottieAnimationPanelBackground_.setClickable(false);
+
+        animSize *= ::resolutionMult;
+
+        local lottieMan = ::Base.mLottieManager;
+        local blendBlock = _hlms.getBlendblock({
+            "blend_operation": _HLMS_SBO_MAX,
+        });
+        mLottieAnimation_ = lottieMan.createAnimation(LottieAnimationType.SPRITE_SHEET, "res://build/assets/lottie/mobileTouch.json", animSize.x.tointeger(), animSize.y.tointeger(), true, blendBlock);
+
+        local blendBlock = _hlms.getBlendblock({
+            "dst_blend_factor": _HLMS_SBF_ONE_MINUS_SOURCE_COLOUR,
+            "blend_operation": _HLMS_SBF_DEST_COLOUR,
+        });
+        mLottieAnimationSecond_ = lottieMan.createAnimation(LottieAnimationType.SPRITE_SHEET, "res://build/assets/lottie/mobileTouch.json", animSize.x.tointeger(), animSize.y.tointeger(), true, blendBlock);
+
+        local datablock = lottieMan.getDatablockForAnim(mLottieAnimation_);
+        mLottieAnimationPanel_.setDatablock(datablock);
+        mLottieDatablock_ = datablock;
+        datablock = lottieMan.getDatablockForAnim(mLottieAnimationSecond_);
+        mLottieAnimationPanelBackground_.setDatablock(datablock);
+        mLottieBackgroundDatablock_ = datablock;
+
+        mLottieAnimationPanel_.setZOrder(WIDGET_SAFE_FOR_BILLBOARD_Z);
+        mLottieAnimationPanelBackground_.setZOrder(WIDGET_SAFE_FOR_BILLBOARD_Z);
+        mShowLottieAnimation_ = false;
+        mLottieAnimationPanel_.setVisible(false);
+        mLottieAnimationPanelBackground_.setVisible(false);
+
+        //Setup full-screen input window for mobile
+        if(mobile){
+            mFullScreenInputWindow_ = _gui.createWindow("DialogFullScreenInput");
+            mFullScreenInputWindow_.setSize(_window.getWidth(), _window.getHeight());
+            mFullScreenInputWindow_.setPosition(0, 0);
+            mFullScreenInputWindow_.setClipBorders(0, 0, 0, 0);
+            mFullScreenInputWindow_.setVisualsEnabled(false);
+
+            mFullScreenInputButton_ = mFullScreenInputWindow_.createButton();
+            mFullScreenInputButton_.setSize(_window.getWidth(), _window.getHeight());
+            mFullScreenInputButton_.setPosition(0, 0);
+            mFullScreenInputButton_.setVisualsEnabled(false);
+            mFullScreenInputButton_.attachListenerForEvent(nextButtonPressed, _GUI_ACTION_PRESSED, this);
         }
 
         setDialogVisible(false);
@@ -163,16 +260,51 @@
 
         if(richText != null){
             mTextContainer_.setRichText(richText);
-            mCurrentDialogColour_ = null;
+            mCurrentDialogColour_ = ColourValue(1, 1, 1, 1);
         }else{
-            mCurrentDialogColour_ = ColourValue(0, 0, 0, 1);
-            mTextContainer_.setTextColour(0, 0, 0, 0);
+            mCurrentDialogColour_ = ColourValue(1, 1, 1, 1);
+            mTextContainer_.setTextColour(1, 1, 1, 1);
         }
 
         mTextContainer_.sizeToFit(mContainerWindow_.getSize().x * 0.95);
         mTotalGlyphs_ = targetText.len();
         mAnimationProgress_ = 0.0;
         mAnimating_ = true;
+
+        //Initialize all glyphs with 0 opacity
+        initialiseGlyphOpacity_();
+
+        //Hide Lottie animation when new text arrives
+        if(mMobileInterface_){
+            mShowLottieAnimation_ = false;
+            mLottieAnimationPanel_.setVisible(false);
+            mLottieAnimationPanelBackground_.setVisible(false);
+        }
+
+        //Position Lottie animation in the container
+        positionLottieAnimation_();
+    }
+
+    function positionLottieAnimation_(){
+        if(!mMobileInterface_) return;
+        //Position at the same location as the Next button
+        local buttonSize = mNextDialogButton_.getSize();
+        local containerSize = mContainerWindow_.getSizeAfterClipping();
+        local animSize = Vec2(64, 64);
+        local posX = containerSize.x - buttonSize.x - animSize.x / 2.0;
+        local posY = containerSize.y - buttonSize.y - animSize.y / 2.0;
+        mLottieAnimationPanel_.setPosition(posX, posY);
+        mLottieAnimationPanelBackground_.setPosition(posX + 1, posY + 1);
+    }
+
+    function initialiseGlyphOpacity_(){
+        //Set all glyphs to 0 opacity initially
+        if(mCurrentDialogColour_ == null) return;
+
+        local colour = ColourValue(mCurrentDialogColour_.r, mCurrentDialogColour_.g, mCurrentDialogColour_.b, 0.0);
+        for(local i = 0; i < mTotalGlyphs_; i++){
+            mTextContainer_.setAnimatedGlyph(i, 0.0, 0.0, colour);
+        }
     }
 
     function updateTextAnimation_(){
