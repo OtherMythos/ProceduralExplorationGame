@@ -483,6 +483,7 @@ enum GameplayComplexMenuBusEvents{
     mOrbCounter_ = null;
     mReturnToTitleButton_ = null;
     mAnimationIds_ = null;
+    mSetup_ = false;
 
     function recreate(){
         local line = _gui.createLayoutLine();
@@ -629,20 +630,9 @@ enum GameplayComplexMenuBusEvents{
         line.layout();
 
         ::OverworldLogic.requestSetup();
-        ::OverworldLogic.requestState(OverworldStates.TITLE_SCREEN);
         local datablock = ::OverworldLogic.getCompositorDatablock();
         explorationMap.setDatablock(datablock);
 
-        //Transition to title screen at layer 2 with panel coordinates for animation
-        if(mParent_ && mParent_.mCreateTitleScreen_){
-            local titleData = {
-                "pos": explorationMap.getDerivedPosition(),
-                "size": explorationMap.getSize(),
-                "bus": mBus_,
-                "animateIn": false
-            };
-            ::ScreenManager.transitionToScreen( ::ScreenManager.ScreenData( Screen.GAME_TITLE_SCREEN, titleData ), null, 2 );
-        }
     }
 
     function getMapPanel(){
@@ -679,6 +669,25 @@ enum GameplayComplexMenuBusEvents{
 
     function update(){
         base.update();
+
+        //Ensure this happens after first frame so the coordinates are correct.
+        if(!mSetup_){
+            //Transition to title screen at layer 2 with panel coordinates for animation
+            if(mParent_ && mParent_.mCreateTitleScreen_){
+                local titleData = {
+                    "pos": mMapPanel_.getDerivedPosition(),
+                    "size": mMapPanel_.getSize(),
+                    "bus": mBus_,
+                    "animateIn": false
+                };
+                ::ScreenManager.transitionToScreen( ::ScreenManager.ScreenData( Screen.GAME_TITLE_SCREEN, titleData ), null, 2 );
+
+                ::OverworldLogic.requestState(OverworldStates.TITLE_SCREEN);
+            }else{
+                ::OverworldLogic.requestState(OverworldStates.ZOOMED_OUT);
+            }
+            mSetup_ = true;
+        }
 
         ::OverworldLogic.update();
     }

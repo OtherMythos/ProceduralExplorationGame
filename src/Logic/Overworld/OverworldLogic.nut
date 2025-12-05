@@ -314,11 +314,16 @@ enum OverworldStates{
 
     function start(data){
         mAnim_ = 0.0;
+        local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.OVERWORLD);
         //Calculate optimal camera position if not yet cached
         if(data.getLogic().mOptimalCameraPosition_ == null){
             data.getLogic().calculateAndApplyOptimalCameraZoom_();
         }
-        local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.OVERWORLD);
+        if(data.getLogic().mCurrentCameraPosition_ == null){
+            data.getLogic().mCurrentCameraPosition_ = data.getLogic().mOptimalCameraPosition_;
+            data.getLogic().mCurrentCameraLookAt_ = data.getLogic().mOptimalCameraLookAt_;
+        }
+
         camera.getParentNode().setPosition(data.getLogic().mCurrentCameraPosition_);
         camera.lookAt(data.getLogic().mCurrentCameraLookAt_);
     }
