@@ -131,7 +131,8 @@
 
     function receiveMoneyAnimFinished(id, data){
         //addForAnimation(data);
-        addCoinAmount_(data);
+        local money = ::Base.mPlayerStats.getMoney();
+        setMoney_(money);
     }
 
     function setMoney_(money){
@@ -147,11 +148,6 @@
 
     function receiveMoneyChanged(id, data){
         setMoney_(data);
-    }
-
-    function addCoinAmount_(amount){
-        local numCoins = mCoinLabel_.getText().tointeger();
-        setMoney_(numCoins + amount);
     }
 
     function playerHealthChanged(id, data){

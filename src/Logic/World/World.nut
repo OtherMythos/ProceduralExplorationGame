@@ -1858,7 +1858,10 @@ enum WorldMousePressContexts{
             local endPos = ::Base.mExplorationLogic.mGui_.getMoneyCounterWindowPos();
             ::HapticManager.triggerSimpleHaptic(HapticType.SELECTION);
 
-            ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": 1, "start": worldPos, "end": endPos, "money": 1, "coinScale": 0.2}));
+            local numCoins = 1;
+            //Do not trigger the money change event, as the effect will update the counter.
+            ::Base.mPlayerStats.changeMoney(numCoins, false);
+            ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": numCoins, "start": worldPos, "end": endPos, "money": 1, "coinScale": 0.2}));
         }
         else if(data.mType == SpoilsComponentType.GIVE_ITEM){
             printf("Giving player item %s", data.mFirst.tostring());

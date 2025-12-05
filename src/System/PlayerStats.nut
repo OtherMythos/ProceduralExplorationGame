@@ -427,6 +427,10 @@
         return mCurrentData_.foundOrbs.len();
     }
 
+    function changeMoney(amount, triggerEvent=true){
+        mInventory_.changeMoney(amount, triggerEvent);
+    }
+
     function getMoney(){
         return mInventory_.getMoney();
     }
