@@ -8,6 +8,14 @@
     mDialogOptionsButtons_ = null;
     mActionSetId_ = null;
 
+    mCurrentDialogText_ = null;
+    mCurrentDialogRichText_ = null;
+    mCurrentDialogColour_ = null;
+    mAnimationProgress_ = 0.0;
+    mTotalGlyphs_ = 0;
+    mGlyphsPerFrame_ = 1.0;
+    mAnimating_ = false;
+
     function receiveDialogSpokenEvent(id, data){
         setNewDialogText(data);
     }
@@ -68,8 +76,24 @@
     }
 
     function update(){
+        if(mAnimating_){
+            mAnimationProgress_ += mGlyphsPerFrame_;
+            if(mAnimationProgress_ >= mTotalGlyphs_){
+                mAnimationProgress_ = mTotalGlyphs_.tofloat();
+                mAnimating_ = false;
+            }
+            updateTextAnimation_();
+        }
+
         if(_input.getButtonAction(::InputManager.dialogNext, _INPUT_PRESSED)){
-            requestNextDialog();
+            if(mAnimating_){
+                //Finish animation immediately
+                mAnimationProgress_ = mTotalGlyphs_.tofloat();
+                mAnimating_ = false;
+                updateTextAnimation_();
+            }else{
+                requestNextDialog();
+            }
         }
     }
 
@@ -97,7 +121,7 @@
             mContainerWindow_.setPosition(winSize.x * 0.20, winSize.y * 0.65);
         }
 
-        mTextContainer_ = mContainerWindow_.createLabel();
+        mTextContainer_ = mContainerWindow_.createAnimatedLabel();
         mTextContainer_.setText(" ");
 
         mNextDialogButton_ = mContainerWindow_.createButton();
@@ -133,15 +157,53 @@
         }
 
         assert(targetText != null);
+        mCurrentDialogText_ = targetText;
+        mCurrentDialogRichText_ = richText;
         mTextContainer_.setText(targetText, false);
 
         if(richText != null){
             mTextContainer_.setRichText(richText);
+            mCurrentDialogColour_ = null;
         }else{
-            mTextContainer_.setTextColour(1, 1, 1, 1);
+            mCurrentDialogColour_ = ColourValue(0, 0, 0, 1);
+            mTextContainer_.setTextColour(0, 0, 0, 0);
         }
 
         mTextContainer_.sizeToFit(mContainerWindow_.getSize().x * 0.95);
+        mTotalGlyphs_ = targetText.len();
+        mAnimationProgress_ = 0.0;
+        mAnimating_ = true;
+    }
+
+    function updateTextAnimation_(){
+        //Animate glyphs from left to right with opacity fading
+        for(local i = 0; i < mTotalGlyphs_; i++){
+            if(i < mAnimationProgress_){
+                //Fully visible
+                local opacity = 1.0;
+                local colour = mCurrentDialogColour_;
+                if(colour != null){
+                    colour = ColourValue(colour.r, colour.g, colour.b, 1.0);
+                    mTextContainer_.setAnimatedGlyph(i, 0.0, 0.0, colour);
+                }
+            }else if(i < mAnimationProgress_ + 1.0){
+                //Fading in - this glyph is between the last fully visible one and the next invisible one
+                local fadeProgress = 1.0 - (i.tofloat() - mAnimationProgress_);
+                local opacity = fadeProgress;
+                local colour = mCurrentDialogColour_;
+                if(colour != null){
+                    colour = ColourValue(colour.r, colour.g, colour.b, opacity);
+                    mTextContainer_.setAnimatedGlyph(i, 0.0, 0.0, colour);
+                }
+            }else{
+                //Not yet visible
+                local colour = mCurrentDialogColour_;
+                if(colour != null){
+                    colour = ColourValue(colour.r, colour.g, colour.b, 0.0);
+                    mTextContainer_.setAnimatedGlyph(i, 0.0, 0.0, colour);
+                }
+            }
+        }
     }
 
     function setNewDialogOptions(options){
