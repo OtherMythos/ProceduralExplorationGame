@@ -627,6 +627,15 @@ enum OverworldStates{
             mCamPos_ = finalCamPos;
             mLookAtPos_ = mCentrePosition_.copy();
 
+            //Interpolate fog position between camera and lookat for smooth transition
+            local interpolationFactor = 0.5;
+            local fogPos = Vec3(
+                ::mix(mCamPos_.x, mLookAtPos_.x, interpolationFactor),
+                0.0,
+                ::mix(mCamPos_.z, mLookAtPos_.z, interpolationFactor)
+            );
+            _gameCore.update(fogPos);
+
             mTime_ += 0.001;
         }
         //Stage 1: Move around and explore
@@ -650,6 +659,15 @@ enum OverworldStates{
 
                 mCamPos_ = mTransitionStartCamPos_;
                 mLookAtPos_ = mTransitionStartLookAt_;
+
+                //Interpolate fog position between camera and lookat
+                local interpolationFactor = 0.5;
+                local fogPos = Vec3(
+                    ::mix(mCamPos_.x, mLookAtPos_.x, interpolationFactor),
+                    0.0,
+                    ::mix(mCamPos_.z, mLookAtPos_.z, interpolationFactor)
+                );
+                _gameCore.update(fogPos);
                 return;
             }
 
@@ -710,10 +728,27 @@ enum OverworldStates{
                     ::mix(transitionLookAt.y, lookAtPos.y, transitionProgressEased),
                     ::mix(transitionLookAt.z, lookAtPos.z, transitionProgressEased)
                 );
+
+                //During transition, interpolate fog between camera and lookat for smooth fake fog effect
+                local fogInterpolationFactor = 0.5;
+                local fogPos = Vec3(
+                    ::mix(camPos.x, lookAtPos.x, fogInterpolationFactor),
+                    0.0,
+                    ::mix(camPos.z, lookAtPos.z, fogInterpolationFactor)
+                );
+                _gameCore.update(fogPos);
+            }else{
+                //After transition, use camera position for fog
+                local fogPos = camPos.copy();
+                fogPos.y = 0;
+                _gameCore.update(fogPos);
             }
 
             camera.getParentNode().setPosition(camPos);
             camera.lookAt(lookAtPos);
+
+            mCamPos_ = camPos;
+            mLookAtPos_ = lookAtPos;
 
             mCamPos_ = camPos;
             mLookAtPos_ = lookAtPos;

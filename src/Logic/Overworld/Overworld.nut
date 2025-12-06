@@ -155,7 +155,7 @@
         mCameraPosition_ = getOverworldStartPosition();
         mTargetCameraPosition_ = getOverworldStartPosition();
 
-        setFogStartEnd(1000, 10000);
+        setFogStartEnd(500, 1200);
         setBackgroundColour(getDefaultSkyColour());
         setBiomeAmbientModifier(getDefaultAmbientModifier());
         setBiomeLightModifier(getDefaultLightModifier());
@@ -203,6 +203,34 @@
     #Override
     function getSurroundingWaterPlaneMesh(){
         return getWaterPlaneMesh();
+    }
+
+    #Override
+    function createScene(){
+        base.createScene();
+
+        //Add three additional water planes in an L-shape on the bottom left for title screen animation
+        local surroundingMesh = getSurroundingWaterPlaneMesh();
+        local surroundBlock = getWaterDatablock_("outsideWaterBlock", true);
+
+        //L-shape positions: one extending down, two extending left from bottom-left corner
+        local lShapePositions = [
+            Vec3(-300, 0, 900),    //Down from bottom-left
+            Vec3(-900, 0, 300),    //Left from bottom-left
+            Vec3(-900, 0, 900)     //Corner extending left and down
+        ];
+
+        foreach(pos in lShapePositions){
+            local oceanNode = mParentNode_.createChildSceneNode(_SCENE_STATIC);
+            local oceanItem = _scene.createItem(surroundingMesh, _SCENE_STATIC);
+            oceanItem.setCastsShadows(false);
+            _gameCore.writeFlagsToItem(oceanItem, HLMS_OCEAN_VERTICES | HLMS_FLOOR_DECALS);
+            oceanItem.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_WATER);
+            oceanItem.setDatablock(surroundBlock);
+            oceanNode.attachObject(oceanItem);
+            oceanNode.setScale(300, 1, 300);
+            oceanNode.setPosition(pos);
+        }
     }
 
     #Override
