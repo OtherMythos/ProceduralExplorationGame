@@ -465,7 +465,8 @@ namespace ProceduralExplorationGameCore{
 
                 if(altitude > maxAltitude) maxAltitude = altitude;
 
-                *reinterpret_cast<AV::uint32*>(&altitudes[x+y*width]) = altitude | static_cast<AV::uint32>(v) << 16;
+                AV::uint8 voxelDiffuse = *VOXEL_META_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y)) & 0x7;
+                *reinterpret_cast<AV::uint32*>(&altitudes[x+y*width]) = altitude | static_cast<AV::uint32>(v) << 16 | static_cast<AV::uint32>(voxelDiffuse) << 24;
                 bufEntry.mNumActiveVox++;
             }
         }
@@ -519,6 +520,8 @@ namespace ProceduralExplorationGameCore{
                     faceContainer.faceMask = f;
                     faceContainer.regionId = regionId;
                     faceContainer.flags = flags;
+                    AV::uint8 voxelDiffuse = *VOXEL_META_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y)) & 0x3;
+                    faceContainer.voxelDiffuse = voxelDiffuse;
 
                     outFaces.outFaces.push_back(faceContainer);
                 }
@@ -555,7 +558,7 @@ namespace ProceduralExplorationGameCore{
 
                 AV::uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
                 (*bufEntry.mVertsWritePtr++) = val;
-                val = f << 29 | w.vox | static_cast<AV::uint32>(w.flags) << 16;
+                val = f << 29 | w.vox | static_cast<AV::uint32>(w.flags) << 16 | static_cast<AV::uint32>(w.voxelDiffuse & 0x7) << 8;
                 (*bufEntry.mVertsWritePtr++) = val;
                 (*bufEntry.mVertsWritePtr++) = 0x0;
                 //(*bufEntry.mVertsWritePtr++) = 0x0;
@@ -625,10 +628,11 @@ namespace ProceduralExplorationGameCore{
                 }
                  */
                 //Calculate the remaining altitude faces
-                writeFaceToMesh(x, (int)y-1, x, yInverse, 0, altitude, altitudes, width, height, v, bufEntry);
-                writeFaceToMesh(x, (int)y+1, x, yInverse, 1, altitude, altitudes, width, height, v, bufEntry);
-                writeFaceToMesh((int)x+1, y, x, yInverse, 4, altitude, altitudes, width, height, v, bufEntry);
-                writeFaceToMesh((int)x-1, y, x, yInverse, 5, altitude, altitudes, width, height, v, bufEntry);
+                AV::uint8 voxelDiffuse = (*reinterpret_cast<AV::uint32*>(&vox) >> 24) & 0x7;
+                writeFaceToMesh(x, (int)y-1, x, yInverse, 0, altitude, altitudes, width, height, v, bufEntry, voxelDiffuse);
+                writeFaceToMesh(x, (int)y+1, x, yInverse, 1, altitude, altitudes, width, height, v, bufEntry, voxelDiffuse);
+                writeFaceToMesh((int)x+1, y, x, yInverse, 4, altitude, altitudes, width, height, v, bufEntry, voxelDiffuse);
+                writeFaceToMesh((int)x-1, y, x, yInverse, 5, altitude, altitudes, width, height, v, bufEntry, voxelDiffuse);
             }
         }
 
@@ -641,7 +645,7 @@ namespace ProceduralExplorationGameCore{
         *outNumRegions = numRegions;
     }
 
-    void Voxeliser::writeFaceToMesh(AV::uint32 targetX, AV::uint32 targetY, AV::uint32 x, AV::uint32 y, AV::uint32 f, AV::uint32 altitude, const std::vector<float>& altitudes, AV::uint32 width, AV::uint32 height, AV::uint8 v, RegionBufferEntry& bufEntry) const{
+    void Voxeliser::writeFaceToMesh(AV::uint32 targetX, AV::uint32 targetY, AV::uint32 x, AV::uint32 y, AV::uint32 f, AV::uint32 altitude, const std::vector<float>& altitudes, AV::uint32 width, AV::uint32 height, AV::uint8 v, RegionBufferEntry& bufEntry, AV::uint8 voxelDiffuse) const{
         //Assuming there's no voxels around the outskirt this check can be avoided.
         //if(!(targetX < 0 || targetY < 0 || targetX >= width || targetY >= height)){
             float vox = altitudes[targetX + targetY * width];
@@ -671,7 +675,7 @@ namespace ProceduralExplorationGameCore{
                             AV::uint32 val = xx | yy << 10 | zz << 20 | ambient << 30;
                             //TODO Magic number for now to avoid it breaking the regular materials.
                             (*bufEntry.mVertsWritePtr++) = val;
-                            val = f << 29 | v;
+                            val = f << 29 | v | static_cast<AV::uint32>(voxelDiffuse) << 8;
                             (*bufEntry.mVertsWritePtr++) = val;
                             (*bufEntry.mVertsWritePtr++) = 0x0;
                             //(*bufEntry.mVertsWritePtr++) = 0x0;

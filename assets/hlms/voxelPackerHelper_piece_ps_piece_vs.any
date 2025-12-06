@@ -34,6 +34,10 @@
 
 @piece( custom_ps_preLights )
 	pixelData.diffuse.xyz *= inPs.ambientVal;
+	@property(!invisibleTerrain && voxelTerrain)
+		pixelData.diffuse.xyz *= (0.2 + inPs.voxelDiffuseVal * 0.8);
+		//pixelData.diffuse.xyz *= inPs.voxelDiffuseVal;
+	@end
 @end
 
 @piece( custom_ps_posExecution )
@@ -103,6 +107,9 @@
 	@else
 		float fog;
 		float ambientVal;
+		@property(!invisibleTerrain && voxelTerrain)
+			float voxelDiffuseVal;
+		@end
 	@end
 	@property( windStreaks )
 		float windDistance;
@@ -256,6 +263,10 @@
 		//If the renderable does not require pixel shading because it is a shadow caster for instance, these settings won't always be available.
 		@property( !hlms_shadowcaster || !hlms_shadow_uses_depth_texture || alpha_test || exponential_shadow_maps )
 			outVs.ambientVal = float(ambient)/3;
+			@property(!invisibleTerrain && voxelTerrain)
+				uint voxelDiffuse = uint((originalSecond >> 8) & uint(0x7));
+				outVs.voxelDiffuseVal = float(voxelDiffuse)/7;
+			@end
 		@end
 		@end
 

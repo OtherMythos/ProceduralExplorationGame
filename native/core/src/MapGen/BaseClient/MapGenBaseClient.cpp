@@ -35,6 +35,7 @@
 #include "Steps/BiomeFinalChangesMapGenStep.h"
 #include "Steps/CalculateWaterDistanceMapGenStep.h"
 #include "Steps/GenerateWaterMeshMapGenStep.h"
+#include "Steps/GenerateVoxelDiffuseMapGenStep.h"
 
 #include "MapGen/Mesh/WaterMeshGenerator.h"
 #include "System/OgreResourceHelper.h"
@@ -96,6 +97,7 @@ namespace ProceduralExplorationGameCore{
             new PlaceItemsForBiomesMapGenStep(),
             new GenerateWaterTextureMapGenStep(),
             new GenerateWaterMeshMapGenStep(),
+            new GenerateVoxelDiffuseMapGenStep(),
         });
     }
 

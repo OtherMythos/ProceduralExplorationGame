@@ -26,6 +26,7 @@ namespace ProceduralExplorationGameCore{
         AV::uint8 regionId;
         //Generic flags object
         AV::uint8 flags;
+        AV::uint8 voxelDiffuse;
     };
     struct OutputFaces{
         std::vector<WrappedFaceContainer> outFaces;

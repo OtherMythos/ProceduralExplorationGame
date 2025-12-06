@@ -147,7 +147,7 @@ namespace ProceduralExplorationGameCore{
         void prepareVertBuffer();
 
         inline AmbientMask getVerticeBorderTerrain(AV::uint32 altitude, const std::vector<float>& altitudes, AV::uint32 f, AV::uint32 x, AV::uint32 y, AV::uint32 width) const;
-        inline void writeFaceToMesh(AV::uint32 targetX, AV::uint32 targetY, AV::uint32 x, AV::uint32 y, AV::uint32 f, AV::uint32 altitude, const std::vector<float>& altitudes, AV::uint32 width, AV::uint32 height, AV::uint8 v, RegionBufferEntry& bufEntry) const;
+        inline void writeFaceToMesh(AV::uint32 targetX, AV::uint32 targetY, AV::uint32 x, AV::uint32 y, AV::uint32 f, AV::uint32 altitude, const std::vector<float>& altitudes, AV::uint32 width, AV::uint32 height, AV::uint8 v, RegionBufferEntry& bufEntry, AV::uint8 voxelDiffuse) const;
         inline void writeFaceToMeshVisitedPlace(int targetX, int targetY, AV::uint32 xVal, AV::uint32 yVal, AV::uint32 x, AV::uint32 y, AV::uint32 f, AV::uint8 altitude, const std::vector<AV::uint8>& altitudes, AV::uint32 width, AV::uint32 height, AV::uint8 v, AV::uint32 totalWidth, AV::uint32 totalHeight, RegionBufferEntry& bufEntry) const;
 
         AV::uint8 getNeighbourMask(VoxelId* data, int x, int y, int z, AV::uint32 width, AV::uint32 height, AV::uint32 depth);
