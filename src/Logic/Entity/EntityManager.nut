@@ -398,27 +398,56 @@ EntityManager.EntityManager <- class{
         processPositionChange_(eid, idx, mEntityPositions_[idx]);
     }
 
-    function processEntityPositionPotential_(eid, idx, newPos, oldPos){
-        local targetPos = newPos;
+    //Helper function to check if a position is valid
+    function checkPositionValid_(pos, idx, collisionRadius, eid){
+        //Check traversable terrain
         if(mEntityComponentHashes_[idx] & (1<<EntityComponents.TRAVERSABLE_TERRAIN)){
             local c = mComponents_[EntityComponents.TRAVERSABLE_TERRAIN].getCompForEid(eid);
-
-            local traverse = mCreatorWorld_.getTraverseTerrainForPosition(targetPos);
-
+            local traverse = mCreatorWorld_.getTraverseTerrainForPosition(pos);
             if((c.mTraversableTerrain & traverse) == 0){
-                targetPos = oldPos;
+                return false;
             }
         }
+        //Check collision world
+        if(collisionRadius != null){
+            local w = mCreatorWorld_.getCollisionDetectionWorld();
+            if(w.checkCollisionPoint(pos.x, pos.z, collisionRadius)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function processEntityPositionPotential_(eid, idx, newPos, oldPos){
+        local targetPos = newPos;
+        local collisionRadius = null;
+
+        //Check collision detection component for radius
         if(mEntityComponentHashes_[idx] & (1<<EntityComponents.COLLISION_DETECTION)){
             local c = mComponents_[EntityComponents.COLLISION_DETECTION].getCompForEid(eid);
-            local w = mCreatorWorld_.getCollisionDetectionWorld();
-            local collided = w.checkCollisionPoint(targetPos.x, targetPos.z, c.mRadius);
-            if(collided){
-                targetPos = oldPos;
-            }
+            collisionRadius = c.mRadius;
         }
 
-        return targetPos;
+        //First try the desired position
+        if(checkPositionValid_(targetPos, idx, collisionRadius, eid)){
+            return targetPos;
+        }
+
+        //If collision occurred, try sliding along walls
+        //Try moving only on X-axis (slide along Z walls)
+        local slideX = Vec3(newPos.x, oldPos.y, oldPos.z);
+        if(checkPositionValid_(slideX, idx, collisionRadius, eid)){
+            return slideX;
+        }
+
+        //Try moving only on Z-axis (slide along X walls)
+        local slideZ = Vec3(oldPos.x, oldPos.y, newPos.z);
+        if(checkPositionValid_(slideZ, idx, collisionRadius, eid)){
+            return slideZ;
+        }
+
+        //No valid sliding position found, return old position (hard stop)
+        return oldPos;
     }
 
     function processPositionChange_(eid, idx, newPos){

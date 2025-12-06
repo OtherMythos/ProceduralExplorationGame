@@ -279,15 +279,18 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         mOrientation_ = orientation;
     }
     function move_(pos, amount){
-        //Check for potential obsticles.
+        //Check for potential obstacles.
+        local targetPos = pos;
         if(mEntity_ != null){
             local result = mCreatorWorld_.getEntityManager().checkEntityPositionPotential(mEntity_, pos);
-            if(result <=> pos){
+            targetPos = result;
+            //If we couldn't move at all (hard stop), return false
+            if(result.x == mPos_.x && result.z == mPos_.z){
                 return false;
             }
         }
 
-        setPosition(pos);
+        setPosition(targetPos);
         setDirection(Vec2(amount.x, amount.z));
 
         if(mMoving_ <= 0 && mStateMachineModel_){
