@@ -58,7 +58,7 @@ namespace ProceduralExplorationGameCore{
                 //Once determined to be water, use distance to land to determine pixel type
                 if(*altitude >= seaLevel){
                     //This is land, just write transparent
-                    _writeToBuffer(&b, 0, 0, 0, 0);
+                    _writeToBuffer(&b, 143, 189, 207);
                 }else{
                     //This is water - use distance to determine which type of water
                     if(*distPtr < 4){
