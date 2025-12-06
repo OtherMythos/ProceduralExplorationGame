@@ -34,7 +34,7 @@
         local playerEntry = ActiveEnemyEntry(mConstructorWorld_, EnemyId.NONE, targetPos, en);
 
         local playerNode = mBaseSceneNode_.createChildSceneNode();
-        local playerModel = mCharacterGenerator_.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, RENDER_QUEUE_EXPLORATION);
+        local playerModel = mCharacterGenerator_.createCharacterModel(playerNode, {"type": CharacterModelType.HUMANOID}, RENDER_QUEUE_EXPLORATION_SHADOW_VISIBILITY);
         playerNode.setScale(0.5, 0.5, 0.5);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](playerNode));
         playerEntry.setModel(playerModel);
@@ -317,7 +317,11 @@
         placeNode.setPosition(targetPos);
         //TODO make some of these scene static
         local item = _gameCore.createVoxMeshItem(meshPath);
-        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
+        local targetQueue = RENDER_QUEUE_EXPLORATION;
+        if(teleData.rawin("renderQueue")){
+            targetQueue = teleData.renderQueue;
+        }
+        item.setRenderQueueGroup(targetQueue);
         placeNode.attachObject(item);
         placeNode.setScale(scale, scale, scale);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](placeNode, true));
@@ -680,7 +684,7 @@
         local item = _scene.createItem(::expOrbMesh);
         _gameCore.writeFlagsToItem(item, 0x1);
         if(!found){
-            item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
+            item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_SHADOW_VISIBILITY);
         }
         item.setDatablock(found ? "foundOrbMaterial" : "baseVoxelMaterial");
         parentNode.setScale(1.5, 1.5, 1.5);
@@ -747,7 +751,7 @@
         local parentNode = mBaseSceneNode_.createChildSceneNode();
         parentNode.setPosition(targetPos);
         local item = _gameCore.createVoxMeshItem("coin.voxMesh");
-        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_SHADOW_VISIBILITY);
         local animNode = parentNode.createChildSceneNode();
         animNode.setScale(0.1, 0.1, 0.1);
         animNode.attachObject(item);
@@ -848,7 +852,7 @@
         parentNode.setScale(0.15, 0.15, 0.15);
         parentNode.setPosition(targetPos);
         local item = _gameCore.createVoxMeshItem("treasureChestBase.voxMesh");
-        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_SHADOW_VISIBILITY);
         local baseNode = parentNode.createChildSceneNode();
         baseNode.attachObject(item);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](parentNode, true));
@@ -869,7 +873,7 @@
 
         local lidNode = parentNode.createChildSceneNode();
         item = _gameCore.createVoxMeshItem("treasureChestLid.voxMesh");
-        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_SHADOW_VISIBILITY);
         lidNode.attachObject(item);
         lidNode.setPosition(0, 6, 0);
 

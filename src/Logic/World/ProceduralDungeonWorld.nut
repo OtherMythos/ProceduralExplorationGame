@@ -168,6 +168,7 @@
         local ladderUpPos = mMapData_.objectPositions.ladderUp * mWorldScaleSize_ + mOffset_;
         mEntityFactory_.constructSimpleTeleportItem(mParentNode_, "ladderUp.voxMesh", ladderUpPos, 0.5, {
             "actionType": ActionSlotType.ASCEND,
+            "renderQueue": RENDER_QUEUE_EXPLORATION_SHADOW_VISIBILITY,
             "popWorld": true
         });
 
@@ -176,6 +177,7 @@
             "actionType": ActionSlotType.DESCEND,
             "worldType": WorldTypes.PROCEDURAL_DUNGEON_WORLD,
             "dungeonType": ProceduralDungeonTypes.DUST_MITE_NEST,
+            "renderQueue": RENDER_QUEUE_EXPLORATION_SHADOW_VISIBILITY,
             "seed": _random.randInt(1000),
             "width": 50,
             "height": 50
