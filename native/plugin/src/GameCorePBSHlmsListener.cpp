@@ -69,5 +69,11 @@ namespace ProceduralExplorationGamePlugin
             hlms->_setProperty("disableDefaultPSBody", true);
             hlms->_setProperty("renderShadowVisibility", true);
         }
+        else if(p->getDefinition()->mIdentifier == 15){
+            hlms->_setProperty("renderSceneDecorations", true);
+            hlms->_setProperty("lineColourDangerous", true);
+            hlms->_setProperty("disableDefaultPSBody", true);
+            hlms->_setProperty("disableFog", true);
+        }
     }
 }

@@ -84,7 +84,7 @@ compositor_node renderMainGameplayNode
         pass render_scene
         {
             rq_first 15
-            rq_last 18
+            rq_last 20
 
             camera explorationCamera
             shadows default_simpleShadowNode
@@ -207,6 +207,27 @@ compositor_node renderMainGameplayNode
 
             rq_first 14
             rq_last 16
+        }
+        //Render dangerous enemy decorations with red line marker
+        pass render_scene
+        {
+            load {
+                colour dont_care
+            }
+            store
+            {
+                colour    store
+                depth    dont_care
+                stencil    dont_care
+            }
+
+            overlays    off
+
+            identifier 15
+            camera explorationCamera
+
+            rq_first 19
+            rq_last 20
         }
         //Render particles
         pass render_scene

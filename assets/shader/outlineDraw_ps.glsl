@@ -140,7 +140,11 @@ void main()
 
     float2 mainOutline = computeLineForImage(Center.x, Left.x, Right.x, Top.x, Bottom.x, Center.y, false);
     if(mainOutline.x != 0.0 && mainOutline.y != 0.0){
-        startValue = mix(startValue, float4(0, 0, 0, 1), mainOutline.x * mainOutline.y);
+        //Determine which outline to draw (dangerous red or default black) from blue channel
+        bool renderDangerousRed = Center.w < 0.5;
+
+        float4 lineColour = renderDangerousRed ? float4(0.4, 0, 0, 1) : float4(0, 0, 0, 1);
+        startValue = mix(startValue, lineColour, mainOutline.x * mainOutline.y);
         returnFinalColour(startValue);
     }
 

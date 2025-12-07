@@ -78,7 +78,11 @@
 		//float colVal = float(inPs.passDrawId % uint(100)) / 100.0;
 		outPs_colour0.xyz = inPs.decorationColour;
 		outPs_colour0.z = inPs.passDrawColour;
-		outPs_colour0.w = 1.0;
+		@property(lineColourDangerous)
+			outPs_colour0.w = 0.0; //Red line marker (dangerous)
+		@else
+			outPs_colour0.w = 1.0; //Default line marker (safe)
+		@end
 	@end
 
 	@property(floorDecals)
