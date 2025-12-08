@@ -170,7 +170,7 @@ namespace ProceduralExplorationGameCore{
         subMesh->mVao[Ogre::VpNormal].push_back(arrayObj);
         subMesh->mVao[Ogre::VpShadow].push_back(arrayObj);
 
-        const Ogre::Vector3 halfBounds(width/2, height/2, depth/2);
+        const Ogre::Vector3 halfBounds(width/2 + 0.5, height/2 + 0.5, depth/2 + 0.5);
         const Ogre::Aabb bounds(halfBounds, halfBounds);
         mesh->_setBounds(bounds);
         mesh->_setBoundingSphereRadius(bounds.getRadius());
