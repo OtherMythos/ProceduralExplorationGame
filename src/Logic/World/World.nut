@@ -1445,10 +1445,11 @@ enum WorldMousePressContexts{
         }
     }
     function updateMapViewerPlayerPosition_(playerPos){
-        //TODO remove direct access.
-        if(mGui_.mWorldMapDisplay_.mMapViewer_){
-            mGui_.mWorldMapDisplay_.mMapViewer_.setPlayerPosition(playerPos.x, playerPos.z, mWorldScaleSize_);
-        }
+        _event.transmit(Event.MINIMAP_PLAYER_POSITION_CHANGED, {
+            "x": playerPos.x,
+            "y": playerPos.z,
+            "worldScale": mWorldScaleSize_
+        });
     }
 
     function notifyPlayerVoxelChange(){

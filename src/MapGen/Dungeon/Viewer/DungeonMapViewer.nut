@@ -2,10 +2,6 @@
 
     mMapData_ = null;
 
-    constructor(){
-        setupBlendblock();
-    }
-
     function fillBufferWithMap(textureBox){
         textureBox.seek(0);
         local v = mMapData_.vals;

@@ -460,11 +460,12 @@
         parentNode.setPosition(Vec3(mPosition_.x, zPos, mPosition_.z) + rot );
         camera.lookAt(mPosition_.x, zPos, mPosition_.z);
 
-        //Update the minimap direction indicator
+        //Update the minimap direction indicator via event
         local cameraDir = getCameraDirection();
-        if(mGui_.mWorldMapDisplay_.mMapViewer_){
-            mGui_.mWorldMapDisplay_.mMapViewer_.setPlayerDirection(cameraDir.x, cameraDir.y);
-        }
+        _event.transmit(Event.MINIMAP_CAMERA_DIRECTION_CHANGED, {
+            "dirX": cameraDir.x,
+            "dirY": cameraDir.y
+        });
     }
 
     function processCameraMove(x, y){
@@ -515,7 +516,11 @@
     function updateMapViewerPlayerPosition_(playerPos){
         local p = playerPos.copy();
         p.z = -p.z;
-        base.updateMapViewerPlayerPosition_(p);
+        _event.transmit(Event.MINIMAP_PLAYER_POSITION_CHANGED, {
+            "x": p.x,
+            "y": p.z,
+            "worldScale": mWorldScaleSize_
+        });
     }
 
     #Override

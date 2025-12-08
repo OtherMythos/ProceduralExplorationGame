@@ -33,7 +33,7 @@
         mPlaceMarkers_ = [];
         mFoundPlaces_ = [];
 
-        setupBlendblock();
+        base.constructor();
     }
 
     function shutdown(){

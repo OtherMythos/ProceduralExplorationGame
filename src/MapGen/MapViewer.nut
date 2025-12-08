@@ -174,6 +174,8 @@
 
     constructor(){
         setupBlendblock();
+        _event.subscribe(Event.MINIMAP_PLAYER_POSITION_CHANGED, onMinimapPlayerPositionChanged, this);
+        _event.subscribe(Event.MINIMAP_CAMERA_DIRECTION_CHANGED, onMinimapCameraDirectionChanged, this);
     }
 
     function shutdown(){
@@ -268,6 +270,9 @@
         if(mPlayerDirectionBeam_ != null){
             mPlayerDirectionBeam_.shutdown();
         }
+
+        _event.unsubscribe(Event.MINIMAP_PLAYER_POSITION_CHANGED, onMinimapPlayerPositionChanged, this);
+        _event.unsubscribe(Event.MINIMAP_CAMERA_DIRECTION_CHANGED, onMinimapCameraDirectionChanged, this);
     }
 
     function setColour(colour){
@@ -305,6 +310,14 @@
 
     function getMinimapVisible(){
         return true;
+    }
+
+    function onMinimapPlayerPositionChanged(id, data){
+        setPlayerPosition(data.x, data.y, data.worldScale);
+    }
+
+    function onMinimapCameraDirectionChanged(id, data){
+        setPlayerDirection(data.dirX, data.dirY);
     }
 
 }

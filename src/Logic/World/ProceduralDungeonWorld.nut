@@ -81,11 +81,12 @@
         parentNode.setPosition(Vec3(mPosition_.x, zPos, mPosition_.z) + rot );
         camera.lookAt(mPosition_.x, zPos, mPosition_.z);
 
-        //Update the minimap direction indicator
+        //Update the minimap direction indicator via event
         local cameraDir = getCameraDirection();
-        if(mGui_.mWorldMapDisplay_.mMapViewer_){
-            mGui_.mWorldMapDisplay_.mMapViewer_.setPlayerDirection(cameraDir.x, cameraDir.y);
-        }
+        _event.transmit(Event.MINIMAP_CAMERA_DIRECTION_CHANGED, {
+            "dirX": cameraDir.x,
+            "dirY": cameraDir.y
+        });
     }
 
     #Override
