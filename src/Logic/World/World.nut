@@ -872,6 +872,12 @@ enum WorldMousePressContexts{
             "dirX": cameraDir.x,
             "dirY": cameraDir.y
         });
+
+        local playerDir = getPlayerDirection();
+        _event.transmit(Event.MINIMAP_PLAYER_DIRECTION_CHANGED, {
+            "dirX": playerDir.x,
+            "dirY": playerDir.y
+        });
     }
 
     function constructPlayerEntry_(){
@@ -1427,6 +1433,10 @@ enum WorldMousePressContexts{
 
     function setPlayerDirection(dir){
         mPlayerEntry_.setDirection(dir);
+        _event.transmit(Event.MINIMAP_PLAYER_DIRECTION_CHANGED, {
+            "dirX": dir.x,
+            "dirY": dir.y
+        });
     }
     function movePlayer(amount, speed=0.2){
         local targetPos = mPlayerEntry_.mPos_ + Vec3(amount.x, 0, amount.y);
@@ -1436,6 +1446,13 @@ enum WorldMousePressContexts{
         mPlayerEntry_.moveToPoint(targetPos, speed);
 
         notifyPlayerMoved();
+
+        //Emit player direction event as movement may change direction
+        local playerDir = getPlayerDirection();
+        _event.transmit(Event.MINIMAP_PLAYER_DIRECTION_CHANGED, {
+            "dirX": playerDir.x,
+            "dirY": playerDir.y
+        });
 
         //NOTE: left over from the flag system, scheduled for removal.
         /*

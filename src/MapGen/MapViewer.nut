@@ -82,7 +82,7 @@
 
             //Move the panel along the direction vector by half its size to position the bottom center at the player location
             local panelSize = mPanel_.getSize();
-            local offset = Vec2(cos(angle), sin(angle)) * (panelSize.y / 2 + 1);
+            local offset = Vec2(cos(angle), sin(angle)) * (panelSize.y / 2 + 2);
             intendedPos += offset;
 
             mPanel_.setCentre(intendedPos.x, intendedPos.y);
@@ -98,7 +98,7 @@
             updatePositionAndDirection_();
         }
         function setColour(colour){
-            mPanel_.setColour(colour);
+            mPanel_.setColour(ColourValue(0.8, 0, 0, colour.a * 0.9));
         }
         function setVisible(visible){
             mPanel_.setVisible(visible);
@@ -176,6 +176,7 @@
         setupBlendblock();
         _event.subscribe(Event.MINIMAP_PLAYER_POSITION_CHANGED, onMinimapPlayerPositionChanged, this);
         _event.subscribe(Event.MINIMAP_CAMERA_DIRECTION_CHANGED, onMinimapCameraDirectionChanged, this);
+        _event.subscribe(Event.MINIMAP_PLAYER_DIRECTION_CHANGED, onMinimapPlayerDirectionChanged, this);
     }
 
     function shutdown(){
@@ -273,11 +274,15 @@
 
         _event.unsubscribe(Event.MINIMAP_PLAYER_POSITION_CHANGED, onMinimapPlayerPositionChanged, this);
         _event.unsubscribe(Event.MINIMAP_CAMERA_DIRECTION_CHANGED, onMinimapCameraDirectionChanged, this);
+        _event.unsubscribe(Event.MINIMAP_PLAYER_DIRECTION_CHANGED, onMinimapPlayerDirectionChanged, this);
     }
 
     function setColour(colour){
         if(mPlayerLocationPanel_ != null){
             mPlayerLocationPanel_.setColour(colour);
+        }
+        if(mPlayerDirectionBeam_ != null){
+            mPlayerDirectionBeam_.setColour(colour);
         }
     }
 
@@ -318,6 +323,13 @@
 
     function onMinimapCameraDirectionChanged(id, data){
         setPlayerDirection(data.dirX, data.dirY);
+    }
+
+    function onMinimapPlayerDirectionChanged(id, data){
+        if(mPlayerLocationPanel_ != null){
+            local angle = atan2(data.dirY, data.dirX);
+            mPlayerLocationPanel_.mPanel_.setOrientation(angle);
+        }
     }
 
 }
