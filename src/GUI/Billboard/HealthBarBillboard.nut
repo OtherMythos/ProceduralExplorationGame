@@ -14,6 +14,7 @@
         //local width = 2 + ((totalHealth * totalHealth) *0.002);
         local width = 2 + (totalHealth / 2);
         if(width >= 100) width = 100;
+        width = (width * 0.75).tointeger();
         mPanelWidth_ = width;
         panel.setSize(width.tointeger(), 4);
         mPanel_ = panel;
