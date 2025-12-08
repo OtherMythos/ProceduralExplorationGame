@@ -119,7 +119,9 @@
         //_gui.destroy(mMapViewerPanel_);
         //_gui.destroy(mExplorationScenePanel_);
         shutdownCompositor_();
-        mMapViewer_.shutdown();
+        if(mMapViewer_ != null){
+            mMapViewer_.shutdown();
+        }
 
         _event.unsubscribe(Event.ACTIVE_WORLD_CHANGE, processActiveWorldChange, this);
         _event.unsubscribe(Event.PLACE_DISCOVERED, notifyPlaceDiscovered, this);

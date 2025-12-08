@@ -297,7 +297,9 @@
         }
         mRegionEntries_.clear();
 
-        _gameCore.destroyMapData(::currentNativeMapData);
+        if(::currentNativeMapData != null){
+            _gameCore.destroyMapData(::currentNativeMapData);
+        }
         ::currentNativeMapData = null;
 
         _event.unsubscribe(Event.REQUEST_WORLD_VIEW_CHANGE, receiveWorldViewChangeRequest, this);

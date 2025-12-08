@@ -694,7 +694,9 @@ enum WorldMousePressContexts{
         if(mPlayerEntry_ != null){
             mPlayerEntry_.notifyDestroyed();
         }
-        mEntityManager_.destroyAllEntities();
+        if(mEntityManager_ != null){
+            mEntityManager_.destroyAllEntities();
+        }
 
         mActiveEnemies_.clear();
 
