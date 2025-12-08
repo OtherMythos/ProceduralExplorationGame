@@ -198,6 +198,8 @@
         mCurrentWorld_.processWorldActiveChange_(true);
 
         _event.transmit(Event.ACTIVE_WORLD_CHANGE, mCurrentWorld_);
+
+        mCurrentWorld_.processWorldActiveChangePost_();
     }
 
     function activateEffect(effect){

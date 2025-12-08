@@ -858,6 +858,22 @@ enum WorldMousePressContexts{
     function processWorldActiveChange_(active){
     }
 
+    function processWorldActiveChangePost_(){
+        //Send minimap position and direction events after world becomes active
+        local playerPos = mPlayerEntry_.getPosition();
+        _event.transmit(Event.MINIMAP_PLAYER_POSITION_CHANGED, {
+            "x": playerPos.x,
+            "y": -playerPos.z,
+            "worldScale": mWorldScaleSize_
+        });
+
+        local cameraDir = getCameraDirection();
+        _event.transmit(Event.MINIMAP_CAMERA_DIRECTION_CHANGED, {
+            "dirX": cameraDir.x,
+            "dirY": cameraDir.y
+        });
+    }
+
     function constructPlayerEntry_(){
         return mEntityFactory_.constructPlayer(mGui_, ::Base.mPlayerStats);
     }
@@ -867,7 +883,6 @@ enum WorldMousePressContexts{
 
         if(mProjectileManager_ != null) mProjectileManager_.shutdown();
         mProjectileManager_ = ExplorationProjectileManager(this, mDamageCollisionWorld_);
-
     }
 
     function processStatusAfflictionChange_(entity){
