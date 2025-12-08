@@ -38,6 +38,50 @@
 		pixelData.diffuse.xyz *= (0.2 + inPs.voxelDiffuseVal * 0.8);
 		//pixelData.diffuse.xyz *= inPs.voxelDiffuseVal;
 	@end
+
+	@property(oceanVertices)
+		/*
+		//Per-voxel glistening effect on 600x600 texture grid
+		//Determine which voxel in the grid this fragment belongs to
+		//Multiply texture coordinates by grid size and floor to get voxel indices
+		int voxelX = int(floor(inPs.oceanTexCoord.x * 50.0));
+		int voxelY = int(floor(inPs.oceanTexCoord.y * 50.0));
+
+		//Create deterministic random seed per voxel
+		float voxelHash = float(voxelX * 73 + voxelY * 179);
+		//Use sine of hash to create base random offset (0-1)
+		float baseOffset = fract(sin(voxelHash) * 43758.5453);
+
+		//Animate smoothly using sine wave with slow time scaling
+		//2π radians per cycle, divided by larger number for slower animation
+		float animatedValue = sin(passBuf.time * 1.0 + baseOffset * 6.28319) * 0.5 + 0.5;
+
+		//Convert to black and white, blend with texture at 0.5 strength
+		float3 blackWhiteNoise = float3(animatedValue, animatedValue, 0);
+		pixelData.diffuse.xyz = mix(pixelData.diffuse.xyz, blackWhiteNoise, 0.04);
+		*/
+
+		//Higher granularity sparkle layer (300x300 voxels)
+		int sparkleX = int(floor(inPs.oceanTexCoord.x * 600.0));
+		int sparkleY = int(floor(inPs.oceanTexCoord.y * 600.0));
+
+		//Create deterministic random seed per sparkle voxel
+		float sparkleHash = float(sparkleX * 73 + sparkleY * 179);
+		float sparkleOffset = fract(sin(sparkleHash) * 43758.5453);
+
+		//Each voxel has its own repeating sawtooth cycle based on time + offset
+		//fract creates a repeating 0-1 sawtooth, multiply by 6.28 to get full radian cycle
+		float sparklePhase = fract(passBuf.time * 0.00425 + sparkleOffset) * 6.28319;
+		//Create smooth transition window: fade in from 0-0.039, peak at 0.039-0.1, fade out at 0.1-0.1375
+		float fadeIn = smoothstep(0.0, 0.039, sparklePhase);
+		float fadeOut = smoothstep(0.1375, 0.1, sparklePhase);
+		float windowSmooth = fadeIn * fadeOut;
+		//Within the window, animate from 0 to 1 and back
+		float sparkleValue = windowSmooth * sin(sparklePhase * 2.495) * 0.5 + 0.5 * windowSmooth;
+
+		//Blend sparkle layer on top (mix to keep mostly dark)
+		pixelData.diffuse.xyz = mix(pixelData.diffuse.xyz, float3(sparkleValue, sparkleValue, 0), 0.05);
+	@end
 @end
 
 @piece( custom_ps_posExecution )
@@ -117,6 +161,9 @@
 	@end
 	@property( windStreaks )
 		float windDistance;
+	@end
+	@property(oceanVertices)
+		float2 oceanTexCoord;
 	@end
 @end
 
@@ -294,6 +341,11 @@
 		@property(windStreaks)
 			inVs_vertex.y += sin(inVs_vertex.z*10 + passBuf.time) * 0.75;
 			inVs_vertex.x += sin(inVs_vertex.z*3 + passBuf.time * 4) * 2.75;
+		@end
+
+		@property(oceanVertices)
+			//Pass texture coordinates for ocean glistening effect
+			outVs.oceanTexCoord = inVs_uv0;
 		@end
 	@end
 
