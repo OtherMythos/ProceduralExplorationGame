@@ -812,7 +812,7 @@
         local OBJECT_SCALE = 0.1;
         //Construct this first so we know the radius to offset by.
         local item = _gameCore.createVoxMeshItem(wrappedItem.getMesh());
-        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_SHADOW_VISIBILITY);
         targetPos.y += item.getLocalRadius() * OBJECT_SCALE;
 
         local en = manager.createEntity(targetPos);
