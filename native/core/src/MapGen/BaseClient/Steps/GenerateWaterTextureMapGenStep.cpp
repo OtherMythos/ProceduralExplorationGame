@@ -63,7 +63,13 @@ namespace ProceduralExplorationGameCore{
 
     static void getBufferWriteForRegion(float** buf, RegionId regionId, AV::uint8 distance, ExplorationMapData* mapData){
         if(regionId == REGION_ID_WATER){
-            _writeToBuffer(buf, 0, 0, 150);
+            AV::uint8 targetDist = distance >= 4 ? 4 : distance;
+
+            Biome::BiomeColour c{0, 100, 150, 255};
+            c.r -= targetDist * 10;
+            c.g -= targetDist * 10;
+            c.b -= targetDist * 10;
+            _writeToBuffer(buf, c.r, c.g, c.b, c.a);
             return;
         }
 
