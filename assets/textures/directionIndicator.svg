@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100" width="200" height="100" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <!-- Gradient: white on the left → transparent on the right -->
+    <linearGradient id="beamGradient" x1="0" y1="50" x2="200" y2="50" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="white" stop-opacity="1"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Mirrored triangle: bright point on the left (0,50) -->
+  <polygon points="0,50 200,0 200,100" fill="url(#beamGradient)" />
+</svg>

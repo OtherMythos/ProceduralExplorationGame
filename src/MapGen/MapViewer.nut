@@ -11,6 +11,7 @@
     mCompositorTexture_ = null
 
     mPlayerLocationPanel_ = null;
+    mPlayerDirectionBeam_ = null;
 
     mLabelWindow_ = null;
 
@@ -39,6 +40,65 @@
         }
         function setColour(colour){
             mPanel_.setColour(ColourValue(1, 0, 0, colour.a));
+        }
+        function setVisible(visible){
+            mPanel_.setVisible(visible);
+        }
+        function setZOrder(zOrder){
+            mPanel_.setZOrder(zOrder);
+        }
+        function shutdown(){
+            _gui.destroy(mPanel_);
+        }
+    };
+
+    PlaceMarkerDirectionBeam = class{
+        mPanel_ = null;
+        mParent_ = null;
+        mMapData_ = null;
+        mMapScale_ = null;
+        mPlayerX_ = 0;
+        mPlayerY_ = 0;
+        mDirX_ = 0;
+        mDirY_ = 0;
+        constructor(parentWin, mapData, size=30, scale=1){
+            mParent_ = parentWin;
+            mMapData_ = mapData;
+            mMapScale_ = scale;
+
+            mPanel_ = parentWin.createPanel();
+            mPanel_.setSize(size, 20);
+            mPanel_.setPosition(0, 0);
+            mPanel_.setDatablock("playerCameraDirectionBeam");
+            setColour(ColourValue(0.8, 0, 0, 0.9));
+        }
+        function updatePositionAndDirection_(){
+            local intendedPos = Vec2(mPlayerX_.tofloat() / mMapData_.width.tofloat(), mPlayerY_.tofloat() / mMapData_.height.tofloat());
+            intendedPos *= mParent_.getSize();
+            intendedPos /= mMapScale_;
+
+            local angle = atan2(mDirY_, mDirX_);
+            mPanel_.setOrientation(angle);
+
+            //Move the panel along the direction vector by half its size to position the bottom center at the player location
+            local panelSize = mPanel_.getSize();
+            local offset = Vec2(cos(angle), sin(angle)) * (panelSize.y / 2 + 1);
+            intendedPos += offset;
+
+            mPanel_.setCentre(intendedPos.x, intendedPos.y);
+        }
+        function setCentre(x, y){
+            mPlayerX_ = x;
+            mPlayerY_ = y;
+            updatePositionAndDirection_();
+        }
+        function setDirection(dirX, dirY){
+            mDirX_ = dirX;
+            mDirY_ = dirY;
+            updatePositionAndDirection_();
+        }
+        function setColour(colour){
+            mPanel_.setColour(colour);
         }
         function setVisible(visible){
             mPanel_.setVisible(visible);
@@ -205,6 +265,9 @@
         if(mPlayerLocationPanel_ != null){
             mPlayerLocationPanel_.shutdown();
         }
+        if(mPlayerDirectionBeam_ != null){
+            mPlayerDirectionBeam_.shutdown();
+        }
     }
 
     function setColour(colour){
@@ -223,10 +286,21 @@
         if(mMapData_ == null) return;
         if(mLabelWindow_ == null) return;
 
+        if(mPlayerDirectionBeam_ == null){
+            mPlayerDirectionBeam_ = PlaceMarkerDirectionBeam(mLabelWindow_, mMapData_, 30, worldScale);
+        }
+        mPlayerDirectionBeam_.setCentre(x, y);
+
         if(mPlayerLocationPanel_ == null){
             mPlayerLocationPanel_ = PlaceMarkerIcon(mLabelWindow_, mMapData_, 5, worldScale);
         }
         mPlayerLocationPanel_.setCentre(x, y);
+    }
+
+    function setPlayerDirection(dirX, dirY){
+        if(mPlayerDirectionBeam_ != null){
+            mPlayerDirectionBeam_.setDirection(dirX, dirY);
+        }
     }
 
     function getMinimapVisible(){

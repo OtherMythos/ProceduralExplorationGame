@@ -459,6 +459,12 @@
 
         parentNode.setPosition(Vec3(mPosition_.x, zPos, mPosition_.z) + rot );
         camera.lookAt(mPosition_.x, zPos, mPosition_.z);
+
+        //Update the minimap direction indicator
+        local cameraDir = getCameraDirection();
+        if(mGui_.mWorldMapDisplay_.mMapViewer_){
+            mGui_.mWorldMapDisplay_.mMapViewer_.setPlayerDirection(cameraDir.x, cameraDir.y);
+        }
     }
 
     function processCameraMove(x, y){
