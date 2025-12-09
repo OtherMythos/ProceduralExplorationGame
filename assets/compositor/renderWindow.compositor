@@ -89,12 +89,6 @@ compositor_node renderMainGameplayNode
             camera explorationCamera
             shadows default_simpleShadowNode
         }
-        //Ensure particles are rendered
-        pass render_scene
-        {
-            rq_first 80
-            camera explorationCamera
-        }
         //Render discovered terrain
         pass render_scene
         {
@@ -229,13 +223,14 @@ compositor_node renderMainGameplayNode
             rq_first 19
             rq_last 20
         }
-        //Render particles
+    }
+
+    target finalSceneRender{
+        //Ensure particles are rendered
         pass render_scene
         {
             rq_first 80
-
             camera explorationCamera
-            identifier 12
         }
     }
 
