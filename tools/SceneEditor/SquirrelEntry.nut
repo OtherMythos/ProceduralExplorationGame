@@ -44,6 +44,7 @@ function start(){
     _doFile("res://SceneEditorGUIObjectPropertyEntryVoxMesh.nut");
     _doFile("res://SceneEditorGUIObjectPropertyEntryDataPoint.nut");
     _doFile("res://SceneEditorGUIObjectPropertyEntryCollider.nut");
+    _doFile("res://SceneEditorGUIObjectPropertyEntryParticleSystem.nut");
     _doFile("res://SceneEditorGUITileGridProperties.nut");
     _doFile("res://SceneEditorRightClickMenuManager.nut");
     _doFile("res://actions/TerrainValueChangeAction.nut");

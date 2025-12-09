@@ -53,6 +53,14 @@ namespace ProceduralExplorationGameCore{
                 mCollisionWorld->addCollisionRectangle(targetPos.x - targetScale.x / 2, targetPos.y - targetScale.y / 2, targetScale.x*2, targetScale.z*2);
             }
         }
+        else if(idx == 3){
+            const Ogre::String& particleSystemName = strings[d.idx];
+
+            Ogre::ParticleSystem* particleSystem=AV::BaseSingleton::getSceneManager()->createParticleSystem(particleSystemName);
+            if(particleSystem){
+                parent->attachObject(particleSystem);
+            }
+        }
 
         return true;
     }

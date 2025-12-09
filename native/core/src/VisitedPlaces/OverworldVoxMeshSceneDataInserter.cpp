@@ -118,6 +118,22 @@ namespace ProceduralExplorationGameCore{
                 insertUserObject(2, e, d, strings, newNode);
                 break;
             }
+            case AV::SceneObjectType::User3:{
+                insertUserObject(3, e, d, strings, newNode);
+                break;
+            }
+            case AV::SceneObjectType::User4:{
+                insertUserObject(4, e, d, strings, newNode);
+                break;
+            }
+            case AV::SceneObjectType::User5:{
+                insertUserObject(5, e, d, strings, newNode);
+                break;
+            }
+            case AV::SceneObjectType::User6:{
+                insertUserObject(6, e, d, strings, newNode);
+                break;
+            }
             default:{
                 assert(false);
             }

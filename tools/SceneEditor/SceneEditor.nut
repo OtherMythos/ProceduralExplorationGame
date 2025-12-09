@@ -142,6 +142,15 @@ enum SceneEditorMapType{
                         item.setRenderQueueGroup(30);
                         item.setQueryFlags(1 << 20);
                         parentNode.attachObject(item);
+                        break;
+                    }
+                    case 3:{
+                        local item = _scene.createItem("lineBox");
+
+                        item.setRenderQueueGroup(30);
+                        item.setQueryFlags(1 << 20);
+                        parentNode.attachObject(item);
+                        break;
                     }
                 }
             }
@@ -158,6 +167,10 @@ enum SceneEditorMapType{
                     }
                     case 2:{
                         return "collider";
+                        break;
+                    }
+                    case 3:{
+                        return "particleSystem";
                         break;
                     }
                     default:
@@ -184,6 +197,9 @@ enum SceneEditorMapType{
                 }
                 else if(userId == 2){
                     return ::SceneEditorFramework.SceneEditorGUIObjectPropertyEntryCollider;
+                }
+                else if(userId == 3){
+                    return ::SceneEditorFramework.SceneEditorGUIObjectPropertyEntryParticleSystem;
                 }
                 return null;
             }
