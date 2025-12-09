@@ -344,7 +344,10 @@ namespace ProceduralExplorationGamePlugin{
 
         ProceduralExplorationGameCore::TileDataParser tileData(ProceduralExplorationGameCore::VisitedPlacesParser::mMapsDirectory);
         ProceduralExplorationGameCore::TileDataParser::OutDataContainer out;
-        tileData.readData(&out, mapName, fileName);
+        bool readSuccess = tileData.readData(&out, mapName, fileName);
+        if(!readSuccess){
+            return 0;
+        }
 
         if(out.tilesWidth != mapData->width || out.tilesHeight != mapData->height){
             return sq_throwerror(vm, "Tile size mismatch");
