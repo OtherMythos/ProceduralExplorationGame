@@ -14,4 +14,7 @@
         <position x="-0.136195" y="0" z="5.83399"/>
         <scale x="0.4" y="0.4" z="0.4"/>
     </user0>
+    <user3 value="goblinBonfireSmoke">
+        <position x="-0.254591" y="1.90735e-06" z="5.34944"/>
+    </user3>
 </scene>

@@ -66,3 +66,37 @@ particle_system goblinBonfireSmoke
     }
 
 }
+
+particle_system chimneySmoke
+{
+    material        ParticleAlphaWhite
+    particle_width  0.1
+    particle_height 0.1
+    cull_each       false
+    quota           10000
+    billboard_type  oriented_self
+
+    // Area emitter.
+    emitter Point
+    {
+        angle           1
+        emission_rate   1
+        time_to_live    10
+        direction       0 1 0
+        velocity_min    1.5
+        velocity_max    1.5
+    }
+
+    affector Scaler
+    {
+        rate 0.05
+    }
+
+    affector ColourFader2
+    {
+        state_change 2
+        alpha1 0.0
+        alpha2 -0.5
+    }
+
+}

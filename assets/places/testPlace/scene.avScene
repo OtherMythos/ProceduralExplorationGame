@@ -34,4 +34,10 @@
     <user1 value="1-0">
         <position x="6.24436" y="0" z="-6.45741"/>
     </user1>
+    <user3 value="chimneySmoke">
+        <position x="2.23235" y="7.43596" z="4.44039"/>
+    </user3>
+    <user3 value="chimneySmoke">
+        <position x="-12.6195" y="7.43596" z="-6.4114"/>
+    </user3>
 </scene>
