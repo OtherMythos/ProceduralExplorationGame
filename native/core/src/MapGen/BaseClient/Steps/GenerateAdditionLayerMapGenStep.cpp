@@ -7,6 +7,8 @@
 #include <cmath>
 #include <set>
 
+#include <iostream>
+
 namespace ProceduralExplorationGameCore{
 
 
@@ -112,19 +114,30 @@ namespace ProceduralExplorationGameCore{
             }
         }
 
-        const float maxDistance = sqrt(pow(LINE_BOX_SIZE, 2) * 2) * 1.05;
+        //Calculate distances for all draw points in first pass
+        std::vector<double> lineDistances;
+        double maxLineDistance = 0.0;
         for(WorldPoint p : drawPoints){
             WorldCoord xx, yy;
             READ_WORLD_POINT(p, xx, yy);
             double lineDistance = pointToLineDistance(xx, yy, x1, y1, x2, y2);
-            float distance = maxDistance - lineDistance;
-            assert(distance >= 0.0f);
-            //distance = tan(distance) * 2;
+            lineDistances.push_back(lineDistance);
+            maxLineDistance = std::max(maxLineDistance, lineDistance);
+        }
+
+        //Write values using determined maxDistance
+        size_t distIdx = 0;
+        for(WorldPoint p : drawPoints){
+            WorldCoord xx, yy;
+            READ_WORLD_POINT(p, xx, yy);
+            double lineDistance = lineDistances[distIdx];
+            float writeDistance = (maxLineDistance - lineDistance) / maxLineDistance;
+            writeDistance *= 0.1;
             size_t valIdx = xx + yy * width;
-            float writeDistance = distance / width;
             if(writeDistance > additionVals[valIdx]){
                 additionVals[valIdx] = writeDistance;
             }
+            distIdx++;
         }
     }
 
