@@ -325,6 +325,7 @@ enum VoxPickerType{
         local placeTypeNames = [
             "None",
             "Gateway",
+            "Player Spawn"
             "City",
             "Town",
             "Village",

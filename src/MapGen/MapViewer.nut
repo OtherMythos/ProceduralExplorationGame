@@ -122,7 +122,7 @@
 
         mLabel_ = null;
         mTypeSizes_ = [
-            0, 20, 30, 20, 15, 10
+            0, 20, 20, 30, 20, 15, 10
         ];
         mTypeColours_ = [
             null,
