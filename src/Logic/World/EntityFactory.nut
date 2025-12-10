@@ -69,6 +69,10 @@
         //_component.sceneNode.add(en, playerNode);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](playerNode));
         playerEntry.setModel(playerModel);
+
+        //Attach ambient dust particles to player.
+        local dustParticleSystem = _scene.createParticleSystem("playerWalkingDust");
+        playerNode.attachObject(dustParticleSystem);
         playerEntry.setCombatData(playerStats.mPlayerCombatStats);
         playerEntry.setWieldActive(playerStats.getWieldActive());
         playerEntry.setTargetCollisionWorld(_COLLISION_ENEMY);

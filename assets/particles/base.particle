@@ -100,3 +100,46 @@ particle_system chimneySmoke
     }
 
 }
+
+particle_system playerWalkingDust
+{
+    material        ParticleAlphaGrey
+    particle_width  0.2
+    particle_height 0.2
+    cull_each       true
+    quota           5000
+    billboard_type  point
+
+    // Box emitter for ambient dust.
+    emitter Box
+    {
+        angle           0
+        emission_rate   20
+        time_to_live    5
+        direction       0 1 0
+        angle           0
+        velocity        0.1
+        width           200
+        height          200
+        depth           16
+    }
+
+    affector ColourInterpolator
+    {
+        time0 0
+        colour0 1 1 1 0
+
+        time1 0.1
+        colour1 1 1 1 1
+
+        time2 1.0
+        colour2 1 1 1 0
+    }
+
+    affector DirectionRandomiser
+    {
+        randomness 0.1
+    }
+
+
+}
