@@ -3,6 +3,7 @@
 ::Util.SimpleStateMachine <- class{
     mStates_ = null;
     mCurrentState_ = null;
+    mPreviousState_ = null;
     mData_ = null;
     mStateInstance_ = null;
     mStateData_ = null;
@@ -24,6 +25,7 @@
             return false;
         }
 
+        mPreviousState_ = mCurrentState_;
         mStateData_ = stateData;
         local entry = mStates_[state];
         assert(entry != null);
@@ -48,8 +50,13 @@
     }
 
     function resetState(){
+        mPreviousState_ = mCurrentState_;
         mCurrentState_ = null;
         mStateInstance_ = null;
+    }
+
+    function getPreviousState(){
+        return mPreviousState_;
     }
 
     function update(){

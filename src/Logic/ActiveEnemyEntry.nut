@@ -140,7 +140,10 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
     function update(ctx){
         ctx.mCount_--;
         print("dashing count" + ctx.mCount_);
-        if(ctx.mCount_ <= 0) return ActiveEnemyAnimationStage.WALKING;
+        if(ctx.mCount_ <= 0){
+            local previousState = ctx.getPreviousState();
+            return previousState != null ? previousState : ActiveEnemyAnimationStage.WALKING;
+        }
     }
     function notify(ctx, event){
     }
