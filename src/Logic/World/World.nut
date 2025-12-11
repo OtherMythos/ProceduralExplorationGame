@@ -698,6 +698,10 @@ enum WorldMousePressContexts{
             mEntityManager_.destroyAllEntities();
         }
 
+        foreach(i in mActiveWorldActions_){
+            i.notifyEnd();
+        }
+
         mActiveEnemies_.clear();
 
         clearAllLocationFlags();
@@ -1767,6 +1771,7 @@ enum WorldMousePressContexts{
 
     function pushWorldAction(actionInstance){
         mActiveWorldActions_.append(actionInstance);
+        actionInstance.notifyStart();
     }
     function updateWorldActions(){
         local finishedActions = null;
@@ -1781,6 +1786,7 @@ enum WorldMousePressContexts{
         if(finishedActions != null){
             //Remove the values from the list.
             foreach(i in finishedActions){
+                mActiveWorldActions_[i].notifyEnd();
                 mActiveWorldActions_[i] = null;
             }
             while(true){
