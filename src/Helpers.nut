@@ -153,8 +153,8 @@
 }
 
 ::clampValue <- function(val, min, max){
-    if(val < min) return val;
-    if(val > max) return val;
+    if(val < min) return min;
+    if(val > max) return max;
     return val;
 }
 
