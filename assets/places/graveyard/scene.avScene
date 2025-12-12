@@ -1,4 +1,20 @@
 <scene>
+    <user2 value="1">
+        <position x="1.06706" y="0.326115" z="-8.24309"/>
+        <scale x="1.44561" y="1" z="5.35908"/>
+    </user2>
+    <user2 value="1">
+        <position x="11.3097" y="0.355057" z="-14.9052"/>
+        <scale x="7.90201" y="1" z="1.23306"/>
+    </user2>
+    <user2 value="1">
+        <position x="15.805" y="0.348217" z="-0.993876"/>
+        <scale x="5.27479" y="1" z="1.45048"/>
+    </user2>
+    <user2 value="1">
+        <position x="19.8435" y="0.186977" z="-10.7696"/>
+        <scale x="1" y="1" z="2.6584"/>
+    </user2>
     <user0 value="graveyard.wall1.voxMesh">
         <position x="6" y="1" z="-15"/>
         <scale x="0.5" y="0.5" z="0.5"/>

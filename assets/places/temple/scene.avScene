@@ -3,11 +3,27 @@
         <position x="-0.809004" y="0" z="0.841386"/>
         <scale x="0.5" y="0.5" z="0.5"/>
         <orientation x="0" y="1" z="0" w="0"/>
+        <user2 value="2">
+            <position x="4.96238" y="0" z="-0.0145145"/>
+            <scale x="2.72744" y="1" z="6.67457"/>
+        </user2>
+        <user2 value="2">
+            <position x="-0.946296" y="0" z="-5.01499"/>
+            <scale x="5.89024" y="1" z="1.31977"/>
+        </user2>
     </user0>
     <user0 value="templeFragmentFirst.templeWall.1.voxMesh">
         <position x="6.91876" y="0" z="-3.83373"/>
         <scale x="0.5" y="0.5" z="0.5"/>
         <orientation x="0" y="-0.2" z="0" w="1"/>
+        <user2 value="2">
+            <position x="4.96238" y="0" z="-0.0145145"/>
+            <scale x="2.72744" y="1" z="6.67457"/>
+        </user2>
+        <user2 value="2">
+            <position x="-0.946296" y="0" z="-5.01499"/>
+            <scale x="5.89024" y="1" z="1.31977"/>
+        </user2>
     </user0>
     <user0 value="templeFragmentFirst.templeBits.1.voxMesh">
         <position x="2.32627" y="0" z="-3.78053"/>
