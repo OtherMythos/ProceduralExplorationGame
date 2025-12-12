@@ -891,7 +891,7 @@ enum SceneEditorMapType{
             "radius": aabb.getRadius()
         };
 
-        _system.writeJsonAsFile(path, data);
+        _system.writeJsonAsFile(path, data, true, 5);
         printf("Writing editorMeta to path '%s'", path);
     }
 
