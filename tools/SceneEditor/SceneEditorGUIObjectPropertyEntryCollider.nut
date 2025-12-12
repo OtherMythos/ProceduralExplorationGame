@@ -12,11 +12,10 @@
         layout.addCell(label);
 
         mColliderTypes_ = mWindow_.createSpinner();
-        mColliderTypes_.setOptions(["Circle", "Rectangle"]);
+        mColliderTypes_.setOptions(["Circle", "Rectangle", "Rotated Rectangle"]);
         mColliderTypes_.attachListenerForEvent(function(widget, action){
             local value = widget.getValueRaw();
             print(value);
-            //::Base.setEditingTileRotation(value);
 
             local action = ::SceneEditorFramework.Actions[SceneEditorFramework_Action.USER_2]();
             assert(mEntry_ != null);
@@ -35,7 +34,5 @@
 
         mColliderTypes_.setValueRaw(entry.data.value.tointeger());
     }
-
-
 
 };

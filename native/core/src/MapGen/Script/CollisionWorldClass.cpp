@@ -17,6 +17,7 @@ namespace ProceduralExplorationGameCore{
         AV::ScriptUtils::addFunction(vm, processCollision, "processCollision");
         AV::ScriptUtils::addFunction(vm, addCollisionPoint, "addCollisionPoint", -4, ".nnni");
         AV::ScriptUtils::addFunction(vm, addCollisionRectangle, "addCollisionRectangle", -4, ".nnnni");
+        AV::ScriptUtils::addFunction(vm, addCollisionRotatedRectangle, "addCollisionRotatedRectangle", -5, ".nnnnni");
         AV::ScriptUtils::addFunction(vm, checkCollisionPoint, "checkCollisionPoint", 4, ".nnn");
         AV::ScriptUtils::addFunction(vm, removeCollisionPoint, "removeCollisionPoint", 2, ".i");
         AV::ScriptUtils::addFunction(vm, getNumCollisions, "getNumCollisions");
@@ -144,6 +145,38 @@ namespace ProceduralExplorationGameCore{
         }
 
         AV::CollisionEntryId entryId = outWorld->addCollisionRectangle(x, y, width, height, targetMask, targetEntryType);
+
+        sq_pushinteger(vm, static_cast<SQInteger>(entryId));
+
+        return 1;
+    }
+
+    SQInteger CollisionWorldClass::addCollisionRotatedRectangle(HSQUIRRELVM vm){
+        AV::CollisionWorldObject* outWorld = 0;
+        SCRIPT_ASSERT_RESULT(readCollisionWorldFromUserData(vm, 1, &outWorld));
+
+        SQFloat x, y, width, height, rotation;
+
+        sq_getfloat(vm, 2, &x);
+        sq_getfloat(vm, 3, &y);
+        sq_getfloat(vm, 4, &width);
+        sq_getfloat(vm, 5, &height);
+        sq_getfloat(vm, 6, &rotation);
+
+        AV::uint8 targetMask = 0xFF;
+        if(sq_gettop(vm) >= 7){
+            SQInteger outMask;
+            sq_getinteger(vm, 7, &outMask);
+            targetMask = static_cast<AV::uint8>(outMask);
+        }
+        AV::CollisionEntryType targetEntryType = AV::CollisionEntryType::either;
+        if(sq_gettop(vm) >= 8){
+            SQInteger outType;
+            sq_getinteger(vm, 8, &outType);
+            targetEntryType = static_cast<AV::CollisionEntryType>(outType);
+        }
+
+        AV::CollisionEntryId entryId = outWorld->addCollisionRotatedRectangle(x, y, width, height, rotation, targetMask, targetEntryType);
 
         sq_pushinteger(vm, static_cast<SQInteger>(entryId));
 

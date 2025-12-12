@@ -4,13 +4,17 @@
         <orientation x="0" y="1" z="0" w="0"/>
         <user2 value="1">
             <position x="0.803403" y="0" z="-10.0803"/>
-            <scale x="11.9385" y="8.00171" z="11.7076"/>
+            <scale x="11.9385" y="8.00171" z="12.696"/>
         </user2>
     </user0>
     <user0 value="house1.voxMesh">
         <position x="-9.79128" y="0" z="-10.5205"/>
         <scale x="0.3" y="0.3" z="0.3"/>
         <orientation x="0" y="1.7" z="0" w="1"/>
+        <user2 value="2">
+            <position x="0.803403" y="0" z="-10.0803"/>
+            <scale x="11.9385" y="8.00171" z="11.7076"/>
+        </user2>
     </user0>
     <user0 value="plantPot.voxMesh">
         <position x="2.47889" y="0" z="-2.32548"/>

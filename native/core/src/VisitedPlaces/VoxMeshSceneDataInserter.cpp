@@ -44,13 +44,19 @@ namespace ProceduralExplorationGameCore{
 
             const std::string& v = strings[d.idx];
             const Ogre::Vector2 targetPos(parentPos.x + mOffset.x, parentPos.z + mOffset.z);
-            //const Ogre::Vector3 targetScale(parentScale * d.scale);
-            const Ogre::Vector3 targetScale(parentScale * d.scale);
+            const Ogre::Vector3 targetScale(parentScale);
             if(v == "0"){
                 mCollisionWorld->addCollisionPoint(targetPos.x, targetPos.y, targetScale.x);
             }
             else if(v == "1"){
-                mCollisionWorld->addCollisionRectangle(targetPos.x - targetScale.x / 2, targetPos.y - targetScale.y / 2, targetScale.x*2, targetScale.z*2);
+                mCollisionWorld->addCollisionRectangle(targetPos.x, targetPos.y, targetScale.x * 2, targetScale.z * 2);
+            }
+            else if(v == "2"){
+                //Rotated rectangle - extract rotation from parent orientation
+                Ogre::Quaternion parentOrientation = parent->_getDerivedOrientationUpdated();
+                float rotation = static_cast<float>(parentOrientation.getYaw().valueRadians());
+
+                mCollisionWorld->addCollisionRotatedRectangle(targetPos.x, targetPos.y, targetScale.x * 2, targetScale.z * 2, -rotation);
             }
         }
         else if(idx == 3){
