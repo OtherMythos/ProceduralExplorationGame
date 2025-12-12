@@ -190,7 +190,9 @@
         local enemyNode = mBaseSceneNode_.createChildSceneNode();
 
         local modelType = enemyDef.getModelType();
-        local characterModel = mCharacterGenerator_.createCharacterModel(enemyNode, {"type": modelType}, RENDER_QUEUE_EXPLORATION_SHADOW_VISIBILITY_DANGEROUS, 1 << 4, clonedBlock);
+        //For bees, use the normal render queue by default so they get the red outline when aggressive
+        local initialRenderQueue = enemyType == EnemyId.BEE ? RENDER_QUEUE_EXPLORATION_SHADOW_VISIBILITY : RENDER_QUEUE_EXPLORATION_SHADOW_VISIBILITY_DANGEROUS;
+        local characterModel = mCharacterGenerator_.createCharacterModel(enemyNode, {"type": modelType}, initialRenderQueue, 1 << 4, clonedBlock);
 
         entry.setTargetCollisionWorld(_COLLISION_PLAYER);
 

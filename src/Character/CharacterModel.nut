@@ -196,4 +196,17 @@
         local obj = node.getAttachedObject(0);
         return world ? obj.getWorldAabbUpdated() : obj.getLocalAabb();
     }
+
+    function setRenderQueue(renderQueue){
+        mRenderQueue_ = renderQueue;
+        //Update all attached mesh objects to the new render queue
+        for(local i = 0; i < mNodes_.len(); i++){
+            local node = mNodes_[i];
+            local attachedCount = node.getNumAttachedObjects();
+            for(local j = 0; j < attachedCount; j++){
+                local obj = node.getAttachedObject(j);
+                obj.setRenderQueueGroup(renderQueue);
+            }
+        }
+    }
 };

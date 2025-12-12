@@ -539,4 +539,23 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         mAttackers_.rawdelete(attackerId);
         if(mAttackers_.len() == 0) mAttackers_ = null;
     }
+
+    function setRenderQueue(renderQueue){
+        //Prefer to use the character model's method if available
+        if(mModel_ != null){
+            mModel_.setRenderQueue(renderQueue);
+        }else if(mEntity_ != null){
+            //Fallback for mesh-based entities (like hives)
+            local manager = mCreatorWorld_.getEntityManager();
+            if(manager.hasComponent(mEntity_, EntityComponents.SCENE_NODE)){
+                local sceneNodeComp = manager.getComponent(mEntity_, EntityComponents.SCENE_NODE);
+                local node = sceneNodeComp.mNode;
+                local attachedCount = node.getNumAttachedObjects();
+                for(local i = 0; i < attachedCount; i++){
+                    local obj = node.getAttachedObject(i);
+                    obj.setRenderQueueGroup(renderQueue);
+                }
+            }
+        }
+    }
 }
