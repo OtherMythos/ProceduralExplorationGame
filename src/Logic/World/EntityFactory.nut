@@ -512,6 +512,17 @@
 
             local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.GIVE_ITEM, ::Item(flowerItem), null, null);
             manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
+        }else if(
+            itemType == PlacedItemId.SWAMP_TREE_ONE ||
+            itemType == PlacedItemId.SWAMP_TREE_TWO
+        ){
+            local collisionDetectionWorld = mConstructorWorld_.getCollisionDetectionWorld();
+            local collisionDetectionPoint = collisionDetectionWorld.addCollisionPoint(targetPos.x, targetPos.z, d.mCollisionRadius, 0xFF, _COLLISION_WORLD_ENTRY_SENDER);
+
+            manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO, ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](
+                collisionPoint, collisionDetectionPoint,
+                damageWorld, collisionDetectionWorld
+            ));
         }else{
             manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, damageWorld));
         }

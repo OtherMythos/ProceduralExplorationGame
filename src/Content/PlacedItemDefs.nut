@@ -13,8 +13,8 @@
 ::PlacedItems[PlacedItemId.BERRY_BUSH] = PlacedItem("berryBush.voxMesh", 0.2);
 ::PlacedItems[PlacedItemId.BERRY_BUSH_BERRIES] = PlacedItem("berryBushBerries.voxMesh", 0.2);
 
-::PlacedItems[PlacedItemId.SWAMP_TREE_ONE] = PlacedItem("swampPlants.tree1.voxMesh", 0.4);
-::PlacedItems[PlacedItemId.SWAMP_TREE_TWO] = PlacedItem("swampPlants.tree2.voxMesh", 0.4);
+::PlacedItems[PlacedItemId.SWAMP_TREE_ONE] = PlacedItem("swampPlants.tree1.voxMesh", 0.4, null, 2);
+::PlacedItems[PlacedItemId.SWAMP_TREE_TWO] = PlacedItem("swampPlants.tree2.voxMesh", 0.4, null, 2);
 ::PlacedItems[PlacedItemId.SWAMP_TREE_THREE] = PlacedItem("swampPlants.tree3.voxMesh", 0.3);
 ::PlacedItems[PlacedItemId.SWAMP_TREE_FOUR] = PlacedItem("swampPlants.tree4.voxMesh", 0.3);
 ::PlacedItems[PlacedItemId.SWAMP_BULLRUSH_1] = PlacedItem("swampPlants.bullrush1.voxMesh", 0.2);
