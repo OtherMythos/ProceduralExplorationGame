@@ -159,7 +159,7 @@
 }
 
 ::calculateSimpleAnimationInRange <- function(start, end, anim, animStart, animEnd){
-    local animCount = ::clampValue(anim, animStart, animEnd) - animStart;
+    local animCount = anim - animStart;
     animCount = animCount / (animEnd - animStart).tofloat();
     return ::calculateSimpleAnimation(start, end, animCount);
 }
