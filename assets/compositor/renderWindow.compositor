@@ -130,6 +130,14 @@ compositor_node renderMainGameplayNode
 
             identifier 14
         }
+        pass render_scene
+        {
+            rq_first 19
+            rq_last 20
+            camera explorationCamera
+
+            identifier 14
+        }
     }
 
     target sceneRenderEnemyShadowsSecond
@@ -148,6 +156,14 @@ compositor_node renderMainGameplayNode
 
             rq_first 14
             rq_last 15
+            camera explorationCamera
+
+            identifier 14
+        }
+        pass render_scene
+        {
+            rq_first 19
+            rq_last 20
             camera explorationCamera
 
             identifier 14
