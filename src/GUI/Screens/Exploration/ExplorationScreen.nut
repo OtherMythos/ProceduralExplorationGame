@@ -361,6 +361,7 @@ enum ExplorationScreenWidgetType{
 
         mTargetAnimation_ = 0.0;
         mAnim_ = 1.0;
+        mVisible_ = true;
 
         constructor(parent){
             mButton_ = parent.createButton();
@@ -442,9 +443,10 @@ enum ExplorationScreenWidgetType{
             //mDatablock_.setUseColour(true);
             //mAnimationPanel_.setColour(ColourValue(1, 1, 1, opacity));
             //TODO I wasn't able to fade in the opacity due to how the blendblocks are setup.
-            mAnimationPanel_.setVisible(opacity >= 0.5);
-            mAnimationPanelBackground_.setVisible(opacity >= 0.5);
-            mButton_.setVisible(opacity >= 0.5);
+            local visible = (opacity >= 0.5 && mVisible_);
+            mAnimationPanel_.setVisible(visible);
+            mAnimationPanelBackground_.setVisible(visible);
+            mButton_.setVisible(visible);
             //mBackgroundDatablock_.setUseColour(true);
             //mAnimationPanelBackground_.setColour(ColourValue(1, 1, 1, opacity));
         }
@@ -464,6 +466,14 @@ enum ExplorationScreenWidgetType{
 
             mLabel_.setText(data[0].tostring());
             reposition_();
+        }
+
+        function setVisible(visible){
+            mVisible_ = visible;
+            mLabel_.setVisible(visible);
+            mAnimationPanel_.setVisible(visible);
+            mAnimationPanelBackground_.setVisible(visible);
+            mButton_.setVisible(visible);
         }
 
     };
@@ -917,6 +927,10 @@ enum ExplorationScreenWidgetType{
             mCompassAnimator_.setVisible(false);
             mZoomLines_.setVisible(false);
             mInventoryWidget_.setVisible(false);
+            mPlayerDirectJoystick_.setVisible(false);
+            if(mMobileActionInfo_ != null){
+                mMobileActionInfo_.setVisible(false);
+            }
         }
 
         //TOOD NOTE Workaround! This isn't how the paradigm should fit together
