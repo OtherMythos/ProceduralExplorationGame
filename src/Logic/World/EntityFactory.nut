@@ -98,7 +98,7 @@
             );
 
             local collisionRadius = 1.5;
-            manager.assignComponent(en, EntityComponents.COLLISION_DETECTION, ::EntityManager.Components[EntityComponents.COLLISION_DETECTION](collisionRadius));
+            manager.assignComponent(en, EntityComponents.COLLISION_DETECTION, ::EntityManager.Components[EntityComponents.COLLISION_DETECTION](collisionRadius, COLLISION_TYPE_PLAYER));
         }
 
         /*
@@ -232,7 +232,7 @@
         manager.assignComponent(en, EntityComponents.LIFETIME, ::EntityManager.Components[EntityComponents.LIFETIME](3000 + _random.randInt(100)));
 
         //local collisionRadius = 1;
-        manager.assignComponent(en, EntityComponents.COLLISION_DETECTION, ::EntityManager.Components[EntityComponents.COLLISION_DETECTION](COLLISION_DETECTION_RADIUS));
+        manager.assignComponent(en, EntityComponents.COLLISION_DETECTION, ::EntityManager.Components[EntityComponents.COLLISION_DETECTION](COLLISION_DETECTION_RADIUS, COLLISION_TYPE_ENEMY));
 
         /*
         local worldMask = (0x1 << mConstructorWorld_.getWorldId());
@@ -649,6 +649,31 @@
         local triggerWorld = mConstructorWorld_.getTriggerWorld();
         local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.DIE, en, targetPos.x, targetPos.z, RADIUS, _COLLISION_PLAYER);
         manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
+
+        return en;
+    }
+
+    function constructEnemyCollisionBlocker(pos, radius){
+        local manager = mConstructorWorld_.getEntityManager();
+        local targetPos = pos.copy();
+        targetPos.y = getZForPos(targetPos);
+
+        local en = manager.createEntity(targetPos);
+
+        local parentNode = mBaseSceneNode_.createChildSceneNode();
+        parentNode.setPosition(targetPos);
+        local item = _scene.createItem("cylinder.mesh");
+        //item.setDatablock("PercentageEncounterCylinder");
+        item.setCastsShadows(false);
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
+        parentNode.attachObject(item);
+        //Add a bit of offset to the top to avoid z fighting.
+        parentNode.setScale(radius, 9 + _random.rand(), radius);
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](parentNode, true));
+
+        local collisionDetectionWorld = mConstructorWorld_.getCollisionDetectionWorld();
+        local collisionDetectionPoint = collisionDetectionWorld.addCollisionPoint(targetPos.x, targetPos.z, radius, COLLISION_TYPE_ENEMY, _COLLISION_WORLD_ENTRY_SENDER);
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionDetectionPoint, collisionDetectionWorld));
 
         return en;
     }
