@@ -984,4 +984,42 @@
         return en;
     }
 
+    function constructPlaceDescriptionTrigger(pos, placeId){
+        local manager = mConstructorWorld_.getEntityManager();
+        local targetPos = pos.copy();
+        targetPos.y = getZForPos(targetPos);
+
+        local placeDef = ::Places[placeId];
+        local radius = placeDef.mRadius;
+
+        //Position the billboard above the place by half the radius in Z
+        local billboardPos = targetPos.copy();
+        billboardPos.y += (radius * 0.75);
+
+        local en = manager.createEntity(targetPos);
+
+        local placeName = placeDef.getName();
+
+        //Create a dummy scene node for the billboard
+        local dummyNode = mBaseSceneNode_.createChildSceneNode();
+        dummyNode.setPosition(billboardPos);
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](dummyNode, true));
+
+        //Create and track the billboard
+        local gui = mConstructorWorld_.mGui_;
+        local worldMask = (0x1 << mConstructorWorld_.getWorldId());
+        local billboard = ::BillboardManager.PlaceDescriptionBillboard(placeName, gui.mWindow_, worldMask, radius);
+        billboard.setVisible(false);
+
+        local explorationScreen = ::Base.mExplorationLogic.mGui_;
+        local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(dummyNode, billboard);
+        manager.assignComponent(en, EntityComponents.BILLBOARD, ::EntityManager.Components[EntityComponents.BILLBOARD](billboardIdx));
+
+        local triggerWorld = mConstructorWorld_.getTriggerWorld();
+        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.PLACE_DESCRIPTION_TRIGGER, en, targetPos.x, targetPos.z, radius, _COLLISION_PLAYER);
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
+
+        return en;
+    }
+
 };

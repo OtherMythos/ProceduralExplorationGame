@@ -150,6 +150,7 @@ enum CollisionWorldTriggerResponses{
     PICK,
     PICK_KEEP_PLACED_ITEM,
     READ_LORE,
+    PLACE_DESCRIPTION_TRIGGER,
 
     MAX = 100
 };

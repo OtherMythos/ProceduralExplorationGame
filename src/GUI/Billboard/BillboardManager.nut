@@ -54,6 +54,10 @@
             i.mBillboard.setCullVisible(true);
             pos = Vec2((pos.x + 1) / 2, (-pos.y + 1) / 2);
             i.mBillboard.setPosition(mPos_ + (pos * mSize_));
+            //TODO make this more efficient.
+            if(i.mBillboard.rawin("update")){
+                i.mBillboard.update();
+            }
         }
     }
 
@@ -100,3 +104,4 @@ _doFile("res://src/GUI/Billboard/HealthBarBillboard.nut");
 _doFile("res://src/GUI/Billboard/GatewayExplorationEndBillboard.nut");
 _doFile("res://src/GUI/Billboard/PlaceExplorationVisitBillboard.nut");
 _doFile("res://src/GUI/Billboard/PercentageEncounterBillboard.nut");
+_doFile("res://src/GUI/Billboard/PlaceDescriptionBillboard.nut");

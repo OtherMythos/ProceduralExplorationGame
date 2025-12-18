@@ -299,3 +299,19 @@
                 ::Base.mActionManager.unsetAction(0, entityId);
             }
         });
+        ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.PLACE_DESCRIPTION_TRIGGER] <- TriggerResponse(function(world, entityId, second, collisionStatus){
+            if(collisionStatus == 0x1){
+                local manager = world.getEntityManager();
+                if(manager.hasComponent(entityId, EntityComponents.BILLBOARD)){
+                    local billboardComponent = manager.getComponent(entityId, EntityComponents.BILLBOARD);
+                    local billboardIdx = billboardComponent.mBillboard;
+                    local billboardManager = ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.mBillboardManager_;
+                    if(billboardIdx < billboardManager.mTrackedNodes_.len()){
+                        local billboard = billboardManager.mTrackedNodes_[billboardIdx];
+                        if(billboard != null && billboard.mBillboard.rawin("startAnimation")){
+                            billboard.mBillboard.startAnimation();
+                        }
+                    }
+                }
+            }
+        });

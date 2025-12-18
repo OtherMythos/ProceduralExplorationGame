@@ -22,6 +22,9 @@
             }
             regionEntry.pushFuncPlace(placeData.placeId, pos);
 
+            //Spawn the place description trigger
+            world.mEntityFactory_.constructPlaceDescriptionTrigger(pos, placeData.placeId);
+
             //Add the bounding box for debugging
             //TODO turn that into a developer profile.
             /*
