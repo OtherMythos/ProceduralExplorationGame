@@ -14,6 +14,7 @@ This game is based on RPG mechanics and built around the idea of exploration.
 The gameplay loop focuses on the player exploring a procedural world, finding items, places and combat encounters.
 The game is intended to distill the feeling of exploring a large world into a short, biting gameplay loop.
 
+
 Current features include:
  * Voxel graphics for character models, scenes, items, etc.
  * Fluid combat system built round player movement.
