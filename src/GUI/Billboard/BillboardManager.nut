@@ -9,9 +9,11 @@
     BillboardEntry = class{
         mNode = null;
         mBillboard = null;
+        mHasUpdate = false;
         constructor(node, billboard){
             mNode = node;
             mBillboard = billboard;
+            mHasUpdate = billboard.rawin("update");
         }
     }
 
@@ -54,8 +56,7 @@
             i.mBillboard.setCullVisible(true);
             pos = Vec2((pos.x + 1) / 2, (-pos.y + 1) / 2);
             i.mBillboard.setPosition(mPos_ + (pos * mSize_));
-            //TODO make this more efficient.
-            if(i.mBillboard.rawin("update")){
+            if(i.mHasUpdate){
                 i.mBillboard.update();
             }
         }
