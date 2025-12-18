@@ -679,12 +679,11 @@ namespace ProceduralExplorationGameCore{
                 //AV::uint8* regionPtr = REGION_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y));
                 AV::uint8 originalAltitude = *voxPtr;
 
-                //*regionPtr = regionId;
-                setRegionForPoint(mapData, WRAP_WORLD_POINT(x, y), regionId);
-
+                AV::uint8 newAltitude = 0;
+                RegionId newRegion = regionId;
                 if(distanceFromCore == 0) {
                     // Inside core region - apply full average
-                    *voxPtr = static_cast<AV::uint8>(averageAlt);
+                    newAltitude = static_cast<AV::uint8>(averageAlt);
                 } else if(distanceFromCore <= ditherDistance) {
                     // In dither zone - blend between average and original
                     float blendFactor = static_cast<float>(distanceFromCore) / static_cast<float>(ditherDistance);
@@ -695,8 +694,17 @@ namespace ProceduralExplorationGameCore{
                         averageAlt * (1.0f - blendFactor) + originalAltitude * blendFactor
                     );
 
-                    *voxPtr = blendedAltitude;
+                    newAltitude = blendedAltitude;
+                } else {
+                    newAltitude = originalAltitude;
                 }
+
+                // Set region for this point
+                if(newAltitude < mapData->seaLevel){
+                    newRegion = REGION_ID_WATER;
+                }
+                setRegionForPoint(mapData, WRAP_WORLD_POINT(x, y), newRegion);
+                *voxPtr = newAltitude;
                 // Points beyond dither distance remain unchanged
             }
         }
@@ -760,12 +768,11 @@ namespace ProceduralExplorationGameCore{
                     AV::uint8* voxPtr = VOX_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y));
                     AV::uint8 originalAltitude = *voxPtr;
 
-                    // Set region for this point
-                    setRegionForPoint(mapData, WRAP_WORLD_POINT(x, y), regionId);
-
+                    AV::uint8 newAltitude = 0;
+                    RegionId newRegion = regionId;
                     if(distanceFromCenter <= coreRadius) {
                         // Inside core circle - apply full average
-                        *voxPtr = static_cast<AV::uint8>(averageAlt);
+                        newAltitude = static_cast<AV::uint8>(averageAlt);
                     } else {
                         // In dither zone - blend between average and original
                         float distanceFromCore = distanceFromCenter - coreRadius;
@@ -775,8 +782,15 @@ namespace ProceduralExplorationGameCore{
                         AV::uint8 blendedAltitude = static_cast<AV::uint8>(
                             averageAlt * (1.0f - blendFactor) + originalAltitude * blendFactor
                         );
-                        *voxPtr = blendedAltitude;
+                        newAltitude = blendedAltitude;
                     }
+
+                    // Set region for this point
+                    if(newAltitude < mapData->seaLevel){
+                        newRegion = REGION_ID_WATER;
+                    }
+                    setRegionForPoint(mapData, WRAP_WORLD_POINT(x, y), newRegion);
+                    *voxPtr = newAltitude;
                 }
                 // Points beyond total radius remain unchanged
             }
