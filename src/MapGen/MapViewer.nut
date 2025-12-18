@@ -77,7 +77,7 @@
             intendedPos *= mParent_.getSize();
             intendedPos /= mMapScale_;
 
-            local angle = atan2(mDirY_, mDirX_);
+            local angle = atan2(-mDirY_, mDirX_);
             mPanel_.setOrientation(angle);
 
             //Move the panel along the direction vector by half its size to position the bottom center at the player location
@@ -327,7 +327,7 @@
 
     function onMinimapPlayerDirectionChanged(id, data){
         if(mPlayerLocationPanel_ != null){
-            local angle = atan2(data.dirY, data.dirX);
+            local angle = atan2(-data.dirY, data.dirX);
             mPlayerLocationPanel_.mPanel_.setOrientation(angle);
         }
     }
