@@ -653,23 +653,28 @@
         return en;
     }
 
-    function constructEnemyCollisionBlocker(pos, radius){
+    function constructEnemyCollisionBlocker(parentNode, pos, radius){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = pos.copy();
         targetPos.y = getZForPos(targetPos);
 
         local en = manager.createEntity(targetPos);
 
-        local parentNode = mBaseSceneNode_.createChildSceneNode();
-        parentNode.setPosition(targetPos);
-        local item = _scene.createItem("cylinder.mesh");
+        local insertNode = parentNode.createChildSceneNode();
+        insertNode.setPosition(targetPos);
+        //local item = _scene.createItem("Cylinder.mesh");
         //item.setDatablock("PercentageEncounterCylinder");
-        item.setCastsShadows(false);
-        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
-        parentNode.attachObject(item);
+        //item.setCastsShadows(false);
+        //item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
+        //insertNode.attachObject(item);
         //Add a bit of offset to the top to avoid z fighting.
-        parentNode.setScale(radius, 9 + _random.rand(), radius);
-        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](parentNode, true));
+        insertNode.setScale(radius, 9 + _random.rand(), radius);
+
+        //Attach glimmer particle system.
+        local glimmerParticles = _scene.createParticleSystem("enemyCollisionBlockerGlimmer");
+        insertNode.attachObject(glimmerParticles);
+
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](insertNode, true));
 
         local collisionDetectionWorld = mConstructorWorld_.getCollisionDetectionWorld();
         local collisionDetectionPoint = collisionDetectionWorld.addCollisionPoint(targetPos.x, targetPos.z, radius, COLLISION_TYPE_ENEMY, _COLLISION_WORLD_ENTRY_SENDER);

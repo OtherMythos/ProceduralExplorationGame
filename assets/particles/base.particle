@@ -143,3 +143,41 @@ particle_system playerWalkingDust
 
 
 }
+
+particle_system enemyCollisionBlockerGlimmer
+{
+    material        ParticleWhite
+    particle_width  1
+    particle_height 1
+    cull_each       false
+    quota           2000
+    billboard_type  point
+
+    // Ring emitter for glimmer effect.
+    emitter Ring
+    {
+        angle           0
+        emission_rate   100
+        time_to_live    0.6
+        direction       0 1 0
+        velocity        0.2
+        inner_width     0.9
+        inner_height    0.9
+        width 2
+        height 2
+        depth 0.001
+    }
+
+    affector ColourInterpolator
+    {
+        time0 0
+        colour0 0.6 0.8 1.0 1
+
+        time1 0.5
+        colour1 0.8 0.9 1.0 1
+
+        time2 1.0
+        colour2 0.6 0.8 1.0 0
+    }
+
+}

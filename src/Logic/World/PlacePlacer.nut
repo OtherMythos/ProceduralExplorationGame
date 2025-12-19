@@ -25,7 +25,11 @@
             //Spawn the place description trigger
             world.mEntityFactory_.constructPlaceDescriptionTrigger(pos, placeData.placeId);
 
-            local newNPC = world.mEntityFactory_.constructEnemyCollisionBlocker(pos, placeDefine.mRadius);
+            local pId = placeData.placeId;
+            if(pId == PlaceId.GARRITON || pId == PlaceId.GRAVEYARD){
+                local blockerNode = node.createChildSceneNode();
+                world.mEntityFactory_.constructEnemyCollisionBlocker(blockerNode, pos, placeDefine.mRadius * 1.5);
+            }
 
             //Add the bounding box for debugging
             //TODO turn that into a developer profile.
