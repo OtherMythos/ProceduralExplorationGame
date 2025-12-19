@@ -257,6 +257,7 @@
         _doFile("res://src/Logic/World/Actions/WorldAction.nut");
         _doFile("res://src/Logic/World/Actions/EXPTrailAction.nut");
         _doFile("res://src/Logic/World/Actions/ObjectDropAction.nut");
+        _doFile("res://src/Logic/World/Actions/CometAction.nut");
 
         _doFile("res://src/GUI/RenderIconManager.nut");
         ::RenderIconManager.setup();

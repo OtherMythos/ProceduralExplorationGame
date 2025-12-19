@@ -181,3 +181,40 @@ particle_system enemyCollisionBlockerGlimmer
     }
 
 }
+
+particle_system cometTrail
+{
+    material        ParticleAlphaWhite
+    particle_width  0.5
+    particle_height 0.5
+    cull_each       false
+    quota           20000
+    billboard_type  point
+
+    //Dense emitter for comet trail
+    emitter Point
+    {
+        angle           30
+        emission_rate   50
+        time_to_live    3
+        direction       0 -1 0
+        velocity_min    0.2
+        velocity_max    0.4
+    }
+
+    affector Scaler
+    {
+        rate -0.1
+    }
+
+    affector ColourFader2
+    {
+        state_change 1
+        alpha1 0.5
+
+        alpha2 -0.3
+        red2 -0.1
+        green2 -0.1
+        blue2 -0.1
+    }
+}

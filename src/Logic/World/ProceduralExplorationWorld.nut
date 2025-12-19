@@ -22,6 +22,9 @@
 
     mTerrain_ = null;
 
+    mCometsSpawned_ = 0;
+    mCometChanceMultiplier_ = 1;
+
     ProceduralRegionEntry = class{
         mCreatorWorld_ = null;
         mEntityManager_ = null;
@@ -344,6 +347,7 @@
         base.update();
         checkForEnemyAppear();
         checkForDistractionAppear();
+        checkForCometAppear();
 
         mAnimIncrement_ += 0.01;
         updateWaterBlock(mWaterDatablock_);
@@ -419,6 +423,34 @@
         if(mAppearDistractionLogic_.checkAppearForObject(WorldDistractionType.EXP_ORB)){
             mEntityFactory_.constructEXPTrailEncounter(target);
         }
+    }
+
+    function checkForCometAppear(){
+        //Limit to 3 comets per procedural world
+        if(mCometsSpawned_ >= 3) return;
+
+        //Comets are very rare - check roughly once per 10 seconds at 60 fps
+        //Difficulty increases: each spawn multiplies the chance by 4 (doubles the random check value)
+        local cometChance = _random.randInt(1200 * mCometChanceMultiplier_);
+        if(cometChance != 0) return;
+
+        //Find a random position on land to spawn the comet
+        local landingPos = MapGenHelpers.findRandomPointOnLand(mMapData_, mPlayerEntry_.getPosition(), 200, 50);
+        if(landingPos == null){
+            return;
+        }
+
+        //Determine the starting position high above the landing spot
+        local startPos = landingPos.copy();
+        startPos.y = 50.0;
+
+        //Create and register the comet action
+        local cometAction = ::CometAction(this, startPos, landingPos);
+        pushWorldAction(cometAction);
+
+        //Track this comet and increase difficulty for next one
+        mCometsSpawned_++;
+        mCometChanceMultiplier_ *= 4;
     }
 
     #Override
