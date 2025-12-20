@@ -22,8 +22,20 @@
             }
             regionEntry.pushFuncPlace(placeData.placeId, pos);
 
+            //Check if place has a meta.json and parse it
+            local metaPath = "res://build/assets/places/"+placeFile+"/meta.json";
+            local shouldSpawnPlaceDescription = true;
+            if(_system.exists(metaPath)){
+                local metaTable = _system.readJSONAsTable(metaPath);
+                if(metaTable.rawin("disablePlaceName") && metaTable.disablePlaceName){
+                    shouldSpawnPlaceDescription = false;
+                }
+            }
+
             //Spawn the place description trigger
-            world.mEntityFactory_.constructPlaceDescriptionTrigger(pos, placeData.placeId);
+            if(shouldSpawnPlaceDescription){
+                world.mEntityFactory_.constructPlaceDescriptionTrigger(pos, placeData.placeId);
+            }
 
             local pId = placeData.placeId;
             if(pId == PlaceId.GARRITON || pId == PlaceId.GRAVEYARD){
