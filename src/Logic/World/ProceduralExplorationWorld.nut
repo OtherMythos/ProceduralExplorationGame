@@ -25,6 +25,9 @@
     mCometsSpawned_ = 0;
     mCometChanceMultiplier_ = 1;
 
+    mMessagesInBottlesSpawned_ = 0;
+    mMessageInBottleChanceMultiplier_ = 1;
+
     ProceduralRegionEntry = class{
         mCreatorWorld_ = null;
         mEntityManager_ = null;
@@ -348,6 +351,7 @@
         checkForEnemyAppear();
         checkForDistractionAppear();
         checkForCometAppear();
+        checkForMessageInBottleAppear();
 
         mAnimIncrement_ += 0.01;
         updateWaterBlock(mWaterDatablock_);
@@ -451,6 +455,91 @@
         //Track this comet and increase difficulty for next one
         mCometsSpawned_++;
         mCometChanceMultiplier_ *= 4;
+    }
+
+    function findMessageInBottleSpawn(){
+        //Pick a random edge: 0 = top (y=0), 1 = right (x=width), 2 = bottom (y=-height), 3 = left (x=0)
+        local edge = _random.randInt(4);
+        local edgePos = null;
+
+        if(edge == 0){
+            //Top edge: y = 0
+            local randomX = _random.rand() * mMapData_.width;
+            edgePos = Vec3(randomX, 0, 0);
+        }else if(edge == 1){
+            //Right edge: x = width
+            local randomY = _random.rand() * mMapData_.height;
+            edgePos = Vec3(mMapData_.width, 0, -randomY);
+        }else if(edge == 2){
+            //Bottom edge: y = -height
+            local randomX = _random.rand() * mMapData_.width;
+            edgePos = Vec3(randomX, 0, -mMapData_.height);
+        }else{
+            //Left edge: x = 0
+            local randomY = _random.rand() * mMapData_.height;
+            edgePos = Vec3(0, 0, -randomY);
+        }
+
+        return edgePos;
+    }
+
+    function findMessageInBottleDirection(bottlePos){
+        //Calculate world centre
+        local centreX = mMapData_.width * 0.5;
+        local centreY = -mMapData_.height * 0.5;
+        local worldCentre = Vec3(centreX, 0, centreY);
+
+        //Offset centre position by 0.2 of the world (using the smaller dimension)
+        local worldSize = mMapData_.width < mMapData_.height ? mMapData_.width : mMapData_.height;
+        local offset = worldSize * 0.2;
+
+        //Generate a random direction and offset the centre
+        local offsetDir = (_random.randVec3() - 0.5);
+        offsetDir.y = 0;
+        offsetDir.normalise();
+        local offsetCentre = worldCentre + (offsetDir * offset);
+
+        //Calculate direction from bottle position to offset centre
+        local direction = (offsetCentre - bottlePos);
+        direction.y = 0;
+        direction.normalise();
+
+        return direction;
+    }
+
+    function checkForMessageInBottleAppear(){
+        //Limit to 3 messages per procedural world
+        if(mMessagesInBottlesSpawned_ >= 3) return;
+
+        //Messages in bottles spawn in water, very rare - check roughly once per 15 seconds at 60 fps
+        //Difficulty increases: each spawn multiplies the chance by 4
+        local messageChance = _random.randInt(50 * mMessageInBottleChanceMultiplier_);
+        if(messageChance != 0) return;
+
+        //Find a spawn position at the world edge
+        local bottlePos = findMessageInBottleSpawn();
+        bottlePos.y = getZForPos(bottlePos);
+
+        //Check if this position is in water
+        if(!::MapGenHelpers.getIsWaterForPosition(mMapData_, bottlePos)){
+            return;
+        }
+
+        //Create the message in a bottle entity
+        local bottleEntity = mEntityFactory_.constructMessageInABottle(bottlePos);
+
+        //Get the drift direction towards the world centre
+        local driftDirection = findMessageInBottleDirection(bottlePos);
+
+        //Assign the drift direction to the bottle script
+        if(mEntityManager_.hasComponent(bottleEntity, EntityComponents.SCRIPT)){
+            local scriptComponent = mEntityManager_.getComponent(bottleEntity, EntityComponents.SCRIPT);
+            scriptComponent.mScript.driftDirection = driftDirection;
+        }
+
+        //Track this bottle and increase difficulty for next one
+        mMessagesInBottlesSpawned_++;
+        mMessageInBottleChanceMultiplier_ *= 4;
     }
 
     #Override

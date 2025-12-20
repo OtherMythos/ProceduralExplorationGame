@@ -154,6 +154,7 @@ enum CollisionWorldTriggerResponses{
     PICK_KEEP_PLACED_ITEM,
     READ_LORE,
     PLACE_DESCRIPTION_TRIGGER,
+    CLAIM_MESSAGE_IN_BOTTLE,
 
     MAX = 100
 };
@@ -296,6 +297,7 @@ enum ActionSlotType{
     ITEM_SEARCH,
     PICK,
     READ_LORE,
+    CLAIM_MESSAGE_IN_BOTTLE,
 };
 
 enum SystemSetting{
@@ -316,7 +318,8 @@ enum SystemSetting{
     "Enter",
     "Item Search",
     "Pick",
-    "Read"
+    "Read",
+    "Claim"
 ];
 
 enum ProceduralDungeonTypes{

@@ -398,6 +398,22 @@ EntityManager.EntityManager <- class{
         processPositionChange_(eid, idx, mEntityPositions_[idx]);
     }
 
+    function moveEntityCheckPotential(eid, direction){
+        //
+        local world = (eid >> 60) & 0xF;
+        if(world != mId) throw "Entity does not belong to this world.";
+        local version = (eid >> 30) & 0x3FFFFFFF;
+        local idx = eid & 0x3FFFFFFF;
+        if(mVersions_[idx] != version) throw "Entity is invalid";
+        //
+        local oldPos = mEntityPositions_[idx];
+        local newPos = (oldPos + direction);
+        newPos = processEntityPositionPotential_(eid, idx, newPos, oldPos);
+        mEntityPositions_[idx] = newPos;
+
+        processPositionChange_(eid, idx, newPos);
+    }
+
     //Helper function to check if a position is valid
     function checkPositionValid_(pos, idx, collisionRadius, collisionHash, eid){
         //Check traversable terrain
