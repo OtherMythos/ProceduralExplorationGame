@@ -11,8 +11,8 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    bool CollisionDetectionWorld::checkCollisionPoint(float x, float y, float radius){
-        bool pointCheck = CollisionWorldBruteForce::checkCollisionPoint(x, y, radius);
+    bool CollisionDetectionWorld::checkCollisionPoint(float x, float y, float radius, AV::uint8 mask){
+        bool pointCheck = CollisionWorldBruteForce::checkCollisionPoint(x, y, radius, mask);
 
         if(mCollisionGrid.empty()) return pointCheck;
 

@@ -9,7 +9,7 @@ namespace ProceduralExplorationGameCore{
         CollisionDetectionWorld(int worldId);
         ~CollisionDetectionWorld();
 
-        bool checkCollisionPoint(float x, float y, float radius);
+        bool checkCollisionPoint(float x, float y, float radius, AV::uint8 mask=0xFF);
         void setCollisionGrid(std::vector<bool>& collisionGrid, int width, int height);
 
     private:
