@@ -174,7 +174,9 @@ enum InventoryItemHelperScreenFunctions{
 
         // Position the info panel to the right of the buttons
         //local infoPanelPos = Vec2(maxButtonWidth + 20, 20);
-        itemInfoPos.y -= mItemInfoPanel_.getSize().y;
+        if(mItemInfoPanel_ != null){
+            itemInfoPos.y -= mItemInfoPanel_.getSize().y;
+        }
         itemInfoPos.x -= mData_.gridItemSize.x;
         if(repositionX || repositionY){
             itemInfoPos.x = newPos.x;
