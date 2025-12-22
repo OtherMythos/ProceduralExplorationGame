@@ -21,7 +21,7 @@ function initialisePlaceEditorMeta(){
     foreach(c,i in ::Places){
         local placeFile = i.getPlaceFileName();
         if(placeFile == null) continue;
-        local path = "res://build/assets/places/"+placeFile+"/editorMeta.json";
+        local path = "script://../../build/assets/places/"+placeFile+"/editorMeta.json";
         if(!_system.exists(path)){
             continue;
         }
