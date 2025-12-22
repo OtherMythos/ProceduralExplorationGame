@@ -14,7 +14,6 @@ function start(){
     _doFile("res://../../src/Content/PlaceDefs.nut");
     _doFile("res://../../src/MapGen/Exploration/Generator/MapConstants.h.nut");
     _doFile("res://../../src/MapGen/Exploration/Generator/MapGenHelpers.nut");
-    _doFile("res://../../src/MapGen/Exploration/Generator/MapGen.nut");
     _doFile("res://../../src/MapGen/MapViewer.nut");
     _doFile("res://../../src/MapGen/Exploration/Viewer/ExplorationMapViewerConstants.h.nut");
     _doFile("res://../../src/MapGen/Exploration/Viewer/ExplorationMapViewer.nut");
