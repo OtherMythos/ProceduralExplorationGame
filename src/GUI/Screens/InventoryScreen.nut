@@ -466,7 +466,10 @@ enum InventoryBusEvents{
             scrapItem(data);
         }
         else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_OPEN){
-            removeFromInventory_(data);
+            local inventoryData = data;
+            removeFromInventory_(inventoryData);
+            ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.BOTTLE_EFFECT, {"centre": Vec2(0, 0), "bottleScale": 0.5}));
+            setItemForInventory(inventoryData, ::Item(ItemId.APPLE));
         }
         else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_TO_INVENTORY){
             local item = mSecondaryItems_[data.idx];
@@ -606,6 +609,19 @@ enum InventoryBusEvents{
             targetInventory.removeFromInventory(idx);
         }
         return targetItem;
+    }
+
+    function setItemForInventory(inventoryData, item){
+        local idx = inventoryData.idx;
+        if(inventoryData.gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
+            mPlayerStats_.equipItem(item, idx);
+        }else if(inventoryData.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
+            mSecondaryItems_[idx] = item;
+            mSecondaryInventoryGrid_.setNewGridIcons(mSecondaryItems_);
+        }else{
+            local targetInventory = getTargetInventory_();
+            targetInventory.setItemForIdx(item, idx);
+        }
     }
 
     function transferItemBetweenInventories_(sourceInventory, targetInventory, itemIdx){
