@@ -193,13 +193,12 @@ namespace ProceduralExplorationGameCore{
 
         std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
         *regionPtr = newRegion;
+        if(newRegion != INVALID_REGION_ID && newRegion != REGION_ID_WATER){
+            regionData[newRegion].coords.push_back(point);
+        }
 
         if(oldRegion == INVALID_REGION_ID || oldRegion == REGION_ID_WATER){
             return;
-        }
-
-        if(newRegion != INVALID_REGION_ID && newRegion != REGION_ID_WATER){
-            regionData[newRegion].coords.push_back(point);
         }
 
         std::vector<WorldPoint>& coords = regionData[oldRegion].coords;
