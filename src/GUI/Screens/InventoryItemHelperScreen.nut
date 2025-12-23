@@ -12,6 +12,7 @@ enum InventoryItemHelperScreenFunctions{
     MOVE_TO_STORAGE,
     MOVE_FROM_STORAGE,
     BUY,
+    OPEN,
 
     MAX
 };
@@ -243,6 +244,10 @@ enum InventoryItemHelperScreenFunctions{
             buttonOptions.append(UNICODE_DRINK + " Drink");
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.USE]);
             buttonEnabled.append(true);
+        }else if(itemType == ItemType.MESSAGE_IN_A_BOTTLE){
+            buttonOptions.append("Open");
+            buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.OPEN]);
+            buttonEnabled.append(true);
         }else{
             buttonOptions.append(UNICODE_EAT + " Use");
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.USE]);
@@ -360,5 +365,10 @@ b[InventoryItemHelperScreenFunctions.MOVE_FROM_STORAGE] = function(widget, actio
 b[InventoryItemHelperScreenFunctions.BUY] = function(widget, action){
     local data = {"idx": mData_.idx, "gridType": mData_.gridType};
     mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_BUY, data);
+    closeInventoryScreen_();
+};
+b[InventoryItemHelperScreenFunctions.OPEN] = function(widget, action){
+    local data = {"idx": mData_.idx, "gridType": mData_.gridType};
+    mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_OPEN, data);
     closeInventoryScreen_();
 };

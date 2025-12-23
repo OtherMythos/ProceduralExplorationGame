@@ -17,6 +17,7 @@ enum InventoryBusEvents{
     ITEM_INFO_REQUEST_MOVE_FROM_STORAGE,
     ITEM_INFO_REQUEST_READ,
     ITEM_INFO_REQUEST_BUY,
+    ITEM_INFO_REQUEST_OPEN,
 };
 
 ::ScreenManager.Screens[Screen.INVENTORY_SCREEN] = class extends ::Screen{
@@ -464,6 +465,9 @@ enum InventoryBusEvents{
         else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_SCRAP){
             scrapItem(data);
         }
+        else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_OPEN){
+            removeFromInventory_(data);
+        }
         else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_TO_INVENTORY){
             local item = mSecondaryItems_[data.idx];
             local success = mInventory_.addToInventory(item);
@@ -578,6 +582,15 @@ enum InventoryBusEvents{
     }
 
     function scrapItem(inventoryData){
+        local targetItem = removeFromInventory_(inventoryData);
+        if(targetItem == null) return;
+
+        printf("Adding scrap value for item: %s", targetItem.tostring());
+        local scrapValue = targetItem.getScrapVal();
+        mInventory_.addMoney(scrapValue);
+    }
+
+    function removeFromInventory_(inventoryData){
         local targetItem = null;
         local idx = inventoryData.idx;
         if(inventoryData.gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
@@ -592,9 +605,7 @@ enum InventoryBusEvents{
             targetItem = targetInventory.getItemForIdx(idx);
             targetInventory.removeFromInventory(idx);
         }
-        printf("Adding scrap value for item: %s", targetItem.tostring());
-        local scrapValue = targetItem.getScrapVal();
-        mInventory_.addMoney(scrapValue);
+        return targetItem;
     }
 
     function transferItemBetweenInventories_(sourceInventory, targetInventory, itemIdx){

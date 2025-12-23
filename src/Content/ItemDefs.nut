@@ -20,7 +20,7 @@
 ::Items[ItemId.FLOWER_WHITE] = ItemDef("White Flower", "A white delecate flower", "flower.flowerWhite.voxMesh", "item_flowerWhite", ItemType.EAT, 5, null, EquippableId.NONE);
 ::Items[ItemId.FLOWER_RED] = ItemDef("Red Flower", "A red delecate flower", "flower.flowerRed.voxMesh", "item_flowerRed", ItemType.EAT, 5, null, EquippableId.NONE);
 ::Items[ItemId.FLOWER_PURPLE] = ItemDef("Purple Flower", "A purple delecate flower", "flower.flowerPurple.voxMesh", "item_flowerPurple", ItemType.EAT, 5, null, EquippableId.NONE);
-::Items[ItemId.MESSAGE_IN_A_BOTTLE] = ItemDef("Message in a Bottle", "A mysterious message sealed in a glass bottle. It has washed ashore from distant seas.", "simpleSword.voxMesh", "item_simpleSword", ItemType.LORE_CONTENT, 0, null, EquippableId.NONE);
+::Items[ItemId.MESSAGE_IN_A_BOTTLE] = ItemDef("Message in a Bottle", "A mysterious message sealed in a glass bottle. It has washed ashore from distant seas.", "simpleSword.voxMesh", "item_simpleSword", ItemType.MESSAGE_IN_A_BOTTLE, 0, null, EquippableId.NONE);
 //-------------------------------
 
 ::ItemHelper.itemToStats <- function(item){
