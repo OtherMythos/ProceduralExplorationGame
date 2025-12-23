@@ -1,0 +1,14 @@
+[
+  {
+    "seed": 448,
+    "moistureSeed": 208,
+    "variationSeed": 990,
+    "description": "Broken as a result of changing the check in ad31b1f"
+  },
+  {
+    "seed": 300,
+    "moistureSeed": 496,
+    "variationSeed": 94,
+    "description": "The player was spawning at 0,0"
+  }
+]
