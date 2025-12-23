@@ -327,7 +327,9 @@
 		#define inVs_vertex inValues
 
 		@property( !hlms_shadowcaster || !hlms_shadow_uses_depth_texture || alpha_test || exponential_shadow_maps )
-			outVs.ambientVal = 1.0;
+			@property(!renderSceneDecorations)
+				outVs.ambientVal = 1.0;
+			@end
 		@end
 
 		@property(oceanVertices)

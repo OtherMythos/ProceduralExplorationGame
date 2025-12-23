@@ -143,3 +143,78 @@ particle_system playerWalkingDust
 
 
 }
+
+particle_system enemyCollisionBlockerGlimmer
+{
+    material        ParticleWhite
+    particle_width  1
+    particle_height 1
+    cull_each       false
+    quota           2000
+    billboard_type  point
+
+    // Ring emitter for glimmer effect.
+    emitter Ring
+    {
+        angle           0
+        emission_rate   100
+        time_to_live    0.6
+        direction       0 1 0
+        velocity        0.2
+        inner_width     0.9
+        inner_height    0.9
+        width 2
+        height 2
+        depth 0.001
+    }
+
+    affector ColourInterpolator
+    {
+        time0 0
+        colour0 0.6 0.8 1.0 1
+
+        time1 0.5
+        colour1 0.8 0.9 1.0 1
+
+        time2 1.0
+        colour2 0.6 0.8 1.0 0
+    }
+
+}
+
+particle_system cometTrail
+{
+    material        ParticleAlphaWhite
+    particle_width  0.5
+    particle_height 0.5
+    cull_each       false
+    quota           20000
+    billboard_type  point
+
+    //Dense emitter for comet trail
+    emitter Point
+    {
+        angle           30
+        emission_rate   50
+        time_to_live    3
+        direction       0 -1 0
+        velocity_min    0.2
+        velocity_max    0.4
+    }
+
+    affector Scaler
+    {
+        rate -0.1
+    }
+
+    affector ColourFader2
+    {
+        state_change 1
+        alpha1 0.5
+
+        alpha2 -0.3
+        red2 -0.1
+        green2 -0.1
+        blue2 -0.1
+    }
+}

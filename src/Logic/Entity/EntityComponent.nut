@@ -259,9 +259,11 @@
 ::EntityManager.Components[EntityComponents.COLLISION_DETECTION] = class extends ::EntityManager.Component{
 
     mRadius = false;
+    mHash = 0xFF;
 
-    constructor(radius){
+    constructor(radius, hash=0xFF){
         mRadius = radius;
+        mHash = hash;
     }
 
 };

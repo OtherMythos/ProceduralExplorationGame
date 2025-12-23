@@ -161,6 +161,14 @@ These actions might be things like 'talk', 'buy things from', etc.
                 local world = ::Base.mExplorationLogic.readReadable(data);
                 break;
             }
+            case ActionSlotType.CLAIM_MESSAGE_IN_BOTTLE:{
+                local world = ::Base.mExplorationLogic.mCurrentWorld_;
+                local manager = world.getEntityManager();
+                if(manager.entityValid(data)){
+                    manager.destroyEntity(data, EntityDestroyReason.CONSUMED);
+                }
+                break;
+            }
             default:{
                 throw "Attempted to execute an invalid action slot.";
             }

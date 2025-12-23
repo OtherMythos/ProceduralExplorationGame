@@ -21,6 +21,9 @@ const INVALID_WORLD_POINT = 0xFFFFFFFF;
 
 const ACTION_MANAGER_NUM_SLOTS = 2;
 
+const COLLISION_TYPE_PLAYER = 0x1;
+const COLLISION_TYPE_ENEMY = 0x2;
+
 enum FullscreenMode{
     WINDOWED,
     BORDERLESS_FULLSCREEN
@@ -150,6 +153,8 @@ enum CollisionWorldTriggerResponses{
     PICK,
     PICK_KEEP_PLACED_ITEM,
     READ_LORE,
+    PLACE_DESCRIPTION_TRIGGER,
+    CLAIM_MESSAGE_IN_BOTTLE,
 
     MAX = 100
 };
@@ -292,6 +297,7 @@ enum ActionSlotType{
     ITEM_SEARCH,
     PICK,
     READ_LORE,
+    CLAIM_MESSAGE_IN_BOTTLE,
 };
 
 enum SystemSetting{
@@ -312,7 +318,8 @@ enum SystemSetting{
     "Enter",
     "Item Search",
     "Pick",
-    "Read"
+    "Read",
+    "Claim"
 ];
 
 enum ProceduralDungeonTypes{

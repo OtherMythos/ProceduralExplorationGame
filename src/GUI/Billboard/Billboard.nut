@@ -1,5 +1,6 @@
 enum BillboardZOrder{
     HEALTH_BAR = 70,
+    PLACE_DESCRIPTION = 71,
     BUTTON = 75
 };
 

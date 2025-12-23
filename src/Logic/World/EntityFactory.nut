@@ -98,7 +98,7 @@
             );
 
             local collisionRadius = 1.5;
-            manager.assignComponent(en, EntityComponents.COLLISION_DETECTION, ::EntityManager.Components[EntityComponents.COLLISION_DETECTION](collisionRadius));
+            manager.assignComponent(en, EntityComponents.COLLISION_DETECTION, ::EntityManager.Components[EntityComponents.COLLISION_DETECTION](collisionRadius, COLLISION_TYPE_PLAYER));
         }
 
         /*
@@ -232,7 +232,7 @@
         manager.assignComponent(en, EntityComponents.LIFETIME, ::EntityManager.Components[EntityComponents.LIFETIME](3000 + _random.randInt(100)));
 
         //local collisionRadius = 1;
-        manager.assignComponent(en, EntityComponents.COLLISION_DETECTION, ::EntityManager.Components[EntityComponents.COLLISION_DETECTION](COLLISION_DETECTION_RADIUS));
+        manager.assignComponent(en, EntityComponents.COLLISION_DETECTION, ::EntityManager.Components[EntityComponents.COLLISION_DETECTION](COLLISION_DETECTION_RADIUS, COLLISION_TYPE_ENEMY));
 
         /*
         local worldMask = (0x1 << mConstructorWorld_.getWorldId());
@@ -653,6 +653,72 @@
         return en;
     }
 
+    function constructMessageInABottle(pos){
+        local manager = mConstructorWorld_.getEntityManager();
+        local targetPos = pos.copy();
+        targetPos.y = getZForPos(targetPos);
+
+        local en = manager.createEntity(targetPos);
+
+        local parentNode = mBaseSceneNode_.createChildSceneNode();
+        parentNode.setPosition(targetPos);
+        local item = _gameCore.createVoxMeshItem("smallPotion.voxMesh");
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_SHADOW_VISIBILITY);
+        parentNode.setScale(0.1, 0.1, 0.1);
+        parentNode.attachObject(item);
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](parentNode, true));
+
+        //Create a script to handle drifting behaviour
+        manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](::MessageInABottleScript(en)));
+
+        //Add spoils component which grants the message in a bottle item
+        local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.GIVE_ITEM, ::Item(ItemId.MESSAGE_IN_A_BOTTLE), null, null);
+        manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
+
+        //Register collision trigger for interaction
+        local triggerWorld = mConstructorWorld_.getTriggerWorld();
+        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.CLAIM_MESSAGE_IN_BOTTLE, en, targetPos.x, targetPos.z, 3, _COLLISION_PLAYER);
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
+
+        //Add collision detection for movement
+        manager.assignComponent(en, EntityComponents.COLLISION_DETECTION, ::EntityManager.Components[EntityComponents.COLLISION_DETECTION](2, COLLISION_TYPE_PLAYER));
+
+        //Set traversable terrain to water only
+        manager.assignComponent(en, EntityComponents.TRAVERSABLE_TERRAIN, ::EntityManager.Components[EntityComponents.TRAVERSABLE_TERRAIN](EnemyTraversableTerrain.WATER));
+
+        return en;
+    }
+
+    function constructEnemyCollisionBlocker(parentNode, pos, radius){
+        local manager = mConstructorWorld_.getEntityManager();
+        local targetPos = pos.copy();
+        targetPos.y = getZForPos(targetPos);
+
+        local en = manager.createEntity(targetPos);
+
+        local insertNode = parentNode.createChildSceneNode();
+        insertNode.setPosition(targetPos);
+        //local item = _scene.createItem("Cylinder.mesh");
+        //item.setDatablock("PercentageEncounterCylinder");
+        //item.setCastsShadows(false);
+        //item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
+        //insertNode.attachObject(item);
+        //Add a bit of offset to the top to avoid z fighting.
+        insertNode.setScale(radius, 9 + _random.rand(), radius);
+
+        //Attach glimmer particle system.
+        local glimmerParticles = _scene.createParticleSystem("enemyCollisionBlockerGlimmer");
+        insertNode.attachObject(glimmerParticles);
+
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](insertNode, true));
+
+        local collisionDetectionWorld = mConstructorWorld_.getCollisionDetectionWorld();
+        local collisionDetectionPoint = collisionDetectionWorld.addCollisionPoint(targetPos.x, targetPos.z, radius, COLLISION_TYPE_ENEMY, _COLLISION_WORLD_ENTRY_SENDER);
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionDetectionPoint, collisionDetectionWorld));
+
+        return en;
+    }
+
     function constructEXPTrailEncounter(pos){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = pos.copy();
@@ -980,6 +1046,44 @@
         }
 
         manager.assignComponent(en, EntityComponents.LIFETIME, ::EntityManager.Components[EntityComponents.LIFETIME](projData.mLifetime));
+
+        return en;
+    }
+
+    function constructPlaceDescriptionTrigger(pos, placeId){
+        local manager = mConstructorWorld_.getEntityManager();
+        local targetPos = pos.copy();
+        targetPos.y = getZForPos(targetPos);
+
+        local placeDef = ::Places[placeId];
+        local radius = placeDef.mRadius;
+
+        //Position the billboard above the place by half the radius in Z
+        local billboardPos = targetPos.copy();
+        billboardPos.y += (radius * 0.75);
+
+        local en = manager.createEntity(targetPos);
+
+        local placeName = placeDef.getName();
+
+        //Create a dummy scene node for the billboard
+        local dummyNode = mBaseSceneNode_.createChildSceneNode();
+        dummyNode.setPosition(billboardPos);
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](dummyNode, true));
+
+        //Create and track the billboard
+        local gui = mConstructorWorld_.mGui_;
+        local worldMask = (0x1 << mConstructorWorld_.getWorldId());
+        local billboard = ::BillboardManager.PlaceDescriptionBillboard(placeName, gui.mWindow_, worldMask, radius);
+        billboard.setVisible(false);
+
+        local explorationScreen = ::Base.mExplorationLogic.mGui_;
+        local billboardIdx = explorationScreen.mWorldMapDisplay_.mBillboardManager_.trackNode(dummyNode, billboard);
+        manager.assignComponent(en, EntityComponents.BILLBOARD, ::EntityManager.Components[EntityComponents.BILLBOARD](billboardIdx));
+
+        local triggerWorld = mConstructorWorld_.getTriggerWorld();
+        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.PLACE_DESCRIPTION_TRIGGER, en, targetPos.x, targetPos.z, radius, _COLLISION_PLAYER);
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
 
         return en;
     }

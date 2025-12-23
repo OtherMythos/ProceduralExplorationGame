@@ -141,6 +141,7 @@
         _doFile("res://src/Content/Enemies/BasicEnemyScript.nut");
         _doFile("res://src/Content/Enemies/BeeHiveScript.nut");
         _doFile("res://src/Content/Enemies/BeeEnemyScript.nut");
+        _doFile("res://src/Content/Encounters/MessageInABottleScript.nut");
         _doFile("res://src/Content/GenericCallbacks.nut");
 
         _doFile("res://src/DebugOverlayManager.nut");
@@ -257,6 +258,7 @@
         _doFile("res://src/Logic/World/Actions/WorldAction.nut");
         _doFile("res://src/Logic/World/Actions/EXPTrailAction.nut");
         _doFile("res://src/Logic/World/Actions/ObjectDropAction.nut");
+        _doFile("res://src/Logic/World/Actions/CometAction.nut");
 
         _doFile("res://src/GUI/RenderIconManager.nut");
         ::RenderIconManager.setup();

@@ -9,9 +9,11 @@
     BillboardEntry = class{
         mNode = null;
         mBillboard = null;
+        mHasUpdate = false;
         constructor(node, billboard){
             mNode = node;
             mBillboard = billboard;
+            mHasUpdate = billboard.rawin("update");
         }
     }
 
@@ -54,6 +56,9 @@
             i.mBillboard.setCullVisible(true);
             pos = Vec2((pos.x + 1) / 2, (-pos.y + 1) / 2);
             i.mBillboard.setPosition(mPos_ + (pos * mSize_));
+            if(i.mHasUpdate){
+                i.mBillboard.update();
+            }
         }
     }
 
@@ -100,3 +105,4 @@ _doFile("res://src/GUI/Billboard/HealthBarBillboard.nut");
 _doFile("res://src/GUI/Billboard/GatewayExplorationEndBillboard.nut");
 _doFile("res://src/GUI/Billboard/PlaceExplorationVisitBillboard.nut");
 _doFile("res://src/GUI/Billboard/PercentageEncounterBillboard.nut");
+_doFile("res://src/GUI/Billboard/PlaceDescriptionBillboard.nut");
