@@ -45,9 +45,10 @@ Separated from the Base.nut file so enums can be used.
             //data = {"stats": ::Base.mPlayerStats}
             data = {
                 "stats": ::Base.mPlayerStats,
-                "width": 2,
-                "height": 2,
-                "items": [null, null, null, null]
+                //"width": 2,
+                //"height": 2,
+                //"items": [::Item(ItemId.APPLE), null, null, null],
+                "multiSelection": true
             }
         }
         else if(screenId == Screen.EXPLORATION_SCREEN){

@@ -15,6 +15,8 @@
         "inventory_slot_accessory"
     ];
 
+    SELECTION_INDICATOR_PADDING = 4;
+
     mHoverInfo_ = null;
     mButtonCover_ = null;
     mWindow_ = null;
@@ -33,13 +35,20 @@
     mInventoryWidth_ = null;
     mInventoryHeight_ = null;
 
-    constructor(inventoryType, bus, hoverInfo, buttonCover){
+    mMultiSelection_ = null;
+    mSelectedItems_ = null;
+    mSelectionIndicators_ = null;
+
+    constructor(inventoryType, bus, hoverInfo, buttonCover, multiSelection = false){
         mInventoryType_ = inventoryType;
         mBus_ = bus;
         mHoverInfo_ = hoverInfo;
         mButtonCover_ = buttonCover;
         mBackgrounds_ = [];
         mStoredHiddenStates_ = {};
+        mMultiSelection_ = multiSelection;
+        mSelectedItems_ = [];
+        mSelectionIndicators_ = [];
     }
 
     /**
@@ -92,6 +101,10 @@
             mItemIcons_ = array(inventoryHeight);
         }
         mWidgets_ = array(inventoryWidth*inventoryHeight);
+        if(mMultiSelection_){
+            mSelectedItems_ = array(inventoryWidth*inventoryHeight, false);
+            mSelectionIndicators_ = array(inventoryWidth*inventoryHeight, null);
+        }
 
         local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
 
@@ -129,6 +142,17 @@
                 item.attachListener(inventoryItemListener, this);
                 mWidgets_[x + y * inventoryWidth] = item;
                 //if(x == 1 && y == 1 && mInventoryType_ == InventoryGridType.INVENTORY_GRID) item.setFocus();
+
+                if(mMultiSelection_){
+                    local selectionPanel = parentWin.createPanel();
+                    local selectionSize = gridRatio / 2;
+                    selectionPanel.setSize(selectionSize, selectionSize);
+                    selectionPanel.setPosition(x*gridRatio + gridRatio - selectionSize - SELECTION_INDICATOR_PADDING, y*gridRatio + gridRatio - selectionSize - SELECTION_INDICATOR_PADDING);
+                    selectionPanel.setDatablock("greenTick");
+                    selectionPanel.setHidden(true);
+                    selectionPanel.setClickable(false);
+                    mSelectionIndicators_[x + y*inventoryWidth] = selectionPanel;
+                }
             }
         }
 
@@ -243,6 +267,9 @@
         //local targetItemIndex = x + y * INVENTORY_WIDTH;
 
         if(action == _GUI_ACTION_HIGHLIGHTED){ //Hovered
+            if(mMultiSelection_){
+                return;
+            }
             //mItemHovered_ = true;
             //mButtonCover_.setPosition(mResolvedPos_.x + x * 64, mResolvedPos_.y + y * 64);
             local derivedPos = widget.getDerivedPosition();
@@ -253,9 +280,18 @@
             //local success = setToMenuItem(targetItemIndex);
             //if(!success) mItemHovered_ = false
         }else if(action == _GUI_ACTION_CANCEL){ //hover ended
+            if(mMultiSelection_){
+                return;
+            }
             setButtonCoverHidden(true);
             mBus_.notifyEvent(InventoryBusEvents.ITEM_HOVER_ENDED, wrappedData);
         }else if(action == _GUI_ACTION_PRESSED){ //Pressed
+            if(mMultiSelection_){
+                if(mItemIcons_[idx].getVisible()){
+                    toggleSelection_(idx);
+                }
+                return;
+            }
             /*
             local targetArray = ::gui.InventoryScreen.getArrayForInventoryType(parentGridType_);
             local targetItem = targetArray[targetItemIndex];
@@ -364,5 +400,34 @@
         mWidgets_[idx].setPosition(pos);
         mItemIcons_[idx].setPosition(pos + mGridPadding_);
         mBackgrounds_[idx].setPosition(pos);
+    }
+
+    function toggleSelection_(idx){
+        if(idx < 0 || idx >= mSelectedItems_.len()) return;
+        mSelectedItems_[idx] = !mSelectedItems_[idx];
+        local selectionPanel = mSelectionIndicators_[idx];
+        local widgetPos = mWidgets_[idx].getPosition();
+        local widgetSize = mWidgets_[idx].getSize();
+        local selectionSize = widgetSize / 2;
+        selectionPanel.setPosition(widgetPos + widgetSize - selectionSize - SELECTION_INDICATOR_PADDING);
+        if(mSelectedItems_[idx]){
+            selectionPanel.setHidden(false);
+        }else{
+            selectionPanel.setHidden(true);
+        }
+        local wrappedData = {"gridType": mInventoryType_, "id": idx, "selected": mSelectedItems_[idx]};
+        mBus_.notifyEvent(InventoryBusEvents.ITEM_GROUP_SELECTION_CHANGED, wrappedData);
+    }
+
+    function getSelectedItems(){
+        return mSelectedItems_;
+    }
+
+    function getSelectedItemCount(){
+        local count = 0;
+        foreach(selected in mSelectedItems_){
+            if(selected) count++;
+        }
+        return count;
     }
 };

@@ -70,6 +70,10 @@
         mIcon_.setZOrder(zOrder);
     }
 
+    function setDisabled(disabled){
+        mButton_.setDisabled(disabled);
+    }
+
 };
 
 ::IconButtonComplex <- class extends IconButton{

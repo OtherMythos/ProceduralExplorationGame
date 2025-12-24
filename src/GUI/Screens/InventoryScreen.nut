@@ -2,6 +2,7 @@ enum InventoryBusEvents{
     ITEM_HOVER_BEGAN,
     ITEM_HOVER_ENDED,
     ITEM_SELECTED,
+    ITEM_GROUP_SELECTION_CHANGED,
     ITEM_HELPER_SCREEN_BEGAN,
     ITEM_HELPER_SCREEN_ENDED,
 
@@ -90,9 +91,12 @@ enum InventoryBusEvents{
 
     mInventoryWidth = 5;
 
+    mMultiSelection_ = false;
+
     mInventoryBus_ = null;
     mBusCallbackId_ = null;
     mStorageToggleButton_ = null;
+    mAcceptButton_ = null;
 
 
     InventoryContainer = class{
@@ -156,6 +160,12 @@ enum InventoryBusEvents{
             startOffset = data.rawget("startOffset");
         }
 
+        // Check if this inventory screen supports multi-selection
+        mMultiSelection_ = false;
+        if(data.rawin("multiSelection")){
+            mMultiSelection_ = data.multiSelection;
+        }
+
         // Check if this inventory screen supports storage
         mSupportsStorage_ = false;
         if(data.rawin("supportsStorage")){
@@ -217,6 +227,25 @@ enum InventoryBusEvents{
             }, _GUI_ACTION_PRESSED, this);
         }
 
+        if(mMultiSelection_){
+            local acceptButtonPos = backButtonDisabled ? Vec2(10, 10 + startOffset) : Vec2(10 + 64 + 10, 10 + startOffset);
+            mAcceptButton_ = ::IconButtonComplex(mWindow_, {
+                "icon": "greenTickX2",
+                "iconSize": Vec2(48, 48),
+                "iconPosition": Vec2(8, 8),
+                "label": "Accept",
+                "labelPosition": Vec2(64, 0),
+                "labelSizeModifier": 1.5
+            });
+            mAcceptButton_.setSize(Vec2(180, 64));
+            mAcceptButton_.setPosition(acceptButtonPos);
+            mAcceptButton_.setDisabled(true);
+            mAcceptButton_.attachListenerForEvent(function(widget, action){
+                ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
+                acceptSelection_();
+            }, _GUI_ACTION_PRESSED, this);
+        }
+
         local layoutLine = _gui.createLayoutLine();
 
         /*
@@ -258,26 +287,26 @@ enum InventoryBusEvents{
             mPlayerInspector_.setup(mWindow_);
 
         local layoutHorizontal = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
-        mInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID, mInventoryBus_, mHoverInfo_, buttonCover);
+        mInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID, mInventoryBus_, mHoverInfo_, buttonCover, mMultiSelection_);
         local inventoryHeight = mInventory_.getInventorySize() / mInventoryWidth;
         mInventoryGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, mInventoryWidth, inventoryHeight);
         //mInventoryGrid_.addToLayout(layoutLine);
         mInventoryGrid_.addToLayout(layoutHorizontal);
 
-        mInventoryEquippedGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_EQUIPPABLES, mInventoryBus_, mHoverInfo_, buttonCover);
+        mInventoryEquippedGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_EQUIPPABLES, mInventoryBus_, mHoverInfo_, buttonCover, mMultiSelection_);
         mInventoryEquippedGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, null, null);
         //mInventoryEquippedGrid_.addToLayout(layoutLine);
         //mInventoryEquippedGrid_.addToLayout(layoutHorizontal);
 
         if(mUseSecondaryGrid_){
-            mSecondaryInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID_SECONDARY, mInventoryBus_, mHoverInfo_, buttonCover);
+            mSecondaryInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID_SECONDARY, mInventoryBus_, mHoverInfo_, buttonCover, mMultiSelection_);
             mSecondaryInventoryGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, mSecondaryWidth_, mSecondaryHeight_);
             //mSecondaryInventoryGrid_.addToLayout(layoutLine);
             mSecondaryInventoryGrid_.addToLayout(layoutHorizontal);
         }
 
         if(mSupportsStorage_){
-            mStorageGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID, mInventoryBus_, mHoverInfo_, buttonCover);
+            mStorageGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID, mInventoryBus_, mHoverInfo_, buttonCover, mMultiSelection_);
             local storageHeight = mItemStorage_.getInventorySize() / mInventoryWidth;
             mStorageGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, mInventoryWidth, storageHeight);
             mStorageGrid_.addToLayout(layoutHorizontal);
@@ -452,6 +481,9 @@ enum InventoryBusEvents{
         if(event == InventoryBusEvents.ITEM_SELECTED){
             ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
             selectItem(data);
+        }
+        else if(event == InventoryBusEvents.ITEM_GROUP_SELECTION_CHANGED){
+            updateAcceptButtonState_();
         }
         else if(event == InventoryBusEvents.ITEM_HOVER_BEGAN){
             processItemHover(data);
@@ -792,6 +824,68 @@ enum InventoryBusEvents{
             ::ScreenManager.transitionToScreen(null, null, mLayerIdx);
         }
         ::Base.mExplorationLogic.unPauseExploration();
+    }
+
+    function updateAcceptButtonState_(){
+        if(mAcceptButton_ == null) return;
+
+        local totalSelectedItems = 0;
+        if(mInventoryGrid_ != null){
+            totalSelectedItems += mInventoryGrid_.getSelectedItemCount();
+        }
+        if(mInventoryEquippedGrid_ != null){
+            totalSelectedItems += mInventoryEquippedGrid_.getSelectedItemCount();
+        }
+        if(mSecondaryInventoryGrid_ != null){
+            totalSelectedItems += mSecondaryInventoryGrid_.getSelectedItemCount();
+        }
+        if(mStorageGrid_ != null){
+            totalSelectedItems += mStorageGrid_.getSelectedItemCount();
+        }
+
+        mAcceptButton_.setDisabled(totalSelectedItems == 0);
+    }
+
+    function acceptSelection_(){
+        local selectedItems = [];
+
+        addItemsFromGrid_(mInventoryGrid_, mInventory_, selectedItems);
+        addItemsFromGrid_(mSecondaryInventoryGrid_, mSecondaryItems_ != null ? mSecondaryItems_ : null, selectedItems);
+        addItemsFromGrid_(mStorageGrid_, mItemStorage_, selectedItems);
+
+        //Add equipped items separately since they don't use getItemForIdx
+        if(mInventoryEquippedGrid_ != null){
+            local selectedArray = mInventoryEquippedGrid_.getSelectedItems();
+            foreach(idx, selected in selectedArray){
+                if(selected){
+                    local item = mPlayerStats_.getEquippedItem(idx + 1);
+                    if(item != null){
+                        selectedItems.append(item);
+                    }
+                }
+            }
+        }
+
+        local eventData = {
+            "items": selectedItems,
+            "count": selectedItems.len()
+        };
+        _event.transmit(Event.INVENTORY_SELECTION_FINISHED, eventData);
+
+        closeInventory();
+    }
+
+    function addItemsFromGrid_(grid, targetInventory, selectedItems){
+        if(grid == null) return;
+        local selectedArray = grid.getSelectedItems();
+        foreach(idx, selected in selectedArray){
+            if(selected && targetInventory != null){
+                local item = targetInventory.getItemForIdx(idx);
+                if(item != null){
+                    selectedItems.append(item);
+                }
+            }
+        }
     }
 };
 

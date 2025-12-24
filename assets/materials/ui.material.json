@@ -359,6 +359,25 @@
             {
                 "texture": "directionIndicator.png"
             }
+        },
+
+        "greenTick" :
+        {
+            "blendblock": "gui/uiBlend",
+
+            "diffuse_map0" :
+            {
+                "texture": "greenTick.png"
+            }
+        },
+        "greenTickX2" :
+        {
+            "blendblock": "gui/uiBlend",
+
+            "diffuse_map0" :
+            {
+                "texture": "greenTickX2.png"
+            }
         }
     }
 }
