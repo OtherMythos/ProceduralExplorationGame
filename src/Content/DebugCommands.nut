@@ -31,6 +31,16 @@ variationSeed: %i";
     return format("Giving player '%s'", ::Items[itemId].getName());
 });
 
+::DebugConsole.registerCommand("artifact", "Give the player an artifact of id", 1, "i", function(command){
+    local artifactId = command[0].tointeger();
+    if(artifactId >= ArtifactId.MAX){
+        throw format("Invalid artifact idx '%i'", artifactId);
+    }
+    ::Base.mArtifactCollection.addArtifact(artifactId);
+
+    return format("Giving player '%s'", ::Artifacts[artifactId].getName());
+});
+
 ::DebugConsole.registerCommand("health", "Set the player's health to a value. Max health if no number provided.", 1, "i", function(command){
     local health = 1000000000;
     local healthDesc = "max";
