@@ -431,6 +431,7 @@
         ::MultiTouchManager.shutdown();
         mExplorationLogic.shutdown();
         ::ScreenManager.shutdown();
+        ::EffectManager.shutdown();
 
         ::expOrbMesh = null;
     }

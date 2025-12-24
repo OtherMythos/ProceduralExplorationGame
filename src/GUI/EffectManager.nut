@@ -92,6 +92,14 @@
         mActiveEffects_[i] = null;
     }
 
+    function shutdown(){
+        foreach(c,i in mActiveEffects_){
+            if(i == null) continue;
+            shutdownEffect_(c);
+        }
+        mActiveEffects_.clear();
+    }
+
     function update(){
         local destroyed = false;
         foreach(c,i in mActiveEffects_){
