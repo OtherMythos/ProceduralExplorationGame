@@ -409,6 +409,16 @@ enum InventoryBusEvents{
         return mShowingStorage_ ? mItemStorage_ : mInventory_;
     }
 
+    function getGridForData_(inventoryData){
+        if(inventoryData.gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
+            return mInventoryEquippedGrid_;
+        }else if(inventoryData.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
+            return mSecondaryInventoryGrid_;
+        }else{
+            return mShowingStorage_ ? mStorageGrid_ : mInventoryGrid_;
+        }
+    }
+
     function highlightPrevious(){
         processItemHover(mPreviousHighlight_);
 
@@ -468,7 +478,19 @@ enum InventoryBusEvents{
         else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_OPEN){
             local inventoryData = data;
             removeFromInventory_(inventoryData);
-            ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.BOTTLE_EFFECT, {"centre": Vec2(0, 0), "bottleScale": 0.5}));
+
+            //Calculate the window position of the item being opened
+            local idx = inventoryData.idx;
+            local targetGrid = getGridForData_(inventoryData);
+
+            local posForIdx = targetGrid.getPositionForIdx(idx);
+            local gridItemSize = targetGrid.getSizeForIdx(idx);
+            local itemCentre = posForIdx + (gridItemSize / 2);
+
+            //Convert window position to world position
+            local worldPos = ::EffectManager.getWorldPositionForWindowPos(itemCentre);
+
+            ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.BOTTLE_EFFECT, {"startPos": worldPos, "bottleScale": 0.5}));
             setItemForInventory(inventoryData, ::Item(ItemId.APPLE));
         }
         else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_TO_INVENTORY){

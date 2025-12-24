@@ -5,7 +5,7 @@ const BOTTLE_EFFECT_ROTATION_AMOUNT = 0.1;
 
 enum BottleEffectStages{
     NONE,
-    SCALE_IN,
+    MOVE_TO_CENTRE,
     VIBRATE_AND_ROTATE,
     BREAK,
 
@@ -16,13 +16,18 @@ local BottleEffectStateMachine = class extends ::Util.StateMachine{
 };
 
 {
-    BottleEffectStateMachine.mStates_[BottleEffectStages.SCALE_IN] = class extends ::Util.State{
-        mTotalCount_ = 10
+    BottleEffectStateMachine.mStates_[BottleEffectStages.MOVE_TO_CENTRE] = class extends ::Util.State{
+        mTotalCount_ = 15
         mNextState_ = BottleEffectStages.VIBRATE_AND_ROTATE;
         function start(data){
-            data.bottle.setPosition(data.centre.x, data.centre.y, BOTTLE_EFFECT_BOTTLE_Z);
+            //Start at the initial position
         }
         function update(p, data){
+            //Interpolate position from start to centre, while scaling in
+            local currentPos = data.startPos + (data.centre - data.startPos) * p;
+            data.bottle.setPosition(currentPos.x, currentPos.y, BOTTLE_EFFECT_BOTTLE_Z);
+
+            //Scale in during movement
             local scaleNode = data.bottle.getChild(0);
             local newScale = p * data.scale;
             scaleNode.setScale(newScale, newScale, newScale);
@@ -69,22 +74,27 @@ local BottleEffectStateMachine = class extends ::Util.StateMachine{
     mBottle_ = null;
 
     mCentre_ = Vec2(0, 0);
+    mStartPos_ = Vec2(0, 0);
     mScale_ = 1.0;
 
     mStateMachine_ = null;
 
     function setup(data){
-        mCentre_ = data.centre;
+        mCentre_ = ::Vec2_ZERO;
+        mStartPos_ = ::Vec2_ZERO;
+        if("startPos" in data){
+            mStartPos_ = data.startPos;
+        }
         if("bottleScale" in data){
             mScale_ = data.bottleScale;
         }
 
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
 
-        mBottle_ = createBottle(mParentNode_, mCentre_, mScale_);
+        mBottle_ = createBottle(mParentNode_, mStartPos_, mScale_);
 
-        mStateMachine_ = BottleEffectStateMachine({"bottle": mBottle_, "centre": mCentre_, "scale": mScale_});
-        mStateMachine_.setState(BottleEffectStages.SCALE_IN);
+        mStateMachine_ = BottleEffectStateMachine({"bottle": mBottle_, "centre": mCentre_, "startPos": mStartPos_, "scale": mScale_});
+        mStateMachine_.setState(BottleEffectStages.MOVE_TO_CENTRE);
     }
 
     function destroy(){
