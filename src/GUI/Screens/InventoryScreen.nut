@@ -491,7 +491,7 @@ enum InventoryBusEvents{
             local worldPos = ::EffectManager.getWorldPositionForWindowPos(itemCentre);
 
             ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.BOTTLE_EFFECT, {"startPos": worldPos, "bottleScale": 0.5}));
-            setItemForInventory(inventoryData, ::Item(ItemId.APPLE));
+            setItemForInventory(inventoryData, ::Item(ItemId.NOTE_SCRAP, {"artifactId": 0}));
         }
         else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_TO_INVENTORY){
             local item = mSecondaryItems_[data.idx];

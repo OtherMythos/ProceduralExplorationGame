@@ -412,7 +412,19 @@
     }
 
     function readLoreContentForItem(item){
-        local targetPath = "res://build/assets/readables/" + item.getDefData();
+        local targetPath = null;
+
+        local itemData = item.getData();
+        if(itemData != null){
+            local artifact = itemData.artifactId;
+            targetPath = "res://build/assets/readables/" + artifact + ".nut";
+        }else{
+            targetPath = "res://build/assets/readables/" + item.getDefData();
+        }
+        if(targetPath == null){
+            throw "Could not find lore content for item " + item;
+        }
+
         readLoreContentPath(targetPath);
     }
 
