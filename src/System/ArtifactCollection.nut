@@ -7,7 +7,17 @@
     mArtifacts_ = null;
 
     constructor(){
-        mArtifacts_ = [ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_1, ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_2, ArtifactId.ROCK_FRAGMENT_1];
+        mArtifacts_ = [
+            ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_1,
+            ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_2,
+            ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_3,
+            ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_3,
+            ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_3,
+            ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_3,
+            ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_3,
+            ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_3,
+            ArtifactId.ROCK_FRAGMENT_1
+        ];
     }
 
     /**

@@ -559,7 +559,7 @@ enum GameplayComplexMenuBusEvents{
         artifactPos.x += returnToTitleButton.getSize().x;
         artifactButton.setPosition(artifactPos);
         artifactButton.attachListenerForEvent(function(widget, action){
-            ::ScreenManager.transitionToScreen(Screen.ARTIFACT_SCREEN, null, 3);
+            ::ScreenManager.transitionToScreen(Screen.ARTIFACT_SCREEN, null, 2);
             ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
         }, _GUI_ACTION_PRESSED, this);
 
