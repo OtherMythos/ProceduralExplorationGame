@@ -17,6 +17,7 @@
         _doFile("script://StatusAfflictionEnums.nut");
         _doFile("script://VoxelEnums.nut");
         _doFile("script://PlacedItemEnums.nut");
+        _doFile("script://ArtifactEnums.nut");
     }
 
     function loadContentFiles(){
@@ -27,6 +28,8 @@
         _doFile("res://src/Content/StatusAfflictionDefs.nut");
         _doFile("res://src/Content/PlaceDefs.nut");
         _doFile("res://src/Content/PlacedItemDefs.nut");
+        _doFile("res://src/Content/Artifact.nut");
+        _doFile("res://src/Content/ArtifactDefs.nut");
         _doFile("script://VoxelDefs.nut");
     }
 
@@ -57,6 +60,7 @@
         _doFile("res://src/GUI/Screens/OtherMythosSplashScreen.nut");
         _doFile("res://src/GUI/Screens/FoundOrbScreen.nut");
         _doFile("res://src/GUI/Screens/BankDepositWithdrawScreen.nut");
+        _doFile("res://src/GUI/Screens/ArtifactScreen.nut");
 
         _doFile("res://src/GUI/Widgets/BankWidget.nut");
         _doFile("res://src/GUI/Widgets/ShopWidget.nut");

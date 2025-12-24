@@ -16,6 +16,7 @@
     mSystemSettings = null
     mLottieManager = null
     mIconButtonComplexAnimationManager = null
+    mArtifactCollection = null
 
     mGlobalDirectionLight = null
 
@@ -166,6 +167,9 @@
         _doFile("res://src/System/Inventory.nut");
 
         mPlayerStats = ::PlayerStats();
+
+        _doFile("res://src/System/ArtifactCollection.nut");
+        mArtifactCollection = ::ArtifactCollection();
 
         _doFile("res://src/System/MultiTouchManager.nut");
         ::MultiTouchManager.setup();

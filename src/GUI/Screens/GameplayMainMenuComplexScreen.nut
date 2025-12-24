@@ -542,6 +542,26 @@ enum GameplayComplexMenuBusEvents{
             ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
         }, _GUI_ACTION_PRESSED, this);
 
+        //Add button to return to title screen
+        local returnToTitleButton = ::IconButton(mWindow_, "backButtonIcon");
+        returnToTitleButton.setSize(Vec2(64, 64));
+        local returnButtonPos = newspaperButton.getPosition() + Vec2(newspaperButton.getSize().x + 10, 0);
+        returnToTitleButton.setPosition(returnButtonPos);
+        returnToTitleButton.attachListenerForEvent(function(widget, action){
+            returnToTitleScreen_();
+            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
+        }, _GUI_ACTION_PRESSED, this);
+        mReturnToTitleButton_ = returnToTitleButton;
+
+        local artifactButton = ::IconButton(mWindow_, "treasureChestIcon");
+        artifactButton.setSize(Vec2(64, 64));
+        local artifactPos = returnToTitleButton.getPosition() + Vec2(10, 0);
+        artifactPos.x += returnToTitleButton.getSize().x;
+        artifactButton.setPosition(artifactPos);
+        artifactButton.attachListenerForEvent(function(widget, action){
+            ::ScreenManager.transitionToScreen(Screen.ARTIFACT_SCREEN, null, 3);
+            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
+        }, _GUI_ACTION_PRESSED, this);
 
         local winSize = mWindow_.getSize();
 
@@ -615,17 +635,6 @@ enum GameplayComplexMenuBusEvents{
             local animId = ::Base.mIconButtonComplexAnimationManager.addAnimationToButton(glitterAnimator, orbCounter);
             mAnimationIds_.append(animId);
         }
-
-        //Add button to return to title screen
-        local returnToTitleButton = ::IconButton(mWindow_, "backButtonIcon");
-        returnToTitleButton.setSize(Vec2(64, 64));
-        local returnButtonPos = newspaperButton.getPosition() + Vec2(newspaperButton.getSize().x + 10, 0);
-        returnToTitleButton.setPosition(returnButtonPos);
-        returnToTitleButton.attachListenerForEvent(function(widget, action){
-            returnToTitleScreen_();
-            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
-        }, _GUI_ACTION_PRESSED, this);
-        mReturnToTitleButton_ = returnToTitleButton;
 
         line.layout();
 

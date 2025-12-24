@@ -24,6 +24,7 @@
     FOUND_ORB_SCREEN,
     BANK_DEPOSIT_WITHDRAW_SCREEN,
     GAME_TITLE_SCREEN,
+    ARTIFACT_SCREEN,
 
 ");
 
@@ -51,5 +52,6 @@
     "OtherMythosSplashScreen",
     "FoundOrbScreen",
     "BankDepositWithdrawScreen",
-    "GameTitleScreen"
+    "GameTitleScreen",
+    "artifactScreen"
 ]);
