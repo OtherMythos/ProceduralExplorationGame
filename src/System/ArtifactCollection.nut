@@ -7,17 +7,7 @@
     mArtifacts_ = null;
 
     constructor(){
-        mArtifacts_ = [
-            ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_1,
-            ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_2,
-            ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_3,
-            ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_3,
-            ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_3,
-            ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_3,
-            ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_3,
-            ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_3,
-            ArtifactId.ROCK_FRAGMENT_1
-        ];
+        mArtifacts_ = [];
     }
 
     /**
@@ -26,6 +16,15 @@
     function addArtifact(artifactId){
         mArtifacts_.append(artifactId);
         _event.transmit(Event.ARTIFACT_COLLECTED, artifactId);
+    }
+
+    /**
+     * Add an artifact without triggering events (used when loading from save).
+     */
+    function addArtifactDirect(artifactId){
+        if(!hasArtifact(artifactId)){
+            mArtifacts_.append(artifactId);
+        }
     }
 
     /**

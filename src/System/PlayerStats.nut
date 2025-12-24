@@ -89,6 +89,13 @@
             mItemStorage_.rawSetItems(storageData);
         }
 
+        // Load artifacts from save data
+        if(data.rawin("foundArtifacts") && data.foundArtifacts.len() > 0){
+            foreach(artifactId in data.foundArtifacts){
+                ::Base.mArtifactCollection.addArtifactDirect(artifactId);
+            }
+        }
+
         copyQuestData_(data.quest);
     }
     function getSaveSlot(){
@@ -109,6 +116,9 @@
         foreach(c,i in mItemStorage_.mInventoryItems_){
             mCurrentData_.storage[c] = (i == null ? null : i.getId());
         }
+
+        // Sync artifacts to data
+        mCurrentData_.foundArtifacts = ::Base.mArtifactCollection.getArtifacts();
 
         local questData = ::Base.mQuestManager.getTableForQuests();
         mCurrentData_.rawset("quest", questData);

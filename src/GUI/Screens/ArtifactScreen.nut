@@ -191,7 +191,7 @@
         if(artifactTypes.len() == 0){
             local emptyLabel = mArtifactScrollPanel_.createLabel();
             emptyLabel.setText("No artifacts collected yet.");
-            emptyLabel.setColour(0.6, 0.6, 0.6);
+            //emptyLabel.setColour(0.6, 0.6, 0.6);
             emptyLabel.setExpandHorizontal(true);
             layoutLine.addCell(emptyLabel);
         }
