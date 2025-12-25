@@ -14,6 +14,7 @@
     mPlayerDirectionBeam_ = null;
 
     mLabelWindow_ = null;
+    mYOrientationNegation_ = 1;
 
     PlaceMarkerIcon = class{
         mPanel_ = null;
@@ -61,10 +62,12 @@
         mPlayerY_ = 0;
         mDirX_ = 0;
         mDirY_ = 0;
-        constructor(parentWin, mapData, size=30, scale=1){
+        mYOrientationNegation_ = 1;
+        constructor(parentWin, mapData, size=30, scale=1, yOrientationNegation=1){
             mParent_ = parentWin;
             mMapData_ = mapData;
             mMapScale_ = scale;
+            mYOrientationNegation_ = yOrientationNegation;
 
             mPanel_ = parentWin.createPanel();
             mPanel_.setSize(size, 20);
@@ -77,7 +80,7 @@
             intendedPos *= mParent_.getSize();
             intendedPos /= mMapScale_;
 
-            local angle = atan2(-mDirY_, mDirX_);
+            local angle = atan2(mDirY_ * mYOrientationNegation_, mDirX_);
             mPanel_.setOrientation(angle);
 
             //Move the panel along the direction vector by half its size to position the bottom center at the player location
@@ -297,7 +300,7 @@
         if(mLabelWindow_ == null) return;
 
         if(mPlayerDirectionBeam_ == null){
-            mPlayerDirectionBeam_ = PlaceMarkerDirectionBeam(mLabelWindow_, mMapData_, 30, worldScale);
+            mPlayerDirectionBeam_ = PlaceMarkerDirectionBeam(mLabelWindow_, mMapData_, 30, worldScale, mYOrientationNegation_);
         }
         mPlayerDirectionBeam_.setCentre(x, y);
 
@@ -327,7 +330,7 @@
 
     function onMinimapPlayerDirectionChanged(id, data){
         if(mPlayerLocationPanel_ != null){
-            local angle = atan2(-data.dirY, data.dirX);
+            local angle = atan2(data.dirY * mYOrientationNegation_, data.dirX);
             mPlayerLocationPanel_.mPanel_.setOrientation(angle);
         }
     }

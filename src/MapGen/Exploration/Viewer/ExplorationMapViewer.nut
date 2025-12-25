@@ -34,6 +34,7 @@
         mFoundPlaces_ = [];
 
         base.constructor();
+        mYOrientationNegation_ = -1;
     }
 
     function shutdown(){
