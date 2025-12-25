@@ -149,6 +149,14 @@ EntityManager.EntityManager <- class{
                 destroyEntity(i.eid, EntityDestroyReason.LIFETIME);
             }
         }
+        foreach(i in mComponents_[EntityComponents.SPOKEN_TEXT].mComps_){
+            if(i == null) continue;
+            i.mLifetime--;
+            if(i.mLifetime <= 0){
+                processSpokenTextComponentCleanup_(i);
+                removeComponent(i.eid, EntityComponents.SPOKEN_TEXT);
+            }
+        }
         foreach(i in mComponents_[EntityComponents.SCRIPT].mComps_){
             if(i == null) continue;
             i.mScript.update(i.eid);
@@ -552,10 +560,7 @@ EntityManager.EntityManager <- class{
                     ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.mBillboardManager_.untrackNode(component.mBillboard);
                 }
                 else if(i == EntityComponents.SPOKEN_TEXT){
-                    ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.mBillboardManager_.untrackNode(component.mBillboardIdx);
-                    if(component.mSceneNode != null){
-                        component.mSceneNode.destroyNodeAndChildren();
-                    }
+                    processSpokenTextComponentCleanup_(component);
                 }
                 else if(i == EntityComponents.DATABLOCK){
                     ::DatablockManager.removeDatablock(component.mDatablock);
@@ -580,6 +585,13 @@ EntityManager.EntityManager <- class{
                     component.mGizmo = null;
                 }
             }
+        }
+    }
+
+    function processSpokenTextComponentCleanup_(component){
+        ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.mBillboardManager_.untrackNode(component.mBillboardIdx);
+        if(component.mSceneNode != null){
+            component.mSceneNode.destroyNodeAndChildren();
         }
     }
 

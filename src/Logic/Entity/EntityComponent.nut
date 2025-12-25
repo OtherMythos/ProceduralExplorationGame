@@ -132,12 +132,14 @@
     mBillboard = null;
     mSceneNode = null;
     mYOffset = 0;
+    mLifetime = 0;
 
-    constructor(billboardIdx, billboard, sceneNode=null, yOffset=0){
+    constructor(billboardIdx, billboard, sceneNode=null, yOffset=0, lifetime=100){
         mBillboardIdx = billboardIdx;
         mBillboard = billboard;
         mSceneNode = sceneNode;
         mYOffset = yOffset;
+        mLifetime = lifetime;
     }
 
 };
