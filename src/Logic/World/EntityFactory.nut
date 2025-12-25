@@ -54,6 +54,19 @@
         return billboard;
     }
 
+    function constructSpokenText_(entity, manager, node, screen, text, yOffset){
+        local worldMask = (0x1 << mConstructorWorld_.getWorldId());
+        local billboard = ::BillboardManager.SpokenTextBillboard(text, screen.mWindow_, worldMask);
+
+        //Create a sibling scene node for the billboard positioned at the Y offset
+        local billboardNode = node.getParent().createChildSceneNode();
+        billboardNode.setPosition(node.getPositionVec3() + Vec3(0, yOffset, 0));
+
+        local billboardIdx = screen.mWorldMapDisplay_.mBillboardManager_.trackNode(billboardNode, billboard);
+        manager.assignComponent(entity, EntityComponents.SPOKEN_TEXT, ::EntityManager.Components[EntityComponents.SPOKEN_TEXT](billboardIdx, billboard, billboardNode, yOffset));
+        return billboard;
+    }
+
     function constructPlayer(explorationScreen, playerStats, ghostPlayer=false){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = Vec3();
@@ -247,7 +260,7 @@
         if(enemyType == EnemyId.BEE){
             scriptObj = ::BeeEnemyScript(en)
         }else{
-            scriptObj = ::BasicEnemyScript(en)
+            scriptObj = ::BasicEnemyScript(en, true, enemyType)
         }
         assert(scriptObj != null);
         manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](scriptObj));

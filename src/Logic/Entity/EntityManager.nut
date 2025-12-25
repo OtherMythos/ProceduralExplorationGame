@@ -11,6 +11,7 @@ enum EntityComponents{
     LIFETIME,
     ANIMATION,
     BILLBOARD,
+    SPOKEN_TEXT,
     HEALTH,
     SCRIPT,
     SPOILS,
@@ -502,6 +503,12 @@ EntityManager.EntityManager <- class{
                 g.setPosition(newPos)
             }
         }
+        if(mEntityComponentHashes_[idx] & (1<<EntityComponents.SPOKEN_TEXT)){
+            local comp = mComponents_[EntityComponents.SPOKEN_TEXT].getCompForEid(eid);
+            if(comp.mSceneNode != null){
+                comp.mSceneNode.setPosition(newPos + Vec3(0, comp.mYOffset, 0));
+            }
+        }
     }
 
     function processEntityDestruction_(eid, idx, reason){
@@ -543,6 +550,12 @@ EntityManager.EntityManager <- class{
                 }
                 else if(i == EntityComponents.BILLBOARD){
                     ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.mBillboardManager_.untrackNode(component.mBillboard);
+                }
+                else if(i == EntityComponents.SPOKEN_TEXT){
+                    ::Base.mExplorationLogic.mGui_.mWorldMapDisplay_.mBillboardManager_.untrackNode(component.mBillboardIdx);
+                    if(component.mSceneNode != null){
+                        component.mSceneNode.destroyNodeAndChildren();
+                    }
                 }
                 else if(i == EntityComponents.DATABLOCK){
                     ::DatablockManager.removeDatablock(component.mDatablock);

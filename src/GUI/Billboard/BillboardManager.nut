@@ -106,3 +106,4 @@ _doFile("res://src/GUI/Billboard/GatewayExplorationEndBillboard.nut");
 _doFile("res://src/GUI/Billboard/PlaceExplorationVisitBillboard.nut");
 _doFile("res://src/GUI/Billboard/PercentageEncounterBillboard.nut");
 _doFile("res://src/GUI/Billboard/PlaceDescriptionBillboard.nut");
+_doFile("res://src/GUI/Billboard/SpokenTextBillboard.nut");

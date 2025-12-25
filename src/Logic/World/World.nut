@@ -1530,6 +1530,42 @@ enum WorldMousePressContexts{
         mActiveEnemies_.rawset(enemyEntry.mEntity_, enemyEntry);
         return enemyEntry;
     }
+
+    function getEntityAABB(entityId){
+        //Check if there's an active enemy entry for this entity
+        if(mActiveEnemies_.rawin(entityId)){
+            local activeEnemy = mActiveEnemies_[entityId];
+            return activeEnemy.getAABB();
+        }
+        //Otherwise return a default AABB
+        return AABB();
+    }
+
+    function addSpokenText(entityId, text){
+        local manager = mEntityManager_;
+        if(!manager.entityValid(entityId)) return;
+        if(!manager.hasComponent(entityId, EntityComponents.SCENE_NODE)) return;
+
+        //Check if spoken text component already exists
+        if(manager.hasComponent(entityId, EntityComponents.SPOKEN_TEXT)){
+            local comp = manager.getComponent(entityId, EntityComponents.SPOKEN_TEXT);
+            //Update the text on the existing billboard
+            if(comp.mBillboard != null){
+                comp.mBillboard.setText(text);
+            }
+            return;
+        }
+
+        local sceneNodeComp = manager.getComponent(entityId, EntityComponents.SCENE_NODE);
+        local node = sceneNodeComp.mNode;
+
+        //Get the AABB for the entity and calculate the Y offset
+        local aabb = getEntityAABB(entityId);
+        local yOffset = aabb.getRadius() / 2;
+
+        mEntityFactory_.constructSpokenText_(entityId, manager, node, mGui_, text, yOffset);
+    }
+
     function createEnemyCheckCollision(enemyType, pos){
         local placementValid = checkEnemyCollisionPlacement(pos);
         if(!placementValid){

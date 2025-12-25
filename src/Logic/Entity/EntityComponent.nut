@@ -126,6 +126,22 @@
 
 };
 
+::EntityManager.Components[EntityComponents.SPOKEN_TEXT] = class extends ::EntityManager.Component{
+
+    mBillboardIdx = null;
+    mBillboard = null;
+    mSceneNode = null;
+    mYOffset = 0;
+
+    constructor(billboardIdx, billboard, sceneNode=null, yOffset=0){
+        mBillboardIdx = billboardIdx;
+        mBillboard = billboard;
+        mSceneNode = sceneNode;
+        mYOffset = yOffset;
+    }
+
+};
+
 ::EntityManager.Components[EntityComponents.HEALTH] = class extends ::EntityManager.Component{
 
     mHealth = 1;

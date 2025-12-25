@@ -234,6 +234,15 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         //}
         //_component.sceneNode.getNode(mEntity_);
     }
+
+    function getAABB(){
+        if(mModel_ != null){
+            return mModel_.determineAABB();
+        }
+        //Fallback to default AABB if no model
+        return AABB();
+    }
+
     function getPosition(){
         return mPos_;
     }

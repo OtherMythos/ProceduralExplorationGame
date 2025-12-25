@@ -6,6 +6,8 @@ enum BasicEnemyEvents{
 ::BasicEnemyScript <- class{
 
     mMachine = null;
+    mEnemyType_ = null;
+    mEid_ = null;
 
 
 BasicEnemyMachine = class extends ::CombatStateMachine{
@@ -96,11 +98,18 @@ BasicEnemyMachine = class extends ::CombatStateMachine{
     }
 };
 
-    constructor(eid, idleWalk=true){
+    constructor(eid, idleWalk=true, enemyType=null){
+        mEnemyType_ = enemyType;
+        mEid_ = eid;
         mMachine = BasicEnemyMachine(eid, idleWalk);
     }
 
     function receivePlayerSpotted(started){
+        if(started && mEnemyType_ == EnemyId.GOBLIN){
+            //Goblin sees player and says 'humon'
+            local world = ::Base.mExplorationLogic.mCurrentWorld_;
+            world.addSpokenText(mEid_, "humon");
+        }
         mMachine.notify(started ? BasicEnemyEvents.PLAYER_SPOTTED : BasicEnemyEvents.PLAYER_NOT_SPOTTED);
     }
 
