@@ -94,6 +94,7 @@
     mWindow_ = null;
     mArtifactScrollPanel_ = null;
     mActionSetId_ = null;
+    mPaddingTop_ = 0;
 
     function setup(data){
         createBackgroundScreen_();
@@ -104,21 +105,23 @@
         mWindow_.setVisualsEnabled(false);
         mWindow_.setBreadthFirst(true);
 
+        local insets = _window.getScreenSafeAreaInsets();
         local padding = 20;
+        mPaddingTop_ = padding + insets.top;
         local windowWidth = mWindow_.getSize().x - (padding * 2);
-        local windowHeight = mWindow_.getSize().y - (padding * 2);
+        local windowHeight = mWindow_.getSize().y - (mPaddingTop_ + padding);
 
         //Title
         local titleLabel = mWindow_.createLabel();
         titleLabel.setText("Artifacts");
         //titleLabel.setFontHeight(36);
-        titleLabel.setPosition(padding, padding);
+        titleLabel.setPosition(padding, mPaddingTop_);
 
         //Close button
         local closeButton = mWindow_.createButton();
         local closeSize = 64;
         closeButton.setSize(closeSize, closeSize);
-        closeButton.setPosition(mWindow_.getSize().x - closeSize - padding, padding);
+        closeButton.setPosition(mWindow_.getSize().x - closeSize - padding, mPaddingTop_);
         closeButton.setUserId(0);
         closeButton.attachListenerForEvent(function(widget, action){
             ::HapticManager.triggerSimpleHaptic(HapticType.SELECTION);
@@ -132,7 +135,7 @@
         closeIcon.setPosition(closeButton.getPosition());
 
         //Scroll area for artifacts
-        local scrollStartY = padding + 50;
+        local scrollStartY = mPaddingTop_ + 50;
         local scrollHeight = windowHeight - 50;
 
         //mArtifactScrollPanel_ = mWindow_.createScrollPanel();
@@ -197,8 +200,8 @@
         }
 
         layoutLine.setMarginForAllCells(0, 10);
-        layoutLine.setPosition(20, 80);
-        layoutLine.setSize(::drawable.x - 40, mWindow_.getSize().y);
+        layoutLine.setPosition(20, mPaddingTop_ + 80);
+        layoutLine.setSize(::drawable.x - (20 * 2), mWindow_.getSize().y);
         layoutLine.layout();
 
         //Position widgets after layout
