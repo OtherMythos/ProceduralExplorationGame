@@ -36,6 +36,15 @@
 
     function registerBee(beeEntry){
         mActiveBees_.append(beeEntry);
+        //Pass hive position to bee script
+        local world = ::Base.mExplorationLogic.mCurrentWorld_;
+        local beeEid = beeEntry.getEID();
+        local manager = world.getEntityManager();
+        if(manager.hasComponent(beeEid, EntityComponents.SCRIPT)){
+            local comp = manager.getComponent(beeEid, EntityComponents.SCRIPT);
+            local hivePos = manager.getPosition(mEid_);
+            comp.mScript.setHivePosition(hivePos, mEid_);
+        }
     }
 
     function healthChange(newHealth, percentage, difference){
