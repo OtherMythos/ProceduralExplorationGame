@@ -15,15 +15,26 @@
     mFullSize_ = Vec2(98, 98);
     mAnimationRotation_ = 0.0;
     mAnimationRotationX_ = 0.0;
+    mFoundAnimationProgress_ = 0.0;
+    mFoundAnimationActive_ = true;
+    mFoundAnimationStartPos_ = null;
+    mFoundAnimationFinalPos_ = null;
+    mFoundAnimationFinalSize_ = null;
 
     static ITEM_MESH_Z = 5;
     static LABEL_OFFSET_Y = -10;
     static ANIMATION_SPEED = 0.02;
     static ANIMATION_SPEED_X = 0.005;
+    static FOUND_ANIMATION_DURATION = 0.6;
+    static FOUND_ANIMATION_START_SCALE = 0.1;
 
     constructor(parentWindow, itemDef, scale=1.0){
         mParentWindow_ = parentWindow;
         mItemDef_ = itemDef;
+
+        mFoundAnimationStartPos_ = Vec2_ZERO;
+        mFoundAnimationFinalPos_ = Vec2_ZERO;
+        mFoundAnimationFinalSize_ = Vec2_ZERO;
 
         mMeshSize_ = mFullSize_ * 0.75;
 
@@ -91,6 +102,21 @@
     function setPosition(pos){
         mPosition_ = pos;
 
+        //Calculate the centre position where the render icon should be
+        local meshPanelCentre = Vec2(pos.x + mFullSize_.x / 2, pos.y + mMeshSize_.y / 2);
+
+        //Update final position for animation without resetting animation state
+        mFoundAnimationFinalPos_ = meshPanelCentre;
+        mFoundAnimationFinalSize_ = Vec2(mMeshSize_.x * 0.5, mMeshSize_.y * 0.5);
+
+        //Only initialise animation on first call (when progress is 0)
+        if(mFoundAnimationProgress_ == 0.0){
+            //Calculate start position from screen centre
+            local screenCentre = (_window.getSize() / 2);
+            mFoundAnimationStartPos_ = screenCentre;
+            mFoundAnimationActive_ = true;
+        }
+
         //Position the debug panel at the position
         if(mDebugPanel_ != null){
             mDebugPanel_.setPosition(pos);
@@ -116,11 +142,9 @@
         labelPos.x = (mFullSize_.x - mLabel_.getSize().x) / 2;
         mLabel_.setPosition(labelPos);
 
-        //Position the render icon
+        //Position the render icon at start of animation
         if(mRenderIcon_ != null){
-            local meshPanelCentre = Vec2(pos.x + mFullSize_.x / 2, pos.y + mMeshSize_.y / 2);
-            mRenderIcon_.setPosition(meshPanelCentre);
-            mRenderIcon_.setSize(mMeshSize_.x * 0.5, mMeshSize_.y * 0.5);
+            updateRenderIconPosition_();
         }
     }
 
@@ -176,6 +200,16 @@
 
     function update(){
         if(mRenderIcon_ != null){
+            //Update found animation
+            if(mFoundAnimationActive_){
+                mFoundAnimationProgress_ += 1.0 / (FOUND_ANIMATION_DURATION * 60.0);
+                if(mFoundAnimationProgress_ >= 1.0){
+                    mFoundAnimationProgress_ = 1.0;
+                    mFoundAnimationActive_ = false;
+                }
+                updateRenderIconPosition_();
+            }
+
             //Update rotation animation
             mAnimationRotation_ += ANIMATION_SPEED;
             if(mAnimationRotation_ >= (PI * 2)){
@@ -195,5 +229,28 @@
             local combinedQuat = rotQuatY * rotQuatX;
             mRenderIcon_.setOrientation(combinedQuat);
         }
+    }
+
+    function updateRenderIconPosition_(){
+        if(mRenderIcon_ == null){
+            return;
+        }
+
+        //Easing function for smooth animation (ease-out cubic)
+        local easeProgress = 1.0 - pow(1.0 - mFoundAnimationProgress_, 3.0);
+        local easeProgressY = ::Easing.easeOutBack(mFoundAnimationProgress_);
+
+        //Interpolate position from start to final
+        local animPos = mFoundAnimationStartPos_ + (mFoundAnimationFinalPos_ - mFoundAnimationStartPos_) * easeProgress;
+        animPos.y = mFoundAnimationStartPos_.y + (mFoundAnimationFinalPos_.y - mFoundAnimationStartPos_.y) * easeProgressY;
+
+        //Interpolate scale from start to final
+        local startScale = FOUND_ANIMATION_START_SCALE;
+        local endScale = 1.0;
+        local animScale = startScale + (endScale - startScale) * easeProgress;
+        local animSize = mFoundAnimationFinalSize_ * animScale;
+
+        mRenderIcon_.setPosition(animPos);
+        mRenderIcon_.setSize(animSize.x, animSize.y);
     }
 };
