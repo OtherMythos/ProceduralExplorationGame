@@ -34,7 +34,7 @@
             return;
         }
 
-        mRenderIcon_ = ::RenderIconManager.createIcon(meshName);
+        mRenderIcon_ = ::RenderIconManager.createIcon(meshName, true);
     }
 
     function createLabel_(){

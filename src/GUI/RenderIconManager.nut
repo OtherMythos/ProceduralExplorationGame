@@ -5,11 +5,14 @@
         mMesh_ = null;
         mMeshItem_ = null;
         mNode_ = null;
+        mMeshNode_ = null;
 
         mCurrentScreenPos_ = null;
+        mCentreMesh_ = false;
 
-        constructor(parentNode){
+        constructor(parentNode, centreMesh=false){
             mParentNode_ = parentNode;
+            mCentreMesh_ = centreMesh;
             //this.mParentNode_.setVisible(false);
         }
 
@@ -18,6 +21,8 @@
             mCurrentScreenPos_ = Vec2();
             if(mMesh_ == null){
                 if(mNode_) mNode_.destroyNodeAndChildren();
+                mNode_ = null;
+                mMeshNode_ = null;
                 return;
             }
 
@@ -30,7 +35,22 @@
 
             local item = _gameCore.createVoxMeshItem(mesh);
             item.setRenderQueueGroup(RENDER_QUEUE_EFFECT_FG);
-            mNode_.attachObject(item);
+
+            //Create a child node for the mesh if centring is enabled
+            if(mCentreMesh_){
+                mMeshNode_ = mNode_.createChildSceneNode();
+                mMeshNode_.attachObject(item);
+
+                //Calculate the centre offset from the AABB
+                local aabb = item.getLocalAabb();
+                local halfSize = aabb.getHalfSize();
+                local centre = aabb.getCentre();
+                mMeshNode_.setPosition(-centre.x, -centre.y, -centre.z);
+            }else{
+                mNode_.attachObject(item);
+                mMeshNode_ = null;
+            }
+
             mMeshItem_ = item;
         }
 
@@ -89,8 +109,8 @@
 
     }
 
-    function createIcon(mesh = null){
-        local newIcon = RenderIcon(mParentNode_);
+    function createIcon(mesh = null, centreMesh = false){
+        local newIcon = RenderIcon(mParentNode_, centreMesh);
         if(mesh != null){
             newIcon.setMesh(mesh);
         }
