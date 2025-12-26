@@ -717,13 +717,67 @@ enum ExplorationScreenWidgetType{
                 mItemWidgets_[i].update();
                 mWidgetTimeouts_[i]++;
                 if(mWidgetTimeouts_[i] >= ITEM_TIMEOUT_FRAMES){
-                    local oldWidget = mItemWidgets_.remove(i);
-                    mWidgetTimeouts_.remove(i);
-                    oldWidget.shutdown();
-                    updatePositions_();
+                    //Start removal animation
+                    if(!mItemWidgets_[i].mRemovalAnimationActive_){
+                        mItemWidgets_[i].startRemovalAnimation();
+                    }else{
+                        //Update removal animation
+                        mItemWidgets_[i].mRemovalAnimationProgress_ += 1.0 / (::GuiWidgets.FoundItemWidget.REMOVAL_ANIMATION_DURATION * 60.0);
+                        if(mItemWidgets_[i].mRemovalAnimationProgress_ >= 1.0){
+                            //Animation complete, remove widget
+                            local oldWidget = mItemWidgets_.remove(i);
+                            mWidgetTimeouts_.remove(i);
+                            oldWidget.shutdown();
+                            updatePositions_();
+                            continue;
+                        }
+                        updateRemovalAnimationForWidget_(mItemWidgets_[i]);
+                    }
+                    i++;
                 }else{
                     i++;
                 }
+            }
+        }
+
+        function updateRemovalAnimationForWidget_(widget){
+            //Ease out cubic for smooth removal
+            local easeProgress = 1.0 - pow(1.0 - widget.mRemovalAnimationProgress_, 3.0);
+
+            //Animate upward by the widget size
+            local upwardOffset = widget.getSize().y * widget.mRemovalAnimationProgress_;
+            local newPos = widget.mPosition_ - Vec2(0, upwardOffset);
+
+            //Animate opacity to 0
+            local opacity = 1.0 - easeProgress;
+
+            //Animate scale from 1.0 to 0.0
+            local scale = 1.0 - easeProgress;
+
+            //TODO remove direct access to widget members
+            if(widget.mRenderIcon_ != null){
+                local iconSize = widget.mFoundAnimationFinalSize_ * scale;
+                widget.mRenderIcon_.setPosition(Vec2(newPos.x + widget.mFullSize_.x / 2, newPos.y + widget.mMeshSize_.y / 2));
+                widget.mRenderIcon_.setSize(iconSize.x, iconSize.y);
+            }
+
+            if(widget.mLabel_ != null){
+                widget.mLabel_.setPosition(newPos.x + (widget.mFullSize_.x - widget.mLabel_.getSize().x) / 2, newPos.y + widget.mMeshSize_.y + ::GuiWidgets.FoundItemWidget.LABEL_OFFSET_Y);
+                widget.mLabel_.setTextColour(1, 1, 1, opacity);
+            }
+
+            if(widget.mGradientPanel_ != null){
+                widget.mGradientPanel_.setColour(ColourValue(1, 1, 1, opacity * 0.5));
+            }
+
+            if(widget.mDebugPanel_ != null){
+                widget.mDebugPanel_.setPosition(newPos);
+            }
+
+            if(widget.mDebugMeshPanel_ != null){
+                local meshPanelPos = newPos + (widget.mFullSize_ - widget.mMeshSize_) / 2;
+                meshPanelPos.y = newPos.y;
+                widget.mDebugMeshPanel_.setPosition(meshPanelPos);
             }
         }
 

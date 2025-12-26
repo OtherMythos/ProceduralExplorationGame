@@ -20,6 +20,8 @@
     mFoundAnimationStartPos_ = null;
     mFoundAnimationFinalPos_ = null;
     mFoundAnimationFinalSize_ = null;
+    mRemovalAnimationProgress_ = 0.0;
+    mRemovalAnimationActive_ = false;
 
     static ITEM_MESH_Z = 5;
     static LABEL_OFFSET_Y = -10;
@@ -27,6 +29,7 @@
     static ANIMATION_SPEED_X = 0.005;
     static FOUND_ANIMATION_DURATION = 0.4;
     static FOUND_ANIMATION_START_SCALE = 0.1;
+    static REMOVAL_ANIMATION_DURATION = 0.3;
 
     constructor(parentWindow, itemDef, scale=1.0){
         mParentWindow_ = parentWindow;
@@ -165,6 +168,11 @@
             //RenderIconManager doesn't expose setVisible, but we can control via parent node visibility
             //For now, leaving this as a placeholder
         }
+    }
+
+    function startRemovalAnimation(){
+        mRemovalAnimationProgress_ = 0.0;
+        mRemovalAnimationActive_ = true;
     }
 
     function shutdown(){
