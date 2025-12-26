@@ -378,6 +378,16 @@
             {
                 "texture": "greenTickX2.png"
             }
+        },
+
+        "simpleGradient" :
+        {
+            "blendblock": "gui/uiBlend",
+
+            "diffuse_map0" :
+            {
+                "texture": "simpleGradient.png"
+            }
         }
     }
 }

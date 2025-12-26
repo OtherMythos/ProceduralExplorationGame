@@ -8,6 +8,7 @@
     mItemDef_ = null;
     mDebugPanel_ = null;
     mDebugMeshPanel_ = null;
+    mGradientPanel_ = null;
 
     mPosition_ = Vec2(0, 0);
     mMeshSize_ = null;
@@ -56,6 +57,12 @@
     }
 
     function createDebugPanel_(){
+        mGradientPanel_ = mParentWindow_.createPanel();
+        mGradientPanel_.setSize(mMeshSize_);
+        mGradientPanel_.setClickable(false);
+        mGradientPanel_.setDatablock("simpleGradient");
+        mGradientPanel_.setColour(ColourValue(1, 1, 1, 0.5));
+
         mDebugPanel_ = mParentWindow_.createPanel();
         mDebugPanel_.setSize(mFullSize_);
         mDebugPanel_.setClickable(false);
@@ -96,6 +103,13 @@
             mDebugMeshPanel_.setPosition(meshPanelPos);
         }
 
+        //Position the gradient panel centered at the top
+        if(mGradientPanel_ != null){
+            local gradientPanelPos = pos + (mFullSize_ - mMeshSize_) / 2;
+            gradientPanelPos.y = pos.y;
+            mGradientPanel_.setPosition(gradientPanelPos);
+        }
+
         //Position the label below the mesh
         local labelPos = mPosition_ + mMeshSize_;
         labelPos.y += LABEL_OFFSET_Y;
@@ -120,6 +134,9 @@
         if(mDebugMeshPanel_ != null){
             mDebugMeshPanel_.setVisible(visible);
         }
+        if(mGradientPanel_ != null){
+            mGradientPanel_.setVisible(visible);
+        }
         if(mRenderIcon_ != null){
             //RenderIconManager doesn't expose setVisible, but we can control via parent node visibility
             //For now, leaving this as a placeholder
@@ -138,6 +155,10 @@
         if(mDebugMeshPanel_ != null){
             _gui.destroy(mDebugMeshPanel_);
             mDebugMeshPanel_ = null;
+        }
+        if(mGradientPanel_ != null){
+            _gui.destroy(mGradientPanel_);
+            mGradientPanel_ = null;
         }
         if(mRenderIcon_ != null){
             mRenderIcon_.destroy();
