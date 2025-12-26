@@ -25,7 +25,7 @@
     static LABEL_OFFSET_Y = -10;
     static ANIMATION_SPEED = 0.02;
     static ANIMATION_SPEED_X = 0.005;
-    static FOUND_ANIMATION_DURATION = 0.6;
+    static FOUND_ANIMATION_DURATION = 0.4;
     static FOUND_ANIMATION_START_SCALE = 0.1;
 
     constructor(parentWindow, itemDef, scale=1.0){
@@ -252,5 +252,13 @@
 
         mRenderIcon_.setPosition(animPos);
         mRenderIcon_.setSize(animSize.x, animSize.y);
+
+        //Animate opacity of gradient panel and label
+        if(mGradientPanel_ != null){
+            mGradientPanel_.setColour(ColourValue(1, 1, 1, easeProgress * 0.5));
+        }
+        if(mLabel_ != null){
+            mLabel_.setTextColour(1, 1, 1, easeProgress);
+        }
     }
 };
