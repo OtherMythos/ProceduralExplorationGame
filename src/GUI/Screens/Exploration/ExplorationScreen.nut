@@ -711,9 +711,10 @@ enum ExplorationScreenWidgetType{
         }
 
         function update(){
-            //Update all widget timeouts and check for expiration
+            //Update all widgets and their timeouts
             local i = 0;
             while(i < mItemWidgets_.len()){
+                mItemWidgets_[i].update();
                 mWidgetTimeouts_[i]++;
                 if(mWidgetTimeouts_[i] >= ITEM_TIMEOUT_FRAMES){
                     local oldWidget = mItemWidgets_.remove(i);
@@ -953,7 +954,7 @@ enum ExplorationScreenWidgetType{
         //Found items manager - positioned to the right of the inventory widget
         mFoundItemIconsManager_ = FoundItemIconsManager(mWindow_);
         local inventoryWidgetPos = mInventoryWidget_.getPosition();
-        mFoundItemIconsManager_.setBasePosition(inventoryWidgetPos + Vec2(0, mInventoryWidget_.getSize().y));
+        mFoundItemIconsManager_.setBasePosition(inventoryWidgetPos + Vec2(0, mInventoryWidget_.getSize().y + 20));
 
         _event.subscribe(Event.ACTIONS_CHANGED, receiveActionsChanged, this);
         _event.subscribe(Event.WORLD_PREPARATION_STATE_CHANGE, receivePreparationStateChange, this);

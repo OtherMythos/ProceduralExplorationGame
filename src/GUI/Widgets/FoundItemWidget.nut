@@ -12,9 +12,13 @@
     mPosition_ = Vec2(0, 0);
     mMeshSize_ = null;
     mFullSize_ = Vec2(98, 98);
+    mAnimationRotation_ = 0.0;
+    mAnimationRotationX_ = 0.0;
 
     static ITEM_MESH_Z = 5;
     static LABEL_OFFSET_Y = -10;
+    static ANIMATION_SPEED = 0.02;
+    static ANIMATION_SPEED_X = 0.005;
 
     constructor(parentWindow, itemDef, scale=1.0){
         mParentWindow_ = parentWindow;
@@ -25,6 +29,9 @@
         createRenderIcon_();
         createLabel_();
         createDebugPanel_();
+
+        mDebugPanel_.setVisible(false);
+        mDebugMeshPanel_.setVisible(false);
     }
 
     function createRenderIcon_(){
@@ -144,5 +151,28 @@
 
     function getItemDef(){
         return mItemDef_;
+    }
+
+    function update(){
+        if(mRenderIcon_ != null){
+            //Update rotation animation
+            mAnimationRotation_ += ANIMATION_SPEED;
+            if(mAnimationRotation_ >= (PI * 2)){
+                mAnimationRotation_ -= (PI * 2);
+            }
+
+            mAnimationRotationX_ -= ANIMATION_SPEED_X;
+            if(mAnimationRotationX_ <= -(PI)){
+                mAnimationRotationX_ += (PI * 2);
+            }
+
+            //Create rotation around Y axis
+            local rotQuatY = Quat(mAnimationRotation_, ::Vec3_UNIT_Y);
+            //Create rotation around X axis
+            local rotQuatX = Quat(mAnimationRotationX_, ::Vec3_UNIT_X * 0.5);
+            //Combine rotations
+            local combinedQuat = rotQuatY * rotQuatX;
+            mRenderIcon_.setOrientation(combinedQuat);
+        }
     }
 };
