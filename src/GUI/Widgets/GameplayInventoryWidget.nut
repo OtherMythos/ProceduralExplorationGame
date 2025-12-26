@@ -84,6 +84,10 @@
         mIconButton_.setPosition(mIconBackground_.getPosition());
     }
 
+    function getSize(){
+        return mIconBackground_.getSize();
+    }
+
     function getPosition(){
         return mIconButton_.getPosition();
     }

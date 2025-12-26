@@ -78,7 +78,7 @@
                 ::Base.mExplorationLogic.readLoreContentForItem(::Items[ItemId.BOOK_OF_GOBLIN_STORIES]);
             },
             function(widget, action){
-                local renderIcon = ::RenderIconManager.createIcon("cube");
+                local renderIcon = ::RenderIconManager.createIcon("simpleSword.voxMesh");
                 renderIcon.setPosition(Vec2(100, 100));
                 renderIcon.setSize(50, 50);
                 mTestRenderIcon_ = renderIcon;

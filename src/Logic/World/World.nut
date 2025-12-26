@@ -1944,6 +1944,7 @@ enum WorldMousePressContexts{
             printf("Giving player item %s", data.mFirst.tostring());
             ::Base.mPlayerStats.addToInventory(data.mFirst);
             ::HapticManager.triggerSimpleHaptic(HapticType.HEAVY);
+            _event.transmit(Event.ITEM_GIVEN, data.mFirst);
         }
         else if(data.mType == SpoilsComponentType.PICK_KEEP_PLACED_ITEM){
             ::Base.mPlayerStats.addToInventory(data.mFirst);

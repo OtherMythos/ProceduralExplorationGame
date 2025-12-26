@@ -45,6 +45,7 @@ enum ExplorationScreenWidgetType{
     mLayoutLine_ = null;
     mZoomLines_ = null;
     mMobileActionInfo_ = null;
+    mFoundItemIconsManager_ = null;
 
     mPlayerDied_ = 0;
 
@@ -668,6 +669,83 @@ enum ExplorationScreenWidgetType{
 
     };
 
+    FoundItemIconsManager = class{
+        mParentWindow_ = null;
+        mItemWidgets_ = null;
+        mWidgetTimeouts_ = null;
+        mBasePosition_ = Vec2(0, 0);
+
+        static MAX_DISPLAYED_ITEMS = 5;
+        static ITEM_TIMEOUT_FRAMES = 120;
+
+        constructor(parentWindow){
+            mParentWindow_ = parentWindow;
+            mItemWidgets_ = [];
+            mWidgetTimeouts_ = [];
+        }
+
+        function addItem(itemDef){
+            if(mItemWidgets_.len() >= MAX_DISPLAYED_ITEMS){
+                //Remove the oldest item
+                local oldestWidget = mItemWidgets_.remove(0);
+                mWidgetTimeouts_.remove(0);
+                oldestWidget.shutdown();
+            }
+
+            //Create new widget
+            local newWidget = ::GuiWidgets.FoundItemWidget(mParentWindow_, itemDef, 0.3);
+            mItemWidgets_.append(newWidget);
+            mWidgetTimeouts_.append(0);
+
+            updatePositions_();
+        }
+
+        function updatePositions_(){
+            local yOffset = 0;
+            for(local i = 0; i < mItemWidgets_.len(); i++){
+                local widgetSize = mItemWidgets_[i].getSize();
+                local yPos = mBasePosition_.y + yOffset;
+                mItemWidgets_[i].setPosition(Vec2(mBasePosition_.x, yPos));
+                yOffset += widgetSize.y;
+            }
+        }
+
+        function update(){
+            //Update all widget timeouts and check for expiration
+            local i = 0;
+            while(i < mItemWidgets_.len()){
+                mWidgetTimeouts_[i]++;
+                if(mWidgetTimeouts_[i] >= ITEM_TIMEOUT_FRAMES){
+                    local oldWidget = mItemWidgets_.remove(i);
+                    mWidgetTimeouts_.remove(i);
+                    oldWidget.shutdown();
+                    updatePositions_();
+                }else{
+                    i++;
+                }
+            }
+        }
+
+        function setBasePosition(pos){
+            mBasePosition_ = pos;
+            updatePositions_();
+        }
+
+        function setVisible(visible){
+            foreach(widget in mItemWidgets_){
+                widget.setVisible(visible);
+            }
+        }
+
+        function shutdown(){
+            foreach(widget in mItemWidgets_){
+                widget.shutdown();
+            }
+            mItemWidgets_.clear();
+            mWidgetTimeouts_.clear();
+        }
+    };
+
     function setup(data){
         mExplorationScreenWidgetType_ = array(ExplorationScreenWidgetType.MAX);
 
@@ -757,7 +835,8 @@ enum ExplorationScreenWidgetType{
             //mWieldActiveButton.setPosition(_window.getWidth() / 2 - mWieldActiveButton.getSize().x/2, _window.getHeight() - mWieldActiveButton.getSize().y*2);
             mWieldActiveButton.attachListenerForEvent(function(widget, action){
                 ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
-                ::Base.mPlayerStats.toggleWieldActive();
+                //::Base.mPlayerStats.toggleWieldActive();
+                notifyItemFound(::Item(ItemId.SIMPLE_SWORD));
             }, _GUI_ACTION_PRESSED, this);
             mScreenInputCheckList_.append(mWieldActiveButton);
             mExplorationScreenWidgetType_[ExplorationScreenWidgetType.WIELD_BUTTON] = mWieldActiveButton;
@@ -871,11 +950,17 @@ enum ExplorationScreenWidgetType{
         mInventoryWidget_.setPosition(Vec2(0, statsWidget.getPosition().y + statsWidget.getSize().y));
         mExplorationScreenWidgetType_[ExplorationScreenWidgetType.INVENTORY_INDICATOR] = mInventoryWidget_;
 
+        //Found items manager - positioned to the right of the inventory widget
+        mFoundItemIconsManager_ = FoundItemIconsManager(mWindow_);
+        local inventoryWidgetPos = mInventoryWidget_.getPosition();
+        mFoundItemIconsManager_.setBasePosition(inventoryWidgetPos + Vec2(0, mInventoryWidget_.getSize().y));
+
         _event.subscribe(Event.ACTIONS_CHANGED, receiveActionsChanged, this);
         _event.subscribe(Event.WORLD_PREPARATION_STATE_CHANGE, receivePreparationStateChange, this);
         _event.subscribe(Event.REGION_DISCOVERED_POPUP_FINISHED, receiveRegionDiscoveredPopupFinished, this);
         _event.subscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent, this);
         _event.subscribe(Event.EXPLORATION_SCREEN_HIDE_WIDGETS_FINISHED, receiveExplorationHideWidgetsFinished, this);
+        _event.subscribe(Event.ITEM_GIVEN, receiveItemGiven, this);
         ::ScreenManager.transitionToScreen(Screen.WORLD_GENERATION_STATUS_SCREEN, null, 1);
 
         mAnimator_ = ExplorationScreenAnimator();
@@ -995,6 +1080,12 @@ enum ExplorationScreenWidgetType{
         mPlayerTapButtonActive = !allEmpty;
     }
 
+    function receiveItemGiven(id, data){
+        //data is the item that was given
+        local itemDef = data;
+        notifyItemFound(itemDef);
+    }
+
     function update(){
         mLogicInterface_.tickUpdate();
         //mExplorationMovesContainer_.update();
@@ -1007,6 +1098,7 @@ enum ExplorationScreenWidgetType{
         mAnimator_.update();
         mCompassAnimator_.update();
         mZoomLines_.update();
+        mFoundItemIconsManager_.update();
 
         updateTopInfoVisibility();
 
@@ -1083,6 +1175,13 @@ enum ExplorationScreenWidgetType{
         //mExplorationItemsContainer_.setObjectForIndex(foundObject, idx, screenPos);
     }
 
+    function notifyItemFound(itemDef){
+        //Add the item to the found items display
+        if(itemDef != null && itemDef.getMesh() != null){
+            mFoundItemIconsManager_.addItem(itemDef);
+        }
+    }
+
     function notifyHighlightEnemy(enemy){
         if(enemy != null){
             local string = ::Enemies[enemy].getName();
@@ -1114,6 +1213,7 @@ enum ExplorationScreenWidgetType{
         _event.unsubscribe(Event.REGION_DISCOVERED_POPUP_FINISHED, receiveRegionDiscoveredPopupFinished, this);
         _event.unsubscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent, this);
         _event.unsubscribe(Event.EXPLORATION_SCREEN_HIDE_WIDGETS_FINISHED, receiveExplorationHideWidgetsFinished, this);
+        _event.unsubscribe(Event.ITEM_GIVEN, receiveItemGiven, this);
         mLogicInterface_.shutdown();
         //mLogicInterface_.notifyLeaveExplorationScreen();
         //mExplorationStatsContainer_.shutdown();
@@ -1121,6 +1221,7 @@ enum ExplorationScreenWidgetType{
         mDiscoverLevelUpScreen_.shutdown();
         mExplorationPlayerActionsContainer_.shutdown();
         mInventoryWidget_.shutdown();
+        mFoundItemIconsManager_.shutdown();
         mCompassAnimator_.shutdown();
         mExplorationStatsContainer_.shutdown();
         if(mPlayerDirectJoystick_){
