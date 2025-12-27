@@ -242,7 +242,7 @@ enum InventoryItemHelperScreenFunctions{
             if(mData_.gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
                 buttonOptions.append(UNICODE_HELMET + " UnEquip");
                 buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.UNEQUIP]);
-                buttonEnabled.append(true);
+                buttonEnabled.append(!inventoryFull);
             }else{
                 local equipData = ::Equippables[item.getEquippableData()];
                 local equipSlot = equipData.getEquippedSlot();

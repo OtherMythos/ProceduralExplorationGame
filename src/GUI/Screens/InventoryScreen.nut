@@ -745,7 +745,8 @@ enum InventoryBusEvents{
             "supportsStorage": mSupportsStorage_,
             "isShowingStorage": mShowingStorage_,
             "inventory": mInventory_,
-            "storage": mItemStorage_
+            "storage": mItemStorage_,
+            "inventoryFull": mInventory_.getNumSlotsFree() == 0
         };
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_ITEM_HELPER_SCREEN, data), null, mLayerIdx+1);
     }
