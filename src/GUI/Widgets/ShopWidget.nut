@@ -114,6 +114,7 @@
             "secondaryGrid": false,
             "isShop": true,
             "playerMoney": ::Base.mPlayerStats.getMoney(),
+            "inventoryFull": ::Base.mPlayerStats.mInventory_.getNumSlotsFree() == 0,
             "showItemInfo": true
         };
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_ITEM_HELPER_SCREEN, data), null, 3);

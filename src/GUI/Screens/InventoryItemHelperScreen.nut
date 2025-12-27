@@ -60,6 +60,30 @@ enum InventoryItemHelperScreenFunctions{
             layoutLine.addCell(title);
         }
 
+        //Display warnings for shops
+        local inventoryFull = mData_.rawin("inventoryFull") && mData_.inventoryFull;
+        local isShop = mData_.rawin("isShop") && mData_.isShop;
+        if(isShop){
+            local itemPrice = mData_.item.mData_;
+            local playerMoney = mData_.rawin("playerMoney") ? mData_.playerMoney : 0;
+            local warningText = null;
+
+            //Priority: not enough money first, then inventory full
+            if(playerMoney < itemPrice){
+                warningText = "Not enough money!";
+            }else if(inventoryFull){
+                warningText = "Your inventory is full!";
+            }
+
+            if(warningText != null){
+                local warningLabel = mWindow_.createLabel();
+                warningLabel.setDefaultFont(6);
+                warningLabel.setText(warningText);
+                warningLabel.sizeToFit(mWindow_.getSizeAfterClipping().x);
+                layoutLine.addCell(warningLabel);
+            }
+        }
+
         local buttonData = getButtonOptionsForItem(data.item);
         local buttonOptions = buttonData[0];
         local buttonFunctions = buttonData[1];
@@ -205,14 +229,15 @@ enum InventoryItemHelperScreenFunctions{
         local buttonEnabled = [];
 
         local isShop = mData_.rawin("isShop") && mData_.isShop;
+        local inventoryFull = mData_.rawin("inventoryFull") && mData_.inventoryFull;
 
         if(isShop){
             buttonOptions.append(UNICODE_COINS + " Buy");
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.BUY]);
-            // Check if player can afford the item
+            // Check if player can afford the item and has inventory space
             local itemPrice = mData_.item.mData_;
             local playerMoney = mData_.rawin("playerMoney") ? mData_.playerMoney : 0;
-            buttonEnabled.append(playerMoney >= itemPrice);
+            buttonEnabled.append(playerMoney >= itemPrice && !inventoryFull);
         }else if(itemType == ItemType.EQUIPPABLE){
             if(mData_.gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
                 buttonOptions.append(UNICODE_HELMET + " UnEquip");
