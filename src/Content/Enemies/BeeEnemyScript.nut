@@ -14,7 +14,6 @@
                 ctx.returningToHive = true;
             },
             "update": function(ctx, e, data) {
-                print("Returning to hive");
                 local world = ::Base.mExplorationLogic.mCurrentWorld_;
                 local bee = world.mActiveEnemies_[e];
                 if(bee == null) return;
