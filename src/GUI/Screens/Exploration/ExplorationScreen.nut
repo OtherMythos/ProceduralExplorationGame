@@ -890,8 +890,7 @@ enum ExplorationScreenWidgetType{
             //mWieldActiveButton.setPosition(_window.getWidth() / 2 - mWieldActiveButton.getSize().x/2, _window.getHeight() - mWieldActiveButton.getSize().y*2);
             mWieldActiveButton.attachListenerForEvent(function(widget, action){
                 ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
-                //::Base.mPlayerStats.toggleWieldActive();
-                notifyItemFound(::Item(ItemId.SIMPLE_SWORD));
+                ::Base.mPlayerStats.toggleWieldActive();
             }, _GUI_ACTION_PRESSED, this);
             mScreenInputCheckList_.append(mWieldActiveButton);
             mExplorationScreenWidgetType_[ExplorationScreenWidgetType.WIELD_BUTTON] = mWieldActiveButton;
