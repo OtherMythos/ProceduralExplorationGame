@@ -140,7 +140,7 @@
 
             mPlacesCollisionWorld_.addCollisionPoint(originX, originY, radius);
 
-            local placeData = {
+            local outputPlaceData = {
                 "originX": originX,
                 "originY": originY,
                 "originWrapped": point,
@@ -175,11 +175,10 @@
                 mMapData_.holeY = originY;
                 mMapData_.holeRadius = radius;
             }
-            if(placeId == PlaceId.GRAVEYARD){
-                mMapData_.applyTerrainVoxelsForPlace("graveyard", ::basePlacesPath, originX - mData_.halfX, originY - mData_.halfY);
-            }
 
-            mReturnPlaces_.append(placeData);
+            mMapData_.applyTerrainVoxelsForPlace(placeData.mPlaceFileName, ::basePlacesPath, originX - mData_.halfX, originY - mData_.halfY);
+
+            mReturnPlaces_.append(outputPlaceData);
             return;
         }
     }

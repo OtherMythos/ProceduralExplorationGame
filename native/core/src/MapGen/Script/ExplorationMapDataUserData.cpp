@@ -814,11 +814,17 @@ namespace ProceduralExplorationGameCore{
         TileDataParser tileData(basePath);
         TileDataParser::OutDataContainer out;
         bool result = tileData.readData(&out, mapName, "terrainBlend.txt");
-        if(!result) return sq_throwerror(vm, "Unable to find terrainBlend.txt file");
+        if(!result){
+            sq_pushbool(vm, false);
+            return 1;
+        }
 
         TileDataParser::OutDataContainer altitudeOut;
         result = tileData.readData(&altitudeOut, mapName, "terrain.txt");
-        if(!result) return sq_throwerror(vm, "Unable to find terrain.txt file");
+        if(!result){
+            sq_pushbool(vm, false);
+            return 1;
+        }
 
         for(AV::uint32 y = 0; y < out.tilesHeight; y++){
             for(AV::uint32 x = 0; x < out.tilesWidth; x++){
@@ -836,7 +842,8 @@ namespace ProceduralExplorationGameCore{
             }
         }
 
-        return 0;
+        sq_pushbool(vm, true);
+        return 1;
     }
 
     SQInteger ExplorationMapDataUserData::calculateEdgeVoxels(HSQUIRRELVM vm){
