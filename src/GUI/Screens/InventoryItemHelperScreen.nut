@@ -138,6 +138,8 @@ enum InventoryItemHelperScreenFunctions{
         local iconPanel = panelContainerWindow.createPanel();
         iconPanel.setSize(panelSize * 0.75);
         iconPanel.setPosition(gridPadding);
+        //Ensure the default is set to something valid.
+        iconPanel.setSkin("item_none");
         iconPanel.setSkin(item.getIcon());
         iconPanel.setClickable(false);
 
