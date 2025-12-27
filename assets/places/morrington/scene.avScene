@@ -1,0 +1,47 @@
+<scene>
+    <user0 value="house1.voxMesh">
+        <position x="39.6138" y="0" z="-9.81956"/>
+        <scale x="0.3" y="0.3" z="0.3"/>
+        <orientation x="0" y="-2" z="0" w="1"/>
+        <user2 value="2">
+            <position x="0.803403" y="0" z="-10.0803"/>
+            <scale x="11.9385" y="8.00171" z="12.696"/>
+        </user2>
+    </user0>
+    <user0 value="house1.voxMesh">
+        <position x="7.5401" y="0" z="-19.6232"/>
+        <scale x="0.3" y="0.3" z="0.3"/>
+        <orientation x="0" y="1" z="0" w="1"/>
+        <user2 value="1">
+            <position x="0.803403" y="0" z="-10.0803"/>
+            <scale x="11.9385" y="8.00171" z="11.7076"/>
+        </user2>
+    </user0>
+    <user0 value="house1.voxMesh">
+        <position x="9.66066" y="0" z="-35.1673"/>
+        <scale x="0.3" y="0.3" z="0.3"/>
+        <orientation x="0" y="0.2" z="0" w="1"/>
+        <user2 value="2">
+            <position x="0.803403" y="0" z="-10.0803"/>
+            <scale x="11.9385" y="8.00171" z="11.7076"/>
+        </user2>
+    </user0>
+    <user0 value="house1.voxMesh">
+        <position x="11.113" y="0" z="-7.07915"/>
+        <scale x="0.3" y="0.3" z="0.3"/>
+        <orientation x="0" y="2.4" z="0" w="1"/>
+        <user2 value="2">
+            <position x="0.803403" y="0" z="-10.0803"/>
+            <scale x="11.9385" y="8.00171" z="11.7076"/>
+        </user2>
+    </user0>
+    <user0 value="house1.voxMesh">
+        <position x="37.4018" y="-7.62939e-06" z="-34.8044"/>
+        <scale x="0.3" y="0.3" z="0.3"/>
+        <orientation x="0" y="-0.4" z="0" w="1"/>
+        <user2 value="2">
+            <position x="0.803403" y="0" z="-10.0803"/>
+            <scale x="11.9385" y="8.00171" z="11.7076"/>
+        </user2>
+    </user0>
+</scene>

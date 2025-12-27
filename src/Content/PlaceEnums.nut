@@ -7,6 +7,7 @@
     DUSTMITE_NEST,
 
     GARRITON,
+    MORRINGTON,
 
     TEMPLE,
     GRAVEYARD,

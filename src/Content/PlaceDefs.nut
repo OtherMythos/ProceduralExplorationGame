@@ -65,6 +65,7 @@ function initialisePlaceEditorMeta(){
 ::Places[PlaceId.GOBLIN_CAMP] = PlaceDef("Goblin Camp", "Spooky goblin camp", PlaceType.LOCATION, 1.0, "goblinCampsite", 100);
 ::Places[PlaceId.DUSTMITE_NEST] = PlaceDef("Dust Mite Nest", "An entrance to a Dust Mite nest.", PlaceType.LOCATION, 1.0, "dustMiteNest", 100);
 ::Places[PlaceId.GARRITON] = PlaceDef("Garriton", "A nice town", PlaceType.LOCATION, 1.0, "testPlace", 100);
+::Places[PlaceId.MORRINGTON] = PlaceDef("Morrington", "A town nicer than Garriton", PlaceType.LOCATION, 1.0, "morrington", 100);
 ::Places[PlaceId.TEMPLE] = PlaceDef("Temple", "Some sort of temple", PlaceType.LOCATION, 1.0, "temple", 100);
 ::Places[PlaceId.GRAVEYARD] = PlaceDef("Graveyard", "An old graveyard", PlaceType.LOCATION, 1.0, "graveyard", 100);
 ::Places[PlaceId.CHERRY_BLOSSOM_ORB] = PlaceDef("Cherry Blossom Orb", "An orb in the cherry blossom", PlaceType.LOCATION, 1.0, "cherryBlossomOrbFirst", 10);

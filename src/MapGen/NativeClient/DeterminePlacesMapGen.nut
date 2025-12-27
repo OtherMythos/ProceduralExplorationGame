@@ -206,6 +206,7 @@
         placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize, _checkPlacementVoxelsAreLand)
         placeLocation(PlaceId.GOBLIN_CAMP, _determineRegionBySize, _checkPlacementVoxelsAreLand)
         placeLocation(PlaceId.GARRITON, _determineRegionBySize, _checkPlacementVoxelsAreLand);
+        placeLocation(PlaceId.MORRINGTON, _determineRegionBySize, _checkPlacementVoxelsAreLand);
         placeLocation(PlaceId.TEMPLE, _determineRegionBySize, _checkPlacementVoxelsAreLand);
         placeLocation(PlaceId.GRAVEYARD, _determineRegionBySize, _checkPlacementVoxelsAreLand);
         placeLocation(PlaceId.DUSTMITE_NEST, _determineRegionByType, _checkPlacementVoxelsAreLand);
