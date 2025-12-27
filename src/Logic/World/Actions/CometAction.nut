@@ -5,6 +5,7 @@
     mCometNode_ = null;
     mCometMesh_ = null;
     mParticleSystem_ = null;
+    mBaseEffectParticleSystem_ = null;
     mFrameCount_ = 0;
     mTotalFrames_ = 180;
     mApproachAngle_ = 0.0;
@@ -12,6 +13,8 @@
     mLandingFrames_ = 60;
     mFinalShutdownFrames_ = 300;
     mItemSpawned_ = false;
+
+    mCometBaseScale_ = 0.25;
 
     constructor(creatorWorld, startPos, landingPos){
         base.constructor(creatorWorld);
@@ -41,15 +44,19 @@
         mCometNode_.setPosition(mStartPos_);
 
         //Create cube for the comet rock
-        local cometItem = _gameCore.createVoxMeshItem("beeHive.voxMesh");
+        local cometItem = _gameCore.createVoxMeshItem("meteor.voxMesh");
         cometItem.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         mCometMesh_ = mCometNode_.createChildSceneNode();
-        mCometMesh_.setScale(0.1, 0.1, 0.1);
+        mCometMesh_.setScale(mCometBaseScale_, mCometBaseScale_, mCometBaseScale_);
         mCometMesh_.attachObject(cometItem);
 
         //Attach particle system for comet trail
         mParticleSystem_ = _scene.createParticleSystem("cometTrail");
         mCometNode_.attachObject(mParticleSystem_);
+
+        //Attach particle system for comet base effect
+        mBaseEffectParticleSystem_ = _scene.createParticleSystem("cometBaseEffect");
+        mCometNode_.attachObject(mBaseEffectParticleSystem_);
     }
 
     function update(){
@@ -91,7 +98,7 @@
             shrinkProgress = 1.0 - shrinkProgress;
             shrinkProgress = ::clampValue(shrinkProgress, 0.0, 1.0);
 
-            local currentScale = 0.1 * shrinkProgress;
+            local currentScale = mCometBaseScale_ * shrinkProgress;
             mCometMesh_.setScale(currentScale, currentScale, currentScale);
 
             if(mFrameCount_ >= mLandingFrames_ && !mItemSpawned_){
@@ -119,9 +126,9 @@
         local attackValue = 10;
         mCreatorWorld_.mProjectileManager_.spawnProjectile(ProjectileId.AREA, landPos, ::Vec3_ZERO, ::Combat.CombatMove(attackValue), _COLLISION_ENEMY);
 
-        //Stop the particle system
-        if(mParticleSystem_ != null){
-            mParticleSystem_.setEmitting(false);
+        //Stop the base effect particle system
+        if(mBaseEffectParticleSystem_ != null){
+            mBaseEffectParticleSystem_.setEmitting(false);
         }
     }
 

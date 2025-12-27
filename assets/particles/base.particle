@@ -218,3 +218,36 @@ particle_system cometTrail
         blue2 -0.1
     }
 }
+
+particle_system cometBaseEffect
+{
+    material        ParticleAlphaWhite
+    particle_width  1.5
+    particle_height 1.5
+    cull_each       false
+    quota           5000
+    billboard_type  point
+
+    //High-emission burst for impact effect
+    emitter Point
+    {
+        angle           180
+        emission_rate   200
+        time_to_live    0.8
+        direction       0 1 0
+        velocity_min    1.0
+        velocity_max    3.0
+    }
+
+    affector ColourInterpolator
+    {
+        time0 0
+        colour0 1.0 0.0 0.0 1
+
+        time1 0.5
+        colour1 1.0 0.5 0.0 1
+
+        time2 1.0
+        colour2 1.0 1.0 1.0 0
+    }
+}
