@@ -676,7 +676,7 @@ enum ExplorationScreenWidgetType{
         mBasePosition_ = Vec2(0, 0);
 
         static MAX_DISPLAYED_ITEMS = 5;
-        static ITEM_TIMEOUT_FRAMES = 120;
+        static ITEM_TIMEOUT_FRAMES = 200;
 
         constructor(parentWindow){
             mParentWindow_ = parentWindow;
