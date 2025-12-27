@@ -133,7 +133,7 @@
     }
 
     function spawnLandingItem_(){
-        local itemToSpawn = ::Item(ItemId.SIMPLE_SWORD);
+        local itemToSpawn = ::Item(ItemId.FALLEN_STAR);
         local entityFactory = mCreatorWorld_.getEntityFactory();
         local landPos = mLandingPos_.copy();
         landPos.y = mCreatorWorld_.getZForPos(landPos);
