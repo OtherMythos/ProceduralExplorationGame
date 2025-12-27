@@ -25,10 +25,14 @@
             //Check if place has a meta.json and parse it
             local metaPath = "res://build/assets/places/"+placeFile+"/meta.json";
             local shouldSpawnPlaceDescription = true;
+            local shouldSpawnEnemyCollisionBlocker = false;
             if(_system.exists(metaPath)){
                 local metaTable = _system.readJSONAsTable(metaPath);
                 if(metaTable.rawin("disablePlaceName") && metaTable.disablePlaceName){
                     shouldSpawnPlaceDescription = false;
+                }
+                if(metaTable.rawin("spawnEnemyCollisionBlocker") && metaTable.spawnEnemyCollisionBlocker){
+                    shouldSpawnEnemyCollisionBlocker = true;
                 }
             }
 
@@ -37,8 +41,8 @@
                 world.mEntityFactory_.constructPlaceDescriptionTrigger(pos, placeData.placeId);
             }
 
-            local pId = placeData.placeId;
-            if(pId == PlaceId.GARRITON || pId == PlaceId.GRAVEYARD){
+            //Spawn the enemy collision blocker if enabled
+            if(shouldSpawnEnemyCollisionBlocker){
                 local blockerNode = node.createChildSceneNode();
                 world.mEntityFactory_.constructEnemyCollisionBlocker(blockerNode, pos, placeDefine.mRadius * 1.5);
             }
