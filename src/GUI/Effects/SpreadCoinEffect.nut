@@ -31,13 +31,13 @@ local SpreadCoinEffectStateMachine = class extends ::Util.StateMachine{
         }
     };
     SpreadCoinEffectStateMachine.mStates_[SpreadCoinEffectStages.IDLE] = class extends ::Util.State{
-        mTotalCount_ = 20
+        mTotalCount_ = 0
         mNextState_ = SpreadCoinEffectStages.MERGE_TO_FINISH;
         function start(data){ }
         function update(p, data){ }
     };
     SpreadCoinEffectStateMachine.mStates_[SpreadCoinEffectStages.MERGE_TO_FINISH] = class extends ::Util.State{
-        mTotalCount_ = 50
+        mTotalCount_ = 30
         mNextState_ = SpreadCoinEffectStages.SHRINK_TO_FINISH;
         function start(data){ }
         function update(p, data){

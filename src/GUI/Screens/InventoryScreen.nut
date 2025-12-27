@@ -642,9 +642,31 @@ enum InventoryBusEvents{
         local targetItem = removeFromInventory_(inventoryData);
         if(targetItem == null) return;
 
-        printf("Adding scrap value for item: %s", targetItem.tostring());
         local scrapValue = targetItem.getScrapVal();
-        mInventory_.addMoney(scrapValue);
+        printf("Adding scrap value %i for item: %s", scrapValue, targetItem.tostring());
+
+        //Get the item position for the effect origin
+        local idx = inventoryData.idx;
+        local targetGrid = getGridForData_(inventoryData);
+        local posForIdx = targetGrid.getPositionForIdx(idx);
+        local gridItemSize = targetGrid.getSizeForIdx(idx);
+        local itemCentre = posForIdx + (gridItemSize / 2);
+        local startPos = ::EffectManager.getWorldPositionForWindowPos(itemCentre);
+
+        local moneyCounterPos = null;
+        //Get the money counter position as the destination
+        //TODO pretty nasty
+        if(::Base.mExplorationLogic.mGui_ == null){
+            moneyCounterPos = ::ScreenManager.getScreenForLayer(0).mPlayerStats_.getMoneyCounter();
+        }else{
+            moneyCounterPos = ::Base.mExplorationLogic.mGui_.getMoneyCounterWindowPos();
+        }
+
+        //Add money without triggering event (effect will handle counter update)
+        ::Base.mPlayerStats.changeMoney(scrapValue, false);
+
+        //Display the spread coin effect
+        ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"numCoins": scrapValue, "start": startPos, "end": moneyCounterPos, "money": scrapValue, "coinScale": 0.2, "cellSize": 2}));
     }
 
     function removeFromInventory_(inventoryData){
