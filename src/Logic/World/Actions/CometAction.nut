@@ -14,7 +14,7 @@
     mFinalShutdownFrames_ = 300;
     mItemSpawned_ = false;
 
-    mCometBaseScale_ = 0.25;
+    mCometBaseScale_ = 0.15;
 
     constructor(creatorWorld, startPos, landingPos){
         base.constructor(creatorWorld);
@@ -44,7 +44,7 @@
         mCometNode_.setPosition(mStartPos_);
 
         //Create cube for the comet rock
-        local cometItem = _gameCore.createVoxMeshItem("meteor.voxMesh");
+        local cometItem = _gameCore.createVoxMeshItem("fallenStar.voxMesh");
         cometItem.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
         mCometMesh_ = mCometNode_.createChildSceneNode();
         mCometMesh_.setScale(mCometBaseScale_, mCometBaseScale_, mCometBaseScale_);
@@ -56,7 +56,7 @@
 
         //Attach particle system for comet base effect
         mBaseEffectParticleSystem_ = _scene.createParticleSystem("cometBaseEffect");
-        mCometNode_.attachObject(mBaseEffectParticleSystem_);
+        //mCometNode_.attachObject(mBaseEffectParticleSystem_);
     }
 
     function update(){
