@@ -172,6 +172,13 @@
                 "texture": "icon_swords.png"
             }
         },
+        "pauseIcon" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse_map0": {
+                "texture": "icon_pause.png"
+            }
+        },
         "bagIcon" :
         {
             "blendblock": "gui/uiBlend",

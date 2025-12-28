@@ -34,6 +34,7 @@ enum ExplorationScreenWidgetType{
     mCurrentPlace_ = null;
     mScrapAllButton_ = null;
     mWieldActiveButton = null;
+    mPauseButton = null;
     mZoomModifierButton = null;
     mCameraButton = null;
     mPlayerDirectButton = null;
@@ -895,6 +896,16 @@ enum ExplorationScreenWidgetType{
             mScreenInputCheckList_.append(mWieldActiveButton);
             mExplorationScreenWidgetType_[ExplorationScreenWidgetType.WIELD_BUTTON] = mWieldActiveButton;
 
+            mPauseButton = ::IconButton(mWindow_, "pauseIcon");
+            mPauseButton.setSize(Vec2(85, 85));
+            mPauseButton.setButtonVisualsEnabled(false);
+            mPauseButton.setZOrder(WIDGET_SAFE_FOR_BILLBOARD_Z);
+            mPauseButton.attachListenerForEvent(function(widget, action){
+                ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
+                ::Base.mExplorationLogic.setGamePaused(true);
+            }, _GUI_ACTION_PRESSED, this);
+            mScreenInputCheckList_.append(mPauseButton);
+
             mCameraButton = mWindow_.createButton();
             //mCameraButton.setText("Camera");
             //mCameraButton.setPosition(_window.getWidth() / 2 - mCameraButton.getSize().x/2 - mWieldActiveButton.getSize().x - 20, _window.getHeight() - mWieldActiveButton.getSize().y*2);
@@ -963,6 +974,7 @@ enum ExplorationScreenWidgetType{
 
             if(screenshotMode){
                 mWieldActiveButton.setVisible(false);
+                mPauseButton.setVisible(false);
                 mCameraButton.setVisible(false);
                 mZoomModifierButton.setVisible(false);
                 mPlayerDirectButton.setVisible(false);
@@ -1023,8 +1035,13 @@ enum ExplorationScreenWidgetType{
         //mAnimator_.animateToInventoryPercentage(0.5);
         if(mobile){
             local widgetPos = mInventoryWidget_.getPosition();
-            widgetPos.x += 100;
+            widgetPos.x += 80;
             mWieldActiveButton.setPosition(widgetPos);
+
+            local pauseButtonPos = widgetPos.copy();
+            pauseButtonPos.x += 80;
+            pauseButtonPos.y += 5;
+            mPauseButton.setPosition(pauseButtonPos);
 
             mCameraButton.setPosition(mCompassAnimator_.getPosition());
             mCameraButton.setSize(mCompassAnimator_.getSize());
