@@ -304,6 +304,19 @@ compositor_node clearRenderWindowNode
         {
             colour_value 0 0 0 0
         }
+        pass render_quad
+        {
+            material Postprocess/DarkGuiBackground
+            load
+            {
+                depth clear
+                stencil clear
+            }
+            store
+            {
+                all store_or_resolve
+            }
+        }
     }
 
     out 0 renderWindowTexture
