@@ -279,6 +279,8 @@
             notifyPlayerMoved();
         }
 
+        findAllRegionsExceptMajor();
+
         if(false){
             local rel = mMapData_.width / 1024.0;
             local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION);
@@ -1104,6 +1106,19 @@
 
     function findAllRegions(){
         foreach(c,i in mRegionEntries_){
+            processFoundNewRegion(c);
+        }
+    }
+
+    function findAllRegionsExceptMajor(){
+        //Skip the first few major regions (like desert and swamp)
+        local skipCount = 3;
+        local count = 0;
+        foreach(c,i in mRegionEntries_){
+            if(count < skipCount){
+                count++;
+                continue;
+            }
             processFoundNewRegion(c);
         }
     }
