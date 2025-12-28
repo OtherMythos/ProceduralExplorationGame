@@ -247,8 +247,8 @@ enum InventoryItemHelperScreenFunctions{
                 local equipData = ::Equippables[item.getEquippableData()];
                 local equipSlot = equipData.getEquippedSlot();
                 if(equipSlot == EquippedSlotTypes.HAND){
-                    buttonOptions.append(UNICODE_LEFT_HAND + " Equip Left Hand");
-                    buttonOptions.append(UNICODE_RIGHT_HAND + " Equip Right Hand");
+                    buttonOptions.append(UNICODE_LEFT_HAND + " Left Hand");
+                    buttonOptions.append(UNICODE_RIGHT_HAND + " Right Hand");
                     buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.EQUIP_LEFT_HAND]);
                     buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.EQUIP_RIGHT_HAND]);
                     buttonEnabled.append(true);
@@ -287,13 +287,13 @@ enum InventoryItemHelperScreenFunctions{
             buttonEnabled.append(true);
 
             if(mData_.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
-                buttonOptions.append(UNICODE_INTO_INVENTORY + " Move to Inventory");
+                buttonOptions.append(UNICODE_INTO_INVENTORY + " Inventory");
                 buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.MOVE_TO_INVENTORY]);
                 buttonEnabled.append(true);
             }
 
             if(mData_.secondaryGrid && mData_.gridType == InventoryGridType.INVENTORY_GRID){
-                buttonOptions.append(UNICODE_LEAVE_INVENTORY + " Move out of Inventory");
+                buttonOptions.append(UNICODE_LEAVE_INVENTORY + " Inventory");
                 buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.MOVE_OUT_OF_INVENTORY]);
                 buttonEnabled.append(true);
             }
@@ -306,7 +306,7 @@ enum InventoryItemHelperScreenFunctions{
                     InventoryItemHelperScreenFunctions.MOVE_FROM_STORAGE :
                     InventoryItemHelperScreenFunctions.MOVE_TO_STORAGE;
                 local buttonIcon = mData_.isShowingStorage ? UNICODE_INTO_INVENTORY : UNICODE_LEAVE_INVENTORY;
-                local buttonText = mData_.isShowingStorage ? " Move to Inventory" : " Move to Storage";
+                local buttonText = mData_.isShowingStorage ? " Inventory" : " Storage";
 
                 buttonOptions.append(buttonIcon + buttonText);
                 buttonFunctions.append(mButtonFunctions_[buttonFunc]);
