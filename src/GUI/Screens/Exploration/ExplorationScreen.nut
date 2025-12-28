@@ -8,6 +8,7 @@ enum ExplorationScreenWidgetType{
     MOVES_CONTAINER,
     MINIMAP,
     WIELD_BUTTON,
+    PAUSE_BUTTON,
     CAMERA_BUTTON,
     INVENTORY_INDICATOR,
     COMPASS,
@@ -905,6 +906,7 @@ enum ExplorationScreenWidgetType{
                 ::Base.mExplorationLogic.setGamePaused(true);
             }, _GUI_ACTION_PRESSED, this);
             mScreenInputCheckList_.append(mPauseButton);
+            mExplorationScreenWidgetType_[ExplorationScreenWidgetType.PAUSE_BUTTON] = mPauseButton;
 
             mCameraButton = mWindow_.createButton();
             //mCameraButton.setText("Camera");
@@ -1378,6 +1380,9 @@ enum ExplorationScreenWidgetType{
         if(mExplorationScreenWidgetType_[ExplorationScreenWidgetType.WIELD_BUTTON]){
             mExplorationScreenWidgetType_[ExplorationScreenWidgetType.WIELD_BUTTON].setVisible(vis);
         }
+        if(mExplorationScreenWidgetType_[ExplorationScreenWidgetType.PAUSE_BUTTON]){
+            mExplorationScreenWidgetType_[ExplorationScreenWidgetType.PAUSE_BUTTON].setVisible(vis);
+        }
         mExplorationScreenWidgetType_[ExplorationScreenWidgetType.INVENTORY_INDICATOR].setVisible(vis);
         //mExplorationStatsContainer_.setVisible(vis);
         //mWorldMapDisplay_.setVisible(vis);
@@ -1403,6 +1408,9 @@ enum ExplorationScreenWidgetType{
 
         if(mExplorationScreenWidgetType_[ExplorationScreenWidgetType.WIELD_BUTTON]){
             mExplorationScreenWidgetType_[ExplorationScreenWidgetType.WIELD_BUTTON].setColour(target);
+        }
+        if(mExplorationScreenWidgetType_[ExplorationScreenWidgetType.PAUSE_BUTTON]){
+            mExplorationScreenWidgetType_[ExplorationScreenWidgetType.PAUSE_BUTTON].setColour(target);
         }
         mExplorationScreenWidgetType_[ExplorationScreenWidgetType.INVENTORY_INDICATOR].setColour(target);
         mExplorationScreenWidgetType_[ExplorationScreenWidgetType.STATS_CONTAINER].setColour(target);
