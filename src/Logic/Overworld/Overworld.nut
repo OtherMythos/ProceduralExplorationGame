@@ -321,6 +321,11 @@
         return true;
     }
 
+    function findAllRegionsExceptMajor(){
+        //Override
+        return;
+    }
+
     function updateCameraPosition(){
         local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.OVERWORLD);
         assert(camera != null);
