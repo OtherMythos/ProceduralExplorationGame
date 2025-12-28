@@ -149,9 +149,11 @@ enum ExplorationScreenWidgetType{
         mTexture_ = null;
         mStoredTexture_ = null;
         mDatablock_ = null;
+        mShadowDatablock_ = null;
 
         mCompassWindow_ = null;
         mCompassPanel_ = null;
+        mShadowPanels_ = null;
         mParentNode_ = null;
         mCompassNode_ = null;
 
@@ -183,6 +185,12 @@ enum ExplorationScreenWidgetType{
             //mIconBackground_.setDatablock(datablock);
             mDatablock_ = datablock;
 
+            //Create shadow datablock with black diffuse colour
+            local shadowDatablock = _hlms.unlit.createDatablock("gameplayExplorationCompassShadowDatablock", blendBlock);
+            shadowDatablock.setTexture(0, texture);
+            shadowDatablock.setColour(ColourValue(0, 0, 0, 1));
+            mShadowDatablock_ = shadowDatablock;
+
             mCompassWindow_ = window.createWindow();
             mCompassWindow_.setClickable(false);
             mCompassWindow_.setPosition(0, ::drawable.y - 150);
@@ -190,14 +198,31 @@ enum ExplorationScreenWidgetType{
             mCompassWindow_.setClipBorders(0, 0, 0, 0);
             mCompassWindow_.setVisualsEnabled(false);
 
+            mShadowPanels_ = [];
+
+            //Create four shadow panels with offsets
+            local shadowOffsets = [
+                Vec2(0.5, 0.5),
+                Vec2(-0.5, 0.5),
+                Vec2(0.5, -0.5),
+                Vec2(-0.5, -0.5)
+            ];
+
+            for(local i = 0; i < 4; i++){
+                local shadowPanel = mCompassWindow_.createPanel();
+                shadowPanel.setClickable(false);
+                shadowPanel.setSize(400, 300);
+                shadowPanel.setPosition(shadowOffsets[i].x, shadowOffsets[i].y - 100);
+                shadowPanel.setDatablock(mShadowDatablock_);
+                mShadowPanels_.append(shadowPanel);
+            }
+
             local compassPanel = mCompassWindow_.createPanel();
             //compassPanel.setPosition(0, ::drawable.y - 250);
             compassPanel.setClickable(false);
             compassPanel.setSize(400, 300);
             compassPanel.setPosition(0, -100);
             mCompassPanel_ = compassPanel;
-            //mCameraButton.setPosition(compassPanel.getPosition());
-            //mCameraButton.setSize(compassPanel.getSize());
 
             local node = _scene.getRootSceneNode().createChildSceneNode();
             local compassNode = node.createChildSceneNode();
@@ -274,6 +299,7 @@ enum ExplorationScreenWidgetType{
             _compositor.removeWorkspace(mRenderWorkspace_);
             _gui.destroy(mCompassWindow_);
             _hlms.destroyDatablock(mDatablock_);
+            _hlms.destroyDatablock(mShadowDatablock_);
             ::CompositorManager.removeExtraTexture(mStoredTexture_);
             _graphics.destroyTexture(mTexture_);
             mCompassNode_.destroyNodeAndChildren();
@@ -281,8 +307,10 @@ enum ExplorationScreenWidgetType{
 
             mCompassWindow_ = null;
             mCompassPanel_ = null;
+            mShadowPanels_ = null;
             mTexture_ = null;
             mDatablock_ = null;
+            mShadowDatablock_ = null;
             mParentNode_ = null;
             mCompassNode_ = null;
             mDirectionNodes_ = null;

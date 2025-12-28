@@ -76,7 +76,6 @@ compositor_node compositor/GamplayInventoryRingNode
 compositor_node compositor/GameplayExplorationCompassNode
 {
     in 0 renderTexture
-    texture finalRender target_width target_height PFG_RGBA32_FLOAT
 
     target finalRender
     {
@@ -90,15 +89,6 @@ compositor_node compositor/GameplayExplorationCompassNode
 
             rq_first 74
             rq_last 75
-        }
-    }
-
-    target renderTexture
-    {
-        pass render_quad
-        {
-            material Postprocess/CompassShadow
-            input 0 finalRender
         }
     }
 
