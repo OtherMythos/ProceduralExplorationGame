@@ -23,7 +23,11 @@
 
         mTileGridPlacer_ = ::TileGridPlacer([
             "InteriorFloor.voxMesh", "InteriorWall.voxMesh", "InteriorWallCorner.voxMesh"
-        ], 5);
+        ], 5, [
+            [0, 0, 0, 0],
+            [false, false, 1, 1],
+            [true, true, 1, true]
+        ], 2);
     }
 
     #Override
@@ -173,10 +177,10 @@
             local tileNode = mTileGridPlacer_.insertGridToScene(mParentNode_, tileArray, mMapData_.mapData.tilesWidth, mMapData_.mapData.tilesHeight);
             tileNode.setPosition(3, 0, 3);
 
-            tileArray.apply(function(item){
-                return (item & 0xF) != 0 ? true : 1;
-            });
-            _gameCore.setupCollisionDataForWorld(mCollisionDetectionWorld_, tileArray, mMapData_.mapData.tilesWidth, mMapData_.mapData.tilesHeight);
+            //Build the collision grid using per-tile collision data
+            local collisionData = mTileGridPlacer_.buildCollisionGrid(tileArray, mMapData_.mapData.tilesWidth, mMapData_.mapData.tilesHeight);
+
+            _gameCore.setupCollisionDataForWorld(mCollisionDetectionWorld_, collisionData.grid, collisionData.width, collisionData.height, collisionData.scale);
         }
     }
 

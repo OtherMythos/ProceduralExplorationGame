@@ -695,6 +695,13 @@ namespace ProceduralExplorationGamePlugin{
         SQInteger width, height;
         sq_getinteger(vm, 4, &width);
         sq_getinteger(vm, 5, &height);
+
+        SQInteger scaleResolution = 1;
+        if(sq_gettop(vm) >= 6){
+            sq_getinteger(vm, 6, &scaleResolution);
+            sq_pop(vm, 1);
+        }
+
         //Get the array at the top.
         sq_pop(vm, 2);
 
@@ -717,7 +724,7 @@ namespace ProceduralExplorationGamePlugin{
             sq_pop(vm, 1);
         }
 
-        collision->setCollisionGrid(data, width, height);
+        collision->setCollisionGrid(data, width, height, static_cast<int>(scaleResolution));
 
         return 0;
     }
@@ -1045,7 +1052,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, writeFlagsToItem, "writeFlagsToItem", 3, ".ui");
 
         AV::ScriptUtils::addFunction(vm, createCollisionDetectionWorld, "createCollisionDetectionWorld", 2, ".i");
-        AV::ScriptUtils::addFunction(vm, setupCollisionDataForWorld, "setupCollisionDataForWorld", 5, ".uaii");
+        AV::ScriptUtils::addFunction(vm, setupCollisionDataForWorld, "setupCollisionDataForWorld", -5, ".uaiii");
 
         AV::ScriptUtils::addFunction(vm, beginMapGen, "beginMapGen", 2, ".t");
         AV::ScriptUtils::addFunction(vm, getMapGenStage, "getMapGenStage");

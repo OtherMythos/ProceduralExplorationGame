@@ -3,7 +3,7 @@
 namespace ProceduralExplorationGameCore{
 
     CollisionDetectionWorld::CollisionDetectionWorld(int worldId)
-        : AV::CollisionWorldBruteForce(worldId) {
+        : AV::CollisionWorldBruteForce(worldId), mScaleResolution(1) {
 
     }
 
@@ -18,10 +18,11 @@ namespace ProceduralExplorationGameCore{
 
         for(int yy = int(y - radius); yy < int(y + radius); yy++){
             for(int xx = int(x - radius); xx < int(x + radius); xx++){
-                int xxx = xx / 5;
-                int yyy = yy / 5;
-                if(xxx < 0 || yyy < 0 || xxx >= mWidth || yyy >= mHeight) continue;
-                if(mCollisionGrid[xxx + yyy * mWidth]){
+                //Scale the position based on the resolution scale
+                int scaledX = xx * mScaleResolution / 5;
+                int scaledY = yy * mScaleResolution / 5;
+                if(scaledX < 0 || scaledY < 0 || scaledX >= mWidth || scaledY >= mHeight) continue;
+                if(mCollisionGrid[scaledX + scaledY * mWidth]){
                     return true;
                 }
             }
@@ -30,9 +31,10 @@ namespace ProceduralExplorationGameCore{
         return pointCheck;
     }
 
-    void CollisionDetectionWorld::setCollisionGrid(std::vector<bool>& collisionGrid, int width, int height){
+    void CollisionDetectionWorld::setCollisionGrid(std::vector<bool>& collisionGrid, int width, int height, int scaleResolution){
         mWidth = width;
         mHeight = height;
+        mScaleResolution = scaleResolution;
         mCollisionGrid = std::move(collisionGrid);
     }
 
