@@ -77,7 +77,7 @@ compositor_node compositor/GameplayExplorationCompassNode
 {
     in 0 renderTexture
 
-    target finalRender
+    target renderTexture
     {
         pass render_scene
         {
