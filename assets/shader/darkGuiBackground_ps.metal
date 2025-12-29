@@ -68,6 +68,10 @@ fragment float4 main_metal
 	float2 uv = inPs.uv0 - 0.5;
 	uv.x *= p.iResolution.x / p.iResolution.y;
 
+	//Pixelate the UVs to quarter resolution
+	float pixelSize = 0.012;
+	uv = floor(uv / pixelSize) * pixelSize;
+
 	float time = p.iTime * 0.15;
 
 	float2 flow = float2(
@@ -82,7 +86,7 @@ fragment float4 main_metal
 
 	//float3 baseColor = float3(0.04, 0.06, 0.09);
 	float3 baseColor = float3(0.02, 0.03, 0.045);
-	float3 accent    = float3(0.10, 0.14, 0.20);
+	float3 accent    = float3(0.20, 0.24, 0.30);
 	//float3 accent    = baseColor;
 
 	float3 color = mix(baseColor, accent, pattern);
@@ -90,5 +94,5 @@ fragment float4 main_metal
 	float vignette = smoothstep(0.8, 0.2, length(uv));
 	color *= vignette;
 
-	returnFinalColour(float4(color, 1.0));
+	returnFinalColour(float4(color * (color + 0.3) * color * 64 * float3(0.8, 0.8, 1.0) * 0.1, 1.0));
 }
