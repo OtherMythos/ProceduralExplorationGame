@@ -52,8 +52,8 @@
         mInventoryGrid_.initialise(mParent_, gridSize, null, mInventoryWidth_, mInventoryHeight_);
         mInventoryGrid_.setPosition(mInnerPanel_.getPosition());
 
-        local items = array(mInventoryWidth_ * mInventoryHeight_, null);
-        items[0] = ::Item(ItemId.APPLE, 100);
+        local distributor = ::FindableDistributor();
+        local items = distributor.determineShopItems(mInventoryWidth_, mInventoryHeight_);
         mInventory_ = items;
         refreshGrid_()
 
