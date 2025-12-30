@@ -450,7 +450,8 @@ enum GameplayComplexMenuBusEvents{
             "disableBackground": true,
             "disableBackButton": true,
             "disableBackgroundClose": true,
-            "supportsStorage": true
+            "supportsStorage": true,
+            "sellAvailable": true
         });
 
         mWindow_.sizeScrollToFit();

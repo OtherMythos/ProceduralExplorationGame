@@ -282,7 +282,9 @@ enum InventoryItemHelperScreenFunctions{
         }
 
         if(!isShop){
-            buttonOptions.append(UNICODE_COINS + " Scrap");
+            local sellAvailable = mData_.rawin("sellAvailable") && mData_.sellAvailable;
+            local scrapButtonText = sellAvailable ? UNICODE_COINS + " Sell" : UNICODE_COINS + " Scrap";
+            buttonOptions.append(scrapButtonText);
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.SCRAP]);
             buttonEnabled.append(true);
 

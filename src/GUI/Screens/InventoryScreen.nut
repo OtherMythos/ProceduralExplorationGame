@@ -93,6 +93,8 @@ enum InventoryBusEvents{
 
     mMultiSelection_ = false;
 
+    mSellAvailable_ = false;
+
     mInventoryBus_ = null;
     mBusCallbackId_ = null;
     mStorageToggleButton_ = null;
@@ -170,6 +172,12 @@ enum InventoryBusEvents{
         mSupportsStorage_ = false;
         if(data.rawin("supportsStorage")){
             mSupportsStorage_ = data.supportsStorage;
+        }
+
+        // Check if this inventory screen allows selling items
+        mSellAvailable_ = false;
+        if(data.rawin("sellAvailable")){
+            mSellAvailable_ = data.sellAvailable;
         }
 
         if(data.rawin("items")){
@@ -768,7 +776,8 @@ enum InventoryBusEvents{
             "isShowingStorage": mShowingStorage_,
             "inventory": mInventory_,
             "storage": mItemStorage_,
-            "inventoryFull": mInventory_.getNumSlotsFree() == 0
+            "inventoryFull": mInventory_.getNumSlotsFree() == 0,
+            "sellAvailable": mSellAvailable_
         };
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_ITEM_HELPER_SCREEN, data), null, mLayerIdx+1);
     }
