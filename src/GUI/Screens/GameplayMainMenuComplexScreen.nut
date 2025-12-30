@@ -50,12 +50,13 @@ enum GameplayComplexMenuBusEvents{
             local win = parentWin.createWindow("GameplayMainMenuComplex");
             win.setClipBorders(0, 0, 0, 0);
             win.setSize(::drawable.x, SIZE + 10 + mHeightOverride_);
-            //win.setVisualsEnabled(false);
+            win.setVisualsEnabled(false);
             mWindow_ = win;
 
             mBackgroundPanel_ = win.createPanel();
             mBackgroundPanel_.setSize(win.getSize());
-            mBackgroundPanel_.setDatablock("simpleGrey");
+            mBackgroundPanel_.setDatablock("gui/basicTransparentFull");
+            mBackgroundPanel_.setColour(ColourValue(0.4, 0.4, 0.4, 0.5));
 
             local linePanel = win.createPanel();
             linePanel.setSize(::drawable.x, 2);
