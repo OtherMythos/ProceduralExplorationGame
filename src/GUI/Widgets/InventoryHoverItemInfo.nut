@@ -8,8 +8,10 @@
     mLayoutLine_ = null;
 
     mActive_ = false;
+    mHideValueInfo_ = false;
 
-    constructor(overlayWindow, isBuyable = false){
+    constructor(overlayWindow, isBuyable = false, hideValueInfo = false){
+        mHideValueInfo_ = hideValueInfo;
         if(overlayWindow == null){
             mHoverWin_ = _gui.createWindow("InventoryHoverInfoWindow");
         }else{
@@ -87,7 +89,7 @@
         mDescriptionLabel_.sizeToFit(::drawable.x * 0.5);
 
         local stats = item.toStats();
-        local richTextDesc = stats.getDescriptionWithRichText();
+        local richTextDesc = stats.getDescriptionWithRichText(mHideValueInfo_);
         mStatsLabel_.setText(richTextDesc[0]);
         mStatsLabel_.setRichText(richTextDesc[1]);
 

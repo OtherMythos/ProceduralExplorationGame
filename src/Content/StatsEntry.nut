@@ -75,7 +75,7 @@
         return statColour;
     }
 
-    function getDescriptionWithRichText(){
+    function getDescriptionWithRichText(hideValueInfo = false){
         local outString = "";
         local outRichText = [];
         for(local i = 0; i < StatType.MAX; i++){
@@ -89,12 +89,14 @@
         }
 
         //Add value information if present
-        local valueDesc = getDescriptionForValue();
-        if(valueDesc.len() > 0){
-            local appendString = valueDesc + "\n";
-            local goldColour = ColourValue(1.0, 0.84, 0.0, 1.0);
-            outRichText.append({"offset": outString.len(), "len": appendString.len(), "col": goldColour, "font": 6});
-            outString += appendString;
+        if(!hideValueInfo){
+            local valueDesc = getDescriptionForValue();
+            if(valueDesc.len() > 0){
+                local appendString = valueDesc + "\n";
+                local goldColour = ColourValue(1.0, 0.84, 0.0, 1.0);
+                outRichText.append({"offset": outString.len(), "len": appendString.len(), "col": goldColour, "font": 6});
+                outString += appendString;
+            }
         }
 
         return [outString, outRichText];
