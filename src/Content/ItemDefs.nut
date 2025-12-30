@@ -2,7 +2,7 @@
 ::Items <- array(ItemId.MAX, null);
 
 //-------------------------------
-::Items[ItemId.NONE] = ItemDef("None", "None", null, null ItemType.NONE, 1, EquippableId.NONE);
+::Items[ItemId.NONE] = ItemDef("None", "None", null, null, ItemType.NONE, 1, EquippableId.NONE);
 
 ::Items[ItemId.HEALTH_POTION] = ItemDef("Health Potion", "A potion of health. Bubbles gently inside a cast glass flask.", "smallPotion.voxMesh", "item_healthPotion", ItemType.DRINK, 5, null, EquippableId.NONE);
 ::Items[ItemId.LARGE_HEALTH_POTION] = ItemDef("Large Health Potion", "A large potion of health.", "largePotion.voxMesh", "item_largeHealthPotion", ItemType.DRINK, 10, null, EquippableId.NONE);
@@ -27,6 +27,10 @@
 
 ::ItemHelper.itemToStats <- function(item){
     local stat = ::StatsEntry();
+
+    //Populate sell and scrap values from item definition
+    stat.mSellValue = ::Items[item].getSellValue();
+    stat.mScrapValue = ::Items[item].getScrapVal();
 
     switch(item){
         case ItemId.NONE: return stat;

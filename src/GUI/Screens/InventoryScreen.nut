@@ -12,6 +12,7 @@ enum InventoryBusEvents{
     ITEM_INFO_REQUEST_UNEQUIP,
     ITEM_INFO_REQUEST_USE,
     ITEM_INFO_REQUEST_SCRAP,
+    ITEM_INFO_REQUEST_SELL,
     ITEM_INFO_REQUEST_MOVE_TO_INVENTORY,
     ITEM_INFO_REQUEST_MOVE_OUT_OF_INVENTORY,
     ITEM_INFO_REQUEST_MOVE_TO_STORAGE,
@@ -513,7 +514,10 @@ enum InventoryBusEvents{
             }
         }
         else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_SCRAP){
-            scrapItem(data);
+            disposeOfItem(data, false);
+        }
+        else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_SELL){
+            disposeOfItem(data, true);
         }
         else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_OPEN){
             local inventoryData = data;
@@ -646,12 +650,13 @@ enum InventoryBusEvents{
         }
     }
 
-    function scrapItem(inventoryData){
+    function disposeOfItem(inventoryData, isSell){
         local targetItem = removeFromInventory_(inventoryData);
         if(targetItem == null) return;
 
-        local scrapValue = targetItem.getScrapVal();
-        printf("Adding scrap value %i for item: %s", scrapValue, targetItem.tostring());
+        local itemValue = isSell ? targetItem.getSellValue() : targetItem.getScrapVal();
+        local actionDescription = isSell ? "Selling" : "Scrapping";
+        printf("Adding %s value %i for item: %s", actionDescription, itemValue, targetItem.tostring());
 
         //Get the item position for the effect origin
         local idx = inventoryData.idx;
@@ -671,10 +676,10 @@ enum InventoryBusEvents{
         }
 
         //Add money without triggering event (effect will handle counter update)
-        ::Base.mPlayerStats.changeMoney(scrapValue, false);
+        ::Base.mPlayerStats.changeMoney(itemValue, false);
 
         //Display the spread coin effect
-        ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"numCoins": scrapValue, "start": startPos, "end": moneyCounterPos, "money": scrapValue, "coinScale": 0.2, "cellSize": 2}));
+        ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"numCoins": itemValue, "start": startPos, "end": moneyCounterPos, "money": itemValue, "coinScale": 0.2, "cellSize": 2}));
     }
 
     function removeFromInventory_(inventoryData){

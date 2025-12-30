@@ -52,6 +52,7 @@ enum ItemEquipTransformType{
     function getDescription(){ return mItem_.getDescription(); }
     function getEquippableData(){ return mItem_.getEquippableData(); }
     function getEquipTransforms(wield, wieldActive){ return mItem_.getEquipTransforms(wield, wieldActive); }
+    function getSellValue(){ return mItem_.getSellValue(); }
     function getScrapVal(){ return mItem_.getScrapVal(); }
     function getIcon(){ return mItem_.getIcon(); }
     function toStats(){
@@ -67,20 +68,20 @@ enum ItemEquipTransformType{
     mDesc = null;
     mMesh = null;
     mType = ItemType.NONE;
-    mScrapVal = 0;
+    mSellValue = 0;
     mIcon = null;
     mDefData = null;
 
     mEquippableData = EquippableId.NONE;
     mEquipTransformType = ItemEquipTransformType.NONE;
 
-    constructor(name, desc, mesh, icon, type, scrapVal, defData, equippableData=null, equippableTransformType=ItemEquipTransformType.NONE){
+    constructor(name, desc, mesh, icon, type, sellValue, defData, equippableData=null, equippableTransformType=ItemEquipTransformType.NONE){
         mName = name;
         mDesc = desc;
         mMesh = mesh;
         mType = type;
         mIcon = icon;
-        mScrapVal = scrapVal;
+        mSellValue = sellValue;
         mEquippableData = equippableData;
         mDefData = defData;
         mEquipTransformType = equippableTransformType;
@@ -101,7 +102,8 @@ enum ItemEquipTransformType{
     function getDescription(){ return mDesc; }
     function getDefData(){ return mDefData; }
     function getMesh(){ return mMesh; }
-    function getScrapVal(){ return mScrapVal; }
+    function getSellValue(){ return mSellValue; }
+    function getScrapVal(){ return (mSellValue*0.4).tointeger(); }
     function getEquippableData(){ return mEquippableData; }
     function getEquipTransforms(left, wieldActive){
         if(left){

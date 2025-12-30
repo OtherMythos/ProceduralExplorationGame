@@ -6,9 +6,11 @@
     mRestorativeHealth = 1;
     mAttack = 1;
     mDefense = 1;
+    mSellValue = 0;
+    mScrapValue = 0;
 
     function _tostring(){
-        local t = format("{restorativeHealth: %i, attack: %i, defense: %i}", mRestorativeHealth, mAttack, mDefense);
+        local t = format("{restorativeHealth: %i, attack: %i, defense: %i, sellValue: %i, scrapValue: %i}", mRestorativeHealth, mAttack, mDefense, mSellValue, mScrapValue);
         return ::wrapToString(::FoundObject, "ItemStat", t);
     }
 
@@ -16,6 +18,8 @@
         mRestorativeHealth = 1;
         mAttack = 1;
         mDefense = 1;
+        mSellValue = 0;
+        mScrapValue = 0;
     }
 
     function hasStatType(stat){
@@ -54,6 +58,18 @@
         }
     }
 
+    function getDescriptionForValue(){
+        local desc = "";
+        if(mSellValue > 0){
+            desc += format("%s Sell: %i", UNICODE_COINS, mSellValue);
+        }
+        if(mScrapValue > 0){
+            if(desc.len() > 0) desc += " ";
+            desc += format("%s Scrap: %i", UNICODE_COINS, mScrapValue);
+        }
+        return desc;
+    }
+
     function getColourForStat(stat){
         local statColour = ::ItemHelper.coloursForStats[stat];
         return statColour;
@@ -72,6 +88,15 @@
             outString += appendString;
         }
 
+        //Add value information if present
+        local valueDesc = getDescriptionForValue();
+        if(valueDesc.len() > 0){
+            local appendString = valueDesc + "\n";
+            local goldColour = ColourValue(1.0, 0.84, 0.0, 1.0);
+            outRichText.append({"offset": outString.len(), "len": appendString.len(), "col": goldColour, "font": 6});
+            outString += appendString;
+        }
+
         return [outString, outRichText];
     }
 
@@ -82,6 +107,8 @@
         mRestorativeHealth += stat.mRestorativeHealth;
         mAttack += stat.mAttack;
         mDefense += stat.mDefense;
+        mSellValue += stat.mSellValue;
+        mScrapValue += stat.mScrapValue;
 
         return this;
     }

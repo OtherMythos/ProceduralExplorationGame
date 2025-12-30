@@ -1,6 +1,7 @@
 enum InventoryItemHelperScreenFunctions{
     USE,
     SCRAP,
+    SELL,
     CANCEL,
     EQUIP,
     EQUIP_LEFT_HAND,
@@ -283,10 +284,15 @@ enum InventoryItemHelperScreenFunctions{
 
         if(!isShop){
             local sellAvailable = mData_.rawin("sellAvailable") && mData_.sellAvailable;
-            local scrapButtonText = sellAvailable ? UNICODE_COINS + " Sell" : UNICODE_COINS + " Scrap";
-            buttonOptions.append(scrapButtonText);
-            buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.SCRAP]);
-            buttonEnabled.append(true);
+            if(sellAvailable){
+                buttonOptions.append(UNICODE_COINS + " Sell");
+                buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.SELL]);
+                buttonEnabled.append(true);
+            }else{
+                buttonOptions.append(UNICODE_COINS + " Scrap");
+                buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.SCRAP]);
+                buttonEnabled.append(true);
+            }
 
             if(mData_.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
                 buttonOptions.append(UNICODE_INTO_INVENTORY + " Inventory");
@@ -343,6 +349,11 @@ b[InventoryItemHelperScreenFunctions.USE] = function(widget, action){
 b[InventoryItemHelperScreenFunctions.SCRAP] =function(widget, action){
     local data = {"idx": mData_.idx, "gridType": mData_.gridType};
     mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_SCRAP, data);
+    closeInventoryScreen_();
+};
+b[InventoryItemHelperScreenFunctions.SELL] = function(widget, action){
+    local data = {"idx": mData_.idx, "gridType": mData_.gridType};
+    mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_SELL, data);
     closeInventoryScreen_();
 };
 b[InventoryItemHelperScreenFunctions.CANCEL] = function(widget, action){
