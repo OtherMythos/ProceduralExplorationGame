@@ -513,6 +513,7 @@ enum WorldMousePressContexts{
     mTriggerCollisionWorld_ = null;
     mCombatTargetCollisionWorld_ = null;
     mCollisionDetectionWorld_ = null;
+    mCompassCollisionWorld_ = null;
     mEntityManager_ = null;
     mWorldScaleSize_ = 1;
     mCameraAcceleration_ = null;
@@ -548,6 +549,8 @@ enum WorldMousePressContexts{
     mPlayerTargetRadiusProjectiles_ = null;
 
     mInputs_ = null;
+
+    mCompassIndicatorTracking_ = null;
 
     NUM_PLAYER_QUEUED_FLAGS = 1;
 
@@ -611,6 +614,8 @@ enum WorldMousePressContexts{
             "zoomOut": _input.getButtonActionHandle("ZoomOut"),
             "toggleWorldView": _input.getButtonActionHandle("ToggleWorldView"),
         };
+
+        mCompassIndicatorTracking_ = {};
     }
 
     function getWorldType(){
@@ -642,6 +647,9 @@ enum WorldMousePressContexts{
     }
     function getCollisionDetectionWorld(){
         return mCollisionDetectionWorld_;
+    }
+    function getCompassCollisionWorld(){
+        return mCompassCollisionWorld_;
     }
     function getEntityManager(){
         return mEntityManager_;
@@ -723,6 +731,7 @@ enum WorldMousePressContexts{
         mTriggerCollisionWorld_ = CollisionWorldWrapper(this, 1);
         mCombatTargetCollisionWorld_ = CollisionWorldWrapper(this, 2);
         mCollisionDetectionWorld_ = _gameCore.createCollisionDetectionWorld(3);
+        mCompassCollisionWorld_ = CollisionWorld(_COLLISION_WORLD_OCTREE, 4);
 
         mEntityManager_ = EntityManager.createEntityManager(this);
 
@@ -844,6 +853,102 @@ enum WorldMousePressContexts{
         mTriggerCollisionWorld_.processCollision();
         mCombatTargetCollisionWorld_.processCollision();
         mCollisionDetectionWorld_.processCollision();
+        mCompassCollisionWorld_.processCollision();
+
+        updateCompassIndicators_();
+    }
+
+    function updateCompassIndicators_(){
+        for(local i = 0; i < mCompassCollisionWorld_.getNumCollisions(); i++){
+            local pair = mCompassCollisionWorld_.getCollisionPairForIdx(i);
+            local collisionStatus = (pair & 0xF000000000000000) >> 60;
+
+            //Extract sender (first) and receiver (second) point IDs
+            local senderPointId = pair & 0xFFFFFFF; //Lower 28 bits
+            local receiverPointId = (pair >> 30) & 0x3FFFFFF; //Bits 30-55
+
+            if(collisionStatus == 0x1){
+                //Collision entered
+                if(!mCompassIndicatorTracking_.rawin(senderPointId)){
+                    createCompassIndicator_(senderPointId, receiverPointId);
+                }
+            }
+            else if(collisionStatus == 0x2){
+                //Collision left
+                if(mCompassIndicatorTracking_.rawin(senderPointId)){
+                    destroyCompassIndicator_(senderPointId);
+                }
+            }
+            else if(collisionStatus == 0x0){
+                //Collision still active, update position
+                if(mCompassIndicatorTracking_.rawin(senderPointId)){
+                    updateCompassIndicatorPosition_(senderPointId, receiverPointId);
+                }
+            }
+        }
+    }
+
+    function getCompassIndicatorPosition_(senderPointId, receiverPointId){
+        local senderPos = mCompassCollisionWorld_.getPositionForPoint(senderPointId);
+        local receiverPos = mCompassCollisionWorld_.getPositionForPoint(receiverPointId);
+
+        //Calculate distance and radian from receiver to sender
+        local deltaX = senderPos.x - receiverPos.x;
+        local deltaZ = senderPos.y - receiverPos.y;
+        local distance = sqrt(deltaX * deltaX + deltaZ * deltaZ) / PLAYER_COMPASS_DISTANCE;
+        //TODO I'm not so sure why I need this offset, but I found it was necessary.
+        local radian = atan2(deltaZ, deltaX) + (PI / 2); //Add 90 degrees offset
+
+        //Normalize distance to compass scale (compass is typically 100-200 units)
+        local compassDistance = distance;
+
+        return Vec2(compassDistance, radian);
+    }
+
+    function createCompassIndicator_(senderPointId, receiverPointId){
+        local position = getCompassIndicatorPosition_(senderPointId, receiverPointId);
+
+        //Add indicator to compass
+        local indicatorId = mGui_.mCompassAnimator_.addCompassIndicator(position.x, position.y);
+
+        //Store mapping
+        mCompassIndicatorTracking_.rawset(senderPointId, indicatorId);
+    }
+
+    function updateCompassIndicatorPosition_(senderPointId, receiverPointId){
+        local position = getCompassIndicatorPosition_(senderPointId, receiverPointId);
+        local indicatorId = mCompassIndicatorTracking_[senderPointId];
+
+        if(indicatorId != null){
+            mGui_.mCompassAnimator_.updateCompassIndicatorPosition(indicatorId, position.x, position.y);
+        }
+    }
+
+    function destroyCompassIndicator_(pointId){
+        local indicatorId = mCompassIndicatorTracking_[pointId];
+        if(indicatorId != null){
+            mGui_.mCompassAnimator_.removeCompassIndicator(indicatorId);
+        }
+        mCompassIndicatorTracking_.rawdelete(pointId);
+    }
+
+    function getCompassCollidingPoints(){
+        local collidingPoints = [];
+
+        for(local i = 0; i < mCompassCollisionWorld_.getNumCollisions(); i++){
+            local pair = mCompassCollisionWorld_.getCollisionPairForIdx(i);
+            local collisionStatus = (pair & 0xF000000000000000) >> 60;
+
+            local first = pair & 0xFFFFFFF;
+            local second = (pair >> 30) & 0xFFFFFFF;
+
+            //If collision is active, record the colliding point (second point is the receiver, first is sender)
+            if(collisionStatus == 0x1){
+                collidingPoints.push(second);
+            }
+        }
+
+        return collidingPoints;
     }
 
     function setCurrentWorld(current){
@@ -893,6 +998,10 @@ enum WorldMousePressContexts{
 
         if(mProjectileManager_ != null) mProjectileManager_.shutdown();
         mProjectileManager_ = ExplorationProjectileManager(this, mDamageCollisionWorld_);
+
+        //Add player indicator to compass (distance 0, radian 0)
+        local playerIndicatorId = mGui_.mCompassAnimator_.addCompassIndicator(0, 0);
+        mCompassIndicatorTracking_.rawset(-1, playerIndicatorId); //Use -1 as sentinel for player
     }
 
     function processStatusAfflictionChange_(entity){

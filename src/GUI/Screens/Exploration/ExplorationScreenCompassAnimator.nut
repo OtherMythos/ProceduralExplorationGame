@@ -7,7 +7,7 @@
     constructor(distance, radian, parentNode, compassNode, window){
         local target = parentNode.createChildSceneNode();
         local indicatorPlane = _scene.createItem("plane");
-        indicatorPlane.setDatablock("guiExplorationCompassIndicator");
+        //indicatorPlane.setDatablock("guiExplorationCompassIndicator");
         indicatorPlane.setRenderQueueGroup(74);
         target.setScale(0.08, 0.08, 0.08);
         target.attachObject(indicatorPlane);

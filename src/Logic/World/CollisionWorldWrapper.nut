@@ -122,6 +122,10 @@
         return pointId;
     }
 
+    function setPositionForPoint(id, x, y){
+        mCollisionWorld_.setPositionForPoint(id, x, y);
+    }
+
     function addCollisionReceiver(triggerData, x, y, rad, mask=0xFF){
         local pointId = mCollisionWorld_.addCollisionPoint(x, y, rad, mask, _COLLISION_WORLD_ENTRY_RECEIVER);
         //assert(!mPoints_.rawin(pointId));

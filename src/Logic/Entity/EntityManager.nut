@@ -8,6 +8,7 @@ enum EntityComponents{
     COLLISION_POINT_TWO,
     COLLISION_POINT_THREE,
     COLLISION_POINT_FOUR,
+    COLLISION_POINT_FIVE,
     LIFETIME,
     ANIMATION,
     BILLBOARD,
@@ -484,25 +485,33 @@ EntityManager.EntityManager <- class{
         }
         if(mEntityComponentHashes_[idx] & (1<<EntityComponents.COLLISION_POINT)){
             local comp = mComponents_[EntityComponents.COLLISION_POINT].getCompForEid(eid);
-            comp.mCreator.mCollisionWorld_.setPositionForPoint(comp.mPoint, newPos.x, newPos.z);
+            comp.mCreator.setPositionForPoint(comp.mPoint, newPos.x, newPos.z);
         }
         if(mEntityComponentHashes_[idx] & (1<<EntityComponents.COLLISION_POINT_TWO)){
             local comp = mComponents_[EntityComponents.COLLISION_POINT_TWO].getCompForEid(eid);
-            comp.mCreatorFirst.mCollisionWorld_.setPositionForPoint(comp.mPointFirst, newPos.x, newPos.z);
-            comp.mCreatorSecond.mCollisionWorld_.setPositionForPoint(comp.mPointSecond, newPos.x, newPos.z);
+            comp.mCreatorFirst.setPositionForPoint(comp.mPointFirst, newPos.x, newPos.z);
+            comp.mCreatorSecond.setPositionForPoint(comp.mPointSecond, newPos.x, newPos.z);
         }
         if(mEntityComponentHashes_[idx] & (1<<EntityComponents.COLLISION_POINT_THREE)){
             local comp = mComponents_[EntityComponents.COLLISION_POINT_THREE].getCompForEid(eid);
-            comp.mCreatorFirst.mCollisionWorld_.setPositionForPoint(comp.mPointFirst, newPos.x, newPos.z);
-            comp.mCreatorSecond.mCollisionWorld_.setPositionForPoint(comp.mPointSecond, newPos.x, newPos.z);
-            comp.mCreatorThird.mCollisionWorld_.setPositionForPoint(comp.mPointThird, newPos.x, newPos.z);
+            comp.mCreatorFirst.setPositionForPoint(comp.mPointFirst, newPos.x, newPos.z);
+            comp.mCreatorSecond.setPositionForPoint(comp.mPointSecond, newPos.x, newPos.z);
+            comp.mCreatorThird.setPositionForPoint(comp.mPointThird, newPos.x, newPos.z);
         }
         if(mEntityComponentHashes_[idx] & (1<<EntityComponents.COLLISION_POINT_FOUR)){
             local comp = mComponents_[EntityComponents.COLLISION_POINT_FOUR].getCompForEid(eid);
-            comp.mCreatorFirst.mCollisionWorld_.setPositionForPoint(comp.mPointFirst, newPos.x, newPos.z);
-            comp.mCreatorSecond.mCollisionWorld_.setPositionForPoint(comp.mPointSecond, newPos.x, newPos.z);
-            comp.mCreatorThird.mCollisionWorld_.setPositionForPoint(comp.mPointThird, newPos.x, newPos.z);
-            comp.mCreatorFourth.mCollisionWorld_.setPositionForPoint(comp.mPointFourth, newPos.x, newPos.z);
+            comp.mCreatorFirst.setPositionForPoint(comp.mPointFirst, newPos.x, newPos.z);
+            comp.mCreatorSecond.setPositionForPoint(comp.mPointSecond, newPos.x, newPos.z);
+            comp.mCreatorThird.setPositionForPoint(comp.mPointThird, newPos.x, newPos.z);
+            comp.mCreatorFourth.setPositionForPoint(comp.mPointFourth, newPos.x, newPos.z);
+        }
+        if(mEntityComponentHashes_[idx] & (1<<EntityComponents.COLLISION_POINT_FIVE)){
+            local comp = mComponents_[EntityComponents.COLLISION_POINT_FIVE].getCompForEid(eid);
+            comp.mCreatorFirst.setPositionForPoint(comp.mPointFirst, newPos.x, newPos.z);
+            comp.mCreatorSecond.setPositionForPoint(comp.mPointSecond, newPos.x, newPos.z);
+            comp.mCreatorThird.setPositionForPoint(comp.mPointThird, newPos.x, newPos.z);
+            comp.mCreatorFourth.setPositionForPoint(comp.mPointFourth, newPos.x, newPos.z);
+            comp.mCreatorFifth.setPositionForPoint(comp.mPointFifth, newPos.x, newPos.z);
         }
         if(mEntityComponentHashes_[idx] & (1<<EntityComponents.GIZMO)){
             local gizmos = mComponents_[EntityComponents.GIZMO].getCompForEid(eid).mGizmo;
@@ -550,6 +559,13 @@ EntityManager.EntityManager <- class{
                     component.mCreatorSecond.removeCollisionPoint(component.mPointSecond);
                     component.mCreatorThird.removeCollisionPoint(component.mPointThird);
                     component.mCreatorFourth.removeCollisionPoint(component.mPointFourth);
+                }
+                else if(i == EntityComponents.COLLISION_POINT_FIVE){
+                    component.mCreatorFirst.removeCollisionPoint(component.mPointFirst);
+                    component.mCreatorSecond.removeCollisionPoint(component.mPointSecond);
+                    component.mCreatorThird.removeCollisionPoint(component.mPointThird);
+                    component.mCreatorFourth.removeCollisionPoint(component.mPointFourth);
+                    component.mCreatorFifth.removeCollisionPoint(component.mPointFifth);
                 }
                 else if(i == EntityComponents.SCRIPT){
                     if("destroyed" in component.mScript){

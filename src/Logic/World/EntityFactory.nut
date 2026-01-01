@@ -103,10 +103,13 @@
             local damageWorld = mConstructorWorld_.getDamageWorld();
             local damagePoint = damageWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
 
-            manager.assignComponent(en, EntityComponents.COLLISION_POINT_FOUR,
-                ::EntityManager.Components[EntityComponents.COLLISION_POINT_FOUR](
-                    collisionPoint, damagePoint, combatTargetPoint, combatTargetProjectilePoint
-                    triggerWorld, damageWorld, combatTargetWorld, combatTargetWorld
+            local compassCollisionWorld = mConstructorWorld_.getCompassCollisionWorld();
+            local compassPoint = compassCollisionWorld.addCollisionPoint(targetPos.x, targetPos.z, PLAYER_COMPASS_DISTANCE, _COLLISION_PLAYER, _COLLISION_WORLD_ENTRY_RECEIVER);
+
+            manager.assignComponent(en, EntityComponents.COLLISION_POINT_FIVE,
+                ::EntityManager.Components[EntityComponents.COLLISION_POINT_FIVE](
+                    collisionPoint, damagePoint, combatTargetPoint, combatTargetProjectilePoint, compassPoint,
+                    triggerWorld, damageWorld, combatTargetWorld, combatTargetWorld, compassCollisionWorld
                 )
             );
 
@@ -225,10 +228,13 @@
         local combatTargetWorld = mConstructorWorld_.getCombatTargetWorld();
         local combatTargetPoint = combatTargetWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_ENEMY);
 
-        manager.assignComponent(en, EntityComponents.COLLISION_POINT_THREE,
-            ::EntityManager.Components[EntityComponents.COLLISION_POINT_THREE](
-                playerSpottedOutline, damagePoint, combatTargetPoint,
-                triggerWorld, damageWorld, combatTargetWorld
+        local compassCollisionWorld = mConstructorWorld_.getCompassCollisionWorld();
+        local compassPoint = compassCollisionWorld.addCollisionPoint(targetPos.x, targetPos.z, 1, _COLLISION_PLAYER, _COLLISION_WORLD_ENTRY_SENDER);
+
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT_FOUR,
+            ::EntityManager.Components[EntityComponents.COLLISION_POINT_FOUR](
+                playerSpottedOutline, damagePoint, combatTargetPoint, compassPoint,
+                triggerWorld, damageWorld, combatTargetWorld, compassCollisionWorld
             )
         );
 
