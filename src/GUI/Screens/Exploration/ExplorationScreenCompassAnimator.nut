@@ -1,3 +1,45 @@
+::CompassIndicator <- class{
+    mDistance_ = 0.0;
+    mRadian_ = 0.0;
+    mSceneNode_ = null;
+    mPanelTrackNode_ = null;
+
+    constructor(distance, radian, parentNode, compassNode, window){
+        local target = parentNode.createChildSceneNode();
+        local indicatorPlane = _scene.createItem("plane");
+        indicatorPlane.setDatablock("guiExplorationCompassIndicator");
+        indicatorPlane.setRenderQueueGroup(74);
+        target.setScale(0.08, 0.08, 0.08);
+        target.attachObject(indicatorPlane);
+        mSceneNode_ = target;
+
+        mPanelTrackNode_ = compassNode.createChildSceneNode();
+
+        setPosition(distance, radian);
+    }
+
+    function setPosition(distance, radian){
+        mDistance_ = distance;
+        mRadian_ = radian;
+        local x = cos(radian) * distance;
+        local y = sin(radian) * distance;
+        mSceneNode_.setPosition(x, y, 0);
+        mPanelTrackNode_.setPosition(x, y, 0);
+    }
+
+    function updatePanelPosition(){
+        local derivedPos = mPanelTrackNode_.getDerivedPositionVec3();
+        mSceneNode_.setPosition(derivedPos);
+    }
+
+    function shutdown(){
+        mSceneNode_.destroyNodeAndChildren();
+        mPanelTrackNode_.destroyNodeAndChildren();
+        mSceneNode_ = null;
+        mPanelTrackNode_ = null;
+    }
+};
+
 ::ExplorationScreenCompassAnimator <- class{
     mTexture_ = null;
     mStoredTexture_ = null;
@@ -13,10 +55,14 @@
     mRenderWorkspace_ = null;
 
     mDirectionNodes_ = null;
+    mCompassIndicators_ = null;
+    mCompassIndicatorPool_ = null;
 
     constructor(window, size){
 
         mDirectionNodes_ = [];
+        mCompassIndicators_ = [];
+        mCompassIndicatorPool_ = ::VersionPool();
 
         local texture = _graphics.createTexture("explorationCompassTexture");
         texture.setResolution((size.x * ::resolutionMult.x).tointeger(), (size.y.tointeger() * ::resolutionMult.y).tointeger());
@@ -113,6 +159,35 @@
         mCompassWindow_.setVisible(visible);
     }
 
+    function addCompassIndicator(distance, radian){
+        local indicator = CompassIndicator(distance, radian, mParentNode_, mCompassNode_, mCompassWindow_);
+        local id = mCompassIndicatorPool_.store(indicator);
+        mCompassIndicators_.append(id);
+        return id;
+    }
+
+    function removeCompassIndicator(id){
+        if(!mCompassIndicatorPool_.valid(id)){
+            return;
+        }
+        local indicator = mCompassIndicatorPool_.get(id);
+        if(indicator != null){
+            indicator.shutdown();
+        }
+        mCompassIndicatorPool_.unstore(id);
+        mCompassIndicators_.remove(mCompassIndicators_.find(id));
+    }
+
+    function updateCompassIndicatorPosition(id, distance, radian){
+        if(!mCompassIndicatorPool_.valid(id)){
+            return;
+        }
+        local indicator = mCompassIndicatorPool_.get(id);
+        if(indicator != null){
+            indicator.setPosition(distance, radian);
+        }
+    }
+
     function getDatablock_(dir){
         switch(dir){
             case 0:
@@ -149,6 +224,17 @@
     }
 
     function shutdown(){
+        //Clean up all compass indicators
+        foreach(indicatorId in mCompassIndicators_){
+            if(mCompassIndicatorPool_.valid(indicatorId)){
+                local indicator = mCompassIndicatorPool_.get(indicatorId);
+                if(indicator != null){
+                    indicator.shutdown();
+                }
+                mCompassIndicatorPool_.unstore(indicatorId);
+            }
+        }
+
         _compositor.removeWorkspace(mRenderWorkspace_);
         _gui.destroy(mCompassWindow_);
         _hlms.destroyDatablock(mDatablock_);
@@ -167,6 +253,8 @@
         mParentNode_ = null;
         mCompassNode_ = null;
         mDirectionNodes_ = null;
+        mCompassIndicators_ = null;
+        mCompassIndicatorPool_ = null;
     }
 
     function getPosition(){
@@ -224,6 +312,16 @@
         foreach(i in mDirectionNodes_){
             i[0].setPosition(i[1].getDerivedPositionVec3());
             //i[0].lookAt(_camera.getPosition());
+        }
+
+        //Update compass indicator positions
+        foreach(indicatorId in mCompassIndicators_){
+            if(mCompassIndicatorPool_.valid(indicatorId)){
+                local indicator = mCompassIndicatorPool_.get(indicatorId);
+                if(indicator != null){
+                    indicator.updatePanelPosition();
+                }
+            }
         }
 
     }
