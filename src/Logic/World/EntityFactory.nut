@@ -106,12 +106,13 @@
             local compassCollisionWorld = mConstructorWorld_.getCompassCollisionWorld();
             local compassPoint = compassCollisionWorld.addCollisionPoint(targetPos.x, targetPos.z, PLAYER_COMPASS_DISTANCE, _COLLISION_PLAYER, _COLLISION_WORLD_ENTRY_RECEIVER);
 
-            manager.assignComponent(en, EntityComponents.COLLISION_POINT_FIVE,
-                ::EntityManager.Components[EntityComponents.COLLISION_POINT_FIVE](
-                    collisionPoint, damagePoint, combatTargetPoint, combatTargetProjectilePoint, compassPoint,
-                    triggerWorld, damageWorld, combatTargetWorld, combatTargetWorld, compassCollisionWorld
+            manager.assignComponent(en, EntityComponents.COLLISION_POINT_FOUR,
+                ::EntityManager.Components[EntityComponents.COLLISION_POINT_FOUR](
+                    collisionPoint, damagePoint, combatTargetPoint, combatTargetProjectilePoint,
+                    triggerWorld, damageWorld, combatTargetWorld, combatTargetWorld
                 )
             );
+            manager.assignComponent(en, EntityComponents.COMPASS_INDICATOR, ::EntityManager.Components[EntityComponents.COMPASS_INDICATOR](compassPoint, compassCollisionWorld));
 
             local collisionRadius = 1.5;
             manager.assignComponent(en, EntityComponents.COLLISION_DETECTION, ::EntityManager.Components[EntityComponents.COLLISION_DETECTION](collisionRadius, COLLISION_TYPE_PLAYER));
@@ -231,12 +232,13 @@
         local compassCollisionWorld = mConstructorWorld_.getCompassCollisionWorld();
         local compassPoint = compassCollisionWorld.addCollisionPoint(targetPos.x, targetPos.z, 1, _COLLISION_PLAYER, _COLLISION_WORLD_ENTRY_SENDER);
 
-        manager.assignComponent(en, EntityComponents.COLLISION_POINT_FOUR,
-            ::EntityManager.Components[EntityComponents.COLLISION_POINT_FOUR](
-                playerSpottedOutline, damagePoint, combatTargetPoint, compassPoint,
-                triggerWorld, damageWorld, combatTargetWorld, compassCollisionWorld
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT_THREE,
+            ::EntityManager.Components[EntityComponents.COLLISION_POINT_THREE](
+                playerSpottedOutline, damagePoint, combatTargetPoint,
+                triggerWorld, damageWorld, combatTargetWorld
             )
         );
+        manager.assignComponent(en, EntityComponents.COMPASS_INDICATOR, ::EntityManager.Components[EntityComponents.COMPASS_INDICATOR](compassPoint, compassCollisionWorld));
 
         entry.setPosition(targetPos);
 

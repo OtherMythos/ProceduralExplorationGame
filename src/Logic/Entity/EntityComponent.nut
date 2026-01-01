@@ -372,3 +372,15 @@
     }
 
 };
+
+::EntityManager.Components[EntityComponents.COMPASS_INDICATOR] = class extends ::EntityManager.Component{
+
+    mPoint = null;
+    mCreator = null;
+
+    constructor(point, creator){
+        mPoint = point;
+        mCreator = creator;
+    }
+
+};

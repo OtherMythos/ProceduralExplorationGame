@@ -27,6 +27,7 @@ enum EntityComponents{
     STATUS_AFFLICTION,
     GIZMO,
     DATABLOCK_ANIMATOR,
+    COMPASS_INDICATOR,
 
     MAX
 
@@ -526,6 +527,10 @@ EntityManager.EntityManager <- class{
                 comp.mSceneNode.setPosition(newPos + Vec3(0, comp.mYOffset, 0));
             }
         }
+        if(mEntityComponentHashes_[idx] & (1<<EntityComponents.COMPASS_INDICATOR)){
+            local comp = mComponents_[EntityComponents.COMPASS_INDICATOR].getCompForEid(eid);
+            comp.mCreator.setPositionForPoint(comp.mPoint, newPos.x, newPos.z);
+        }
     }
 
     function processEntityDestruction_(eid, idx, reason){
@@ -599,6 +604,9 @@ EntityManager.EntityManager <- class{
                         g.destroy();
                     }
                     component.mGizmo = null;
+                }
+                else if(i == EntityComponents.COMPASS_INDICATOR){
+                    component.mCreator.removeCollisionPoint(component.mPoint);
                 }
             }
         }
