@@ -913,6 +913,12 @@ enum WorldMousePressContexts{
 
         //Store mapping
         mCompassIndicatorTracking_.rawset(senderPointId, indicatorId);
+
+        local eid = mCompassCollisionWorld_.getUserValue(senderPointId);
+        if(mEntityManager_.entityValid(eid) && mEntityManager_.hasComponent(eid, EntityComponents.COMPASS_INDICATOR)){
+            local comp = mEntityManager_.getComponent(eid, EntityComponents.COMPASS_INDICATOR);
+            mGui_.mCompassAnimator_.setCompassIndicatorType(indicatorId, comp.mType);
+        }
     }
 
     function updateCompassIndicatorPosition_(senderPointId, receiverPointId){

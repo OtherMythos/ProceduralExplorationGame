@@ -56,6 +56,11 @@ enum ProximityComponentType{
     PLAYER,
 };
 
+enum CompassIndicatorType{
+    ENEMY,
+    NPC
+};
+
 ::EntityManager <- {
 
     MAX_MANAGERS = 0xF

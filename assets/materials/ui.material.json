@@ -395,6 +395,17 @@
             {
                 "texture": "simpleGradient.png"
             }
+        },
+
+        "guiExplorationCompassIndicatorEnemy" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse" : [1, 0, 0, 1]
+        },
+        "guiExplorationCompassIndicatorNPC" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse" : [1, 0, 1, 1]
         }
     }
 }

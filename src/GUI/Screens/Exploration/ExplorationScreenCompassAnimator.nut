@@ -8,6 +8,7 @@
         local target = parentNode.createChildSceneNode();
         local indicatorPlane = _scene.createItem("plane");
         //indicatorPlane.setDatablock("guiExplorationCompassIndicator");
+
         indicatorPlane.setRenderQueueGroup(74);
         target.setScale(0.08, 0.08, 0.08);
         target.attachObject(indicatorPlane);
@@ -25,6 +26,14 @@
         local y = sin(radian) * distance;
         mSceneNode_.setPosition(x, y, 0);
         mPanelTrackNode_.setPosition(x, y, 0);
+    }
+
+    function setType(type){
+        if(type == CompassIndicatorType.ENEMY){
+            mSceneNode_.getAttachedObject(0).setDatablock("guiExplorationCompassIndicatorEnemy");
+        }else if(type == CompassIndicatorType.NPC){
+            mSceneNode_.getAttachedObject(0).setDatablock("guiExplorationCompassIndicatorNPC");
+        }
     }
 
     function updatePanelPosition(){
@@ -185,6 +194,16 @@
         local indicator = mCompassIndicatorPool_.get(id);
         if(indicator != null){
             indicator.setPosition(distance, radian);
+        }
+    }
+
+    function setCompassIndicatorType(id, type){
+        if(!mCompassIndicatorPool_.valid(id)){
+            return;
+        }
+        local indicator = mCompassIndicatorPool_.get(id);
+        if(indicator != null){
+            indicator.setType(type);
         }
     }
 

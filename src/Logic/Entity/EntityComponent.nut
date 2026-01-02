@@ -377,10 +377,13 @@
 
     mPoint = null;
     mCreator = null;
+    mType = null;
 
-    constructor(point, creator){
+    constructor(point, creator, type, eid){
         mPoint = point;
         mCreator = creator;
+        mType = type;
+        mCreator.setUserValue(mPoint, eid);
     }
 
 };

@@ -41,6 +41,10 @@
 
         manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](::BasicEnemyScript(en, readBoolFromData_(data, "idleWalk", false))));
 
+        local compassCollisionWorld = mConstructorWorld_.getCompassCollisionWorld();
+        local compassPoint = compassCollisionWorld.addCollisionPoint(targetPos.x, targetPos.z, 1, _COLLISION_PLAYER, _COLLISION_WORLD_ENTRY_SENDER);
+        manager.assignComponent(en, EntityComponents.COMPASS_INDICATOR, ::EntityManager.Components[EntityComponents.COMPASS_INDICATOR](compassPoint, compassCollisionWorld, CompassIndicatorType.NPC, en));
+
         playerEntry.setPosition(targetPos);
 
         return playerEntry;
@@ -112,7 +116,7 @@
                     triggerWorld, damageWorld, combatTargetWorld, combatTargetWorld
                 )
             );
-            manager.assignComponent(en, EntityComponents.COMPASS_INDICATOR, ::EntityManager.Components[EntityComponents.COMPASS_INDICATOR](compassPoint, compassCollisionWorld));
+            manager.assignComponent(en, EntityComponents.COMPASS_INDICATOR, ::EntityManager.Components[EntityComponents.COMPASS_INDICATOR](compassPoint, compassCollisionWorld, 0, en));
 
             local collisionRadius = 1.5;
             manager.assignComponent(en, EntityComponents.COLLISION_DETECTION, ::EntityManager.Components[EntityComponents.COLLISION_DETECTION](collisionRadius, COLLISION_TYPE_PLAYER));
@@ -238,7 +242,7 @@
                 triggerWorld, damageWorld, combatTargetWorld
             )
         );
-        manager.assignComponent(en, EntityComponents.COMPASS_INDICATOR, ::EntityManager.Components[EntityComponents.COMPASS_INDICATOR](compassPoint, compassCollisionWorld));
+        manager.assignComponent(en, EntityComponents.COMPASS_INDICATOR, ::EntityManager.Components[EntityComponents.COMPASS_INDICATOR](compassPoint, compassCollisionWorld, CompassIndicatorType.ENEMY, en));
 
         entry.setPosition(targetPos);
 
