@@ -31,6 +31,19 @@ variationSeed: %i";
     return format("Giving player '%s'", ::Items[itemId].getName());
 });
 
+::DebugConsole.registerCommand("drop", "Drop an item of id near the player", 1, "i", function(command){
+    local itemId = command[0].tointeger();
+    if(itemId >= ItemId.MAX){
+        throw format("Invalid item idx '%i'", itemId);
+    }
+
+    local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+    local playerPos = currentWorld.getPlayerPosition();
+    currentWorld.spawnDroppedItem(playerPos + Vec3(5, 0, 0), ::Item(itemId));
+
+    return format("Dropped '%s' near player", ::Items[itemId].getName());
+});
+
 ::DebugConsole.registerCommand("artifact", "Give the player an artifact of id", 1, "i", function(command){
     local artifactId = command[0].tointeger();
     if(artifactId >= ArtifactId.MAX){
