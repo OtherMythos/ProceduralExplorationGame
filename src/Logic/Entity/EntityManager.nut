@@ -611,6 +611,7 @@ EntityManager.EntityManager <- class{
                     component.mGizmo = null;
                 }
                 else if(i == EntityComponents.COMPASS_INDICATOR){
+                    mCreatorWorld_.destroyCompassIndicator_(component.mPoint);
                     component.mCreator.removeCollisionPoint(component.mPoint);
                 }
             }
