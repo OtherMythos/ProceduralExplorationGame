@@ -909,7 +909,7 @@ enum WorldMousePressContexts{
         local position = getCompassIndicatorPosition_(senderPointId, receiverPointId);
 
         //Add indicator to compass
-        local indicatorId = mGui_.mCompassAnimator_.addCompassIndicator(position.x, position.y);
+        local indicatorId = mGui_.mCompassAnimator_.addCompassIndicator(getWorldId(), position.x, position.y);
 
         //Store mapping
         mCompassIndicatorTracking_.rawset(senderPointId, indicatorId);
@@ -931,6 +931,7 @@ enum WorldMousePressContexts{
     }
 
     function destroyCompassIndicator_(pointId){
+        if(!(pointId in mCompassIndicatorTracking_)) return;
         local indicatorId = mCompassIndicatorTracking_[pointId];
         if(indicatorId != null){
             mGui_.mCompassAnimator_.removeCompassIndicator(indicatorId);
@@ -1010,7 +1011,7 @@ enum WorldMousePressContexts{
 
     function setupPlayerCompass_(){
         //Add player indicator to compass (distance 0, radian 0)
-        local playerIndicatorId = mGui_.mCompassAnimator_.addCompassIndicator(0, 0);
+        local playerIndicatorId = mGui_.mCompassAnimator_.addCompassIndicator(getWorldId(), 0, 0);
         mCompassIndicatorTracking_.rawset(-1, playerIndicatorId); //Use -1 as sentinel for player
     }
 

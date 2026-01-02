@@ -186,6 +186,7 @@
         mCurrentWorld_.setCurrentWorld(true);
 
         mGui_.mWorldMapDisplay_.mBillboardManager_.setMaskVisible(0x1 << mCurrentWorld_.getWorldId());
+        mGui_.mCompassAnimator_.setCurrentWorld(mCurrentWorld_.getWorldId());
 
         _event.transmit(Event.CURRENT_WORLD_CHANGE, mCurrentWorld_);
 

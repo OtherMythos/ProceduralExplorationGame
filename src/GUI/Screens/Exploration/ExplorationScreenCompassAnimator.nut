@@ -3,8 +3,10 @@
     mRadian_ = 0.0;
     mSceneNode_ = null;
     mPanelTrackNode_ = null;
+    mWorldId_ = -1;
 
-    constructor(distance, radian, parentNode, compassNode, window){
+    constructor(worldId, distance, radian, parentNode, compassNode, window){
+        mWorldId_ = worldId;
         local target = parentNode.createChildSceneNode();
         local indicatorPlane = _scene.createItem("plane");
         //indicatorPlane.setDatablock("guiExplorationCompassIndicator");
@@ -67,11 +69,16 @@
     mCompassIndicators_ = null;
     mCompassIndicatorPool_ = null;
 
+    mWorldNodes_ = null;
+    mCurrentWorldId_ = -1;
+
     constructor(window, size){
 
         mDirectionNodes_ = [];
         mCompassIndicators_ = [];
         mCompassIndicatorPool_ = ::VersionPool();
+
+        mWorldNodes_ = {};
 
         local texture = _graphics.createTexture("explorationCompassTexture");
         texture.setResolution((size.x * ::resolutionMult.x).tointeger(), (size.y.tointeger() * ::resolutionMult.y).tointeger());
@@ -168,8 +175,26 @@
         mCompassWindow_.setVisible(visible);
     }
 
-    function addCompassIndicator(distance, radian){
-        local indicator = CompassIndicator(distance, radian, mParentNode_, mCompassNode_, mCompassWindow_);
+    function setCurrentWorld(worldId){
+        mCurrentWorldId_ = worldId;
+        foreach(id, node in mWorldNodes_){
+            node.setVisible(id == worldId);
+        }
+    }
+
+    function getWorldNode_(worldId){
+        if(!mWorldNodes_.rawin(worldId)){
+            local node = mParentNode_.createChildSceneNode();
+            mWorldNodes_.rawset(worldId, node);
+
+            node.setVisible(worldId == mCurrentWorldId_);
+        }
+        return mWorldNodes_[worldId];
+    }
+
+    function addCompassIndicator(worldId, distance, radian){
+        local node = getWorldNode_(worldId);
+        local indicator = CompassIndicator(worldId, distance, radian, node, mCompassNode_, mCompassWindow_);
         local id = mCompassIndicatorPool_.store(indicator);
         mCompassIndicators_.append(id);
         return id;
@@ -274,6 +299,7 @@
         mDirectionNodes_ = null;
         mCompassIndicators_ = null;
         mCompassIndicatorPool_ = null;
+        mWorldNodes_ = null;
     }
 
     function getPosition(){
@@ -337,7 +363,7 @@
         foreach(indicatorId in mCompassIndicators_){
             if(mCompassIndicatorPool_.valid(indicatorId)){
                 local indicator = mCompassIndicatorPool_.get(indicatorId);
-                if(indicator != null){
+                if(indicator != null && indicator.mWorldId_ == mCurrentWorldId_){
                     indicator.updatePanelPosition();
                 }
             }
