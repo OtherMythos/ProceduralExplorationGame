@@ -999,6 +999,10 @@ enum WorldMousePressContexts{
         if(mProjectileManager_ != null) mProjectileManager_.shutdown();
         mProjectileManager_ = ExplorationProjectileManager(this, mDamageCollisionWorld_);
 
+        setupPlayerCompass_();
+    }
+
+    function setupPlayerCompass_(){
         //Add player indicator to compass (distance 0, radian 0)
         local playerIndicatorId = mGui_.mCompassAnimator_.addCompassIndicator(0, 0);
         mCompassIndicatorTracking_.rawset(-1, playerIndicatorId); //Use -1 as sentinel for player

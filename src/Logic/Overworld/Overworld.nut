@@ -347,6 +347,11 @@
         updateSelectedRegion_();
     }
 
+    #Override
+    function setupPlayerCompass_(){
+
+    }
+
     function updateSelectedRegion_(){
         local region = ::currentNativeMapData.getRegionForPos(mCameraPosition_);
         local altitude = ::currentNativeMapData.getAltitudeForPos(mCameraPosition_);
