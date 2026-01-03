@@ -45,6 +45,21 @@
         local compassPoint = compassCollisionWorld.addCollisionPoint(targetPos.x, targetPos.z, 1, _COLLISION_PLAYER, _COLLISION_WORLD_ENTRY_SENDER);
         manager.assignComponent(en, EntityComponents.COMPASS_INDICATOR, ::EntityManager.Components[EntityComponents.COMPASS_INDICATOR](compassPoint, compassCollisionWorld, CompassIndicatorType.NPC, en));
 
+        local triggerWorld = mConstructorWorld_.getTriggerWorld();
+        local npcInteractPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.NPC_INTERACT, en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
+
+        local detectionWorld = mConstructorWorld_.getCollisionDetectionWorld();
+        local collisionDetectionPoint = detectionWorld.addCollisionPoint(targetPos.x, targetPos.z, 1, 0xFF, _COLLISION_WORLD_ENTRY_SENDER);
+
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO, ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](
+            npcInteractPoint, collisionDetectionPoint,
+            triggerWorld, detectionWorld
+        ));
+
+        local dialogPath = readBoolFromData_(data, "dialogPath", null);
+        local startBlock = readBoolFromData_(data, "startBlock", null);
+        manager.assignComponent(en, EntityComponents.DIALOG, ::EntityManager.Components[EntityComponents.DIALOG](dialogPath, startBlock));
+
         playerEntry.setPosition(targetPos);
 
         return playerEntry;

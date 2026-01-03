@@ -1734,12 +1734,14 @@ enum WorldMousePressContexts{
         return enemyEntry;
     }
     function createNPCWithDialog(pos, dialogPath, startBlock, data){
-        local entity = createNPC(pos, data);
+        local npcData = data;
+        if(npcData == null){
+            npcData = {};
+        }
+        npcData.dialogPath <- dialogPath;
+        npcData.startBlock <- startBlock;
 
-        local en = entity.getEID();
-        local collisionPoint = mTriggerCollisionWorld_.addCollisionSender(CollisionWorldTriggerResponses.NPC_INTERACT, en, pos.x, pos.z, 2, _COLLISION_PLAYER);
-        mEntityManager_.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, mTriggerCollisionWorld_));
-        mEntityManager_.assignComponent(en, EntityComponents.DIALOG, ::EntityManager.Components[EntityComponents.DIALOG](dialogPath, startBlock));
+        local entity = createNPC(pos, npcData);
 
         return entity;
     }
