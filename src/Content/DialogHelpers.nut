@@ -51,9 +51,68 @@ function checkPlayerFreeInventorySlot(){
     return ::Base.mPlayerStats.mInventory_.hasFreeSlot();
 }
 
+function triggerInventoryForItems(){
+    local data = {
+        "multiSelection": true,
+        "stats": ::Base.mPlayerStats
+    };
+    //TODO fix the action set popping problem by not overriding dialog with the inventory screen.
+    ::Base.mExplorationLogic.mCurrentWorld_.showInventory(data, 2);
+}
+
 function showItemInfoPopup_(text){
     local dialogMetaScanner = ::DialogManager.DialogMetaScanner();
     local outContainer = array(2);
     dialogMetaScanner.getRichText(text, outContainer);
     ::PopupManager.displayPopup(::PopupManager.PopupData(Popup.TOP_RIGHT_OF_SCREEN, {"text": outContainer[0], "richText": outContainer[1]}));
+}
+
+class InventorySelectionWaiter{
+    mEventReceived_ = false;
+    mItems_ = null;
+
+    constructor(){
+        _event.subscribe(Event.INVENTORY_SELECTION_FINISHED, receiveSelectionFinished, this);
+    }
+
+    function shutdown(){
+        _event.unsubscribe(Event.INVENTORY_SELECTION_FINISHED, receiveSelectionFinished, this);
+    }
+
+    function receiveSelectionFinished(id, data){
+        this.mEventReceived_ = true;
+        this.mItems_ = data;
+    }
+
+    function checkEventReceived(){
+        return mEventReceived_;
+    }
+
+    function getItems(){
+        return mItems_;
+    }
+
+    function reset(){
+        mEventReceived_ = false;
+        mItems_ = null;
+    }
+}
+
+::gInventorySelectionWaiter_ <- null;
+
+function checkForInventoryItems(){
+    print("Checking for inventory items");
+    if(gInventorySelectionWaiter_ == null){
+        gInventorySelectionWaiter_ = InventorySelectionWaiter();
+    }
+
+    if(gInventorySelectionWaiter_.checkEventReceived()){
+        //local items = gInventorySelectionWaiter_.getItems();
+        //gInventorySelectionWaiter_.reset();
+        gInventorySelectionWaiter_.shutdown();
+        print("Received inventory items");
+        return true;
+    }
+
+    return false;
 }
