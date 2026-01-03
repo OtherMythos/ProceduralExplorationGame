@@ -5,6 +5,8 @@
 
     mOffset_ = Vec3(3, 0, 3);
 
+    mTileGridPlacer_ = null;
+
     constructor(worldId, preparer){
         base.constructor(worldId, preparer);
         mWorldScaleSize_ = 5;
@@ -39,7 +41,14 @@
 
         mMapData_ = mapData;
 
-        _gameCore.setupCollisionDataForWorld(mCollisionDetectionWorld_, mMapData_.vals, mMapData_.width, mMapData_.height);
+        mTileGridPlacer_ = ::TileGridPlacer(getWallMeshes(), mWorldScaleSize_,
+        [
+            [0, 0, 0, 0],
+            [false, false, 1, 1],
+            [true, true, 1, true]
+        ], 2);
+
+        placeGrid_();
 
         createScene();
         spawnEnemies();
@@ -154,9 +163,13 @@
         }
     }
 
+    function placeGrid_(){
+        local collisionData = mTileGridPlacer_.buildCollisionGrid(mMapData_.resolvedTiles, mMapData_.width, mMapData_.height);
+        _gameCore.setupCollisionDataForWorld(mCollisionDetectionWorld_, collisionData.grid, collisionData.width, collisionData.height, collisionData.scale);
+    }
+
     function createScene(){
-        local gridPlacer = ::TileGridPlacer(getWallMeshes(), mWorldScaleSize_);
-        local gridNode = gridPlacer.insertGridToScene(mParentNode_, mMapData_.resolvedTiles, mMapData_.width, mMapData_.height);
+        local gridNode = mTileGridPlacer_.insertGridToScene(mParentNode_, mMapData_.resolvedTiles, mMapData_.width, mMapData_.height);
         gridNode.setPosition(mOffset_);
 
         //Place some decorations around the dungeon
