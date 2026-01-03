@@ -406,6 +406,11 @@
         {
             "blendblock": "gui/uiBlend",
             "diffuse" : [1, 0, 1, 1]
+        },
+        "guiExplorationCompassIndicatorItem" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse" : [1, 1, 0, 1]
         }
     }
 }

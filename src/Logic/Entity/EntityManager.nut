@@ -58,7 +58,8 @@ enum ProximityComponentType{
 
 enum CompassIndicatorType{
     ENEMY,
-    NPC
+    NPC,
+    ITEM
 };
 
 ::EntityManager <- {

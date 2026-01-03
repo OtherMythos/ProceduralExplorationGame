@@ -35,6 +35,8 @@
             mSceneNode_.getAttachedObject(0).setDatablock("guiExplorationCompassIndicatorEnemy");
         }else if(type == CompassIndicatorType.NPC){
             mSceneNode_.getAttachedObject(0).setDatablock("guiExplorationCompassIndicatorNPC");
+        }else if(type == CompassIndicatorType.ITEM){
+            mSceneNode_.getAttachedObject(0).setDatablock("guiExplorationCompassIndicatorItem");
         }
     }
 

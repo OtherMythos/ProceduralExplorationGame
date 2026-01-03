@@ -967,6 +967,10 @@
         anim.setTime(_random.randInt(0, 180));
         manager.assignComponent(en, EntityComponents.ANIMATION, ::EntityManager.Components[EntityComponents.ANIMATION](anim));
 
+        local compassCollisionWorld = mConstructorWorld_.getCompassCollisionWorld();
+        local compassPoint = compassCollisionWorld.addCollisionPoint(targetPos.x, targetPos.z, 1, _COLLISION_PLAYER, _COLLISION_WORLD_ENTRY_SENDER);
+        manager.assignComponent(en, EntityComponents.COMPASS_INDICATOR, ::EntityManager.Components[EntityComponents.COMPASS_INDICATOR](compassPoint, compassCollisionWorld, CompassIndicatorType.ITEM, en));
+
         return en;
     }
 
