@@ -12,7 +12,8 @@
     TEMPLE,
     GRAVEYARD,
 
-    CHERRY_BLOSSOM_ORB
+    CHERRY_BLOSSOM_ORB,
+    DEEP_HOLE
 ");
 
 enum PlaceType{

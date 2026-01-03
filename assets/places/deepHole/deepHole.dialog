@@ -1,0 +1,30 @@
+<Dialog_Script>
+
+    <script path = "res://src/Content/DialogHelpers.nut" id = "0"/>
+    <script path = "res://build/assets/places/deepHole/deepHoleDialogHelper.nut" id = "1"/>
+
+    <b id = "0">
+        <ts>Hungry... Hungry...</ts>
+        <script id = "0" func = "triggerInventoryForItems"/>
+        <jmp id="2"/>
+    </b>
+
+    <b id = "2">
+        <script id = "0" func = "checkForInventoryItems" block="1"/>
+        <sleep l="1"/>
+        <jmp id="2"/>
+    </b>
+
+    <b id = "1">
+        <script id = "1" func = "giveItems" block="6"/>
+        <jmp id="5"/>
+    </b>
+
+    <b id="5">
+        <ts>Not enough</ts>
+    </b>
+    <b id="6">
+        <ts>Lovely</ts>
+    </b>
+
+</Dialog_Script>

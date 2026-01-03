@@ -1075,6 +1075,28 @@
         return en;
     }
 
+    function constructDeepHoleEntity(pos, dialogPath, startBlock, collisionRadius){
+        local manager = mConstructorWorld_.getEntityManager();
+        local zPos = getZForPos(pos);
+        local targetPos = Vec3(pos.x, zPos, pos.z);
+        local en = manager.createEntity(targetPos);
+
+        local triggerWorld = mConstructorWorld_.getTriggerWorld();
+        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.NPC_INTERACT, en, targetPos.x, targetPos.z, collisionRadius * 1.1, _COLLISION_PLAYER);
+
+        local detectionWorld = mConstructorWorld_.getCollisionDetectionWorld();
+        local collisionDetectionPoint = detectionWorld.addCollisionPoint(targetPos.x, targetPos.z, collisionRadius, 0xFF, _COLLISION_WORLD_ENTRY_SENDER);
+
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO, ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](
+            collisionPoint, collisionDetectionPoint,
+            triggerWorld, detectionWorld
+        ));
+
+        manager.assignComponent(en, EntityComponents.DIALOG, ::EntityManager.Components[EntityComponents.DIALOG](dialogPath, startBlock));
+
+        return en;
+    }
+
     function constructPlaceDescriptionTrigger(pos, placeId){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = pos.copy();

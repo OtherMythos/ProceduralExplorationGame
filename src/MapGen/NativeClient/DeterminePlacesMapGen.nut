@@ -209,6 +209,7 @@
         placeLocation(PlaceId.MORRINGTON, _determineRegionBySize, _checkPlacementVoxelsAreLand);
         placeLocation(PlaceId.TEMPLE, _determineRegionBySize, _checkPlacementVoxelsAreLand);
         placeLocation(PlaceId.GRAVEYARD, _determineRegionBySize, _checkPlacementVoxelsAreLand);
+        placeLocation(PlaceId.DEEP_HOLE, _determineRegionBySize, _checkPlacementVoxelsAreLand);
         placeLocation(PlaceId.DUSTMITE_NEST, _determineRegionByType, _checkPlacementVoxelsAreLand);
         mData_.region = RegionType.CHERRY_BLOSSOM_FOREST;
         placeLocation(PlaceId.CHERRY_BLOSSOM_ORB, _determineRegionByType, _checkPlacementVoxelsAreLand);
