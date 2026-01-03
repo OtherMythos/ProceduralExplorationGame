@@ -297,6 +297,26 @@ local commonScale = Vec3(1.4, 1.4, 1.0);
 
         return ItemId.NONE;
     }
+
+    function removeItemsFromInventory(itemsTable){
+        local playerStats = ::Base.mPlayerStats;
+
+        if(!itemsTable.rawin("items")){
+            return;
+        }
+
+        foreach(itemData in itemsTable.items){
+            local idx = itemData.idx;
+            local gridType = itemData.gridType;
+
+            if(gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
+                playerStats.unEquipItem(idx+1);
+            }else if(gridType == InventoryGridType.INVENTORY_GRID){
+                local inventory = playerStats.mInventory_;
+                inventory.removeFromInventory(idx);
+            }
+        }
+    }
 };
 
 ItemHelper.registerColourForStat(ColourValue(1, 0, 0, 1));
