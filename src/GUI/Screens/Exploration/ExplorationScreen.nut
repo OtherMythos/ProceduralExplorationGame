@@ -853,7 +853,11 @@ enum ExplorationScreenWidgetType{
 
             local directSize = mPlayerDirectButton.getSize();
             mPlayerDirectJoystick_.setSize(directSize + directSize * 0.5);
-            mPlayerDirectJoystick_.setPosition(mPlayerDirectButton.getPosition() - directSize * 0.25);
+            local joystickPos = mPlayerDirectButton.getPosition() - directSize * 0.25;
+            if(::SystemSettings.getSetting(SystemSetting.JOYSTICK_LEFT_SIDE)){
+                joystickPos.x = 0;
+            }
+            mPlayerDirectJoystick_.setPosition(joystickPos);
 
             local zoomLinesSize = mZoomLines_.getSize();
             zoomLinesSize.y = mCompassAnimator_.getPosition().y - mZoomLines_.getPosition().y;

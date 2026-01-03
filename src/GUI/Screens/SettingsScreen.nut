@@ -56,6 +56,15 @@
         layoutLine.addCell(renderStatsButton);
         mSettingsWidgets_[SystemSetting.TOGGLE_WIREFRAME] = renderStatsButton;
 
+        local joystickSideCheckbox = mWindow_.createCheckbox();
+        joystickSideCheckbox.setText("Joystick on Left Side");
+        joystickSideCheckbox.attachListenerForEvent(function(widget, action){
+            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
+            ::SystemSettings.setSettingsValue(SystemSetting.JOYSTICK_LEFT_SIDE, widget.getValue());
+        }, _GUI_ACTION_RELEASED);
+        layoutLine.addCell(joystickSideCheckbox);
+        mSettingsWidgets_[SystemSetting.JOYSTICK_LEFT_SIDE] = joystickSideCheckbox;
+
         layoutLine.setMarginForAllCells(0, 20);
         //layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
         layoutLine.setSize(winWidth, winHeight);

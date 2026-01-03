@@ -10,6 +10,7 @@
 
     function setupDefaultValues(){
         mSettings_[SystemSetting.INVERT_CAMERA_CONTROLLER] = false;
+        mSettings_[SystemSetting.JOYSTICK_LEFT_SIDE] = false;
     }
 
     function setSettingsValue(setting, value){
