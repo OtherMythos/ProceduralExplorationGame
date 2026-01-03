@@ -19,6 +19,9 @@ BasicEnemyMachine = class extends ::CombatStateMachine{
 
     direction = null;
     movementCount = 50;
+    maxChaseFrames = -1;
+    chaseFrameCount = 0;
+    playerSpottedRadius = 32;
 
     idleState = {
         "update": function(ctx, e, data) {
@@ -63,6 +66,7 @@ BasicEnemyMachine = class extends ::CombatStateMachine{
             local world = ::Base.mExplorationLogic.mCurrentWorld_;
             local activeEnemy = world.mActiveEnemies_[e];
             ctx.targetingId = world.mTargetManager_.targetEntity(world.mPlayerEntry_, activeEnemy);
+            ctx.chaseFrameCount = 0;
         },
         "update": function(ctx, e, data) {
             local world = ::Base.mExplorationLogic.mCurrentWorld_;
@@ -79,6 +83,21 @@ BasicEnemyMachine = class extends ::CombatStateMachine{
 
             local lifetimeComp = world.getEntityManager().getComponent(e, EntityComponents.LIFETIME);
             lifetimeComp.mLifetime = lifetimeComp.mLifetimeTotal;
+
+            //Check if chase frame limit has been exceeded.
+            if(ctx.maxChaseFrames >= 0){
+                if(distance < ctx.playerSpottedRadius / 2){
+                    //Reset counter if player is close.
+                    ctx.chaseFrameCount = 0;
+                }else{
+                    ctx.chaseFrameCount++;
+                    if(ctx.chaseFrameCount > ctx.maxChaseFrames){
+                        //Stop chasing if timeout exceeded and distance is still large.
+                        ctx.switchState(ctx.idleWalk ? ctx.idleWalkState : ctx.idleState);
+                        return;
+                    }
+                }
+            }
         },
         "notify": function(ctx, id, e, data){
             if(id == BasicEnemyEvents.PLAYER_NOT_SPOTTED){
@@ -91,17 +110,19 @@ BasicEnemyMachine = class extends ::CombatStateMachine{
         },
     };
 
-    constructor(entity, idleWalk){
+    constructor(entity, idleWalk, maxChaseFrames=-1, playerSpottedRadius=32){
         this.entity = entity;
         this.idleWalk = idleWalk;
+        this.maxChaseFrames = maxChaseFrames;
+        this.playerSpottedRadius = playerSpottedRadius;
         switchState(idleWalk ? idleWalkState : idleState);
     }
 };
 
-    constructor(eid, idleWalk=true, enemyType=null){
+    constructor(eid, idleWalk=true, enemyType=null, maxChaseFrames=-1, playerSpottedRadius=32){
         mEnemyType_ = enemyType;
         mEid_ = eid;
-        mMachine = BasicEnemyMachine(eid, idleWalk);
+        mMachine = BasicEnemyMachine(eid, idleWalk, maxChaseFrames, playerSpottedRadius);
     }
 
     function receivePlayerSpotted(started){

@@ -239,7 +239,8 @@
         entry.setModel(characterModel);
 
         local triggerWorld = mConstructorWorld_.getTriggerWorld();
-        local playerSpottedOutline = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.BASIC_ENEMY_RECEIVE_PLAYER_SPOTTED, en, targetPos.x, targetPos.z, 32, _COLLISION_PLAYER);
+        local playerSpottedRadius = 32;
+        local playerSpottedOutline = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.BASIC_ENEMY_RECEIVE_PLAYER_SPOTTED, en, targetPos.x, targetPos.z, playerSpottedRadius, _COLLISION_PLAYER);
 
         local damageWorld = mConstructorWorld_.getDamageWorld();
         local damagePoint = damageWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_ENEMY);
@@ -287,7 +288,12 @@
         if(enemyType == EnemyId.BEE){
             scriptObj = ::BeeEnemyScript(en)
         }else{
-            scriptObj = ::BasicEnemyScript(en, true, enemyType)
+            //Ten seconds at 60 FPS.
+            local maxChaseFrames = -1;
+            if(enemyType == EnemyId.GOBLIN || enemyType == EnemyId.SKELETON){
+                maxChaseFrames = 600;
+            }
+            scriptObj = ::BasicEnemyScript(en, true, enemyType, maxChaseFrames, playerSpottedRadius)
         }
         assert(scriptObj != null);
         manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](scriptObj));
