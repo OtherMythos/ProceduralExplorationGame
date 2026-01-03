@@ -37,7 +37,8 @@
 
     function receiveDialogMetaEvent(id, data){
         if("ended" in data && data.ended){
-            setDialogVisible(false);
+            ::ScreenManager.backupScreen(mLayerIdx);
+            //setDialogVisible(false);
         }
 
         if("started" in data && data.started){
