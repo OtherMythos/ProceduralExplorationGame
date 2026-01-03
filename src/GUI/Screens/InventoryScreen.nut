@@ -886,9 +886,9 @@ enum InventoryBusEvents{
     function acceptSelection_(){
         local selectedItems = [];
 
-        addItemsFromGrid_(mInventoryGrid_, mInventory_, selectedItems);
-        addItemsFromGrid_(mSecondaryInventoryGrid_, mSecondaryItems_ != null ? mSecondaryItems_ : null, selectedItems);
-        addItemsFromGrid_(mStorageGrid_, mItemStorage_, selectedItems);
+        addItemsFromGrid_(mInventoryGrid_, mInventory_, InventoryGridType.INVENTORY_GRID, selectedItems);
+        addItemsFromGrid_(mSecondaryInventoryGrid_, mSecondaryItems_ != null ? mSecondaryItems_ : null, InventoryGridType.INVENTORY_GRID_SECONDARY, selectedItems);
+        addItemsFromGrid_(mStorageGrid_, mItemStorage_, InventoryGridType.INVENTORY_GRID, selectedItems);
 
         //Add equipped items separately since they don't use getItemForIdx
         if(mInventoryEquippedGrid_ != null){
@@ -897,7 +897,11 @@ enum InventoryBusEvents{
                 if(selected){
                     local item = mPlayerStats_.getEquippedItem(idx + 1);
                     if(item != null){
-                        selectedItems.append(item);
+                        selectedItems.append({
+                            "item": item,
+                            "idx": idx,
+                            "gridType": InventoryGridType.INVENTORY_EQUIPPABLES
+                        });
                     }
                 }
             }
@@ -907,19 +911,24 @@ enum InventoryBusEvents{
             "items": selectedItems,
             "count": selectedItems.len()
         };
-        _event.transmit(Event.INVENTORY_SELECTION_FINISHED, eventData);
 
         closeInventory();
+
+        _event.transmit(Event.INVENTORY_SELECTION_FINISHED, eventData);
     }
 
-    function addItemsFromGrid_(grid, targetInventory, selectedItems){
+    function addItemsFromGrid_(grid, targetInventory, gridType, selectedItems){
         if(grid == null) return;
         local selectedArray = grid.getSelectedItems();
         foreach(idx, selected in selectedArray){
             if(selected && targetInventory != null){
                 local item = targetInventory.getItemForIdx(idx);
                 if(item != null){
-                    selectedItems.append(item);
+                    selectedItems.append({
+                        "item": item,
+                        "idx": idx,
+                        "gridType": gridType
+                    });
                 }
             }
         }

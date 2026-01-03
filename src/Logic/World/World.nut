@@ -1878,7 +1878,7 @@ enum WorldMousePressContexts{
         mPlayerEntry_.checkAttackState(mPlayerTargetRadius_.len() >= 1);
     }
 
-    function showInventory(data=null){
+    function showInventory(data=null, layer=1){
         local targetData = data;
         local insets = _window.getScreenSafeAreaInsets();
         if(targetData == null){
@@ -1886,7 +1886,7 @@ enum WorldMousePressContexts{
         }
         notifyModalPopupScreen();
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_SCREEN, targetData),
-            null, 1);
+            null, layer);
         ::Base.mExplorationLogic.pauseExploration();
     }
 
