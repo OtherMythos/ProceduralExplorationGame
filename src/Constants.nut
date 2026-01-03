@@ -318,6 +318,13 @@ enum SystemSetting{
     MAX
 };
 
+::SystemSettingString <- [
+    "invertCameraController",
+    "toggleWireframe",
+    "toggleRenderStats",
+    "joystickLeftSide"
+];
+
 ::ActionSlotTypeString <- [
     "None",
     "Talk",
