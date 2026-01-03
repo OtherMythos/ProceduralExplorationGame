@@ -16,7 +16,11 @@
     function setSettingsValue(setting, value){
         mSettings_[setting] = value;
 
-        _event.transmit(Event.SYSTEM_SETTINGS_CHANGED, setting);
+        local eventData = {
+            "setting": setting,
+            "value": value
+        };
+        _event.transmit(Event.SYSTEM_SETTINGS_CHANGED, eventData);
     }
 
     function getSetting(setting){

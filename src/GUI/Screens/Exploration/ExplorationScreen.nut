@@ -828,6 +828,7 @@ enum ExplorationScreenWidgetType{
         _event.subscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent, this);
         _event.subscribe(Event.EXPLORATION_SCREEN_HIDE_WIDGETS_FINISHED, receiveExplorationHideWidgetsFinished, this);
         _event.subscribe(Event.ITEM_GIVEN, receiveItemGiven, this);
+        _event.subscribe(Event.SYSTEM_SETTINGS_CHANGED, receiveSystemSettingsChanged, this);
         ::ScreenManager.transitionToScreen(Screen.WORLD_GENERATION_STATUS_SCREEN, null, 1);
 
         mAnimator_ = ExplorationScreenAnimator();
@@ -853,11 +854,7 @@ enum ExplorationScreenWidgetType{
 
             local directSize = mPlayerDirectButton.getSize();
             mPlayerDirectJoystick_.setSize(directSize + directSize * 0.5);
-            local joystickPos = mPlayerDirectButton.getPosition() - directSize * 0.25;
-            if(::SystemSettings.getSetting(SystemSetting.JOYSTICK_LEFT_SIDE)){
-                joystickPos.x = 0;
-            }
-            mPlayerDirectJoystick_.setPosition(joystickPos);
+            repositionJoystick_();
 
             local zoomLinesSize = mZoomLines_.getSize();
             zoomLinesSize.y = mCompassAnimator_.getPosition().y - mZoomLines_.getPosition().y;
@@ -954,6 +951,24 @@ enum ExplorationScreenWidgetType{
             mMobileActionInfo_.actionsChanged(data, allEmpty);
         }
         mPlayerTapButtonActive = !allEmpty;
+    }
+
+    function receiveSystemSettingsChanged(id, data){
+        if(data.setting == SystemSetting.JOYSTICK_LEFT_SIDE){
+            repositionJoystick_();
+        }
+    }
+
+    function repositionJoystick_(){
+        if(mPlayerDirectJoystick_ == null || mPlayerDirectButton == null){
+            return;
+        }
+        local directSize = mPlayerDirectButton.getSize();
+        local joystickPos = mPlayerDirectButton.getPosition() - directSize * 0.25;
+        if(::SystemSettings.getSetting(SystemSetting.JOYSTICK_LEFT_SIDE)){
+            joystickPos.x = 0;
+        }
+        mPlayerDirectJoystick_.setPosition(joystickPos);
     }
 
     function receiveItemGiven(id, data){
@@ -1090,6 +1105,7 @@ enum ExplorationScreenWidgetType{
         _event.unsubscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent, this);
         _event.unsubscribe(Event.EXPLORATION_SCREEN_HIDE_WIDGETS_FINISHED, receiveExplorationHideWidgetsFinished, this);
         _event.unsubscribe(Event.ITEM_GIVEN, receiveItemGiven, this);
+        _event.unsubscribe(Event.SYSTEM_SETTINGS_CHANGED, receiveSystemSettingsChanged, this);
         mLogicInterface_.shutdown();
         //mLogicInterface_.notifyLeaveExplorationScreen();
         //mExplorationStatsContainer_.shutdown();
