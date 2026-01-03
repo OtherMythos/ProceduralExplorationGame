@@ -100,6 +100,14 @@
         return mActiveScreens_[layerIdx] != null;
     }
 
+    function getScreenIdForLayer(layerIdx){
+        local screen = mActiveScreens_[layerIdx];
+        if(screen == null){
+            return null;
+        }
+        return screen.getScreenData().id;
+    }
+
     function isScreenTop(layerIdx){
         for(local i = layerIdx+1; i < mActiveScreens_.len(); i++){
             if(mActiveScreens_[i] != null){
