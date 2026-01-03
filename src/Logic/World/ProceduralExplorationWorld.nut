@@ -279,7 +279,7 @@
             notifyPlayerMoved();
         }
 
-        findAllRegionsExceptMajor();
+        //findAllRegionsExceptMajor();
 
         if(false){
             local rel = mMapData_.width / 1024.0;
