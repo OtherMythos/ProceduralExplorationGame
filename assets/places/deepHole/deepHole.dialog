@@ -16,6 +16,7 @@
     </b>
 
     <b id = "1">
+        <script id = "1" func = "checkItemsAreNull" block="7"/>
         <script id = "1" func = "giveItems" block="6"/>
         <jmp id="5"/>
     </b>
@@ -25,6 +26,9 @@
     </b>
     <b id="6">
         <ts>Lovely</ts>
+    </b>
+    <b id="7">
+        <ts>Hungry...</ts>
     </b>
 
 </Dialog_Script>

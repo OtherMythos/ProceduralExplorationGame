@@ -1,3 +1,8 @@
+function checkItemsAreNull(){
+    local items = gInventorySelectionWaiter_.getItems();
+    return items == null;
+}
+
 function giveItems(){
     local items = gInventorySelectionWaiter_.getItems();
     getroottable().rawdelete("gInventorySelectionWaiter_");
