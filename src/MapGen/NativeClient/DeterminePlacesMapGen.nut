@@ -155,22 +155,13 @@
                 "region": mMapData_.getRegionId(region)
             };
 
-            if(placeId == PlaceId.DUSTMITE_NEST){
-                local radius = 5;
+            if(placeMetaData != null && placeMetaData.rawin("terrainHoleRadius")){
+                local radius = placeMetaData.terrainHoleRadius;
                 for(local y = originY - radius; y < originY + radius; y++){
                     for(local x = originX - radius; x < originX + radius; x++){
                         local dx = x - originX;
                         local dy = y - originY;
                         if(dx * dx + dy * dy > radius * radius) continue;
-
-                        /*
-                        local val = mMapData_.voxValueForCoord(x, y);
-                        local voxValue = val & 0xFF;
-
-                        if(x == originX && y == originY){
-                            placeData.forceZ <- altitudeToZPos(voxValue);
-                        }
-                        */
 
                         local val = mMapData_.secondaryValueForCoord(x, y);
                         val = val | SKIP_DRAW_TERRAIN_VOXEL_FLAG;
