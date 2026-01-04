@@ -171,9 +171,11 @@
                     }
                 }
 
-                mMapData_.holeX = originX;
-                mMapData_.holeY = originY;
-                mMapData_.holeRadius = radius;
+                local holeIdx = mMapData_.holeCount;
+                local holesPos = (originX << 16) | originY;
+                mMapData_._set("holePos_" + holeIdx, holesPos);
+                mMapData_._set("holeRadius_" + holeIdx, radius);
+                mMapData_.holeCount = holeIdx + 1;
             }
 
             mMapData_.applyTerrainVoxelsForPlace(placeData.mPlaceFileName, ::basePlacesPath, originX - mData_.halfX, originY - mData_.halfY);
@@ -198,6 +200,8 @@
             "halfX": 5,
             "halfY": 5,
         };
+
+        mMapData_.holeCount = 0;
 
         placeLocation(PlaceId.GATEWAY, _determineRegionBySize, _checkPlacementVoxelsAreLand)
         placeLocation(PlaceId.PLAYER_SPAWN, _determineRegionBySize, _checkPlacementVoxelsAreLand)
