@@ -861,6 +861,7 @@ enum InventoryBusEvents{
             ::ScreenManager.transitionToScreen(null, null, mLayerIdx);
         }
         ::Base.mExplorationLogic.unPauseExploration();
+        _event.transmit(Event.INVENTORY_CLOSED, null);
     }
 
     function updateAcceptButtonState_(){

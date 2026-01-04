@@ -73,15 +73,25 @@ class InventorySelectionWaiter{
 
     constructor(){
         _event.subscribe(Event.INVENTORY_SELECTION_FINISHED, receiveSelectionFinished, this);
+        _event.subscribe(Event.INVENTORY_CLOSED, receiveInventoryClosed, this);
     }
 
     function shutdown(){
         _event.unsubscribe(Event.INVENTORY_SELECTION_FINISHED, receiveSelectionFinished, this);
+        _event.unsubscribe(Event.INVENTORY_CLOSED, receiveInventoryClosed, this);
     }
 
     function receiveSelectionFinished(id, data){
         this.mEventReceived_ = true;
         this.mItems_ = data;
+    }
+
+    function receiveInventoryClosed(id, data){
+        if(mEventReceived_){
+            return;
+        }
+        mEventReceived_ = true;
+        mItems_ = null;
     }
 
     function checkEventReceived(){

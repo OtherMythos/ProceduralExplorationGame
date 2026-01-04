@@ -218,6 +218,8 @@ enum Event{
     INVENTORY_SELECTION_FINISHED = 1041,
 
     ITEM_GIVEN = 1042,
+
+    INVENTORY_CLOSED = 1043,
 };
 
 enum FoundObjectType{
