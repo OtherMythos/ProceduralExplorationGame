@@ -627,6 +627,14 @@ enum ExplorationScreenWidgetType{
             mItemWidgets_.clear();
             mWidgetTimeouts_.clear();
         }
+
+        function clearAllWidgets(){
+            foreach(widget in mItemWidgets_){
+                widget.shutdown();
+            }
+            mItemWidgets_.clear();
+            mWidgetTimeouts_.clear();
+        }
     };
 
     function setup(data){
@@ -856,6 +864,7 @@ enum ExplorationScreenWidgetType{
         _event.subscribe(Event.EXPLORATION_SCREEN_HIDE_WIDGETS_FINISHED, receiveExplorationHideWidgetsFinished, this);
         _event.subscribe(Event.ITEM_GIVEN, receiveItemGiven, this);
         _event.subscribe(Event.SYSTEM_SETTINGS_CHANGED, receiveSystemSettingsChanged, this);
+        _event.subscribe(Event.SCREEN_CHANGED, receiveScreenChanged, this);
         ::ScreenManager.transitionToScreen(Screen.WORLD_GENERATION_STATUS_SCREEN, null, 1);
 
         mAnimator_ = ExplorationScreenAnimator();
@@ -1004,6 +1013,10 @@ enum ExplorationScreenWidgetType{
         notifyItemFound(itemDef);
     }
 
+    function receiveScreenChanged(id, data){
+        mFoundItemIconsManager_.clearAllWidgets();
+    }
+
     function update(){
         mLogicInterface_.tickUpdate();
         //mExplorationMovesContainer_.update();
@@ -1133,6 +1146,7 @@ enum ExplorationScreenWidgetType{
         _event.unsubscribe(Event.EXPLORATION_SCREEN_HIDE_WIDGETS_FINISHED, receiveExplorationHideWidgetsFinished, this);
         _event.unsubscribe(Event.ITEM_GIVEN, receiveItemGiven, this);
         _event.unsubscribe(Event.SYSTEM_SETTINGS_CHANGED, receiveSystemSettingsChanged, this);
+        _event.unsubscribe(Event.SCREEN_CHANGED, receiveScreenChanged, this);
         mLogicInterface_.shutdown();
         //mLogicInterface_.notifyLeaveExplorationScreen();
         //mExplorationStatsContainer_.shutdown();
