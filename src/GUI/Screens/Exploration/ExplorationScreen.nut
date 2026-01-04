@@ -154,6 +154,7 @@ enum ExplorationScreenWidgetType{
         mAnimationPanel_ = null;
         mAnimationPanelBackground_ = null;
         mButton_ = null;
+        mDisabledPanel_ = null;
 
         mLottieAnimation_ = null;
         mLottieAnimationSecond_ = null;
@@ -164,6 +165,7 @@ enum ExplorationScreenWidgetType{
         mTargetAnimation_ = 0.0;
         mAnim_ = 1.0;
         mVisible_ = true;
+        mIsActionActive_ = true;
 
         constructor(parent){
             mButton_ = parent.createButton();
@@ -184,6 +186,13 @@ enum ExplorationScreenWidgetType{
             mAnimationPanelBackground_.setSize(animSize);
             mAnimationPanel_ = parent.createPanel();
             mAnimationPanel_.setSize(animSize);
+
+            mDisabledPanel_ = parent.createPanel();
+            mDisabledPanel_.setSize(animSize * 0.75);
+            mDisabledPanel_.setDatablock(_hlms.getDatablock("redCross"));
+            mDisabledPanel_.setClickable(false);
+            mDisabledPanel_.setVisible(false);
+            mDisabledPanel_.setColour(ColourValue(1, 1, 1, 0.75));
 
             mLabel_.setClickable(false);
             mAnimationPanel_.setClickable(false);
@@ -213,6 +222,7 @@ enum ExplorationScreenWidgetType{
             mLabel_.setZOrder(WIDGET_SAFE_FOR_BILLBOARD_Z);
             mAnimationPanel_.setZOrder(WIDGET_SAFE_FOR_BILLBOARD_Z);
             mAnimationPanelBackground_.setZOrder(WIDGET_SAFE_FOR_BILLBOARD_Z);
+            mDisabledPanel_.setZOrder(WIDGET_SAFE_FOR_BILLBOARD_Z);
 
             reposition_();
         }
@@ -230,6 +240,13 @@ enum ExplorationScreenWidgetType{
             winPos += Vec2(1, 1);
             mAnimationPanelBackground_.setPosition(winPos);
 
+            {
+                local labelCentre = mLabel_.getCentre();
+                local labelPos = mLabel_.getPosition();
+                local disabledPos = Vec2(labelPos.x - mDisabledPanel_.getSize().x / 2, labelCentre.y);
+                mDisabledPanel_.setCentre(disabledPos);
+            }
+
             local totalSize =  (mLabel_.getPosition() + mLabel_.getSize()) - mAnimationPanel_.getPosition();
             mButton_.setSize(totalSize);
             mButton_.setPosition(mAnimationPanel_.getPosition());
@@ -239,16 +256,24 @@ enum ExplorationScreenWidgetType{
             //mLabel_.setVisible(visible);
             //mAnimationPanel_.setVisible(visible);
             //mAnimationPanelBackground_.setVisible(visible);
-            mLabel_.setTextColour(ColourValue(1, 1, 1, opacity));
-            mLabel_.setShadowOutline(true, ColourValue(0, 0, 0, opacity), Vec2(2, 2));
+            local labelOpacity = opacity;
+            local labelColour = ColourValue(1, 1, 1, labelOpacity);
+            if(!mIsActionActive_){
+                labelOpacity = opacity * 0.75;
+                labelColour = ColourValue(1, 0.5, 0.5, labelOpacity);
+            }
+            mLabel_.setTextColour(labelColour);
+            mLabel_.setShadowOutline(true, ColourValue(0, 0, 0, labelOpacity), Vec2(2, 2));
 
             //mDatablock_.setUseColour(true);
             //mAnimationPanel_.setColour(ColourValue(1, 1, 1, opacity));
             //TODO I wasn't able to fade in the opacity due to how the blendblocks are setup.
-            local visible = (opacity >= 0.5 && mVisible_);
-            mAnimationPanel_.setVisible(visible);
-            mAnimationPanelBackground_.setVisible(visible);
-            mButton_.setVisible(visible);
+            local animVisible = (opacity >= 0.5 && mVisible_ && mIsActionActive_);
+            mAnimationPanel_.setVisible(animVisible);
+            mAnimationPanelBackground_.setVisible(animVisible);
+            local disabledVisible = (opacity >= 0.5 && mVisible_ && !mIsActionActive_);
+            mDisabledPanel_.setVisible(disabledVisible);
+            mButton_.setVisible(mVisible_);
             //mBackgroundDatablock_.setUseColour(true);
             //mAnimationPanelBackground_.setColour(ColourValue(1, 1, 1, opacity));
         }
@@ -267,6 +292,7 @@ enum ExplorationScreenWidgetType{
             mTargetAnimation_ = 1.0;
 
             mLabel_.setText(data[0].tostring());
+            mIsActionActive_ = data[0].mIsActive[0];
             reposition_();
         }
 
@@ -275,6 +301,7 @@ enum ExplorationScreenWidgetType{
             mLabel_.setVisible(visible);
             mAnimationPanel_.setVisible(visible);
             mAnimationPanelBackground_.setVisible(visible);
+            mDisabledPanel_.setVisible(visible);
             mButton_.setVisible(visible);
         }
 

@@ -386,6 +386,15 @@
                 "texture": "greenTickX2.png"
             }
         },
+        "redCross" :
+        {
+            "blendblock": "gui/uiBlend",
+
+            "diffuse_map0" :
+            {
+                "texture": "redCross.png"
+            }
+        },
 
         "simpleGradient" :
         {

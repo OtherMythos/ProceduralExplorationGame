@@ -291,7 +291,8 @@
         });
         ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.PICK] <- TriggerResponse(function(world, entityId, second, collisionStatus){
             if(collisionStatus == 0x1){
-                ::Base.mActionManager.registerAction(ActionSlotType.PICK, 0, entityId, entityId);
+                local isActive = ::Base.mPlayerStats.doesInventoryHaveFreeSlot();
+                ::Base.mActionManager.registerAction(ActionSlotType.PICK, 0, entityId, entityId, isActive);
             }else if(collisionStatus == 0x2){
                 ::Base.mActionManager.unsetAction(0, entityId);
             }
@@ -321,7 +322,8 @@
         });
         ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.CLAIM_MESSAGE_IN_BOTTLE] <- TriggerResponse(function(world, entityId, second, collisionStatus){
             if(collisionStatus == 0x1){
-                ::Base.mActionManager.registerAction(ActionSlotType.CLAIM_MESSAGE_IN_BOTTLE, 0, entityId, entityId);
+                local isActive = ::Base.mPlayerStats.doesInventoryHaveFreeSlot();
+                ::Base.mActionManager.registerAction(ActionSlotType.CLAIM_MESSAGE_IN_BOTTLE, 0, entityId, entityId, isActive);
             }else if(collisionStatus == 0x2){
                 ::Base.mActionManager.unsetAction(0, entityId);
             }

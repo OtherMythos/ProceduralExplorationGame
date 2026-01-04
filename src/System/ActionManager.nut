@@ -16,17 +16,20 @@ These actions might be things like 'talk', 'buy things from', etc.
         mData = null
         mTypes = null
         mIds = null
+        mIsActive = null
 
         constructor(){
             mData = [];
             mTypes = [];
             mIds = [];
+            mIsActive = [];
         }
 
-        function register(type, data, id){
+        function register(type, data, id, active = true){
             mData.append(data);
             mTypes.append(type);
             mIds.append(id);
+            mIsActive.append(active);
         }
 
         function unset(id){
@@ -35,6 +38,7 @@ These actions might be things like 'talk', 'buy things from', etc.
                     mData.remove(i);
                     mTypes.remove(i);
                     mIds.remove(i);
+                    mIsActive.remove(i);
                     return;
                 }
             }
@@ -88,10 +92,10 @@ These actions might be things like 'talk', 'buy things from', etc.
     /**
     Register an action to a specific slot.
     */
-    function registerAction(type, slot, data, uniqueId){
+    function registerAction(type, slot, data, uniqueId, active = true){
         assert(slot >= 0 && slot < ACTION_MANAGER_NUM_SLOTS);
 
-        mActiveActions_[slot].register(type, data, uniqueId);
+        mActiveActions_[slot].register(type, data, uniqueId, active);
         notifyActionChange();
     }
 
@@ -112,6 +116,7 @@ These actions might be things like 'talk', 'buy things from', etc.
         assert(slot >= 0 && slot < ACTION_MANAGER_NUM_SLOTS);
         local target = mActiveActions_[slot];
         if(!target.populated()) return;
+        if(!target.mIsActive[0]) return;
 
         local data = target.mData[0];
         switch(target.mTypes[0]){
