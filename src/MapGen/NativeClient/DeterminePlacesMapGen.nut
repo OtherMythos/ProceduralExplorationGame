@@ -139,8 +139,10 @@
 
             _markRemovePlacedItems(originX, originY, mData_.halfX, mData_.halfY);
 
-            if(placeId == PlaceId.DUSTMITE_NEST){
-                mMapData_.averageOutAltitudeRadius(originX, originY, 10, 5, region);
+            if(placeMetaData != null && placeMetaData.rawin("averageGroundRadius")){
+                local radiusVal = placeMetaData.averageGroundRadius[0];
+                local strengthVal = placeMetaData.averageGroundRadius[1];
+                mMapData_.averageOutAltitudeRadius(originX, originY, radiusVal, strengthVal, region);
             }else{
                 _averageOutGround(originX, originY, mData_.halfX, mData_.halfY, region);
             }

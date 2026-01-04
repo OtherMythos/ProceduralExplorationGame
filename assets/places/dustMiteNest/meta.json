@@ -1,3 +1,4 @@
 {
-    "terrainHoleRadius": 5
+    "terrainHoleRadius": 5,
+    "averageGroundRadius": [10, 5]
 }
