@@ -98,6 +98,13 @@
         local targetRegions = determineRegionFunction();
         if(targetRegions.len() == 0) return;
 
+        //Read the meta data for the place.
+        local metaJsonPath = format("%s/%s/meta.json", ::basePlacesPath, placeData.mPlaceFileName);
+        local placeMetaData = null;
+        if(_mapGen.exists(metaJsonPath)){
+            placeMetaData = _mapGen.readJSONAsTable(metaJsonPath);
+        }
+
         if(placeData.mHalf != null){
             local halfX = placeData.mHalf[0];
             local halfY = placeData.mHalf[2];
