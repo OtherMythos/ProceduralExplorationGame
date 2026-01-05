@@ -9,6 +9,7 @@
     mDebugPanel_ = null;
     mDebugMeshPanel_ = null;
     mGradientPanel_ = null;
+    mBackgroundButton_ = null;
 
     mPosition_ = Vec2(0, 0);
     mMeshSize_ = null;
@@ -44,6 +45,7 @@
         createRenderIcon_();
         createLabel_();
         createDebugPanel_();
+        createBackgroundButton_();
 
         mDebugPanel_.setVisible(false);
         mDebugMeshPanel_.setVisible(false);
@@ -89,6 +91,17 @@
         mDebugMeshPanel_.setColour(ColourValue(0.8, 0.2, 0.2, 0.4));
     }
 
+    function createBackgroundButton_(){
+        mBackgroundButton_ = mParentWindow_.createButton();
+        mBackgroundButton_.setSize(mFullSize_);
+        mBackgroundButton_.setVisualsEnabled(false);
+        mBackgroundButton_.attachListenerForEvent(backgroundButtonPressed, _GUI_ACTION_PRESSED, this);
+    }
+
+    function backgroundButtonPressed(widget, action){
+        ::Base.mExplorationLogic.mCurrentWorld_.showInventory();
+    }
+
     function getSize(){
         /*
         local outPos = mDebugPanel_.getSize();
@@ -118,6 +131,11 @@
             local screenCentre = (_window.getSize() / 2);
             mFoundAnimationStartPos_ = screenCentre;
             mFoundAnimationActive_ = true;
+        }
+
+        //Position the background button
+        if(mBackgroundButton_ != null){
+            mBackgroundButton_.setPosition(pos);
         }
 
         //Position the debug panel at the position
@@ -164,6 +182,9 @@
         if(mGradientPanel_ != null){
             mGradientPanel_.setVisible(visible);
         }
+        if(mBackgroundButton_ != null){
+            mBackgroundButton_.setVisible(visible);
+        }
         if(mRenderIcon_ != null){
             //RenderIconManager doesn't expose setVisible, but we can control via parent node visibility
             //For now, leaving this as a placeholder
@@ -191,6 +212,10 @@
         if(mGradientPanel_ != null){
             _gui.destroy(mGradientPanel_);
             mGradientPanel_ = null;
+        }
+        if(mBackgroundButton_ != null){
+            _gui.destroy(mBackgroundButton_);
+            mBackgroundButton_ = null;
         }
         if(mRenderIcon_ != null){
             mRenderIcon_.destroy();
