@@ -24,7 +24,7 @@
 
     function hasStatType(stat){
         switch(stat){
-            case StatType.RESTORATIVE_HEALTH: return mRestorativeHealth > 1;
+            case StatType.RESTORATIVE_HEALTH: return mRestorativeHealth != 0;
             case StatType.ATTACK: return mAttack > 1;
             case StatType.DEFENSE: return mDefense > 1;
             default:
@@ -45,6 +45,9 @@
     function getDescriptionForStat(stat){
         switch(stat){
             case StatType.RESTORATIVE_HEALTH:{
+                if(mRestorativeHealth < 0){
+                    return format("%s Reduces health by %i.", UNICODE_HEART, -mRestorativeHealth);
+                }
                 return format("%s Restores %i health.", UNICODE_HEART, mRestorativeHealth);
             }
             case StatType.ATTACK:{
