@@ -16,7 +16,8 @@
         local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
 
         if(mobile){
-            return Vec2(_window.getWidth() * 0.05 - 10, 10);
+            local insets = _window.getScreenSafeAreaInsets();
+            return Vec2(_window.getWidth() * 0.05 - 10, 10 + insets.top);
         }else{
             return Vec2(_window.getWidth() * 0.7 - 10, 10);
         }
