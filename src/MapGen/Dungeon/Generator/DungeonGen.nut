@@ -40,7 +40,7 @@
 
         local resolvedTiles = _resolveTiles(outVals, data.width, data.height);
 
-        local objectPositions = _generateObjectPositions(floodRooms);
+        local objectPositions = _generateObjectPositions(floodRooms, playerStart);
 
         _random.seed(_system.time());
 
@@ -522,7 +522,7 @@
         return outVals;
     }
 
-    function _generateObjectPositions(floodRooms){
+    function _generateObjectPositions(floodRooms, playerStart = null){
         local objectPositions = {
             "enemies": [],
             "decorations": [],
@@ -556,7 +556,11 @@
         objectPositions.chest = _getRandomRoomPosition(floodRooms);
 
         //Generate ladder up position
-        objectPositions.ladderUp = _getRandomRoomPosition(floodRooms);
+        if(playerStart != null){
+            objectPositions.ladderUp = Vec3( (playerStart & 0xFFFF), 0, (playerStart >> 16) & 0xFFFF );
+        }else{
+            objectPositions.ladderUp = _getRandomRoomPosition(floodRooms);
+        }
 
         //Generate ladder down position
         objectPositions.ladderDown = _getRandomRoomPosition(floodRooms);
