@@ -13,7 +13,8 @@
     GRAVEYARD,
 
     CHERRY_BLOSSOM_ORB,
-    DEEP_HOLE
+    DEEP_HOLE,
+    MUSHROOM_FAIRY_RING,
 ");
 
 enum PlaceType{

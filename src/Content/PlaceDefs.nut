@@ -70,6 +70,7 @@ function initialisePlaceEditorMeta(){
 ::Places[PlaceId.GRAVEYARD] = PlaceDef("Graveyard", "An old graveyard", PlaceType.LOCATION, 1.0, "graveyard", 100);
 ::Places[PlaceId.CHERRY_BLOSSOM_ORB] = PlaceDef("Cherry Blossom Orb", "An orb in the cherry blossom", PlaceType.LOCATION, 1.0, "cherryBlossomOrbFirst", 10);
 ::Places[PlaceId.DEEP_HOLE] = PlaceDef("Deep Hole", "A very deep hole", PlaceType.LOCATION, 1.0, "deepHole", 100);
+::Places[PlaceId.MUSHROOM_FAIRY_RING] = PlaceDef("Mushroom Fairy Ring", "A ring of mushrooms", PlaceType.LOCATION, 1.0, "mushroomFairyRing", 100);
 
 ::PlacesByType <- {};
 
