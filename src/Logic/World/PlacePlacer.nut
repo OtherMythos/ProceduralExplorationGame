@@ -5,20 +5,23 @@
         local placeFile = placeDefine.getPlaceFileName();
         local pos = Vec3(placeData.originX, 0, -placeData.originY);
 
-            local insertNode = node.createChildSceneNode();
-            local insertPos = pos - placeDefine.mCentre;
-            insertPos.y = 0;
-            insertNode.setPosition(insertPos);
-            local sceneFile = _scene.parseSceneFile("res://build/assets/places/"+placeFile+"/scene.avScene");
-            local animData = _gameCore.insertParsedSceneFileGetAnimInfo(sceneFile, insertNode, world.getCollisionDetectionWorld());
-            assert(animData == null);
-            for(local i = 0; i < insertNode.getNumChildren(); i++){
-                local child = insertNode.getChild(i);
-                local originalPos = child.getPositionVec3();
-                local worldPos = insertPos + originalPos;
-                local newPos = originalPos;
-                newPos.y = world.getZForPos(worldPos);
-                child.setPosition(newPos);
+            local sceneFilePath = "res://build/assets/places/"+placeFile+"/scene.avScene";
+            if(_system.exists(sceneFilePath)){
+                local insertNode = node.createChildSceneNode();
+                local insertPos = pos - placeDefine.mCentre;
+                insertPos.y = 0;
+                insertNode.setPosition(insertPos);
+                local sceneFile = _scene.parseSceneFile(sceneFilePath);
+                local animData = _gameCore.insertParsedSceneFileGetAnimInfo(sceneFile, insertNode, world.getCollisionDetectionWorld());
+                assert(animData == null);
+                for(local i = 0; i < insertNode.getNumChildren(); i++){
+                    local child = insertNode.getChild(i);
+                    local originalPos = child.getPositionVec3();
+                    local worldPos = insertPos + originalPos;
+                    local newPos = originalPos;
+                    newPos.y = world.getZForPos(worldPos);
+                    child.setPosition(newPos);
+                }
             }
             regionEntry.pushFuncPlace(placeData.placeId, pos);
 
