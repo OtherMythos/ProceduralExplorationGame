@@ -1152,7 +1152,9 @@
 
         //Position the billboard above the place by half the radius in Z
         local billboardPos = targetPos.copy();
-        billboardPos.y += (radius * 0.75);
+        local radiusDist = (radius * 0.75);
+        if(radiusDist >= 12) radiusDist = 12;
+        billboardPos.y += radiusDist;
 
         local en = manager.createEntity(targetPos);
 
