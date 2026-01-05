@@ -16,6 +16,9 @@
             entityFactory.constructSimpleItem(node, model, targetPos, 0.15, null, null, 10, orientation);
         }
 
+        world.createEnemy(EnemyId.DUST_MITE_WORKER, pos + Vec3(12, 0, 8));
+        world.createEnemy(EnemyId.DUST_MITE_WORKER, pos + Vec3(-12, 0, 8));
+
         local teleData = {
             "actionType": ActionSlotType.DESCEND,
             "worldType": WorldTypes.PROCEDURAL_DUNGEON_WORLD,
