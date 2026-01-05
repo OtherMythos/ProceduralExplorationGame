@@ -868,6 +868,21 @@
         }
     }
 
+    function placePlacedItem(placedItemId, pos){
+        local regionId = ::MapGenHelpers.getRegionForData(mMapData_, pos);
+        if(regionId < 0) return;
+
+        local regionEntry = mRegionEntries_[regionId];
+        if(regionEntry == null) return;
+
+        local node = regionEntry.mDecoratioNode_;
+        local itemEntry = mEntityFactory_.constructPlacedItem(node, {
+            "originX": pos.x,
+            "originY": -pos.z,
+            "type": placedItemId
+        });
+    }
+
     function getTraverseTerrainForPosition(pos){
         return ::MapGenHelpers.getTraverseTerrainForPosition(mMapData_, pos);
     }
