@@ -103,6 +103,7 @@
 
     function loadFiles(){
         _doFile("res://src/Util/VersionPool.nut");
+        _doFile("res://src/Util/TextureForceLoader.nut");
 
         _doFile("res://src/System/CompositorManager.nut");
         ::CompositorManager.setup();
@@ -485,12 +486,11 @@
     }
 
     function forceTextureMaterialLoad(datablock){
-        local c = _gameCore.createVoxMeshItem("playerHead.voxMesh");
-        c.setDatablock(datablock);
-        local tempNode = _scene.getRootSceneNode().createChildSceneNode();
-        tempNode.attachObject(c);
-        _graphics.waitForStreamingCompletion();
-        tempNode.destroyNodeAndChildren();
+        local forceLoader = TextureForceLoader([
+            "voxelPalette.png",
+            "font_icons.png"
+        ]);
+        forceLoader.shutdown();
     }
 
     function setFullscreenState(fullscreen){
