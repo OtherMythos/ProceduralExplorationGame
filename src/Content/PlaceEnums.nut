@@ -15,6 +15,7 @@
     CHERRY_BLOSSOM_ORB,
     DEEP_HOLE,
     MUSHROOM_FAIRY_RING,
+    PILGRIM
 ");
 
 enum PlaceType{

@@ -1,0 +1,11 @@
+<Dialog_Script>
+
+    <script path = "res://src/Content/DialogHelpers.nut" id = "0"/>
+
+    <b id = "0">
+        <ts>Hello adventurer, I hope the roads are treating you well.</ts>
+        <ts>Here, I found this strange thing on the floor, perhapse you can find a use for it.</ts>
+        <script id = "0" func = "givePlayerItem" v1="Simple Sword"/>
+    </b>
+
+</Dialog_Script>
