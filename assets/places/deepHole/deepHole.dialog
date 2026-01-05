@@ -5,7 +5,7 @@
 
     <b id = "0">
         <ts>Hungry... Hungry...</ts>
-        <script id = "0" func = "triggerInventoryForItems"/>
+        <script id = "0" func = "triggerInventoryForItems" v1="Into the hole"/>
         <jmp id="2"/>
     </b>
 

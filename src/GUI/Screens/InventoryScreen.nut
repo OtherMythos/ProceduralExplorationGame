@@ -237,17 +237,25 @@ enum InventoryBusEvents{
         }
 
         if(mMultiSelection_){
+            local multiSelectionLabel = "Accept";
+            if(data.rawin("acceptButtonLabel")){
+                multiSelectionLabel = data.acceptButtonLabel;
+            }
             local acceptButtonPos = backButtonDisabled ? Vec2(10, 10 + startOffset) : Vec2(10 + 64 + 10, 10 + startOffset);
             mAcceptButton_ = ::IconButtonComplex(mWindow_, {
                 "icon": "greenTickX2",
                 "iconSize": Vec2(48, 48),
                 "iconPosition": Vec2(8, 8),
-                "label": "Accept",
+                "label": multiSelectionLabel,
                 "labelPosition": Vec2(64, 0),
                 "labelSizeModifier": 1.5
             });
-            mAcceptButton_.setSize(Vec2(180, 64));
+
             mAcceptButton_.setPosition(acceptButtonPos);
+
+            local minSize = mAcceptButton_.getMinimumSize();
+            mAcceptButton_.setSize(Vec2(minSize.x + 10, 66));
+
             mAcceptButton_.setDisabled(true);
             mAcceptButton_.attachListenerForEvent(function(widget, action){
                 ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
