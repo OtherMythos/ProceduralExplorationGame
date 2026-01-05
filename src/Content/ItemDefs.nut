@@ -20,6 +20,9 @@
 ::Items[ItemId.FLOWER_WHITE] = ItemDef("White Flower", "A white delecate flower", "flower.flowerWhite.voxMesh", "item_flowerWhite", ItemType.EAT, 5, null, EquippableId.NONE);
 ::Items[ItemId.FLOWER_RED] = ItemDef("Red Flower", "A red delecate flower", "flower.flowerRed.voxMesh", "item_flowerRed", ItemType.EAT, 5, null, EquippableId.NONE);
 ::Items[ItemId.FLOWER_PURPLE] = ItemDef("Purple Flower", "A purple delecate flower", "flower.flowerPurple.voxMesh", "item_flowerPurple", ItemType.EAT, 5, null, EquippableId.NONE);
+::Items[ItemId.MUSHROOM_1] = ItemDef("Mushroom", "A peculiar fungal growth", "mushrooms.mushroom.1.voxMesh", "item_mushroom1", ItemType.EAT, 5, null, EquippableId.NONE);
+::Items[ItemId.MUSHROOM_2] = ItemDef("Mushroom", "A peculiar fungal growth", "mushrooms.mushroom.2.voxMesh", "item_mushroom2", ItemType.EAT, 5, null, EquippableId.NONE);
+::Items[ItemId.MUSHROOM_3] = ItemDef("Mushroom", "A peculiar fungal growth", "mushrooms.mushroom.3.voxMesh", "item_mushroom3", ItemType.EAT, 5, null, EquippableId.NONE);
 ::Items[ItemId.MESSAGE_IN_A_BOTTLE] = ItemDef("Message in a Bottle", "A mysterious message sealed in a glass bottle. It has washed ashore from distant seas.", "simpleSword.voxMesh", "item_simpleSword", ItemType.MESSAGE_IN_A_BOTTLE, 0, null, EquippableId.NONE);
 ::Items[ItemId.NOTE_SCRAP] = ItemDef("Note Scrap", "A scrap of paper found inside the message in a bottle.", null, "item_noteScrap", ItemType.LORE_CONTENT, 0, null, EquippableId.NONE);
 ::Items[ItemId.FALLEN_STAR] = ItemDef("Fallen Star", "A glimmering star that has fallen from the heavens.", "fallenStar.voxMesh", "item_fallenStar", ItemType.EAT, 5, null, EquippableId.NONE);
@@ -40,8 +43,14 @@
         }
         case ItemId.APPLE:
         case ItemId.RED_BERRIES:
-        case ItemId.COCONUT: {
+        case ItemId.COCONUT:
+        case ItemId.MUSHROOM_2:
+        case ItemId.MUSHROOM_3: {
             stat.mRestorativeHealth = 5;
+            return stat;
+        }
+        case ItemId.MUSHROOM_1: {
+            stat.mRestorativeHealth = -5;
             return stat;
         }
         case ItemId.LARGE_HEALTH_POTION: {

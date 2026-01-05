@@ -22,3 +22,7 @@
 ::PlacedItems[PlacedItemId.SWAMP_GRASS_1] = PlacedItem("swampPlants.waterBush1.voxMesh", 0.4);
 ::PlacedItems[PlacedItemId.SWAMP_GRASS_2] = PlacedItem("swampPlants.waterBush2.voxMesh", 0.2);
 ::PlacedItems[PlacedItemId.SWAMP_LILYPAD] = PlacedItem("swampPlants.lilypad.voxMesh", 0.2, Vec3(0, -0.8, 0));
+
+::PlacedItems[PlacedItemId.MUSHROOM_1] = PlacedItem("mushrooms.mushroom.1.voxMesh", 0.3);
+::PlacedItems[PlacedItemId.MUSHROOM_2] = PlacedItem("mushrooms.mushroom.2.voxMesh", 0.3);
+::PlacedItems[PlacedItemId.MUSHROOM_3] = PlacedItem("mushrooms.mushroom.3.voxMesh", 0.3);

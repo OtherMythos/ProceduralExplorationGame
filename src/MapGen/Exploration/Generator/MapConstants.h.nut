@@ -114,6 +114,10 @@ enum PlacedItemId{
     SWAMP_GRASS_2,
     SWAMP_LILYPAD,
 
+    MUSHROOM_1,
+    MUSHROOM_2,
+    MUSHROOM_3,
+
     MAX
 };
 

@@ -559,6 +559,26 @@
             local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.GIVE_ITEM, ::Item(flowerItem), null, null);
             manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
         }else if(
+            itemType == PlacedItemId.MUSHROOM_1 ||
+            itemType == PlacedItemId.MUSHROOM_2 ||
+            itemType == PlacedItemId.MUSHROOM_3
+        ){
+            local triggerWorld = mConstructorWorld_.getTriggerWorld();
+            local playerInteraction = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.PICK, en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
+
+            manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO, ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](
+                collisionPoint, playerInteraction,
+                damageWorld, triggerWorld
+            ));
+
+            local mushroomItem = ItemId.MUSHROOM_1;
+            if(itemType == PlacedItemId.MUSHROOM_1) mushroomItem = ItemId.MUSHROOM_1;
+            else if(itemType == PlacedItemId.MUSHROOM_2) mushroomItem = ItemId.MUSHROOM_2;
+            else if(itemType == PlacedItemId.MUSHROOM_3) mushroomItem = ItemId.MUSHROOM_3;
+
+            local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.GIVE_ITEM, ::Item(mushroomItem), null, null);
+            manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
+        }else if(
             itemType == PlacedItemId.SWAMP_TREE_ONE ||
             itemType == PlacedItemId.SWAMP_TREE_TWO
         ){

@@ -168,6 +168,14 @@ namespace ProceduralExplorationGameCore{
                 if(processRValue(mapData, x, y, 10)){
                     bool treeType = (mapGenRandomIntMinMax(0, 2) == 0);
                     PLACE_ITEM(treeType ? PlacedItemId::SWAMP_TREE_THREE : PlacedItemId::SWAMP_TREE_FOUR);
+                    placed = true;
+                }
+            }
+            if(!placed){
+                if(processRValue(mapData, x, y, 8)){
+                    static const PlacedItemId MUSHROOM_VALS[] = {PlacedItemId::MUSHROOM_1, PlacedItemId::MUSHROOM_2, PlacedItemId::MUSHROOM_3};
+                    size_t val = mapGenRandomIntMinMax(0, 2);
+                    PLACE_ITEM(MUSHROOM_VALS[val]);
                 }
             }
         }
