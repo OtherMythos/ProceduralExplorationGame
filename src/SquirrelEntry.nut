@@ -50,6 +50,7 @@ function start(){
     _doFile("res://src/Util/CombatStateMachine.nut");
 
     _event.subscribe(_EVENT_SYSTEM_WINDOW_RESIZE, recieveWindowResize, this);
+    _event.subscribe(_EVENT_SYSTEM_APPLICATION_DID_ENTER_BACKGROUND, receiveEnterBackground, this);
 
     if(_system.exists("res://developerTools.nut")){
         _doFile("res://developerTools.nut");
@@ -111,6 +112,11 @@ function recieveWindowResize(id, data){
     canvasSize = _window.getSize();
     ::ScreenManager.processResize();
     ::DebugConsole.resize();
+}
+
+function receiveEnterBackground(id, data){
+    print("enterBackground");
+    _event.transmit(1044, null);
 }
 
 function setupInitialCanvasSize(){

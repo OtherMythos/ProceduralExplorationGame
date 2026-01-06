@@ -64,6 +64,7 @@
         _event.unsubscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);
         _event.unsubscribe(Event.PLAYER_EQUIP_CHANGED, playerEquipChanged, this);
         _event.unsubscribe(Event.PLAYER_WIELD_ACTIVE_CHANGED, playerWieldActiveChanged, this);
+        _event.unsubscribe(Event.GAME_MOVED_TO_BACKGROUND, processMoveToBackground, this);
 
         _state.setPauseState(0);
 
@@ -93,6 +94,7 @@
         _event.subscribe(Event.PLAYER_HEALTH_CHANGED, playerHealthChanged, this);
         _event.subscribe(Event.PLAYER_EQUIP_CHANGED, playerEquipChanged, this);
         _event.subscribe(Event.PLAYER_WIELD_ACTIVE_CHANGED, playerWieldActiveChanged, this);
+        _event.subscribe(Event.GAME_MOVED_TO_BACKGROUND, processMoveToBackground, this);
     }
 
     function playerHealthChanged(id, data){
@@ -212,6 +214,11 @@
         pauseExploration();
         ::Base.mPlayerStats.processPlayerDeath();
         if(mGui_) mGui_.notifyPlayerDeath();
+    }
+
+    function processMoveToBackground(id, data){
+        print("Received move to background event");
+        setGamePaused(true);
     }
 
     function resetExploration_(){

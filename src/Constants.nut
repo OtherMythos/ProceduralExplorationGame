@@ -220,6 +220,8 @@ enum Event{
     ITEM_GIVEN = 1042,
 
     INVENTORY_CLOSED = 1043,
+
+    GAME_MOVED_TO_BACKGROUND = 1044,
 };
 
 enum FoundObjectType{
