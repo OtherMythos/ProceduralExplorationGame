@@ -46,6 +46,7 @@ enum BiomeId{
     EXP_FIELD,
     DESERT,
     SWAMP,
+    HOT_SPRINGS,
 
     SHALLOW_OCEAN,
     DEEP_OCEAN,
@@ -69,6 +70,7 @@ enum RegionType{
     EXP_FIELDS,
     DESERT,
     SWAMP,
+    HOT_SPRINGS,
     GATEWAY_DOMAIN,
     PLAYER_START
 };

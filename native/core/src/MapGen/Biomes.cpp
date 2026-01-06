@@ -212,6 +212,43 @@ namespace ProceduralExplorationGameCore{
         }
     }
 
+    MapVoxelTypes HOT_SPRINGS_VoxFunction(AV::uint8 altitude, AV::uint8 moisture, const ExplorationMapData* mapData){
+        return MapVoxelTypes::DIRT;
+    }
+
+    void HOT_SPRINGS_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture, AV::uint8 regionDistance){
+    }
+
+    AV::uint8 HOT_SPRINGS_DetermineAltitudeFunction(AV::uint8 altitude, AV::uint8 moisture, AV::uint8 altitudeDistance, AV::uint16 x, AV::uint16 y, const ExplorationMapData* mapData){
+
+        static const float DIST = 8.0f;
+        float modifier = (altitudeDistance > DIST ? DIST : static_cast<float>(altitudeDistance)) / DIST;
+        float originalAltitude = float(altitude);
+        float altDifference = originalAltitude - mapData->seaLevel;
+        float startAltDifference = 1;
+        float fa = mapData->seaLevel - 1;
+        float a = mix<float>(fa, originalAltitude, 1.0-modifier);
+        AV::uint8 out = static_cast<AV::uint8>(a);
+        return out;
+    }
+
+    void HOT_SPRINGS_FinalVoxChangeFunction(const ExplorationMapData* mapData, AV::uint32* vox, AV::uint32* secondary, AV::uint16 x, AV::uint16 y){
+        *secondary |= DO_NOT_PLACE_RIVERS_VOXEL_FLAG;
+
+        if((*vox & 0xFF) < mapData->seaLevel){
+            *secondary |= TEST_CHANGE_WATER_FLAG;
+        }
+    }
+
+    Biome::BiomeColour HOT_SPRINGS_WaterTextureColourChangeFunction(bool mask, AV::uint8 distance, const ExplorationMapData* mapData){
+        AV::uint8 targetDist = distance >= 4 ? 4 : distance;
+
+        Biome::BiomeColour c{40, 120, 180, 255};
+        c.g -= targetDist * 4;
+        c.b -= targetDist * 4;
+        return c;
+    }
+
     void NONE_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture, AV::uint8 regionDistance){
     }
     #undef PLACE_ITEM
@@ -258,6 +295,7 @@ namespace ProceduralExplorationGameCore{
         Biome(&EXP_FIELD_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
         Biome(&DESERT_VoxFunction, &DESERT_PlaceObjectsFunction, &DESERT_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
         Biome(&SWAMP_VoxFunction, &SWAMP_PlaceObjectsFunction, &SWAMP_DetermineAltitudeFunction, &SWAMP_FinalVoxChangeFunction, &SWAMP_WaterTextureColourChangeFunction),
+        Biome(&HOT_SPRINGS_VoxFunction, &HOT_SPRINGS_PlaceObjectsFunction, &HOT_SPRINGS_DetermineAltitudeFunction, &HOT_SPRINGS_FinalVoxChangeFunction, &HOT_SPRINGS_WaterTextureColourChangeFunction),
         Biome(&SHALLOW_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
         Biome(&DEEP_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
     };
@@ -283,6 +321,7 @@ namespace ProceduralExplorationGameCore{
             case RegionType::EXP_FIELDS: targetBiome = BiomeId::EXP_FIELD; break;
             case RegionType::DESERT: targetBiome = BiomeId::DESERT; break;
             case RegionType::SWAMP: targetBiome = BiomeId::SWAMP; break;
+            case RegionType::HOT_SPRINGS: targetBiome = BiomeId::HOT_SPRINGS; break;
             default:{
                 targetBiome = BiomeId::GRASS_LAND;
             }

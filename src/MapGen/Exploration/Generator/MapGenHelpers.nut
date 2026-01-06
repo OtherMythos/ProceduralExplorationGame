@@ -115,6 +115,7 @@
             case RegionType.EXP_FIELDS: return BiomeId.EXP_FIELD;
             case RegionType.DESERT: return BiomeId.DESERT;
             case RegionType.SWAMP: return BiomeId.SWAMP;
+            case RegionType.HOT_SPRINGS: return BiomeId.HOT_SPRINGS;
             default:{
                 return BiomeId.GRASS_LAND;
             }
