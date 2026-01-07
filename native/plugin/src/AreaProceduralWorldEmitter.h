@@ -13,6 +13,7 @@ coordinates, accounting for the height of the procedural world.
 
 #include "OgreAreaEmitter.h"
 #include "OgreMath.h"
+#include <vector>
 
 namespace Ogre
 {
@@ -30,8 +31,13 @@ namespace Ogre
         /// @see ParticleEmitter
         void _initParticle(Particle *pParticle) override;
 
+        ///@param points Vector of world points where particles will be emitted
+        void setEmissionPoints(const std::vector<uint32_t>& points);
+
     private:
         size_t mCurrentCoordinateIndex_;
+        std::vector<uint32_t> mEmissionPoints_;
+        bool mUsingCustomPoints_;
     };
 
 }  // namespace Ogre

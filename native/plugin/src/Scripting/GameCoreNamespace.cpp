@@ -13,6 +13,7 @@
 #include "MapGen/Script/MapGenScriptVM.h"
 #include "PluginBaseSingleton.h"
 #include "Platform/iOS/HapticFeedback.h"
+#include "AreaProceduralWorldEmitter.h"
 
 #include "System/Util/PathUtils.h"
 
@@ -1039,6 +1040,49 @@ namespace ProceduralExplorationGamePlugin{
         return 0;
     }
 
+    SQInteger GameCoreNamespace::setupParticleEmitterPoints(HSQUIRRELVM vm){
+        Ogre::MovableObject* outObject = 0;
+        SCRIPT_ASSERT_RESULT(AV::MovableObjectUserData::readMovableObjectFromUserData(vm, 2, &outObject, AV::MovableObjectType::ParticleSystem));
+        Ogre::ParticleSystem* particleSystem = dynamic_cast<Ogre::ParticleSystem*>(outObject);
+        assert(particleSystem);
+
+        //Get emitter
+        Ogre::ParticleEmitter* emitter = particleSystem->getEmitter(0);
+        if(!emitter){
+            sq_throwerror(vm, "Particle system has no emitter at index 0");
+            return SQ_ERROR;
+        }
+
+        //Cast to our custom emitter type
+        Ogre::AreaProceduralWorldEmitter* areaEmitter = dynamic_cast<Ogre::AreaProceduralWorldEmitter*>(emitter);
+        if(!areaEmitter){
+            sq_throwerror(vm, "Emitter is not an AreaProceduralWorldEmitter");
+            return SQ_ERROR;
+        }
+
+        //Get array of world points
+        if(sq_gettype(vm, 3) != OT_ARRAY){
+            sq_throwerror(vm, "Third parameter must be an array of world points");
+            return SQ_ERROR;
+        }
+
+        std::vector<uint32_t> points;
+        SQInteger arraySize = sq_getsize(vm, 3);
+        for(SQInteger i = 0; i < arraySize; i++){
+            sq_pushinteger(vm, i);
+            sq_get(vm, 3);
+            SQInteger worldPoint = 0;
+            sq_getinteger(vm, -1, &worldPoint);
+            points.push_back(static_cast<uint32_t>(worldPoint));
+            sq_pop(vm, 1);
+        }
+
+        //Set the points on the emitter
+        areaEmitter->setEmissionPoints(points);
+
+        return 0;
+    }
+
     void GameCoreNamespace::setupNamespace(HSQUIRRELVM vm){
         AV::ScriptUtils::addFunction(vm, getGameCoreVersion, "getGameCoreVersion");
 
@@ -1097,6 +1141,8 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, triggerHeavyHapticFeedback, "triggerHeavyHapticFeedback");
         AV::ScriptUtils::addFunction(vm, triggerSelectionHapticFeedback, "triggerSelectionHapticFeedback");
         AV::ScriptUtils::addFunction(vm, triggerNotificationHapticFeedback, "triggerNotificationHapticFeedback", -1, ".");
+
+        AV::ScriptUtils::addFunction(vm, setupParticleEmitterPoints, "setupParticleEmitterPoints", 3, ".ua");
 
         AV::ScriptUtils::addFunction(vm, createDataPointFileParser, "DataPointFile");
     }

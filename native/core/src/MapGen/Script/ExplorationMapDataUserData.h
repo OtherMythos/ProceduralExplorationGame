@@ -49,6 +49,7 @@ namespace ProceduralExplorationGameCore{
         static SQInteger applyTerrainVoxelsForPlace(HSQUIRRELVM vm);
 
         static SQInteger getIsWaterForCoord(HSQUIRRELVM vm);
+        static SQInteger getIsWaterForPoint(HSQUIRRELVM vm);
 
         static SQInteger calculateEdgeVoxels(HSQUIRRELVM vm);
 

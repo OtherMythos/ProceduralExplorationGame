@@ -298,6 +298,25 @@
                 }
             }
         }
+
+        //Create particle system for testing area emitter
+        local particleSystemNode = mParentNode_.createChildSceneNode(_SCENE_DYNAMIC);
+        local particleSystem = _scene.createParticleSystem("hotSpringsWater");
+        particleSystemNode.attachObject(particleSystem);
+        particleSystemNode.setPosition(0, 0, 0);
+        particleSystemNode.setScale(600, 1, 600);
+        foreach(c,i in mMapData_.regionData){
+            if(i.type == RegionType.HOT_SPRINGS){
+                local outPoints = [];
+                foreach(p in i.coords){
+                    if(::currentNativeMapData.getIsWaterForPoint(p)){
+                        outPoints.append(p);
+                    }
+                }
+                _gameCore.setupParticleEmitterPoints(particleSystem, outPoints);
+            }
+        }
+        //assert(false);
     }
 
     function shutdown(){
@@ -801,13 +820,6 @@
 
         mWaterDatablock_ = waterBlock;
         mOutsideWaterDatablock_ = surroundBlock;
-
-        //Create particle system for testing area emitter
-        local particleSystemNode = mParentNode_.createChildSceneNode(_SCENE_DYNAMIC);
-        local particleSystem = _scene.createParticleSystem("areaProceduralWorldParticles");
-        particleSystemNode.attachObject(particleSystem);
-        particleSystemNode.setPosition(0, 5, 0);
-        particleSystemNode.setScale(600, 1, 600);
 
     }
 
