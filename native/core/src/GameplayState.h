@@ -13,8 +13,13 @@ namespace ProceduralExplorationGameCore{
 
         static void setNewMapData(ExplorationMapData* mapData);
 
+        static ExplorationMapData* getMapData(){
+            return mMapData;
+        }
+
     private:
         static std::vector<bool> mFoundRegions;
+        static ExplorationMapData* mMapData;
 
     public:
         static bool getFoundRegion(RegionId region){
