@@ -44,6 +44,7 @@
 #include "OgreTextureBox.h"
 #include "GameCorePBSHlmsListener.h"
 #include "OgreRenderable.h"
+#include "RingProceduralWorldEmitterFactory.h"
 
 namespace ProceduralExplorationGamePlugin{
 
@@ -150,6 +151,11 @@ namespace ProceduralExplorationGamePlugin{
         Ogre::VoxMeshItemFactory* factory = OGRE_NEW Ogre::VoxMeshItemFactory();
         Ogre::Root::getSingletonPtr()->addMovableObjectFactory(factory);
         mMovableFactory = factory;
+
+        //Register custom particle emitter factories
+        Ogre::ParticleEmitterFactory *pEmitFact;
+        pEmitFact = OGRE_NEW Ogre::RingProceduralWorldEmitterFactory();
+        Ogre::ParticleSystemManager::getSingleton().addEmitterFactory( pEmitFact );
 
         GameCorePBSHlmsListener* pbsListener = new GameCorePBSHlmsListener();
         Ogre::Hlms *hlmsPbs = Ogre::Root::getSingleton().getHlmsManager()->getHlms( Ogre::HLMS_PBS );

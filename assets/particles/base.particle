@@ -154,7 +154,7 @@ particle_system enemyCollisionBlockerGlimmer
     billboard_type  point
 
     // Ring emitter for glimmer effect.
-    emitter Ring
+    emitter RingProceduralWorld
     {
         angle           0
         emission_rate   100
