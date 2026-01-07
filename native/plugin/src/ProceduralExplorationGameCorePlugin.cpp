@@ -45,6 +45,7 @@
 #include "GameCorePBSHlmsListener.h"
 #include "OgreRenderable.h"
 #include "RingProceduralWorldEmitterFactory.h"
+#include "AreaProceduralWorldEmitterFactory.h"
 
 namespace ProceduralExplorationGamePlugin{
 
@@ -155,7 +156,9 @@ namespace ProceduralExplorationGamePlugin{
         //Register custom particle emitter factories
         Ogre::ParticleEmitterFactory *pEmitFact;
         pEmitFact = OGRE_NEW Ogre::RingProceduralWorldEmitterFactory();
-        Ogre::ParticleSystemManager::getSingleton().addEmitterFactory( pEmitFact );
+        Ogre::ParticleSystemManager::getSingleton().addEmitterFactory(pEmitFact);
+        pEmitFact = OGRE_NEW Ogre::AreaProceduralWorldEmitterFactory();
+        Ogre::ParticleSystemManager::getSingleton().addEmitterFactory(pEmitFact);
 
         GameCorePBSHlmsListener* pbsListener = new GameCorePBSHlmsListener();
         Ogre::Hlms *hlmsPbs = Ogre::Root::getSingleton().getHlmsManager()->getHlms( Ogre::HLMS_PBS );
