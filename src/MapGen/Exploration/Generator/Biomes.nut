@@ -5,13 +5,15 @@ local Biome = class{
     mAmbientModifier = null;
     mLightModifier = null;
     mFogStartEnd = null;
-    constructor(name, spawnableEnemies, skyColour, ambientModifier, lightModifier, fogStartEnd){
+    mBiomeLogic = null;
+    constructor(name, spawnableEnemies, skyColour, ambientModifier, lightModifier, fogStartEnd, biomeLogic=null){
         mName = name;
         mSpawnableEnemies = spawnableEnemies;
         mSkyColour = skyColour;
         mAmbientModifier = ambientModifier;
         mLightModifier = lightModifier;
         mFogStartEnd = fogStartEnd;
+        mBiomeLogic = biomeLogic;
     }
 
     function getName() { return mName; }
@@ -19,6 +21,28 @@ local Biome = class{
     function getAmbientModifier() { return mAmbientModifier; }
     function getLightModifier() { return mLightModifier; }
     function getFogStartEnd() { return mFogStartEnd; }
+    function getBiomeLogic() { return mBiomeLogic; }
+};
+
+local HotSpringsLogic = {
+    "mHotSpringsComponentId_": null,
+
+    "update": function(world){
+        //TODO add hot springs specific logic here
+        //print("hot springs ");
+    },
+    "enter": function(world){
+        //Register the hot springs world gen component
+        local component = HotSpringsWorldGenComponent(world);
+        mHotSpringsComponentId_ = world.registerWorldComponent(component);
+    },
+    "leave": function(world){
+        //Unregister the hot springs world gen component
+        if(mHotSpringsComponentId_ != null){
+            world.unregisterWorldComponent(mHotSpringsComponentId_);
+            mHotSpringsComponentId_ = null;
+        }
+    }
 };
 
 ::Biomes <- array(BiomeId.MAX, null);
@@ -31,6 +55,6 @@ local Biome = class{
 ::Biomes[BiomeId.EXP_FIELD] = Biome("EXP Field", [], null, null, null, null);
 ::Biomes[BiomeId.DESERT] = Biome("Desert", [EnemyId.SKELETON], null, null, 2, null);
 ::Biomes[BiomeId.SWAMP] = Biome("Swamp", [EnemyId.GOBLIN], Vec3(0.05, 0.1, 0.08), Vec3(0.25, 0.25, 0.25), 0.25, Vec2(50, 200));
-::Biomes[BiomeId.HOT_SPRINGS] = Biome("Hot Springs", [EnemyId.GOBLIN], null, null, null, null);
+::Biomes[BiomeId.HOT_SPRINGS] = Biome("Hot Springs", [EnemyId.GOBLIN], null, null, null, null, HotSpringsLogic);
 ::Biomes[BiomeId.SHALLOW_OCEAN] = Biome("Shallow Ocean", [EnemyId.SQUID], null, null, null, null);
 ::Biomes[BiomeId.DEEP_OCEAN] = Biome("Deep Ocean", [EnemyId.SQUID], null, null, null, null);

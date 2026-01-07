@@ -11,6 +11,8 @@
     mCurrentFoundRegions_ = null;
     mRegionEntries_ = null;
 
+    mCurrentRegionId_ = null;
+
     mAnimIncrement_ = 0.0;
     mWaterDatablock_ = null;
     mOutsideWaterDatablock_ = null;
@@ -367,6 +369,16 @@
 
         foreach(c,i in mRegionEntries_){
             i.update();
+        }
+
+        //Update biome logic for the current region
+        if(mCurrentRegionId_ != null && mCurrentRegionId_ >= 0 && mCurrentRegionId_ < mMapData_.regionData.len()){
+            local regionData = mMapData_.regionData[mCurrentRegionId_];
+            local biomeType = ::MapGenHelpers.getBiomeForRegionType(regionData.type);
+            local biomeLogic = ::Biomes[biomeType].getBiomeLogic();
+            if(biomeLogic != null && biomeLogic.rawin("update")){
+                biomeLogic.update(this);
+            }
         }
 
         checkWorldZoomState();
@@ -964,61 +976,93 @@
                 break;
             }
 
-            local skyColour = null;
-            local ambientModifier = null;
-            local lightModifier = null;
-            local fogStartEndModifier = null;
-            if(regionId == 253){
-                // print("Ocean");
-                skyColour = getDefaultSkyColour();
-                ambientModifier = getDefaultAmbientModifier();
-                lightModifier = getDefaultLightModifier();
-                fogStartEndModifier = getDefaultFogStartEnd();
-            }else if(regionId == 255){
-                //print("invalid");
-            }else{
-                local regionData = mMapData_.regionData[regionId];
-                local biomeType = ::MapGenHelpers.getBiomeForRegionType(regionData.type);
-                local biomeColour = ::Biomes[biomeType].getSkyColour();
-                if(biomeColour == null){
-                    biomeColour = getDefaultSkyColour();
-                }
-
-                local biomeAmbient = ::Biomes[biomeType].getAmbientModifier();
-                if(biomeAmbient == null){
-                    biomeAmbient = getDefaultAmbientModifier();
-                }
-
-                local biomeLight = ::Biomes[biomeType].getLightModifier();
-                if(biomeLight == null){
-                    biomeLight = getDefaultLightModifier();
-                }
-
-                local biomeFogStartEnd = ::Biomes[biomeType].getFogStartEnd();
-                if(biomeFogStartEnd == null){
-                    biomeFogStartEnd = getDefaultFogStartEnd();
-                }
-                skyColour = biomeColour;
-                ambientModifier = biomeAmbient;
-                lightModifier = biomeLight;
-                fogStartEndModifier = biomeFogStartEnd;
-            }
-            if(skyColour != null){
-                mSkyAnimator_.animateSkyToColour(skyColour);
-            }
-            if(ambientModifier != null){
-                mSkyAnimator_.animateAmbientToModifier(ambientModifier);
-            }
-            if(lightModifier != null){
-                mSkyAnimator_.animateLightModifier(lightModifier);
-            }
-            if(fogStartEndModifier != null){
-                mSkyAnimator_.animateFogStartEnd(fogStartEndModifier);
-            }
+            processRegionSpecificSkyChanges_(regionId);
+            processBiomeSpecificLogic_(regionId);
 
             //print("type " + regionData.type);
         }
     }
+
+    function processBiomeSpecificLogic_(regionId){
+        //Handle entering a new region
+        if(mCurrentRegionId_ != regionId){
+            //Leave the old region if there was one
+            if(mCurrentRegionId_ != null && mCurrentRegionId_ >= 0 && mCurrentRegionId_ < mMapData_.regionData.len()){
+                local oldRegionData = mMapData_.regionData[mCurrentRegionId_];
+                local oldBiomeType = ::MapGenHelpers.getBiomeForRegionType(oldRegionData.type);
+                local oldBiomeLogic = ::Biomes[oldBiomeType].getBiomeLogic();
+                if(oldBiomeLogic != null && oldBiomeLogic.rawin("leave")){
+                    oldBiomeLogic.leave(this);
+                }
+            }
+
+            //Enter the new region
+            mCurrentRegionId_ = regionId;
+            if(regionId >= 0 && regionId < mMapData_.regionData.len()){
+                local newRegionData = mMapData_.regionData[regionId];
+                local newBiomeType = ::MapGenHelpers.getBiomeForRegionType(newRegionData.type);
+                local newBiomeLogic = ::Biomes[newBiomeType].getBiomeLogic();
+                if(newBiomeLogic != null && newBiomeLogic.rawin("enter")){
+                    newBiomeLogic.enter(this);
+                }
+            }
+        }
+    }
+
+    function processRegionSpecificSkyChanges_(regionId){
+        local skyColour = null;
+        local ambientModifier = null;
+        local lightModifier = null;
+        local fogStartEndModifier = null;
+        if(regionId == 253){
+            // print("Ocean");
+            skyColour = getDefaultSkyColour();
+            ambientModifier = getDefaultAmbientModifier();
+            lightModifier = getDefaultLightModifier();
+            fogStartEndModifier = getDefaultFogStartEnd();
+        }else if(regionId == 255){
+            //print("invalid");
+        }else{
+            local regionData = mMapData_.regionData[regionId];
+            local biomeType = ::MapGenHelpers.getBiomeForRegionType(regionData.type);
+            local biomeColour = ::Biomes[biomeType].getSkyColour();
+            if(biomeColour == null){
+                biomeColour = getDefaultSkyColour();
+            }
+
+            local biomeAmbient = ::Biomes[biomeType].getAmbientModifier();
+            if(biomeAmbient == null){
+                biomeAmbient = getDefaultAmbientModifier();
+            }
+
+            local biomeLight = ::Biomes[biomeType].getLightModifier();
+            if(biomeLight == null){
+                biomeLight = getDefaultLightModifier();
+            }
+
+            local biomeFogStartEnd = ::Biomes[biomeType].getFogStartEnd();
+            if(biomeFogStartEnd == null){
+                biomeFogStartEnd = getDefaultFogStartEnd();
+            }
+            skyColour = biomeColour;
+            ambientModifier = biomeAmbient;
+            lightModifier = biomeLight;
+            fogStartEndModifier = biomeFogStartEnd;
+        }
+        if(skyColour != null){
+            mSkyAnimator_.animateSkyToColour(skyColour);
+        }
+        if(ambientModifier != null){
+            mSkyAnimator_.animateAmbientToModifier(ambientModifier);
+        }
+        if(lightModifier != null){
+            mSkyAnimator_.animateLightModifier(lightModifier);
+        }
+        if(fogStartEndModifier != null){
+            mSkyAnimator_.animateFogStartEnd(fogStartEndModifier);
+        }
+    }
+
     function _checkRectCircleCollision(tileX, tileY, radius, circleX, circleY){
         local distX = abs(circleX - (tileX)-0.5);
         local distY = abs(circleY - (tileY)-0.5);
