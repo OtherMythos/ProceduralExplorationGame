@@ -17,7 +17,7 @@ namespace Ogre
     @remarks
         Creates instances of RingProceduralWorldEmitter to be used in particle systems.
     */
-    class _OgreParticleFXExport RingProceduralWorldEmitterFactory final : public ParticleEmitterFactory
+    class RingProceduralWorldEmitterFactory final : public ParticleEmitterFactory
     {
     protected:
     public:

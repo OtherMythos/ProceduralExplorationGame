@@ -21,7 +21,7 @@ namespace Ogre
         This particle emitter extends the standard RingEmitter to adjust particle
         positions based on the height of the procedural exploration world.
     */
-    class _OgreParticleFXExport RingProceduralWorldEmitter : public RingEmitter
+    class RingProceduralWorldEmitter : public RingEmitter
     {
     public:
         RingProceduralWorldEmitter( ParticleSystem *psys );
