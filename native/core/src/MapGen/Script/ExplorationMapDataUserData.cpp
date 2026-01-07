@@ -339,6 +339,26 @@ namespace ProceduralExplorationGameCore{
         return 1;
     }
 
+    SQInteger ExplorationMapDataUserData::getIsWaterForPoint(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger worldPoint;
+        sq_getinteger(vm, 2, &worldPoint);
+
+        WorldPoint p = static_cast<WorldPoint>(worldPoint);
+
+        const WaterId* waterPtr = WATER_GROUP_PTR_FOR_COORD_CONST(mapData, p);
+        if(*waterPtr == INVALID_WATER_ID){
+            sq_pushbool(vm, false);
+            return 1;
+        }
+
+        sq_pushbool(vm, true);
+
+        return 1;
+    }
+
     SQInteger ExplorationMapDataUserData::getIsWaterForPos(HSQUIRRELVM vm){
         ExplorationMapData* mapData;
         SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
@@ -945,6 +965,7 @@ namespace ProceduralExplorationGameCore{
         AV::ScriptUtils::addFunction(vm, randomIntMinMax, "randomIntMinMax", 3, ".ii");
 
         AV::ScriptUtils::addFunction(vm, getIsWaterForCoord, "getIsWaterForCoord", 3, ".ii");
+        AV::ScriptUtils::addFunction(vm, getIsWaterForPoint, "getIsWaterForPoint", 2, ".i");
 
         AV::ScriptUtils::addFunction(vm, setValue, "_set");
         AV::ScriptUtils::addFunction(vm, getValue, "_get");
