@@ -129,6 +129,26 @@ enum WorldMousePressContexts{
     POPUP_WINDOW,
 };
 
+/*
+ * World components are classes which are registered with the world and updated each frame.
+ */
+::WorldComponent <- class{
+    mWorld_ = null;
+
+    constructor(world){
+        mWorld_ = world;
+    }
+
+    function update(){
+        //Override in derived classes
+    }
+
+    function destroy(){
+        //Override if cleanup is needed
+    }
+};
+
+
 ::World <- class{
 
     //TODO remove this at some point.
@@ -518,6 +538,8 @@ enum WorldMousePressContexts{
     mWorldScaleSize_ = 1;
     mCameraAcceleration_ = null;
 
+    mWorldComponentPool_ = null;
+
     mMovementCooldown_ = 0;
     mMovementCooldownTotal_ = 30;
     mMostRecentMovementType_ = null;
@@ -735,11 +757,25 @@ enum WorldMousePressContexts{
 
         mEntityManager_ = EntityManager.createEntityManager(this);
 
+        mWorldComponentPool_ = VersionPool();
+
         _gameCore.setCustomPassBufferValue(::Base.mPlayerStats.getWieldActive() ? 1.0 : 0.0, 0, 0);
     }
 
     function getEntityFactory(){
         return mEntityFactory_;
+    }
+
+    function registerWorldComponent(component){
+        return mWorldComponentPool_.store(component);
+    }
+
+    function unregisterWorldComponent(componentId){
+        local component = mWorldComponentPool_.get(componentId);
+        if(component != null){
+            component.destroy();
+        }
+        mWorldComponentPool_.unstore(componentId);
     }
 
     function playerHealthChanged(data){
@@ -818,6 +854,14 @@ enum WorldMousePressContexts{
         mProjectileManager_.update();
         mEntityManager_.update();
         mSkyAnimator_.update();
+
+        //Update world components
+        for(local i = 0; i < mWorldComponentPool_.mObject_.len(); i++){
+            local component = mWorldComponentPool_.mObject_[i];
+            if(component != null){
+                component.update();
+            }
+        }
 
         if(!_input.getMouseButton(_MB_LEFT)){
             mMouseContext_.notifyMouseEnded();
