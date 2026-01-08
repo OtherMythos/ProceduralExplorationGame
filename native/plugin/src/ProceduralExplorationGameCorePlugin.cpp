@@ -44,8 +44,8 @@
 #include "OgreTextureBox.h"
 #include "GameCorePBSHlmsListener.h"
 #include "OgreRenderable.h"
-#include "RingProceduralWorldEmitterFactory.h"
-#include "AreaProceduralWorldEmitterFactory.h"
+#include "Ogre/RingProceduralWorldEmitterFactory.h"
+#include "Ogre/AreaProceduralWorldEmitterFactory.h"
 
 namespace ProceduralExplorationGamePlugin{
 

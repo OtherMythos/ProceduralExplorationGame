@@ -13,7 +13,7 @@
 #include "MapGen/Script/MapGenScriptVM.h"
 #include "PluginBaseSingleton.h"
 #include "Platform/iOS/HapticFeedback.h"
-#include "AreaProceduralWorldEmitter.h"
+#include "Ogre/AreaProceduralWorldEmitter.h"
 
 #include "System/Util/PathUtils.h"
 

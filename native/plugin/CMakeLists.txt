@@ -25,6 +25,7 @@ if(NOT STATIC_ONLY)
             ${Squirrel_STD_LIBRARY}
             ${Squirrel_LIBRARY}
             ${Ogre_LIBRARY}
+            ${LIB_PARTICLE_FX}
             ${LIB_AVCORE}
         )
     endif()
