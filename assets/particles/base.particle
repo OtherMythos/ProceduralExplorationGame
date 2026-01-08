@@ -49,8 +49,8 @@ particle_system goblinBonfireSmoke
         emission_rate   1
         time_to_live    5
         direction       0 1 0
-        velocity_min    3.0
-        velocity_max    3.01
+        velocity_min    1.0
+        velocity_max    1.01
     }
 
     affector Scaler
