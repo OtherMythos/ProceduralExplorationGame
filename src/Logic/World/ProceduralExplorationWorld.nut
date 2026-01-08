@@ -1106,7 +1106,7 @@
         }
     }
     function regionDiscoveredSpawnEnemy(regionEntry, pos){
-        print(regionEntry.type);
+        if(regionEntry.total <= 1500) return;
         if(regionEntry.type == RegionType.NONE){
             if(_random.randInt(6) == 0){
                 createEnemy(EnemyId.BEE_HIVE, pos);
