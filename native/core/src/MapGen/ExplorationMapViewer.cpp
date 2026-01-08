@@ -108,6 +108,15 @@ namespace ProceduralExplorationGameCore{
             float dist = static_cast<float>(regionDistance) / 254;
             drawVal = Ogre::ColourValue(dist, dist, dist, OPACITY).getAsABGR();
         }
+        if(drawOptions & (1 << (size_t)MapViewerDrawOptions::REGION_CONCAVITY)){
+            const std::vector<RegionData>& regionData = *mapData->ptr<std::vector<RegionData>>("regionData");
+            if(regionId >= regionData.size()){
+                drawVal = Ogre::ColourValue(1, 1, 1, OPACITY).getAsABGR();
+            }else{
+                float dist = static_cast<float>(regionData[regionId].concavity) / 254;
+                drawVal = Ogre::ColourValue(dist, dist, dist, OPACITY).getAsABGR();
+            }
+        }
         if(drawOptions & (1 << (size_t)MapViewerDrawOptions::BLUE_NOISE)){
             drawVal = Ogre::ColourValue(blueNoise, blueNoise, blueNoise, OPACITY).getAsABGR();
         }

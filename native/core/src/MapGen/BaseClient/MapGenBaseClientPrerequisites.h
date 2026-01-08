@@ -29,6 +29,7 @@ namespace ProceduralExplorationGameCore{
         WorldCoord seedY;
         RegionType type;
         AV::uint8 meta;
+        AV::uint8 concavity;
         std::vector<WorldPoint> coords;
         std::vector<WorldPoint> edges;
     };

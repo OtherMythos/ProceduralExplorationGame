@@ -37,6 +37,7 @@
 #include "Steps/CalculateWaterDistanceMapGenStep.h"
 #include "Steps/GenerateWaterMeshMapGenStep.h"
 #include "Steps/GenerateVoxelDiffuseMapGenStep.h"
+#include "Steps/CalculateRegionConcavityMapGenStep.h"
 
 #include "MapGen/Mesh/WaterMeshGenerator.h"
 #include "System/OgreResourceHelper.h"
@@ -73,6 +74,7 @@ namespace ProceduralExplorationGameCore{
             new WriteFinalRegionValuesMapGenStep(),
             new MergeSmallRegionsMapGenStep(),
             new MergeIsolatedRegionsMapGenStep(),
+            new CalculateRegionConcavityMapGenStep(),
             new DetermineRegionTypesMapGenStep(),
             new MergeExpandableRegionsMapGenStep(),
             //Apply the biome altitude first so places modify the correct altitude.

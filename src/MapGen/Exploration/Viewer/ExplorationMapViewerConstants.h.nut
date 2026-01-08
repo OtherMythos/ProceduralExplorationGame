@@ -10,6 +10,7 @@ enum MapViewerDrawOptions{
     REGIONS,
     REGION_DISTANCE,
     REGION_EDGES,
+    REGION_CONCAVITY,
     BLUE_NOISE,
     RIVER_DATA,
     LAND_GROUPS,

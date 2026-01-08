@@ -68,8 +68,14 @@ namespace ProceduralExplorationGameCore{
 
                 const RegionData& rd = regionData[regionId];
                 if(rd.type == RegionType::NONE){
-                    if(rd.total > 500 && rd.total < 2000){
-                        availableRegions.push_back(regionId);
+                    if(r == RegionType::HOT_SPRINGS){
+                        if(rd.total > 500 && rd.total < 2000 && rd.concavity >= 180){
+                            availableRegions.push_back(regionId);
+                        }
+                    }else{
+                        if(rd.total > 300 && rd.total < 800 && rd.concavity >= 180){
+                            availableRegions.push_back(regionId);
+                        }
                     }
                 }
             }
