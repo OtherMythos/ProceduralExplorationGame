@@ -249,12 +249,10 @@ namespace ProceduralExplorationGameCore{
         return c;
     }
 
-    MapVoxelTypes MUSHROOM_CLUSTER_VoxFunction(AV::uint8 altitude, AV::uint8 moisture, const ExplorationMapData* mapData){
-        return MapVoxelTypes::DIRT;
-    }
-
     void MUSHROOM_CLUSTER_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture, AV::uint8 regionDistance){
-        if(processRValue(mapData, x, y, 3)){
+        int R = 5 - regionDistance;
+        R = R < 1 ? 1 : R;
+        if(processRValue(mapData, x, y, R)){
             static const PlacedItemId MUSHROOM_TYPES[] = {PlacedItemId::MUSHROOM_1, PlacedItemId::MUSHROOM_2, PlacedItemId::MUSHROOM_3};
             size_t val = mapGenRandomIntMinMax(0, 2);
             PLACE_ITEM(MUSHROOM_TYPES[val]);
@@ -308,7 +306,7 @@ namespace ProceduralExplorationGameCore{
         Biome(&DESERT_VoxFunction, &DESERT_PlaceObjectsFunction, &DESERT_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
         Biome(&SWAMP_VoxFunction, &SWAMP_PlaceObjectsFunction, &SWAMP_DetermineAltitudeFunction, &SWAMP_FinalVoxChangeFunction, &SWAMP_WaterTextureColourChangeFunction),
         Biome(&HOT_SPRINGS_VoxFunction, &HOT_SPRINGS_PlaceObjectsFunction, &HOT_SPRINGS_DetermineAltitudeFunction, &HOT_SPRINGS_FinalVoxChangeFunction, &HOT_SPRINGS_WaterTextureColourChangeFunction),
-        Biome(&MUSHROOM_CLUSTER_VoxFunction, &MUSHROOM_CLUSTER_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
+        Biome(&GRASS_LAND_VoxFunction, &MUSHROOM_CLUSTER_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
         Biome(&SHALLOW_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
         Biome(&DEEP_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
     };
