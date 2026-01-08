@@ -423,7 +423,17 @@
         if(pos == null){
             return;
         }
-        appearEnemy(pos);
+
+        //TODO duplicated
+        local regionId = ::MapGenHelpers.getRegionForData(mMapData_, pos);
+        local regionData = mMapData_.regionData[regionId];
+        local targetBiome = ::Biomes[::MapGenHelpers.getBiomeForRegionType(regionData.type)];
+        local spawnable = targetBiome.mSpawnableEnemies;
+        if(spawnable.len() <= 0) return;
+        local idx = _random.randIndex(spawnable);
+        local targetEnemy = spawnable[idx];
+
+        spawnTeleviseEnemy(targetEnemy, pos);
     }
 
     function findRandomPointOnLandDiscoveredRegion(radius){

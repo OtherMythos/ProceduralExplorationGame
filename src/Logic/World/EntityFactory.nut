@@ -1182,4 +1182,27 @@
         return en;
     }
 
+    function constructEnemyTeleviseObject(pos, enemyId, lifetime){
+        local manager = mConstructorWorld_.getEntityManager();
+        local zPos = getZForPos(pos);
+        local targetPos = Vec3(pos.x, zPos, pos.z);
+        local en = manager.createEntity(targetPos);
+
+        local node = mBaseSceneNode_.createChildSceneNode();
+        node.setPosition(targetPos);
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](node, true));
+
+        local particleSystem = _scene.createParticleSystem("enemyTeleviseDust");
+        node.attachObject(particleSystem);
+        local particleSystemSecond = _scene.createParticleSystem("enemyTeleviseDustBase");
+        node.attachObject(particleSystemSecond);
+
+        local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SINGLE_ENEMY, enemyId, null, null, EntityDestroyReason.LIFETIME);
+        manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
+
+        manager.assignComponent(en, EntityComponents.LIFETIME, ::EntityManager.Components[EntityComponents.LIFETIME](lifetime));
+
+        return en;
+    }
+
 };

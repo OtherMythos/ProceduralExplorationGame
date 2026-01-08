@@ -1304,6 +1304,10 @@ enum WorldMousePressContexts{
         }
     }
 
+    function spawnTeleviseEnemy(enemyType, pos, lifetime=200){
+        mEntityFactory_.constructEnemyTeleviseObject(pos, enemyType, lifetime);
+    }
+
     function checkHighlightEnemy(){
         if(mCurrentHighlightEnemy_ == mPreviousHighlightEnemy_) return;
 
@@ -2139,6 +2143,9 @@ enum WorldMousePressContexts{
         }
         else if(data.mType == SpoilsComponentType.GIVE_ORB){
             ::Base.mExplorationLogic.givePlayerOrb(data.mFirst);
+        }
+        else if(data.mType == SpoilsComponentType.SINGLE_ENEMY){
+            createEnemy(data.mFirst, position);
         }
     }
 

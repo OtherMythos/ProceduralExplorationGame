@@ -10,6 +10,12 @@
         }
     },
 
+    "macroblocks":{
+        "noDepthWrite":{
+            "depth_write" : false
+        }
+    },
+
     "unlit" :
     {
         "ParticleWhite" :
@@ -20,6 +26,7 @@
         "ParticleAlphaWhite" :
         {
             "blendblock": "transparentBlend",
+            "macroblock": "noDepthWrite",
 
             "diffuse" : [1, 1, 1, 1]
         },
@@ -27,6 +34,7 @@
         "ParticleAlphaGrey" :
         {
             "blendblock": "transparentBlend",
+            "macroblock": "noDepthWrite",
 
             "diffuse" : [1, 1, 1, 0.25]
         }

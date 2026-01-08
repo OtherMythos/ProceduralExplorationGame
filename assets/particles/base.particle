@@ -285,3 +285,87 @@ particle_system hotSpringsWater
         colour2 1.0 1.0 1.0 0
     }
 }
+
+particle_system enemyTeleviseDust
+{
+    material        ParticleAlphaWhite
+    particle_width  0.15
+    particle_height 0.15
+    cull_each       false
+    quota           5000
+    billboard_type  point
+
+    emitter Cylinder
+    {
+        angle           20
+        emission_rate   40
+        time_to_live    1.0
+        direction       0 1 0
+        velocity        5.5
+        width           0.1
+        height          0.1
+        depth           0.1
+    }
+
+    affector ColourInterpolator
+    {
+        time0 0
+        colour0 0.7 0.6 0.5 1.0
+
+        time1 0.5
+        colour1 1 1 1 0.6
+
+        time2 1.0
+        colour2 1 1 1 0
+    }
+
+    // Gravity.
+    affector LinearForce
+    {
+        force_vector      0 -8 0
+        force_application add
+    }
+}
+particle_system enemyTeleviseDustBase
+{
+    material        ParticleAlphaWhite
+    particle_width  0.5
+    particle_height 0.5
+    cull_each       false
+    quota           5000
+    billboard_type  point
+
+    emitter Box
+    {
+        angle           360
+        emission_rate   40
+        time_to_live    1.0
+        direction       0 1 0
+        velocity        0.1
+        width           1.0
+        height          1.0
+        depth           1.0
+    }
+
+    affector ColourInterpolator
+    {
+        time0 0
+        colour0 0.7 0.6 0.5 1.0
+
+        time1 0.5
+        colour1 0.7 0.6 0.5 0.6
+
+        time2 1.0
+        colour2 0.7 0.6 0.5 0
+    }
+
+    affector Scaler
+    {
+        rate -0.20
+    }
+    affector DirectionRandomiser
+	{
+		randomness	10
+	}
+
+}
