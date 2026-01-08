@@ -52,7 +52,7 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    AV::uint32 getColourForVox(AV::uint32 x, AV::uint32 y, AV::uint32 vox, AV::uint32 secondaryVox, float blueNoise, ExplorationMapData* mapData, AV::uint32 drawOptions, const std::vector<MapGen::VoxelDef>& voxDefs){
+    AV::uint32 getColourForVox(AV::uint32 x, AV::uint32 y, AV::uint32 vox, AV::uint32 secondaryVox, AV::uint32 tertiaryVox, float blueNoise, ExplorationMapData* mapData, AV::uint32 drawOptions, const std::vector<MapGen::VoxelDef>& voxDefs){
         AV::uint8 altitude = static_cast<AV::uint8>(vox & 0xFF);
         RegionId regionId = static_cast<AV::uint8>((secondaryVox >> 8) & 0xFF);
         AV::uint8 regionDistance = static_cast<AV::uint8>((secondaryVox >> 16) & 0xFF);
@@ -96,6 +96,10 @@ namespace ProceduralExplorationGameCore{
             float valGroup = static_cast<float>(secondaryVox & 0xFF) / static_cast<float>(0xFF);
             drawVal = Ogre::ColourValue(valGroup, valGroup, valGroup, OPACITY).getAsABGR();
         }
+        if(drawOptions & (1 << (size_t)MapViewerDrawOptions::VOXEL_DIFFUSE)){
+            float valGroup = static_cast<float>(tertiaryVox & 0xFF) / static_cast<float>(0xFF);
+            drawVal = Ogre::ColourValue(valGroup, valGroup, valGroup, OPACITY).getAsABGR();
+        }
         if(drawOptions & (1 << (size_t)MapViewerDrawOptions::REGIONS)){
             float valGroup = static_cast<float>((secondaryVox >> 8) & 0xFF) / static_cast<float>(mapData->ptr<std::vector<RegionData>>("regionData")->size());
             drawVal = Ogre::ColourValue(valGroup, valGroup, valGroup, OPACITY).getAsABGR();
@@ -129,6 +133,7 @@ namespace ProceduralExplorationGameCore{
         AV::uint32* texPtr = static_cast<AV::uint32*>(tex->data);
         AV::uint32* voxPtr = static_cast<AV::uint32*>(mapData->voxelBuffer);
         AV::uint32* voxSecondaryPtr = static_cast<AV::uint32*>(mapData->secondaryVoxelBuffer);
+        AV::uint32* voxTertiaryPtr = static_cast<AV::uint32*>(mapData->tertiaryVoxelBuffer);
         float* blueNoisePtr = static_cast<float*>(mapData->blueNoiseBuffer);
         const std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
 
@@ -139,11 +144,12 @@ namespace ProceduralExplorationGameCore{
         for(Ogre::uint32 y = 0; y < tex->height; y++){
             for(Ogre::uint32 x = 0; x < tex->width; x++){
 
-                AV::uint32 voxColour = getColourForVox(x, y, *voxPtr, *voxSecondaryPtr, *blueNoisePtr, mapData, drawOptions, voxDefs);
+                AV::uint32 voxColour = getColourForVox(x, y, *voxPtr, *voxSecondaryPtr, *voxTertiaryPtr, *blueNoisePtr, mapData, drawOptions, voxDefs);
                 (*texPtr++) = voxColour;
 
                 voxPtr++;
                 voxSecondaryPtr++;
+                voxTertiaryPtr++;
                 blueNoisePtr++;
             }
         }

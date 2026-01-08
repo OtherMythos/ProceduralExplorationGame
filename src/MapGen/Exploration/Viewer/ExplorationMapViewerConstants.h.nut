@@ -6,6 +6,7 @@ enum MapViewerDrawOptions{
     GROUND_TYPE,
     WATER_GROUPS,
     MOISTURE_MAP,
+    VOXEL_DIFFUSE,
     REGIONS,
     REGION_DISTANCE,
     REGION_EDGES,
