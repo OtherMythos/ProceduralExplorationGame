@@ -21,6 +21,7 @@ namespace ProceduralExplorationGameCore{
 
         void* voxelBuffer;
         void* secondaryVoxelBuffer;
+        void* tertiaryVoxelBuffer;
         void* blueNoiseBuffer;
     };
 
@@ -47,6 +48,13 @@ namespace ProceduralExplorationGameCore{
         READ_WORLD_POINT(p, xx, yy);
         return (reinterpret_cast<T>(mapData->secondaryVoxelBuffer) + xx + yy * mapData->height);
     }
+    template<typename T=AV::uint32*, typename D=ExplorationMapData>
+    static inline T FULL_PTR_FOR_COORD_TERTIARY(D mapData, WorldPoint p){
+        WorldCoord xx;
+        WorldCoord yy;
+        READ_WORLD_POINT(p, xx, yy);
+        return (reinterpret_cast<T>(mapData->tertiaryVoxelBuffer) + xx + yy * mapData->height);
+    }
 
     template<typename T, typename D, int N>
     static inline T UINT8_PTR_FOR_COORD(D mapData, WorldPoint p){
@@ -55,6 +63,10 @@ namespace ProceduralExplorationGameCore{
     template<typename T, typename D, int N>
     static inline T UINT8_PTR_FOR_COORD_SECONDARY(D mapData, WorldPoint p){
         return reinterpret_cast<T>(FULL_PTR_FOR_COORD_SECONDARY<AV::uint32*, D>(mapData, p)) + N;
+    }
+    template<typename T, typename D, int N>
+    static inline T UINT8_PTR_FOR_COORD_TERTIARY(D mapData, WorldPoint p){
+        return reinterpret_cast<T>(FULL_PTR_FOR_COORD_TERTIARY<AV::uint32*, D>(mapData, p)) + N;
     }
 
     static inline AV::uint8* VOX_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
@@ -103,10 +115,10 @@ namespace ProceduralExplorationGameCore{
     }
 
     static inline AV::uint8* VOXEL_META_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
-        return UINT8_PTR_FOR_COORD_SECONDARY<AV::uint8*, ExplorationMapData*, 0>(mapData, p);
+        return UINT8_PTR_FOR_COORD_TERTIARY<AV::uint8*, ExplorationMapData*, 0>(mapData, p);
     }
     static inline const AV::uint8* VOXEL_META_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
-        return UINT8_PTR_FOR_COORD_SECONDARY<const AV::uint8*, const ExplorationMapData*, 0>(mapData, p);
+        return UINT8_PTR_FOR_COORD_TERTIARY<const AV::uint8*, const ExplorationMapData*, 0>(mapData, p);
     }
 
 }
