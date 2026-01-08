@@ -51,7 +51,7 @@ namespace ProceduralExplorationGameCore{
         }
 
         //Place HOT_SPRING regions
-        static const std::array smallRegionsToAdd{RegionType::HOT_SPRINGS};
+        static const std::array smallRegionsToAdd{RegionType::HOT_SPRINGS, RegionType::MUSHROOM_CLUSTER};
         for(RegionType r : smallRegionsToAdd){
             std::vector<RegionId> availableRegions;
             for(size_t i = 0; i < regionData.size(); i++){

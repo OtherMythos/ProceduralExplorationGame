@@ -47,6 +47,7 @@ enum BiomeId{
     DESERT,
     SWAMP,
     HOT_SPRINGS,
+    MUSHROOM_CLUSTER,
 
     SHALLOW_OCEAN,
     DEEP_OCEAN,
@@ -71,6 +72,7 @@ enum RegionType{
     DESERT,
     SWAMP,
     HOT_SPRINGS,
+    MUSHROOM_CLUSTER,
     GATEWAY_DOMAIN,
     PLAYER_START
 };
