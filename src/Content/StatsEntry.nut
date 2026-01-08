@@ -3,11 +3,15 @@
  * These are generally stats relating to the combat system, but are also used by items, descriptions for levels, etc.
  */
 ::StatsEntry <- class{
-    mRestorativeHealth = 1;
+    mRestorativeHealth = 0;
     mAttack = 1;
     mDefense = 1;
     mSellValue = 0;
     mScrapValue = 0;
+
+    constructor(){
+        clear();
+    }
 
     function _tostring(){
         local t = format("{restorativeHealth: %i, attack: %i, defense: %i, sellValue: %i, scrapValue: %i}", mRestorativeHealth, mAttack, mDefense, mSellValue, mScrapValue);
@@ -15,7 +19,7 @@
     }
 
     function clear(){
-        mRestorativeHealth = 1;
+        mRestorativeHealth = 0;
         mAttack = 1;
         mDefense = 1;
         mSellValue = 0;
