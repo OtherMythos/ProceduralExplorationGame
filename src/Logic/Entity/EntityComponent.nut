@@ -387,3 +387,14 @@
     }
 
 };
+
+::EntityManager.Components[EntityComponents.MOVEMENT_PARTICLES] = class extends ::EntityManager.Component{
+
+    mParticleSystem = null;
+    mPositionChangedThisFrame = false;
+
+    constructor(particleSystem){
+        mParticleSystem = particleSystem;
+    }
+
+};

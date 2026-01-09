@@ -28,6 +28,7 @@ enum EntityComponents{
     GIZMO,
     DATABLOCK_ANIMATOR,
     COMPASS_INDICATOR,
+    MOVEMENT_PARTICLES,
 
     MAX
 
@@ -227,6 +228,11 @@ EntityManager.EntityManager <- class{
             if(i.mAnim <= 0){
                 removeComponent(i.eid, EntityComponents.DATABLOCK_ANIMATOR);
             }
+        }
+        foreach(i in mComponents_[EntityComponents.MOVEMENT_PARTICLES].mComps_){
+            if(i == null) continue;
+            i.mParticleSystem.setEmitting(i.mPositionChangedThisFrame);
+            i.mPositionChangedThisFrame = false;
         }
 
         processProximityComponent_();
@@ -537,6 +543,10 @@ EntityManager.EntityManager <- class{
         if(mEntityComponentHashes_[idx] & (1<<EntityComponents.COMPASS_INDICATOR)){
             local comp = mComponents_[EntityComponents.COMPASS_INDICATOR].getCompForEid(eid);
             comp.mCreator.setPositionForPoint(comp.mPoint, newPos.x, newPos.z);
+        }
+        if(mEntityComponentHashes_[idx] & (1<<EntityComponents.MOVEMENT_PARTICLES)){
+            local comp = mComponents_[EntityComponents.MOVEMENT_PARTICLES].getCompForEid(eid);
+            comp.mPositionChangedThisFrame = true;
         }
     }
 

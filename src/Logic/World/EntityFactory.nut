@@ -105,6 +105,13 @@
         //Attach ambient dust particles to player.
         local dustParticleSystem = _scene.createParticleSystem("playerWalkingDust");
         playerNode.attachObject(dustParticleSystem);
+
+        //Attach feet dust particles to player.
+        local feetDustParticleSystem = _scene.createParticleSystem("playerFeetDust");
+        feetDustParticleSystem.setEmitting(false);
+        playerNode.attachObject(feetDustParticleSystem);
+        manager.assignComponent(en, EntityComponents.MOVEMENT_PARTICLES, ::EntityManager.Components[EntityComponents.MOVEMENT_PARTICLES](feetDustParticleSystem));
+
         playerEntry.setCombatData(playerStats.mPlayerCombatStats);
         playerEntry.setWieldActive(playerStats.getWieldActive());
         playerEntry.setTargetCollisionWorld(_COLLISION_ENEMY);

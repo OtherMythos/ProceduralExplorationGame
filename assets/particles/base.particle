@@ -144,6 +144,67 @@ particle_system playerWalkingDust
 
 }
 
+particle_system playerFeetDust
+{
+    material        ParticleAlphaWhite
+    particle_width  0.3
+    particle_height 0.3
+    cull_each       false
+    quota           2000
+    billboard_type  point
+
+    //Ring emitter at player feet projecting outward
+    emitter Box
+    {
+        angle           25
+        emission_rate   5
+        time_to_live    0.8
+        direction       0 1 0
+        velocity        10.0
+        inner_width     0.8
+        inner_height    0.8
+        width           2.5
+        height          2.5
+        depth           0.01
+    }
+
+    affector ColourInterpolator
+    {
+        time0 0
+        colour0 0.8 0.8 0.8 1.0
+
+        time1 0.5
+        colour1 0.8 0.8 0.8 0.8
+
+        time2 1.0
+        colour2 0.8 0.8 0.8 0.4
+    }
+
+    affector DirectionRandomiser
+    {
+        randomness 0.1
+    }
+
+    affector Scaler
+    {
+        rate -0.16
+    }
+
+    // Gravity.
+    affector LinearForce
+    {
+        force_vector      0 -14 0
+        force_application add
+    }
+
+	affector DeflectorPlane
+	{
+		plane_point	0 1 0
+		plane_normal	0 1 0
+		bounce	0.5
+	}
+}
+
 particle_system enemyCollisionBlockerGlimmer
 {
     material        ParticleWhite
