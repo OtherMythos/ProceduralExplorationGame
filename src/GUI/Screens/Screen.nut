@@ -66,7 +66,12 @@
     }
 
     function shutdown(){
-        if(mBackgroundWindow_) _gui.destroy(mBackgroundWindow_);
+        //if(mBackgroundWindow_) _gui.destroy(mBackgroundWindow_);
+        if(mBackgroundWindow_){
+            //To workaround some lifecycle issues, destruction is scheduled.
+            ::ScreenManager.scheduleDestruction(mBackgroundWindow_);
+            mBackgroundWindow_.setPosition(-2000, -2000);
+        }
         _gui.destroy(mWindow_);
 
         mBackgroundWindow_ = null;

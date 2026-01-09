@@ -210,7 +210,7 @@ enum InventoryBusEvents{
             inventoryCloseButton.attachListenerForEvent(function(widget, action){
                 ::HapticManager.triggerSimpleHaptic(HapticType.SELECTION);
                 closeInventory();
-            }, _GUI_ACTION_PRESSED, this);
+            }, _GUI_ACTION_RELEASED, this);
         }
 
         local inventoryButton = null;

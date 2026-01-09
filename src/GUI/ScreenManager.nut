@@ -18,6 +18,9 @@
 
     mDefaultCoords_ = null
 
+    mScheduledDestructions_ = null
+    mScheduledDestructionsFrameCounter_ = 0
+
     "Screens": array(Screen.MAX, null),
 
     /**
@@ -40,6 +43,8 @@
         mActiveScreens_ = array(MAX_SCREENS, null);
         mPreviousScreens_ = array(MAX_SCREENS, null);
         mQueuedScreens_ = array(MAX_SCREENS, null);
+        mScheduledDestructions_ = [];
+        mScheduledDestructionsFrameCounter_ = null;
 
         for(local i = 0; i < MAX_SCREENS; i++){
             mPreviousScreens_[i] = [];
@@ -179,6 +184,11 @@
         }
     }
 
+    function scheduleDestruction(guiObj){
+        mScheduledDestructions_.append(guiObj);
+        mScheduledDestructionsFrameCounter_ = 0;
+    }
+
     /**
      * Queue the transition of the window to the start of the next frame.
      * This can help to ease issues if the transition happens deep in a callback stack.
@@ -203,7 +213,22 @@
         transitionToScreen(prev, null, layerId, false);
     }
 
+    function updateScheduledDestructions_(){
+        if(mScheduledDestructionsFrameCounter_ == null) return;
+
+        mScheduledDestructionsFrameCounter_++;
+        if(mScheduledDestructionsFrameCounter_ >= 2){
+            foreach(obj in mScheduledDestructions_){
+                _gui.destroy(obj);
+            }
+            mScheduledDestructions_.clear();
+            mScheduledDestructionsFrameCounter_ = null;
+        }
+    }
+
     function update(){
+        updateScheduledDestructions_();
+
         if(mScreenQueued_){
             for(local i = 0; i < MAX_SCREENS; i++){
                 local screenData = mQueuedScreens_[i];
