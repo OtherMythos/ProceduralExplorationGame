@@ -34,6 +34,7 @@ namespace ProceduralExplorationGameCore{
         std::vector<WorldPoint> edges;
         WorldPoint deepestPoint;
         AV::uint8 deepestDistance;
+        WorldPoint centrePoint;
     };
 
     struct FloodFillEntry{
