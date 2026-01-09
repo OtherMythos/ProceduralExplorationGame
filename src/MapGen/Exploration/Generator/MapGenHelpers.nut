@@ -56,6 +56,17 @@
         return worldData.getRegionForPos(Vec3(xPos, 0, -yPos));
     }
 
+    function getPositionForPoint(point){
+        local outPoint = Vec3(
+            (point >> 16) & 0xFFFF,
+            0,
+            point & 0xFFFF);
+
+        outPoint.z = -outPoint.z;
+
+        return outPoint;
+    }
+
     function getTraverseTerrainForPosition(worldData, pos){
         return getIsWaterForPosition(worldData, pos) ? EnemyTraversableTerrain.WATER : EnemyTraversableTerrain.LAND;
     }

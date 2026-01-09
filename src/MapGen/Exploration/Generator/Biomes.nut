@@ -30,6 +30,26 @@ local Biome = class{
 local HotSpringsLogic = {
     "mHotSpringsComponentId_": null,
 
+    "setup": function(regionData, world){
+        local outPoints = [];
+        foreach(p in regionData.coords){
+            if(::currentNativeMapData.getIsWaterForPoint(p)){
+                outPoints.append(p);
+            }
+        }
+        if(outPoints.len() == 0) return;
+
+        local particleSystemNode = world.mParentNode_.createChildSceneNode(_SCENE_DYNAMIC);
+        local particleSystem = _scene.createParticleSystem("hotSpringsWater");
+        particleSystemNode.attachObject(particleSystem);
+        particleSystemNode.setPosition(0, 0, 0);
+        particleSystemNode.setScale(600, 1, 600);
+
+        _gameCore.setupParticleEmitterPoints(particleSystem, outPoints);
+
+        local centrePos = ::MapGenHelpers.getPositionForPoint(regionData.deepestPoint);
+        world.mEntityFactory_.constructGenericDescriptionTrigger(centrePos, "hot springs", 10);
+    },
     "update": function(world){
         //TODO add hot springs specific logic here
         //print("hot springs ");

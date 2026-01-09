@@ -1150,6 +1150,14 @@
         local placeDef = ::Places[placeId];
         local radius = placeDef.mRadius;
 
+        constructGenericDescriptionTrigger(pos, placeDef.getName(), radius);
+    }
+
+    function constructGenericDescriptionTrigger(pos, descriptionText, radius){
+        local manager = mConstructorWorld_.getEntityManager();
+        local targetPos = pos.copy();
+        targetPos.y = getZForPos(targetPos);
+
         //Position the billboard above the place by half the radius in Z
         local billboardPos = targetPos.copy();
         local radiusDist = (radius * 0.75);
@@ -1157,8 +1165,6 @@
         billboardPos.y += radiusDist;
 
         local en = manager.createEntity(targetPos);
-
-        local placeName = placeDef.getName();
 
         //Create a dummy scene node for the billboard
         local dummyNode = mBaseSceneNode_.createChildSceneNode();
@@ -1168,7 +1174,7 @@
         //Create and track the billboard
         local gui = mConstructorWorld_.mGui_;
         local worldMask = (0x1 << mConstructorWorld_.getWorldId());
-        local billboard = ::BillboardManager.PlaceDescriptionBillboard(placeName, gui.mWindow_, worldMask, radius);
+        local billboard = ::BillboardManager.PlaceDescriptionBillboard(descriptionText, gui.mWindow_, worldMask, radius);
         billboard.setVisible(false);
 
         local explorationScreen = ::Base.mExplorationLogic.mGui_;

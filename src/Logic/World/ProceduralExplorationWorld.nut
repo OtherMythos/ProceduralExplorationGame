@@ -300,25 +300,13 @@
         }
 
         foreach(c,i in mMapData_.regionData){
-            if(i.type == RegionType.HOT_SPRINGS){
-                local outPoints = [];
-                foreach(p in i.coords){
-                    if(::currentNativeMapData.getIsWaterForPoint(p)){
-                        outPoints.append(p);
-                    }
-                }
-                if(outPoints.len() == 0) continue;
 
-                local particleSystemNode = mParentNode_.createChildSceneNode(_SCENE_DYNAMIC);
-                local particleSystem = _scene.createParticleSystem("hotSpringsWater");
-                particleSystemNode.attachObject(particleSystem);
-                particleSystemNode.setPosition(0, 0, 0);
-                particleSystemNode.setScale(600, 1, 600);
-
-                _gameCore.setupParticleEmitterPoints(particleSystem, outPoints);
+            local biomeType = ::MapGenHelpers.getBiomeForRegionType(i.type);
+            local biomeLogic = ::Biomes[biomeType].getBiomeLogic();
+            if(biomeLogic != null && biomeLogic.rawin("setup")){
+                biomeLogic.setup(i, this);
             }
         }
-        //assert(false);
     }
 
     function shutdown(){
