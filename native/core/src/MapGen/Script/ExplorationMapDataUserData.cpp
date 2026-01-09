@@ -122,6 +122,8 @@ namespace ProceduralExplorationGameCore{
             pushInteger(vm, "seedX", e.seedX);
             pushInteger(vm, "seedY", e.seedY);
             pushInteger(vm, "type", static_cast<SQInteger>(e.type));
+            pushInteger(vm, "deepestPoint", static_cast<SQInteger>(e.deepestPoint));
+            pushInteger(vm, "deepestDistance", static_cast<SQInteger>(e.deepestDistance));
             pushArray<WorldPoint>(vm, "coords", e.coords);
             //pushArray<WorldPoint>(vm, "edges", e.edges);
 

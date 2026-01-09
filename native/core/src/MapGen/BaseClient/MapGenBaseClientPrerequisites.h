@@ -32,6 +32,8 @@ namespace ProceduralExplorationGameCore{
         AV::uint8 concavity;
         std::vector<WorldPoint> coords;
         std::vector<WorldPoint> edges;
+        WorldPoint deepestPoint;
+        AV::uint8 deepestDistance;
     };
 
     struct FloodFillEntry{

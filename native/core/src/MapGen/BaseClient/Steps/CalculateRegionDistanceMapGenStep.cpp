@@ -38,6 +38,8 @@ namespace ProceduralExplorationGameCore{
 
         calculateRegionDistance(mapData, distances);
 
+        std::vector<RegionData>& regionData = (*mapData->ptr<std::vector<RegionData>>("regionData"));
+
         for(AV::uint32 y = 0; y < mapData->height; y++){
             for(AV::uint32 x = 0; x < mapData->width; x++){
                 AV::uint8 dist = distances[x + y * mapData->width];
@@ -46,6 +48,14 @@ namespace ProceduralExplorationGameCore{
                     *distPtr = 0xFF;
                 }else{
                     *distPtr = dist;
+                }
+
+                const RegionId* regionId = REGION_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y));
+                if(*regionId != INVALID_REGION_ID && *regionId != REGION_ID_WATER && *regionId < regionData.size()){
+                    if(dist > regionData[*regionId].deepestDistance){
+                        regionData[*regionId].deepestDistance = dist;
+                        regionData[*regionId].deepestPoint = WRAP_WORLD_POINT(x, y);
+                    }
                 }
             }
         }
