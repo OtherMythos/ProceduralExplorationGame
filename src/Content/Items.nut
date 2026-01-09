@@ -234,7 +234,7 @@ local commonScale = Vec3(1.4, 1.4, 1.0);
         }
         else if(itemType == ItemType.CONSUMABLE || itemType == ItemType.DRINK || itemType == ItemType.EAT){
             local itemStats = item.toStats();
-            if(itemStats.mRestorativeHealth != 0){
+            if(itemStats.mRestorativeHealth == 0){
                 return;
             }
             //::Base.mPlayerStats.alterPlayerHealth(itemStats.mRestorativeHealth);
