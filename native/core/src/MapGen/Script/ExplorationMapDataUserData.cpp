@@ -71,6 +71,11 @@ namespace ProceduralExplorationGameCore{
         sq_pushinteger(vm, value);
         sq_rawset(vm, -3);
     }
+    inline void pushFloat(HSQUIRRELVM vm, const char* key, float value){
+        sq_pushstring(vm, key, -1);
+        sq_pushfloat(vm, value);
+        sq_rawset(vm, -3);
+    }
     inline void pushEmptyArray(HSQUIRRELVM vm, const char* key){
         sq_pushstring(vm, key, -1);
         sq_newarray(vm, 0);
@@ -125,6 +130,7 @@ namespace ProceduralExplorationGameCore{
             pushInteger(vm, "deepestPoint", static_cast<SQInteger>(e.deepestPoint));
             pushInteger(vm, "deepestDistance", static_cast<SQInteger>(e.deepestDistance));
             pushInteger(vm, "centrePoint", static_cast<SQInteger>(e.centrePoint));
+            pushFloat(vm, "radius", e.radius);
             pushArray<WorldPoint>(vm, "coords", e.coords);
             //pushArray<WorldPoint>(vm, "edges", e.edges);
 

@@ -35,6 +35,7 @@ namespace ProceduralExplorationGameCore{
         WorldPoint deepestPoint;
         AV::uint8 deepestDistance;
         WorldPoint centrePoint;
+        float radius;
     };
 
     struct FloodFillEntry{

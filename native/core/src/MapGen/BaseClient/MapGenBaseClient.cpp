@@ -31,6 +31,7 @@
 #include "Steps/GenerateWaterTextureMapGenStep.h"
 #include "Steps/CalculateRegionDistanceMapGenStep.h"
 #include "Steps/CalculateRegionCentreMapGenStep.h"
+#include "Steps/CalculateRegionRadiusMapGenStep.h"
 #include "Steps/RecalculateRegionEdgesMapGenStep.h"
 #include "Steps/BiomeAltitudeMapGenStep.h"
 #include "Steps/InitialiseVoxelDiffuseMapGenStep.h"
@@ -82,6 +83,7 @@ namespace ProceduralExplorationGameCore{
             new RecalculateRegionEdgesMapGenStep(),
             new CalculateRegionDistanceMapGenStep(),
             new CalculateRegionCentreMapGenStep(),
+            new CalculateRegionRadiusMapGenStep(),
 
             //Perform logic to determine altitude
             new BiomeAltitudeMapGenStep(),
