@@ -154,7 +154,7 @@ particle_system playerFeetDust
     billboard_type  point
 
     //Ring emitter at player feet projecting outward
-    emitter Box
+    emitter GroundColourModifier
     {
         angle           25
         emission_rate   5
@@ -166,18 +166,6 @@ particle_system playerFeetDust
         width           2.5
         height          2.5
         depth           0.01
-    }
-
-    affector ColourInterpolator
-    {
-        time0 0
-        colour0 0.8 0.8 0.8 1.0
-
-        time1 0.5
-        colour1 0.8 0.8 0.8 0.8
-
-        time2 1.0
-        colour2 0.8 0.8 0.8 0.4
     }
 
     affector DirectionRandomiser
