@@ -24,6 +24,7 @@ enum ActiveEnemyAnimationStage{
     mStates_ = array(ActiveEnemyAnimationStage.MAX);
     mModel_ = null;
     mInWater_ = false;
+    mDashReturnState_ = null;
     mCount_ = 0;
 
     mEquippablePerformance_ = null;
@@ -136,19 +137,24 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
 ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = class extends ::Util.SimpleState{
     function start(ctx){
         ctx.mCount_ = 15;
+        ctx.mDashReturnState_ = ctx.getPreviousState();
+        if(ctx.mDashReturnState_ == null) ctx.mDashReturnState_ = ActiveEnemyAnimationStage.WALKING;
     }
     function update(ctx){
         ctx.mCount_--;
         print("dashing count" + ctx.mCount_);
         if(ctx.mCount_ <= 0){
-            local previousState = ctx.getPreviousState();
-            return previousState != null ? previousState : ActiveEnemyAnimationStage.WALKING;
+            return ctx.mDashReturnState_;
         }
     }
     function notify(ctx, event){
+        if(event == ActiveEnemyAnimationEvents.WATER_STATE_CHANGE){
+            ctx.mDashReturnState_ = ctx.mInWater_ ? ActiveEnemyAnimationStage.SWIMMING : ActiveEnemyAnimationStage.WALKING;
+        }
     }
     function end(ctx){
         ctx.mCount_ = 0;
+        ctx.mDashReturnState_ = null;
     }
 };
 
