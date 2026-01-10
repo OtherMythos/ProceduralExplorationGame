@@ -305,6 +305,14 @@
         assert(scriptObj != null);
         manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](scriptObj));
 
+        //Attach feet dust particles to goblins and skeletons.
+        if(enemyType == EnemyId.GOBLIN || enemyType == EnemyId.SKELETON){
+            local feetDustParticleSystem = _scene.createParticleSystem("playerFeetDust");
+            feetDustParticleSystem.setEmitting(false);
+            enemyNode.attachObject(feetDustParticleSystem);
+            manager.assignComponent(en, EntityComponents.MOVEMENT_PARTICLES, ::EntityManager.Components[EntityComponents.MOVEMENT_PARTICLES](feetDustParticleSystem));
+        }
+
         //local machine = ::BasicEnemyMachine(en);
         //::w.e.rawset(en.getId(), machine);
 
