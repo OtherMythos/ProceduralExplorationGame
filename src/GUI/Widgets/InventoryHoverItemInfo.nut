@@ -80,25 +80,40 @@
         //Set to a big size so the sizers don't try and steal from neighbour widgets.
         mHoverWin_.setSize(1000, 1000);
 
+        //Clear the layout and rebuild it each time
+        local layout = _gui.createLayoutLine();
+
         mTitleLabel_.setText(item.getName());
         mTitleLabel_.setDefaultFont(3);
-        local descText = item.getDescription();
+        layout.addCell(mTitleLabel_);
 
+        local descText = item.getDescription();
         mDescriptionLabel_.setDefaultFont(6);
         mDescriptionLabel_.setText(descText);
         mDescriptionLabel_.sizeToFit(::drawable.x * 0.5);
+        layout.addCell(mDescriptionLabel_);
 
         local stats = item.toStats();
         local richTextDesc = stats.getDescriptionWithRichText(mHideValueInfo_);
         mStatsLabel_.setText(richTextDesc[0]);
         mStatsLabel_.setRichText(richTextDesc[1]);
 
+        //Only add stats label if it's not empty
+        if(richTextDesc[0] != "" && richTextDesc[0] != " "){
+            layout.addCell(mStatsLabel_);
+        }
+
         if(mPriceLabel_ != null){
             mPriceLabel_.setText(UNICODE_COINS + " " + item.mData_);
             mPriceLabel_.setDefaultFont(6);
+            layout.addCell(mPriceLabel_);
         }
 
-        mLayoutLine_.layout();
+        layout.setMarginForAllCells(0, -10);
+        layout.setPosition(0, 10);
+        mLayoutLine_ = layout;
+
+        layout.layout();
         mHoverWin_.setSize(mHoverWin_.calculateChildrenSize());
     }
 };
