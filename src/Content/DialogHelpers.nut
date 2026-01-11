@@ -38,9 +38,11 @@ function givePlayerItem(item){
     }
     printf("Giving player item '%s' of id %i", item, targetItem);
 
-    showItemInfoPopup_(format("You received [GREEN]%s[GREEN]!", item));
+    //showItemInfoPopup_(format("You received [GREEN]%s[GREEN]!", item));
 
-    ::Base.mPlayerStats.mInventory_.addToInventory(::Item(targetItem));
+    local newItem = ::Item(targetItem);
+    ::Base.mPlayerStats.mInventory_.addToInventory(newItem);
+    _event.transmit(Event.ITEM_GIVEN, newItem);
 }
 
 function checkPlayerMoney(amount){
