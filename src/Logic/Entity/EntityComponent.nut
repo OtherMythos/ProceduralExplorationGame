@@ -306,10 +306,12 @@
 
     mRadius = false;
     mHash = 0xFF;
+    mIgnorePoint = null;
 
-    constructor(radius, hash=0xFF){
+    constructor(radius, hash=0xFF, ignorePoint=null){
         mRadius = radius;
         mHash = hash;
+        mIgnorePoint = ignorePoint;
     }
 
 };

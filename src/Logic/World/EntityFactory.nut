@@ -56,6 +56,9 @@
             triggerWorld, detectionWorld
         ));
 
+        local collisionRadius = 1.5;
+        manager.assignComponent(en, EntityComponents.COLLISION_DETECTION, ::EntityManager.Components[EntityComponents.COLLISION_DETECTION](collisionRadius, COLLISION_TYPE_PLAYER, collisionDetectionPoint));
+
         local dialogPath = readBoolFromData_(data, "dialogPath", null);
         local startBlock = readBoolFromData_(data, "startBlock", null);
         manager.assignComponent(en, EntityComponents.DIALOG, ::EntityManager.Components[EntityComponents.DIALOG](dialogPath, startBlock));
@@ -132,16 +135,19 @@
             local compassCollisionWorld = mConstructorWorld_.getCompassCollisionWorld();
             local compassPoint = compassCollisionWorld.addCollisionPoint(targetPos.x, targetPos.z, PLAYER_COMPASS_DISTANCE, _COLLISION_PLAYER, _COLLISION_WORLD_ENTRY_RECEIVER);
 
-            manager.assignComponent(en, EntityComponents.COLLISION_POINT_FOUR,
-                ::EntityManager.Components[EntityComponents.COLLISION_POINT_FOUR](
-                    collisionPoint, damagePoint, combatTargetPoint, combatTargetProjectilePoint,
-                    triggerWorld, damageWorld, combatTargetWorld, combatTargetWorld
+            local detectionWorld = mConstructorWorld_.getCollisionDetectionWorld();
+            local collisionDetectionPoint = detectionWorld.addCollisionPoint(targetPos.x, targetPos.z, 1.5, 0xFF, _COLLISION_WORLD_ENTRY_SENDER);
+
+            manager.assignComponent(en, EntityComponents.COLLISION_POINT_FIVE,
+                ::EntityManager.Components[EntityComponents.COLLISION_POINT_FIVE](
+                    collisionPoint, damagePoint, combatTargetPoint, combatTargetProjectilePoint, collisionDetectionPoint
+                    triggerWorld, damageWorld, combatTargetWorld, combatTargetWorld, detectionWorld
                 )
             );
             manager.assignComponent(en, EntityComponents.COMPASS_INDICATOR, ::EntityManager.Components[EntityComponents.COMPASS_INDICATOR](compassPoint, compassCollisionWorld, 0, en));
 
             local collisionRadius = 1.5;
-            manager.assignComponent(en, EntityComponents.COLLISION_DETECTION, ::EntityManager.Components[EntityComponents.COLLISION_DETECTION](collisionRadius, COLLISION_TYPE_PLAYER));
+            manager.assignComponent(en, EntityComponents.COLLISION_DETECTION, ::EntityManager.Components[EntityComponents.COLLISION_DETECTION](collisionRadius, COLLISION_TYPE_PLAYER, collisionDetectionPoint));
         }
 
         /*

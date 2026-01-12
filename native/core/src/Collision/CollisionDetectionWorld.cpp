@@ -11,10 +11,10 @@ namespace ProceduralExplorationGameCore{
 
     }
 
-    bool CollisionDetectionWorld::checkCollisionPoint(float x, float y, float radius, AV::uint8 mask){
-        bool pointCheck = CollisionWorldBruteForce::checkCollisionPoint(x, y, radius, mask);
+    bool CollisionDetectionWorld::checkCollisionPoint(float x, float y, float radius, AV::uint8 mask, AV::CollisionEntryId ignorePointId){
+        bool pointCheck = CollisionWorldBruteForce::checkCollisionPoint(x, y, radius, mask, ignorePointId);
 
-        if(mCollisionGrid.empty()) return pointCheck;
+        if(pointCheck || mCollisionGrid.empty()) return pointCheck;
 
         for(int yy = int(y - radius); yy < int(y + radius); yy++){
             for(int xx = int(x - radius); xx < int(x + radius); xx++){
