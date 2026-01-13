@@ -575,6 +575,7 @@ enum WorldMousePressContexts{
 
     mPlayerTargetRadius_ = null;
     mPlayerTargetRadiusProjectiles_ = null;
+    mPlayerIgnorePointId_ = null;
 
     mInputs_ = null;
 
@@ -1065,7 +1066,10 @@ enum WorldMousePressContexts{
     }
 
     function constructPlayerEntry_(){
-        return mEntityFactory_.constructPlayer(mGui_, ::Base.mPlayerStats);
+        local playerEntry = mEntityFactory_.constructPlayer(mGui_, ::Base.mPlayerStats);
+        local ignorePoint = mEntityManager_.getComponent(playerEntry.getEID(), EntityComponents.COLLISION_DETECTION).mIgnorePoint;
+        mPlayerIgnorePointId_ = ignorePoint;
+        return playerEntry;
     }
 
     function resetSession(){
@@ -1766,7 +1770,7 @@ enum WorldMousePressContexts{
         return createEnemy(enemyType, pos);
     }
     function checkEnemyCollisionPlacement(pos){
-        local placed = mEntityFactory_.checkEnemyCollisionPlacement(pos.x, pos.z);
+        local placed = mEntityFactory_.checkEnemyCollisionPlacement(pos.x, pos.z, mPlayerIgnorePointId_);
         return placed;
     }
     function appearEnemy(pos){

@@ -224,9 +224,9 @@
         return entry;
     }
 
-    function checkEnemyCollisionPlacement(x, y){
+    function checkEnemyCollisionPlacement(x, y, playerColliderId){
         local collisionWorld = mConstructorWorld_.getCollisionDetectionWorld();
-        return !(collisionWorld.checkCollisionPoint(x, y, COLLISION_DETECTION_RADIUS));
+        return !(collisionWorld.checkCollisionPoint(x, y, COLLISION_DETECTION_RADIUS, 0xFF, playerColliderId));
     }
 
     function constructEnemyBase_(enemyType, pos, explorationScreen){
