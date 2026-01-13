@@ -63,6 +63,12 @@
         local startBlock = readBoolFromData_(data, "startBlock", null);
         manager.assignComponent(en, EntityComponents.DIALOG, ::EntityManager.Components[EntityComponents.DIALOG](dialogPath, startBlock));
 
+        local positionLimitRadius = readBoolFromData_(data, "positionLimitRadius", null);
+        if(positionLimitRadius != null){
+            local centre = Vec2(targetPos.x, targetPos.z);
+            manager.assignComponent(en, EntityComponents.POSITION_LIMITER, ::EntityManager.Components[EntityComponents.POSITION_LIMITER](centre, positionLimitRadius));
+        }
+
         playerEntry.setPosition(targetPos);
 
         return playerEntry;

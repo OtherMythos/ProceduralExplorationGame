@@ -29,6 +29,7 @@ enum EntityComponents{
     DATABLOCK_ANIMATOR,
     COMPASS_INDICATOR,
     MOVEMENT_PARTICLES,
+    POSITION_LIMITER,
 
     MAX
 
@@ -470,6 +471,15 @@ EntityManager.EntityManager <- class{
             collisionRadius = c.mRadius;
             collisionHash = c.mHash;
             ignorePoint = c.mIgnorePoint;
+        }
+
+        //Check position limiter component to prevent moving too far from a set position
+        if(mEntityComponentHashes_[idx] & (1<<EntityComponents.POSITION_LIMITER)){
+            local c = mComponents_[EntityComponents.POSITION_LIMITER].getCompForEid(eid);
+            local newPos2D = targetPos.xz();
+            if(c.mCentre.distance(newPos2D) > c.mRadius){
+                targetPos = oldPos;
+            }
         }
 
         //First try the desired position

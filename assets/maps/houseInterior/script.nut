@@ -13,7 +13,8 @@
 
     function setupForNPCDataPoint(world, pos, minor){
         local npcData = {
-            "idleWalk": true
+            "idleWalk": true,
+            "positionLimitRadius": 4.0
         };
         world.createNPCWithDialog(pos, "res://src/Content/HouseInterior/houseSpeech.dialog", 0, npcData);
     }

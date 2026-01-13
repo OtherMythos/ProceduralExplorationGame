@@ -400,3 +400,15 @@
     }
 
 };
+
+::EntityManager.Components[EntityComponents.POSITION_LIMITER] = class extends ::EntityManager.Component{
+
+    mCentre = null;
+    mRadius = 0;
+
+    constructor(centre, radius){
+        mCentre = centre;
+        mRadius = radius;
+    }
+
+};
