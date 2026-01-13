@@ -183,3 +183,21 @@ variationSeed: %i";
 
     return "Saved to slot " + saveSlot;
 });
+::DebugConsole.registerCommand("pauseLogic", "Toggle the logic pause state in the current world", 0, "", function(command){
+    local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+    local newPausedState = !currentWorld.mLogicPaused_;
+    currentWorld.setLogicPaused(newPausedState);
+
+    if(newPausedState){
+        local component = ::DebugCameraSpinComponent(currentWorld);
+        local componentId = currentWorld.registerWorldComponent(component);
+        ::mDebugCameraSpinComponentId_ <- componentId;
+        return "Logic paused - camera spinning enabled";
+    }else{
+        if(currentWorld.rawin("mDebugCameraSpinComponentId_")){
+            currentWorld.unregisterWorldComponent(::mDebugCameraSpinComponentId_);
+            delete ::mDebugCameraSpinComponentId_;
+        }
+        return "Logic resumed";
+    }
+});

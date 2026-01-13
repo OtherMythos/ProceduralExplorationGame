@@ -361,6 +361,7 @@
         if(!isActive()) return;
 
         base.update();
+        if(mLogicPaused_) return;
         checkForEnemyAppear();
         checkForDistractionAppear();
         checkForCometAppear();

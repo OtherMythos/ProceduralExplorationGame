@@ -143,6 +143,10 @@ enum WorldMousePressContexts{
         //Override in derived classes
     }
 
+    function updateLogicPaused(){
+        //Override in derived classes
+    }
+
     function destroy(){
         //Override if cleanup is needed
     }
@@ -505,6 +509,9 @@ enum WorldMousePressContexts{
     mWorldPreparer_ = null;
     mCurrent_ = false;
     mReady_ = false;
+    //Logic paused is when the update returns early and an updateLogicPaused function is called instead.
+    //This can be useful for things like cutscenes.
+    mLogicPaused_ = false;
 
     mPlayerEntry_ = null;
     mActiveEnemies_ = null;
@@ -817,8 +824,26 @@ enum WorldMousePressContexts{
         mEntityManager_.moveTowards(sender, mPlayerEntry_.getPosition(), anim);
     }
 
+    function setLogicPaused(paused){
+        mLogicPaused_ = paused;
+    }
+
+    function updateLogicPaused(){
+        //Update world components for paused logic
+        for(local i = 0; i < mWorldComponentPool_.mObject_.len(); i++){
+            local component = mWorldComponentPool_.mObject_[i];
+            if(component != null && component.rawin("updateLogicPaused")){
+                component.updateLogicPaused();
+            }
+        }
+    }
+
     function update(){
         if(!isActive()) return;
+        if(mLogicPaused_){
+            updateLogicPaused();
+            return;
+        }
 
         checkCameraChange();
         checkOrientatingCamera();
@@ -2155,6 +2180,10 @@ enum WorldMousePressContexts{
 
     function isActive(){
         return mCurrent_ && mReady_;
+    }
+
+    function isLogicPaused(){
+        return mLogicPaused_;
     }
 
     function updatePlayerPos(playerPos){
