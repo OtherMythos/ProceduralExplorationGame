@@ -15,6 +15,69 @@
         }
     }
 };
+
+::StartupAnimationComponent <- class extends ::WorldComponent{
+    mAnimationProgress_ = 0.0;
+    mWorldCentre_ = null;
+    mPlayerPos_ = null;
+    mComponentId_ = null;
+
+    constructor(world){
+        base.constructor(world);
+        mWorld_.setLogicPaused(true);
+        //Calculate world centre from map data
+        local mapData = mWorld_.getMapData();
+        mWorldCentre_ = Vec3(mapData.width * 0.5, 0, -mapData.height * 0.5);
+        mPlayerPos_ = mWorld_.getPlayerPosition();
+    }
+
+    function updateLogicPaused(){
+        mAnimationProgress_ += 0.012;
+
+        if(mAnimationProgress_ > 1.0){
+            //Animation complete
+            mWorld_.setLogicPaused(false);
+            mWorld_.unregisterWorldComponent(mComponentId_);
+            return;
+        }
+
+        //Start values
+        local startPos = mPlayerPos_.copy();
+        startPos.x = startPos.x - 60;
+        startPos.z = startPos.z + 200;
+        startPos.y += 200;
+        local startLookAt = mPlayerPos_.copy();
+        startLookAt.y = 0;
+
+        //Calculate end state (normal zoom at player)
+        local endZoom = mWorld_.mCurrentZoomLevel_;
+        local endLookAt = mPlayerPos_;
+        local endZPos = mWorld_.getZForPos(endLookAt);
+        local cameraData = mWorld_.calculateCameraPositionAndLookAt(endLookAt, endZPos, endZoom);
+
+        //Get the camera
+        local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION);
+        assert(camera != null);
+        local parentNode = camera.getParentNode();
+
+        local a = ::Easing.easeOutCubic(mAnimationProgress_);
+        //local a = 0;
+        local currentCentre = ::calculateSimpleAnimation(startPos, cameraData[0], a);
+        local currentLookAt = ::calculateSimpleAnimation(startLookAt, cameraData[1], a);
+
+        parentNode.setPosition(currentCentre);
+        camera.lookAt(currentLookAt);
+        //_gameCore.update(currentLookAt);
+    }
+
+    function destroy(){
+        //Ensure we resume logic if component is destroyed early
+        if(mWorld_.mLogicPaused_){
+            mWorld_.setLogicPaused(false);
+        }
+    }
+};
+
 //NOTE temporary
 ::DebugCameraSpinComponent <- class extends ::WorldComponent{
     mRotationCounter_ = 0.0;

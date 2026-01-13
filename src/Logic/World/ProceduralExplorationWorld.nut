@@ -307,6 +307,11 @@
                 biomeLogic.setup(i, this);
             }
         }
+
+        //Register startup animation component
+        local startupAnimComponent = ::StartupAnimationComponent(this);
+        local componentId = registerWorldComponent(startupAnimComponent);
+        startupAnimComponent.mComponentId_ = componentId;
     }
 
     function shutdown(){
@@ -587,6 +592,23 @@
     function easeOutQuat(x) {
         return 1 - pow(1 - x, 4);
     }
+
+    function calculateCameraPositionAndLookAt(targetPos, zPos, targetDistance){
+        local zoom = targetDistance;
+        setShadowFarDistance(30 + zoom * 2);
+
+        local xPos = cos(mRotation_.x)*zoom;
+        local yPos = sin(mRotation_.x)*zoom;
+        local rot = Vec3(xPos, 0, yPos);
+        yPos = sin(mRotation_.y)*zoom;
+        rot += Vec3(0, yPos, 0);
+
+        local cameraPos = Vec3(targetPos.x, zPos, targetPos.z) + rot;
+        local lookAtPos = Vec3(targetPos.x, zPos, targetPos.z);
+
+        return [cameraPos, lookAtPos];
+    }
+
     function updateCameraPosition(){
         local zPos = getZForPos(mPosition_);
 
@@ -603,17 +625,11 @@
                 targetDistance = WORLD_VIEW_DISTANCE - (WORLD_VIEW_DISTANCE - mCurrentZoomLevel_) * easeOutQuat(mWorldViewAnim_);
             }
         }
-        local zoom = targetDistance;
-        setShadowFarDistance(30 + zoom * 2);
 
-        local xPos = cos(mRotation_.x)*zoom;
-        local yPos = sin(mRotation_.x)*zoom;
-        local rot = Vec3(xPos, 0, yPos);
-        yPos = sin(mRotation_.y)*zoom;
-        rot += Vec3(0, yPos, 0);
+        local cameraData = calculateCameraPositionAndLookAt(mPosition_, zPos, targetDistance);
 
-        parentNode.setPosition(Vec3(mPosition_.x, zPos, mPosition_.z) + rot );
-        camera.lookAt(mPosition_.x, zPos, mPosition_.z);
+        parentNode.setPosition(cameraData[0]);
+        camera.lookAt(cameraData[1]);
 
         //Update the minimap direction indicator via event
         local cameraDir = getCameraDirection();
