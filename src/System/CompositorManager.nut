@@ -60,7 +60,11 @@ enum CompositorSceneType{
         }
 
         mExplorationCamera = _scene.createCamera("explorationCamera");
-        local cameraNode = _scene.getRootSceneNode().createChildSceneNode();
+        //Create extra scene nodes for the camera.
+        //The highest level is what position and orientation is set to.
+        //The second has animations and effects applied to it.
+        //The third is what the camera is actually attached to for compatability with queries.
+        local cameraNode = _scene.getRootSceneNode().createChildSceneNode().createChildSceneNode().createChildSceneNode();
         cameraNode.attachObject(mExplorationCamera);
 
         mEffectCam = _scene.createCamera("compositor/foregroundEffectCamera");

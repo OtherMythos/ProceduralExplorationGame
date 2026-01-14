@@ -54,13 +54,8 @@
     //This retrieves the parent node of the camera and creates an animation child node.
     function setup(camera){
         mCamera_ = camera;
-        //Get the parent node of the camera (the node it's attached to).
         mCameraParentNode_ = camera.getParentNode();
-        mCameraParentNode_.detachObject(camera);
-        //Create a child node under the parent for animation effects.
-        mCameraAnimationNode_ = mCameraParentNode_.createChildSceneNode();
-        local innerNode = mCameraAnimationNode_.createChildSceneNode();
-        innerNode.attachObject(camera);
+        mCameraAnimationNode_ = mCameraParentNode_.getParent();
     }
 
     //Add a new camera effect to the manager.
@@ -116,13 +111,6 @@
     }
 
     function shutdown(){
-        if(mCameraAnimationNode_ != null){
-            mCameraAnimationNode_.destroyNodeAndChildren();
-            mCameraAnimationNode_ = null;
-        }
-        //Don't destroy the parent node as it belongs to the camera system.
-        mCameraParentNode_ = null;
-        mCamera_ = null;
     }
 
 };
