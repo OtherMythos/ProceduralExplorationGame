@@ -1169,6 +1169,36 @@
         return en;
     }
 
+    function constructGeyser(pos){
+        local manager = mConstructorWorld_.getEntityManager();
+        local targetPos = pos.copy();
+        targetPos.y = getZForPos(targetPos);
+
+        local en = manager.createEntity(targetPos);
+
+        local geyserNode = mBaseSceneNode_.createChildSceneNode();
+        geyserNode.setPosition(targetPos);
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](geyserNode, true));
+
+        local geyserScript = ::GeyserScript(en, geyserNode);
+        manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](geyserScript));
+
+        //Add fountain particle effect - water droplets falling from above
+        local fountainParticleNode = geyserNode.createChildSceneNode();
+        fountainParticleNode.setPosition(0, 5, 0);
+        local fountainParticles = _scene.createParticleSystem("geyserFountain");
+        fountainParticles.setEmitting(true);
+        fountainParticleNode.attachObject(fountainParticles);
+
+        local innerFountainParticleNode = geyserNode.createChildSceneNode();
+        innerFountainParticleNode.setPosition(0, 10, 0);
+        local innerFountainParticles = _scene.createParticleSystem("geyserInnerFountain");
+        innerFountainParticles.setEmitting(true);
+        innerFountainParticleNode.attachObject(innerFountainParticles);
+
+        return en;
+    }
+
     function constructPlaceDescriptionTrigger(pos, placeId){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = pos.copy();

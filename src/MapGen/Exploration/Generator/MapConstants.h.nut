@@ -35,6 +35,9 @@ enum MapVoxelTypes{
 
     SWAMP_GRASS,
     SWAMP_FOREST_GRASS,
+
+    GEOTHERMAL_DIRT,
+    GEOTHERMAL_GRAVEL,
 };
 
 enum BiomeId{
@@ -48,6 +51,7 @@ enum BiomeId{
     SWAMP,
     HOT_SPRINGS,
     MUSHROOM_CLUSTER,
+    GEOTHERMAL_PLANES,
 
     SHALLOW_OCEAN,
     DEEP_OCEAN,
@@ -73,6 +77,7 @@ enum RegionType{
     SWAMP,
     HOT_SPRINGS,
     MUSHROOM_CLUSTER,
+    GEOTHERMAL_PLANES,
     GATEWAY_DOMAIN,
     PLAYER_START
 };

@@ -35,13 +35,13 @@ namespace ProceduralExplorationGameCore{
 
         std::vector<RegionId> blacklistedRegions;
 
-        static const std::array regionsToAdd{RegionType::CHERRY_BLOSSOM_FOREST, RegionType::SWAMP, RegionType::DESERT};
+        static const std::array regionsToAdd{RegionType::CHERRY_BLOSSOM_FOREST, RegionType::SWAMP, RegionType::GEOTHERMAL_PLANES};
         for(RegionType r : regionsToAdd){
             size_t targetIdx = mapGenRandomIndex(freeRegions);
             if(targetIdx >= freeRegions.size()) continue;
             RegionData& rd = regionData[freeRegions[targetIdx]];
             rd.type = r;
-            if(r == RegionType::DESERT || r == RegionType::SWAMP){
+            if(r == RegionType::DESERT || r == RegionType::SWAMP || r == RegionType::GEOTHERMAL_PLANES){
                 rd.meta |= static_cast<AV::uint8>(RegionMeta::EXPANDABLE);
             }
 

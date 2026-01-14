@@ -418,3 +418,87 @@ particle_system enemyTeleviseDustBase
 	}
 
 }
+
+particle_system geyserFountain
+{
+    material        ParticleAlphaWhite
+    particle_width  0.3
+    particle_height 0.3
+    cull_each       false
+    quota           5000
+    billboard_type  point
+
+    emitter Box
+    {
+        angle           10
+        emission_rate   100
+        time_to_live    2.5
+        direction       0 1 0
+        velocity_min    24.0
+        velocity_max    24.0
+        width           2.0
+        height          0.5
+        depth           2.0
+    }
+
+    affector ColourInterpolator
+    {
+        time0 0
+        colour0 1.0 1.0 1.0 1.0
+
+        time1 0.5
+        colour1 1.0 1.0 1.0 0.8
+
+        time2 1.0
+        colour2 1.0 1.0 1.0 0
+    }
+
+    affector LinearForce
+    {
+        force_vector      0 -22 0
+        force_application add
+    }
+    affector DeflectorPlane
+	{
+		plane_point	0 1 0
+		plane_normal	0 1 0
+		bounce	0.0
+	}
+
+}
+
+particle_system geyserInnerFountain
+{
+    material        ParticleAlphaWhite
+    particle_width  0.3
+    particle_height 0.3
+    cull_each       false
+    quota           5000
+    billboard_type  point
+
+    emitter Box
+    {
+        angle           10
+        emission_rate   200
+        time_to_live    0.4
+        direction       0 1 0
+        velocity_min    1.0
+        velocity_max    1.0
+        width           5.0
+        height          5.0
+        depth           10.0
+    }
+
+    affector ColourInterpolator
+    {
+        time0 0
+        colour0 1.0 1.0 1.0 1.0
+
+        time1 0.5
+        colour1 1.0 1.0 1.0 0.8
+
+        time2 1.0
+        colour2 1.0 1.0 1.0 0
+    }
+
+}

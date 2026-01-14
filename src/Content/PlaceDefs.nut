@@ -72,6 +72,7 @@ function initialisePlaceEditorMeta(){
 ::Places[PlaceId.DEEP_HOLE] = PlaceDef("Deep Hole", "A very deep hole", PlaceType.LOCATION, 1.0, "deepHole", 100);
 ::Places[PlaceId.MUSHROOM_FAIRY_RING] = PlaceDef("Mushroom Fairy Ring", "A ring of mushrooms", PlaceType.LOCATION, 1.0, "mushroomFairyRing", 100);
 ::Places[PlaceId.PILGRIM] = PlaceDef("Pilgrim", "A pilgrim", PlaceType.LOCATION, 1.0, "pilgrim", 100);
+::Places[PlaceId.GEOTHERMAL_GEYSER] = PlaceDef("Geothermal Geyser", "A plume of water", PlaceType.LOCATION, 1.0, "geothermalGeyser", 100);
 
 ::PlacesByType <- {};
 

@@ -7,3 +7,5 @@ _gameCore.registerVoxel(VoxelId.DIRT_EXP_FIELD, 198, ColourValue(0.33, 0.66, 0.0
 _gameCore.registerVoxel(VoxelId.SAND_EXP_FIELD 199, ColourValue(0.94, 0.44, 0.91, 1));
 _gameCore.registerVoxel(VoxelId.SWAMP_GRASS, 166, ColourValue(0.22, 0.66, 0.00, 1));
 _gameCore.registerVoxel(VoxelId.SWAMP_FOREST_GRASS, 165, ColourValue(0.1, 0.44, 0.00, 1));
+_gameCore.registerVoxel(VoxelId.GEOTHERMAL_DIRT, 86, ColourValue(0.1, 0.44, 0.00, 1));
+_gameCore.registerVoxel(VoxelId.GEOTHERMAL_GRAVEL, 88, ColourValue(0.1, 0.44, 0.00, 1));
