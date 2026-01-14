@@ -581,6 +581,8 @@ enum WorldMousePressContexts{
 
     mCompassIndicatorTracking_ = null;
 
+    mCameraEffectManager_ = null;
+
     NUM_PLAYER_QUEUED_FLAGS = 1;
 
     constructor(worldId, preparer){
@@ -743,6 +745,8 @@ enum WorldMousePressContexts{
 
         clearAllLocationFlags();
 
+        mCameraEffectManager_.shutdown();
+
         if(mParentNode_) mParentNode_.destroyNodeAndChildren();
         mParentNode_ = null;
 
@@ -765,6 +769,9 @@ enum WorldMousePressContexts{
         mEntityManager_ = EntityManager.createEntityManager(this);
 
         mWorldComponentPool_ = VersionPool();
+
+        mCameraEffectManager_ = ::CameraEffectManager();
+        setupCameraEffectManager();
 
         _gameCore.setCustomPassBufferValue(::Base.mPlayerStats.getWieldActive() ? 1.0 : 0.0, 0, 0);
     }
@@ -875,6 +882,7 @@ enum WorldMousePressContexts{
                 }
             }
         }
+        mCameraEffectManager_.update();
 
         mProjectileManager_.update();
         mEntityManager_.update();
@@ -1476,6 +1484,26 @@ enum WorldMousePressContexts{
         targetForward = Vec2(targetForward.x, targetForward.z);
         return targetForward;
     }
+
+    function setupCameraEffectManager(){
+        assert(mCameraEffectManager_ != null);
+        local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION);
+        mCameraEffectManager_.setup(camera);
+    }
+
+    function addCameraEffect(effectId, params){
+        if(mCameraEffectManager_ == null) return null;
+        if(effectId < 0 || effectId >= CameraEffectId.MAX) return null;
+
+        local effectDef = ::CameraEffects[effectId];
+        if(effectDef == null) return null;
+
+        //Create the effect with the provided parameters.
+        local effect = effectDef.createEffect(mCameraEffectManager_, mCameraEffectManager_.getAnimationNode(), params);
+        local effectId_out = mCameraEffectManager_.addEffect(effect);
+        return effectId_out;
+    }
+
     function checkPlayerMove(){
         if(mBlockAllInputs_) return;
         local moved = false;

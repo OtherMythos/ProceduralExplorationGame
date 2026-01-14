@@ -1,0 +1,6 @@
+
+::EnumDef.addToEnum("CameraEffectId", @"
+
+    SHAKE,
+
+");

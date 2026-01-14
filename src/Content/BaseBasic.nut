@@ -18,6 +18,7 @@
         _doFile("script://VoxelEnums.nut");
         _doFile("script://PlacedItemEnums.nut");
         _doFile("script://ArtifactEnums.nut");
+        _doFile("script://CameraEffectEnums.nut");
     }
 
     function loadContentFiles(){
@@ -67,6 +68,9 @@
         _doFile("res://src/GUI/Widgets/InventoryHoverItemInfo.nut");
 
         _doFile("res://src/Content/World/WorldComponents.nut");
+
+        _doFile("res://src/Logic/World/CameraEffects/CameraShakeEffect.nut");
+        _doFile("res://src/Content/CameraEffectDefs.nut");
 
         //Particles must be loaded later to ensure the custom emitters from the plugin are registered.
         _resources.addResourceLocation("res://build/assets/particles", "FileSystem", "Particles");
