@@ -308,6 +308,10 @@
             }
         }
 
+        registerStartupAnimation_();
+    }
+
+    function registerStartupAnimation_(){
         //Register startup animation component
         local startupAnimComponent = ::StartupAnimationComponent(this);
         local componentId = registerWorldComponent(startupAnimComponent);

@@ -386,6 +386,11 @@
         mRegionPicker_.setVisible(active);
     }
 
+    #Override
+    function registerStartupAnimation_(){
+
+    }
+
     function getCurrentSelectedRegion(){
         return mCurrentSelectedRegion_;
     }
