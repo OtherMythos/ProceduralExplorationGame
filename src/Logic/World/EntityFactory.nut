@@ -1180,21 +1180,27 @@
         geyserNode.setPosition(targetPos);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](geyserNode, true));
 
-        local geyserScript = ::GeyserScript(en, geyserNode);
-        manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](geyserScript));
-
         //Add fountain particle effect - water droplets falling from above
         local fountainParticleNode = geyserNode.createChildSceneNode();
         fountainParticleNode.setPosition(0, 5, 0);
         local fountainParticles = _scene.createParticleSystem("geyserFountain");
-        fountainParticles.setEmitting(true);
+        fountainParticles.setEmitting(false);
         fountainParticleNode.attachObject(fountainParticles);
 
         local innerFountainParticleNode = geyserNode.createChildSceneNode();
         innerFountainParticleNode.setPosition(0, 10, 0);
         local innerFountainParticles = _scene.createParticleSystem("geyserInnerFountain");
-        innerFountainParticles.setEmitting(true);
+        innerFountainParticles.setEmitting(false);
         innerFountainParticleNode.attachObject(innerFountainParticles);
+
+        local warmingUpFountainParticleNode = geyserNode.createChildSceneNode();
+        warmingUpFountainParticleNode.setPosition(0, 0.5, 0);
+        local warmingUpFountainParticles = _scene.createParticleSystem("geyserWarmingUpFountain");
+        warmingUpFountainParticles.setEmitting(false);
+        warmingUpFountainParticleNode.attachObject(warmingUpFountainParticles);
+
+        local geyserScript = ::GeyserScript(en, geyserNode, fountainParticles, innerFountainParticles, warmingUpFountainParticles);
+        manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](geyserScript));
 
         return en;
     }

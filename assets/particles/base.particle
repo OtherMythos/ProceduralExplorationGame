@@ -502,3 +502,44 @@ particle_system geyserInnerFountain
     }
 
 }
+
+particle_system geyserWarmingUpFountain
+{
+    material        ParticleAlphaWhite
+    particle_width  0.2
+    particle_height 0.2
+    cull_each       false
+    quota           3000
+    billboard_type  point
+
+    emitter Cylinder
+    {
+        angle           35
+        emission_rate   50
+        time_to_live    1.5
+        direction       0 1 0
+        velocity_min    6.0
+        velocity_max    8.0
+        width           5.5
+        height          5.5
+        depth           1.5
+    }
+
+    affector ColourInterpolator
+    {
+        time0 0
+        colour0 0.8 0.9 1.0 1.0
+
+        time1 0.5
+        colour1 0.9 0.95 1.0 0.8
+
+        time2 1.0
+        colour2 0.8 0.9 1.0 0
+    }
+
+    affector LinearForce
+    {
+        force_vector      0 -24 0
+        force_application add
+    }
+}

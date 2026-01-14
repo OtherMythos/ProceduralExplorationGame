@@ -1,9 +1,33 @@
+//State enumeration
+enum GeyserState{
+    NONE,
+
+    DORMANT,
+    WARMING_UP,
+    WARMED_UP,
+    FIRING,
+    COOLING_DOWN,
+
+    MAX
+};
+
 ::GeyserScript <- class{
     mParentNode_ = null;
     mMeshNodes_ = null;
     mWaterParticles_ = null;
     mBaseParticles_ = null;
+    mFountainParticles_ = null;
+    mInnerFountainParticles_ = null;
+    mWarmingUpFountainParticles_ = null;
     mFrameCounter_ = 0;
+
+    //State machine
+    mStateMachine_ = null;
+    mCurrentState_ = null;
+
+    //Flags for particle emission
+    mIsEmittingWater_ = false;
+    mIsEmittingBase_ = false;
 
     //Tweakable parameters for water particle animation
     mWaterVelocityMin_ = 1.0;
@@ -20,19 +44,37 @@
     mBaseEmissionRate_ = 4;
     mBaseMaxLifetime_ = 60;
 
-    constructor(eid, parentNode){
+    //State timing configuration (in frames)
+    mDormantDuration_ = 225;
+    mWarmingUpDuration_ = 300;
+    mFiringDuration_ = 300;
+    mCoolingDownDuration_ = 15;
+
+    constructor(eid, parentNode, fountainParticles, innerFountainParticles, warmingUpFountainParticles){
         mParentNode_ = parentNode;
         mMeshNodes_ = [];
         mWaterParticles_ = [];
         mBaseParticles_ = [];
+        mFountainParticles_ = fountainParticles;
+        mInnerFountainParticles_ = innerFountainParticles;
+        mWarmingUpFountainParticles_ = warmingUpFountainParticles;
+
+        //Initialise with particles off
+        if(mFountainParticles_ != null) mFountainParticles_.setEmitting(false);
+        if(mInnerFountainParticles_ != null) mInnerFountainParticles_.setEmitting(false);
+        if(mWarmingUpFountainParticles_ != null) mWarmingUpFountainParticles_.setEmitting(false);
+
+        //Initialise state machine
+        mStateMachine_ = ::GeyserStateMachine(this);
+        mStateMachine_.setState(GeyserState.DORMANT);
     }
 
     function update(eid){
         mFrameCounter_++;
 
-        //Spawn a new mesh piece every frame
-        if(mFrameCounter_ % 1 == 0){
-            spawnGeyserPiece_();
+        //Update state machine
+        if(mStateMachine_ != null){
+            mStateMachine_.update();
         }
 
         //Update existing mesh nodes and remove old ones
@@ -56,6 +98,17 @@
 
         //Update base particles
         updateBaseParticles_();
+    }
+
+    function setEmissionEnabled_(enabled){
+        mIsEmittingWater_ = enabled;
+        mIsEmittingBase_ = enabled;
+        if(mFountainParticles_ != null) mFountainParticles_.setEmitting(enabled);
+        if(mInnerFountainParticles_ != null) mInnerFountainParticles_.setEmitting(enabled);
+    }
+
+    function setWarmingUpEmissionEnabled_(enabled){
+        if(mWarmingUpFountainParticles_ != null) mWarmingUpFountainParticles_.setEmitting(enabled);
     }
 
     function spawnGeyserPiece_(){
@@ -176,8 +229,8 @@
     }
 
     function updateWaterParticles_(){
-        //Emit new water particles based on emission rate
-        if(mFrameCounter_ % 1 == 0){
+        //Emit new water particles based on emission rate if flag is set
+        if(mIsEmittingWater_ && mFrameCounter_ % 1 == 0){
             for(local i = 0; i < mWaterEmissionRate_; i++){
                 spawnWaterParticle_();
             }
@@ -217,8 +270,8 @@
     }
 
     function updateBaseParticles_(){
-        //Emit new base particles based on emission rate
-        if(mFrameCounter_ % 1 == 0){
+        //Emit new base particles based on emission rate if flag is set
+        if(mIsEmittingBase_ && mFrameCounter_ % 1 == 0){
             for(local i = 0; i < mBaseEmissionRate_; i++){
                 spawnBaseParticle_();
             }
@@ -275,5 +328,120 @@
             particle.node.destroyNodeAndChildren();
         }
         mBaseParticles_.clear();
+    }
+};
+
+//State machine class
+::GeyserStateMachine <- class extends ::Util.SimpleStateMachine{
+    mStates_ = array(GeyserState.MAX);
+
+    function getData(){
+        return mData_;
+    }
+};
+
+//DORMANT state - no effects, just waiting
+::GeyserStateMachine.mStates_[GeyserState.DORMANT] = class extends ::Util.SimpleState{
+    mStateTime_ = 0;
+
+    function start(data){
+        mStateTime_ = 0;
+        data.mData_.setEmissionEnabled_(false);
+        data.mData_.setWarmingUpEmissionEnabled_(false);
+    }
+
+    function update(data){
+        mStateTime_++;
+
+        if(mStateTime_ >= data.mData_.mDormantDuration_){
+            return GeyserState.WARMING_UP;
+        }
+    }
+};
+
+//WARMING_UP state - preparing for eruption
+::GeyserStateMachine.mStates_[GeyserState.WARMING_UP] = class extends ::Util.SimpleState{
+    mStateTime_ = 0;
+
+    function start(data){
+        mStateTime_ = 0;
+        data.mData_.setWarmingUpEmissionEnabled_(true);
+    }
+
+    function update(data){
+        mStateTime_++;
+
+        if(mStateTime_ >= data.mData_.mWarmingUpDuration_){
+            return GeyserState.WARMED_UP;
+        }
+    }
+
+    function end(data){
+        //Keep warming particles on during WARMED_UP
+    }
+};
+
+//WARMED_UP state - about to fire, complicated effect
+::GeyserStateMachine.mStates_[GeyserState.WARMED_UP] = class extends ::Util.SimpleState{
+    mStateTime_ = 0;
+
+    function start(data){
+        mStateTime_ = 0;
+        //Warming up particles already enabled from previous state
+    }
+    function update(data){
+        mStateTime_++;
+
+        if(mStateTime_ >= 15){ //Assume WARMED_UP lasts briefly before FIRING
+            return GeyserState.FIRING;
+        }
+    }
+
+    function end(data){
+        //Turn off warming particles when firing
+        data.mData_.setWarmingUpEmissionEnabled_(false);
+    }
+};
+
+//FIRING state - main geyser eruption with full effects
+::GeyserStateMachine.mStates_[GeyserState.FIRING] = class extends ::Util.SimpleState{
+    mStateTime_ = 0;
+
+    function start(data){
+        mStateTime_ = 0;
+        data.mData_.setEmissionEnabled_(true);
+    }
+    function update(data){
+        mStateTime_++;
+
+        //Spawn plume pieces
+        if(data.mData_.mFrameCounter_ % 1 == 0){
+            data.mData_.spawnGeyserPiece_();
+        }
+
+        if(mStateTime_ >= data.mData_.mFiringDuration_){
+            return GeyserState.COOLING_DOWN;
+        }
+    }
+    function end(data){
+        //Stop particle emission when firing ends
+        data.mData_.setEmissionEnabled_(false);
+    }
+};
+
+//COOLING_DOWN state - winding down the eruption
+::GeyserStateMachine.mStates_[GeyserState.COOLING_DOWN] = class extends ::Util.SimpleState{
+    mStateTime_ = 0;
+
+    function start(data){
+        mStateTime_ = 0;
+    }
+
+    function update(data){
+        mStateTime_++;
+
+        if(mStateTime_ >= data.mData_.mCoolingDownDuration_){
+            return GeyserState.DORMANT;
+        }
     }
 };
