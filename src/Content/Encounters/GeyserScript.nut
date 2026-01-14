@@ -73,6 +73,7 @@ enum GeyserState{
         //Initialise state machine
         mStateMachine_ = ::GeyserStateMachine(this);
         mStateMachine_.setState(GeyserState.DORMANT);
+        this.mStateMachine_.mStateInstance_.mStateTime_ = _random.randInt(mDormantDuration_);
     }
 
     function update(eid){

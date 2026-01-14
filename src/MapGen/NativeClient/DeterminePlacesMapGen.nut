@@ -217,12 +217,13 @@
         placeLocation(PlaceId.DUSTMITE_NEST, _determineRegionByType, _checkPlacementVoxelsAreLand);
         placeLocation(PlaceId.MUSHROOM_FAIRY_RING, _determineRegionBySize, _checkPlacementVoxelsAreLand);
         placeLocation(PlaceId.PILGRIM, _determineRegionBySize, _checkPlacementVoxelsAreLand);
-        mData_.region = RegionType.GEOTHERMAL_PLANES;
-        placeLocation(PlaceId.GEOTHERMAL_GEYSER, _determineRegionByType, _checkPlacementVoxelsAreLand);
-        placeLocation(PlaceId.GEOTHERMAL_GEYSER, _determineRegionByType, _checkPlacementVoxelsAreLand);
-        placeLocation(PlaceId.GEOTHERMAL_GEYSER, _determineRegionByType, _checkPlacementVoxelsAreLand);
         mData_.region = RegionType.CHERRY_BLOSSOM_FOREST;
         placeLocation(PlaceId.CHERRY_BLOSSOM_ORB, _determineRegionByType, _checkPlacementVoxelsAreLand);
+        mData_.region = RegionType.GEOTHERMAL_PLANES;
+        mData_.radius = 40;
+        for(local i = 0; i < 6; i++){
+            placeLocation(PlaceId.GEOTHERMAL_GEYSER, _determineRegionByType, _checkPlacementVoxelsAreLand);
+        }
 
         return mReturnPlaces_;
     }
