@@ -157,6 +157,7 @@ enum CollisionWorldTriggerResponses{
     READ_LORE,
     PLACE_DESCRIPTION_TRIGGER,
     CLAIM_MESSAGE_IN_BOTTLE,
+    CAMERA_EFFECT,
 
     MAX = 100
 };

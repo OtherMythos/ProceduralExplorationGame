@@ -328,4 +328,10 @@
                 ::Base.mActionManager.unsetAction(0, entityId);
             }
         });
+        ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.CAMERA_EFFECT] <- TriggerResponse(function(world, effectData, second, collisionStatus){
+            if(collisionStatus != 0x1) return;
+            local effectId = effectData.effectId;
+            local params = effectData.params;
+            world.addCameraEffect(effectId, params);
+        });
 

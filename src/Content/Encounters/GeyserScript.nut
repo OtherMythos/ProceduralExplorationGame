@@ -20,6 +20,9 @@ enum GeyserState{
     mInnerFountainParticles_ = null;
     mWarmingUpFountainParticles_ = null;
     mFrameCounter_ = 0;
+    mWorld_ = null;
+    mPosition_ = null;
+    mCameraEffectCollisionPoint_ = null;
 
     //State machine
     mStateMachine_ = null;
@@ -50,7 +53,7 @@ enum GeyserState{
     mFiringDuration_ = 300;
     mCoolingDownDuration_ = 15;
 
-    constructor(eid, parentNode, fountainParticles, innerFountainParticles, warmingUpFountainParticles){
+    constructor(eid, parentNode, fountainParticles, innerFountainParticles, warmingUpFountainParticles, world, position){
         mParentNode_ = parentNode;
         mMeshNodes_ = [];
         mWaterParticles_ = [];
@@ -58,6 +61,9 @@ enum GeyserState{
         mFountainParticles_ = fountainParticles;
         mInnerFountainParticles_ = innerFountainParticles;
         mWarmingUpFountainParticles_ = warmingUpFountainParticles;
+        mWorld_ = world;
+        mPosition_ = position;
+        mCameraEffectCollisionPoint_ = null;
 
         //Initialise with particles off
         if(mFountainParticles_ != null) mFountainParticles_.setEmitting(false);
@@ -109,6 +115,31 @@ enum GeyserState{
 
     function setWarmingUpEmissionEnabled_(enabled){
         if(mWarmingUpFountainParticles_ != null) mWarmingUpFountainParticles_.setEmitting(enabled);
+    }
+
+    function addCameraEffectCollisionPoint_(){
+        if(mWorld_ == null) return;
+        local triggerWorld = mWorld_.getTriggerWorld();
+        if(triggerWorld == null) return;
+
+        local effectData = {
+            "effectId": CameraEffectId.SHAKE,
+            "params": {
+                "magnitude": 0.15,
+                "duration": 30,
+                "frequency": 5
+            }
+        };
+        mCameraEffectCollisionPoint_ = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.CAMERA_EFFECT, effectData, mPosition_.x, mPosition_.z, 8, _COLLISION_PLAYER);
+    }
+
+    function removeCameraEffectCollisionPoint_(){
+        if(mWorld_ == null || mCameraEffectCollisionPoint_ == null) return;
+        local triggerWorld = mWorld_.getTriggerWorld();
+        if(triggerWorld == null) return;
+
+        triggerWorld.removeCollisionPoint(mCameraEffectCollisionPoint_);
+        mCameraEffectCollisionPoint_ = null;
     }
 
     function spawnGeyserPiece_(){
@@ -410,6 +441,7 @@ enum GeyserState{
     function start(data){
         mStateTime_ = 0;
         data.mData_.setEmissionEnabled_(true);
+        data.mData_.addCameraEffectCollisionPoint_();
     }
     function update(data){
         mStateTime_++;
@@ -426,6 +458,7 @@ enum GeyserState{
     function end(data){
         //Stop particle emission when firing ends
         data.mData_.setEmissionEnabled_(false);
+        data.mData_.removeCameraEffectCollisionPoint_();
     }
 };
 

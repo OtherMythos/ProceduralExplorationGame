@@ -1199,7 +1199,7 @@
         warmingUpFountainParticles.setEmitting(false);
         warmingUpFountainParticleNode.attachObject(warmingUpFountainParticles);
 
-        local geyserScript = ::GeyserScript(en, geyserNode, fountainParticles, innerFountainParticles, warmingUpFountainParticles);
+        local geyserScript = ::GeyserScript(en, geyserNode, fountainParticles, innerFountainParticles, warmingUpFountainParticles, mConstructorWorld_, targetPos);
         manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](geyserScript));
 
         return en;
