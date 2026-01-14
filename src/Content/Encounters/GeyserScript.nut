@@ -23,6 +23,7 @@ enum GeyserState{
     mWorld_ = null;
     mPosition_ = null;
     mCameraEffectCollisionPoint_ = null;
+    mDamageCollisionPoint_ = null;
 
     //State machine
     mStateMachine_ = null;
@@ -64,6 +65,7 @@ enum GeyserState{
         mWorld_ = world;
         mPosition_ = position;
         mCameraEffectCollisionPoint_ = null;
+        mDamageCollisionPoint_ = null;
 
         //Initialise with particles off
         if(mFountainParticles_ != null) mFountainParticles_.setEmitting(false);
@@ -141,6 +143,23 @@ enum GeyserState{
 
         triggerWorld.removeCollisionPoint(mCameraEffectCollisionPoint_);
         mCameraEffectCollisionPoint_ = null;
+    }
+
+    function addDamageCollisionPoint_(){
+        if(mWorld_ == null) return;
+        local damageWorld = mWorld_.getDamageWorld();
+        if(damageWorld == null) return;
+
+        mDamageCollisionPoint_ = damageWorld.addCollisionSender(CollisionWorldTriggerResponses.PASSIVE_DAMAGE, 20, mPosition_.x, mPosition_.z, 8, _COLLISION_PLAYER | _COLLISION_ENEMY);
+    }
+
+    function removeDamageCollisionPoint_(){
+        if(mWorld_ == null || mDamageCollisionPoint_ == null) return;
+        local damageWorld = mWorld_.getDamageWorld();
+        if(damageWorld == null) return;
+
+        damageWorld.removeCollisionPoint(mDamageCollisionPoint_);
+        mDamageCollisionPoint_ = null;
     }
 
     function spawnGeyserPiece_(){
@@ -443,6 +462,7 @@ enum GeyserState{
         mStateTime_ = 0;
         data.mData_.setEmissionEnabled_(true);
         data.mData_.addCameraEffectCollisionPoint_();
+        data.mData_.addDamageCollisionPoint_();
     }
     function update(data){
         mStateTime_++;
@@ -460,6 +480,7 @@ enum GeyserState{
         //Stop particle emission when firing ends
         data.mData_.setEmissionEnabled_(false);
         data.mData_.removeCameraEffectCollisionPoint_();
+        data.mData_.removeDamageCollisionPoint_();
     }
 };
 
