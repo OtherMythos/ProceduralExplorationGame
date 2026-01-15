@@ -865,14 +865,26 @@ namespace ProceduralExplorationGameCore{
             return 1;
         }
 
+        TileDataParser::OutDataContainer flagsOut;
+        bool hasFlagsFile = tileData.readData(&flagsOut, mapName, "terrainFlags.txt");
+
         for(AV::uint32 y = 0; y < out.tilesHeight; y++){
             for(AV::uint32 x = 0; x < out.tilesWidth; x++){
+                AV::uint32 xxx = x + static_cast<AV::uint32>(xx);
+                AV::uint32 yyy = y + static_cast<AV::uint32>(yy);
+
+                if(hasFlagsFile){
+                    AV::uint8 flagValue = flagsOut.tileValues[x + y * out.tilesWidth];
+                    static const AV::uint32 VOXEL_FLAG_SHIFT = 24;
+                    AV::uint32 shiftedFlags = (static_cast<AV::uint32>(flagValue) << VOXEL_FLAG_SHIFT);
+                    AV::uint32* secondaryVoxPtr = FULL_PTR_FOR_COORD_SECONDARY(mapData, WRAP_WORLD_POINT(xxx, yyy));
+                    *secondaryVoxPtr |= (shiftedFlags);
+                }
+
                 if(altitudeOut.tileValues[x + y * out.tilesWidth] == 0){
                     continue;
                 }
 
-                AV::uint32 xxx = x + static_cast<AV::uint32>(xx);
-                AV::uint32 yyy = y + static_cast<AV::uint32>(yy);
                 AV::uint8* voxPtr = VOX_VALUE_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(xxx, yyy));
                 *voxPtr = out.tileValues[x + y * out.tilesWidth];
 
