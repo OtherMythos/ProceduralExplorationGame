@@ -175,6 +175,16 @@
             {
                 "value": [1, 1, 1]
             }
+        },
+
+        "GeyserWater":
+        {
+            "workflow": "metallic",
+
+            "diffuse":
+            {
+                "value": [0, 0.6, 1]
+            }
         }
     }
 }

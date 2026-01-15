@@ -1199,6 +1199,13 @@
         warmingUpFountainParticles.setEmitting(false);
         warmingUpFountainParticleNode.attachObject(warmingUpFountainParticles);
 
+        local waterPlaneNode = geyserNode.createChildSceneNode();
+        waterPlaneNode.setScale(2.4, 2.4, 2.4);
+        waterPlaneNode.setPosition(0, -0.2, 0);
+        local flatItem = _scene.createItem("Disc.mesh");
+        waterPlaneNode.attachObject(flatItem);
+        flatItem.setDatablock("GeyserWater");
+
         local geyserScript = ::GeyserScript(en, geyserNode, fountainParticles, innerFountainParticles, warmingUpFountainParticles, mConstructorWorld_, targetPos);
         manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](geyserScript));
 
