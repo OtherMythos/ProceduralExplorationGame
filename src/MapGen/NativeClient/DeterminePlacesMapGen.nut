@@ -178,7 +178,16 @@
                 mMapData_.holeCount = holeIdx + 1;
             }
 
-            mMapData_.applyTerrainVoxelsForPlace(placeData.mPlaceFileName, ::basePlacesPath, originX - mData_.halfX, originY - mData_.halfY);
+            local tileOffsetX = 0;
+            local tileOffsetY = 0;
+            if(placeMetaData != null && placeMetaData.rawin("tileOffsetX")){
+                tileOffsetX = placeMetaData.tileOffsetX;
+            }
+            if(placeMetaData != null && placeMetaData.rawin("tileOffsetY")){
+                tileOffsetY = placeMetaData.tileOffsetY;
+            }
+
+            mMapData_.applyTerrainVoxelsForPlace(placeData.mPlaceFileName, ::basePlacesPath, originX - mData_.halfX + tileOffsetX, originY - mData_.halfY + tileOffsetY);
 
             mReturnPlaces_.append(outputPlaceData);
             return;
