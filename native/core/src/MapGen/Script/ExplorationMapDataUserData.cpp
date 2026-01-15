@@ -730,7 +730,7 @@ namespace ProceduralExplorationGameCore{
 
                 // Set region for this point
                 if(newAltitude < mapData->seaLevel){
-                    newRegion = REGION_ID_WATER;
+                    newRegion = *REGION_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y));
                 }
                 setRegionForPoint(mapData, WRAP_WORLD_POINT(x, y), newRegion);
                 *voxPtr = newAltitude;
@@ -816,7 +816,7 @@ namespace ProceduralExplorationGameCore{
 
                     // Set region for this point
                     if(newAltitude < mapData->seaLevel){
-                        newRegion = REGION_ID_WATER;
+                        newRegion = *REGION_PTR_FOR_COORD_CONST(mapData, WRAP_WORLD_POINT(x, y));
                     }
                     setRegionForPoint(mapData, WRAP_WORLD_POINT(x, y), newRegion);
                     *voxPtr = newAltitude;
