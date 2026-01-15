@@ -265,12 +265,18 @@ namespace ProceduralExplorationGameCore{
         PerlinNoise p(100);
         float pv = p.perlin2d(x, y, 0.05, 1);
 
+        //Higher resolution perlin for detail
+        float pvDetail = p.perlin2d(x, y, 0.10, 1);
+
+        static const float DETAIL_STRENGTH = 0.3f; //Tweakable flag for detail noise strength
+        float blendedNoise = mix<float>(pv, pvDetail, DETAIL_STRENGTH);
+
         static const float DIST = 18.0f;
         float modifier = (altitudeDistance > DIST ? DIST : static_cast<float>(altitudeDistance)) / DIST;
         float originalAltitude = float(altitude);
         float altDifference = originalAltitude - mapData->seaLevel;
         float startAltDifference = 1;
-        float fa = mapData->seaLevel + startAltDifference * 0.25 + (pv - 0.5) * 8;
+        float fa = mapData->seaLevel + startAltDifference * 0.20 + (blendedNoise - 0.5) * 8;
         if(fa > mapData->seaLevel + 1){
             fa = mapData->seaLevel + altDifference * 0.3;
         }

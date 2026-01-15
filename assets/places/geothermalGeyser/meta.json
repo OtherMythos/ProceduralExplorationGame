@@ -1,4 +1,6 @@
 {
-    "terrainHoleRadius": 6,
-    "averageGroundRadius": [10, 10]
+    "averageGroundRadius": [5, 10],
+    "disablePlaceName": true,
+    "tileOffsetX": 3,
+    "tileOffsetY": 3
 }
