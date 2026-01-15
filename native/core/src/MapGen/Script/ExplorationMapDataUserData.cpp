@@ -648,7 +648,7 @@ namespace ProceduralExplorationGameCore{
         ExplorationMapData* mapData;
         SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
 
-        SQInteger oX, oY, hX, hY, ditherDist;
+        SQInteger oX, oY, hX, hY, ditherDist, minAlt;
         SQInteger rId;
         sq_getinteger(vm, 2, &oX);
         sq_getinteger(vm, 3, &oY);
@@ -656,14 +656,16 @@ namespace ProceduralExplorationGameCore{
         sq_getinteger(vm, 5, &hY);
         sq_getinteger(vm, 6, &ditherDist); // New dither distance parameter
         sq_getinteger(vm, 7, &rId); // New dither distance parameter
+        sq_getinteger(vm, 8, &minAlt); // Minimum altitude parameter
 
-        AV::uint32 originX, originY, halfX, halfY, ditherDistance;
+        AV::uint32 originX, originY, halfX, halfY, ditherDistance, minAltitude;
         RegionId regionId = static_cast<RegionId>(rId);
         originX = static_cast<AV::uint32>(oX);
         originY = static_cast<AV::uint32>(oY);
         halfX = static_cast<AV::uint32>(hX);
         halfY = static_cast<AV::uint32>(hY);
         ditherDistance = static_cast<AV::uint32>(ditherDist);
+        minAltitude = static_cast<AV::uint32>(minAlt);
 
         // First pass: Calculate the average altitude for the core region
         size_t count = 0;
@@ -677,6 +679,9 @@ namespace ProceduralExplorationGameCore{
         }
 
         size_t averageAlt = altitudeTotal / count;
+        if(averageAlt < minAltitude){
+            averageAlt = minAltitude;
+        }
 
         // Second pass: Apply the averaged altitude with dithering
         AV::uint32 totalHalfX = halfX + ditherDistance;
@@ -744,20 +749,22 @@ namespace ProceduralExplorationGameCore{
     SQInteger ExplorationMapDataUserData::averageOutAltitudeRadius(HSQUIRRELVM vm){
         ExplorationMapData* mapData;
         SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
-        SQInteger oX, oY, radius, ditherDist;
+        SQInteger oX, oY, radius, ditherDist, minAlt;
         SQInteger rId;
         sq_getinteger(vm, 2, &oX);
         sq_getinteger(vm, 3, &oY);
         sq_getinteger(vm, 4, &radius);
         sq_getinteger(vm, 5, &ditherDist); // Dither distance parameter
         sq_getinteger(vm, 6, &rId); // Region ID parameter
+        sq_getinteger(vm, 7, &minAlt); // Minimum altitude parameter
 
-        AV::uint32 originX, originY, coreRadius, ditherDistance;
+        AV::uint32 originX, originY, coreRadius, ditherDistance, minAltitude;
         RegionId regionId = static_cast<RegionId>(rId);
         originX = static_cast<AV::uint32>(oX);
         originY = static_cast<AV::uint32>(oY);
         coreRadius = static_cast<AV::uint32>(radius);
         ditherDistance = static_cast<AV::uint32>(ditherDist);
+        minAltitude = static_cast<AV::uint32>(minAlt);
 
         // First pass: Calculate the average altitude for the core circular region
         size_t count = 0;
@@ -781,6 +788,9 @@ namespace ProceduralExplorationGameCore{
         }
 
         size_t averageAlt = altitudeTotal / count;
+        if(averageAlt < minAltitude){
+            averageAlt = minAltitude;
+        }
 
         // Second pass: Apply the averaged altitude with dithering
         AV::uint32 totalRadius = coreRadius + ditherDistance;
@@ -991,8 +1001,8 @@ namespace ProceduralExplorationGameCore{
         AV::ScriptUtils::addFunction(vm, getRegionCoordForIdx, "getRegionCoordForIdx", 3, ".ii");
         AV::ScriptUtils::addFunction(vm, getRegionId, "getRegionId", 2, ".i");
 
-        AV::ScriptUtils::addFunction(vm, averageOutAltitudeRectangle, "averageOutAltitudeRectangle", 7, ".iiiiii");
-        AV::ScriptUtils::addFunction(vm, averageOutAltitudeRadius, "averageOutAltitudeRadius", 6, ".iiiii");
+        AV::ScriptUtils::addFunction(vm, averageOutAltitudeRectangle, "averageOutAltitudeRectangle", 8, ".iiiiiii");
+        AV::ScriptUtils::addFunction(vm, averageOutAltitudeRadius, "averageOutAltitudeRadius", 7, ".iiiiii");
         AV::ScriptUtils::addFunction(vm, applyTerrainVoxelsForPlace, "applyTerrainVoxelsForPlace", 5, ".ssii");
         AV::ScriptUtils::addFunction(vm, calculateEdgeVoxels, "calculateEdgeVoxels");
 

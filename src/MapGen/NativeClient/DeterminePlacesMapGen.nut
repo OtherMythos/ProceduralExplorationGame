@@ -90,7 +90,7 @@
     }
 
     function _averageOutGround(originX, originY, halfX, halfY, region){
-        mMapData_.averageOutAltitudeRectangle(originX, originY, halfX, halfY, 5, region);
+        mMapData_.averageOutAltitudeRectangle(originX, originY, halfX, halfY, 5, region, 100);
     }
 
     function placeLocation(placeId, determineRegionFunction, checkPlacement){
@@ -142,7 +142,7 @@
             if(placeMetaData != null && placeMetaData.rawin("averageGroundRadius")){
                 local radiusVal = placeMetaData.averageGroundRadius[0];
                 local strengthVal = placeMetaData.averageGroundRadius[1];
-                mMapData_.averageOutAltitudeRadius(originX, originY, radiusVal, strengthVal, region);
+                mMapData_.averageOutAltitudeRadius(originX, originY, radiusVal, strengthVal, region, 101);
             }else{
                 _averageOutGround(originX, originY, mData_.halfX, mData_.halfY, region);
             }
