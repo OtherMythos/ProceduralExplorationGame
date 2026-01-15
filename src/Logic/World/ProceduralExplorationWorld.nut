@@ -16,6 +16,7 @@
     mAnimIncrement_ = 0.0;
     mWaterDatablock_ = null;
     mOutsideWaterDatablock_ = null;
+    mFirstDiscovery_ = true;
 
     mCloudManager_ = null;
     mWindStreakManager_ = null;
@@ -70,9 +71,11 @@
             _scene.notifyStaticDirty(mLandNode_);
             _scene.notifyStaticDirty(mDecoratioNode_);
         }
-        function performArrival(){
+        function performArrival(skipAnim=false){
             setVisible(true);
-            mAnimCount_ = mMaxAnim_;
+            if(!skipAnim){
+                mAnimCount_ = mMaxAnim_;
+            }
         }
         function setVisible(visible){
             mVisible_ = visible;
@@ -1179,7 +1182,8 @@
             //A mesh for this region is present so perform the animation.
             local regionEntry = mRegionEntries_[regionId];
             if(regionEntry != null){
-                regionEntry.performArrival();
+                regionEntry.performArrival(mFirstDiscovery_);
+                mFirstDiscovery_ = false;
                 //::PopupManager.displayPopup(::PopupManager.PopupData(Popup.REGION_DISCOVERED, regionData.type));
             }
         }
