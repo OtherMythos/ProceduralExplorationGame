@@ -390,7 +390,7 @@ namespace ProceduralExplorationGameCore{
         WorldPoint p = WRAP_WORLD_POINT(x, y);
 
         AV::uint32* worldPtr = FULL_PTR_FOR_COORD_SECONDARY(mapData, p);
-        if(*worldPtr & RIVER_VOXEL_FLAG){
+        if(*worldPtr & (RIVER_VOXEL_FLAG | WATER_VOXEL)){
             sq_pushbool(vm, true);
             return 1;
         }
