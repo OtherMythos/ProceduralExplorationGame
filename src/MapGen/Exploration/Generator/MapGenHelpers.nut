@@ -127,6 +127,7 @@
             case RegionType.DESERT: return BiomeId.DESERT;
             case RegionType.SWAMP: return BiomeId.SWAMP;
             case RegionType.HOT_SPRINGS: return BiomeId.HOT_SPRINGS;
+            case RegionType.GEOTHERMAL_PLANES: return BiomeId.GEOTHERMAL_PLANES;
             case RegionType.MUSHROOM_CLUSTER: return BiomeId.MUSHROOM_CLUSTER;
             default:{
                 return BiomeId.GRASS_LAND;

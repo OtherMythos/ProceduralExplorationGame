@@ -251,10 +251,32 @@ namespace ProceduralExplorationGameCore{
 
     MapVoxelTypes GEOTHERMAL_PLANES_VoxFunction(AV::uint8 altitude, AV::uint8 moisture, const ExplorationMapData* mapData){
         if(altitude >= mapData->seaLevel + 10){
-            return MapVoxelTypes::GEOTHERMAL_DIRT;
+            if(moisture >= mapData->seaLevel + 40){
+                return MapVoxelTypes::GEOTHERMAL_PAY_DIRT;
+            }else{
+                return MapVoxelTypes::GEOTHERMAL_DIRT;
+            }
         }else{
             return MapVoxelTypes::GEOTHERMAL_GRAVEL;
         }
+    }
+
+    AV::uint8 GEOTHERMAL_PLANES_DetermineAltitudeFunction(AV::uint8 altitude, AV::uint8 moisture, AV::uint8 altitudeDistance, AV::uint16 x, AV::uint16 y, const ExplorationMapData* mapData){
+        PerlinNoise p(100);
+        float pv = p.perlin2d(x, y, 0.05, 1);
+
+        static const float DIST = 18.0f;
+        float modifier = (altitudeDistance > DIST ? DIST : static_cast<float>(altitudeDistance)) / DIST;
+        float originalAltitude = float(altitude);
+        float altDifference = originalAltitude - mapData->seaLevel;
+        float startAltDifference = 1;
+        float fa = mapData->seaLevel + startAltDifference * 0.25 + (pv - 0.5) * 8;
+        if(fa > mapData->seaLevel + 1){
+            fa = mapData->seaLevel + altDifference * 0.3;
+        }
+        float a = mix<float>(fa, originalAltitude, 1.0-modifier);
+        AV::uint8 out = static_cast<AV::uint8>(a);
+        return out;
     }
 
     void GEOTHERMAL_PLANES_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture, AV::uint8 regionDistance){
@@ -272,6 +294,15 @@ namespace ProceduralExplorationGameCore{
             }
         }
     }
+
+    void GEOTHERMAL_PLANES_FinalVoxChangeFunction(const ExplorationMapData* mapData, AV::uint32* vox, AV::uint32* secondary, AV::uint16 x, AV::uint16 y){
+        *secondary |= DO_NOT_PLACE_RIVERS_VOXEL_FLAG;
+
+        if((*vox & 0xFF) < mapData->seaLevel){
+            *secondary |= TEST_CHANGE_WATER_FLAG;
+        }
+    }
+
 
     void MUSHROOM_CLUSTER_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture, AV::uint8 regionDistance){
         int R = 5 - regionDistance;
@@ -331,7 +362,7 @@ namespace ProceduralExplorationGameCore{
         Biome(&SWAMP_VoxFunction, &SWAMP_PlaceObjectsFunction, &SWAMP_DetermineAltitudeFunction, &SWAMP_FinalVoxChangeFunction, &SWAMP_WaterTextureColourChangeFunction),
         Biome(&HOT_SPRINGS_VoxFunction, &HOT_SPRINGS_PlaceObjectsFunction, &HOT_SPRINGS_DetermineAltitudeFunction, &HOT_SPRINGS_FinalVoxChangeFunction, &HOT_SPRINGS_WaterTextureColourChangeFunction),
         Biome(&GRASS_LAND_VoxFunction, &MUSHROOM_CLUSTER_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
-        Biome(&GEOTHERMAL_PLANES_VoxFunction, &GEOTHERMAL_PLANES_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
+        Biome(&GEOTHERMAL_PLANES_VoxFunction, &GEOTHERMAL_PLANES_PlaceObjectsFunction, &GEOTHERMAL_PLANES_DetermineAltitudeFunction, &GEOTHERMAL_PLANES_FinalVoxChangeFunction, &HOT_SPRINGS_WaterTextureColourChangeFunction),
         Biome(&SHALLOW_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
         Biome(&DEEP_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
     };

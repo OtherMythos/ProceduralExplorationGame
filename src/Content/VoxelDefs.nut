@@ -9,3 +9,4 @@ _gameCore.registerVoxel(VoxelId.SWAMP_GRASS, 166, ColourValue(0.22, 0.66, 0.00, 
 _gameCore.registerVoxel(VoxelId.SWAMP_FOREST_GRASS, 165, ColourValue(0.1, 0.44, 0.00, 1));
 _gameCore.registerVoxel(VoxelId.GEOTHERMAL_DIRT, 86, ColourValue(0.1, 0.44, 0.00, 1));
 _gameCore.registerVoxel(VoxelId.GEOTHERMAL_GRAVEL, 88, ColourValue(0.1, 0.44, 0.00, 1));
+_gameCore.registerVoxel(VoxelId.GEOTHERMAL_PAY_DIRT, 130, ColourValue(0.1, 0.44, 0.00, 1));

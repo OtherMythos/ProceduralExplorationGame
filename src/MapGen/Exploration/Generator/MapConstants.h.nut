@@ -38,6 +38,7 @@ enum MapVoxelTypes{
 
     GEOTHERMAL_DIRT,
     GEOTHERMAL_GRAVEL,
+    GEOTHERMAL_PAY_DIRT
 };
 
 enum BiomeId{
