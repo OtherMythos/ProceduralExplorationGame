@@ -876,6 +876,11 @@ namespace ProceduralExplorationGameCore{
                 AV::uint8* voxPtr = VOX_VALUE_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(xxx, yyy));
                 *voxPtr = out.tileValues[x + y * out.tilesWidth];
 
+                AV::uint8* altitudePtr = VOX_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(xxx, yyy));
+                AV::uint8 newAltitude = *altitudePtr;
+                newAltitude += (altitudeOut.tileValues[x + y * out.tilesWidth] - 1) * 8;
+                *altitudePtr = newAltitude;
+
                 AV::uint32* secondaryVoxPtr = FULL_PTR_FOR_COORD_SECONDARY(mapData, WRAP_WORLD_POINT(xxx, yyy));
                 *secondaryVoxPtr |= (DRAW_COLOUR_VOXEL_FLAG | DO_NOT_CHANGE_VOXEL);
             }
