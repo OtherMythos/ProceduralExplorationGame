@@ -36,6 +36,8 @@
 #include "OgreSubMesh2.h"
 #include "Vao/OgreVaoManager.h"
 
+#include "PlacedItemManager.h"
+
 #include "Ogre.h"
 #include "Ogre/OgreVoxMeshItem.h"
 #include "OgreHlms.h"
@@ -146,7 +148,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptVM::setupDelegateTable(DataPointFileParserUserData::setupDelegateTable);
 
         ProceduralExplorationGameCore::MapGen* mapGen = new ProceduralExplorationGameCore::MapGen();
-        ProceduralExplorationGameCore::PluginBaseSingleton::initialise(mapGen, 0, new ProceduralExplorationGameCore::MapGenScriptManager());
+        ProceduralExplorationGameCore::PluginBaseSingleton::initialise(mapGen, 0, new ProceduralExplorationGameCore::MapGenScriptManager(), new ProceduralExplorationGameCore::PlacedItemManager());
 
         Ogre::VoxMeshManager* meshManager = OGRE_NEW Ogre::VoxMeshManager();
         meshManager->_initialise();

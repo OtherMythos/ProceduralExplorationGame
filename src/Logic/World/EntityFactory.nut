@@ -623,6 +623,9 @@
         local totalHealth = 100;
         manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](totalHealth));
 
+        //Register the placed item in the manager
+        _gameCore.registerPlacedItem(itemType, en, itemData.originX, itemData.originY);
+
         //entry.setPosition(targetPos);
 
         //return entry;

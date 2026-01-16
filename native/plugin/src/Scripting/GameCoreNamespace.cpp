@@ -53,6 +53,8 @@
 #include "System/Base.h"
 #include "System/BaseSingleton.h"
 
+#include "PlacedItemManager.h"
+
 #include "Ogre/OgreVoxMeshItem.h"
 #include "Ogre/OgreVoxMeshManager.h"
 #include "Hlms/Pbs/OgreHlmsPbsDatablock.h"
@@ -240,7 +242,68 @@ namespace ProceduralExplorationGamePlugin{
 
         ProceduralExplorationGameCore::GameplayState::setNewMapData(mapData);
 
+        ProceduralExplorationGameCore::PlacedItemManager* placedItemManager = ProceduralExplorationGameCore::PluginBaseSingleton::getPlacedItemManager();
+        if(placedItemManager){
+            placedItemManager->initialiseGrid(mapData->width, mapData->height);
+        }
+
         return 0;
+    }
+
+    SQInteger GameCoreNamespace::registerPlacedItem(HSQUIRRELVM vm){
+        SQInteger placedItemId;
+        sq_getinteger(vm, 2, &placedItemId);
+
+        SQInteger eid;
+        sq_getinteger(vm, 3, &eid);
+
+        SQInteger x;
+        sq_getinteger(vm, 4, &x);
+
+        SQInteger y;
+        sq_getinteger(vm, 5, &y);
+
+        ProceduralExplorationGameCore::PlacedItemManager* placedItemManager = ProceduralExplorationGameCore::PluginBaseSingleton::getPlacedItemManager();
+        if(placedItemManager){
+            placedItemManager->registerPlacedItem(static_cast<AV::uint32>(placedItemId), static_cast<AV::uint64>(eid), static_cast<AV::uint32>(x), static_cast<AV::uint32>(y));
+        }
+
+        return 0;
+    }
+
+    SQInteger GameCoreNamespace::removePlacedItem(HSQUIRRELVM vm){
+        SQInteger eid;
+        sq_getinteger(vm, 2, &eid);
+
+        ProceduralExplorationGameCore::PlacedItemManager* placedItemManager = ProceduralExplorationGameCore::PluginBaseSingleton::getPlacedItemManager();
+        if(placedItemManager){
+            placedItemManager->removePlacedItem(static_cast<AV::uint64>(eid));
+        }
+
+        return 0;
+    }
+
+    SQInteger GameCoreNamespace::getPlacedItemsInRadius(HSQUIRRELVM vm){
+        SQFloat x, y, radius;
+        sq_getfloat(vm, 2, &x);
+        sq_getfloat(vm, 3, &y);
+        sq_getfloat(vm, 4, &radius);
+
+        ProceduralExplorationGameCore::PlacedItemManager* placedItemManager = ProceduralExplorationGameCore::PluginBaseSingleton::getPlacedItemManager();
+        std::vector<AV::uint64> items;
+        if(placedItemManager){
+            items = placedItemManager->getPlacedItemsInRadius(x, y, radius);
+        }
+
+        //Convert to Squirrel array
+        sq_newarray(vm, items.size());
+        for(size_t i = 0; i < items.size(); ++i){
+            sq_pushinteger(vm, static_cast<SQInteger>(i));
+            sq_pushinteger(vm, static_cast<SQInteger>(items[i]));
+            sq_newslot(vm, -3, SQFalse);
+        }
+
+        return 1;
     }
 
     SQInteger GameCoreNamespace::createTerrainFromMapData(HSQUIRRELVM vm){
@@ -1101,6 +1164,10 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, triggerNotificationHapticFeedback, "triggerNotificationHapticFeedback", -1, ".");
 
         AV::ScriptUtils::addFunction(vm, setupParticleEmitterPoints, "setupParticleEmitterPoints", 3, ".ua");
+
+        AV::ScriptUtils::addFunction(vm, registerPlacedItem, "registerPlacedItem", 5, ".nnii");
+        AV::ScriptUtils::addFunction(vm, removePlacedItem, "removePlacedItem", 2, ".n");
+        AV::ScriptUtils::addFunction(vm, getPlacedItemsInRadius, "getPlacedItemsInRadius", 4, ".nnn");
 
         AV::ScriptUtils::addFunction(vm, createDataPointFileParser, "DataPointFile");
     }

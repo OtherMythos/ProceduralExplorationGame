@@ -75,6 +75,10 @@ namespace ProceduralExplorationGamePlugin{
 
         static SQInteger setupParticleEmitterPoints(HSQUIRRELVM vm);
 
+        static SQInteger registerPlacedItem(HSQUIRRELVM vm);
+        static SQInteger removePlacedItem(HSQUIRRELVM vm);
+        static SQInteger getPlacedItemsInRadius(HSQUIRRELVM vm);
+
         static ProceduralExplorationGameCore::VisitedPlacesParser* currentVisitedPlacesParser;
 
         static SQInteger update(HSQUIRRELVM vm);
