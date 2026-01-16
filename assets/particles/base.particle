@@ -185,7 +185,7 @@ particle_system playerFeetDust
         force_application add
     }
 
-	affector DeflectorPlane
+	affector DeflectorPlaneProceduralWorld
 	{
 		plane_point	0 1 0
 		plane_normal	0 1 0

@@ -47,6 +47,7 @@
 #include "Ogre/RingProceduralWorldEmitterFactory.h"
 #include "Ogre/AreaProceduralWorldEmitterFactory.h"
 #include "Ogre/GroundColourModifierEmitterFactory.h"
+#include "Ogre/DeflectorPlaneProceduralWorldAffectorFactory.h"
 
 namespace ProceduralExplorationGamePlugin{
 
@@ -162,6 +163,11 @@ namespace ProceduralExplorationGamePlugin{
         Ogre::ParticleSystemManager::getSingleton().addEmitterFactory(pEmitFact);
         pEmitFact = OGRE_NEW Ogre::GroundColourModifierEmitterFactory();
         Ogre::ParticleSystemManager::getSingleton().addEmitterFactory(pEmitFact);
+
+        //Register custom particle affector factories
+        Ogre::ParticleAffectorFactory *pAffFact;
+        pAffFact = OGRE_NEW Ogre::DeflectorPlaneProceduralWorldAffectorFactory();
+        Ogre::ParticleSystemManager::getSingleton().addAffectorFactory(pAffFact);
 
         GameCorePBSHlmsListener* pbsListener = new GameCorePBSHlmsListener();
         Ogre::Hlms *hlmsPbs = Ogre::Root::getSingleton().getHlmsManager()->getHlms( Ogre::HLMS_PBS );
