@@ -1016,25 +1016,6 @@ enum WorldMousePressContexts{
         mCompassIndicatorTracking_.rawdelete(pointId);
     }
 
-    function getCompassCollidingPoints(){
-        local collidingPoints = [];
-
-        for(local i = 0; i < mCompassCollisionWorld_.getNumCollisions(); i++){
-            local pair = mCompassCollisionWorld_.getCollisionPairForIdx(i);
-            local collisionStatus = (pair & 0xF000000000000000) >> 60;
-
-            local first = pair & 0xFFFFFFF;
-            local second = (pair >> 30) & 0xFFFFFFF;
-
-            //If collision is active, record the colliding point (second point is the receiver, first is sender)
-            if(collisionStatus == 0x1){
-                collidingPoints.push(second);
-            }
-        }
-
-        return collidingPoints;
-    }
-
     function setCurrentWorld(current){
         mCurrent_ = current;
         processWorldCurrentChange_(current);

@@ -406,6 +406,11 @@
             }
         },
 
+        "guiExplorationCompassIndicator" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse" : [1, 1, 1, 1]
+        },
         "guiExplorationCompassIndicatorEnemy" :
         {
             "blendblock": "gui/uiBlend",
