@@ -177,9 +177,13 @@
     mHealth = 1;
     mMaxHealth = 1;
 
-    constructor(health){
+    constructor(health, maxHealth=null){
         mHealth = health;
-        mMaxHealth = health;
+        if(maxHealth != null){
+            mMaxHealth = maxHealth;
+        }else{
+            mMaxHealth = health;
+        }
     }
 
 };

@@ -167,7 +167,7 @@
         //_component.user[Component.MISC].add(en);
         //_component.user[Component.MISC].set(en, 0, billboardIdx);
 
-        manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](playerStats.getPlayerHealth()));
+        manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](playerStats.getPlayerHealth(), playerStats.getPlayerMaxHealth()));
         playerBillboard.setHealth(playerStats.getPlayerHealth());
 
         //_component.script.add(en, "res://src/Content/Enemies/PlayerScript.nut");
