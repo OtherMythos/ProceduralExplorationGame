@@ -543,3 +543,41 @@ particle_system geyserWarmingUpFountain
         force_application add
     }
 }
+
+particle_system treeLeaves
+{
+    material        ParticleAlphaWhite
+    particle_width  0.2
+    particle_height 0.2
+    cull_each       false
+    quota           5000
+    billboard_type  point
+
+    emitter TreeLeaf
+    {
+        angle           20
+        emission_rate   1000
+        time_to_live    3
+        direction       0 -1 0
+        velocity_min    0.5
+        velocity_max    1.5
+    }
+
+    affector ColourInterpolator
+    {
+        time0 0
+        colour0 0.0 1.0 0.0 1.0
+
+        time1 0.5
+        colour1 0.0 1.0 0.0 1.0
+
+        time2 1.0
+        colour2 0.0 1.0 0.0 0.0
+    }
+
+    affector DirectionRandomiser
+    {
+        randomness 0.3
+    }
+}
+

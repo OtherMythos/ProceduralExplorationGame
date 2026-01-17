@@ -1165,7 +1165,7 @@ namespace ProceduralExplorationGamePlugin{
 
         AV::ScriptUtils::addFunction(vm, setupParticleEmitterPoints, "setupParticleEmitterPoints", 3, ".ua");
 
-        AV::ScriptUtils::addFunction(vm, registerPlacedItem, "registerPlacedItem", 5, ".nnii");
+        AV::ScriptUtils::addFunction(vm, registerPlacedItem, "registerPlacedItem", 5, ".nnnn");
         AV::ScriptUtils::addFunction(vm, removePlacedItem, "removePlacedItem", 2, ".n");
         AV::ScriptUtils::addFunction(vm, getPlacedItemsInRadius, "getPlacedItemsInRadius", 4, ".nnn");
 

@@ -95,4 +95,14 @@ std::vector<AV::uint64> PlacedItemManager::getPlacedItemsInRadius(float x, float
     return result;
 }
 
+AV::uint64 PlacedItemManager::getRandomPlacedItem() const{
+    if(mPlacedItems_.empty()){
+        return 0;
+    }
+
+    auto it = mPlacedItems_.begin();
+    std::advance(it, rand() % mPlacedItems_.size());
+    return it->first;
+}
+
 }

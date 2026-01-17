@@ -37,6 +37,9 @@ namespace ProceduralExplorationGameCore{
         //Get all placed items within a radius
         std::vector<AV::uint64> getPlacedItemsInRadius(float x, float y, float radius) const;
 
+        //Get a random placed item EID (returns 0 if none exist)
+        AV::uint64 getRandomPlacedItem() const;
+
     private:
         std::vector<AV::uint64> mGrid_;
         std::map<AV::uint64, PlacedItemEntry> mPlacedItems_;

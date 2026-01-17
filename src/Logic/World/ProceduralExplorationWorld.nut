@@ -21,6 +21,8 @@
     mCloudManager_ = null;
     mWindStreakManager_ = null;
 
+    mTreeLeafParticleSystem_ = null;
+
     WORLD_VIEW_DISTANCE = 300;
 
     mTerrain_ = null;
@@ -271,6 +273,10 @@
 
         mCloudManager_ = CloudManager(mParentNode_, mMapData_.width * 3, mMapData_.height * 3, -mMapData_.width, -mMapData_.height);
         mWindStreakManager_ = WindStreakManager(mParentNode_, mMapData_.width, mMapData_.height);
+
+        //Create tree leaf particle system
+        //mTreeLeafParticleSystem_ = _scene.createParticleSystem("treeLeaves");
+        //mParentNode_.attachObject(mTreeLeafParticleSystem_);
 
         setupPlaces();
         createPlacedItems();
@@ -955,6 +961,11 @@
         foreach(i in mRegionEntries_){
             i.setWorldActive(active);
         }
+
+        ////Control tree leaf particle system emission
+        //if(mTreeLeafParticleSystem_ != null){
+        //    mTreeLeafParticleSystem_.setEmitting(active);
+        //}
 
         //mSkyAnimator_.animateSkyToColour(Vec3(0, 0, 0));
     }

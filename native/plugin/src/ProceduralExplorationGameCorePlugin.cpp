@@ -48,6 +48,7 @@
 #include "OgreRenderable.h"
 #include "Ogre/RingProceduralWorldEmitterFactory.h"
 #include "Ogre/AreaProceduralWorldEmitterFactory.h"
+#include "Ogre/TreeLeafEmitterFactory.h"
 #include "Ogre/GroundColourModifierEmitterFactory.h"
 #include "Ogre/DeflectorPlaneProceduralWorldAffectorFactory.h"
 
@@ -162,6 +163,8 @@ namespace ProceduralExplorationGamePlugin{
         pEmitFact = OGRE_NEW Ogre::RingProceduralWorldEmitterFactory();
         Ogre::ParticleSystemManager::getSingleton().addEmitterFactory(pEmitFact);
         pEmitFact = OGRE_NEW Ogre::AreaProceduralWorldEmitterFactory();
+        Ogre::ParticleSystemManager::getSingleton().addEmitterFactory(pEmitFact);
+        pEmitFact = OGRE_NEW Ogre::TreeLeafEmitterFactory();
         Ogre::ParticleSystemManager::getSingleton().addEmitterFactory(pEmitFact);
         pEmitFact = OGRE_NEW Ogre::GroundColourModifierEmitterFactory();
         Ogre::ParticleSystemManager::getSingleton().addEmitterFactory(pEmitFact);
