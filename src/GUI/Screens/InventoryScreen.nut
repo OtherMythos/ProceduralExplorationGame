@@ -33,9 +33,19 @@ enum InventoryBusEvents{
             createBackgroundScreen_();
         }
 
+        local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
+        local disableBackgroundClose = false;
+        if(data.rawin("disableBackgroundClose") && data.disableBackgroundClose){
+            disableBackgroundClose = true;
+        }
+        if(mobile && !disableBackgroundClose){
+            createBackgroundCloseButton_();
+        }
+
         mWindow_ = _gui.createWindow("InventoryScreen");
         mWindow_.setSize(::drawable.x, ::drawable.y);
         mWindow_.setVisualsEnabled(false);
+        mWindow_.setClickable(false);
         mWindow_.setSkinPack("WindowSkinNoBorder");
         mWindow_.setBreadthFirst(true);
 
@@ -44,6 +54,10 @@ enum InventoryBusEvents{
         mInventoryObj_.setup(mWindow_, data);
 
         mActionSetId_ = ::InputManager.pushActionSet(InputActionSets.MENU);
+    }
+
+    function closeScreen(){
+        mInventoryObj_.closeInventory();
     }
 
     function shutdown(){
@@ -198,20 +212,6 @@ enum InventoryBusEvents{
         mBusCallbackId_ = mInventoryBus_.registerCallback(busCallback, this);
 
         local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
-
-        local disableBackgroundClose = false;
-        if(data.rawin("disableBackgroundClose") && data.disableBackgroundClose){
-            disableBackgroundClose = true;
-        }
-        if(mobile && !disableBackgroundClose){
-            local inventoryCloseButton = mWindow_.createButton();
-            inventoryCloseButton.setSize(mWindow_.getSize());
-            inventoryCloseButton.setVisualsEnabled(false);
-            inventoryCloseButton.attachListenerForEvent(function(widget, action){
-                ::HapticManager.triggerSimpleHaptic(HapticType.SELECTION);
-                closeInventory();
-            }, _GUI_ACTION_RELEASED, this);
-        }
 
         local inventoryButton = null;
         local backButtonDisabled = false;
