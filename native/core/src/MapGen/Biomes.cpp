@@ -306,10 +306,14 @@ namespace ProceduralExplorationGameCore{
                 RVal = 4;
             }
             if(processRValue(mapData, x, y, RVal)){
-                //Scatter small rocks throughout geothermal area
-                static const PlacedItemId SMALL_ROCKS[] = {PlacedItemId::ROCK_SMALL_1, PlacedItemId::ROCK_SMALL_2, PlacedItemId::ROCK_SMALL_3, PlacedItemId::ROCK_SMALL_4, PlacedItemId::ROCK_SMALL_5, PlacedItemId::ROCK_SMALL_6};
-                size_t val = mapGenRandomIntMinMax(0, 5);
-                PLACE_ITEM(SMALL_ROCKS[val]);
+                if(mapGenRandomIntMinMax(0, 3) == 0){
+                    PLACE_ITEM(PlacedItemId::MAGMA_SHROOM);
+                }else{
+                    //Scatter small rocks throughout geothermal area
+                    static const PlacedItemId SMALL_ROCKS[] = {PlacedItemId::ROCK_SMALL_1, PlacedItemId::ROCK_SMALL_2, PlacedItemId::ROCK_SMALL_3, PlacedItemId::ROCK_SMALL_4, PlacedItemId::ROCK_SMALL_5, PlacedItemId::ROCK_SMALL_6};
+                    size_t val = mapGenRandomIntMinMax(0, 5);
+                    PLACE_ITEM(SMALL_ROCKS[val]);
+                }
             }
         }
     }

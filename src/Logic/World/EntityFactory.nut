@@ -615,6 +615,36 @@
 
             local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.GIVE_ITEM, ::Item(mushroomItem), null, null);
             manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
+        }else if(itemType == PlacedItemId.MAGMA_SHROOM){
+            //Magma shroom has a script that handles fire effects and damage
+            local triggerWorld = mConstructorWorld_.getTriggerWorld();
+            local playerInteraction = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.PICK, en, targetPos.x, targetPos.z, 2, _COLLISION_PLAYER);
+
+            manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO, ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](
+                collisionPoint, playerInteraction,
+                damageWorld, triggerWorld
+            ));
+
+            //Add building phase particle effect - flamey particles
+            local buildingParticleNode = placeNode.createChildSceneNode();
+            buildingParticleNode.setPosition(0, 1, 0);
+            local buildingParticles = _scene.createParticleSystem("magmaShroomBuilding");
+            buildingParticles.setEmitting(false);
+            buildingParticleNode.attachObject(buildingParticles);
+
+            //Add emitting phase particle effect - dramatic magma/flame torrent
+            local emittingParticleNode = placeNode.createChildSceneNode();
+            emittingParticleNode.setPosition(0, 2, 0);
+            local emittingParticles = _scene.createParticleSystem("magmaShroomEmitting");
+            emittingParticles.setEmitting(false);
+            emittingParticleNode.attachObject(emittingParticles);
+
+            //Add the magma shroom script
+            local magmaShroomScript = ::MagmaShroomScript(en, placeNode, buildingParticles, emittingParticles, mConstructorWorld_, targetPos);
+            manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](magmaShroomScript));
+
+            local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.GIVE_ITEM, ::Item(ItemId.MAGMA_SHROOM), null, null);
+            manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
         }else if(
             itemType == PlacedItemId.SWAMP_TREE_ONE ||
             itemType == PlacedItemId.SWAMP_TREE_TWO

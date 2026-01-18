@@ -128,6 +128,7 @@ enum PlacedItemId{
     MUSHROOM_1,
     MUSHROOM_2,
     MUSHROOM_3,
+    MAGMA_SHROOM,
 
     ROCK_SMALL_1,
     ROCK_SMALL_2,

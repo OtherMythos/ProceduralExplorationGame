@@ -23,6 +23,7 @@
 ::Items[ItemId.MUSHROOM_1] = ItemDef("Mushroom", "A peculiar fungal growth", "mushrooms.mushroom.1.voxMesh", "item_mushroom1", ItemType.EAT, 5, null, EquippableId.NONE);
 ::Items[ItemId.MUSHROOM_2] = ItemDef("Mushroom", "A peculiar fungal growth", "mushrooms.mushroom.2.voxMesh", "item_mushroom2", ItemType.EAT, 5, null, EquippableId.NONE);
 ::Items[ItemId.MUSHROOM_3] = ItemDef("Mushroom", "A peculiar fungal growth", "mushrooms.mushroom.3.voxMesh", "item_mushroom3", ItemType.EAT, 5, null, EquippableId.NONE);
+::Items[ItemId.MAGMA_SHROOM] = ItemDef("Magma Shroom", "A peculiar mushroom that radiates heat", "mushrooms.mushroom.1.voxMesh", "item_mushroom1", ItemType.EAT, 10, null, EquippableId.NONE);
 ::Items[ItemId.MESSAGE_IN_A_BOTTLE] = ItemDef("Message in a Bottle", "A mysterious message sealed in a glass bottle. It has washed ashore from distant seas.", "simpleSword.voxMesh", "item_simpleSword", ItemType.MESSAGE_IN_A_BOTTLE, 0, null, EquippableId.NONE);
 ::Items[ItemId.NOTE_SCRAP] = ItemDef("Note Scrap", "A scrap of paper found inside the message in a bottle.", null, "item_noteScrap", ItemType.LORE_CONTENT, 0, null, EquippableId.NONE);
 ::Items[ItemId.FALLEN_STAR] = ItemDef("Fallen Star", "A glimmering star that has fallen from the heavens.", "fallenStar.voxMesh", "item_fallenStar", ItemType.EAT, 5, null, EquippableId.NONE);
