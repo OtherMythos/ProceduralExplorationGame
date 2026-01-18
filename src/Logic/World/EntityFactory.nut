@@ -1312,4 +1312,26 @@
         return en;
     }
 
+    function constructBrokenRockEffect(pos){
+        local manager = mConstructorWorld_.getEntityManager();
+        local zPos = getZForPos(pos);
+        local targetPos = Vec3(pos.x, zPos + 0.3, pos.z);
+
+        local en = manager.createEntity(targetPos);
+
+        local effectNode = mBaseSceneNode_.createChildSceneNode();
+        effectNode.setPosition(targetPos);
+
+        local pebblesParticleSystem = _scene.createParticleSystem("brokenRockPebbles");
+        effectNode.attachObject(pebblesParticleSystem);
+
+        local dustParticleSystem = _scene.createParticleSystem("brokenRockDust");
+        effectNode.attachObject(dustParticleSystem);
+
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](effectNode, true));
+        manager.assignComponent(en, EntityComponents.LIFETIME, ::EntityManager.Components[EntityComponents.LIFETIME](300));
+
+        return en;
+    }
+
 };
