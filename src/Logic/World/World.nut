@@ -688,6 +688,10 @@ enum WorldMousePressContexts{
     function getWorldId(){
         return mWorldId_;
     }
+    function spawnWorldEffect(effectId, pos){
+        local effectFunc = ::WorldEffects[effectId];
+        return effectFunc(pos, mParentNode_, this);
+    }
     function getPlayerPosition(){
         return mPlayerEntry_.getPosition();
     }

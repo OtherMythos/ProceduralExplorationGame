@@ -19,6 +19,7 @@
         _doFile("script://PlacedItemEnums.nut");
         _doFile("script://ArtifactEnums.nut");
         _doFile("script://CameraEffectEnums.nut");
+        _doFile("script://WorldEffectEnums.nut");
     }
 
     function loadContentFiles(){
@@ -32,6 +33,7 @@
         _doFile("res://src/Content/Artifact.nut");
         _doFile("res://src/Content/ArtifactDefs.nut");
         _doFile("script://VoxelDefs.nut");
+        _doFile("res://src/Content/WorldEffects.nut");
     }
 
     function setupFirst(){
