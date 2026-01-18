@@ -21,3 +21,22 @@
 
     return en;
 }
+
+::WorldEffects[WorldEffectId.WATER_SPLASH] = function(pos, parentSceneNode, world){
+    local manager = world.getEntityManager();
+    local zPos = world.getZForPos(pos);
+    local targetPos = Vec3(pos.x, zPos + 0.1, pos.z);
+
+    local en = manager.createEntity(targetPos);
+
+    local effectNode = parentSceneNode.createChildSceneNode();
+    effectNode.setPosition(targetPos);
+
+    local splashParticleSystem = _scene.createParticleSystem("waterSplash");
+    effectNode.attachObject(splashParticleSystem);
+
+    manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](effectNode, true));
+    manager.assignComponent(en, EntityComponents.LIFETIME, ::EntityManager.Components[EntityComponents.LIFETIME](120));
+
+    return en;
+}

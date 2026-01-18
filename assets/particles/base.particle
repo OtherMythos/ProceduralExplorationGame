@@ -678,3 +678,59 @@ particle_system brokenRockDust
     }
 }
 
+particle_system waterSplash
+{
+    material        ParticleAlphaWhite
+    particle_width  0.2
+    particle_height 0.2
+    cull_each       false
+    quota           2000
+    billboard_type  point
+
+    emitter Ring
+    {
+        angle           45
+        emission_rate   100
+        time_to_live    1.0
+        direction       0 1 0
+        velocity_min    3.0
+        velocity_max    6.0
+        inner_width     0.5
+        inner_height    0.5
+        width           2.0
+        height          2.0
+        depth           0.01
+        duration        0.15
+    }
+
+    affector ColourInterpolator
+    {
+        time0 0
+        colour0 0.6 0.8 1.0 1.0
+
+        time1 0.5
+        colour1 0.7 0.9 1.0 0.8
+
+        time2 1.0
+        colour2 0.6 0.8 1.0 0
+    }
+
+    affector LinearForce
+    {
+        force_vector      0 -12 0
+        force_application add
+    }
+
+    affector Scaler
+    {
+        rate -0.1
+    }
+
+    affector DeflectorPlaneProceduralWorld
+    {
+        plane_point 0 1 0
+        plane_normal 0 1 0
+        bounce 0.3
+    }
+}
+

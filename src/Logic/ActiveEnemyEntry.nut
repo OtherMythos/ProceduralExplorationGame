@@ -219,6 +219,10 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         local inWater = mCreatorWorld_.getIsWaterForPosition(mPos_);
         if(inWater != mInWater_ && mStateMachineModel_){
             mStateMachineModel_.notifyWaterState(inWater);
+            //Trigger water splash effect when entering water
+            if(inWater){
+                mCreatorWorld_.spawnWorldEffect(WorldEffectId.WATER_SPLASH, mPos_);
+            }
         }
         mInWater_ = inWater;
 
