@@ -39,6 +39,9 @@
         },
         "mushrooms.gox": {
             "separateLayers": true
+        },
+        "rocks.gox": {
+            "separateLayers": true
         }
     }
 }

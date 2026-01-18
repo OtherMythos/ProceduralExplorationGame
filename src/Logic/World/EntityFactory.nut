@@ -522,6 +522,16 @@
         placeNode.attachObject(item);
         local scale = d.mScale;
         placeNode.setScale(scale, scale, scale);
+
+        //Apply random Y rotation for rocks to add variation
+        if(itemType == PlacedItemId.ROCK_SMALL_1 || itemType == PlacedItemId.ROCK_SMALL_2 ||
+           itemType == PlacedItemId.ROCK_SMALL_3 || itemType == PlacedItemId.ROCK_SMALL_4 ||
+           itemType == PlacedItemId.ROCK_SMALL_5 || itemType == PlacedItemId.ROCK_SMALL_6 ||
+           itemType == PlacedItemId.ROCK_1 || itemType == PlacedItemId.ROCK_2){
+            local quat = Quat(_random.rand() * PI * 2, ::Vec3_UNIT_Y);
+            placeNode.setOrientation(quat);
+        }
+
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](placeNode, true));
 
         local damageWorld = mConstructorWorld_.getDamageWorld();
@@ -616,6 +626,24 @@
                 collisionPoint, collisionDetectionPoint,
                 damageWorld, collisionDetectionWorld
             ));
+        }else if(
+            itemType == PlacedItemId.ROCK_1 ||
+            itemType == PlacedItemId.ROCK_2 ||
+            itemType == PlacedItemId.ROCK_ORE
+        ){
+            local collisionDetectionWorld = mConstructorWorld_.getCollisionDetectionWorld();
+            local collisionDetectionPoint = collisionDetectionWorld.addCollisionPoint(targetPos.x, targetPos.z, d.mCollisionRadius, 0xFF, _COLLISION_WORLD_ENTRY_SENDER);
+
+            manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO, ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](
+                collisionPoint, collisionDetectionPoint,
+                damageWorld, collisionDetectionWorld
+            ));
+        }else if(itemType == PlacedItemId.ROCK_ORE){
+            //Drop apple as temporary placeholder for ore when destroyed
+            local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SPOILS_DATA, [
+                ::SpoilsEntry(SPOILS_ENTRIES.DROPPED_ITEMS, ::Item(ItemId.APPLE))
+            ], null, null);
+            manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
         }else{
             manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, damageWorld));
         }

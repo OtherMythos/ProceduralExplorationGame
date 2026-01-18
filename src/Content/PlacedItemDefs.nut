@@ -26,3 +26,13 @@
 ::PlacedItems[PlacedItemId.MUSHROOM_1] = PlacedItem("mushrooms.mushroom.1.voxMesh", 0.3);
 ::PlacedItems[PlacedItemId.MUSHROOM_2] = PlacedItem("mushrooms.mushroom.2.voxMesh", 0.3);
 ::PlacedItems[PlacedItemId.MUSHROOM_3] = PlacedItem("mushrooms.mushroom.3.voxMesh", 0.3);
+
+::PlacedItems[PlacedItemId.ROCK_SMALL_1] = PlacedItem("rocks.rockSmall.1.voxMesh", 0.4);
+::PlacedItems[PlacedItemId.ROCK_SMALL_2] = PlacedItem("rocks.rockSmall.2.voxMesh", 0.4);
+::PlacedItems[PlacedItemId.ROCK_SMALL_3] = PlacedItem("rocks.rockSmall.3.voxMesh", 0.4);
+::PlacedItems[PlacedItemId.ROCK_SMALL_4] = PlacedItem("rocks.rockSmall.4.voxMesh", 0.4);
+::PlacedItems[PlacedItemId.ROCK_SMALL_5] = PlacedItem("rocks.rockSmall.5.voxMesh", 0.4);
+::PlacedItems[PlacedItemId.ROCK_SMALL_6] = PlacedItem("rocks.rockSmall.6.voxMesh", 0.4);
+::PlacedItems[PlacedItemId.ROCK_1] = PlacedItem("rocks.rock.1.voxMesh", 0.6, null, 2);
+::PlacedItems[PlacedItemId.ROCK_2] = PlacedItem("rocks.rock.2.voxMesh", 0.6, null, 2);
+::PlacedItems[PlacedItemId.ROCK_ORE] = PlacedItem("rocks.rockOre.1.voxMesh", 0.6, null, 2);

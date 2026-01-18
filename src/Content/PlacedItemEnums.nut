@@ -26,4 +26,14 @@
     MUSHROOM_2,
     MUSHROOM_3,
 
+    ROCK_SMALL_1,
+    ROCK_SMALL_2,
+    ROCK_SMALL_3,
+    ROCK_SMALL_4,
+    ROCK_SMALL_5,
+    ROCK_SMALL_6,
+    ROCK_1,
+    ROCK_2,
+    ROCK_ORE,
+
 ");

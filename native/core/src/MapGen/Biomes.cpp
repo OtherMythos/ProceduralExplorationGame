@@ -287,16 +287,29 @@ namespace ProceduralExplorationGameCore{
 
     void GEOTHERMAL_PLANES_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture, AV::uint8 regionDistance){
         if(altitude >= mapData->seaLevel + 10){
-            if(processRValue(mapData, x, y, 8)){
-                /*
-                if(mapGenRandomIntMinMax(0, 3)==0){
-                    static const PlacedItemId VALS[]={PlacedItemId::FLOWER_RED, PlacedItemId::FLOWER_WHITE, PlacedItemId::FLOWER_PURPLE};
-                    size_t val=mapGenRandomIntMinMax(0, 2);
-                    PLACE_ITEM(VALS[val]);
-                }else if(mapGenRandomIntMinMax(0, 5)==0){
-                    PLACE_ITEM(PlacedItemId::BERRY_BUSH_BERRIES);
+            //Place big rocks where paydirt appears
+            if(moisture >= mapData->seaLevel + 40){
+                if(processRValue(mapData, x, y, 6)){
+                    //Spawn rock ore 30% of the time, regular rocks 70%
+                    if(mapGenRandomIntMinMax(0, 18) < 3){
+                        PLACE_ITEM(PlacedItemId::ROCK_ORE);
+                    }else{
+                        static const PlacedItemId BIG_ROCKS[] = {PlacedItemId::ROCK_1, PlacedItemId::ROCK_2};
+                        size_t val = mapGenRandomIntMinMax(0, 1);
+                        PLACE_ITEM(BIG_ROCKS[val]);
+                    }
                 }
-                */
+            }
+        }else if(altitude >= mapData->seaLevel){
+            int RVal = 7;
+            if(moisture >= mapData->seaLevel + 40){
+                RVal = 4;
+            }
+            if(processRValue(mapData, x, y, RVal)){
+                //Scatter small rocks throughout geothermal area
+                static const PlacedItemId SMALL_ROCKS[] = {PlacedItemId::ROCK_SMALL_1, PlacedItemId::ROCK_SMALL_2, PlacedItemId::ROCK_SMALL_3, PlacedItemId::ROCK_SMALL_4, PlacedItemId::ROCK_SMALL_5, PlacedItemId::ROCK_SMALL_6};
+                size_t val = mapGenRandomIntMinMax(0, 5);
+                PLACE_ITEM(SMALL_ROCKS[val]);
             }
         }
     }
