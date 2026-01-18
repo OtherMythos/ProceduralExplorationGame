@@ -638,14 +638,24 @@
                 collisionPoint, collisionDetectionPoint,
                 damageWorld, collisionDetectionWorld
             ));
-        }else if(itemType == PlacedItemId.ROCK_ORE){
-            //Drop apple as temporary placeholder for ore when destroyed
-            local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SPOILS_DATA, [
-                ::SpoilsEntry(SPOILS_ENTRIES.DROPPED_ITEMS, ::Item(ItemId.APPLE))
-            ], null, null);
-            manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
         }else{
             manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, damageWorld));
+        }
+
+        if(itemType == PlacedItemId.ROCK_ORE){
+            local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SPOILS_DATA, [
+                ::SpoilsEntry(SPOILS_ENTRIES.DROPPED_ITEMS, ::Item(ItemId.APPLE)),
+                ::SpoilsEntry(SPOILS_ENTRIES.SPAWN_WORLD_EFFECT, WorldEffectId.BROKEN_ROCK)
+            ], null, null);
+            manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
+        }else if(
+            itemType == PlacedItemId.ROCK_1 ||
+            itemType == PlacedItemId.ROCK_2
+        ){
+            local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SPOILS_DATA, [
+                ::SpoilsEntry(SPOILS_ENTRIES.SPAWN_WORLD_EFFECT, WorldEffectId.BROKEN_ROCK)
+            ], null, null);
+            manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
         }
 
         local totalHealth = 100;

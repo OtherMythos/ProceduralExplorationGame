@@ -2117,6 +2117,9 @@ enum WorldMousePressContexts{
                 else if(i.mType == SPOILS_ENTRIES.DROPPED_ITEMS){
                     spawnDroppedItem(position, i.mFirst);
                 }
+                else if(i.mType == SPOILS_ENTRIES.SPAWN_WORLD_EFFECT){
+                    spawnWorldEffect(i.mFirst, position);
+                }
             }
         }
         else if(data.mType == SpoilsComponentType.PERCENTAGE){

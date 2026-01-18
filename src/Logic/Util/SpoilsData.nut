@@ -4,7 +4,8 @@ enum SPOILS_ENTRIES{
     COINS,
     SPAWN_ENEMIES,
     DROPPED_ITEMS,
-    SINGLE_ENEMY
+    SINGLE_ENEMY,
+    SPAWN_WORLD_EFFECT
 };
 
 ::SpoilsEntry <- class{
