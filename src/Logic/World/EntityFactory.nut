@@ -213,10 +213,16 @@
         manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](hiveScript));
 
         for(local i = 0; i < 3; i++){
-            local offset = _random.randVec3()-0.5;
-            offset.y = 0;
-            local beeEntity = mConstructorWorld_.createEnemy(EnemyId.BEE, pos + (offset * 15));
-            hiveScript.registerBee(beeEntity);
+            for(local attempt = 0; attempt < 10; attempt++){
+                local offset = _random.randVec3()-0.5;
+                offset.y = 0;
+                local beePos = pos + (offset * 15);
+                local beeEntity = mConstructorWorld_.createEnemyCheckCollision(EnemyId.BEE, beePos);
+                if(beeEntity != null){
+                    hiveScript.registerBee(beeEntity);
+                    break;
+                }
+            }
         }
 
         entry.setPosition(targetPos);
