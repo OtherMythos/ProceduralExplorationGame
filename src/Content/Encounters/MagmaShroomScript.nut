@@ -38,8 +38,8 @@ enum MagmaShroomState{
         mDamageCollisionPoint_ = null;
 
         //Initialise with particles off
-        if(mBuildingParticles_! = null) mBuildingParticles_.setEmitting(false);
-        if(mEmittingParticles_! = null) mEmittingParticles_.setEmitting(false);
+        if(mBuildingParticles_ != null) mBuildingParticles_.setEmitting(false);
+        if(mEmittingParticles_ != null) mEmittingParticles_.setEmitting(false);
 
         //Initialise state machine
         mStateMachine_ = ::MagmaShroomStateMachine(this);
@@ -51,18 +51,18 @@ enum MagmaShroomState{
         mFrameCounter_++;
 
         //Update state machine
-        if(mStateMachine_! = null){
+        if(mStateMachine_ != null){
             mStateMachine_.update();
         }
     }
 
     function setEmissionEnabled_(enabled){
-        if(mBuildingParticles_! = null) mBuildingParticles_.setEmitting(enabled);
-        if(mEmittingParticles_! = null) mEmittingParticles_.setEmitting(enabled);
+        if(mBuildingParticles_ != null) mBuildingParticles_.setEmitting(enabled);
+        if(mEmittingParticles_ != null) mEmittingParticles_.setEmitting(enabled);
     }
 
     function addDamageCollisionPoint_(){
-        if(mDamageCollisionPoint_! = null) return;
+        if(mDamageCollisionPoint_ != null) return;
 
         local damageWorld = mWorld_.getDamageWorld();
         local fireArea = ::Combat.CombatMove(10);
@@ -72,7 +72,7 @@ enum MagmaShroomState{
     }
 
     function removeDamageCollisionPoint_(){
-        if(mDamageCollisionPoint_ =  = null) return;
+        if(mDamageCollisionPoint_ == null) return;
 
         local damageWorld = mWorld_.getDamageWorld();
         damageWorld.removeCollisionPoint(mDamageCollisionPoint_);
@@ -84,10 +84,10 @@ enum MagmaShroomState{
         removeDamageCollisionPoint_();
 
         //Clean up particle systems
-        if(mBuildingParticles_! = null){
+        if(mBuildingParticles_ != null){
             mBuildingParticles_.setEmitting(false);
         }
-        if(mEmittingParticles_! = null){
+        if(mEmittingParticles_ != null){
             mEmittingParticles_.setEmitting(false);
         }
     }
@@ -113,14 +113,14 @@ enum MagmaShroomState{
 
     function start(data){
         mStateTime_ = 0;
-        if(data.mData_.mBuildingParticles_! = null) data.mData_.mBuildingParticles_.setEmitting(false);
-        if(data.mData_.mEmittingParticles_! = null) data.mData_.mEmittingParticles_.setEmitting(false);
+        if(data.mData_.mBuildingParticles_ != null) data.mData_.mBuildingParticles_.setEmitting(false);
+        if(data.mData_.mEmittingParticles_ != null) data.mData_.mEmittingParticles_.setEmitting(false);
     }
 
     function update(data){
         mStateTime_++;
 
-        if(mStateTime_> = data.mData_.mIdleDuration_){
+        if(mStateTime_ >= data.mData_.mIdleDuration_){
             return MagmaShroomState.BUILDING;
         }
     }
@@ -132,13 +132,13 @@ enum MagmaShroomState{
 
     function start(data){
         mStateTime_ = 0;
-        if(data.mData_.mBuildingParticles_! = null) data.mData_.mBuildingParticles_.setEmitting(true);
+        if(data.mData_.mBuildingParticles_ != null) data.mData_.mBuildingParticles_.setEmitting(true);
     }
 
     function update(data){
         mStateTime_++;
 
-        if(mStateTime_> = data.mData_.mBuildingDuration_){
+        if(mStateTime_ >= data.mData_.mBuildingDuration_){
             return MagmaShroomState.EMITTING;
         }
     }
@@ -154,22 +154,22 @@ enum MagmaShroomState{
 
     function start(data){
         mStateTime_ = 0;
-        if(data.mData_.mEmittingParticles_! = null) data.mData_.mEmittingParticles_.setEmitting(true);
-        if(data.mData_.mBuildingParticles_! = null) data.mData_.mBuildingParticles_.setEmitting(false);
+        if(data.mData_.mEmittingParticles_ != null) data.mData_.mEmittingParticles_.setEmitting(true);
+        if(data.mData_.mBuildingParticles_ != null) data.mData_.mBuildingParticles_.setEmitting(false);
         data.mData_.addDamageCollisionPoint_();
     }
 
     function update(data){
         mStateTime_++;
 
-        if(mStateTime_> = data.mData_.mEmittingDuration_){
+        if(mStateTime_ >= data.mData_.mEmittingDuration_){
             return MagmaShroomState.COOLING_DOWN;
         }
     }
 
     function end(data){
         //Stop particle emission when emitting ends
-        if(data.mData_.mEmittingParticles_! = null) data.mData_.mEmittingParticles_.setEmitting(false);
+        if(data.mData_.mEmittingParticles_ != null) data.mData_.mEmittingParticles_.setEmitting(false);
         data.mData_.removeDamageCollisionPoint_();
     }
 };
@@ -185,7 +185,7 @@ enum MagmaShroomState{
     function update(data){
         mStateTime_++;
 
-        if(mStateTime_> = data.mData_.mCoolingDownDuration_){
+        if(mStateTime_ >= data.mData_.mCoolingDownDuration_){
             return MagmaShroomState.IDLE;
         }
     }
