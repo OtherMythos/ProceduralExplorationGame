@@ -71,6 +71,8 @@
         setExplorationActive_(false);
         mCurrentWorld_ = null;
         mQueuedWorlds_.clear();
+
+        mGui_ = null;
     }
 
     function setup(){
