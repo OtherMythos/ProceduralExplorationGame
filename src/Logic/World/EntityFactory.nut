@@ -593,7 +593,7 @@
             else if(itemType == PlacedItemId.FLOWER_WHITE) flowerItem = ItemId.FLOWER_WHITE;
             else if(itemType == PlacedItemId.FLOWER_PURPLE) flowerItem = ItemId.FLOWER_PURPLE;
 
-            local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.GIVE_ITEM, ::Item(flowerItem), null, null);
+            local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.GIVE_ITEM, ::Item(flowerItem), null, null, EntityDestroyReason.CONSUMED);
             manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
         }else if(
             itemType == PlacedItemId.MUSHROOM_1 ||
@@ -613,7 +613,7 @@
             else if(itemType == PlacedItemId.MUSHROOM_2) mushroomItem = ItemId.MUSHROOM_2;
             else if(itemType == PlacedItemId.MUSHROOM_3) mushroomItem = ItemId.MUSHROOM_3;
 
-            local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.GIVE_ITEM, ::Item(mushroomItem), null, null);
+            local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.GIVE_ITEM, ::Item(mushroomItem), null, null, EntityDestroyReason.CONSUMED);
             manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
         }else if(itemType == PlacedItemId.MAGMA_SHROOM){
             //Magma shroom has a script that handles fire effects and damage
@@ -643,7 +643,7 @@
             local magmaShroomScript = ::MagmaShroomScript(en, placeNode, buildingParticles, emittingParticles, mConstructorWorld_, targetPos);
             manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](magmaShroomScript));
 
-            local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.GIVE_ITEM, ::Item(ItemId.MAGMA_SHROOM), null, null);
+            local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.GIVE_ITEM, ::Item(ItemId.MAGMA_SHROOM), null, null, EntityDestroyReason.CONSUMED);
             manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
         }else if(
             itemType == PlacedItemId.SWAMP_TREE_ONE ||
