@@ -416,3 +416,13 @@
     }
 
 };
+
+::EntityManager.Components[EntityComponents.STATUS_AFFLICTION_IMMUNITY] = class extends ::EntityManager.Component{
+
+    mImmunityMask = 0;
+
+    constructor(immunityMask=0){
+        mImmunityMask = immunityMask;
+    }
+
+};

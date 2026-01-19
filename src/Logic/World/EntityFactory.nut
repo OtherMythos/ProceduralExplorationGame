@@ -691,6 +691,17 @@
         local totalHealth = 100;
         manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](totalHealth));
 
+        //Add on-fire immunity to rocks and magma shroom
+        if(itemType == PlacedItemId.ROCK_1 || itemType == PlacedItemId.ROCK_2 || itemType == PlacedItemId.ROCK_ORE ||
+           itemType == PlacedItemId.ROCK_SMALL_1 || itemType == PlacedItemId.ROCK_SMALL_2 ||
+           itemType == PlacedItemId.ROCK_SMALL_3 || itemType == PlacedItemId.ROCK_SMALL_4 ||
+           itemType == PlacedItemId.ROCK_SMALL_5 || itemType == PlacedItemId.ROCK_SMALL_6 ||
+           itemType == PlacedItemId.MAGMA_SHROOM){
+            local fireImmunityMask = 1 << StatusAfflictionType.ON_FIRE;
+            manager.assignComponent(en, EntityComponents.STATUS_AFFLICTION_IMMUNITY,
+                ::EntityManager.Components[EntityComponents.STATUS_AFFLICTION_IMMUNITY](fireImmunityMask));
+        }
+
         //Register the placed item in the manager
         _gameCore.registerPlacedItem(itemType, en, itemData.originX, itemData.originY);
 

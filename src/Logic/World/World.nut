@@ -1121,6 +1121,14 @@ enum WorldMousePressContexts{
         }
     }
     function applyStatusAffliction(entity, afflictionType, lifetime){
+        //Check for immunity before applying
+        if(mEntityManager_.hasComponent(entity, EntityComponents.STATUS_AFFLICTION_IMMUNITY)){
+            local immunityComp = mEntityManager_.getComponent(entity, EntityComponents.STATUS_AFFLICTION_IMMUNITY);
+            if(immunityComp.mImmunityMask & (1 << afflictionType)){
+                return;
+            }
+        }
+
         local c = ::EntityManager.Components[EntityComponents.STATUS_AFFLICTION];
         local comp = null;
         if(!mEntityManager_.hasComponent(entity, EntityComponents.STATUS_AFFLICTION)){
