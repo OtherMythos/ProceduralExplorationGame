@@ -1335,6 +1335,10 @@ enum WorldMousePressContexts{
     }
 
     function spawnTeleviseEnemy(enemyType, pos, lifetime=200){
+        local placementValid = checkEnemyCollisionPlacement(pos);
+        if(!placementValid){
+            return;
+        }
         mEntityFactory_.constructEnemyTeleviseObject(pos, enemyType, lifetime);
     }
 
