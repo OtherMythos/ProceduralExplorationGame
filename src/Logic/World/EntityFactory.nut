@@ -235,6 +235,11 @@
         return !(collisionWorld.checkCollisionPoint(x, y, COLLISION_DETECTION_RADIUS, 0xFF, playerColliderId));
     }
 
+    function checkPlayerCollisionPlacement(x, y, playerColliderId){
+        local collisionWorld = mConstructorWorld_.getCollisionDetectionWorld();
+        return !(collisionWorld.checkCollisionPoint(x, y, COLLISION_DETECTION_RADIUS, _COLLISION_PLAYER, playerColliderId));
+    }
+
     function constructEnemyBase_(enemyType, pos, explorationScreen){
         local enemyDef = ::Enemies[enemyType];
         local enemyStats = enemyDef.getStats();

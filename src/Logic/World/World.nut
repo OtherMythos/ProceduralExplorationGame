@@ -1304,20 +1304,36 @@ enum WorldMousePressContexts{
 
     function spawnEXPOrbs(pos, num, spread=4){
         for(local i = 0; i < num; i++){
-            local randDir = (_random.rand()*2-1) * PI;
+            for(local y = 0; y < 10; y++){
+                local randDir = (_random.rand()*2-1) * PI;
 
-            //local targetPos = pos + (Vec3(_random.rand()-0.5, 0, _random.rand()-0.5) * spread);
-            local targetPos = pos + (Vec3(sin(randDir) * spread, 0, cos(randDir) * spread));
-            mEntityFactory_.constructEXPOrb(targetPos);
+                local targetPos = pos + (Vec3(sin(randDir) * spread, 0, cos(randDir) * spread));
+
+                local placementValid = checkPlayerCollisionPlacement(targetPos);
+                if(!placementValid){
+                    continue;
+                }
+
+                mEntityFactory_.constructEXPOrb(targetPos);
+                break;
+            }
         }
     }
 
     function spawnMoney(pos, num, spread=4){
         for(local i = 0; i < num; i++){
-            local randDir = (_random.rand()*2-1) * PI;
+            for(local y = 0; y < 10; y++){
+                local randDir = (_random.rand()*2-1) * PI;
 
-            local targetPos = pos + (Vec3(sin(randDir) * spread, 0, cos(randDir) * spread));
-            mEntityFactory_.constructMoneyObject(targetPos);
+                local targetPos = pos + (Vec3(sin(randDir) * spread, 0, cos(randDir) * spread));
+
+                local placementValid = checkPlayerCollisionPlacement(targetPos);
+                if(!placementValid){
+                    continue;
+                }
+                mEntityFactory_.constructMoneyObject(targetPos);
+                break;
+            }
         }
     }
 
@@ -1796,6 +1812,10 @@ enum WorldMousePressContexts{
     }
     function checkEnemyCollisionPlacement(pos){
         local placed = mEntityFactory_.checkEnemyCollisionPlacement(pos.x, pos.z, mPlayerIgnorePointId_);
+        return placed;
+    }
+    function checkPlayerCollisionPlacement(pos){
+        local placed = mEntityFactory_.checkPlayerCollisionPlacement(pos.x, pos.z, mPlayerIgnorePointId_);
         return placed;
     }
     function appearEnemy(pos){
