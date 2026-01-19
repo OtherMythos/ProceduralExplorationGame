@@ -27,6 +27,26 @@ local Biome = class{
     function getShowDiscoveredPopup() { return mShowDiscoveredPopup; }
 };
 
+local GeoThermalLogic = {
+    "setup": function(regionData, world){
+        local outPoints = [];
+        foreach(p in regionData.coords){
+            if(::currentNativeMapData.getIsWaterForPoint(p)){
+                outPoints.append(p);
+            }
+        }
+        if(outPoints.len() == 0) return;
+
+        local particleSystemNode = world.mParentNode_.createChildSceneNode(_SCENE_DYNAMIC);
+        local particleSystem = _scene.createParticleSystem("hotSpringsWater");
+        particleSystemNode.attachObject(particleSystem);
+        particleSystemNode.setPosition(0, 0, 0);
+        particleSystemNode.setScale(600, 1, 600);
+
+        _gameCore.setupParticleEmitterPoints(particleSystem, outPoints);
+    }
+};
+
 local HotSpringsLogic = {
     "mHotSpringsComponentId_": null,
 
@@ -80,6 +100,6 @@ local HotSpringsLogic = {
 ::Biomes[BiomeId.SWAMP] = Biome("Swamp", [EnemyId.GOBLIN], Vec3(0.05, 0.1, 0.08), Vec3(0.25, 0.25, 0.25), 0.25, Vec2(50, 200));
 ::Biomes[BiomeId.HOT_SPRINGS] = Biome("Hot Springs", [EnemyId.GOBLIN], null, null, null, null, HotSpringsLogic, false);
 ::Biomes[BiomeId.MUSHROOM_CLUSTER] = Biome("Mushroom Cluster", [EnemyId.GOBLIN], null, null, null, null, null, false);
-::Biomes[BiomeId.GEOTHERMAL_PLANES] = Biome("Geothermal Planes", [EnemyId.GOBLIN], null, null, null, null, HotSpringsLogic, false);
+::Biomes[BiomeId.GEOTHERMAL_PLANES] = Biome("Geothermal Planes", [EnemyId.GOBLIN], null, null, null, null, GeoThermalLogic);
 ::Biomes[BiomeId.SHALLOW_OCEAN] = Biome("Shallow Ocean", [EnemyId.SQUID], null, null, null, null);
 ::Biomes[BiomeId.DEEP_OCEAN] = Biome("Deep Ocean", [EnemyId.SQUID], null, null, null, null);
