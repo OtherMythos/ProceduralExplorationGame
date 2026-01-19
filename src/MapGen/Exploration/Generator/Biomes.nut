@@ -68,7 +68,7 @@ local HotSpringsLogic = {
         _gameCore.setupParticleEmitterPoints(particleSystem, outPoints);
 
         local centrePos = ::MapGenHelpers.getPositionForPoint(regionData.centrePoint);
-        world.mEntityFactory_.constructGenericDescriptionTrigger(centrePos, "hot springs", regionData.radius);
+        world.mEntityFactory_.constructGenericDescriptionTrigger(centrePos, "hot springs", regionData.radius, 0.5);
     },
     "update": function(world){
         //TODO add hot springs specific logic here

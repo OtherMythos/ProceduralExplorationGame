@@ -1316,7 +1316,7 @@
         constructGenericDescriptionTrigger(pos, placeDef.getName(), radius);
     }
 
-    function constructGenericDescriptionTrigger(pos, descriptionText, radius){
+    function constructGenericDescriptionTrigger(pos, descriptionText, radius, heightModifier=1.0){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = pos.copy();
         targetPos.y = getZForPos(targetPos);
@@ -1325,7 +1325,7 @@
         local billboardPos = targetPos.copy();
         local radiusDist = (radius * 0.75);
         if(radiusDist >= 12) radiusDist = 12;
-        billboardPos.y += radiusDist;
+        billboardPos.y += (radiusDist * heightModifier);
 
         local en = manager.createEntity(targetPos);
 
