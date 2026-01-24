@@ -341,7 +341,7 @@ enum ExplorationScreenWidgetType{
             local c = GREEN;
             if(percentage <= 0.5){
                 c = GREEN;
-            }else if(percentage > 0.5 && percentage <= 0.8){
+            }else if(percentage > 0.5 && percentage < 1.0){
                 c = YELLOW;
             }else{
                 c = RED;
