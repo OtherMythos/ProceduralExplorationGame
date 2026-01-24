@@ -75,7 +75,8 @@
         _doFile("res://src/Content/CameraEffectDefs.nut");
 
         //Particles must be loaded later to ensure the custom emitters from the plugin are registered.
-        _resources.addResourceLocation("res://build/assets/particles", "FileSystem", "Particles");
+        local platform = _settings.getPlatform();
+        _resources.addResourceLocation("res://build/assets/particles", platform == _PLATFORM_ANDROID ? "APKFileSystem" : "FileSystem", "Particles");
         _resources.initialiseResourceGroup("Particles");
     }
 
