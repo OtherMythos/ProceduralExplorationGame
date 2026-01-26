@@ -8,6 +8,7 @@
         mMeshNode_ = null;
 
         mCurrentScreenPos_ = null;
+        mCurrentScreenSize_ = null;
         mCentreMesh_ = false;
         mDebugPanel_ = null;
         mDebugWindow_ = null;
@@ -30,7 +31,11 @@
 
             if(mNode_){
                 //The node already exists, so re-create only the item.
-                mNode_.recursiveDestroyAttachedObjects();
+                if(mCentreMesh_){
+                    mNode_.getChild(0).destroyNodeAndChildren();
+                }else{
+                    mNode_.recursiveDestroyAttachedObjects();
+                }
             }else{
                 mNode_ = mParentNode_.createChildSceneNode();
             }
@@ -54,6 +59,11 @@
             }
 
             mMeshItem_ = item;
+
+            if(mCurrentScreenSize_ != null){
+                setSize(mCurrentScreenSize_.x, mCurrentScreenSize_.y);
+                setPosition(mCurrentScreenPos_);
+            }
         }
 
         function destroy(){
@@ -92,6 +102,10 @@
          */
         function setSize(width, height){
             if(!mNode_) return;
+
+            mCurrentScreenSize_ = Vec2(width, height);
+            mNode_.setScale(1, 1, 1);
+
             local aabb = mMeshItem_.getLocalAabb();
             local sizeVec = aabb.getHalfSize();
             local y = sizeVec.y > sizeVec.x;

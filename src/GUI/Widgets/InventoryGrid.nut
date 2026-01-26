@@ -141,7 +141,7 @@
                 mItemIcons_[x + y * inventoryWidth] = iconPanel;
 
                 //Create render icon for 3D mesh display
-                local renderIcon = ::RenderIconManager.createIcon("smallPotion.voxMesh", false);
+                local renderIcon = ::RenderIconManager.createIcon("smallPotion.voxMesh", true);
                 local iconCentrePos = Vec2(x * gridRatio, y * gridRatio);
                 renderIcon.setPosition(iconCentrePos);
                 local renderSize = iconSize + iconSize * 0.1;

@@ -123,7 +123,7 @@
 
         //Update final position for animation without resetting animation state
         mFoundAnimationFinalPos_ = meshPanelCentre;
-        mFoundAnimationFinalSize_ = Vec2(mMeshSize_.x * 0.5, mMeshSize_.y * 0.5);
+        mFoundAnimationFinalSize_ = Vec2(mMeshSize_.x, mMeshSize_.y);
 
         //Only initialise animation on first call (when progress is 0)
         if(mFoundAnimationProgress_ == 0.0){
