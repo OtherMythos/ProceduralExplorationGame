@@ -11,6 +11,8 @@
     mInventoryWidth_ = 5;
     mInventoryHeight_ = 5;
 
+    INNER_PADDING = 5;
+
     mInventory_ = null;
     mInventoryGrid_ = null;
 
@@ -30,7 +32,7 @@
         mBackgroundPanel_.setDatablock("simpleGrey");
         mBackgroundPanel_.setPosition(0, yPos);
 
-        local innerPadding = 5;
+        local innerPadding = INNER_PADDING;
 
         mTitle_ = mParent_.createLabel();
         mTitle_.setDefaultFontSize(mTitle_.getDefaultFontSize() * 1.1);
@@ -121,7 +123,7 @@
     }
 
     function notifyPositionChanged(){
-        mInventoryGrid_.notifyPositionChanged();
+        mInventoryGrid_.notifyPositionChanged(INNER_PADDING);
     }
 
     function handleBuyEvent(data){

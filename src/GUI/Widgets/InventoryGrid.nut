@@ -439,11 +439,12 @@
         }
     }
 
-    function notifyPositionChanged(){
+    function notifyPositionChanged(offset=0){
+        local offsetVec = Vec2(offset, offset);
         for(local idx = 0; idx < mRenderIcons_.len(); idx++){
             if(mRenderIcons_[idx] != null){
                 local iconCentrePos = mItemIcons_[idx].getDerivedCentre();
-                mRenderIcons_[idx].setPosition(iconCentrePos);
+                mRenderIcons_[idx].setPosition(iconCentrePos + offsetVec);
             }
         }
     }
