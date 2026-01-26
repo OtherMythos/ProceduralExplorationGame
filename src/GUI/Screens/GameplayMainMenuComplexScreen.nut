@@ -434,6 +434,13 @@ enum GameplayComplexMenuBusEvents{
         shopStart.x = 0;
         mShopPanel_.setup(shopStart);
     }
+
+    function shutdown(){
+        mShopPanel_.shutdown();
+
+        base.shutdown();
+    }
+
 };
 
 //TODO move this out of global space

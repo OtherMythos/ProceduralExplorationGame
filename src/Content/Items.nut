@@ -101,7 +101,6 @@ enum ItemEquipTransformType{
     function getName(){ return mName; }
     function getDescription(){ return mDesc; }
     function getDefData(){ return mDefData; }
-    function getMesh(){ return mMesh; }
     function getSellValue(){ return mSellValue; }
     function getScrapVal(){ return (mSellValue*0.4).tointeger(); }
     function getEquippableData(){ return mEquippableData; }
@@ -114,6 +113,7 @@ enum ItemEquipTransformType{
     }
 
     function getIcon(){ return mIcon == null ? "icon_none" : mIcon; }
+    function getMesh(){ return mMesh == null ? "smallPotion.voxMesh" : mMesh; }
 }
 
 ::ItemEquipTransform <- class{

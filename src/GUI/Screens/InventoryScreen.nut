@@ -843,6 +843,18 @@ enum InventoryBusEvents{
         if(mPlayerInspector_ != null){
             mPlayerInspector_.shutdown();
         }
+        if(mInventoryGrid_ != null){
+            mInventoryGrid_.shutdown();
+        }
+        if(mInventoryEquippedGrid_ != null){
+            mInventoryEquippedGrid_.shutdown();
+        }
+        if(mSecondaryInventoryGrid_ != null){
+            mSecondaryInventoryGrid_.shutdown();
+        }
+        if(mStorageGrid_ != null){
+            mStorageGrid_.shutdown();
+        }
         //base.shutdown();
         _event.unsubscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent);
         _event.unsubscribe(Event.STORAGE_CONTENTS_CHANGED, receiveStorageChangedEvent);

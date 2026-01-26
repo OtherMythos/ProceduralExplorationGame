@@ -148,6 +148,8 @@
 
     function shutdown(){
         mInventoryBus_.deregisterCallback(mBusCallbackId_);
+
+        mInventoryGrid_.shutdown();
     }
 
 };

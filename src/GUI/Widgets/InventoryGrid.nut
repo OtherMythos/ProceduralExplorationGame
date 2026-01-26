@@ -38,6 +38,7 @@
     mMultiSelection_ = null;
     mSelectedItems_ = null;
     mSelectionIndicators_ = null;
+    mRenderIcons_ = null;
 
     constructor(inventoryType, bus, hoverInfo, buttonCover, multiSelection = false){
         mInventoryType_ = inventoryType;
@@ -49,6 +50,7 @@
         mMultiSelection_ = multiSelection;
         mSelectedItems_ = [];
         mSelectionIndicators_ = [];
+        mRenderIcons_ = [];
     }
 
     /**
@@ -64,6 +66,7 @@
         //assert(mInventoryWidth_ * mInventoryHeight_ == inv.len());
         for(local i = offset; i < inv.len() - offset; i++){
             local widget = mItemIcons_[i - offset];
+            local renderIcon = mRenderIcons_[i - offset];
             local item = inv[i];
 
             if(mInventoryType_ == InventoryGridType.INVENTORY_EQUIPPABLES){
@@ -72,12 +75,20 @@
             }
             if(item == null){
                 widget.setVisible(false);
+                if(renderIcon != null){
+                    renderIcon.setVisible(false);
+                }
                 //Skip this to save a bit of time.
                 //widget.setSkin("item_none");
                 continue;
             }
             widget.setVisible(true);
             widget.setSkin(item.getIcon());
+            widget.setVisualsEnabled(false);
+            renderIcon.setMesh(item.getMesh());
+            if(renderIcon != null){
+                renderIcon.setVisible(true);
+            }
         }
     }
 
@@ -128,6 +139,19 @@
                 iconPanel.setSkin("item_none");
                 iconPanel.setVisible(false);
                 mItemIcons_[x + y * inventoryWidth] = iconPanel;
+
+                //Create render icon for 3D mesh display
+                local renderIcon = ::RenderIconManager.createIcon("smallPotion.voxMesh", false);
+                local iconCentrePos = Vec2(x * gridRatio, y * gridRatio);
+                renderIcon.setPosition(iconCentrePos);
+                local renderSize = iconSize + iconSize * 0.1;
+                renderIcon.setSize(renderSize, renderSize);
+                local orientation = Quat();
+                orientation += Quat(0.5, ::Vec3_UNIT_Y);
+                orientation += Quat(-0.5, ::Vec3_UNIT_Z);
+                orientation += Quat(1.0, ::Vec3_UNIT_X);
+                renderIcon.setOrientation(orientation);
+                mRenderIcons_.append(renderIcon);
 
                 local item = parentWin.createButton();
                 item.setHidden(false);
@@ -346,7 +370,12 @@
     }
 
     function shutdown(){
-
+        foreach(renderIcon in mRenderIcons_){
+            if(renderIcon != null){
+                renderIcon.destroy();
+            }
+        }
+        mRenderIcons_.clear();
     }
 
     function busCallback(event, data){
@@ -368,8 +397,12 @@
         foreach(i in mWidgets_){
             i.setPosition(i.getPosition() + pos);
         }
-        foreach(i in mItemIcons_){
+        foreach(c,i in mItemIcons_){
             i.setPosition(i.getPosition() + pos);
+
+            if(mRenderIcons_[c] != null){
+                mRenderIcons_[c].setPosition(i.getCentre());
+            }
         }
     }
     function setSize(size){
@@ -400,6 +433,10 @@
         mWidgets_[idx].setPosition(pos);
         mItemIcons_[idx].setPosition(pos + mGridPadding_);
         mBackgrounds_[idx].setPosition(pos);
+        if(mRenderIcons_[idx] != null){
+            local iconCentrePos = pos + (mBackgrounds_[idx].getSize() / 2);
+            mRenderIcons_[idx].setPosition(iconCentrePos);
+        }
     }
 
     function toggleSelection_(idx){

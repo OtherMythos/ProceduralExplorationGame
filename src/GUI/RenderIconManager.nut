@@ -9,16 +9,18 @@
 
         mCurrentScreenPos_ = null;
         mCentreMesh_ = false;
+        mDebugPanel_ = null;
+        mDebugWindow_ = null;
 
-        constructor(parentNode, centreMesh=false){
+        constructor(parentNode, centreMesh=false, debugWindow=null){
             mParentNode_ = parentNode;
             mCentreMesh_ = centreMesh;
+            mDebugWindow_ = debugWindow;
             //this.mParentNode_.setVisible(false);
         }
 
         function setMesh(mesh){
             mMesh_ = mesh;
-            mCurrentScreenPos_ = Vec2();
             if(mMesh_ == null){
                 if(mNode_) mNode_.destroyNodeAndChildren();
                 mNode_ = null;
@@ -60,13 +62,28 @@
             mNode_ = null;
             mMesh_ = null;
             mMeshItem_ = null;
+
+            if(mDebugPanel_){
+                _gui.destroy(mDebugPanel_);
+                mDebugPanel_ = null;
+            }
         }
 
         function setPosition(pos){
             if(!mNode_) return;
-            mCurrentScreenPos_ = pos;
+            mCurrentScreenPos_ = pos.copy();
             local objectPos = ::EffectManager.getWorldPositionForWindowPos(mCurrentScreenPos_);
+            print("objet post" + objectPos);
             mNode_.setPosition(objectPos.x, objectPos.y, 70);
+
+            if(mDebugPanel_){
+                mDebugPanel_.setCentre(mCurrentScreenPos_.x, mCurrentScreenPos_.y);
+            }
+        }
+
+        function setVisible(visible){
+            if(!mNode_) return;
+            mNode_.setVisible(visible);
         }
 
         /**
@@ -85,7 +102,13 @@
 
             local newScale = y ? -percentage.y : percentage.x;
 
+            newScale *= 0.5;
             mNode_.setScale(newScale, newScale, newScale);
+
+            if(mDebugPanel_){
+                mDebugPanel_.setSize(width, height);
+                mDebugPanel_.setCentre(mCurrentScreenPos_.x, mCurrentScreenPos_.y);
+            }
         }
 
         function setOrientation(orientation){
@@ -100,9 +123,20 @@
 
     mActiveIcons_ = []
     mParentNode_ = null
+    mDebugPanelsEnabled_ = false
+    mDebugWindow_ = null
 
     function setup(){
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
+
+        if(mDebugPanelsEnabled_){
+            mDebugWindow_ = _gui.createWindow();
+            mDebugWindow_.setZOrder(150);
+            mDebugWindow_.setSize(_window.getSize().x, _window.getSize().y);
+            mDebugWindow_.setClipBorders(0, 0, 0, 0);
+            mDebugWindow_.setClickable(false);
+            //mDebugWindow_.setVisualsEnabled(false);
+        }
     }
 
     function update(){
@@ -110,10 +144,24 @@
     }
 
     function createIcon(mesh = null, centreMesh = false){
-        local newIcon = RenderIcon(mParentNode_, centreMesh);
+        local newIcon = RenderIcon(mParentNode_, centreMesh, mDebugWindow_);
         if(mesh != null){
             newIcon.setMesh(mesh);
         }
+
+        if(mDebugPanelsEnabled_ && mDebugWindow_){
+            local debugPanel = mDebugWindow_.createPanel();
+            local r = (_random.rand() % 100) / 100.0;
+            local g = (_random.rand() % 100) / 100.0;
+            local b = (_random.rand() % 100) / 100.0;
+            debugPanel.setColour(ColourValue(r, g, b, 0.3));
+            debugPanel.setClickable(false);
+            newIcon.mDebugPanel_ = debugPanel;
+        }
+
+        newIcon.setPosition(_window.getSize() / 2);
+        newIcon.setSize(100, 100);
+
         mActiveIcons_.append(newIcon);
         return newIcon;
     }
