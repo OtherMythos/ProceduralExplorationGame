@@ -120,6 +120,10 @@
         ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.INVENTORY_ITEM_HELPER_SCREEN, data), null, 3);
     }
 
+    function notifyPositionChanged(){
+        mInventoryGrid_.notifyPositionChanged();
+    }
+
     function handleBuyEvent(data){
         local idx = data.idx;
         local shopItem = mInventory_[idx];

@@ -439,6 +439,15 @@
         }
     }
 
+    function notifyPositionChanged(){
+        for(local idx = 0; idx < mRenderIcons_.len(); idx++){
+            if(mRenderIcons_[idx] != null){
+                local iconCentrePos = mItemIcons_[idx].getDerivedCentre();
+                mRenderIcons_[idx].setPosition(iconCentrePos);
+            }
+        }
+    }
+
     function toggleSelection_(idx){
         if(idx < 0 || idx >= mSelectedItems_.len()) return;
         mSelectedItems_[idx] = !mSelectedItems_[idx];

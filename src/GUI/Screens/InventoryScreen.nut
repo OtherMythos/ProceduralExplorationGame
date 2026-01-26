@@ -832,6 +832,21 @@ enum InventoryBusEvents{
         mHoverInfo_.setVisible(true);
     }
 
+    function notifyPositionChanged(){
+        if(mInventoryGrid_ != null){
+            mInventoryGrid_.notifyPositionChanged();
+        }
+        if(mInventoryEquippedGrid_ != null){
+            mInventoryEquippedGrid_.notifyPositionChanged();
+        }
+        if(mSecondaryInventoryGrid_ != null){
+            mSecondaryInventoryGrid_.notifyPositionChanged();
+        }
+        if(mStorageGrid_ != null){
+            mStorageGrid_.notifyPositionChanged();
+        }
+    }
+
     function setZOrder(idx){
         mOverlayWindow_.setZOrder(idx+1);
     }

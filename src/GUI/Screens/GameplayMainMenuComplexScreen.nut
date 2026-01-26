@@ -425,6 +425,8 @@ enum GameplayComplexMenuBusEvents{
     mBankPanel_ = null;
     mShopPanel_ = null;
 
+    mCurrentPos_ = null;
+
     function recreate(){
         mBankPanel_ = ::BankWidget(mWindow_);
         mBankPanel_.setup();
@@ -433,6 +435,8 @@ enum GameplayComplexMenuBusEvents{
         local shopStart = mBankPanel_.getSize() + 10;
         shopStart.x = 0;
         mShopPanel_.setup(shopStart);
+
+        mCurrentPos_ = Vec2();
     }
 
     function shutdown(){
@@ -441,12 +445,23 @@ enum GameplayComplexMenuBusEvents{
         base.shutdown();
     }
 
+    function setPosition(pos){
+        base.setPosition(pos);
+
+        if(pos.x != mCurrentPos_.x || pos.y != mCurrentPos_.y){
+            mCurrentPos_ = pos;
+            mShopPanel_.notifyPositionChanged();
+        }
+    }
+
 };
 
 //TODO move this out of global space
 ::InventoryWindow <- class extends ::ScreenManager.Screens[Screen.GAMEPLAY_MAIN_MENU_COMPLEX_SCREEN].TabWindow{
 
     mInventoryObj_ = null;
+
+    mCurrentPos_ = null;
 
     function recreate(){
         mWindow_.setClipBorders(0, 0, 0, 0);
@@ -465,11 +480,22 @@ enum GameplayComplexMenuBusEvents{
         local maxScroll = mWindow_.getMaxScroll();
         maxScroll.y += 50;
         mWindow_.setMaxScroll(maxScroll);
+
+        mCurrentPos_ = Vec2();
     }
 
     function setZOrder(idx){
         base.setZOrder(idx);
         mInventoryObj_.setZOrder(idx);
+    }
+
+    function setPosition(pos){
+        base.setPosition(pos);
+
+        if(pos.x != mCurrentPos_.x || pos.y != mCurrentPos_.y){
+            mCurrentPos_ = pos;
+            mInventoryObj_.notifyPositionChanged();
+        }
     }
 
     function update(){
