@@ -75,7 +75,7 @@ enum CompositorSceneType{
         mEffectCam.lookAt(0, 0, 0);
         mEffectCam.setAspectRatio(_window.getWidth().tofloat() / _window.getHeight().tofloat());
         mEffectCam.setProjectionType(_PT_ORTHOGRAPHIC);
-        mEffectCam.setOrthoWindow(20, 20);
+        mEffectCam.setOrthoWindow(_window.getWidth().tofloat(), _window.getHeight().tofloat());
 
         ::FGEffectCamera <- mEffectCam;
 
