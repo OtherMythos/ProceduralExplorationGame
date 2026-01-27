@@ -121,9 +121,9 @@
 
         //Get the size of a grid relative to some universal metric.
         local gridRatio = ::ScreenManager.calculateRatio(gridSize);
-        local gridPadding = gridRatio * 0.125;
+        local gridPadding = gridRatio * 0;
         mGridPadding_ = gridPadding;
-        local iconSize = ::ScreenManager.calculateRatio(gridSize.tofloat() * 0.75);
+        local iconSize = ::ScreenManager.calculateRatio(gridSize.tofloat() * 1.0);
         if(mButtonCover_) mButtonCover_.setSize(gridRatio, gridRatio);
         for(local y = 0; y < inventoryHeight; y++){
             for(local x = 0; x < inventoryWidth; x++){
@@ -144,7 +144,7 @@
                 local renderIcon = ::RenderIconManager.createIcon("smallPotion.voxMesh", true, true);
                 local iconCentrePos = Vec2(x * gridRatio, y * gridRatio);
                 renderIcon.setPosition(iconCentrePos);
-                local renderSize = iconSize + iconSize * 0.1;
+                local renderSize = iconSize * 1.0;
                 renderIcon.setSize(renderSize, renderSize);
                 local orientation = Quat();
                 orientation += Quat(0.5, ::Vec3_UNIT_Y);

@@ -55,11 +55,7 @@ enum CompositorSceneType{
 
         for(local i = 0; i < CompositorSceneType.MAX; i++){
             local newTex = _graphics.createTexture("compositor/renderTexture" + i);
-            if(i == CompositorSceneType.RENDER_ICONS){
-                newTex.setResolution(_window.getWidth(), _window.getHeight());
-            }else{
-                newTex.setResolution(100, 100);
-            }
+            newTex.setResolution(100, 100);
             newTex.scheduleTransitionTo(_GPU_RESIDENCY_RESIDENT);
             mTextures_.append(newTex);
         }
@@ -86,7 +82,7 @@ enum CompositorSceneType{
 
         setGameplayActive(false);
 
-        createRenderIconsWorkspace(_window.getSize());
+        createRenderIconsWorkspace(_window.getSize() * ::resolutionMult);
     }
 
     function addExtraTexture(texture){

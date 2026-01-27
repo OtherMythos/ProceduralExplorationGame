@@ -136,6 +136,7 @@
             local newScale = y ? -percentage.y : percentage.x;
 
             newScale *= 0.5;
+            newScale *= 0.75;
             mNode_.setScale(newScale, newScale, newScale);
 
             //Update holepunch matrix if using cutout material
@@ -267,7 +268,11 @@
         if(datablock != null){
             local texture = ::CompositorManager.mTextures_[CompositorSceneType.RENDER_ICONS];
 
-            datablock.setTexture(0, texture);
+            //local sampler = _hlms.getSamplerblock({
+            //    "mag": "point"
+            //});
+            //datablock.setTexture(0, texture, sampler);
+            datablock.setTexture(0, texture, sampler);
             datablock.setEnableAnimationMatrix(0, true);
         }
     }
