@@ -357,6 +357,7 @@ compositor_node renderWindowNode
     in 3 texture1
     in 4 texture2
     in 5 texture3
+    in 6 texture4
 
     target renderWindowTexture
     {
@@ -369,6 +370,7 @@ compositor_node renderWindowNode
             expose texture1
             expose texture2
             expose texture3
+            expose texture4
 
             load
             {
@@ -425,6 +427,7 @@ workspace renderWindowWorkspaceGameplay
     connect_external 3 renderWindowNode 3
     connect_external 4 renderWindowNode 4
     connect_external 5 renderWindowNode 5
+    connect_external 6 renderWindowNode 6
 }
 
 workspace renderWindowWorkspaceGameplayWithEffects
@@ -440,6 +443,7 @@ workspace renderWindowWorkspaceGameplayWithEffects
     connect_external 3 renderWindowNode 3
     connect_external 4 renderWindowNode 4
     connect_external 5 renderWindowNode 5
+    connect_external 6 renderWindowNode 6
 }
 
 workspace renderWindowWorkspace
@@ -454,4 +458,5 @@ workspace renderWindowWorkspace
     connect_external 3 renderWindowNode 3
     connect_external 3 renderWindowNode 4
     connect_external 3 renderWindowNode 5
+    connect_external 4 renderWindowNode 6
 }
