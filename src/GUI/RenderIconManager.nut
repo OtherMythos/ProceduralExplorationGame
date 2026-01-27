@@ -272,7 +272,7 @@
             //    "mag": "point"
             //});
             //datablock.setTexture(0, texture, sampler);
-            datablock.setTexture(0, texture, sampler);
+            datablock.setTexture(0, texture);
             datablock.setEnableAnimationMatrix(0, true);
         }
     }
