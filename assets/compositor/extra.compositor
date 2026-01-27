@@ -95,6 +95,27 @@ compositor_node compositor/GameplayExplorationCompassNode
     out 0 renderTexture
 }
 
+compositor_node compositor/RenderIconsNode
+{
+    in 0 renderTexture
+    target renderTexture
+    {
+        pass clear
+        {
+            colour_value 0 0 0 0
+        }
+        pass render_scene
+        {
+            rq_first 70
+            rq_last 71
+
+            camera compositor/foregroundEffectCamera
+
+            identifier 10
+        }
+    }
+}
+
 workspace renderTextureInventoryWorkspace
 {
     connect_output renderTextureInventoryNode 0
@@ -114,4 +135,8 @@ workspace compositor/GamplayInventoryRingWorkspace
 workspace compositor/GamplayExplorationCompassWorkspace
 {
     connect_output compositor/GameplayExplorationCompassNode 0
+}
+workspace compositor/RenderIconsWorkspace
+{
+    connect_output compositor/RenderIconsNode 0
 }
