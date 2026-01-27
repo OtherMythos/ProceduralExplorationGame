@@ -152,8 +152,8 @@ enum InventoryItemHelperScreenFunctions{
         panelContainerWindow.setClickable(false);
 
         local panelSize = mData_.gridItemSize;
-        local gridPadding = panelSize * 0.125;
-        local iconSize = panelSize * 0.75;
+        local gridPadding = panelSize;
+        local iconSize = panelSize;
 
         local background = panelContainerWindow.createPanel();
         background.setSize(panelSize);
@@ -161,16 +161,19 @@ enum InventoryItemHelperScreenFunctions{
         background.setClickable(false);
 
         local iconPanel = panelContainerWindow.createPanel();
-        iconPanel.setSize(panelSize * 0.75);
+        iconPanel.setSize(panelSize);
         iconPanel.setPosition(gridPadding);
-        //Ensure the default is set to something valid.
-        iconPanel.setSkin("item_none");
-        iconPanel.setSkin(item.getIcon());
         iconPanel.setClickable(false);
 
         panelContainerWindow.setSize(panelSize);
         panelContainerWindow.setPosition(mData_.gridItemPos);
         mPanelContainerWindow_ = panelContainerWindow;
+
+        //Create holepunch datablock for rendering from the render icons texture
+        local panelDerivedPos = iconPanel.getDerivedPosition();
+        local panelSize3d = iconPanel.getSize();
+        local datablock = ::RenderIconManager.createRenderIconDatablock(panelDerivedPos, panelSize3d);
+        iconPanel.setDatablock(datablock);
     }
 
     function determinePositionForScreen_(targetPos, windowSize, data){

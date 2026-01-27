@@ -201,6 +201,12 @@
     mDebugWindow_ = null
     mRenderIconTexture_ = null
     mTotalDatablocks_ = 0
+    mAnimMatrix_ = [
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1,
+    ]
 
     function setup(){
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
@@ -275,6 +281,36 @@
             datablock.setTexture(0, texture);
             datablock.setEnableAnimationMatrix(0, true);
         }
+    }
+
+    function createRenderIconDatablock(screenPos, screenSize){
+        //Create a new datablock for rendering a holepunched region
+        local blendBlock = _hlms.getBlendblock({
+            "src_blend_factor": _HLMS_SBF_SOURCE_ALPHA,
+            "dst_blend_factor": _HLMS_SBF_ONE_MINUS_SOURCE_ALPHA,
+            "src_alpha_blend_factor": _HLMS_SBF_ONE_MINUS_DEST_ALPHA,
+            "dst_alpha_blend_factor": _HLMS_SBF_ONE
+        });
+        local datablock = _hlms.unlit.createDatablock("renderIconPanelDatablock" + mTotalDatablocks_, blendBlock);
+        attachTextureToDatablock(datablock);
+        mTotalDatablocks_++;
+
+        //Set up the holepunch matrix
+        local textureSize = _window.getSize();
+
+        local normalizedX = screenPos.x / textureSize.x;
+        local normalizedY = screenPos.y / textureSize.y;
+        local normalizedWidth = screenSize.x / textureSize.x;
+        local normalizedHeight = screenSize.y / textureSize.y;
+
+        mAnimMatrix_[0] = normalizedWidth;
+        mAnimMatrix_[5] = normalizedHeight;
+        mAnimMatrix_[3] = normalizedX;
+        mAnimMatrix_[7] = normalizedY;
+
+        datablock.setAnimationMatrix(0, mAnimMatrix_);
+
+        return datablock;
     }
 
 }
