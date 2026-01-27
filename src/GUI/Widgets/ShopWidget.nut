@@ -152,6 +152,10 @@
         mInventoryGrid_.setNewGridIcons(mInventory_);
     }
 
+    function update(){
+        mInventoryGrid_.update();
+    }
+
     function shutdown(){
         mInventoryBus_.deregisterCallback(mBusCallbackId_);
 

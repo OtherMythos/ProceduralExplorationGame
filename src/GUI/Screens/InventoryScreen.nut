@@ -877,7 +877,16 @@ enum InventoryBusEvents{
     }
 
     function update(){
-        //mInventoryGrid_.update();
+        mInventoryGrid_.update();
+        if(mInventoryEquippedGrid_ != null){
+            mInventoryEquippedGrid_.update();
+        }
+        if(mSecondaryInventoryGrid_ != null){
+            mSecondaryInventoryGrid_.update();
+        }
+        if(mStorageGrid_ != null){
+            mStorageGrid_.update();
+        }
         mHoverInfo_.update();
         if(mPlayerInspector_ != null){
             mPlayerInspector_.update();

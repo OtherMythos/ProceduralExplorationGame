@@ -445,6 +445,12 @@ enum GameplayComplexMenuBusEvents{
         base.shutdown();
     }
 
+    function update(){
+        base.update();
+
+        mShopPanel_.update();
+    }
+
     function setPosition(pos){
         base.setPosition(pos);
 

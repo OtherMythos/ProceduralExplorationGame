@@ -39,6 +39,7 @@
     mSelectedItems_ = null;
     mSelectionIndicators_ = null;
     mRenderIcons_ = null;
+    mRenderIconAnimationTime_ = 0;
 
     constructor(inventoryType, bus, hoverInfo, buttonCover, multiSelection = false){
         mInventoryType_ = inventoryType;
@@ -373,6 +374,31 @@
 
     function notifyLayout(){
         mResolvedPos_ = mBackgrounds_[0].getDerivedPosition();
+    }
+
+    function update(){
+        //Update render icon animations
+        mRenderIconAnimationTime_ += 0.01;
+
+        foreach(renderIcon in mRenderIcons_){
+            if(renderIcon != null){
+                //Calculate rotation animation around Y and X axes
+                local rotY = Quat(sin(mRenderIconAnimationTime_ * 1.5), ::Vec3_UNIT_Y);
+                local rotX = Quat(sin(mRenderIconAnimationTime_ * 2.0), ::Vec3_UNIT_X);
+
+                //Get the base orientation and combine with animation
+                local baseOrient = Quat();
+                baseOrient += Quat(0.5, ::Vec3_UNIT_Y);
+                baseOrient += Quat(-0.5, ::Vec3_UNIT_Z);
+                baseOrient += Quat(1.0, ::Vec3_UNIT_X);
+
+                local animatedOrient = baseOrient;
+                animatedOrient += rotY;
+                animatedOrient += rotX;
+
+                renderIcon.setOrientation(animatedOrient);
+            }
+        }
     }
 
     function shutdown(){
