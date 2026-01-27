@@ -152,7 +152,7 @@ enum InventoryItemHelperScreenFunctions{
         panelContainerWindow.setClickable(false);
 
         local panelSize = mData_.gridItemSize;
-        local gridPadding = panelSize;
+        local gridPadding = ::Vec2_ZERO;
         local iconSize = panelSize;
 
         local background = panelContainerWindow.createPanel();
