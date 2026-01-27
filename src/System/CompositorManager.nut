@@ -4,6 +4,7 @@ enum CompositorSceneType{
     EXPLORATION,
     INVENTORY_PLAYER_INSPECTOR,
     OVERWORLD,
+    RENDER_ICONS,
 
     MAX,
     NONE
@@ -54,7 +55,11 @@ enum CompositorSceneType{
 
         for(local i = 0; i < CompositorSceneType.MAX; i++){
             local newTex = _graphics.createTexture("compositor/renderTexture" + i);
-            newTex.setResolution(100, 100);
+            if(i == CompositorSceneType.RENDER_ICONS){
+                newTex.setResolution(_window.getWidth(), _window.getHeight());
+            }else{
+                newTex.setResolution(100, 100);
+            }
             newTex.scheduleTransitionTo(_GPU_RESIDENCY_RESIDENT);
             mTextures_.append(newTex);
         }
@@ -80,6 +85,8 @@ enum CompositorSceneType{
         ::FGEffectCamera <- mEffectCam;
 
         setGameplayActive(false);
+
+        createRenderIconsWorkspace(_window.getSize());
     }
 
     function addExtraTexture(texture){
@@ -207,6 +214,13 @@ enum CompositorSceneType{
         }
         local data = mCompositorsForTypes[sceneType];
         return data == null ? null : data.mCamera;
+    }
+
+    function createRenderIconsWorkspace(size){
+        local workspaceId = createCompositorWorkspace("compositor/RenderIconsWorkspace", size, CompositorSceneType.RENDER_ICONS, false, true);
+        local texture = mTextures_[CompositorSceneType.RENDER_ICONS];
+
+        return workspaceId;
     }
 
     function getDatablockForCompositor(id){

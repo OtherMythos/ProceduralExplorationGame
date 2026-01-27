@@ -12,11 +12,20 @@
         mCentreMesh_ = false;
         mDebugPanel_ = null;
         mDebugWindow_ = null;
+        mCutoutMaterial_ = false;
+        mDatablock_ = null;
+        mAnimMatrix_ = [
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1,
+        ];
 
-        constructor(parentNode, centreMesh=false, debugWindow=null){
+        constructor(parentNode, centreMesh=false, debugWindow=null, cutoutMaterial=false){
             mParentNode_ = parentNode;
             mCentreMesh_ = centreMesh;
             mDebugWindow_ = debugWindow;
+            mCutoutMaterial_ = cutoutMaterial;
             //this.mParentNode_.setVisible(false);
         }
 
@@ -41,7 +50,7 @@
             }
 
             local item = _gameCore.createVoxMeshItem(mesh);
-            item.setRenderQueueGroup(RENDER_QUEUE_EFFECT_FG);
+            item.setRenderQueueGroup(RENDER_QUEUE_RENDER_ICONS);
 
             //Create a child node for the mesh if centring is enabled
             if(mCentreMesh_){
@@ -77,6 +86,11 @@
                 _gui.destroy(mDebugPanel_);
                 mDebugPanel_ = null;
             }
+
+            if(mDatablock_ != null){
+                _hlms.destroyDatablock(mDatablock_);
+                mDatablock_ = null;
+            }
         }
 
         function setPosition(pos){
@@ -85,6 +99,11 @@
             local objectPos = ::EffectManager.getWorldPositionForWindowPos(mCurrentScreenPos_);
             print("objet post" + objectPos);
             mNode_.setPosition(objectPos.x, objectPos.y, 70);
+
+            //Update holepunch matrix if using cutout material
+            if(mCutoutMaterial_ && mCurrentScreenSize_ != null){
+                updateHolepunchMatrix_();
+            }
 
             if(mDebugPanel_){
                 mDebugPanel_.setCentre(mCurrentScreenPos_.x, mCurrentScreenPos_.y);
@@ -119,6 +138,11 @@
             newScale *= 0.5;
             mNode_.setScale(newScale, newScale, newScale);
 
+            //Update holepunch matrix if using cutout material
+            if(mCutoutMaterial_ && mCurrentScreenPos_ != null){
+                updateHolepunchMatrix_();
+            }
+
             if(mDebugPanel_){
                 mDebugPanel_.setSize(width, height);
                 mDebugPanel_.setCentre(mCurrentScreenPos_.x, mCurrentScreenPos_.y);
@@ -130,6 +154,41 @@
             mNode_.setOrientation(orientation);
         }
 
+        function getDatablock(){
+            return mDatablock_;
+        }
+
+        function setDatablock(datablock){
+            mDatablock_ = datablock;
+        }
+
+        function setHolepunchMatrix(screenPos, screenSize, textureSize){
+            if(mDatablock_ == null) return;
+
+            //Calculate the normalized position and size within the texture
+            local normalizedX = (screenPos.x - screenSize.x / 2) / textureSize.x;
+            local normalizedY = (screenPos.y - screenSize.y / 2) / textureSize.y;
+            local normalizedWidth = screenSize.x / textureSize.x;
+            local normalizedHeight = screenSize.y / textureSize.y;
+
+            //Set up the animation matrix to display only the holepunched region
+            mAnimMatrix_[0] = normalizedWidth;
+            mAnimMatrix_[5] = normalizedHeight;
+            mAnimMatrix_[3] = normalizedX;
+            mAnimMatrix_[7] = normalizedY;
+
+            //assert (false);
+            mDatablock_.setAnimationMatrix(0, mAnimMatrix_);
+        }
+
+        function updateHolepunchMatrix_(){
+            if(mDatablock_ == null || mCurrentScreenPos_ == null || mCurrentScreenSize_ == null) return;
+
+            local textureSize = _window.getSize();
+
+            setHolepunchMatrix(mCurrentScreenPos_, mCurrentScreenSize_, textureSize);
+        }
+
         function _tostring(){
             return ::wrapToString(::RenderIconManager.RenderIcon, "RenderIcon", mMesh_);
         }
@@ -139,6 +198,8 @@
     mParentNode_ = null
     mDebugPanelsEnabled_ = false
     mDebugWindow_ = null
+    mRenderIconTexture_ = null
+    mTotalDatablocks_ = 0
 
     function setup(){
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
@@ -157,10 +218,24 @@
 
     }
 
-    function createIcon(mesh = null, centreMesh = false){
-        local newIcon = RenderIcon(mParentNode_, centreMesh, mDebugWindow_);
+    function createIcon(mesh = null, centreMesh = false, cutoutMaterial = false){
+        local newIcon = RenderIcon(mParentNode_, centreMesh, mDebugWindow_, cutoutMaterial);
         if(mesh != null){
             newIcon.setMesh(mesh);
+        }
+
+        if(cutoutMaterial){
+            //Create a datablock for this icon
+            local blendBlock = _hlms.getBlendblock({
+                "src_blend_factor": _HLMS_SBF_SOURCE_ALPHA,
+                "dst_blend_factor": _HLMS_SBF_ONE_MINUS_SOURCE_ALPHA,
+                "src_alpha_blend_factor": _HLMS_SBF_ONE_MINUS_DEST_ALPHA,
+                "dst_alpha_blend_factor": _HLMS_SBF_ONE
+            });
+            local datablock = _hlms.unlit.createDatablock("renderIconDatablock" + mTotalDatablocks_, blendBlock);
+            newIcon.setDatablock(datablock);
+            attachTextureToDatablock(datablock);
+            mTotalDatablocks_++;
         }
 
         if(mDebugPanelsEnabled_ && mDebugWindow_){
@@ -178,6 +253,23 @@
 
         mActiveIcons_.append(newIcon);
         return newIcon;
+    }
+
+    function setRenderIconTexture(texture){
+        mRenderIconTexture_ = texture;
+    }
+
+    function getRenderIconTexture(){
+        return mRenderIconTexture_;
+    }
+
+    function attachTextureToDatablock(datablock){
+        if(datablock != null){
+            local texture = ::CompositorManager.mTextures_[CompositorSceneType.RENDER_ICONS];
+
+            datablock.setTexture(0, texture);
+            datablock.setEnableAnimationMatrix(0, true);
+        }
     }
 
 }

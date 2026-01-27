@@ -83,8 +83,8 @@
                 continue;
             }
             widget.setVisible(true);
-            widget.setSkin(item.getIcon());
-            widget.setVisualsEnabled(false);
+            //widget.setSkin(item.getIcon());
+            //widget.setVisualsEnabled(false);
             renderIcon.setMesh(item.getMesh());
             if(renderIcon != null){
                 renderIcon.setVisible(true);
@@ -136,12 +136,12 @@
                 local iconPanel = parentWin.createPanel();
                 iconPanel.setSize(iconSize, iconSize);
                 iconPanel.setPosition(x * gridRatio + gridPadding, y * gridRatio + gridPadding);
-                iconPanel.setSkin("item_none");
+                //iconPanel.setSkin("item_none");
                 iconPanel.setVisible(false);
                 mItemIcons_[x + y * inventoryWidth] = iconPanel;
 
                 //Create render icon for 3D mesh display
-                local renderIcon = ::RenderIconManager.createIcon("smallPotion.voxMesh", true);
+                local renderIcon = ::RenderIconManager.createIcon("smallPotion.voxMesh", true, true);
                 local iconCentrePos = Vec2(x * gridRatio, y * gridRatio);
                 renderIcon.setPosition(iconCentrePos);
                 local renderSize = iconSize + iconSize * 0.1;
@@ -152,6 +152,12 @@
                 orientation += Quat(1.0, ::Vec3_UNIT_X);
                 renderIcon.setOrientation(orientation);
                 mRenderIcons_.append(renderIcon);
+
+                //Assign the render icon's datablock to the GUI widget for proper rendering
+                local datablock = renderIcon.getDatablock();
+                if(datablock != null){
+                    iconPanel.setDatablock(datablock);
+                }
 
                 local item = parentWin.createButton();
                 item.setHidden(false);
@@ -370,6 +376,13 @@
     }
 
     function shutdown(){
+        //Clear datablock references from GUI widgets before destroying render icons
+        foreach(iconPanel in mItemIcons_){
+            if(iconPanel != null){
+                iconPanel.setDatablock("simpleGrey");
+            }
+        }
+
         foreach(renderIcon in mRenderIcons_){
             if(renderIcon != null){
                 renderIcon.destroy();
