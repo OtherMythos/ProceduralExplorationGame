@@ -111,7 +111,7 @@ compositor_node compositor/RenderIconsNode
 
             camera compositor/foregroundEffectCamera
 
-            identifier 10
+            identifier 16
         }
     }
 }

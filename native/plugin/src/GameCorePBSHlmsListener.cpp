@@ -75,5 +75,10 @@ namespace ProceduralExplorationGamePlugin
             hlms->_setProperty("disableDefaultPSBody", true);
             hlms->_setProperty("disableFog", true);
         }
+        else if(p->getDefinition()->mIdentifier == 16){
+            hlms->_setProperty("removeAmbient", true);
+            hlms->_setProperty("disableFog", true);
+            hlms->_setProperty("disableLightChanges", true);
+        }
     }
 }
