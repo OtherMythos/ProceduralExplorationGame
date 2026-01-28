@@ -50,7 +50,7 @@
             }
 
             local item = _gameCore.createVoxMeshItem(mesh);
-            item.setRenderQueueGroup(RENDER_QUEUE_RENDER_ICONS);
+            item.setRenderQueueGroup(mCutoutMaterial_ ? RENDER_QUEUE_RENDER_ICONS : RENDER_QUEUE_EFFECT_FG);
 
             //Create a child node for the mesh if centring is enabled
             if(mCentreMesh_){
