@@ -10,3 +10,5 @@ _gameCore.registerVoxel(VoxelId.SWAMP_FOREST_GRASS, 165, ColourValue(0.1, 0.44, 
 _gameCore.registerVoxel(VoxelId.GEOTHERMAL_DIRT, 86, ColourValue(0.58, 0.58, 0.22, 1));
 _gameCore.registerVoxel(VoxelId.GEOTHERMAL_GRAVEL, 88, ColourValue(0.59, 0.59, 0.59, 1));
 _gameCore.registerVoxel(VoxelId.GEOTHERMAL_PAY_DIRT, 130, ColourValue(0.4, 0.4, 0.23, 1));
+_gameCore.registerVoxel(VoxelId.STONE_PATH, 50, ColourValue(0.65, 0.65, 0.65, 1));
+_gameCore.registerVoxel(VoxelId.DIRT_PATH, 111, ColourValue(0.55, 0.45, 0.25, 1));

@@ -18,6 +18,8 @@
 #include "Steps/DetermineEdgesMapGenStep.h"
 #include "Steps/DetermineRiversMapGenStep.h"
 #include "Steps/CarveRiversMapGenStep.h"
+#include "Steps/PathGenerationMapGenStep.h"
+#include "Steps/PathVoxelizationMapGenStep.h"
 #include "Steps/DeterminePlayerStartMapGenStep.h"
 #include "Steps/DetermineGatewayPositionMapGenStep.h"
 #include "Steps/DetermineRegionsMapGenStep.h"
@@ -99,6 +101,9 @@ namespace ProceduralExplorationGameCore{
             new DetermineEdgesMapGenStep(),
             new DetermineRiversMapGenStep(),
             new CarveRiversMapGenStep(),
+            new MapGenStepMarker("DeterminePathNodes"),
+            new PathGenerationMapGenStep(),
+            new PathVoxelizationMapGenStep(),
             //new DeterminePlayerStartMapGenStep(),
             //new DetermineGatewayPositionMapGenStep(),
             new CalculateWaterDistanceMapGenStep(),
@@ -119,6 +124,10 @@ namespace ProceduralExplorationGameCore{
         std::vector<PlacedItemData>* placedItemData = (mapData->ptr<std::vector<PlacedItemData>>("placedItems"));
         placedItemData->clear();
         delete placedItemData;
+
+        std::vector<PathSegment>* pathData = (mapData->ptr<std::vector<PathSegment>>("pathData"));
+        pathData->clear();
+        delete pathData;
 
         std::vector<RiverData>* riverData = (mapData->ptr<std::vector<RiverData>>("riverData"));
         riverData->clear();

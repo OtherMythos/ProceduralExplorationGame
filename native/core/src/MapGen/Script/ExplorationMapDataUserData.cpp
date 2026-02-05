@@ -1,6 +1,7 @@
 #include "ExplorationMapDataUserData.h"
 
 #include "ProceduralExplorationGameCoreScriptTypeTags.h"
+#include "MapGen/ExplorationMapDataPrerequisites.h"
 
 //TODO think about making this generic.
 #include "VisitedPlaces/TileDataParser.h"
@@ -176,6 +177,44 @@ namespace ProceduralExplorationGameCore{
         }
         sq_rawset(vm, -3);
     }
+    inline void pushPathData(HSQUIRRELVM vm, const char* key, std::vector<PathSegment>& pathData){
+        sq_pushstring(vm, key, -1);
+        sq_newarray(vm, pathData.size());
+        for(size_t i = 0; i < pathData.size(); i++){
+            sq_pushinteger(vm, i);
+
+            const PathSegment& p = pathData[i];
+            sq_newtable(vm);
+
+            //Push origin
+            WorldCoord ox, oy;
+            READ_WORLD_POINT(p.origin, ox, oy);
+            pushInteger(vm, "originX", ox);
+            pushInteger(vm, "originY", oy);
+
+            //Push path points array
+            sq_pushstring(vm, "points", -1);
+            sq_newarray(vm, p.points.size());
+            for(size_t j = 0; j < p.points.size(); j++){
+                sq_pushinteger(vm, j);
+                WorldCoord px, py;
+                READ_WORLD_POINT(p.points[j], px, py);
+                sq_newtable(vm);
+                pushInteger(vm, "x", px);
+                pushInteger(vm, "y", py);
+                sq_rawset(vm, -3);
+            }
+            sq_rawset(vm, -3);
+
+            pushInteger(vm, "pathId", static_cast<SQInteger>(p.pathId));
+            pushInteger(vm, "difficulty", static_cast<SQInteger>(p.difficulty));
+            pushInteger(vm, "width", static_cast<SQInteger>(p.width));
+            pushInteger(vm, "region", static_cast<SQInteger>(p.region));
+
+            sq_rawset(vm, -3);
+        }
+        sq_rawset(vm, -3);
+    }
     inline void generatePushedItemBuffer(HSQUIRRELVM vm, const char* key, AV::uint32 width, AV::uint32 height, std::vector<PlacedItemData>& itemData){
         size_t len = width * height * sizeof(AV::uint16);
         sq_pushstring(vm, key, -1);
@@ -235,6 +274,7 @@ namespace ProceduralExplorationGameCore{
         //pushPlaceData(vm, "placeData", mapData->placeData);
         pushRegionData(vm, "regionData", *mapData->ptr<std::vector<RegionData>>("regionData"));
         pushPlacedItemData(vm, "placedItems", *mapData->ptr<std::vector<PlacedItemData>>("placedItems"));
+        pushPathData(vm, "pathData", *mapData->ptr<std::vector<PathSegment>>("pathData"));
         //generatePushedItemBuffer(vm, "placedItemsBuffer", mapData->width, mapData->height, *mapData->ptr<std::vector<PlacedItemData>>("placedItems"));
 
         //pushBuffer(vm, "voxelBuffer", mapData->voxelBuffer, mapData->voxelBufferSize);

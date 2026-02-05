@@ -57,6 +57,7 @@ namespace ProceduralExplorationGameCore{
 
     void MapGen::registerStep(int id, MapGenStep* mapGenStep){
         mMapGenSteps.insert(mMapGenSteps.begin() + id, mapGenStep);
+        mCurrentStage = mMapGenSteps.size();
     }
 
     int MapGen::registerStep(const std::string& markerName, MapGenStep* mapGenStep){

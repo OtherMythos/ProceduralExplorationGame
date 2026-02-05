@@ -1,3 +1,5 @@
 {
-    "spawnEnemyCollisionBlocker": true
+    "spawnEnemyCollisionBlocker": true,
+    "pathSpawns": 1,
+    "canReceivePaths": true
 }
