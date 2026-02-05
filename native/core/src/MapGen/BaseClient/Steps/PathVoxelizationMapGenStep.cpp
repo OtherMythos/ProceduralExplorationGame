@@ -55,11 +55,13 @@ namespace ProceduralExplorationGameCore{
             *pathIdPtr=pathIdx;
 
             //Set DO_NOT_PLACE_TREES flag in secondary buffer
-            AV::uint8* flagsPtr=VOXEL_FLAGS_PTR_FOR_COORD(mapData, p);
-            *flagsPtr|=DO_NOT_PLACE_ITEMS_VOXEL_FLAG;
+            //AV::uint8* flagsPtr=VOXEL_FLAGS_PTR_FOR_COORD(mapData, p);
+            //*flagsPtr|=DO_NOT_PLACE_ITEMS_VOXEL_FLAG;
+            AV::uint32* fullSecondaryVoxPtr=FULL_PTR_FOR_COORD_SECONDARY(mapData, p);
+            *fullSecondaryVoxPtr |= DO_NOT_PLACE_ITEMS_VOXEL_FLAG;
 
             //Set DRAW_COLOUR_VOXEL_FLAG to use direct colour value
-            *flagsPtr|=DRAW_COLOUR_VOXEL_FLAG;
+            *fullSecondaryVoxPtr|=DRAW_COLOUR_VOXEL_FLAG;
 
             //Set colour value to 248
             AV::uint8* voxPtr=VOX_VALUE_PTR_FOR_COORD(mapData, p);
