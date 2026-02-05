@@ -149,81 +149,8 @@ namespace ProceduralExplorationGameCore{
         }
         std::reverse(pathPoints.begin(), pathPoints.end());
 
-        //Insert intermediate points between far-apart A* nodes to ensure connectivity
-        std::vector<WorldPoint> interpolatedPoints;
-        for(size_t i=0; i<pathPoints.size(); i++){
-            interpolatedPoints.push_back(pathPoints[i]);
-
-            if(i<pathPoints.size()-1){
-                WorldCoord x1, y1, x2, y2;
-                READ_WORLD_POINT(pathPoints[i], x1, y1);
-                READ_WORLD_POINT(pathPoints[i+1], x2, y2);
-
-                int dx=static_cast<int>(x2)-static_cast<int>(x1);
-                int dy=static_cast<int>(y2)-static_cast<int>(y1);
-
-                //If nodes are far apart (diagonal or further), add midpoints
-                if(std::abs(dx)>1||std::abs(dy)>1){
-                    WorldCoord midX=x1+(dx/2);
-                    WorldCoord midY=y1+(dy/2);
-                    interpolatedPoints.push_back(WRAP_WORLD_POINT(midX, midY));
-                }
-            }
-        }
-
-        //Apply Perlin noise to meander the path
-        const float MEANDER_SCALE=50.0f;
-        const float MEANDER_AMPLITUDE=1.0f;
-        const float MEANDER_FREQ=0.5f;
-        const int MEANDER_DEPTH=2;
-        PerlinNoise noise(0); //Use seed 0 for consistency
-
-        std::vector<WorldPoint> meanderPoints;
-        for(size_t i=0; i<interpolatedPoints.size(); i++){
-            WorldCoord x, y;
-            READ_WORLD_POINT(interpolatedPoints[i], x, y);
-
-            if(i>0&&i<interpolatedPoints.size()-1){
-                //Get direction perpendicular to path
-                WorldCoord prevX, prevY, nextX, nextY;
-                READ_WORLD_POINT(interpolatedPoints[i-1], prevX, prevY);
-                READ_WORLD_POINT(interpolatedPoints[i+1], nextX, nextY);
-
-                float dirX=nextX-prevX;
-                float dirY=nextY-prevY;
-                float len=std::sqrt(dirX*dirX+dirY*dirY);
-                if(len>0.01f){
-                    dirX/=len; dirY/=len;
-                }
-
-                //Perpendicular direction
-                float perpX=-dirY;
-                float perpY=dirX;
-
-                //Perlin noise for meander
-                float noiseVal=noise.perlin2d(x/MEANDER_SCALE, y/MEANDER_SCALE, MEANDER_FREQ, MEANDER_DEPTH);
-                float offset=0.0f; //TEMPORARILY DISABLED: noiseVal*MEANDER_AMPLITUDE;
-
-                x=static_cast<WorldCoord>(x+perpX*offset);
-                y=static_cast<WorldCoord>(y+perpY*offset);
-            }
-
-            meanderPoints.push_back(WRAP_WORLD_POINT(x, y));
-        }
-
-        //Validate that path is fully connected
-        for(size_t i=0; i<meanderPoints.size()-1; i++){
-            WorldCoord x1, y1, x2, y2;
-            READ_WORLD_POINT(meanderPoints[i], x1, y1);
-            READ_WORLD_POINT(meanderPoints[i+1], x2, y2);
-
-            int dx=static_cast<int>(x2)-static_cast<int>(x1);
-            int dy=static_cast<int>(y2)-static_cast<int>(y1);
-
-            //Assert each point has an adjacent neighbor (Manhattan distance<=1 for continuity, or <=2 with filling)
-            int maxDist=std::max(std::abs(dx), std::abs(dy));
-            //assert(maxDist<=2);
-        }
+        //Use A* path directly without meander effects
+        std::vector<WorldPoint>& meanderPoints=pathPoints;
 
         outSegment.origin=pathPoints.front();
         outSegment.points=meanderPoints;
