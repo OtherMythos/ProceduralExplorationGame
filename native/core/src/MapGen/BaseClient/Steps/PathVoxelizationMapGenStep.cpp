@@ -6,7 +6,7 @@
 
 namespace ProceduralExplorationGameCore{
 
-    static const int PATH_THICKNESS=0;//Radius of thickened path
+    static const int PATH_THICKNESS=1;//Radius of thickened path
     static const AV::uint8 PATH_COLOUR_VALUE=250;
 
     PathVoxelizationMapGenStep::PathVoxelizationMapGenStep() : MapGenStep("Path Voxelization"){

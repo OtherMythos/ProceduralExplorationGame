@@ -48,5 +48,13 @@ namespace ProceduralExplorationGameCore{
 
         static float heuristic(WorldCoord x1, WorldCoord y1, WorldCoord x2, WorldCoord y2);
         static float getMovementCost(const ExplorationMapData* mapData, WorldCoord fromX, WorldCoord fromY, WorldCoord toX, WorldCoord toY);
+
+        //Catmull-Rom spline smoothing for organic paths
+        static void catmullRomPoint(float t, float p0x, float p0y, float p1x, float p1y, float p2x, float p2y, float p3x, float p3y, float& outX, float& outY);
+        static std::vector<WorldPoint> applyCatmullRomSmoothing(const ExplorationMapData* mapData, const std::vector<WorldPoint>& path, int subdivisions);
+
+        //Bresenham line to connect discrete points
+        static void bresenhamLine(WorldCoord x0, WorldCoord y0, WorldCoord x1, WorldCoord y1, std::vector<WorldPoint>& outPoints);
+        static std::vector<WorldPoint> connectPathPoints(const std::vector<WorldPoint>& path);
     };
 }
