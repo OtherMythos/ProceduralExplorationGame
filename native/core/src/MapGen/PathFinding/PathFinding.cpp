@@ -21,6 +21,12 @@ namespace ProceduralExplorationGameCore{
             return false;
         }
 
+        //Check for rivers
+        AV::uint32* fullSecondaryVoxPtr=FULL_PTR_FOR_COORD_SECONDARY(mapData, p);
+        if((*fullSecondaryVoxPtr&RIVER_VOXEL_FLAG)!=0){
+            return false;
+        }
+
         //Check altitude (sea level or higher)
         AV::uint8 altitude=*VOX_PTR_FOR_COORD_CONST(mapData, p);
         if(altitude<mapData->seaLevel){
@@ -50,7 +56,7 @@ namespace ProceduralExplorationGameCore{
 
         //Penalize tiles too close to sea level to avoid underwater paths
         float altitudeCost=1.0f;
-        AV::uint8 minSafeAltitude=mapData->seaLevel+5; //At least 5 units above sea level
+        AV::uint8 minSafeAltitude=mapData->seaLevel+10; //At least 10 units above sea level
         if(altitude<minSafeAltitude){
             //Heavy penalty for tiles barely above sea level
             altitudeCost+=(minSafeAltitude-altitude)*2.0f;
