@@ -12,8 +12,8 @@ namespace ProceduralExplorationGameCore{
 
     class PathFinding{
     public:
-        PathFinding()=delete;
-        ~PathFinding()=delete;
+        PathFinding() = delete;
+        ~PathFinding() = delete;
 
         //Check if a coordinate is walkable for path generation
         static bool isWalkableForPath(const ExplorationMapData* mapData, WorldCoord x, WorldCoord y);
@@ -38,11 +38,11 @@ namespace ProceduralExplorationGameCore{
             PathNode(WorldCoord x_, WorldCoord y_, float g, float h, PathNode* p=nullptr)
                 : x(x_), y(y_), gCost(g), hCost(h), parent(p){}
 
-            float getFCost() const{ return gCost+hCost; }
+            float getFCost() const{ return gCost + hCost; }
 
             bool operator<(const PathNode& other) const{
                 //For priority queue (min-heap)
-                return getFCost()>other.getFCost();
+                return getFCost() > other.getFCost();
             }
         };
 

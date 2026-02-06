@@ -86,7 +86,7 @@ namespace ProceduralExplorationGameCore{
         }
 
         //Apply random diffuse noise to all path voxels
-        std::vector<PathSegment>* pathData=mapData->ptr<std::vector<PathSegment>>("pathData");
+        std::vector<PathSegment>* pathData = mapData->ptr<std::vector<PathSegment>>("pathData");
 
         //Collect all unique path points into a set
         std::set<WorldPoint> uniquePathPoints;

@@ -9,27 +9,27 @@
 namespace ProceduralExplorationGameCore{
 
     bool PathFinding::isWalkableForPath(const ExplorationMapData* mapData, WorldCoord x, WorldCoord y){
-        if(x<0||y<0||x>=mapData->width||y>=mapData->height){
+        if(x < 0 || y < 0 || x >= mapData->width || y >= mapData->height){
             return false;
         }
 
-        WorldPoint p=WRAP_WORLD_POINT(x, y);
+        WorldPoint p = WRAP_WORLD_POINT(x, y);
 
         //Check water
-        WaterId waterGroup=*WATER_GROUP_PTR_FOR_COORD_CONST(mapData, p);
-        if(waterGroup!=INVALID_WATER_ID){
+        WaterId waterGroup = *WATER_GROUP_PTR_FOR_COORD_CONST(mapData, p);
+        if(waterGroup != INVALID_WATER_ID){
             return false;
         }
 
         //Check for rivers
-        AV::uint32* fullSecondaryVoxPtr=FULL_PTR_FOR_COORD_SECONDARY(mapData, p);
-        if((*fullSecondaryVoxPtr&RIVER_VOXEL_FLAG)!=0){
+        AV::uint32* fullSecondaryVoxPtr = FULL_PTR_FOR_COORD_SECONDARY(mapData, p);
+        if((*fullSecondaryVoxPtr & RIVER_VOXEL_FLAG) != 0){
             return false;
         }
 
         //Check altitude (sea level or higher)
-        AV::uint8 altitude=*VOX_PTR_FOR_COORD_CONST(mapData, p);
-        if(altitude<mapData->seaLevel){
+        AV::uint8 altitude = *VOX_PTR_FOR_COORD_CONST(mapData, p);
+        if(altitude < mapData->seaLevel){
             return false;
         }
 
@@ -40,9 +40,9 @@ namespace ProceduralExplorationGameCore{
 
     float PathFinding::heuristic(WorldCoord x1, WorldCoord y1, WorldCoord x2, WorldCoord y2){
         //Manhattan distance
-        int dx=static_cast<int>(x1)-static_cast<int>(x2);
-        int dy=static_cast<int>(y1)-static_cast<int>(y2);
-        return static_cast<float>(std::abs(dx)+std::abs(dy));
+        int dx = static_cast<int>(x1) - static_cast<int>(x2);
+        int dy = static_cast<int>(y1) - static_cast<int>(y2);
+        return static_cast<float>(std::abs(dx) + std::abs(dy));
     }
 
     float PathFinding::getMovementCost(const ExplorationMapData* mapData, WorldCoord fromX, WorldCoord fromY, WorldCoord toX, WorldCoord toY){
@@ -51,27 +51,27 @@ namespace ProceduralExplorationGameCore{
         }
 
         //Get altitude of destination
-        WorldPoint p=WRAP_WORLD_POINT(toX, toY);
-        AV::uint8 altitude=*VOX_PTR_FOR_COORD_CONST(mapData, p);
+        WorldPoint p = WRAP_WORLD_POINT(toX, toY);
+        AV::uint8 altitude = *VOX_PTR_FOR_COORD_CONST(mapData, p);
 
         //Penalize tiles too close to sea level to avoid underwater paths
-        float altitudeCost=1.0f;
-        AV::uint8 minSafeAltitude=mapData->seaLevel+10; //At least 10 units above sea level
-        if(altitude<minSafeAltitude){
+        float altitudeCost = 1.0f;
+        AV::uint8 minSafeAltitude = mapData->seaLevel + 10; //At least 10 units above sea level
+        if(altitude < minSafeAltitude){
             //Heavy penalty for tiles barely above sea level
-            altitudeCost+=(minSafeAltitude-altitude)*2.0f;
+            altitudeCost += (minSafeAltitude - altitude) * 2.0f;
         }
 
         //Diagonal movement costs slightly more
-        int dx=static_cast<int>(toX)-static_cast<int>(fromX);
-        int dy=static_cast<int>(toY)-static_cast<int>(fromY);
+        int dx = static_cast<int>(toX) - static_cast<int>(fromX);
+        int dy = static_cast<int>(toY) - static_cast<int>(fromY);
 
-        float baseCost=1.0f;
-        if(dx!=0&&dy!=0){
-            baseCost=1.41f; //sqrt(2) for diagonal
+        float baseCost = 1.0f;
+        if(dx != 0 && dy != 0){
+            baseCost = 1.41f; //sqrt(2) for diagonal
         }
 
-        return baseCost*altitudeCost;
+        return baseCost * altitudeCost;
     }
 
     bool PathFinding::generatePath(
@@ -81,7 +81,7 @@ namespace ProceduralExplorationGameCore{
         AV::uint8 pathId,
         PathSegment& outSegment){
 
-        if(!isWalkableForPath(mapData, startX, startY)||!isWalkableForPath(mapData, endX, endY)){
+        if(!isWalkableForPath(mapData, startX, startY) || !isWalkableForPath(mapData, endX, endY)){
             return false;
         }
 
@@ -91,50 +91,50 @@ namespace ProceduralExplorationGameCore{
         std::set<std::pair<WorldCoord, WorldCoord>> closedSet;
 
         //Start node
-        PathNode* startNode=new PathNode(startX, startY, 0.0f, heuristic(startX, startY, endX, endY));
+        PathNode* startNode = new PathNode(startX, startY, 0.0f, heuristic(startX, startY, endX, endY));
         openSet.push(*startNode);
-        allNodes[{startX, startY}]=startNode;
+        allNodes[{startX, startY}] = startNode;
 
-        PathNode* current=nullptr;
-        bool pathFound=false;
+        PathNode* current = nullptr;
+        bool pathFound = false;
 
         //A* main loop
         while(!openSet.empty()){
-            current=new PathNode(openSet.top());
+            current = new PathNode(openSet.top());
             openSet.pop();
 
-            if(current->x==endX&&current->y==endY){
-                pathFound=true;
+            if(current->x == endX && current->y == endY){
+                pathFound = true;
                 break;
             }
 
             closedSet.insert({current->x, current->y});
 
             //Check 8 neighbors (including diagonals)
-            for(int dx=-1; dx<=1; dx++){
-                for(int dy=-1; dy<=1; dy++){
-                    if(dx==0&&dy==0) continue;
+            for(int dx = -1; dx <= 1; dx++){
+                for(int dy = -1; dy <= 1; dy++){
+                    if(dx == 0 && dy == 0) continue;
 
-                    WorldCoord nx=current->x+dx;
-                    WorldCoord ny=current->y+dy;
+                    WorldCoord nx = current->x + dx;
+                    WorldCoord ny = current->y + dy;
 
                     if(!isWalkableForPath(mapData, nx, ny)) continue;
                     if(closedSet.count({nx, ny})) continue;
 
-                    float moveCost=getMovementCost(mapData, current->x, current->y, nx, ny);
-                    if(moveCost>999.0f) continue;
+                    float moveCost = getMovementCost(mapData, current->x, current->y, nx, ny);
+                    if(moveCost > 999.0f) continue;
 
-                    float gCost=current->gCost+moveCost;
-                    float hCost=heuristic(nx, ny, endX, endY);
+                    float gCost = current->gCost + moveCost;
+                    float hCost = heuristic(nx, ny, endX, endY);
 
-                    auto it=allNodes.find({nx, ny});
-                    if(it==allNodes.end()){
-                        PathNode* newNode=new PathNode(nx, ny, gCost, hCost, current);
-                        allNodes[{nx, ny}]=newNode;
+                    auto it = allNodes.find({nx, ny});
+                    if(it == allNodes.end()){
+                        PathNode* newNode = new PathNode(nx, ny, gCost, hCost, current);
+                        allNodes[{nx, ny}] = newNode;
                         openSet.push(*newNode);
-                    }else if(gCost<it->second->gCost){
-                        it->second->gCost=gCost;
-                        it->second->parent=current;
+                    } else if(gCost < it->second->gCost){
+                        it->second->gCost = gCost;
+                        it->second->parent = current;
                     }
                 }
             }
