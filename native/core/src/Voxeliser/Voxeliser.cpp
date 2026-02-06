@@ -520,7 +520,7 @@ namespace ProceduralExplorationGameCore{
                     faceContainer.faceMask = f;
                     faceContainer.regionId = regionId;
                     faceContainer.flags = flags;
-                    AV::uint8 voxelDiffuse = *VOXEL_META_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y)) & 0x3;
+                    AV::uint8 voxelDiffuse = *VOXEL_META_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y)) & 0x7;
                     faceContainer.voxelDiffuse = voxelDiffuse;
 
                     outFaces.outFaces.push_back(faceContainer);
