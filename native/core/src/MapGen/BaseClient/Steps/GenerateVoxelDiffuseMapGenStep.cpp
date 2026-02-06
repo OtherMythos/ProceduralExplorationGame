@@ -107,45 +107,45 @@ namespace ProceduralExplorationGameCore{
             WorldCoord x, y;
             READ_WORLD_POINT(p, x, y);
 
-            if(x>=0&&y>=0&&x<static_cast<WorldCoord>(width)&&y<static_cast<WorldCoord>(height)){
-                int index=x+y*width;
-                pathDistances[index]=0;
+            if(x >= 0 && y >= 0 && x < static_cast<WorldCoord>(width) && y < static_cast<WorldCoord>(height)){
+                int index = x + y * width;
+                pathDistances[index] = 0;
                 distanceQueue.push({p, 0});
             }
         }
 
         //BFS to propagate distances
         while(!distanceQueue.empty()){
-            auto current=distanceQueue.front();
+            auto current = distanceQueue.front();
             distanceQueue.pop();
 
-            WorldPoint currentPoint=current.first;
-            int currentDist=current.second;
+            WorldPoint currentPoint = current.first;
+            int currentDist = current.second;
 
             WorldCoord x, y;
             READ_WORLD_POINT(currentPoint, x, y);
 
             //Check 8-connected neighbors (including diagonals)
-            for(int dx=-1; dx<=1; dx++){
-                for(int dy=-1; dy<=1; dy++){
-                    if(dx==0&&dy==0) continue;
+            for(int dx = -1; dx <= 1; dx++){
+                for(int dy = -1; dy <= 1; dy++){
+                    if(dx == 0 && dy == 0) continue;
 
-                    WorldCoord nx=x+dx;
-                    WorldCoord ny=y+dy;
+                    WorldCoord nx = x + dx;
+                    WorldCoord ny = y + dy;
 
                     //Bounds check
-                    if(nx<0||ny<0||nx>=static_cast<WorldCoord>(width)||ny>=static_cast<WorldCoord>(height)){
+                    if(nx < 0 || ny < 0 || nx >= static_cast<WorldCoord>(width) || ny >= static_cast<WorldCoord>(height)){
                         continue;
                     }
 
-                    int neighborIndex=nx+ny*width;
+                    int neighborIndex = nx + ny * width;
 
                     //If not yet processed
-                    if(pathDistances[neighborIndex]==255){
-                        int newDist=currentDist+1;
-                        if(newDist>254) newDist=254;
+                    if(pathDistances[neighborIndex] == 255){
+                        int newDist = currentDist + 1;
+                        if(newDist > 254) newDist = 254;
 
-                        pathDistances[neighborIndex]=static_cast<AV::uint8>(newDist);
+                        pathDistances[neighborIndex] = static_cast<AV::uint8>(newDist);
                         distanceQueue.push({WRAP_WORLD_POINT(nx, ny), newDist});
                     }
                 }
@@ -153,23 +153,23 @@ namespace ProceduralExplorationGameCore{
         }
 
         //Apply drop shadow effect based on distance from paths
-        for(AV::uint32 y=0; y<height; y++){
-            for(AV::uint32 x=0; x<width; x++){
-                int index=x+y*width;
-                AV::uint8 distFromPath=pathDistances[index];
+        for(AV::uint32 y = 0; y < height; y++){
+            for(AV::uint32 x = 0; x < width; x++){
+                int index = x + y * width;
+                AV::uint8 distFromPath = pathDistances[index];
 
                 //Only apply shadow if voxel is within 4 units of a path
-                if(distFromPath==255||distFromPath>2){
+                if(distFromPath == 255 || distFromPath > 2){
                     continue;
                 }
 
                 //Calculate shadow intensity: full gradient from 7 (on path) to 0 (4 tiles away)
-                float shadowFalloff=(static_cast<float>(distFromPath)/2.0f);
-                float shadowValue=(shadowFalloff)*2.0f;
-                AV::uint8 shadowAmount=static_cast<AV::uint8>(shadowValue);
+                float shadowFalloff = (static_cast<float>(distFromPath) / 2.0f);
+                float shadowValue = (shadowFalloff) * 2.0f;
+                AV::uint8 shadowAmount = static_cast<AV::uint8>(shadowValue);
 
-                AV::uint8* metaPtr=VOXEL_META_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y));
-                *metaPtr=(*metaPtr&0xF8)|(shadowAmount&0x7);
+                AV::uint8* metaPtr = VOXEL_META_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y));
+                *metaPtr = (*metaPtr & 0xF8) | (shadowAmount & 0x7);
             }
         }
 
@@ -178,10 +178,10 @@ namespace ProceduralExplorationGameCore{
             WorldCoord x, y;
             READ_WORLD_POINT(p, x, y);
 
-            AV::uint8 randomDiffuse=static_cast<AV::uint8>(mapGenRandomIntMinMax(0, 0x7));
+            AV::uint8 randomDiffuse = static_cast<AV::uint8>(mapGenRandomIntMinMax(0, 0x7));
 
-            AV::uint8* metaPtr=VOXEL_META_PTR_FOR_COORD(mapData, p);
-            *metaPtr=(*metaPtr&0xF8)|(randomDiffuse&0x7);
+            AV::uint8* metaPtr = VOXEL_META_PTR_FOR_COORD(mapData, p);
+            *metaPtr = (*metaPtr & 0xF8) | (randomDiffuse & 0x7);
         }
 
         return true;
