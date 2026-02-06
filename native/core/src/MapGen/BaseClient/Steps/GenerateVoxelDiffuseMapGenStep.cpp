@@ -4,6 +4,9 @@
 #include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 #include "PerlinNoise.h"
 
+#include <queue>
+#include <set>
+
 namespace ProceduralExplorationGameCore{
 
     GenerateVoxelDiffuseMapGenStep::GenerateVoxelDiffuseMapGenStep() : MapGenStep("Generate Voxel Diffuse"){
@@ -83,24 +86,102 @@ namespace ProceduralExplorationGameCore{
         }
 
         //Apply random diffuse noise to all path voxels
-        std::vector<PathSegment>* pathData = mapData->ptr<std::vector<PathSegment>>("pathData");
+        std::vector<PathSegment>* pathData=mapData->ptr<std::vector<PathSegment>>("pathData");
 
+        //Collect all unique path points into a set
+        std::set<WorldPoint> uniquePathPoints;
         for(const PathSegment& path : *pathData){
-            for(const WorldPoint& p : path.points){
-                WorldCoord x, y;
-                READ_WORLD_POINT(p, x, y);
+            for(const WorldPoint& p : path.pointsExpanded){
+                uniquePathPoints.insert(p);
+            }
+        }
 
-                //Skip if out of bounds
-                if(x < 0 || y < 0 || x >= static_cast<WorldCoord>(width) || y >= static_cast<WorldCoord>(height)){
+        //Calculate distance from each voxel to the nearest path
+        std::vector<AV::uint8> pathDistances(width*height, 255); //255=not calculated
+
+        //BFS from all path points
+        std::queue<std::pair<WorldPoint, int>> distanceQueue;
+
+        //Initialize: mark all path points with distance 0
+        for(const WorldPoint& p : uniquePathPoints){
+            WorldCoord x, y;
+            READ_WORLD_POINT(p, x, y);
+
+            if(x>=0&&y>=0&&x<static_cast<WorldCoord>(width)&&y<static_cast<WorldCoord>(height)){
+                int index=x+y*width;
+                pathDistances[index]=0;
+                distanceQueue.push({p, 0});
+            }
+        }
+
+        //BFS to propagate distances
+        while(!distanceQueue.empty()){
+            auto current=distanceQueue.front();
+            distanceQueue.pop();
+
+            WorldPoint currentPoint=current.first;
+            int currentDist=current.second;
+
+            WorldCoord x, y;
+            READ_WORLD_POINT(currentPoint, x, y);
+
+            //Check 8-connected neighbors (including diagonals)
+            for(int dx=-1; dx<=1; dx++){
+                for(int dy=-1; dy<=1; dy++){
+                    if(dx==0&&dy==0) continue;
+
+                    WorldCoord nx=x+dx;
+                    WorldCoord ny=y+dy;
+
+                    //Bounds check
+                    if(nx<0||ny<0||nx>=static_cast<WorldCoord>(width)||ny>=static_cast<WorldCoord>(height)){
+                        continue;
+                    }
+
+                    int neighborIndex=nx+ny*width;
+
+                    //If not yet processed
+                    if(pathDistances[neighborIndex]==255){
+                        int newDist=currentDist+1;
+                        if(newDist>254) newDist=254;
+
+                        pathDistances[neighborIndex]=static_cast<AV::uint8>(newDist);
+                        distanceQueue.push({WRAP_WORLD_POINT(nx, ny), newDist});
+                    }
+                }
+            }
+        }
+
+        //Apply drop shadow effect based on distance from paths
+        for(AV::uint32 y=0; y<height; y++){
+            for(AV::uint32 x=0; x<width; x++){
+                int index=x+y*width;
+                AV::uint8 distFromPath=pathDistances[index];
+
+                //Only apply shadow if voxel is within 4 units of a path
+                if(distFromPath==255||distFromPath>2){
                     continue;
                 }
 
-                AV::uint8 randomDiffuse = static_cast<AV::uint8>(mapGenRandomIntMinMax(0, 0x7));
+                //Calculate shadow intensity: full gradient from 7 (on path) to 0 (4 tiles away)
+                float shadowFalloff=(static_cast<float>(distFromPath)/2.0f);
+                float shadowValue=(shadowFalloff)*2.0f;
+                AV::uint8 shadowAmount=static_cast<AV::uint8>(shadowValue);
 
-                //Update diffuse value (lower 3 bits of meta byte)
-                AV::uint8* metaPtr = VOXEL_META_PTR_FOR_COORD(mapData, p);
-                *metaPtr = (*metaPtr&0xF8) | (randomDiffuse&0x7);
+                AV::uint8* metaPtr=VOXEL_META_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y));
+                *metaPtr=(*metaPtr&0xF8)|(shadowAmount&0x7);
             }
+        }
+
+        //Apply random noise to path points themselves
+        for(const WorldPoint& p : uniquePathPoints){
+            WorldCoord x, y;
+            READ_WORLD_POINT(p, x, y);
+
+            AV::uint8 randomDiffuse=static_cast<AV::uint8>(mapGenRandomIntMinMax(0, 0x7));
+
+            AV::uint8* metaPtr=VOXEL_META_PTR_FOR_COORD(mapData, p);
+            *metaPtr=(*metaPtr&0xF8)|(randomDiffuse&0x7);
         }
 
         return true;

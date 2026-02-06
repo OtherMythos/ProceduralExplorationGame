@@ -64,6 +64,7 @@ namespace ProceduralExplorationGameCore{
     struct PathSegment{
         WorldPoint origin;
         std::vector<WorldPoint> points;
+        std::vector<WorldPoint> pointsExpanded;
         AV::uint8 pathId;
         AV::uint8 difficulty;
         AV::uint16 width;

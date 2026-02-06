@@ -21,7 +21,10 @@ namespace ProceduralExplorationGameCore{
         //Collect all expanded path points into a set to avoid duplicates
         std::set<std::pair<WorldCoord, WorldCoord>> expandedPathPoints;
 
-        for(const PathSegment& segment : pathData){
+        for(PathSegment& segment : pathData){
+            //Create a separate set for this path's expanded points
+            std::set<std::pair<WorldCoord, WorldCoord>> segmentExpandedPoints;
+
             for(size_t i=0; i<segment.points.size(); i++){
                 WorldPoint p=segment.points[i];
                 WorldCoord x, y;
@@ -36,10 +39,18 @@ namespace ProceduralExplorationGameCore{
                         //Check bounds
                         if(expandedX<0||expandedY<0||expandedX>=mapData->width||expandedY>=mapData->height) continue;
 
-                        expandedPathPoints.insert({expandedX, expandedY});
+                        segmentExpandedPoints.insert({expandedX, expandedY});
                     }
                 }
             }
+
+            //Convert segment's expanded points to WorldPoint format and store in segment
+            for(const auto& coord : segmentExpandedPoints){
+                segment.pointsExpanded.push_back(WRAP_WORLD_POINT(coord.first, coord.second));
+            }
+
+            //Add this segment's expanded points to the complete set
+            expandedPathPoints.insert(segmentExpandedPoints.begin(), segmentExpandedPoints.end());
         }
 
         //Now mark all expanded path points in the voxel buffer
