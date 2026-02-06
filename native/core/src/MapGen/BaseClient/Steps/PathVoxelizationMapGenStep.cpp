@@ -18,6 +18,15 @@ namespace ProceduralExplorationGameCore{
     bool PathVoxelizationMapGenStep::processStep(const ExplorationMapInputData* input, ExplorationMapData* mapData, ExplorationMapGenWorkspace* workspace){
         std::vector<PathSegment>& pathData=*mapData->ptr<std::vector<PathSegment>>("pathData");
 
+        //Initialize all path IDs to INVALID_PATH_ID
+        for(AV::uint32 y=0; y<mapData->height; y++){
+            for(AV::uint32 x=0; x<mapData->width; x++){
+                WorldPoint p=WRAP_WORLD_POINT(x, y);
+                PathId* pathIdPtr=PATH_ID_PTR_FOR_COORD(mapData, p);
+                *pathIdPtr=INVALID_PATH_ID;
+            }
+        }
+
         //Collect all expanded path points into a set to avoid duplicates
         std::set<std::pair<WorldCoord, WorldCoord>> expandedPathPoints;
 
@@ -62,7 +71,7 @@ namespace ProceduralExplorationGameCore{
             WorldPoint p=WRAP_WORLD_POINT(x, y);
 
             //Write path ID to tertiary buffer byte 1
-            AV::uint8* pathIdPtr=PATH_ID_PTR_FOR_COORD(mapData, p);
+            PathId* pathIdPtr=PATH_ID_PTR_FOR_COORD(mapData, p);
             *pathIdPtr=pathIdx;
 
             //Set DO_NOT_PLACE_TREES flag in secondary buffer
