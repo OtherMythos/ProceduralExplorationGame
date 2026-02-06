@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <limits>
 
 namespace ProceduralExplorationGameCore{
 
@@ -17,14 +18,6 @@ namespace ProceduralExplorationGameCore{
 
     PathGenerationMapGenStep::~PathGenerationMapGenStep(){
     }
-
-    struct PathNode{
-        WorldCoord originX, originY;
-        RegionId region;
-        AV::uint8 pathSpawns;
-        bool canReceivePaths;
-        AV::uint8 connectivity;
-    };
 
     static float distanceBetweenPoints(WorldCoord x1, WorldCoord y1, WorldCoord x2, WorldCoord y2){
         float dx=static_cast<float>(static_cast<int>(x1)-static_cast<int>(x2));
@@ -108,6 +101,89 @@ namespace ProceduralExplorationGameCore{
             }
         }
 
+        //Generate wilderness path nodes to give impression of paths leading to nowhere
+        generateWildernessPathNodes(mapData, pathData, pathNodes, pathId);
+
         return true;
+    }
+
+    void PathGenerationMapGenStep::generateWildernessPathNodes(ExplorationMapData* mapData, std::vector<PathSegment>& pathData, const std::vector<PathNode>& pathNodes, AV::uint8& pathId){
+        const AV::uint32 seaLevel=mapData->uint32("seaLevel");
+        const int numWildernessNodes=5; //Number of wilderness nodes to generate
+        const float minDistanceFromPlaces=100.0f; //Minimum distance from existing path nodes
+
+        std::vector<PathNode> wildernessNodes;
+
+        //Generate random wilderness nodes on valid land
+        int attemptsPerNode=20;
+        for(int n=0; n<numWildernessNodes; n++){
+            bool found=false;
+            for(int attempt=0; attempt<attemptsPerNode&&!found; attempt++){
+                WorldCoord x=mapGenRandomIntMinMax(0, mapData->width-1);
+                WorldCoord y=mapGenRandomIntMinMax(0, mapData->height-1);
+
+                //Check if this location is valid
+                if(!PathFinding::isWalkableForPath(mapData, x, y)){
+                    continue;
+                }
+
+                //Check it's far enough from existing path nodes
+                bool tooCloseToPlace=false;
+                for(const PathNode& place : pathNodes){
+                    float dist=distanceBetweenPoints(x, y, place.originX, place.originY);
+                    if(dist<minDistanceFromPlaces){
+                        tooCloseToPlace=true;
+                        break;
+                    }
+                }
+
+                if(tooCloseToPlace){
+                    continue;
+                }
+
+                //Valid wilderness node found
+                PathNode wildNode;
+                wildNode.originX=x;
+                wildNode.originY=y;
+                wildNode.region=INVALID_REGION_ID;
+                wildNode.pathSpawns=0; //Wilderness nodes don't spawn paths
+                wildNode.canReceivePaths=true;
+                wildNode.connectivity=1;
+
+                wildernessNodes.push_back(wildNode);
+                found=true;
+            }
+        }
+
+        //Connect wilderness nodes to nearby places
+        for(const PathNode& wildNode : wildernessNodes){
+            if(pathId>=255) break;
+
+            //Find the closest place node
+            float closestDist=std::numeric_limits<float>::max();
+            size_t closestIdx=0;
+
+            for(size_t i=0; i<pathNodes.size(); i++){
+                float dist=distanceBetweenPoints(wildNode.originX, wildNode.originY, pathNodes[i].originX, pathNodes[i].originY);
+                if(dist<closestDist){
+                    closestDist=dist;
+                    closestIdx=i;
+                }
+            }
+
+            //Generate path from this place to the wilderness node
+            const PathNode& sourceNode=pathNodes[closestIdx];
+            PathSegment segment;
+            if(PathFinding::generatePath(
+                mapData,
+                sourceNode.originX, sourceNode.originY,
+                wildNode.originX, wildNode.originY,
+                pathId,
+                segment
+            )){
+                pathData.push_back(segment);
+                pathId++;
+            }
+        }
     }
 }
