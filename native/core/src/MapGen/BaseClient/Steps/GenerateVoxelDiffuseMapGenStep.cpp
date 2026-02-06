@@ -35,8 +35,7 @@ namespace ProceduralExplorationGameCore{
                 AV::uint8 diffuseValue = static_cast<AV::uint8>(blendedValue * 4.0f);
 
                 //Pack into the lower three bits of byte 0 of secondary voxel buffer
-                AV::uint8* metaPtr = VOXEL_META_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y));
-                *metaPtr = diffuseValue & 0x7;
+                VOXEL_META_SET_DIFFUSE(mapData, WRAP_WORLD_POINT(x, y), diffuseValue);
             }
         }
 
@@ -76,11 +75,10 @@ namespace ProceduralExplorationGameCore{
                     if(randomChance > falloff) continue; //Skip this voxel based on dither
 
                     //Darken the diffuse value (max value is 7, so reduce by 3-5 based on falloff)
-                    AV::uint8* metaPtr = VOXEL_META_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(vx, vy));
-                    AV::uint8 currentDiffuse = *metaPtr & 0x7;
+                    AV::uint8 currentDiffuse = VOXEL_META_GET_DIFFUSE(mapData, WRAP_WORLD_POINT(vx, vy));
                     AV::uint8 darkAmount = static_cast<AV::uint8>(3.0f + falloff * 2.0f); //Darken by 3-5
                     AV::uint8 newDiffuse = currentDiffuse > darkAmount ? currentDiffuse - darkAmount : 0;
-                    *metaPtr = newDiffuse & 0x7;
+                    VOXEL_META_SET_DIFFUSE(mapData, WRAP_WORLD_POINT(vx, vy), newDiffuse);
                 }
             }
         }
@@ -168,8 +166,7 @@ namespace ProceduralExplorationGameCore{
                 float shadowValue = (shadowFalloff) * 2.0f;
                 AV::uint8 shadowAmount = static_cast<AV::uint8>(shadowValue);
 
-                AV::uint8* metaPtr = VOXEL_META_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y));
-                *metaPtr = (*metaPtr & 0xF8) | (shadowAmount & 0x7);
+                VOXEL_META_SET_DIFFUSE(mapData, WRAP_WORLD_POINT(x, y), shadowAmount);
             }
         }
 
@@ -180,8 +177,7 @@ namespace ProceduralExplorationGameCore{
 
             AV::uint8 randomDiffuse = static_cast<AV::uint8>(mapGenRandomIntMinMax(0, 0x7));
 
-            AV::uint8* metaPtr = VOXEL_META_PTR_FOR_COORD(mapData, p);
-            *metaPtr = (*metaPtr & 0xF8) | (randomDiffuse & 0x7);
+            VOXEL_META_SET_DIFFUSE(mapData, p, randomDiffuse);
         }
 
         return true;

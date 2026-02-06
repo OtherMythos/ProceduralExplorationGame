@@ -120,6 +120,18 @@ namespace ProceduralExplorationGameCore{
     static inline const AV::uint8* VOXEL_META_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
         return UINT8_PTR_FOR_COORD_TERTIARY<const AV::uint8*, const ExplorationMapData*, 0>(mapData, p);
     }
+
+    static inline AV::uint8 VOXEL_META_GET_DIFFUSE(const ExplorationMapData* mapData, WorldPoint p){
+        const AV::uint8* metaPtr = VOXEL_META_PTR_FOR_COORD_CONST(mapData, p);
+        return *metaPtr & 0x7;
+    }
+
+    static inline void VOXEL_META_SET_DIFFUSE(ExplorationMapData* mapData, WorldPoint p, AV::uint8 diffuse){
+        assert(diffuse <= 0x7);
+        AV::uint8* metaPtr = VOXEL_META_PTR_FOR_COORD(mapData, p);
+        *metaPtr = (*metaPtr & 0xF8) | (diffuse & 0x7);
+    }
+
     static inline PathId* PATH_ID_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
         return reinterpret_cast<PathId*>(UINT8_PTR_FOR_COORD_TERTIARY<AV::uint8*, ExplorationMapData*, 1>(mapData, p));
     }

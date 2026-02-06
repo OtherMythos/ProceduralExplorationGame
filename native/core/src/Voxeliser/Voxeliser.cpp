@@ -465,7 +465,7 @@ namespace ProceduralExplorationGameCore{
 
                 if(altitude > maxAltitude) maxAltitude = altitude;
 
-                AV::uint8 voxelDiffuse = *VOXEL_META_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y)) & 0x7;
+                AV::uint8 voxelDiffuse = VOXEL_META_GET_DIFFUSE(mapData, WRAP_WORLD_POINT(x, y));
                 *reinterpret_cast<AV::uint32*>(&altitudes[x+y*width]) = altitude | static_cast<AV::uint32>(v) << 16 | static_cast<AV::uint32>(voxelDiffuse) << 24;
                 bufEntry.mNumActiveVox++;
             }
@@ -520,7 +520,7 @@ namespace ProceduralExplorationGameCore{
                     faceContainer.faceMask = f;
                     faceContainer.regionId = regionId;
                     faceContainer.flags = flags;
-                    AV::uint8 voxelDiffuse = *VOXEL_META_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y)) & 0x7;
+                    AV::uint8 voxelDiffuse = VOXEL_META_GET_DIFFUSE(mapData, WRAP_WORLD_POINT(x, y));
                     faceContainer.voxelDiffuse = voxelDiffuse;
 
                     outFaces.outFaces.push_back(faceContainer);

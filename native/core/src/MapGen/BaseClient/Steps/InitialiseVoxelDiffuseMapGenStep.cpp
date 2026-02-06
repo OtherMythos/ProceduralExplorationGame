@@ -18,8 +18,7 @@ namespace ProceduralExplorationGameCore{
         const AV::uint32 height = mapData->height;
         for(AV::uint32 y = 0; y < height; y++){
             for(AV::uint32 x = 0; x < width; x++){
-                AV::uint8* metaPtr = VOXEL_META_PTR_FOR_COORD(mapData, WRAP_WORLD_POINT(x, y));
-                *metaPtr = 7;
+                VOXEL_META_SET_DIFFUSE(mapData, WRAP_WORLD_POINT(x, y), 7);
             }
         }
 
