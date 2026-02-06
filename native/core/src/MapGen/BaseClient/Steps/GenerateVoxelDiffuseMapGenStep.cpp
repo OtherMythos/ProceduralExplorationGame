@@ -82,6 +82,27 @@ namespace ProceduralExplorationGameCore{
             }
         }
 
+        //Apply random diffuse noise to all path voxels
+        std::vector<PathSegment>* pathData = mapData->ptr<std::vector<PathSegment>>("pathData");
+
+        for(const PathSegment& path : *pathData){
+            for(const WorldPoint& p : path.points){
+                WorldCoord x, y;
+                READ_WORLD_POINT(p, x, y);
+
+                //Skip if out of bounds
+                if(x < 0 || y < 0 || x >= static_cast<WorldCoord>(width) || y >= static_cast<WorldCoord>(height)){
+                    continue;
+                }
+
+                AV::uint8 randomDiffuse = static_cast<AV::uint8>(mapGenRandomIntMinMax(0, 0x7));
+
+                //Update diffuse value (lower 3 bits of meta byte)
+                AV::uint8* metaPtr = VOXEL_META_PTR_FOR_COORD(mapData, p);
+                *metaPtr = (*metaPtr&0xF8) | (randomDiffuse&0x7);
+            }
+        }
+
         return true;
     }
 
