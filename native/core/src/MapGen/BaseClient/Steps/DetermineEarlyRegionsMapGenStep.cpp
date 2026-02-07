@@ -22,6 +22,19 @@ namespace ProceduralExplorationGameCore{
         return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
     }
 
+    //Compute a noise offset to perturb the Voronoi distance, producing organic region boundaries.
+    //Uses multiple sine octaves keyed on voxel position and seed index for varied wobble per edge.
+    inline float regionNoise(float x, float y, int seedIdx){
+        float seedOffset = seedIdx * 53.7f;
+        float n = 0.0f;
+        n += std::sin(x * 0.08f + seedOffset) * 8.0f;
+        n += std::sin(y * 0.08f + seedOffset * 1.3f) * 8.0f;
+        n += std::sin((x + y) * 0.06f + seedOffset * 0.7f) * 6.0f;
+        n += std::sin((x - y) * 0.1f + seedOffset * 1.9f) * 4.0f;
+        n += std::sin(x * 0.15f + y * 0.12f + seedOffset * 2.3f) * 3.0f;
+        return n;
+    }
+
     WorldPoint _determineRegionPoint(const std::vector<FloodFillEntry*>& landData, const std::vector<LandId>& landWeighted, LandId biggestLand, const ExplorationMapData* mapData, AV::CollisionWorldObject* collisionWorld, int size){
         //Attempt a few times, otherwise fail.
         for(int i = 0; i < 30; i++){
@@ -230,7 +243,7 @@ namespace ProceduralExplorationGameCore{
                     WorldCoord xTarget, yTarget;
                     READ_WORLD_POINT(p, xTarget, yTarget);
 
-                    float length = distance(xTarget, yTarget, x, y);
+                    float length = distance(xTarget, yTarget, x, y) + regionNoise(static_cast<float>(x), static_cast<float>(y), i);
                     if(length < closest){
                         closest = length;
                         closestIdx = i;
