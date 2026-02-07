@@ -121,6 +121,23 @@ namespace ProceduralExplorationGameCore{
         return UINT8_PTR_FOR_COORD_TERTIARY<const AV::uint8*, const ExplorationMapData*, 0>(mapData, p);
     }
 
+    static inline AV::uint8* VOXEL_HIGHLIGHT_GROUP_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
+        return UINT8_PTR_FOR_COORD_TERTIARY<AV::uint8*, ExplorationMapData*, 2>(mapData, p);
+    }
+    static inline const AV::uint8* VOXEL_HIGHLIGHT_GROUP_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
+        return UINT8_PTR_FOR_COORD_TERTIARY<const AV::uint8*, const ExplorationMapData*, 2>(mapData, p);
+    }
+
+    static inline AV::uint8 VOXEL_HIGHLIGHT_GROUP_GET(const ExplorationMapData* mapData, WorldPoint p){
+        const AV::uint8* ptr = VOXEL_HIGHLIGHT_GROUP_PTR_FOR_COORD_CONST(mapData, p);
+        return *ptr;
+    }
+
+    static inline void VOXEL_HIGHLIGHT_GROUP_SET(ExplorationMapData* mapData, WorldPoint p, AV::uint8 highlightGroup){
+        AV::uint8* ptr = VOXEL_HIGHLIGHT_GROUP_PTR_FOR_COORD(mapData, p);
+        *ptr = highlightGroup;
+    }
+
     static inline AV::uint8 VOXEL_META_GET_DIFFUSE(const ExplorationMapData* mapData, WorldPoint p){
         const AV::uint8* metaPtr = VOXEL_META_PTR_FOR_COORD_CONST(mapData, p);
         return *metaPtr & 0x7;

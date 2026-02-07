@@ -386,6 +386,32 @@ namespace ProceduralExplorationGameCore{
         return 1;
     }
 
+    SQInteger ExplorationMapDataUserData::getVoxelHighlightGroupForPos(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        Ogre::Vector3 outVec;
+        SCRIPT_CHECK_RESULT(AV::Vector3UserData::readVector3FromUserData(vm, -1, &outVec));
+        outVec.z = -outVec.z;
+
+        AV::uint8 highlightGroup = 0;
+
+        if(outVec.x < 0 || outVec.z < 0 || outVec.x >= mapData->width || outVec.z >= mapData->height){
+            sq_pushinteger(vm, static_cast<SQInteger>(highlightGroup));
+            return 1;
+        }
+
+        WorldCoord x, y;
+        x = static_cast<WorldCoord>(outVec.x);
+        y = static_cast<WorldCoord>(outVec.z);
+
+        highlightGroup = VOXEL_HIGHLIGHT_GROUP_GET(mapData, WRAP_WORLD_POINT(x, y));
+
+        sq_pushinteger(vm, static_cast<SQInteger>(highlightGroup));
+
+        return 1;
+    }
+
     SQInteger ExplorationMapDataUserData::getIsWaterForCoord(HSQUIRRELVM vm){
         ExplorationMapData* mapData;
         SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
@@ -902,6 +928,61 @@ namespace ProceduralExplorationGameCore{
         return 0;
     }
 
+    SQInteger ExplorationMapDataUserData::setVoxelHighlightGroupRectangle(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger oX, oY, hX, hY, highlightGroup;
+        sq_getinteger(vm, 2, &oX);
+        sq_getinteger(vm, 3, &oY);
+        sq_getinteger(vm, 4, &hX);
+        sq_getinteger(vm, 5, &hY);
+        sq_getinteger(vm, 6, &highlightGroup);
+
+        AV::uint32 originX = static_cast<AV::uint32>(oX);
+        AV::uint32 originY = static_cast<AV::uint32>(oY);
+        AV::uint32 halfX = static_cast<AV::uint32>(hX);
+        AV::uint32 halfY = static_cast<AV::uint32>(hY);
+        AV::uint8 groupId = static_cast<AV::uint8>(highlightGroup);
+
+        for(AV::uint32 y = originY - halfY; y < originY + halfY; y++){
+            for(AV::uint32 x = originX - halfX; x < originX + halfX; x++){
+                VOXEL_HIGHLIGHT_GROUP_SET(mapData, WRAP_WORLD_POINT(x, y), groupId);
+            }
+        }
+
+        return 0;
+    }
+
+    SQInteger ExplorationMapDataUserData::setVoxelHighlightGroupRadius(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger oX, oY, radius, highlightGroup;
+        sq_getinteger(vm, 2, &oX);
+        sq_getinteger(vm, 3, &oY);
+        sq_getinteger(vm, 4, &radius);
+        sq_getinteger(vm, 5, &highlightGroup);
+
+        AV::uint32 originX = static_cast<AV::uint32>(oX);
+        AV::uint32 originY = static_cast<AV::uint32>(oY);
+        AV::uint32 coreRadius = static_cast<AV::uint32>(radius);
+        AV::uint8 groupId = static_cast<AV::uint8>(highlightGroup);
+
+        for(AV::uint32 y = originY - coreRadius; y < originY + coreRadius; y++){
+            for(AV::uint32 x = originX - coreRadius; x < originX + coreRadius; x++){
+                int dx = static_cast<int>(x) - static_cast<int>(originX);
+                int dy = static_cast<int>(y) - static_cast<int>(originY);
+
+                if(dx * dx + dy * dy <= static_cast<int>(coreRadius * coreRadius)){
+                    VOXEL_HIGHLIGHT_GROUP_SET(mapData, WRAP_WORLD_POINT(x, y), groupId);
+                }
+            }
+        }
+
+        return 0;
+    }
+
     SQInteger ExplorationMapDataUserData::applyTerrainVoxelsForPlace(HSQUIRRELVM vm){
         ExplorationMapData* mapData;
         SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
@@ -1061,6 +1142,7 @@ namespace ProceduralExplorationGameCore{
         AV::ScriptUtils::addFunction(vm, getSpeedModifierForPos, "getSpeedModifierForPos", 2, ".u");
         AV::ScriptUtils::addFunction(vm, getLandmassForPos, "getLandmassForPos", 2, ".u");
         AV::ScriptUtils::addFunction(vm, getWaterGroupForPos, "getWaterGroupForPos", 2, ".u");
+        AV::ScriptUtils::addFunction(vm, getVoxelHighlightGroupForPos, "getVoxelHighlightGroupForPos", 2, ".u");
         AV::ScriptUtils::addFunction(vm, getIsWaterForPos, "getIsWaterForPos", 2, ".u");
         AV::ScriptUtils::addFunction(vm, getRegionForPos, "getRegionForPos", 2, ".u");
         AV::ScriptUtils::addFunction(vm, randomIntMinMax, "randomIntMinMax", 3, ".ii");
@@ -1085,6 +1167,8 @@ namespace ProceduralExplorationGameCore{
 
         AV::ScriptUtils::addFunction(vm, averageOutAltitudeRectangle, "averageOutAltitudeRectangle", 8, ".iiiiiii");
         AV::ScriptUtils::addFunction(vm, averageOutAltitudeRadius, "averageOutAltitudeRadius", 7, ".iiiiii");
+        AV::ScriptUtils::addFunction(vm, setVoxelHighlightGroupRectangle, "setVoxelHighlightGroupRectangle", 6, ".iiiii");
+        AV::ScriptUtils::addFunction(vm, setVoxelHighlightGroupRadius, "setVoxelHighlightGroupRadius", 5, ".iiii");
         AV::ScriptUtils::addFunction(vm, applyTerrainVoxelsForPlace, "applyTerrainVoxelsForPlace", 5, ".ssii");
         AV::ScriptUtils::addFunction(vm, calculateEdgeVoxels, "calculateEdgeVoxels");
 

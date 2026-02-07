@@ -49,6 +49,10 @@
         */
     }
 
+    function getVoxelHighlightGroupForPos(worldData, pos){
+        return ::currentNativeMapData.getVoxelHighlightGroupForPos(pos);
+    }
+
     function getRegionForPoint(worldData, point){
         //TODO OPTIMISATION would be better to shift all this to C++.
         local xPos = (point >> 16) & 0xFFFF;

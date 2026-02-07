@@ -406,6 +406,17 @@ namespace ProceduralExplorationGamePlugin{
         return 0;
     }
 
+    SQInteger GameCoreNamespace::setVoxelHighlightGroup(HSQUIRRELVM vm){
+        Ogre::uint32 val;
+        if(SQ_FAILED(sq_getinteger(vm, 2, reinterpret_cast<SQInteger*>(&val)))){
+            return sq_throwerror(vm, "Parameter 1 must be an integer");
+        }
+
+        GameCorePBSHlmsListener::mActiveVoxelHighlightGroup = val;
+
+        return 0;
+    }
+
     SQInteger GameCoreNamespace::registerVoxel(HSQUIRRELVM vm){
         ProceduralExplorationGameCore::MapGen* mapGen = ProceduralExplorationGameCore::PluginBaseSingleton::getMapGen();
         assert(mapGen);
@@ -1131,6 +1142,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, setCustomPassBufferValue, "setCustomPassBufferValue", -2, ".n|unn");
         AV::ScriptUtils::addFunction(vm, setPassBufferFogValue, "setPassBufferFogValue", -2, ".n|unn");
         AV::ScriptUtils::addFunction(vm, setPassBufferFogStartEnd, "setPassBufferFogStartEnd", -2, ".n|un");
+        AV::ScriptUtils::addFunction(vm, setVoxelHighlightGroup, "setVoxelHighlightGroup", 2, ".i");
         AV::ScriptUtils::addFunction(vm, setCameraForNode, "setCameraForNode", 3, ".ss");
         AV::ScriptUtils::addFunction(vm, loadOverworld, "loadOverworld", 2, ".s");
 

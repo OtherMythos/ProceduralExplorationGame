@@ -522,6 +522,8 @@ namespace ProceduralExplorationGameCore{
                     faceContainer.flags = flags;
                     AV::uint8 voxelDiffuse = VOXEL_META_GET_DIFFUSE(mapData, WRAP_WORLD_POINT(x, y));
                     faceContainer.voxelDiffuse = voxelDiffuse;
+                    AV::uint8 voxelHighlightGroup = VOXEL_HIGHLIGHT_GROUP_GET(mapData, WRAP_WORLD_POINT(x, y));
+                    faceContainer.voxelHighlightGroup = voxelHighlightGroup;
 
                     outFaces.outFaces.push_back(faceContainer);
                 }
@@ -560,7 +562,7 @@ namespace ProceduralExplorationGameCore{
                 (*bufEntry.mVertsWritePtr++) = val;
                 val = f << 29 | w.vox | static_cast<AV::uint32>(w.flags) << 16 | static_cast<AV::uint32>(w.voxelDiffuse & 0x7) << 8;
                 (*bufEntry.mVertsWritePtr++) = val;
-                (*bufEntry.mVertsWritePtr++) = 0x0;
+                (*bufEntry.mVertsWritePtr++) = static_cast<AV::uint32>(w.voxelHighlightGroup);
                 //(*bufEntry.mVertsWritePtr++) = 0x0;
                 //*reinterpret_cast<float*>(bufEntry.mVertsWritePtr++) = texCoordX;
                 //*reinterpret_cast<float*>(bufEntry.mVertsWritePtr++) = texCoordY;
@@ -629,10 +631,11 @@ namespace ProceduralExplorationGameCore{
                  */
                 //Calculate the remaining altitude faces
                 AV::uint8 voxelDiffuse = (*reinterpret_cast<AV::uint32*>(&vox) >> 24) & 0x7;
-                writeFaceToMesh(x, (int)y-1, x, yInverse, 0, altitude, altitudes, width, height, v, bufEntry, voxelDiffuse);
-                writeFaceToMesh(x, (int)y+1, x, yInverse, 1, altitude, altitudes, width, height, v, bufEntry, voxelDiffuse);
-                writeFaceToMesh((int)x+1, y, x, yInverse, 4, altitude, altitudes, width, height, v, bufEntry, voxelDiffuse);
-                writeFaceToMesh((int)x-1, y, x, yInverse, 5, altitude, altitudes, width, height, v, bufEntry, voxelDiffuse);
+                AV::uint8 voxelHighlightGroup = VOXEL_HIGHLIGHT_GROUP_GET(mapData, WRAP_WORLD_POINT(x, y));
+                writeFaceToMesh(x, (int)y-1, x, yInverse, 0, altitude, altitudes, width, height, v, bufEntry, voxelDiffuse, voxelHighlightGroup);
+                writeFaceToMesh(x, (int)y+1, x, yInverse, 1, altitude, altitudes, width, height, v, bufEntry, voxelDiffuse, voxelHighlightGroup);
+                writeFaceToMesh((int)x+1, y, x, yInverse, 4, altitude, altitudes, width, height, v, bufEntry, voxelDiffuse, voxelHighlightGroup);
+                writeFaceToMesh((int)x-1, y, x, yInverse, 5, altitude, altitudes, width, height, v, bufEntry, voxelDiffuse, voxelHighlightGroup);
             }
         }
 
@@ -645,7 +648,7 @@ namespace ProceduralExplorationGameCore{
         *outNumRegions = numRegions;
     }
 
-    void Voxeliser::writeFaceToMesh(AV::uint32 targetX, AV::uint32 targetY, AV::uint32 x, AV::uint32 y, AV::uint32 f, AV::uint32 altitude, const std::vector<float>& altitudes, AV::uint32 width, AV::uint32 height, AV::uint8 v, RegionBufferEntry& bufEntry, AV::uint8 voxelDiffuse) const{
+    void Voxeliser::writeFaceToMesh(AV::uint32 targetX, AV::uint32 targetY, AV::uint32 x, AV::uint32 y, AV::uint32 f, AV::uint32 altitude, const std::vector<float>& altitudes, AV::uint32 width, AV::uint32 height, AV::uint8 v, RegionBufferEntry& bufEntry, AV::uint8 voxelDiffuse, AV::uint8 voxelHighlightGroup) const{
         //Assuming there's no voxels around the outskirt this check can be avoided.
         //if(!(targetX < 0 || targetY < 0 || targetX >= width || targetY >= height)){
             float vox = altitudes[targetX + targetY * width];
@@ -677,7 +680,7 @@ namespace ProceduralExplorationGameCore{
                             (*bufEntry.mVertsWritePtr++) = val;
                             val = f << 29 | v | static_cast<AV::uint32>(voxelDiffuse) << 8;
                             (*bufEntry.mVertsWritePtr++) = val;
-                            (*bufEntry.mVertsWritePtr++) = 0x0;
+                            (*bufEntry.mVertsWritePtr++) = static_cast<AV::uint32>(voxelHighlightGroup);
                             //(*bufEntry.mVertsWritePtr++) = 0x0;
                             //*reinterpret_cast<float*>(bufEntry.mVertsWritePtr++) = texCoordX;
                             //*reinterpret_cast<float*>(bufEntry.mVertsWritePtr++) = texCoordY;

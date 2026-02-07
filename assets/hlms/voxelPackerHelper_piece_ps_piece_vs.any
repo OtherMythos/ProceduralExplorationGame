@@ -30,6 +30,7 @@
 
 	float fogStart;
 	float fogEnd;
+	uint activeVoxelHighlightGroup;
 @end
 
 @piece( custom_ps_functions )
@@ -52,7 +53,12 @@
 	pixelData.diffuse.xyz *= inPs.ambientVal;
 	@property(!invisibleTerrain && voxelTerrain)
 		pixelData.diffuse.xyz *= (0.2 + inPs.voxelDiffuseVal * 0.8);
-		//pixelData.diffuse.xyz *= inPs.voxelDiffuseVal;
+
+		if(passBuf.activeVoxelHighlightGroup != 0){
+			if(passBuf.activeVoxelHighlightGroup != inPs.voxelHighlightGroup){
+				pixelData.diffuse.xyz = 0.0;
+			}
+		}
 	@end
 
 	@property( disableLightChanges )
@@ -177,6 +183,7 @@
 		float ambientVal;
 		@property(!invisibleTerrain && voxelTerrain)
 			float voxelDiffuseVal;
+			NO_INTERPOLATION_PREFIX uint voxelHighlightGroup;
 		@end
 	@end
 	@property( windStreaks )
@@ -260,9 +267,11 @@
 		@property( syntax == metal )
 			uint original = as_type<uint>(inValues.x);
 			uint originalSecond = as_type<uint>(inValues.y);
+			uint originalThird = as_type<uint>(inValues.z);
 		@else
 			uint original = floatBitsToUint(inValues.x);
 			uint originalSecond = floatBitsToUint(inValues.y);
+			uint originalThird = floatBitsToUint(inValues.z);
 		@end
 
 		float3 normVal = float3(0, 0, 0);
@@ -337,6 +346,7 @@
 			@property(!invisibleTerrain && voxelTerrain)
 				uint voxelDiffuse = uint((originalSecond >> 8) & uint(0x7));
 				outVs.voxelDiffuseVal = float(voxelDiffuse)/7;
+				outVs.voxelHighlightGroup = uint(originalThird & uint(0xFF));
 			@end
 		@end
 		@end

@@ -143,8 +143,10 @@
                 local radiusVal = placeMetaData.averageGroundRadius[0];
                 local strengthVal = placeMetaData.averageGroundRadius[1];
                 mMapData_.averageOutAltitudeRadius(originX, originY, radiusVal, strengthVal, region, 101);
+                mMapData_.setVoxelHighlightGroupRadius(originX, originY, radiusVal, placeId);
             }else{
                 _averageOutGround(originX, originY, mData_.halfX, mData_.halfY, region);
+                mMapData_.setVoxelHighlightGroupRectangle(originX, originY, mData_.halfX, mData_.halfY, placeId);
             }
 
             mPlacesCollisionWorld_.addCollisionPoint(originX, originY, radius);

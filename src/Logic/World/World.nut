@@ -913,6 +913,11 @@ enum WorldMousePressContexts{
 
         _gameCore.update(mPlayerEntry_.getPosition());
 
+        //Check voxel highlight group at player position and activate place effect if needed
+        local playerPos = mPlayerEntry_.getPosition();
+        local placeId = ::currentNativeMapData.getVoxelHighlightGroupForPos(playerPos);
+        ::_gameCore.setVoxelHighlightGroup(placeId);
+
         ::DebugOverlayManager.appendText(DebugOverlayId.COMBAT, getTotalTargetedEnemies());
         if(mPlayerTargetRadius_.len() > 0){
             ::DebugOverlayManager.appendText(DebugOverlayId.COMBAT, "====");

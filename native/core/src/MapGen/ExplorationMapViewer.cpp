@@ -135,6 +135,15 @@ namespace ProceduralExplorationGameCore{
                 drawVal = Ogre::ColourValue(valGroup, valGroup, valGroup, OPACITY).getAsABGR();
             }
         }
+        if(drawOptions & (1 << (size_t)MapViewerDrawOptions::VOXEL_HIGHLIGHT_GROUPS)){
+            AV::uint8 highlightGroup = VOXEL_HIGHLIGHT_GROUP_GET(mapData, WRAP_WORLD_POINT(x, y));
+            if(highlightGroup == 0){
+                drawVal = Ogre::ColourValue::Black.getAsABGR();
+            }else{
+                float valGroup = static_cast<float>(highlightGroup) / static_cast<float>(0xFF);
+                drawVal = Ogre::ColourValue(valGroup, valGroup, valGroup, OPACITY).getAsABGR();
+            }
+        }
 
         return drawVal;
     }

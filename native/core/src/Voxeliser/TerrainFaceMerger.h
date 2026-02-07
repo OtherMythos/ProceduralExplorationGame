@@ -27,6 +27,7 @@ namespace ProceduralExplorationGameCore{
         //Generic flags object
         AV::uint8 flags;
         AV::uint8 voxelDiffuse;
+        AV::uint8 voxelHighlightGroup;
     };
     struct OutputFaces{
         std::vector<WrappedFaceContainer> outFaces;

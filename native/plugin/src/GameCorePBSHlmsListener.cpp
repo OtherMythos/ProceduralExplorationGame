@@ -4,6 +4,8 @@
 #include "OgreHlmsManager.h"
 #include "OgreRoot.h"
 
+#include "Logger/Log.h"
+
 namespace ProceduralExplorationGamePlugin
 {
 
@@ -12,6 +14,7 @@ namespace ProceduralExplorationGamePlugin
     Ogre::Vector3 GameCorePBSHlmsListener::mCustomValues = Ogre::Vector3::ZERO;
     Ogre::Vector3 GameCorePBSHlmsListener::mFogColour = Ogre::Vector3::ZERO;
     Ogre::Vector2 GameCorePBSHlmsListener::mFogStartEnd = Ogre::Vector2::ZERO;
+    Ogre::uint32 GameCorePBSHlmsListener::mActiveVoxelHighlightGroup = 0;
 
     GameCorePBSHlmsListener::GameCorePBSHlmsListener(){
 
@@ -22,7 +25,7 @@ namespace ProceduralExplorationGamePlugin
     }
 
     Ogre::uint32 GameCorePBSHlmsListener::getPassBufferSize(const Ogre::CompositorShadowNode *shadowNode, bool casterPass, bool dualParaboloid, Ogre::SceneManager *sceneManager) const {
-        return sizeof(float) + sizeof(float) * 3 + sizeof(float) * 3 + sizeof(float) * 3 + sizeof(float) * 2;
+        return sizeof(float) + sizeof(float) * 3 + sizeof(float) * 3 + sizeof(float) * 3 + sizeof(float) * 2 + sizeof(Ogre::uint32);
     }
 
     float* GameCorePBSHlmsListener::preparePassBuffer(const Ogre::CompositorShadowNode *shadowNode, bool casterPass, bool dualParaboloid, Ogre::SceneManager *sceneManager, float *passBufferPtr){
@@ -41,6 +44,8 @@ namespace ProceduralExplorationGamePlugin
 
         *passBufferPtr++ = mFogStartEnd.x;
         *passBufferPtr++ = mFogStartEnd.y;
+
+        *passBufferPtr++ = *reinterpret_cast<float*>(&mActiveVoxelHighlightGroup);
 
         return passBufferPtr;
     }

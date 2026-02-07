@@ -29,6 +29,7 @@ namespace ProceduralExplorationGameCore{
         static SQInteger getIsWaterForPos(HSQUIRRELVM vm);
         static SQInteger getRegionForPos(HSQUIRRELVM vm);
         static SQInteger getWaterGroupForPos(HSQUIRRELVM vm);
+        static SQInteger getVoxelHighlightGroupForPos(HSQUIRRELVM vm);
         static SQInteger randomIntMinMax(HSQUIRRELVM vm);
 
         static SQInteger getValue(HSQUIRRELVM vm);
@@ -47,6 +48,8 @@ namespace ProceduralExplorationGameCore{
         static SQInteger writeSecondaryValueForCoord(HSQUIRRELVM vm);
         static SQInteger averageOutAltitudeRectangle(HSQUIRRELVM vm);
         static SQInteger averageOutAltitudeRadius(HSQUIRRELVM vm);
+        static SQInteger setVoxelHighlightGroupRectangle(HSQUIRRELVM vm);
+        static SQInteger setVoxelHighlightGroupRadius(HSQUIRRELVM vm);
         static SQInteger applyTerrainVoxelsForPlace(HSQUIRRELVM vm);
 
         static SQInteger getIsWaterForCoord(HSQUIRRELVM vm);

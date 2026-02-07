@@ -197,6 +197,7 @@ enum VoxPickerType{
                     mCurrentNativeMapData_.getWaterGroupForPos(pos),
                     mCurrentNativeMapData_.getLandmassForPos(pos),
                     mCurrentNativeMapData_.getRegionForPos(pos),
+                    mCurrentNativeMapData_.getVoxelHighlightGroupForPos(pos),
                 ];
                 mActiveVoxPickerWindow_.setData(data);
             }
@@ -292,6 +293,7 @@ enum VoxPickerType{
             "Show water group",
             "Show moisture map",
             "Show voxel diffuse",
+            "Show voxel highlight groups"
             "Show regions",
             "Show region distance",
             "Show region edges",
