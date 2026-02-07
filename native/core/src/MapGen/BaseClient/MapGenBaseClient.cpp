@@ -81,6 +81,8 @@ namespace ProceduralExplorationGameCore{
             new CalculateRegionConcavityMapGenStep(),
             new DetermineRegionTypesMapGenStep(),
             new MergeExpandableRegionsMapGenStep(),
+            new RecalculateRegionEdgesMapGenStep(),
+            new MergeIsolatedRegionsMapGenStep(),
             //Apply the biome altitude first so places modify the correct altitude.
             new RecalculateRegionEdgesMapGenStep(),
             new CalculateRegionDistanceMapGenStep(),
