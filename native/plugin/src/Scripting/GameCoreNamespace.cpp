@@ -616,6 +616,7 @@ namespace ProceduralExplorationGamePlugin{
         }
         data->voidPtr("regionData", regionData);
         data->voidPtr("placedItems", new std::vector<ProceduralExplorationGameCore::PlacedItemData>());
+        data->voidPtr("pathData", new std::vector<ProceduralExplorationGameCore::PathSegment>());
         data->voidPtr("riverData", new std::vector<ProceduralExplorationGameCore::RiverData>());
 
         data->uint32("width", data->width);
