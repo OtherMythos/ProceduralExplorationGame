@@ -362,8 +362,10 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
             slow *= 0.6;
         }
         //Apply voxel-based speed modifier
-        local voxelSpeedModifier = ::currentNativeMapData.getSpeedModifierForPos(mPos_);
-        slow *= voxelSpeedModifier;
+        if(::currentNativeMapData != null){
+            local voxelSpeedModifier = ::currentNativeMapData.getSpeedModifierForPos(mPos_);
+            slow *= voxelSpeedModifier;
+        }
         return slow;
     }
     function setId(id){
