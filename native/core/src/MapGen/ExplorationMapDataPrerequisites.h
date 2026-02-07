@@ -132,6 +132,26 @@ namespace ProceduralExplorationGameCore{
         *metaPtr = (*metaPtr & 0xF8) | (diffuse & 0x7);
     }
 
+    static inline AV::uint8 VOXEL_META_GET_SPEED_MODIFIER(const ExplorationMapData* mapData, WorldPoint p){
+        const AV::uint8* metaPtr = VOXEL_META_PTR_FOR_COORD_CONST(mapData, p);
+        return (*metaPtr >> 3) & 0x7;
+    }
+
+    static inline void VOXEL_META_SET_SPEED_MODIFIER(ExplorationMapData* mapData, WorldPoint p, AV::uint8 speedModifier){
+        assert(speedModifier <= 0x7);
+        AV::uint8* metaPtr = VOXEL_META_PTR_FOR_COORD(mapData, p);
+        *metaPtr = (*metaPtr & 0xC7) | ((speedModifier & 0x7) << 3);
+    }
+
+    static inline float VOXEL_META_GET_SPEED_MODIFIER_FLOAT(const ExplorationMapData* mapData, WorldPoint p){
+        AV::uint8 value = VOXEL_META_GET_SPEED_MODIFIER(mapData, p);
+        if(value <= 4){
+            return 1.0f + (value * 0.25f);
+        }else{
+            return 1.0f - ((value - 4) * 0.25f);
+        }
+    }
+
     static inline PathId* PATH_ID_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
         return reinterpret_cast<PathId*>(UINT8_PTR_FOR_COORD_TERTIARY<AV::uint8*, ExplorationMapData*, 1>(mapData, p));
     }

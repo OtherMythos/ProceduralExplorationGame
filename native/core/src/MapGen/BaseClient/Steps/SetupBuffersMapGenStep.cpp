@@ -30,6 +30,9 @@ namespace ProceduralExplorationGameCore{
         mapData->tertiaryVoxelBuffer = reinterpret_cast<void*>(startPtr + (VOX_BUF_SIZE + SECONDARY_VOX_BUF_SIZE));
         mapData->blueNoiseBuffer = reinterpret_cast<void*>(startPtr + (VOX_BUF_SIZE + SECONDARY_VOX_BUF_SIZE + TERTIARY_VOX_BUF_SIZE));
 
+        //Initialise tertiary buffer to 0
+        memset(mapData->tertiaryVoxelBuffer, 0, TERTIARY_VOX_BUF_SIZE);
+
         //mapData->voxelBufferSize = VOX_BUF_SIZE;
         //mapData->secondaryVoxelBufferSize = SECONDARY_VOX_BUF_SIZE;
         //mapData->blueNoiseBufferSize = BLUE_NOISE_BUF_SIZE;

@@ -24,6 +24,7 @@ namespace ProceduralExplorationGameCore{
 
         static SQInteger explorationMapDataToTable(HSQUIRRELVM vm);
         static SQInteger getAltitudeForPos(HSQUIRRELVM vm);
+        static SQInteger getSpeedModifierForPos(HSQUIRRELVM vm);
         static SQInteger getLandmassForPos(HSQUIRRELVM vm);
         static SQInteger getIsWaterForPos(HSQUIRRELVM vm);
         static SQInteger getRegionForPos(HSQUIRRELVM vm);

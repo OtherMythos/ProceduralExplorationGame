@@ -308,6 +308,30 @@ namespace ProceduralExplorationGameCore{
         return 1;
     }
 
+    SQInteger ExplorationMapDataUserData::getSpeedModifierForPos(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        Ogre::Vector3 outVec;
+        SCRIPT_CHECK_RESULT(AV::Vector3UserData::readVector3FromUserData(vm, -1, &outVec));
+        outVec.z = -outVec.z;
+
+        if(outVec.x < 0 || outVec.z < 0 || outVec.x >= mapData->width || outVec.z >= mapData->height){
+            sq_pushfloat(vm, 1.0f);
+            return 1;
+        }
+
+        WorldCoord x, y;
+        x = static_cast<WorldCoord>(outVec.x);
+        y = static_cast<WorldCoord>(outVec.z);
+
+        float speedModifier = VOXEL_META_GET_SPEED_MODIFIER_FLOAT(mapData, WRAP_WORLD_POINT(x, y));
+
+        sq_pushfloat(vm, speedModifier);
+
+        return 1;
+    }
+
     SQInteger ExplorationMapDataUserData::getLandmassForPos(HSQUIRRELVM vm){
         ExplorationMapData* mapData;
         SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
@@ -1034,6 +1058,7 @@ namespace ProceduralExplorationGameCore{
 
         AV::ScriptUtils::addFunction(vm, explorationMapDataToTable, "explorationMapDataToTable");
         AV::ScriptUtils::addFunction(vm, getAltitudeForPos, "getAltitudeForPos", 2, ".u");
+        AV::ScriptUtils::addFunction(vm, getSpeedModifierForPos, "getSpeedModifierForPos", 2, ".u");
         AV::ScriptUtils::addFunction(vm, getLandmassForPos, "getLandmassForPos", 2, ".u");
         AV::ScriptUtils::addFunction(vm, getWaterGroupForPos, "getWaterGroupForPos", 2, ".u");
         AV::ScriptUtils::addFunction(vm, getIsWaterForPos, "getIsWaterForPos", 2, ".u");
