@@ -1,5 +1,7 @@
 #include "SetupBuffersMapGenStep.h"
 
+#include <cstring>
+
 #include "MapGen/ExplorationMapDataPrerequisites.h"
 #include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 
