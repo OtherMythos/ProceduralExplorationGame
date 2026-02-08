@@ -75,7 +75,7 @@ namespace ProceduralExplorationGameCore{
             *pathIdPtr = pathIdx;
 
             //Set speed modifier to 1.25x (0x1)
-            VOXEL_META_SET_SPEED_MODIFIER(mapData, p, 0x1);
+            VOXEL_META_SET_SPEED_MODIFIER(mapData, p, 0x2);
 
             //Set DO_NOT_PLACE_TREES flag in secondary buffer
             //AV::uint8* flagsPtr = VOXEL_FLAGS_PTR_FOR_COORD(mapData, p);
