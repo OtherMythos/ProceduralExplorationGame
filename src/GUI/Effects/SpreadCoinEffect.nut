@@ -81,8 +81,8 @@ local SpreadCoinEffectStateMachine = class extends ::Util.StateMachine{
     mStartPos_ = Vec2(0, 0);
     mEndPos_ = Vec2(0, 0);
     mAnimStages_ = null;
-    mScale_ = 0.5;
-    mCellSize_ = 5;
+    mScale_ = 10;
+    mCellSize_ = 100;
 
     mStateMachine_ = null;
 

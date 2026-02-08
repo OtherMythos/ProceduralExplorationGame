@@ -63,13 +63,13 @@
                 ::PopupManager.displayPopup(::PopupManager.PopupData(Popup.REGION_DISCOVERED, ::Biomes[BiomeId.DESERT]));
             },
             function(widget, action){
-                ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"numCoins": 10, "start": Vec2(0, 0), "end": Vec2(-2, 0), "money": 10}));
+                ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"numCoins": 10, "start": Vec2(0, 0), "end": Vec2(-40, -160), "money": 10}));
             },
             function(widget, action){
-                ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": 10, "start": Vec2(0, 0), "end": Vec2(-4, -4), "money": 10, "coinScale": 0.1}));
+                ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": 10, "start": Vec2(0, 0), "end": Vec2(-40, -160), "money": 10, "coinScale": 10}));
             },
             function(widget, action){
-                ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_EXP_ORB_EFFECT, {"numOrbs": 10, "start": Vec2(0, 0), "end": Vec2(-4, -4), "orbScale": 0.1}));
+                ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_EXP_ORB_EFFECT, {"numOrbs": 10, "start": Vec2(0, 0), "end": Vec2(-40, -160), "orbScale": 30}));
             },
             function(widget, action){
                 ::PopupManager.displayPopup(::PopupManager.PopupData(Popup.SINGLE_TEXT, {"text": "You clicked the mouse", "posX": _input.getMouseX(), "posY": _input.getMouseY(), "fontMultiplier": 1.5, "lifespan": 50, "fadeInTime": 10}));

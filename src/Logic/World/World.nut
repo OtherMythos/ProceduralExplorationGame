@@ -2231,7 +2231,7 @@ enum WorldMousePressContexts{
             local numCoins = 1;
             //Do not trigger the money change event, as the effect will update the counter.
             ::Base.mPlayerStats.changeMoney(numCoins, false);
-            ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": numCoins, "start": worldPos, "end": endPos, "money": 1, "coinScale": 0.2}));
+            ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_COIN_EFFECT, {"numCoins": numCoins, "start": worldPos, "end": endPos, "money": 1, "coinScale": 10}));
         }
         else if(data.mType == SpoilsComponentType.GIVE_ITEM){
             printf("Giving player item %s", data.mFirst.tostring());

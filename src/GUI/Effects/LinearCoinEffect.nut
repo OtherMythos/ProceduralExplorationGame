@@ -67,8 +67,7 @@ local LinearCoinEffectStateMachine = class extends ::Util.StateMachine{
     mNumCoins_ = 10;
     mStartPos_ = Vec2(0, 0);
     mEndPos_ = Vec2(0, 0);
-    mScale_ = 0.5;
-    mCellSize_ = 5;
+    mScale_ = 10;
 
     mStateMachine_ = null;
 
@@ -100,7 +99,7 @@ local LinearCoinEffectStateMachine = class extends ::Util.StateMachine{
     function createCoinOffsets(numCoins){
         local offsets = array(numCoins);
         for(local i = 0; i < numCoins; i++){
-            offsets[i] = (_random.rand()-0.5)*2;
+            offsets[i] = (_random.rand()-0.5)*5;
         }
         return offsets;
     }

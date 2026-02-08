@@ -66,8 +66,8 @@ local LinearEXPOrbEffectStateMachine = class extends ::Util.StateMachine{
     mNumOrbs_ = 1;
     mStartPos_ = Vec2(0, 0);
     mEndPos_ = Vec2(0, 0);
-    mScale_ = 0.5;
-    mCellSize_ = 5;
+    mScale_ = 0.1;
+    mCellSize_ = 100;
 
     mStateMachine_ = null;
 
@@ -75,8 +75,8 @@ local LinearEXPOrbEffectStateMachine = class extends ::Util.StateMachine{
         mNumOrbs_ = data.numOrbs;
         mStartPos_ = data.start;
         mEndPos_ = data.end;
-        if("coinScale" in data){
-            mScale_ = data.orbscale;
+        if("orbScale" in data){
+            mScale_ = data.orbScale;
         }
 
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
@@ -98,7 +98,7 @@ local LinearEXPOrbEffectStateMachine = class extends ::Util.StateMachine{
     function createCoinOffsets(numCoins){
         local offsets = array(numCoins);
         for(local i = 0; i < numCoins; i++){
-            offsets[i] = (_random.rand()-0.5)*2;
+            offsets[i] = (_random.rand()-0.5)*5;
         }
         return offsets;
     }

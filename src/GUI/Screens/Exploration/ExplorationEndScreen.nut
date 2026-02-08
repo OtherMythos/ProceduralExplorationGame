@@ -127,7 +127,7 @@ local ObjAnim = class{
         }
         function update(p, data){
             if(mOrbsToAdd_ > 0){
-                ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_EXP_ORB_EFFECT, {"numOrbs": 1, "start": mStartPos_, "end": mEndPos_, "orbScale": 0.2}));
+                ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.LINEAR_EXP_ORB_EFFECT, {"numOrbs": 1, "start": mStartPos_, "end": mEndPos_, "orbScale": 30}));
             }
             if(mOrbsToAdd_ <= 0) return;
             local prevLevel = ::Base.mPlayerStats.getLevelForEXP_(mLevelData_.startEXP + mOrbsAdded_);

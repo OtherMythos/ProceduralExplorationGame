@@ -687,7 +687,7 @@ enum InventoryBusEvents{
         ::Base.mPlayerStats.changeMoney(itemValue, false);
 
         //Display the spread coin effect
-        ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"numCoins": itemValue, "start": startPos, "end": moneyCounterPos, "money": itemValue, "coinScale": 0.2, "cellSize": 2}));
+        ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"numCoins": itemValue, "start": startPos, "end": moneyCounterPos, "money": itemValue, "coinScale": 10, "cellSize": 2}));
     }
 
     function removeFromInventory_(inventoryData){

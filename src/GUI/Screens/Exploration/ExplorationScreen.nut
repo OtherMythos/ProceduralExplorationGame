@@ -1183,7 +1183,7 @@ enum ExplorationScreenWidgetType{
                 }
                 local worldPos = ::EffectManager.getWorldPositionForWindowPos(data.buttonCentre);
                 local endPos = mMoneyCounter_.getPositionWindowPos();
-                ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"cellSize": 2, "coinScale": 0.1, "numCoins": 2, "start": worldPos, "end": endPos, "money": 100}));
+                ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.SPREAD_COIN_EFFECT, {"cellSize": 2, "coinScale": 10, "numCoins": 2, "start": worldPos, "end": endPos, "money": 100}));
             }
             else if(data.type == FoundObjectType.PLACE){
                 //::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.PLACE_INFO_SCREEN, data));
