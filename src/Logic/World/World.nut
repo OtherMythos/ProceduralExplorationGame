@@ -1152,6 +1152,36 @@ enum WorldMousePressContexts{
         processStatusAfflictionChange_(entity);
     }
 
+    function removeFireAffliction(entity){
+        //Remove all fire status afflictions from the entity
+        if(!mEntityManager_.hasComponent(entity, EntityComponents.STATUS_AFFLICTION)){
+            return;
+        }
+
+        local comp = mEntityManager_.getComponent(entity, EntityComponents.STATUS_AFFLICTION);
+        for(local i = 0; i < comp.mAfflictions.len(); i++){
+            if(comp.mAfflictions[i] != null && comp.mAfflictions[i].mAffliction == StatusAfflictionType.ON_FIRE){
+                comp.mAfflictions[i] = null;
+            }
+        }
+
+        //Check if there are any remaining afflictions
+        local hasRemaining = false;
+        foreach(a in comp.mAfflictions){
+            if(a != null){
+                hasRemaining = true;
+                break;
+            }
+        }
+
+        //If no afflictions remain, remove the component
+        if(!hasRemaining){
+            mEntityManager_.removeComponent(entity, EntityComponents.STATUS_AFFLICTION);
+        }
+
+        processStatusAfflictionChange_(entity);
+    }
+
     function updatePerformingMoves(){
         local removed = false;
         foreach(c,i in mPerformingMoves_){
