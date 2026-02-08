@@ -56,7 +56,7 @@
 
 		if(passBuf.activeVoxelHighlightGroup != 0){
 			if(passBuf.activeVoxelHighlightGroup != inPs.voxelHighlightGroup){
-				pixelData.diffuse.xyz = 0.0;
+				pixelData.diffuse.xyz = float3(0.0);
 			}
 		}
 	@end
