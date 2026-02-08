@@ -945,8 +945,13 @@ namespace ProceduralExplorationGameCore{
         AV::uint32 halfY = static_cast<AV::uint32>(hY);
         AV::uint8 groupId = static_cast<AV::uint8>(highlightGroup);
 
-        for(AV::uint32 y = originY - halfY; y < originY + halfY; y++){
-            for(AV::uint32 x = originX - halfX; x < originX + halfX; x++){
+        AV::uint32 minX = (halfX > originX) ? 0 : (originX - halfX);
+        AV::uint32 maxX = originX + halfX;
+        AV::uint32 minY = (halfY > originY) ? 0 : (originY - halfY);
+        AV::uint32 maxY = originY + halfY;
+
+        for(AV::uint32 y = minY; y < maxY; y++){
+            for(AV::uint32 x = minX; x < maxX; x++){
                 VOXEL_HIGHLIGHT_GROUP_SET(mapData, WRAP_WORLD_POINT(x, y), groupId);
             }
         }
@@ -969,8 +974,13 @@ namespace ProceduralExplorationGameCore{
         AV::uint32 coreRadius = static_cast<AV::uint32>(radius);
         AV::uint8 groupId = static_cast<AV::uint8>(highlightGroup);
 
-        for(AV::uint32 y = originY - coreRadius; y < originY + coreRadius; y++){
-            for(AV::uint32 x = originX - coreRadius; x < originX + coreRadius; x++){
+        AV::uint32 minX = (coreRadius > originX) ? 0 : (originX - coreRadius);
+        AV::uint32 maxX = originX + coreRadius;
+        AV::uint32 minY = (coreRadius > originY) ? 0 : (originY - coreRadius);
+        AV::uint32 maxY = originY + coreRadius;
+
+        for(AV::uint32 y = minY; y < maxY; y++){
+            for(AV::uint32 x = minX; x < maxX; x++){
                 int dx = static_cast<int>(x) - static_cast<int>(originX);
                 int dy = static_cast<int>(y) - static_cast<int>(originY);
 

@@ -407,12 +407,12 @@ namespace ProceduralExplorationGamePlugin{
     }
 
     SQInteger GameCoreNamespace::setVoxelHighlightGroup(HSQUIRRELVM vm){
-        Ogre::uint32 val;
-        if(SQ_FAILED(sq_getinteger(vm, 2, reinterpret_cast<SQInteger*>(&val)))){
+        SQInteger val;
+        if(SQ_FAILED(sq_getinteger(vm, 2, &val))){
             return sq_throwerror(vm, "Parameter 1 must be an integer");
         }
 
-        GameCorePBSHlmsListener::mActiveVoxelHighlightGroup = val;
+        GameCorePBSHlmsListener::mActiveVoxelHighlightGroup = static_cast<Ogre::uint32>(val);
 
         return 0;
     }
