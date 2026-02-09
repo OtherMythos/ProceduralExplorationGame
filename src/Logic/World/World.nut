@@ -2200,7 +2200,8 @@ enum WorldMousePressContexts{
             targetData.rawset(en, true);
 
             if(mActiveEnemies_.rawin(en)){
-                assignGizmoToEntity(en, ExplorationGizmos.TARGET_ENEMY, projectile);
+                //Disabled target indicators
+                //assignGizmoToEntity(en, ExplorationGizmos.TARGET_ENEMY, projectile);
                 //local activeEnemy = mActiveEnemies_[en];
                 //local gizmo = createGizmo(activeEnemy.getPosition(), ExplorationGizmos.TARGET_ENEMY, projectile);
                 //activeEnemy.setGizmo(gizmo);
@@ -2213,7 +2214,8 @@ enum WorldMousePressContexts{
             targetData.rawdelete(en);
             if(mActiveEnemies_.rawin(en)){
                 //mActiveEnemies_[en].setGizmo(null);
-                removeGizmoFromEntity(en, ExplorationGizmos.TARGET_ENEMY);
+                //Disabled target indicators
+                //removeGizmoFromEntity(en, ExplorationGizmos.TARGET_ENEMY);
             }
         }
     }
