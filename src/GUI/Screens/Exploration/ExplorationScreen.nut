@@ -7,7 +7,6 @@ enum ExplorationScreenWidgetType{
     STATS_CONTAINER,
     MOVES_CONTAINER,
     MINIMAP,
-    WIELD_BUTTON,
     PAUSE_BUTTON,
     CAMERA_BUTTON,
     INVENTORY_INDICATOR,
@@ -34,7 +33,6 @@ enum ExplorationScreenWidgetType{
     mPlaceHelperButton_ = null;
     mCurrentPlace_ = null;
     mScrapAllButton_ = null;
-    mWieldActiveButton = null;
     mPauseButton = null;
     mZoomModifierButton = null;
     mCameraButton = null;
@@ -42,6 +40,9 @@ enum ExplorationScreenWidgetType{
     mPlayerDirectJoystick_ = null;
     mPlayerTapButton = null;
     mPlayerTapButtonActive = false;
+    mSwipeTapStartPos_ = null;
+    mSwipeTapEndPos_ = null;
+    mSwipeTapActive_ = false;
     mDiscoverLevelUpScreen_ = null;
     mInventoryWidget_ = null;
     mLayoutLine_ = null;
@@ -717,19 +718,6 @@ enum ExplorationScreenWidgetType{
 
         local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
         if(mobile){
-            //mWieldActiveButton = mWindow_.createButton();
-            mWieldActiveButton = ::IconButton(mWindow_, "swordsIcon");
-            mWieldActiveButton.setSize(Vec2(100, 100));
-            mWieldActiveButton.setButtonVisualsEnabled(false);
-            mWieldActiveButton.setZOrder(WIDGET_SAFE_FOR_BILLBOARD_Z);
-            //mWieldActiveButton.setText("Wield");
-            //mWieldActiveButton.setPosition(_window.getWidth() / 2 - mWieldActiveButton.getSize().x/2, _window.getHeight() - mWieldActiveButton.getSize().y*2);
-            mWieldActiveButton.attachListenerForEvent(function(widget, action){
-                ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
-                ::Base.mPlayerStats.toggleWieldActive();
-            }, _GUI_ACTION_PRESSED, this);
-            mScreenInputCheckList_.append(mWieldActiveButton);
-            mExplorationScreenWidgetType_[ExplorationScreenWidgetType.WIELD_BUTTON] = mWieldActiveButton;
 
             mPauseButton = ::IconButton(mWindow_, "pauseIcon");
             mPauseButton.setSize(Vec2(85, 85));
@@ -759,13 +747,10 @@ enum ExplorationScreenWidgetType{
             mPlayerTapButton.setSize(playerSizeButton);
             mPlayerTapButton.setPosition(_window.getWidth() / 2 - playerSizeButton.x / 2, _window.getHeight() / 2 - playerSizeButton.y / 2);
             mPlayerTapButton.setKeyboardNavigable(false);
-            mPlayerTapButton.setVisible(false);
             mPlayerTapButton.setVisualsEnabled(false);
             //mPlayerTapButton.setPosition(_window.getWidth() / 2 - mPlayerTapButton.getSize().x/2, mCameraButton.getPosition().y - mPlayerTapButton.getSize().y - 20);
-            mPlayerTapButton.attachListenerForEvent(function(widget, action){
-                //::Base.mActionManager.executeSlot(0);
-            }, _GUI_ACTION_PRESSED);
-            //mScreenInputCheckList_.append(mPlayerTapButton);
+            //Swipe attack input is now tracked directly via updateSwipeTracking_() in update()
+            mScreenInputCheckList_.append(mPlayerTapButton);
 
             mPlayerDirectJoystick_ = ::PlayerDirectJoystick(mWindow_);
             mExplorationScreenWidgetType_[ExplorationScreenWidgetType.DIRECTION_JOYSTICK] = mPlayerDirectJoystick_;
@@ -809,7 +794,7 @@ enum ExplorationScreenWidgetType{
             mCameraButton.setSkinPack("ButtonZoom");
 
             if(screenshotMode){
-                mWieldActiveButton.setVisible(false);
+
                 mPauseButton.setVisible(false);
                 mCameraButton.setVisible(false);
                 mZoomModifierButton.setVisible(false);
@@ -874,7 +859,6 @@ enum ExplorationScreenWidgetType{
         if(mobile){
             local widgetPos = mInventoryWidget_.getPosition();
             widgetPos.x += 80;
-            mWieldActiveButton.setPosition(widgetPos);
 
             local pauseButtonPos = widgetPos.copy();
             pauseButtonPos.x += 80;
@@ -983,7 +967,7 @@ enum ExplorationScreenWidgetType{
             }
         }
         if(::Base.getTargetInterface() == TargetInterface.MOBILE){
-            mPlayerTapButton.setVisible(!allEmpty);
+            //mPlayerTapButton.setVisible(!allEmpty);
             mMobileActionInfo_.actionsChanged(data, allEmpty);
         }
         mPlayerTapButtonActive = !allEmpty;
@@ -1030,6 +1014,9 @@ enum ExplorationScreenWidgetType{
         mCompassAnimator_.update();
         mZoomLines_.update();
         mFoundItemIconsManager_.update();
+
+        //Update swipe tracking: check if mouse button is held and track movement
+        updateSwipeTracking_();
 
         updateTopInfoVisibility();
 
@@ -1099,6 +1086,83 @@ enum ExplorationScreenWidgetType{
             return Vec2((x-start.x) / end.x, (y-start.y) / end.y);
         }
         return null;
+    }
+
+    function updateSwipeTracking_(){
+        //Check if player tap button area is being pressed (swipe attacks always available)
+        local currentMousePos = Vec2(_input.getMouseX(), _input.getMouseY());
+
+        //Start swipe tracking if not already active and within button bounds
+        if(!mSwipeTapActive_){
+            local buttonPos = mPlayerTapButton.getPosition();
+            local buttonSize = mPlayerTapButton.getSize();
+
+            if(currentMousePos.x >= buttonPos.x && currentMousePos.y >= buttonPos.y &&
+               currentMousePos.x < buttonPos.x + buttonSize.x && currentMousePos.y < buttonPos.y + buttonSize.y){
+
+                if(_input.getMouseButton(_MB_LEFT)){
+                    mSwipeTapStartPos_ = currentMousePos.copy();
+                    mSwipeTapEndPos_ = mSwipeTapStartPos_.copy();
+                    mSwipeTapActive_ = true;
+                    //Request swiping attack state
+                    local world = ::Base.mExplorationLogic.mCurrentWorld_;
+                    if(world != null){
+                        world.mMouseContext_.requestSwipingAttack();
+                    }
+                }
+            }
+        }
+
+        //Update swipe end position while holding down
+        if(mSwipeTapActive_){
+            mSwipeTapEndPos_ = currentMousePos.copy();
+
+            //Check if mouse button is released (no longer pressed)
+            if(!_input.getMouseButton(_MB_LEFT)){
+                mSwipeTapActive_ = false;
+                //Notify world that mouse ended
+                local world = ::Base.mExplorationLogic.mCurrentWorld_;
+                if(world != null){
+                    world.mMouseContext_.notifyMouseEnded();
+                }
+                onSwipeAttackExecute_();
+            }
+        }
+    }
+
+    function onSwipeAttackExecute_(){
+        //Compute swipe direction from start to end position
+        if(mSwipeTapStartPos_ == null || mSwipeTapEndPos_ == null) return;
+
+        local swipeDelta = mSwipeTapEndPos_ - mSwipeTapStartPos_;
+        if(swipeDelta.length() < 10.0) return; //Minimum swipe distance threshold
+
+        //Normalise the swipe delta
+        swipeDelta.normalise();
+
+        //Convert screen-space swipe direction to world-space direction via camera orientation
+        local world = ::Base.mExplorationLogic.mCurrentWorld_;
+        if(world == null) return;
+
+        //Get camera forward and right vectors based on camera orientation
+        //mRotation_.x is horizontal rotation (around Y axis)
+        //Camera is positioned at offset (cos(rot.x), 0, sin(rot.x)) from target
+        //So forward direction towards target is opposite: (-cos(rot.x), 0, -sin(rot.x))
+        //Right vector is perpendicular in XZ plane
+        local cameraRot = world.mRotation_;
+
+        local cameraForward = Vec3(-cos(cameraRot.x), 0, -sin(cameraRot.x));
+        local cameraRight = Vec3(-sin(cameraRot.x), 0, cos(cameraRot.x));
+
+        //Combine swipe direction with camera vectors: x-axis = right, y-axis = forward (screen Y is inverted)
+        local worldAttackDir = (cameraRight * swipeDelta.x) + (cameraForward * swipeDelta.y);
+        worldAttackDir.normalise();
+
+        print(worldAttackDir)
+        worldAttackDir.y = 0; //Keep attack direction horizontal
+
+        //Resolve enemies in swipe direction and apply attack
+        world.performDirectionalAttack(worldAttackDir);
     }
 
     function notifyObjectFound(foundObject, idx, position = null){
@@ -1237,9 +1301,6 @@ enum ExplorationScreenWidgetType{
         }
         mExplorationScreenWidgetType_[ExplorationScreenWidgetType.MINIMAP].setVisible(vis);
         mExplorationScreenWidgetType_[ExplorationScreenWidgetType.STATS_CONTAINER].setVisible(vis);
-        if(mExplorationScreenWidgetType_[ExplorationScreenWidgetType.WIELD_BUTTON]){
-            mExplorationScreenWidgetType_[ExplorationScreenWidgetType.WIELD_BUTTON].setVisible(vis);
-        }
         if(mExplorationScreenWidgetType_[ExplorationScreenWidgetType.PAUSE_BUTTON]){
             mExplorationScreenWidgetType_[ExplorationScreenWidgetType.PAUSE_BUTTON].setVisible(vis);
         }
@@ -1266,9 +1327,6 @@ enum ExplorationScreenWidgetType{
     function setTopInfoOpacity(opacity){
         local target = ColourValue(1, 1, 1, opacity);
 
-        if(mExplorationScreenWidgetType_[ExplorationScreenWidgetType.WIELD_BUTTON]){
-            mExplorationScreenWidgetType_[ExplorationScreenWidgetType.WIELD_BUTTON].setColour(target);
-        }
         if(mExplorationScreenWidgetType_[ExplorationScreenWidgetType.PAUSE_BUTTON]){
             mExplorationScreenWidgetType_[ExplorationScreenWidgetType.PAUSE_BUTTON].setColour(target);
         }

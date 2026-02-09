@@ -75,7 +75,7 @@
         mMaxHealth = 10;
         mEnemyType = EnemyId.NONE;
         mEquippedItems = null;
-        mWieldActive = true;
+        mWieldActive = false;
 
         mDead = false;
 

@@ -127,6 +127,7 @@ enum WorldMousePressContexts{
     DIRECTING_PLAYER,
     //In the case of a window that takes the full screen with exploration in the back, ensure clicks to leave don't result in a flag press.
     POPUP_WINDOW,
+    SWIPING_ATTACK,
 };
 
 /*
@@ -369,6 +370,9 @@ enum WorldMousePressContexts{
         }
         function requestPopupWindow(){
             return beginState_(WorldMousePressContexts.POPUP_WINDOW);
+        }
+        function requestSwipingAttack(){
+            return beginState_(WorldMousePressContexts.SWIPING_ATTACK);
         }
         function notifyMouseEnded(){
             if(mCurrentState_ == null) return;
@@ -777,7 +781,8 @@ enum WorldMousePressContexts{
         mCameraEffectManager_ = ::CameraEffectManager();
         setupCameraEffectManager();
 
-        _gameCore.setCustomPassBufferValue(::Base.mPlayerStats.getWieldActive() ? 1.0 : 0.0, 0, 0);
+        //Directional attack system: wield state no longer used
+        //_gameCore.setCustomPassBufferValue(::Base.mPlayerStats.getWieldActive() ? 1.0 : 0.0, 0, 0);
     }
 
     function getEntityFactory(){
@@ -809,9 +814,9 @@ enum WorldMousePressContexts{
         mPlayerEntry_.getModel().equipDataToCharacterModel(data.items, data.wieldActive);
     }
     function playerWieldChanged(active){
-        mPlayerEntry_.setWieldActive(active);
-
-        _gameCore.setCustomPassBufferValue(active ? 1.0 : 0.0, 0, 0);
+        //Directional attack system: wield state no longer used
+        //mPlayerEntry_.setWieldActive(active);
+        //_gameCore.setCustomPassBufferValue(active ? 1.0 : 0.0, 0, 0);
     }
 
     function processEXPOrb(entityId){
@@ -1968,7 +1973,8 @@ enum WorldMousePressContexts{
     }
 
     function performProjectileMove(attackingEnemy){
-        if(!::Base.mPlayerStats.getWieldActive()) return;
+        //Directional attack system: wield state no longer used
+        //if(!::Base.mPlayerStats.getWieldActive()) return;
 
         local targetEnemy = null;
         if(attackingEnemy.getId() == -1){
@@ -2003,6 +2009,49 @@ enum WorldMousePressContexts{
         mProjectileManager_.spawnProjectile(ProjectileId.FIREBALL, startPos, -dir, combatMove);
     }
 
+    function performDirectionalAttack(attackDirection){
+        //Find the closest enemy within a cone in the attack direction
+        local playerPos = getPlayerPosition();
+        local ATTACK_RANGE = 5.0; //Maximum distance to target an enemy
+        local ATTACK_CONE_ANGLE = 0.707; //Approximately 45 degrees (cosine of 45 degrees)
+
+        local closestEnemy = null;
+        local closestDistance = ATTACK_RANGE;
+
+        foreach(enemyEid, activeEnemy in mActiveEnemies_){
+            local enemyPos = mEntityManager_.getPosition(enemyEid);
+            local toEnemy = enemyPos - playerPos;
+            local distance = toEnemy.length();
+
+            //Check if enemy is within range
+            if(distance >= ATTACK_RANGE) continue;
+
+            //Check if enemy is within the attack cone
+            local normalised = toEnemy.normalisedCopy();
+            local dotProduct = normalised.dotProduct(attackDirection);
+
+            if(dotProduct < ATTACK_CONE_ANGLE) continue; //Outside cone
+
+            //Track closest enemy in cone
+            if(distance < closestDistance){
+                closestDistance = distance;
+                closestEnemy = enemyEid;
+            }
+        }
+
+        //Perform the attack whether or not an enemy was hit
+        local combatMove = ::Combat.CombatMove(10); //Directional attack base damage
+        mProjectileManager_.spawnProjectile(ProjectileId.FIREBALL, playerPos, -attackDirection, combatMove);
+
+        //Apply damage to the resolved enemy if one exists
+        if(closestEnemy != null){
+            _applyDamageOther(mEntityManager_, closestEnemy, combatMove.getDamage());
+        }
+
+        //Attack animation/visual effect plays regardless of whether there's a target
+        //The swipe attack is now complete
+    }
+
     function checkPlayerInputs(){
         if(mBlockAllInputs_) return;
         foreach(c,i in mInputs_.playerMoves){
@@ -2021,9 +2070,10 @@ enum WorldMousePressContexts{
         if(_input.getButtonAction(mInputs_.interact, _INPUT_PRESSED)){
             ::Base.mActionManager.executeSlot(0);
         }
-        if(_input.getButtonAction(mInputs_.toggleWieldActive, _INPUT_PRESSED)){
-            ::Base.mPlayerStats.toggleWieldActive();
-        }
+        //Directional attack system: wield toggle disabled
+        //if(_input.getButtonAction(mInputs_.toggleWieldActive, _INPUT_PRESSED)){
+        //    ::Base.mPlayerStats.toggleWieldActive();
+        //}
         if(_input.getButtonAction(mInputs_.pauseGame, _INPUT_PRESSED)){
             ::Base.mExplorationLogic.setGamePaused(true);
         }
