@@ -1101,11 +1101,14 @@ enum ExplorationScreenWidgetType{
                currentMousePos.x < buttonPos.x + buttonSize.x && currentMousePos.y < buttonPos.y + buttonSize.y){
 
                 if(_input.getMouseButton(_MB_LEFT)){
+                    //Skip if the world already has an active mouse state (e.g. camera drag moved over button)
+                    local world = ::Base.mExplorationLogic.mCurrentWorld_;
+                    if(world != null && world.mMouseContext_.getCurrentState() != null) return;
+
                     mSwipeTapStartPos_ = currentMousePos.copy();
                     mSwipeTapEndPos_ = mSwipeTapStartPos_.copy();
                     mSwipeTapActive_ = true;
                     //Request swiping attack state
-                    local world = ::Base.mExplorationLogic.mCurrentWorld_;
                     if(world != null){
                         world.mMouseContext_.requestSwipingAttack();
                     }

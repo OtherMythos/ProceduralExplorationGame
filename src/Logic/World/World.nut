@@ -2023,10 +2023,13 @@ enum WorldMousePressContexts{
         local closestEnemy = null;
         local closestDistance = ATTACK_RANGE;
 
+        /*
         foreach(enemyEid, activeEnemy in mActiveEnemies_){
             local enemyPos = mEntityManager_.getPosition(enemyEid);
             local toEnemy = enemyPos - playerPos;
             local distance = toEnemy.length();
+
+            if(distance == null) continue;
 
             //Check if enemy is within range
             if(distance >= ATTACK_RANGE) continue;
@@ -2043,6 +2046,7 @@ enum WorldMousePressContexts{
                 closestEnemy = enemyEid;
             }
         }
+        */
 
         //Perform the attack whether or not an enemy was hit
         local combatMove = ::Combat.CombatMove(10); //Directional attack base damage
