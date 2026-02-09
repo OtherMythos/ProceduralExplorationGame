@@ -876,7 +876,7 @@ enum ExplorationScreenWidgetType{
             widgetPos.x += 80;
 
             local pauseButtonPos = widgetPos.copy();
-            pauseButtonPos.x += 80;
+            pauseButtonPos.x += 20;
             pauseButtonPos.y += 5;
             mPauseButton.setPosition(pauseButtonPos);
 
