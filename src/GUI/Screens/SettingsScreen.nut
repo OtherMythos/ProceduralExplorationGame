@@ -68,6 +68,12 @@
         layoutLine.setMarginForAllCells(0, 20);
         //layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
         layoutLine.setSize(winWidth, winHeight);
+
+        //Display current world seed information
+        local seedLabel = mWindow_.createLabel();
+        seedLabel.setText(getWorldSeedString_());
+        layoutLine.addCell(seedLabel);
+
         layoutLine.layout();
 
         local backButton = mWindow_.createButton();
@@ -100,6 +106,21 @@
             if(setting == null) continue;
             mSettingsWidgets_[i].setValue(setting);
         }
+    }
+
+    function getWorldSeedString_(){
+        local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+        local out = " ";
+        if(currentWorld == null){
+            return out;
+        }
+        local worldType = currentWorld.getWorldType();
+        if(worldType == WorldTypes.PROCEDURAL_EXPLORATION_WORLD){
+            local mapData = currentWorld.getMapData();
+            local text = "Seed: %i, %i, %i";
+            out = format(text, mapData.seed, mapData.moistureSeed, mapData.variationSeed);
+        }
+        return out;
     }
 
     function update(){
