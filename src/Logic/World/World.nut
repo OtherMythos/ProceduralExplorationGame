@@ -2015,6 +2015,11 @@ enum WorldMousePressContexts{
         local ATTACK_RANGE = 5.0; //Maximum distance to target an enemy
         local ATTACK_CONE_ANGLE = 0.707; //Approximately 45 degrees (cosine of 45 degrees)
 
+        //Set the player's facing direction to match the attack direction
+        setPlayerDirection(Vec2(-attackDirection.x, -attackDirection.z));
+        //Reset movement cooldown so the camera movement doesn't immediately override the attack direction
+        mMovementCooldown_ = 0;
+
         local closestEnemy = null;
         local closestDistance = ATTACK_RANGE;
 
