@@ -2046,6 +2046,8 @@ enum WorldMousePressContexts{
 
         //Perform the attack whether or not an enemy was hit
         local combatMove = ::Combat.CombatMove(10); //Directional attack base damage
+        combatMove.mStatusAffliction = StatusAfflictionType.ON_FIRE;
+        combatMove.mStatusAfflictionLifetime = 100;
         mProjectileManager_.spawnProjectile(ProjectileId.FIREBALL, playerPos, -attackDirection, combatMove);
 
         //Apply damage to the resolved enemy if one exists
