@@ -43,6 +43,13 @@ enum ExplorationScreenWidgetType{
     mSwipeTapStartPos_ = null;
     mSwipeTapEndPos_ = null;
     mSwipeTapActive_ = false;
+    mSwipeCompassPanel_ = null;
+    mSwipeCompassRotation_ = 0.0;
+    mSwipeCompassTargetOpacity_ = 0.0;
+    mSwipeCompassCurrentOpacity_ = 0.0;
+    mSwipeHoldTimer_ = 0;
+    static SWIPE_HOLD_THRESHOLD = 60; //1 second at 60fps
+    static SWIPE_HOLD_REPEAT_INTERVAL = 15; //Repeat attack every 0.25 seconds
     mDiscoverLevelUpScreen_ = null;
     mInventoryWidget_ = null;
     mLayoutLine_ = null;
@@ -752,6 +759,14 @@ enum ExplorationScreenWidgetType{
             //Swipe attack input is now tracked directly via updateSwipeTracking_() in update()
             mScreenInputCheckList_.append(mPlayerTapButton);
 
+            //Create spinning compass panel for swipe attack feedback
+            mSwipeCompassPanel_ = mWindow_.createPanel();
+            mSwipeCompassPanel_.setDatablock(_hlms.getDatablock("guiExplorationCompass"));
+            mSwipeCompassPanel_.setSize(Vec2(120, 120));
+            mSwipeCompassPanel_.setVisible(false);
+            mSwipeCompassPanel_.setClickable(false);
+            mSwipeCompassPanel_.setZOrder(WIDGET_SAFE_FOR_BILLBOARD_Z - 1);
+
             mPlayerDirectJoystick_ = ::PlayerDirectJoystick(mWindow_);
             mExplorationScreenWidgetType_[ExplorationScreenWidgetType.DIRECTION_JOYSTICK] = mPlayerDirectJoystick_;
 
@@ -1017,6 +1032,7 @@ enum ExplorationScreenWidgetType{
 
         //Update swipe tracking: check if mouse button is held and track movement
         updateSwipeTracking_();
+        updateSwipeCompassPanelVisibility_();
 
         updateTopInfoVisibility();
 
@@ -1108,6 +1124,9 @@ enum ExplorationScreenWidgetType{
                     mSwipeTapStartPos_ = currentMousePos.copy();
                     mSwipeTapEndPos_ = mSwipeTapStartPos_.copy();
                     mSwipeTapActive_ = true;
+                    mSwipeHoldTimer_ = 0;
+                    mSwipeCompassRotation_ = 0.0;
+                    mSwipeCompassTargetOpacity_ = 0.0;
                     //Request swiping attack state
                     if(world != null){
                         world.mMouseContext_.requestSwipingAttack();
@@ -1119,10 +1138,28 @@ enum ExplorationScreenWidgetType{
         //Update swipe end position while holding down
         if(mSwipeTapActive_){
             mSwipeTapEndPos_ = currentMousePos.copy();
+            mSwipeHoldTimer_++;
+
+            //Show compass panel only after threshold is passed
+            if(mSwipeHoldTimer_ >= SWIPE_HOLD_THRESHOLD){
+                mSwipeCompassTargetOpacity_ = 1.0;
+                local holdTime = mSwipeHoldTimer_ - SWIPE_HOLD_THRESHOLD;
+                if(holdTime % SWIPE_HOLD_REPEAT_INTERVAL == 0){
+                    onSwipeAttackExecute_();
+                }
+            }else{
+                mSwipeCompassTargetOpacity_ = 0.0;
+            }
+
+            //Update compass panel position and rotation
+            mSwipeCompassPanel_.setPosition(mSwipeTapEndPos_ - mSwipeCompassPanel_.getSize() / 2);
+            mSwipeCompassRotation_ += 0.01; //Rotate by 0.01 radians per frame
+            mSwipeCompassPanel_.setOrientation(mSwipeCompassRotation_);
 
             //Check if mouse button is released (no longer pressed)
             if(!_input.getMouseButton(_MB_LEFT)){
                 mSwipeTapActive_ = false;
+                mSwipeCompassTargetOpacity_ = 0.0;
                 //Notify world that mouse ended
                 local world = ::Base.mExplorationLogic.mCurrentWorld_;
                 if(world != null){
@@ -1166,6 +1203,19 @@ enum ExplorationScreenWidgetType{
 
         //Resolve enemies in swipe direction and apply attack
         world.performDirectionalAttack(worldAttackDir);
+    }
+
+    function updateSwipeCompassPanelVisibility_(){
+        //Animate the compass panel opacity towards the target
+        mSwipeCompassCurrentOpacity_ = ::accelerationClampCoordinate_(mSwipeCompassCurrentOpacity_, mSwipeCompassTargetOpacity_, 0.1);
+
+        //Update panel visibility and opacity
+        if(mSwipeCompassCurrentOpacity_ > 0.0){
+            mSwipeCompassPanel_.setVisible(true);
+            mSwipeCompassPanel_.setColour(ColourValue(1, 1, 1, mSwipeCompassCurrentOpacity_));
+        }else{
+            mSwipeCompassPanel_.setVisible(false);
+        }
     }
 
     function notifyObjectFound(foundObject, idx, position = null){
