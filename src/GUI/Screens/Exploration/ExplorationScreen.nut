@@ -40,6 +40,7 @@ enum ExplorationScreenWidgetType{
     mPlayerDirectJoystick_ = null;
     mPlayerTapButton = null;
     mPlayerTapButtonActive = false;
+    mSwipeAttackButton_ = null;
     mSwipeTapStartPos_ = null;
     mSwipeTapEndPos_ = null;
     mSwipeTapActive_ = false;
@@ -112,7 +113,7 @@ enum ExplorationScreenWidgetType{
             mZoomLinesPanel_.setPosition(0, -(currentZoom - currentWorld.MIN_ZOOM));
 
             if(mCurrentOpacityCount_ >= 0){
-                if(currentWorld.getCurrentMouseState() != WorldMousePressContexts.ZOOMING){
+                if(!currentWorld.isMouseStateActive(WorldMousePressContexts.ZOOMING)){
                     mCurrentOpacityCount_--;
                 }
             }
@@ -737,18 +738,6 @@ enum ExplorationScreenWidgetType{
             mScreenInputCheckList_.append(mPauseButton);
             mExplorationScreenWidgetType_[ExplorationScreenWidgetType.PAUSE_BUTTON] = mPauseButton;
 
-            mCameraButton = mWindow_.createButton();
-            //mCameraButton.setText("Camera");
-            //mCameraButton.setPosition(_window.getWidth() / 2 - mCameraButton.getSize().x/2 - mWieldActiveButton.getSize().x - 20, _window.getHeight() - mWieldActiveButton.getSize().y*2);
-            //mCameraButton.setPosition(_window.getWidth() / 2 - mCameraButton.getSize().x/2, _window.getHeight() - mWieldActiveButton.getSize().y*2 - mCameraButton.getSize().y - 20);
-            mCameraButton.attachListenerForEvent(function(widget, action){
-                local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
-                currentWorld.requestOrientingCamera();
-            }, _GUI_ACTION_PRESSED, this);
-            mCameraButton.setVisualsEnabled(false);
-            mScreenInputCheckList_.append(mCameraButton);
-            mExplorationScreenWidgetType_[ExplorationScreenWidgetType.CAMERA_BUTTON] = mCameraButton;
-
             mPlayerTapButton = mWindow_.createButton();
             local playerSizeButton = Vec2(100, 100);
             mPlayerTapButton.setSize(playerSizeButton);
@@ -770,43 +759,106 @@ enum ExplorationScreenWidgetType{
             mPlayerDirectJoystick_ = ::PlayerDirectJoystick(mWindow_);
             mExplorationScreenWidgetType_[ExplorationScreenWidgetType.DIRECTION_JOYSTICK] = mPlayerDirectJoystick_;
 
-            mPlayerDirectButton = mWindow_.createButton();
-            local playerSizeButton = Vec2(100, 100);
-            mPlayerDirectButton.setText("Direct");
-            //mPlayerDirectButton.setSize(playerSizeButton);
-            //mPlayerDirectButton.setPosition(_window.getWidth() / 2 - playerSizeButton.x / 2, _window.getHeight() / 2 - playerSizeButton.y / 2);
-            mPlayerDirectButton.setKeyboardNavigable(false);
-            //mPlayerDirectButton.setVisualsEnabled(false);
-            //mPlayerDirectButton.setPosition(_window.getWidth() / 2 - mPlayerDirectButton.getSize().x/2, mCameraButton.getPosition().y - mPlayerDirectButton.getSize().y - 20);
-            mPlayerDirectButton.attachListenerForEvent(function(widget, action){
+            //Player direct, swipe attack and zoom buttons are created
+            //BEFORE the camera button so they have higher priority in
+            //first-match-wins dispatch.
+
+            //Swipe attack button covers the same area as mPlayerTapButton
+            //(centred on screen). On mobile this replaces the legacy mouse-
+            //polling path in updateSwipeTracking_.
+            mSwipeAttackButton_ = MultiTouchButton(
+                Vec2(_window.getWidth() / 2 - 50, _window.getHeight() / 2 - 50),
+                Vec2(100, 100)
+            );
+            mSwipeAttackButton_.setOnPressed(function(fingerId, pos){
+                local world = ::Base.mExplorationLogic.mCurrentWorld_;
+                if(world == null) return;
+                if(!world.requestSwipingAttackForFinger(fingerId)) return;
+                //Record start position in pixel space.
+                mSwipeTapStartPos_ = Vec2(pos.x * ::canvasSize.x, pos.y * ::canvasSize.y);
+                mSwipeTapEndPos_ = mSwipeTapStartPos_.copy();
+                mSwipeTapActive_ = true;
+                mSwipeHoldTimer_ = 0;
+                mSwipeCompassRotation_ = 0.0;
+                mSwipeCompassTargetOpacity_ = 0.0;
+            }.bindenv(this));
+            mSwipeAttackButton_.setOnMoved(function(fingerId, pos){
+                if(!mSwipeTapActive_) return;
+                mSwipeTapEndPos_ = Vec2(pos.x * ::canvasSize.x, pos.y * ::canvasSize.y);
+            }.bindenv(this));
+            mSwipeAttackButton_.setOnReleased(function(fingerId){
+                local world = ::Base.mExplorationLogic.mCurrentWorld_;
+                if(world != null){
+                    world.releaseStateForFinger(fingerId);
+                }
+                if(mSwipeTapActive_){
+                    mSwipeTapActive_ = false;
+                    mSwipeCompassTargetOpacity_ = 0.0;
+                    onSwipeAttackExecute_();
+                }
+            }.bindenv(this));
+
+            mPlayerDirectButton = MultiTouchButton(Vec2(0, 0), Vec2(100, 100));
+            mPlayerDirectButton.setOnPressed(function(fingerId, pos){
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
-                currentWorld.requestDirectingPlayer();
-            }, _GUI_ACTION_PRESSED);
+                if(currentWorld != null){
+                    currentWorld.requestDirectingPlayerForFinger(fingerId);
+                }
+            }.bindenv(this));
+            mPlayerDirectButton.setOnReleased(function(fingerId){
+                local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+                if(currentWorld != null){
+                    currentWorld.releaseStateForFinger(fingerId);
+                }
+            }.bindenv(this));
             mPlayerDirectButton.setVisible(false);
 
-            mZoomModifierButton = mWindow_.createButton();
-            mZoomModifierButton.setText("Zoom");
-            mZoomModifierButton.setVisualsEnabled(false);
+            mZoomModifierButton = MultiTouchButton(Vec2(0, 0), Vec2(100, 100));
             local zoomButtonPos = mWorldMapDisplay_.getPosition();
             zoomButtonPos.y += mWorldMapDisplay_.getMapViewerPosition().y + mWorldMapDisplay_.getMapViewerSize().y;
-            zoomButtonPos.x += mWorldMapDisplay_.getSize().x - mZoomModifierButton.getSize().x;
+            zoomButtonPos.x += mWorldMapDisplay_.getSize().x - 50;
             mZoomModifierButton.setPosition(zoomButtonPos);
-            mZoomModifierButton.setSize(mZoomModifierButton.getSize().x, _window.getHeight() - zoomButtonPos.y - insets.bottom);
-            //mZoomModifierButton.setSize(40, 40);
-            mZoomModifierButton.attachListenerForEvent(function(widget, action){
-                //TODO clean up direct access
+            mZoomModifierButton.setSize(Vec2(50, _window.getHeight() - zoomButtonPos.y - insets.bottom));
+            mZoomModifierButton.setOnPressed(function(fingerId, pos){
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
-                currentWorld.requestCameraZooming();
-                mZoomLines_.setRecentTouchInteraction();
-            }, _GUI_ACTION_PRESSED, this);
-            mZoomModifierButton.setSkinPack("ButtonZoom");
-            mZoomModifierButton.setText("");
-            mScreenInputCheckList_.append(mZoomModifierButton);
+                if(currentWorld != null){
+                    currentWorld.requestCameraZoomingForFinger(fingerId);
+                    mZoomLines_.setRecentTouchInteraction();
+                }
+            }.bindenv(this));
+            mZoomModifierButton.setOnReleased(function(fingerId){
+                local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+                if(currentWorld != null){
+                    currentWorld.releaseStateForFinger(fingerId);
+                }
+            }.bindenv(this));
+
+            //Camera button is created last so it has lowest dispatch priority.
+            //Touches in player direct or zoom regions are claimed first.
+            mCameraButton = MultiTouchButton(Vec2(0, 0), Vec2(100, 100));
+            mCameraButton.setOnPressed(function(fingerId, pos){
+                local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+                if(currentWorld != null){
+                    currentWorld.requestOrientingCameraWithMovementForFinger(fingerId);
+                }
+            }.bindenv(this));
+            mCameraButton.setOnReleased(function(fingerId){
+                local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+                if(currentWorld != null){
+                    currentWorld.releaseStateForFinger(fingerId);
+                }
+            }.bindenv(this));
+            mCameraButton.setOnTapped(function(fingerId, pos){
+                local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+                if(currentWorld != null){
+                    currentWorld.notifyDoubleTapCheck();
+                }
+            }.bindenv(this));
+            mExplorationScreenWidgetType_[ExplorationScreenWidgetType.CAMERA_BUTTON] = mCameraButton;
 
             local zoomWidth = mZoomModifierButton.getSize().x;
-            mCameraButton.setPosition(0, _window.getHeight() - zoomWidth - insets.bottom);
-            mCameraButton.setSize(_window.getWidth() - zoomWidth, zoomWidth);
-            mCameraButton.setSkinPack("ButtonZoom");
+            mCameraButton.setPosition(Vec2(0, _window.getHeight() - zoomWidth - insets.bottom));
+            mCameraButton.setSize(Vec2(_window.getWidth() - zoomWidth, zoomWidth));
 
             if(screenshotMode){
 
@@ -880,12 +932,16 @@ enum ExplorationScreenWidgetType{
             pauseButtonPos.y += 5;
             mPauseButton.setPosition(pauseButtonPos);
 
-            mCameraButton.setPosition(mCompassAnimator_.getPosition());
-            mCameraButton.setSize(mCompassAnimator_.getSize());
+            //Camera button covers entire gameplay area below the UI,
+            //excluding the zoom strip on the right edge.
+            local cameraTop = mZoomModifierButton.getPosition().y;
+            local cameraBottom = _window.getHeight();
+            mCameraButton.setPosition(Vec2(0, cameraTop));
+            mCameraButton.setSize(Vec2(mZoomModifierButton.getPosition().x, cameraBottom - cameraTop));
 
-            mPlayerDirectButton.setSize(100, 100);
-            mPlayerDirectButton.setPosition(mZoomModifierButton.getPosition().x - 100, mCompassAnimator_.getPosition().y - 100);
-            mPlayerDirectButton.setSkinPack("ButtonZoom");
+            mPlayerDirectButton.setSize(Vec2(100, 100));
+            mPlayerDirectButton.setPosition(Vec2(mZoomModifierButton.getPosition().x - 100, mCompassAnimator_.getPosition().y - 100));
+            mPlayerDirectButton.setVisible(true);
 
             local directSize = mPlayerDirectButton.getSize();
             mPlayerDirectJoystick_.setSize(directSize + directSize * 0.5);
@@ -1105,6 +1161,27 @@ enum ExplorationScreenWidgetType{
     }
 
     function updateSwipeTracking_(){
+        //On mobile, swipe attack input is handled by the MultiTouchButton
+        //(mSwipeAttackButton_) to avoid racing the camera orientation button.
+        if(::Base.getTargetInterface() == TargetInterface.MOBILE){
+            //Still need to advance the hold timer and trigger repeats.
+            if(mSwipeTapActive_){
+                mSwipeHoldTimer_++;
+                if(mSwipeHoldTimer_ >= SWIPE_HOLD_THRESHOLD){
+                    mSwipeCompassTargetOpacity_ = 1.0;
+                    local holdTime = mSwipeHoldTimer_ - SWIPE_HOLD_THRESHOLD;
+                    if(holdTime % SWIPE_HOLD_REPEAT_INTERVAL == 0){
+                        onSwipeAttackExecute_();
+                    }
+                }else{
+                    mSwipeCompassTargetOpacity_ = 0.0;
+                }
+                mSwipeCompassPanel_.setPosition(mSwipeTapEndPos_ - mSwipeCompassPanel_.getSize() / 2);
+                mSwipeCompassRotation_ += 0.01;
+                mSwipeCompassPanel_.setOrientation(mSwipeCompassRotation_);
+            }
+            return;
+        }
         //Check if player tap button area is being pressed (swipe attacks always available)
         local currentMousePos = Vec2(_input.getMouseX(), _input.getMouseY());
 
@@ -1117,9 +1194,16 @@ enum ExplorationScreenWidgetType{
                currentMousePos.x < buttonPos.x + buttonSize.x && currentMousePos.y < buttonPos.y + buttonSize.y){
 
                 if(_input.getMouseButton(_MB_LEFT)){
-                    //Skip if the world already has an active mouse state (e.g. camera drag moved over button)
+                    //Skip if the world has no room for a swiping attack state.
                     local world = ::Base.mExplorationLogic.mCurrentWorld_;
-                    if(world != null && world.mMouseContext_.getCurrentState() != null) return;
+                    if(world != null && !world.mMouseContext_.isEmpty()){
+                        //Still allow if the swiping attack is compatible with active states.
+                        if(!world.requestSwipingAttackForFinger("swipe")) return;
+                    }else if(world != null){
+                        world.requestSwipingAttackForFinger("swipe");
+                    }else{
+                        return;
+                    }
 
                     mSwipeTapStartPos_ = currentMousePos.copy();
                     mSwipeTapEndPos_ = mSwipeTapStartPos_.copy();
@@ -1127,10 +1211,6 @@ enum ExplorationScreenWidgetType{
                     mSwipeHoldTimer_ = 0;
                     mSwipeCompassRotation_ = 0.0;
                     mSwipeCompassTargetOpacity_ = 0.0;
-                    //Request swiping attack state
-                    if(world != null){
-                        world.mMouseContext_.requestSwipingAttack();
-                    }
                 }
             }
         }
@@ -1160,10 +1240,10 @@ enum ExplorationScreenWidgetType{
             if(!_input.getMouseButton(_MB_LEFT)){
                 mSwipeTapActive_ = false;
                 mSwipeCompassTargetOpacity_ = 0.0;
-                //Notify world that mouse ended
+                //Release the swipe finger state.
                 local world = ::Base.mExplorationLogic.mCurrentWorld_;
                 if(world != null){
-                    world.mMouseContext_.notifyMouseEnded();
+                    world.releaseStateForFinger("swipe");
                 }
                 onSwipeAttackExecute_();
             }
@@ -1276,6 +1356,19 @@ enum ExplorationScreenWidgetType{
         mExplorationStatsContainer_.shutdown();
         if(mPlayerDirectJoystick_){
             mPlayerDirectJoystick_.shutdown();
+        }
+        //Shutdown MultiTouchButton instances.
+        if(mCameraButton != null && (mCameraButton instanceof MultiTouchButton)){
+            mCameraButton.shutdown();
+        }
+        if(mZoomModifierButton != null && (mZoomModifierButton instanceof MultiTouchButton)){
+            mZoomModifierButton.shutdown();
+        }
+        if(mPlayerDirectButton != null && (mPlayerDirectButton instanceof MultiTouchButton)){
+            mPlayerDirectButton.shutdown();
+        }
+        if(mSwipeAttackButton_ != null && (mSwipeAttackButton_ instanceof MultiTouchButton)){
+            mSwipeAttackButton_.shutdown();
         }
         base.shutdown();
     }

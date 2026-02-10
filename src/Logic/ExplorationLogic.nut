@@ -321,6 +321,9 @@
         print("UnPausing exploration");
         mExplorationPaused_ = false;
         _state.setPauseState(0x0);
+        if(mCurrentWorld_ != null){
+            mCurrentWorld_.notifyModalPopupDismissed();
+        }
     }
 
     function beginDialog(path, targetBlock=0){

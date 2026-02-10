@@ -20,8 +20,14 @@
         mButton_ = parent.createButton();
         mButton_.setVisualsEnabled(false);
         mButton_.attachListenerForEvent(function(widget, action){
+            //On mobile, MultiTouchButton handles directing input per-finger.
+            //The legacy "mouse" path must not fire here or it will race and
+            //never be released (the per-frame mouse release is desktop-only).
+            if(::Base.getTargetInterface() == TargetInterface.MOBILE) return;
             local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
-            currentWorld.requestDirectingPlayer();
+            if(currentWorld != null){
+                currentWorld.requestDirectingPlayer();
+            }
         }, _GUI_ACTION_PRESSED, this);
 
         mBackgroundPanel_ = parent.createPanel();

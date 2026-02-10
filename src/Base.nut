@@ -176,6 +176,8 @@
 
         _doFile("res://src/System/MultiTouchManager.nut");
         ::MultiTouchManager.setup();
+        _doFile("res://src/System/MultiTouchInputContext.nut");
+        _doFile("res://src/GUI/Widgets/MultiTouchButton.nut");
 
         _doFile("res://src/System/Save/SaveConstants.nut");
         _doFile("res://src/System/Save/Parsers/SaveFileParser.nut");

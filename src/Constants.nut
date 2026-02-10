@@ -97,6 +97,18 @@ enum InventoryGridType{
     INVENTORY_GRID_SECONDARY
 };
 
+enum WorldMousePressContexts{
+    TARGET_ENEMY,
+    PLACING_FLAG,
+    ORIENTING_CAMERA,
+    ORIENTING_CAMERA_WITH_MOVEMENT,
+    ZOOMING,
+    DIRECTING_PLAYER,
+    //In the case of a window that takes the full screen with exploration in the back, ensure clicks to leave don't result in a flag press.
+    POPUP_WINDOW,
+    SWIPING_ATTACK,
+};
+
 //Profiles define how the game should operate,
 //for instance if developing, profiles might help setup a development environment
 enum GameProfile{

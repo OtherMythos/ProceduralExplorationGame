@@ -118,18 +118,6 @@
 
 }
 
-enum WorldMousePressContexts{
-    TARGET_ENEMY,
-    PLACING_FLAG,
-    ORIENTING_CAMERA,
-    ORIENTING_CAMERA_WITH_MOVEMENT,
-    ZOOMING,
-    DIRECTING_PLAYER,
-    //In the case of a window that takes the full screen with exploration in the back, ensure clicks to leave don't result in a flag press.
-    POPUP_WINDOW,
-    SWIPING_ATTACK,
-};
-
 /*
  * World components are classes which are registered with the world and updated each frame.
  */
@@ -317,81 +305,8 @@ enum WorldMousePressContexts{
             return newNode;
         }
     };
-    /**
-     * A state machine to manage logic relating to mouse presses.
-     * If the player clicks an enemy the system shouldn't place location flags.
-     * Similarly if placing a flag the system shouldn't erroneously trigger a target.
-     */
-    MousePressContext = class{
-        mCurrentState_ = null;
-        mGui_ = null;
-
-        mDoubleClickTimer_ = 0;
-        mDoubleClick_ = false;
-
-        constructor(){
-
-        }
-        function update(){
-            //print("Mouse state: " + mCurrentState_);
-            if(mDoubleClickTimer_ > 0) mDoubleClickTimer_--;
-        }
-        function beginState_(state){
-            if(mCurrentState_ != null) return false;
-            mCurrentState_ = state;
-            if(mGui_) mGui_.notifyBlockInput(true);
-            return true;
-        }
-        function requestTargetEnemy(){
-            return beginState_(WorldMousePressContexts.TARGET_ENEMY);
-        }
-        function requestFlagLogic(){
-            return beginState_(WorldMousePressContexts.PLACING_FLAG);
-        }
-        function requestOrientingCameraWithMovement(){
-            local stateBegan = beginState_(WorldMousePressContexts.ORIENTING_CAMERA_WITH_MOVEMENT);
-            if(stateBegan){
-                if(mDoubleClickTimer_ > 0){
-                    //Register that the double click took place.
-                    mDoubleClick_ = true;
-                }
-                mDoubleClickTimer_ = 20;
-            }
-            return stateBegan;
-        }
-        function requestOrientingCamera(){
-            return beginState_(WorldMousePressContexts.ORIENTING_CAMERA);
-        }
-        function requestZoomingCamera(){
-            return beginState_(WorldMousePressContexts.ZOOMING);
-        }
-        function requestDirectingPlayer(){
-            return beginState_(WorldMousePressContexts.DIRECTING_PLAYER);
-        }
-        function requestPopupWindow(){
-            return beginState_(WorldMousePressContexts.POPUP_WINDOW);
-        }
-        function requestSwipingAttack(){
-            return beginState_(WorldMousePressContexts.SWIPING_ATTACK);
-        }
-        function notifyMouseEnded(){
-            if(mCurrentState_ == null) return;
-            mCurrentState_ = null;
-            if(mGui_) mGui_.notifyBlockInput(false);
-        }
-        function getCurrentState(){
-            return mCurrentState_;
-        }
-        //TODO I don't like this, consider re-architecting
-        function setGuiObject(guiObj){
-            mGui_ = guiObj;
-        }
-        function checkDoubleClick(){
-            local retVal = mDoubleClick_;
-            mDoubleClick_ = false;
-            return retVal;
-        }
-    };
+    //MousePressContext has been replaced by ::MultiTouchInputContext.
+    //See src/System/MultiTouchInputContext.nut for multi-finger state management.
 
     WorldSkyAnimator_ = class{
         mWorld_ = null;
@@ -577,6 +492,12 @@ enum WorldMousePressContexts{
     mMouseContext_ = null;
     mDirectingPlayerSpeedModifier_ = 0.0;
 
+    //Origin position (in pixel space) of the finger driving the joystick.
+    mDirectingFingerOrigin_ = null;
+
+    //Per-finger previous positions for delta calculation.
+    mFingerPrevPositions_ = null;
+
     mPlayerTargetRadius_ = null;
     mPlayerTargetRadiusProjectiles_ = null;
     mPlayerIgnorePointId_ = null;
@@ -618,7 +539,9 @@ enum WorldMousePressContexts{
             WorldDistractionType.PERCENTAGE_ENCOUNTER
         ]);
 
-        mMouseContext_ = MousePressContext();
+        mMouseContext_ = MultiTouchInputContext();
+
+        mFingerPrevPositions_ = {};
 
         mRotation_ = Vec2(PI*0.5, PI*0.4);
         mPosition_ = Vec3();
@@ -906,9 +829,15 @@ enum WorldMousePressContexts{
         }
 
         if(!_input.getMouseButton(_MB_LEFT)){
-            mMouseContext_.notifyMouseEnded();
+            //On desktop, release the "mouse" pseudo-finger.
+            //Touch fingers are released via touch-ended events.
+            //On mobile, MultiTouchButtons handle state lifecycle.
+            if(::Base.getTargetInterface() != TargetInterface.MOBILE){
+                mMouseContext_.releaseStateForFinger("mouse");
+            }
         }
         mMouseContext_.update();
+        cleanupFingerPrevPositions_();
 
         mPlayerEntry_.update();
         foreach(i in mActiveEnemies_){
@@ -1442,7 +1371,7 @@ enum WorldMousePressContexts{
     }
 
     function checkTargetEnemy(){
-        if(!_input.getMouseButton(_MB_LEFT) || mMouseContext_.getCurrentState() != null) return;
+        if(!_input.getMouseButton(_MB_LEFT) || !mMouseContext_.isEmpty()) return;
         if(mCurrentHighlightEnemy_ == null) return;
 
         setTargetEnemy(mCurrentHighlightEnemy_);
@@ -1461,7 +1390,13 @@ enum WorldMousePressContexts{
 
         if(mBlockAllInputs_) return;
         if(!mGui_) return;
-        if(!_input.getMouseButton(_MB_LEFT) || mMouseContext_.getCurrentState() != null){
+
+        //On mobile, MultiTouchButtons handle state requests for camera
+        //orienting, directing, and zooming. The mouse polling path would
+        //race and steal the state before the touch system can claim it.
+        if(::Base.getTargetInterface() == TargetInterface.MOBILE) return;
+
+        if(!_input.getMouseButton(_MB_LEFT) || !mMouseContext_.isEmpty()){
             mPinchToZoomWarmDown_ = 5;
             //return;
         }
@@ -1487,33 +1422,92 @@ enum WorldMousePressContexts{
     }
     function requestCameraZooming(){
         local result = mMouseContext_.requestZoomingCamera();
-        assert(result);
+    }
+    function requestCameraZoomingForFinger(fingerId){
+        return mMouseContext_.requestStateForFinger(fingerId, WorldMousePressContexts.ZOOMING);
     }
     function requestDirectingPlayer(){
         local result = mMouseContext_.requestDirectingPlayer();
-        assert(result);
+    }
+    function requestDirectingPlayerForFinger(fingerId){
+        print("==multitouch== World.requestDirectingPlayerForFinger finger=" + fingerId);
+        local result = mMouseContext_.requestStateForFinger(fingerId, WorldMousePressContexts.DIRECTING_PLAYER);
+        print("==multitouch== World.requestDirectingPlayerForFinger result=" + result);
+        if(result){
+            //Record the finger's current position as the joystick origin.
+            //Touch positions are normalised; scale to pixel space.
+            local pos = ::MultiTouchManager.getFingerPosition(fingerId);
+            if(pos != null){
+                mDirectingFingerOrigin_ = Vec2(pos.x * ::canvasSize.x, pos.y * ::canvasSize.y);
+            }else{
+                mDirectingFingerOrigin_ = null;
+            }
+            print("==multitouch== joystick origin=" + (mDirectingFingerOrigin_ != null ? mDirectingFingerOrigin_.tostring() : "null"));
+        }
+        return result;
     }
     function requestOrientingCamera(){
         local result = mMouseContext_.requestOrientingCamera();
-        assert(result);
+    }
+    function requestOrientingCameraForFinger(fingerId){
+        print("==multitouch== World.requestOrientingCameraForFinger finger=" + fingerId);
+        local result = mMouseContext_.requestStateForFinger(fingerId, WorldMousePressContexts.ORIENTING_CAMERA);
+        print("==multitouch== World.requestOrientingCameraForFinger result=" + result);
+        return result;
+    }
+    function requestOrientingCameraWithMovementForFinger(fingerId){
+        local result = mMouseContext_.requestStateForFinger(fingerId, WorldMousePressContexts.ORIENTING_CAMERA_WITH_MOVEMENT);
+        if(result){
+            //Also feed the double-tap timer for drags that were claimed.
+            notifyDoubleTapCheck();
+        }
+        return result;
+    }
+    /**
+     * Called when a quick tap or press lands in the camera region.
+     * Feeds the double-click timer and triggers a dash on double-tap.
+     */
+    function notifyDoubleTapCheck(){
+        if(mMouseContext_.mDoubleClickTimer_ > 0){
+            mMouseContext_.mDoubleClick_ = true;
+        }
+        mMouseContext_.mDoubleClickTimer_ = 20;
+
+        if(mMouseContext_.checkDoubleClick()){
+            performPlayerDash();
+        }
+    }
+    function requestSwipingAttackForFinger(fingerId){
+        return mMouseContext_.requestStateForFinger(fingerId, WorldMousePressContexts.SWIPING_ATTACK);
+    }
+    function releaseStateForFinger(fingerId){
+        print("==multitouch== World.releaseStateForFinger finger=" + fingerId);
+        //If this finger was driving the joystick, clear the origin.
+        local directFinger = mMouseContext_.getFingerForState(WorldMousePressContexts.DIRECTING_PLAYER);
+        if(directFinger != null && directFinger.tostring() == fingerId.tostring()){
+            mDirectingFingerOrigin_ = null;
+        }
+        mMouseContext_.releaseStateForFinger(fingerId);
     }
     function getCurrentMouseState(){
         return mMouseContext_.getCurrentState();
     }
+    function isMouseStateActive(state){
+        return mMouseContext_.isStateActive(state);
+    }
     function checkForFlagPlacement(){
         if(!mGui_) return;
-        if(!_input.getMouseButton(_MB_LEFT) || mMouseContext_.getCurrentState() != null) return;
+        if(!_input.getMouseButton(_MB_LEFT) || !mMouseContext_.isEmpty()) return;
 
         local inWindow = mGui_.checkPlayerInputPosition(_input.getMouseX(), _input.getMouseY());
         if(inWindow != null){
             //The first touch of the mouse.
             queuePlayerFlagForWindowTouch(inWindow);
             local result = mMouseContext_.requestFlagLogic();
-            assert(result);
         }
     }
     function checkForFlagUpdate(){
-        if(mMouseContext_.getCurrentState() == WorldMousePressContexts.PLACING_FLAG){
+        if(mMouseContext_.isStateActive(WorldMousePressContexts.PLACING_FLAG)){
             if(mGui_){
                 local inWindow = mGui_.checkPlayerInputPosition(_input.getMouseX(), _input.getMouseY());
                 if(inWindow != null){
@@ -1598,13 +1592,16 @@ enum WorldMousePressContexts{
         if(mMovementCooldown_ > 0){
             mMovementCooldown_--;
         }
-        local currentState = mMouseContext_.getCurrentState();
         if(
-            currentState == WorldMousePressContexts.ORIENTING_CAMERA_WITH_MOVEMENT ||
-            currentState == WorldMousePressContexts.DIRECTING_PLAYER
+            mMouseContext_.isStateActive(WorldMousePressContexts.ORIENTING_CAMERA_WITH_MOVEMENT) ||
+            mMouseContext_.isStateActive(WorldMousePressContexts.DIRECTING_PLAYER)
         ){
             mMovementCooldown_ = mMovementCooldownTotal_;
-            mMostRecentMovementType_ = currentState;
+            if(mMouseContext_.isStateActive(WorldMousePressContexts.DIRECTING_PLAYER)){
+                mMostRecentMovementType_ = WorldMousePressContexts.DIRECTING_PLAYER;
+            }else{
+                mMostRecentMovementType_ = WorldMousePressContexts.ORIENTING_CAMERA_WITH_MOVEMENT;
+            }
         }
 
         if(mMovementCooldown_ > 0){
@@ -2379,10 +2376,20 @@ enum WorldMousePressContexts{
         }
         */
 
-        if(mMouseContext_.getCurrentState() != WorldMousePressContexts.ORIENTING_CAMERA && mMouseContext_.getCurrentState() != WorldMousePressContexts.ORIENTING_CAMERA_WITH_MOVEMENT) return;
+        if(!mMouseContext_.isStateActive(WorldMousePressContexts.ORIENTING_CAMERA) && !mMouseContext_.isStateActive(WorldMousePressContexts.ORIENTING_CAMERA_WITH_MOVEMENT)) return;
         //print("orientating");
 
-        local mouseDelta = processMouseDelta();
+        //Determine which finger owns the camera state and get its delta.
+        local cameraFinger = mMouseContext_.getFingerForState(WorldMousePressContexts.ORIENTING_CAMERA);
+        if(cameraFinger == null) cameraFinger = mMouseContext_.getFingerForState(WorldMousePressContexts.ORIENTING_CAMERA_WITH_MOVEMENT);
+
+        local mouseDelta = null;
+        if(cameraFinger != null && cameraFinger != "mouse"){
+            mouseDelta = processFingerDelta(cameraFinger);
+        }else{
+            mouseDelta = processMouseDelta();
+        }
+
         if(mouseDelta != null){
             if(::Base.getTargetInterface() == TargetInterface.MOBILE){
                 setCameraAcceleration(Vec2(mouseDelta.x*-0.2, mouseDelta.y*-0.2));
@@ -2419,6 +2426,45 @@ enum WorldMousePressContexts{
         }
         return retVal;
     }
+
+    /**
+     * Calculate movement delta for a specific finger using MultiTouchManager.
+     * Returns Vec2 delta or null if the finger has no position.
+     */
+    function processFingerDelta(fingerId){
+        local pos = ::MultiTouchManager.getFingerPosition(fingerId);
+        if(pos == null) return null;
+
+        local fid = fingerId.tostring();
+        local retVal = null;
+        if(fid in mFingerPrevPositions_){
+            local prev = mFingerPrevPositions_[fid];
+            //Touch positions are normalised (0-1). Scale the delta to
+            //pixel space so it matches processMouseDelta output, which
+            //all consumers expect.
+            retVal = Vec2(
+                (pos.x - prev.x) * ::canvasSize.x,
+                (pos.y - prev.y) * ::canvasSize.y
+            );
+        }
+        mFingerPrevPositions_[fid] <- pos.copy();
+        return retVal;
+    }
+
+    /**
+     * Clean up stored previous positions for fingers that are no longer tracked.
+     */
+    function cleanupFingerPrevPositions_(){
+        local toRemove = [];
+        foreach(fid, _ in mFingerPrevPositions_){
+            if(::MultiTouchManager.getFingerPosition(fid) == null){
+                toRemove.append(fid);
+            }
+        }
+        foreach(fid in toRemove){
+            delete mFingerPrevPositions_[fid];
+        }
+    }
     function dirWithinDeadzone_(dir){
         local limit = 0.1;
         if(
@@ -2433,16 +2479,28 @@ enum WorldMousePressContexts{
         return false;
     }
     function checkForPlayerDirecting(){
-        if(mMouseContext_.getCurrentState() != WorldMousePressContexts.DIRECTING_PLAYER) return;
-        print("Directing player");
+        if(!mMouseContext_.isStateActive(WorldMousePressContexts.DIRECTING_PLAYER)) return;
 
-        //local raycastPosition = getPositionForRaycast(false);
-        //assert(raycastPosition != null);
-        //movePlayerToPos(raycastPosition);
-
-        local mouseDelta = processMouseDelta(false);
-        if(mouseDelta != null){
-            local dirWithinDeadzone_ = dirWithinDeadzone_(mouseDelta);
+        //Get the finger that owns the directing state.
+        local directFinger = mMouseContext_.getFingerForState(WorldMousePressContexts.DIRECTING_PLAYER);
+        local displacement = null;
+        if(directFinger != null && directFinger != "mouse"){
+            //For touch fingers, compute displacement from the joystick
+            //origin rather than frame-to-frame deltas. This gives a
+            //stable direction vector that matches where the finger is
+            //relative to where it first pressed.
+            local pos = ::MultiTouchManager.getFingerPosition(directFinger);
+            if(pos != null && mDirectingFingerOrigin_ != null){
+                local px = pos.x * ::canvasSize.x;
+                local py = pos.y * ::canvasSize.y;
+                displacement = Vec2(px - mDirectingFingerOrigin_.x, py - mDirectingFingerOrigin_.y);
+                print("==multitouch== joystick pos=(" + px + "," + py + ") origin=" + mDirectingFingerOrigin_.tostring() + " disp=" + displacement.tostring());
+            }
+        }else{
+            displacement = processMouseDelta(false);
+        }
+        if(displacement != null){
+            local dirWithinDeadzone_ = dirWithinDeadzone_(displacement);
             if(!dirWithinDeadzone_){
                 local camDir = getCameraDirection();
                 local camAngle = atan2(camDir.x, camDir.y);
@@ -2450,13 +2508,11 @@ enum WorldMousePressContexts{
                 local sinA = sin(camAngle);
 
                 local worldDir = Vec2(
-                    mouseDelta.x * cosA - mouseDelta.y * sinA,
-                    mouseDelta.x * sinA + mouseDelta.y * cosA
+                    displacement.x * cosA - displacement.y * sinA,
+                    displacement.x * sinA + displacement.y * cosA
                 );
 
-                local dist = mouseDelta.distance(::Vec2_ZERO);
-
-                _event.transmit(Event.PLAYER_DIRECTING_CHANGED, mouseDelta);
+                _event.transmit(Event.PLAYER_DIRECTING_CHANGED, displacement);
 
                 setPlayerDirection(worldDir);
                 mDirectingPlayerSpeedModifier_ = 1.0;
@@ -2468,13 +2524,20 @@ enum WorldMousePressContexts{
         }
     }
     function checkForPlayerZoom(){
-        if(mMouseContext_.getCurrentState() != WorldMousePressContexts.ZOOMING) return;
+        if(!mMouseContext_.isStateActive(WorldMousePressContexts.ZOOMING)) return;
         print("zooming");
 
-        local mouseDelta = processMouseDelta();
+        //Get delta from the finger that owns the zoom state.
+        local zoomFinger = mMouseContext_.getFingerForState(WorldMousePressContexts.ZOOMING);
+        local mouseDelta = null;
+        if(zoomFinger != null && zoomFinger != "mouse"){
+            mouseDelta = processFingerDelta(zoomFinger);
+        }else{
+            mouseDelta = processMouseDelta();
+        }
+
         if(mouseDelta != null){
             setZoomAcceleration(mouseDelta.y * -0.15);
-            //setCurrentZoom(mCurrentZoomLevel_ + (mouseDelta.y * 0.1));
         }
     }
     function checkCameraChange(){
@@ -2485,8 +2548,7 @@ enum WorldMousePressContexts{
         ::DebugOverlayManager.appendText(DebugOverlayId.INPUT, format("camera x: %f y: %f", x, y));
         local movAmount = Vec2(x*modifier, y*modifier);
         if(::Base.getTargetInterface() == TargetInterface.MOBILE){
-            local currentState = mMouseContext_.getCurrentState();
-            if(currentState == null){
+            if(mMouseContext_.isEmpty()){
                 movAmount += (mCameraAcceleration_ * 1.0);
             }
         }
@@ -2517,7 +2579,11 @@ enum WorldMousePressContexts{
     }
 
     function notifyModalPopupScreen(){
-        mMouseContext_.requestPopupWindow();
+        mMouseContext_.requestStateForFinger("popup", WorldMousePressContexts.POPUP_WINDOW);
+    }
+
+    function notifyModalPopupDismissed(){
+        mMouseContext_.releaseStateForFinger("popup");
     }
 
     function _tostring() {
