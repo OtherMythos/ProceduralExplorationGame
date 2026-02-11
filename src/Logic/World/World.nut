@@ -1433,9 +1433,7 @@
         local result = mMouseContext_.requestDirectingPlayer();
     }
     function requestDirectingPlayerForFinger(fingerId){
-        print("==multitouch== World.requestDirectingPlayerForFinger finger=" + fingerId);
         local result = mMouseContext_.requestStateForFinger(fingerId, WorldMousePressContexts.DIRECTING_PLAYER);
-        print("==multitouch== World.requestDirectingPlayerForFinger result=" + result);
         if(result){
             //Record the finger's current position as the joystick origin.
             //Touch positions are normalised; scale to pixel space.
@@ -1445,7 +1443,7 @@
             }else{
                 mDirectingFingerOrigin_ = null;
             }
-            print("==multitouch== joystick origin=" + (mDirectingFingerOrigin_ != null ? mDirectingFingerOrigin_.tostring() : "null"));
+
         }
         return result;
     }
@@ -1453,9 +1451,7 @@
         local result = mMouseContext_.requestOrientingCamera();
     }
     function requestOrientingCameraForFinger(fingerId){
-        print("==multitouch== World.requestOrientingCameraForFinger finger=" + fingerId);
         local result = mMouseContext_.requestStateForFinger(fingerId, WorldMousePressContexts.ORIENTING_CAMERA);
-        print("==multitouch== World.requestOrientingCameraForFinger result=" + result);
         return result;
     }
     function requestOrientingCameraWithMovementForFinger(fingerId){
@@ -1486,7 +1482,6 @@
         return mMouseContext_.requestStateForFinger(fingerId, WorldMousePressContexts.SWIPING_ATTACK);
     }
     function releaseStateForFinger(fingerId){
-        print("==multitouch== World.releaseStateForFinger finger=" + fingerId);
         //If this finger was driving the joystick, clear the origin.
         local directFinger = mMouseContext_.getFingerForState(WorldMousePressContexts.DIRECTING_PLAYER);
         if(directFinger != null && directFinger.tostring() == fingerId.tostring()){
@@ -2396,7 +2391,6 @@
         }
 
         if(mouseDelta != null){
-            print("==multitouch== checkOrientatingCamera delta=" + mouseDelta.tostring() + " finger=" + cameraFinger);
             if(::Base.getTargetInterface() == TargetInterface.MOBILE){
                 setCameraAcceleration(Vec2(mouseDelta.x*-0.2, mouseDelta.y*-0.2));
             }
@@ -2500,7 +2494,7 @@
                 local px = pos.x * ::canvasSize.x;
                 local py = pos.y * ::canvasSize.y;
                 displacement = Vec2(px - mDirectingFingerOrigin_.x, py - mDirectingFingerOrigin_.y);
-                print("==multitouch== joystick pos=(" + px + "," + py + ") origin=" + mDirectingFingerOrigin_.tostring() + " disp=" + displacement.tostring());
+
             }
         }else{
             displacement = processMouseDelta(false);

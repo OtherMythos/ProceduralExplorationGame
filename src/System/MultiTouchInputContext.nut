@@ -74,23 +74,21 @@
      */
     function requestStateForFinger(fingerId, state){
         local fid = fingerId.tostring();
-        print("==multitouch== Context.requestStateForFinger finger=" + fid + " state=" + state + " activeStates=" + mStateFingers_.len());
 
         //If a blocking state is active deny everything.
         if(mBlockingStateActive_ && !isBlockingState_(state)){
-            print("==multitouch== Context.requestStateForFinger DENIED: blocking state active");
             return false;
         }
 
         //If this finger already owns a state, deny (release first).
         if(fid in mFingerStates_){
-            print("==multitouch== Context.requestStateForFinger DENIED: finger already owns state " + mFingerStates_[fid]);
+
             return false;
         }
 
         //If this state is already owned by another finger, deny.
         if(state in mStateFingers_){
-            print("==multitouch== Context.requestStateForFinger DENIED: state already owned by finger " + mStateFingers_[state]);
+
             return false;
         }
 
@@ -107,13 +105,12 @@
         //Check compatibility with every currently active state.
         foreach(activeState, _ in mStateFingers_){
             if(!arePairCompatible_(state, activeState)){
-                print("==multitouch== Context.requestStateForFinger DENIED: incompatible with active state " + activeState);
+
                 return false;
             }
         }
 
         assignState_(fid, state);
-        print("==multitouch== Context.requestStateForFinger ACCEPTED");
 
         //Block GUI input while any state is active so engine GUI
         //elements (minimap, stats etc.) don't receive stray clicks.

@@ -30,7 +30,6 @@
      * Returns a handle used for unregistering.
      */
     function registerButton(button){
-        print("==multitouch== registerButton: total registered = " + (mButtons_.len() + 1));
         mButtons_.append(button);
     }
 
@@ -39,17 +38,13 @@
      */
     function unregisterButton(button){
         local idx = mButtons_.find(button);
-        print("==multitouch== unregisterButton: found = " + (idx != null) + ", total before = " + mButtons_.len());
         if(idx != null){
             mButtons_.remove(idx);
         }
     }
 
     function recieveTouchEnded(id, data){
-        local f = data.tostring();
-        print("==multitouch== TOUCH_ENDED finger=" + f + " registered_buttons=" + mButtons_.len());
-
-        //Grab the last known position before removing.
+        local f = data.tostring();        //Grab the last known position before removing.
         local lastPos = mFingers_.rawin(f) ? mFingers_[f] : null;
         mFingers_.rawdelete(f);
 
@@ -77,7 +72,7 @@
         //(no TOUCH_MOTION fired). Dispatch a tap notification so
         //buttons can detect double-tap gestures.
         if(!wasClaimed && lastPos != null){
-            print("==multitouch== unclaimed tap finger=" + f + " pos=" + lastPos.tostring());
+
             foreach(btn in mButtons_){
                 btn.notifyTouchTapped_(f, lastPos);
             }
@@ -104,7 +99,6 @@
             try{
                 pos = _input.getTouchPosition(data);
             }catch(e){
-                print("==multitouch== TOUCH_MOTION getTouchPosition error for finger " + f);
             }
 
             if(pos != null){
@@ -118,19 +112,17 @@
                     if(claimed && !btn.isFingerActive(f)) continue;
                     local accepted = btn.notifyTouchMoved_(f, pos);
                     if(accepted){
-                        print("==multitouch== finger " + f + " claimed by button (first-match-wins)");
                         claimed = true;
                     }
                 }
             }
         }else{
-            print("==multitouch== TOUCH_MOTION finger not tracked: " + f);
+
         }
     }
 
     function recieveTouchBegan(id, data){
         local f = data.fingerId.tostring();
-        print("==multitouch== TOUCH_BEGAN finger=" + f + " registered_buttons=" + mButtons_.len());
 
         //Try to get the initial position from the event data.
         local pos = Vec2();
@@ -138,10 +130,8 @@
             local touchPos = _input.getTouchPosition(data);
             if(touchPos != null) pos = touchPos;
         }catch(e){
-            print("==multitouch== TOUCH_BEGAN getTouchPosition error for finger " + f);
         }
 
-        print("==multitouch== TOUCH_BEGAN position=" + pos.tostring());
         mFingers_.rawset(f, pos);
         mTouches_.append(f);
 
@@ -192,7 +182,7 @@
 
             if(!mMouseWasPressed_){
                 //Synthesise touch-began.
-                print("==multitouch== pumpMouseInput BEGAN rawMouse=(" + rawX + "," + rawY + ") normalised=" + pos.tostring() + " canvasSize=" + ::canvasSize.tostring() + " drawable=" + ::drawable.tostring() + " buttons=" + mButtons_.len());
+
                 mFingers_.rawset(fid, pos);
                 mTouches_.append(fid);
                 foreach(btn in mButtons_){
@@ -211,7 +201,7 @@
         }else{
             if(mMouseWasPressed_){
                 //Synthesise touch-ended.
-                print("==multitouch== pumpMouseInput ENDED");
+
                 local lastPos = mFingers_.rawin(fid) ? mFingers_[fid] : null;
                 if(mFingers_.rawin(fid)) mFingers_.rawdelete(fid);
                 local idx = mTouches_.find(fid);
@@ -229,7 +219,7 @@
                     btn.notifyTouchEnded_(fid);
                 }
                 if(!wasClaimed && lastPos != null){
-                    print("==multitouch== pumpMouseInput unclaimed tap");
+
                     foreach(btn in mButtons_){
                         btn.notifyTouchTapped_(fid, lastPos);
                     }

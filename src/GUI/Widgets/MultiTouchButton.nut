@@ -133,22 +133,19 @@
     //
 
     function notifyTouchBegan_(fid, pos){
-        print("==multitouch== Button.notifyTouchBegan_ finger=" + fid + " pos=" + pos.tostring() + " visible=" + mVisible_);
         if(!mVisible_){
-            print("==multitouch== Button.notifyTouchBegan_ rejected: not visible");
             return;
         }
         local hit = hitTest_(pos);
-        print("==multitouch== Button.notifyTouchBegan_ hitTest result=" + hit);
         if(!hit) return;
 
         mActiveTouches_[fid] <- pos;
-        print("==multitouch== Button.notifyTouchBegan_ accepted, calling onPressed");
+
         if(mOnPressed_ != null){
             local accepted = mOnPressed_(fid, pos);
             //If the callback explicitly returns false, reject the finger.
             if(accepted == false){
-                print("==multitouch== Button.notifyTouchBegan_ rejected by callback");
+
                 delete mActiveTouches_[fid];
                 return;
             }
@@ -156,7 +153,6 @@
     }
 
     function notifyTouchEnded_(fid){
-        print("==multitouch== Button.notifyTouchEnded_ finger=" + fid + " was_active=" + (fid in mActiveTouches_));
         releaseTouch_(fid);
     }
 
@@ -168,12 +164,10 @@
             if(!mVisible_) return false;
             if(!hitTest_(pos)) return false;
 
-            print("==multitouch== Button.notifyTouchMoved_ late-begin finger=" + fid + " pos=" + pos.tostring());
             mActiveTouches_[fid] <- pos;
             if(mOnPressed_ != null){
                 local accepted = mOnPressed_(fid, pos);
                 if(accepted == false){
-                    print("==multitouch== Button.notifyTouchMoved_ late-begin rejected by callback");
                     delete mActiveTouches_[fid];
                     return false;
                 }
@@ -218,7 +212,7 @@
         if(mOnTapped_ == null) return;
         local positionUnknown = (pos.x == 0 && pos.y == 0);
         if(!positionUnknown && !hitTest_(pos)) return;
-        print("==multitouch== Button.notifyTouchTapped_ finger=" + fid + " pos=" + pos.tostring() + " blind=" + positionUnknown);
+
         mOnTapped_(fid, pos);
     }
 
@@ -231,7 +225,6 @@
                 py >= mPosition_.y &&
                 px < mPosition_.x + mSize_.x &&
                 py < mPosition_.y + mSize_.y);
-        print("==multitouch== Button.hitTest_ pos=" + pos.tostring() + " scaled=(" + px + "," + py + ") bounds=[" + mPosition_.tostring() + "," + (mPosition_ + mSize_).tostring() + "] result=" + hit);
         return hit;
     }
 };

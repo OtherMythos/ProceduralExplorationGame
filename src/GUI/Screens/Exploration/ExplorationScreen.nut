@@ -899,7 +899,6 @@ enum ExplorationScreenWidgetType{
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
                 if(currentWorld == null) return false;
                 local result = currentWorld.requestCameraZoomingForFinger(fingerId);
-                print("==multitouch== desktop zoom onPressed finger=" + fingerId + " result=" + result);
                 if(result) mZoomLines_.setRecentTouchInteraction();
                 return result;
             }.bindenv(this));
@@ -915,7 +914,7 @@ enum ExplorationScreenWidgetType{
             mCameraButton.setOnPressed(function(fingerId, pos){
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
                 if(currentWorld == null){
-                    print("==multitouch== desktop camera onPressed: no world");
+
                     return false;
                 }
                 //On desktop, verify the click is in the 3D viewport and not
@@ -923,11 +922,8 @@ enum ExplorationScreenWidgetType{
                 local px = pos.x * ::canvasSize.x;
                 local py = pos.y * ::canvasSize.y;
                 local inWindow = checkPlayerInputPosition(px, py);
-                print("==multitouch== desktop camera onPressed finger=" + fingerId + " px=" + px + " py=" + py + " inWindow=" + (inWindow != null));
                 if(inWindow == null) return false;
-                local result = currentWorld.requestOrientingCameraWithMovementForFinger(fingerId);
-                print("==multitouch== desktop camera requestState result=" + result);
-                return result;
+                return currentWorld.requestOrientingCameraWithMovementForFinger(fingerId);
             }.bindenv(this));
             mCameraButton.setOnReleased(function(fingerId){
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
@@ -964,9 +960,9 @@ enum ExplorationScreenWidgetType{
             mCameraButton.setPosition(Vec2(0, 0));
             mCameraButton.setSize(Vec2(::canvasSize.x - zoomStripWidth, ::canvasSize.y));
 
-            print("==multitouch== desktop buttons: canvasSize=" + ::canvasSize.tostring() + " drawable=" + ::drawable.tostring());
-            print("==multitouch== zoomBtn pos=" + mZoomModifierButton.getPosition().tostring() + " size=" + mZoomModifierButton.getSize().tostring());
-            print("==multitouch== cameraBtn pos=" + mCameraButton.getPosition().tostring() + " size=" + mCameraButton.getSize().tostring());
+
+
+
         }
 
         mExplorationBus_.registerCallback(busCallback, this);
