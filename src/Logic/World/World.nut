@@ -1458,8 +1458,10 @@
     function requestOrientingCameraWithMovementForFinger(fingerId){
         local result = mMouseContext_.requestStateForFinger(fingerId, WorldMousePressContexts.ORIENTING_CAMERA_WITH_MOVEMENT);
         if(result){
-            //Also feed the double-tap timer for drags that were claimed.
-            notifyDoubleTapCheck();
+            //A drag/hold started — clear the double-tap timer so a stale
+            //timer cannot accidentally trigger a dash mid-drag.
+            mMouseContext_.mDoubleClickTimer_ = 0;
+            mMouseContext_.mDoubleClick_ = false;
         }
         return result;
     }

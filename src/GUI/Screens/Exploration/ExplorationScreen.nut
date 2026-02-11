@@ -36,6 +36,7 @@ enum ExplorationScreenWidgetType{
     mPauseButton = null;
     mZoomModifierButton = null;
     mCameraButton = null;
+    mCompassButton = null;
     mPlayerDirectButton = null;
     mPlayerDirectJoystick_ = null;
     mPlayerTapButton = null;
@@ -833,6 +834,23 @@ enum ExplorationScreenWidgetType{
                 }
             }.bindenv(this));
 
+            //Compass button: touches on the compass only orient the camera
+            //without moving the player (ORIENTING_CAMERA not _WITH_MOVEMENT).
+            //Created before the camera button so it has higher dispatch priority.
+            mCompassButton = MultiTouchButton(Vec2(0, 0), Vec2(100, 100));
+            mCompassButton.setOnPressed(function(fingerId, pos){
+                local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+                if(currentWorld != null){
+                    currentWorld.requestOrientingCameraForFinger(fingerId);
+                }
+            }.bindenv(this));
+            mCompassButton.setOnReleased(function(fingerId){
+                local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+                if(currentWorld != null){
+                    currentWorld.releaseStateForFinger(fingerId);
+                }
+            }.bindenv(this));
+
             //Camera button is created last so it has lowest dispatch priority.
             //Touches in player direct or zoom regions are claimed first.
             mCameraButton = MultiTouchButton(Vec2(0, 0), Vec2(100, 100));
@@ -864,6 +882,7 @@ enum ExplorationScreenWidgetType{
 
                 mPauseButton.setVisible(false);
                 mCameraButton.setVisible(false);
+                mCompassButton.setVisible(false);
                 mZoomModifierButton.setVisible(false);
                 mPlayerDirectButton.setVisible(false);
             }
@@ -938,6 +957,12 @@ enum ExplorationScreenWidgetType{
             local cameraBottom = _window.getHeight();
             mCameraButton.setPosition(Vec2(0, cameraTop));
             mCameraButton.setSize(Vec2(mZoomModifierButton.getPosition().x, cameraBottom - cameraTop));
+
+            //Position the compass button to cover the compass widget area.
+            local compassPos = mCompassAnimator_.getPosition();
+            local compassSize = mCompassAnimator_.getSize();
+            mCompassButton.setPosition(Vec2(compassPos.x, compassPos.y));
+            mCompassButton.setSize(Vec2(compassSize.x, compassSize.y));
 
             mPlayerDirectButton.setSize(Vec2(100, 100));
             mPlayerDirectButton.setPosition(Vec2(mZoomModifierButton.getPosition().x - 100, mCompassAnimator_.getPosition().y - 100));
@@ -1367,6 +1392,9 @@ enum ExplorationScreenWidgetType{
         if(mPlayerDirectButton != null && (mPlayerDirectButton instanceof MultiTouchButton)){
             mPlayerDirectButton.shutdown();
         }
+        if(mCompassButton != null && (mCompassButton instanceof MultiTouchButton)){
+            mCompassButton.shutdown();
+        }
         if(mSwipeAttackButton_ != null && (mSwipeAttackButton_ instanceof MultiTouchButton)){
             mSwipeAttackButton_.shutdown();
         }
@@ -1464,6 +1492,9 @@ enum ExplorationScreenWidgetType{
         }
 
         mCompassAnimator_.setVisible(vis);
+        if(mCompassButton != null){
+            mCompassButton.setVisible(vis);
+        }
         if(mPlayerDirectJoystick_){
             mPlayerDirectJoystick_.setVisible(vis);
         }
