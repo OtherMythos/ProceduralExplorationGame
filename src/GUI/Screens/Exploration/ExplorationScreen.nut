@@ -1275,6 +1275,8 @@ enum ExplorationScreenWidgetType{
             return;
         }
         //Check if player tap button area is being pressed (swipe attacks always available)
+        if(mPlayerTapButton == null) return;
+
         local currentMousePos = Vec2(_input.getMouseX(), _input.getMouseY());
 
         //Start swipe tracking if not already active and within button bounds
@@ -1378,6 +1380,7 @@ enum ExplorationScreenWidgetType{
     }
 
     function updateSwipeCompassPanelVisibility_(){
+        if(mSwipeCompassPanel_ == null) return;
         //Animate the compass panel opacity towards the target
         mSwipeCompassCurrentOpacity_ = ::accelerationClampCoordinate_(mSwipeCompassCurrentOpacity_, mSwipeCompassTargetOpacity_, 0.1);
 
