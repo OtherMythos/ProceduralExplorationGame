@@ -11,8 +11,14 @@ _tIntegration("PlayerDeathFromAttack", "Test to check the player dies properly i
         function(){
             local world = ::Base.mExplorationLogic.mCurrentWorld_;
             ::targetEnemy <- world.createEnemy(EnemyId.BEE_HIVE, Vec3(0, 0, 0));
+        },
+        function(){
+            local world = ::Base.mExplorationLogic.mCurrentWorld_;
+            world.performDirectionalAttack(Vec3(0, 0, 1));
+            ::_testHelper.waitFrames(20);
+        },
+        function(){
             ::Base.mPlayerStats.setPlayerHealth(1);
-
         },
         function(){
             ::_testHelper.setQueryText("Return to menu");
