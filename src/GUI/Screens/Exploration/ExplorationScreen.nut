@@ -1450,19 +1450,19 @@ enum ExplorationScreenWidgetType{
             mPlayerDirectJoystick_.shutdown();
         }
         //Shutdown MultiTouchButton instances.
-        if(mCameraButton != null && (mCameraButton instanceof MultiTouchButton)){
+        if(mCameraButton != null){
             mCameraButton.shutdown();
         }
-        if(mZoomModifierButton != null && (mZoomModifierButton instanceof MultiTouchButton)){
+        if(mZoomModifierButton != null){
             mZoomModifierButton.shutdown();
         }
-        if(mPlayerDirectButton != null && (mPlayerDirectButton instanceof MultiTouchButton)){
+        if(mPlayerDirectButton != null){
             mPlayerDirectButton.shutdown();
         }
-        if(mCompassButton != null && (mCompassButton instanceof MultiTouchButton)){
+        if(mCompassButton != null){
             mCompassButton.shutdown();
         }
-        if(mSwipeAttackButton_ != null && (mSwipeAttackButton_ instanceof MultiTouchButton)){
+        if(mSwipeAttackButton_ != null){
             mSwipeAttackButton_.shutdown();
         }
         base.shutdown();
