@@ -1413,7 +1413,7 @@
                     if(::Base.getTargetInterface() == TargetInterface.MOBILE){
                         local double = mMouseContext_.checkDoubleClick();
                         if(double){
-                            performPlayerDash();
+                            performPlayerDash(true);
                         }
                     }
                 }
@@ -1476,7 +1476,7 @@
         mMouseContext_.mDoubleClickTimer_ = 20;
 
         if(mMouseContext_.checkDoubleClick()){
-            performPlayerDash();
+            performPlayerDash(true);
         }
     }
     function requestSwipingAttackForFinger(fingerId){
@@ -1518,9 +1518,8 @@
             }
         }
     }
-    function performPlayerDash(){
-        //local direction = getCameraDirection();
-        local direction = getPlayerDirection();
+    function performPlayerDash(useCameraDirection = false){
+        local direction = useCameraDirection ? getCameraDirection() : getPlayerDirection();
         mPlayerEntry_.performDash(direction);
     }
     function getPlayerDirection(){
