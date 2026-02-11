@@ -1617,8 +1617,8 @@
             assert(targetForward != null);
             local movementPercentage = mMovementCooldown_.tofloat() / mMovementCooldownTotal_.tofloat();
 
-            if(mDirectingPlayerSpeedModifier_){
-                movePlayer(targetForward, 0.2 * sin(movementPercentage));
+            if(mDirectingPlayerSpeedModifier_ > 0.0){
+                movePlayer(targetForward, 0.2 * mDirectingPlayerSpeedModifier_ * sin(movementPercentage));
             }
         }
 
@@ -2478,6 +2478,16 @@
 
         return false;
     }
+    function getJoystickMaxRadius_(){
+        //Query the joystick widget's actual visual radius so the speed
+        //calculation stays in sync with what the player sees.
+        if(mGui_ != null && mGui_.mPlayerDirectJoystick_ != null){
+            local r = mGui_.mPlayerDirectJoystick_.getMaxHandleOffset();
+            if(r > 0.0) return r;
+        }
+        //Fallback if the widget isn't available.
+        return 37.5;
+    }
     function checkForPlayerDirecting(){
         if(!mMouseContext_.isStateActive(WorldMousePressContexts.DIRECTING_PLAYER)) return;
 
@@ -2497,7 +2507,16 @@
 
             }
         }else{
-            displacement = processMouseDelta(false);
+            //For mouse, compute displacement from the joystick widget
+            //centre so distance from centre determines speed.
+            if(mGui_ != null && mGui_.mPlayerDirectJoystick_ != null){
+                local origin = mGui_.mPlayerDirectJoystick_.mJoystickOrigin_;
+                if(origin != null && _input.getMouseButton(_MB_LEFT)){
+                    local mx = _input.getMouseX().tofloat();
+                    local my = _input.getMouseY().tofloat();
+                    displacement = Vec2(mx - origin.x, my - origin.y);
+                }
+            }
         }
         if(displacement != null){
             local dirWithinDeadzone_ = dirWithinDeadzone_(displacement);
@@ -2512,10 +2531,17 @@
                     displacement.x * sinA + displacement.y * cosA
                 );
 
+                //Scale speed by how far from the joystick centre,
+                //reaching full speed at the edge of the widget.
+                local magnitude = sqrt(displacement.x * displacement.x + displacement.y * displacement.y);
+                local maxRadius = getJoystickMaxRadius_();
+                local ratio = magnitude / maxRadius;
+                if(ratio > 1.0) ratio = 1.0;
+                mDirectingPlayerSpeedModifier_ = ratio;
+
                 _event.transmit(Event.PLAYER_DIRECTING_CHANGED, displacement);
 
                 setPlayerDirection(worldDir);
-                mDirectingPlayerSpeedModifier_ = 1.0;
             }else{
                 mDirectingPlayerSpeedModifier_ = 0.0;
             }

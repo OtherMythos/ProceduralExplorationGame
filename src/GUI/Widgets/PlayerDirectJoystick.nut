@@ -5,8 +5,10 @@
     mHandle_ = null;
 
     mCurrentJoystickDir_ = null;
+    mCurrentJoystickMagnitude_ = 0.0;
     mJoystickOrigin_ = null;
     mJoystickPositionTarget_ = null;
+    mMaxHandleOffset_ = 0.0;
 
     MAX_OPACITY_COUNT = 60;
     mCurrentOpacityCount_ = 0;
@@ -59,7 +61,10 @@
     function setSize(size){
         mButton_.setSize(size);
         mBackgroundPanel_.setSize(size);
-        mHandle_.setSize(size * 0.5);
+        local handleSize = size * 0.5;
+        mHandle_.setSize(handleSize);
+        //Max offset keeps the handle edge within the background circle.
+        mMaxHandleOffset_ = (size.x * 0.5) - (handleSize.x * 0.5);
     }
 
     function setPosition(pos){
@@ -69,19 +74,29 @@
         mHandle_.setCentre(mJoystickOrigin_);
     }
 
-    function setJoystickDirection(dir){
-        mCurrentJoystickDir_ = dir.normalisedCopy();
-        setJoystickDirection_(mCurrentJoystickDir_);
+    function getMaxHandleOffset(){
+        return mMaxHandleOffset_;
+    }
+
+    function setJoystickDisplacement(displacement){
+        local magnitude = sqrt(displacement.x * displacement.x + displacement.y * displacement.y);
+        if(magnitude > 0.0001){
+            mCurrentJoystickDir_ = Vec2(displacement.x / magnitude, displacement.y / magnitude);
+        }else{
+            mCurrentJoystickDir_ = ::Vec2_ZERO;
+        }
+        //Clamp the offset so the handle stays within the background.
+        local clampedMag = magnitude;
+        if(clampedMag > mMaxHandleOffset_) clampedMag = mMaxHandleOffset_;
+        mCurrentJoystickMagnitude_ = (mMaxHandleOffset_ > 0.0) ? (clampedMag / mMaxHandleOffset_) : 0.0;
+        //Position the handle at the clamped displacement from the origin.
+        mHandle_.setCentre(mJoystickOrigin_ + (mCurrentJoystickDir_ * clampedMag));
     }
 
     function receivePlayerDirectingChanged(id, data){
-        setJoystickDirection(data);
+        setJoystickDisplacement(data);
         mUseCooldown_ = 1.0;
         setColours_(ColourValue(1, 1, 1, 1));
-    }
-
-    function setJoystickDirection_(dir){
-        mHandle_.setCentre(mJoystickOrigin_ + (dir * 20));
     }
 
     function setColours_(colourVal){
@@ -90,14 +105,10 @@
     }
 
     function update(){
-        //mAnim += 0.01;
-        //setJoystickDirection(Vec2(sin(mAnim), cos(mAnim)));
-
         if(mUseCooldown_ >= 0){
             mUseCooldown_-=0.02;
 
             if(mUseCooldown_ <= 0.0){
-                //mJoystickPositionTarget_ = mJoystickOrigin_;
                 mCooldownAnim_ = 1.0;
             }
         }
@@ -108,8 +119,9 @@
             if(startAnim != mCooldownAnim_){
                 //Something actually changed
                 setColours_(ColourValue(1, 1, 1, mCooldownAnim_));
-                local posAnim = ::calculateSimpleAnimationInRange(mCurrentJoystickDir_, ::Vec2_ZERO, mCooldownAnim_, 1.0, 0.2);
-                setJoystickDirection_(posAnim);
+                //Animate the handle back to the origin.
+                local offset = mCurrentJoystickDir_ * mMaxHandleOffset_ * mCurrentJoystickMagnitude_ * (mCooldownAnim_ - 0.2);
+                mHandle_.setCentre(mJoystickOrigin_ + offset);
             }
         }
     }
