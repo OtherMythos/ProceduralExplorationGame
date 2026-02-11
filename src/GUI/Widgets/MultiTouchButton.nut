@@ -145,7 +145,13 @@
         mActiveTouches_[fid] <- pos;
         print("==multitouch== Button.notifyTouchBegan_ accepted, calling onPressed");
         if(mOnPressed_ != null){
-            mOnPressed_(fid, pos);
+            local accepted = mOnPressed_(fid, pos);
+            //If the callback explicitly returns false, reject the finger.
+            if(accepted == false){
+                print("==multitouch== Button.notifyTouchBegan_ rejected by callback");
+                delete mActiveTouches_[fid];
+                return;
+            }
         }
     }
 
@@ -165,7 +171,12 @@
             print("==multitouch== Button.notifyTouchMoved_ late-begin finger=" + fid + " pos=" + pos.tostring());
             mActiveTouches_[fid] <- pos;
             if(mOnPressed_ != null){
-                mOnPressed_(fid, pos);
+                local accepted = mOnPressed_(fid, pos);
+                if(accepted == false){
+                    print("==multitouch== Button.notifyTouchMoved_ late-begin rejected by callback");
+                    delete mActiveTouches_[fid];
+                    return false;
+                }
             }
             return true;
         }

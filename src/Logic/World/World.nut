@@ -785,6 +785,14 @@
             return;
         }
 
+        //On desktop, synthesise touch events from mouse input so
+        //MultiTouchButtons can handle camera/zoom dispatch.
+        //Also pump when ForceMobileInterface is active, since the
+        //mobile UI is being driven by a real mouse, not a touchscreen.
+        if(::Base.getTargetInterface() != TargetInterface.MOBILE || ::Base.isProfileActive(GameProfile.FORCE_MOBILE_INTERFACE)){
+            ::MultiTouchManager.pumpMouseInput();
+        }
+
         checkCameraChange();
         checkOrientatingCamera();
         checkHighlightEnemy();
@@ -829,12 +837,13 @@
         }
 
         if(!_input.getMouseButton(_MB_LEFT)){
-            //On desktop, release the "mouse" pseudo-finger.
-            //Touch fingers are released via touch-ended events.
-            //On mobile, MultiTouchButtons handle state lifecycle.
-            if(::Base.getTargetInterface() != TargetInterface.MOBILE){
-                mMouseContext_.releaseStateForFinger("mouse");
-            }
+            //On desktop, the "mouse" pseudo-finger is now released by
+            //MultiTouchManager.pumpMouseInput() via the spoofed touch-ended
+            //event. No manual release needed here.
+            //Clear stale prev-mouse positions so the next drag doesn't
+            //compute a huge delta from the old position.
+            mPrevMouseX_ = null;
+            mPrevMouseY_ = null;
         }
         mMouseContext_.update();
         cleanupFingerPrevPositions_();
@@ -1384,17 +1393,11 @@
         mCurrentTargetEnemy_ = mCurrentHighlightEnemy_;
     }
     function checkForPlayerMoveBegin(){
-            if(mPinchToZoomActive_){
-                mMouseContext_.notifyMouseEnded();
-            }
-
-        if(mBlockAllInputs_) return;
-        if(!mGui_) return;
-
-        //On mobile, MultiTouchButtons handle state requests for camera
-        //orienting, directing, and zooming. The mouse polling path would
-        //race and steal the state before the touch system can claim it.
-        if(::Base.getTargetInterface() == TargetInterface.MOBILE) return;
+        //Both platforms now use MultiTouchButtons for state requests.
+        //On mobile, real touch events drive the buttons.
+        //On desktop, pumpMouseInput() synthesises touch events from mouse.
+        //The legacy mouse-polling path below is no longer needed.
+        return;
 
         if(!_input.getMouseButton(_MB_LEFT) || !mMouseContext_.isEmpty()){
             mPinchToZoomWarmDown_ = 5;
@@ -2377,8 +2380,9 @@
         }
         */
 
-        if(!mMouseContext_.isStateActive(WorldMousePressContexts.ORIENTING_CAMERA) && !mMouseContext_.isStateActive(WorldMousePressContexts.ORIENTING_CAMERA_WITH_MOVEMENT)) return;
-        //print("orientating");
+        if(!mMouseContext_.isStateActive(WorldMousePressContexts.ORIENTING_CAMERA) && !mMouseContext_.isStateActive(WorldMousePressContexts.ORIENTING_CAMERA_WITH_MOVEMENT)){
+            return;
+        }
 
         //Determine which finger owns the camera state and get its delta.
         local cameraFinger = mMouseContext_.getFingerForState(WorldMousePressContexts.ORIENTING_CAMERA);
@@ -2392,6 +2396,7 @@
         }
 
         if(mouseDelta != null){
+            print("==multitouch== checkOrientatingCamera delta=" + mouseDelta.tostring() + " finger=" + cameraFinger);
             if(::Base.getTargetInterface() == TargetInterface.MOBILE){
                 setCameraAcceleration(Vec2(mouseDelta.x*-0.2, mouseDelta.y*-0.2));
             }

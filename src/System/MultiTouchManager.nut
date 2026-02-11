@@ -9,6 +9,9 @@
     //Registered MultiTouchButton instances.
     mButtons_ = []
 
+    //Desktop mouse-to-touch spoofing state.
+    mMouseWasPressed_ = false
+
     function setup(){
         _event.subscribe(_EVENT_SYSTEM_INPUT_TOUCH_BEGAN, recieveTouchBegan, this);
         _event.subscribe(_EVENT_SYSTEM_INPUT_TOUCH_ENDED, recieveTouchEnded, this);
@@ -167,6 +170,77 @@
         local fid = fingerId.tostring();
         if(mFingers_.rawin(fid)) return mFingers_[fid];
         return null;
+    }
+
+    /**
+     * Called each frame on desktop to synthesise touch events from
+     * mouse input. Translates left-click press/drag/release into
+     * the same touch began/motion/ended pipeline that real fingers
+     * use, using "mouse" as the finger id.
+     */
+    function pumpMouseInput(){
+        local mouseDown = _input.getMouseButton(_MB_LEFT);
+        local fid = "mouse";
+
+        if(mouseDown){
+            //Normalise pixel-space mouse coords to 0-1 range.
+            local rawX = _input.getMouseX().tofloat();
+            local rawY = _input.getMouseY().tofloat();
+            local px = rawX / ::canvasSize.x;
+            local py = rawY / ::canvasSize.y;
+            local pos = Vec2(px, py);
+
+            if(!mMouseWasPressed_){
+                //Synthesise touch-began.
+                print("==multitouch== pumpMouseInput BEGAN rawMouse=(" + rawX + "," + rawY + ") normalised=" + pos.tostring() + " canvasSize=" + ::canvasSize.tostring() + " drawable=" + ::drawable.tostring() + " buttons=" + mButtons_.len());
+                mFingers_.rawset(fid, pos);
+                mTouches_.append(fid);
+                foreach(btn in mButtons_){
+                    btn.notifyTouchBegan_(fid, pos);
+                }
+            }else{
+                //Synthesise touch-motion.
+                mFingers_.rawset(fid, pos);
+                local claimed = false;
+                foreach(btn in mButtons_){
+                    if(claimed && !btn.isFingerActive(fid)) continue;
+                    local accepted = btn.notifyTouchMoved_(fid, pos);
+                    if(accepted) claimed = true;
+                }
+            }
+        }else{
+            if(mMouseWasPressed_){
+                //Synthesise touch-ended.
+                print("==multitouch== pumpMouseInput ENDED");
+                local lastPos = mFingers_.rawin(fid) ? mFingers_[fid] : null;
+                if(mFingers_.rawin(fid)) mFingers_.rawdelete(fid);
+                local idx = mTouches_.find(fid);
+                if(idx != null) mTouches_[idx] = null;
+                checkForFinishedTouches_();
+
+                local wasClaimed = false;
+                foreach(btn in mButtons_){
+                    if(btn.isFingerActive(fid)){
+                        wasClaimed = true;
+                        break;
+                    }
+                }
+                foreach(btn in mButtons_){
+                    btn.notifyTouchEnded_(fid);
+                }
+                if(!wasClaimed && lastPos != null){
+                    print("==multitouch== pumpMouseInput unclaimed tap");
+                    foreach(btn in mButtons_){
+                        btn.notifyTouchTapped_(fid, lastPos);
+                    }
+                }
+
+                //Release cursor grab that processMouseDelta may have set.
+                _window.grabCursor(false);
+            }
+        }
+
+        mMouseWasPressed_ = mouseDown;
     }
 
     function determinePinchToZoom(){

@@ -773,8 +773,8 @@ enum ExplorationScreenWidgetType{
             );
             mSwipeAttackButton_.setOnPressed(function(fingerId, pos){
                 local world = ::Base.mExplorationLogic.mCurrentWorld_;
-                if(world == null) return;
-                if(!world.requestSwipingAttackForFinger(fingerId)) return;
+                if(world == null) return false;
+                if(!world.requestSwipingAttackForFinger(fingerId)) return false;
                 //Record start position in pixel space.
                 mSwipeTapStartPos_ = Vec2(pos.x * ::canvasSize.x, pos.y * ::canvasSize.y);
                 mSwipeTapEndPos_ = mSwipeTapStartPos_.copy();
@@ -802,9 +802,8 @@ enum ExplorationScreenWidgetType{
             mPlayerDirectButton = MultiTouchButton(Vec2(0, 0), Vec2(100, 100));
             mPlayerDirectButton.setOnPressed(function(fingerId, pos){
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
-                if(currentWorld != null){
-                    currentWorld.requestDirectingPlayerForFinger(fingerId);
-                }
+                if(currentWorld == null) return false;
+                return currentWorld.requestDirectingPlayerForFinger(fingerId);
             }.bindenv(this));
             mPlayerDirectButton.setOnReleased(function(fingerId){
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
@@ -822,10 +821,10 @@ enum ExplorationScreenWidgetType{
             mZoomModifierButton.setSize(Vec2(50, _window.getHeight() - zoomButtonPos.y - insets.bottom));
             mZoomModifierButton.setOnPressed(function(fingerId, pos){
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
-                if(currentWorld != null){
-                    currentWorld.requestCameraZoomingForFinger(fingerId);
-                    mZoomLines_.setRecentTouchInteraction();
-                }
+                if(currentWorld == null) return false;
+                local result = currentWorld.requestCameraZoomingForFinger(fingerId);
+                if(result) mZoomLines_.setRecentTouchInteraction();
+                return result;
             }.bindenv(this));
             mZoomModifierButton.setOnReleased(function(fingerId){
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
@@ -840,9 +839,8 @@ enum ExplorationScreenWidgetType{
             mCompassButton = MultiTouchButton(Vec2(0, 0), Vec2(100, 100));
             mCompassButton.setOnPressed(function(fingerId, pos){
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
-                if(currentWorld != null){
-                    currentWorld.requestOrientingCameraForFinger(fingerId);
-                }
+                if(currentWorld == null) return false;
+                return currentWorld.requestOrientingCameraForFinger(fingerId);
             }.bindenv(this));
             mCompassButton.setOnReleased(function(fingerId){
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
@@ -856,9 +854,8 @@ enum ExplorationScreenWidgetType{
             mCameraButton = MultiTouchButton(Vec2(0, 0), Vec2(100, 100));
             mCameraButton.setOnPressed(function(fingerId, pos){
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
-                if(currentWorld != null){
-                    currentWorld.requestOrientingCameraWithMovementForFinger(fingerId);
-                }
+                if(currentWorld == null) return false;
+                return currentWorld.requestOrientingCameraWithMovementForFinger(fingerId);
             }.bindenv(this));
             mCameraButton.setOnReleased(function(fingerId){
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
@@ -886,6 +883,65 @@ enum ExplorationScreenWidgetType{
                 mZoomModifierButton.setVisible(false);
                 mPlayerDirectButton.setVisible(false);
             }
+        }else{
+            //Desktop: create MultiTouchButtons for camera and zoom.
+            //Mouse input is spoofed as touch via MultiTouchManager.pumpMouseInput().
+            //
+            //IMPORTANT: On desktop, _input.getMouseX/Y() returns pixel
+            //coordinates in window space (::canvasSize). The buttons must
+            //be positioned in that same space so hitTest_ matches.
+            //Do NOT use ::drawable here — it may differ due to
+            //aspect-ratio letterboxing.
+
+            //Zoom button on the right edge (higher priority than camera).
+            mZoomModifierButton = MultiTouchButton(Vec2(0, 0), Vec2(100, 100));
+            mZoomModifierButton.setOnPressed(function(fingerId, pos){
+                local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+                if(currentWorld == null) return false;
+                local result = currentWorld.requestCameraZoomingForFinger(fingerId);
+                print("==multitouch== desktop zoom onPressed finger=" + fingerId + " result=" + result);
+                if(result) mZoomLines_.setRecentTouchInteraction();
+                return result;
+            }.bindenv(this));
+            mZoomModifierButton.setOnReleased(function(fingerId){
+                local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+                if(currentWorld != null){
+                    currentWorld.releaseStateForFinger(fingerId);
+                }
+            }.bindenv(this));
+
+            //Camera button covers the rest of the viewport.
+            mCameraButton = MultiTouchButton(Vec2(0, 0), Vec2(100, 100));
+            mCameraButton.setOnPressed(function(fingerId, pos){
+                local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+                if(currentWorld == null){
+                    print("==multitouch== desktop camera onPressed: no world");
+                    return false;
+                }
+                //On desktop, verify the click is in the 3D viewport and not
+                //over a GUI element (minimap, stats etc.).
+                local px = pos.x * ::canvasSize.x;
+                local py = pos.y * ::canvasSize.y;
+                local inWindow = checkPlayerInputPosition(px, py);
+                print("==multitouch== desktop camera onPressed finger=" + fingerId + " px=" + px + " py=" + py + " inWindow=" + (inWindow != null));
+                if(inWindow == null) return false;
+                local result = currentWorld.requestOrientingCameraWithMovementForFinger(fingerId);
+                print("==multitouch== desktop camera requestState result=" + result);
+                return result;
+            }.bindenv(this));
+            mCameraButton.setOnReleased(function(fingerId){
+                local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+                if(currentWorld != null){
+                    currentWorld.releaseStateForFinger(fingerId);
+                }
+            }.bindenv(this));
+            mCameraButton.setOnTapped(function(fingerId, pos){
+                local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
+                if(currentWorld != null){
+                    currentWorld.notifyDoubleTapCheck();
+                }
+            }.bindenv(this));
+            mExplorationScreenWidgetType_[ExplorationScreenWidgetType.CAMERA_BUTTON] = mCameraButton;
         }
 
         mZoomLines_ = ExplorationScreenZoomLines(mWindow_);
@@ -896,6 +952,21 @@ enum ExplorationScreenWidgetType{
         }else{
             mZoomLines_.setSize(Vec2(50, ::drawable.y));
             mZoomLines_.setPosition(Vec2(::drawable.x - 50, 30));
+
+            //Position desktop MultiTouchButtons in ::canvasSize (window)
+            //space so they match the coordinate space of _input.getMouseX/Y()
+            //and the hitTest_ normalisation round-trip.
+            local zoomStripWidth = 50;
+            mZoomModifierButton.setPosition(Vec2(::canvasSize.x - zoomStripWidth, 0));
+            mZoomModifierButton.setSize(Vec2(zoomStripWidth, ::canvasSize.y));
+
+            //Camera button covers the full window except the zoom strip.
+            mCameraButton.setPosition(Vec2(0, 0));
+            mCameraButton.setSize(Vec2(::canvasSize.x - zoomStripWidth, ::canvasSize.y));
+
+            print("==multitouch== desktop buttons: canvasSize=" + ::canvasSize.tostring() + " drawable=" + ::drawable.tostring());
+            print("==multitouch== zoomBtn pos=" + mZoomModifierButton.getPosition().tostring() + " size=" + mZoomModifierButton.getSize().tostring());
+            print("==multitouch== cameraBtn pos=" + mCameraButton.getPosition().tostring() + " size=" + mCameraButton.getSize().tostring());
         }
 
         mExplorationBus_.registerCallback(busCallback, this);

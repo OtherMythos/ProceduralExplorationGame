@@ -114,6 +114,11 @@
 
         assignState_(fid, state);
         print("==multitouch== Context.requestStateForFinger ACCEPTED");
+
+        //Block GUI input while any state is active so engine GUI
+        //elements (minimap, stats etc.) don't receive stray clicks.
+        if(mGui_) mGui_.notifyBlockInput(true);
+
         return true;
     }
 
@@ -132,6 +137,10 @@
 
         if(isBlockingState_(state)){
             mBlockingStateActive_ = false;
+        }
+
+        //Unblock GUI input when no states remain.
+        if(isEmpty()){
             if(mGui_) mGui_.notifyBlockInput(false);
         }
     }
