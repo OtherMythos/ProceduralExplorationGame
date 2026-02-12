@@ -101,5 +101,6 @@ local HotSpringsLogic = {
 ::Biomes[BiomeId.HOT_SPRINGS] = Biome("Hot Springs", [EnemyId.GOBLIN], null, null, null, null, HotSpringsLogic, false);
 ::Biomes[BiomeId.MUSHROOM_CLUSTER] = Biome("Mushroom Cluster", [EnemyId.GOBLIN], null, null, null, null, null, false);
 ::Biomes[BiomeId.GEOTHERMAL_PLANES] = Biome("Geothermal Planes", [EnemyId.GOBLIN], null, null, null, null, GeoThermalLogic);
+::Biomes[BiomeId.MUSHROOM_FOREST] = Biome("Mushroom Forest", [EnemyId.GOBLIN], null, null, null, null);
 ::Biomes[BiomeId.SHALLOW_OCEAN] = Biome("Shallow Ocean", [EnemyId.SQUID], null, null, null, null);
 ::Biomes[BiomeId.DEEP_OCEAN] = Biome("Deep Ocean", [EnemyId.SQUID], null, null, null, null);

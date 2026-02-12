@@ -133,6 +133,7 @@
             case RegionType.HOT_SPRINGS: return BiomeId.HOT_SPRINGS;
             case RegionType.GEOTHERMAL_PLANES: return BiomeId.GEOTHERMAL_PLANES;
             case RegionType.MUSHROOM_CLUSTER: return BiomeId.MUSHROOM_CLUSTER;
+            case RegionType.MUSHROOM_FOREST: return BiomeId.MUSHROOM_FOREST;
             default:{
                 return BiomeId.GRASS_LAND;
             }

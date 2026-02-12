@@ -337,6 +337,33 @@ namespace ProceduralExplorationGameCore{
         }
     }
 
+    //Mushroom Forest - forest with very frequent mushroom placement and expandable terrain
+    MapVoxelTypes MUSHROOM_FOREST_VoxFunction(AV::uint8 altitude, AV::uint8 moisture, const ExplorationMapData* mapData){
+        if(moisture >= mapData->seaLevel + 30){
+            return MapVoxelTypes::MUSHROOM_FOREST;
+        }else{
+            return MapVoxelTypes::MUSHROOM_DIRT;
+        }
+    }
+
+    void MUSHROOM_FOREST_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture, AV::uint8 regionDistance){
+        if(altitude >= mapData->seaLevel + 10){
+            if(processRValue(mapData, x, y, moisture >= mapData->seaLevel + 30 ? 1 : 4)){
+                static const PlacedItemId MUSHROOM_TYPES[] = {PlacedItemId::MUSHROOM_1, PlacedItemId::MUSHROOM_2, PlacedItemId::MUSHROOM_3};
+                size_t val = mapGenRandomIntMinMax(0, 2);
+                PLACE_ITEM(MUSHROOM_TYPES[val]);
+            }
+        }
+    }
+
+    void MUSHROOM_FOREST_FinalVoxChangeFunction(const ExplorationMapData* mapData, AV::uint32* vox, AV::uint32* secondary, AV::uint16 x, AV::uint16 y){
+        *secondary |= DO_NOT_PLACE_RIVERS_VOXEL_FLAG;
+
+        if((*vox & 0xFF) < mapData->seaLevel){
+            *secondary |= TEST_CHANGE_WATER_FLAG;
+        }
+    }
+
     void NONE_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture, AV::uint8 regionDistance){
     }
     #undef PLACE_ITEM
@@ -386,6 +413,7 @@ namespace ProceduralExplorationGameCore{
         Biome(&HOT_SPRINGS_VoxFunction, &HOT_SPRINGS_PlaceObjectsFunction, &HOT_SPRINGS_DetermineAltitudeFunction, &HOT_SPRINGS_FinalVoxChangeFunction, &HOT_SPRINGS_WaterTextureColourChangeFunction),
         Biome(&GRASS_LAND_VoxFunction, &MUSHROOM_CLUSTER_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
         Biome(&GEOTHERMAL_PLANES_VoxFunction, &GEOTHERMAL_PLANES_PlaceObjectsFunction, &GEOTHERMAL_PLANES_DetermineAltitudeFunction, &GEOTHERMAL_PLANES_FinalVoxChangeFunction, &HOT_SPRINGS_WaterTextureColourChangeFunction),
+        Biome(&MUSHROOM_FOREST_VoxFunction, &MUSHROOM_FOREST_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &MUSHROOM_FOREST_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
         Biome(&SHALLOW_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
         Biome(&DEEP_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
     };
@@ -414,6 +442,7 @@ namespace ProceduralExplorationGameCore{
             case RegionType::HOT_SPRINGS: targetBiome = BiomeId::HOT_SPRINGS; break;
             case RegionType::MUSHROOM_CLUSTER: targetBiome = BiomeId::MUSHROOM_CLUSTER; break;
             case RegionType::GEOTHERMAL_PLANES: targetBiome = BiomeId::GEOTHERMAL_PLANES; break;
+            case RegionType::MUSHROOM_FOREST: targetBiome = BiomeId::MUSHROOM_FOREST; break;
             default:{
                 targetBiome = BiomeId::GRASS_LAND;
             }
