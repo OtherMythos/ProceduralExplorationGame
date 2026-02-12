@@ -26,6 +26,9 @@
 ::PlacedItems[PlacedItemId.MUSHROOM_1] = PlacedItem("mushrooms.mushroom.1.voxMesh", 0.3);
 ::PlacedItems[PlacedItemId.MUSHROOM_2] = PlacedItem("mushrooms.mushroom.2.voxMesh", 0.3);
 ::PlacedItems[PlacedItemId.MUSHROOM_3] = PlacedItem("mushrooms.mushroom.3.voxMesh", 0.3);
+::PlacedItems[PlacedItemId.MUSHROOM_TREE_1] = PlacedItem("mushrooms.mushroom.1.voxMesh", 1.0, null, 2);
+::PlacedItems[PlacedItemId.MUSHROOM_TREE_2] = PlacedItem("mushrooms.mushroom.2.voxMesh", 1.0, null, 2);
+::PlacedItems[PlacedItemId.MUSHROOM_TREE_3] = PlacedItem("mushrooms.mushroom.3.voxMesh", 1.0, null, 2);
 ::PlacedItems[PlacedItemId.MAGMA_SHROOM] = PlacedItem("mushrooms.mushroom.magma.voxMesh", 0.3, null, 2);
 
 ::PlacedItems[PlacedItemId.ROCK_SMALL_1] = PlacedItem("rocks.rockSmall.1.voxMesh", 0.4);

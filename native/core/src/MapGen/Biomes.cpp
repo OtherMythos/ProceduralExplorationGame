@@ -348,10 +348,22 @@ namespace ProceduralExplorationGameCore{
 
     void MUSHROOM_FOREST_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture, AV::uint8 regionDistance){
         if(altitude >= mapData->seaLevel + 10){
-            if(processRValue(mapData, x, y, moisture >= mapData->seaLevel + 30 ? 1 : 4)){
-                static const PlacedItemId MUSHROOM_TYPES[] = {PlacedItemId::MUSHROOM_1, PlacedItemId::MUSHROOM_2, PlacedItemId::MUSHROOM_3};
-                size_t val = mapGenRandomIntMinMax(0, 2);
-                PLACE_ITEM(MUSHROOM_TYPES[val]);
+            bool placed = false;
+            if(moisture >= mapData->seaLevel + 50){
+                if(processRValue(mapData, x, y, 4)){
+                    bool treeType = (mapGenRandomIntMinMax(0, 2) == 0);
+                    static const PlacedItemId MUSHROOM_TREE_TYPES[] = {PlacedItemId::MUSHROOM_TREE_1, PlacedItemId::MUSHROOM_TREE_2, PlacedItemId::MUSHROOM_TREE_3};
+                    size_t val = mapGenRandomIntMinMax(0, 2);
+                    PLACE_ITEM(MUSHROOM_TREE_TYPES[val]);
+                    placed = true;
+                }
+            }
+            if(!placed){
+                if(processRValue(mapData, x, y, moisture >= mapData->seaLevel + 30 ? 1 : 4)){
+                    static const PlacedItemId MUSHROOM_TYPES[] = {PlacedItemId::MUSHROOM_1, PlacedItemId::MUSHROOM_2, PlacedItemId::MUSHROOM_3};
+                    size_t val = mapGenRandomIntMinMax(0, 2);
+                    PLACE_ITEM(MUSHROOM_TYPES[val]);
+                }
             }
         }
     }
