@@ -35,13 +35,13 @@ namespace ProceduralExplorationGameCore{
 
         std::vector<RegionId> blacklistedRegions;
 
-        static const std::array regionsToAdd{RegionType::CHERRY_BLOSSOM_FOREST, RegionType::MUSHROOM_FOREST, RegionType::GEOTHERMAL_PLANES};
+        static const std::array regionsToAdd{RegionType::CHERRY_BLOSSOM_FOREST, RegionType::WORM_FIELDS, RegionType::GEOTHERMAL_PLANES};
         for(RegionType r : regionsToAdd){
             size_t targetIdx = mapGenRandomIndex(freeRegions);
             if(targetIdx >= freeRegions.size()) continue;
             RegionData& rd = regionData[freeRegions[targetIdx]];
             rd.type = r;
-            if(r == RegionType::DESERT || r == RegionType::MUSHROOM_FOREST || r == RegionType::GEOTHERMAL_PLANES){
+            if(r == RegionType::DESERT || r == RegionType::MUSHROOM_FOREST || r == RegionType::GEOTHERMAL_PLANES || r == RegionType::WORM_FIELDS){
                 rd.meta |= static_cast<AV::uint8>(RegionMeta::EXPANDABLE);
             }
 
@@ -51,7 +51,7 @@ namespace ProceduralExplorationGameCore{
         }
 
         //Place HOT_SPRING regions and other minor biomes
-        static const std::array smallRegionsToAdd{RegionType::HOT_SPRINGS, RegionType::MUSHROOM_CLUSTER, RegionType::SWAMP};
+        static const std::array smallRegionsToAdd{RegionType::HOT_SPRINGS, RegionType::MUSHROOM_CLUSTER};
         for(RegionType r : smallRegionsToAdd){
             std::vector<RegionId> availableRegions;
             for(size_t i = 0; i < regionData.size(); i++){

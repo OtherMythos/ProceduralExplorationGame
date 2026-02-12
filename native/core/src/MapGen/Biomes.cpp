@@ -6,6 +6,10 @@
 
 namespace ProceduralExplorationGameCore{
 
+    template <typename T>
+    T mix(const T& a, const T& b, float t) {
+        return a * (1.0f - t) + b * t;
+    }
 
     bool processRValue(const ExplorationMapData* mapData, AV::uint16 xc, AV::uint16 yc, int R){
         float max = 0;
@@ -106,6 +110,27 @@ namespace ProceduralExplorationGameCore{
     }
     //
     //
+    MapVoxelTypes WORM_FIELDS_VoxFunction(AV::uint8 altitude, AV::uint8 moisture, const ExplorationMapData* mapData){
+        return MapVoxelTypes::SAND;
+    }
+    void WORM_FIELDS_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture, AV::uint8 regionDistance){
+    }
+    void WORM_FIELDS_FinalVoxChangeFunction(const ExplorationMapData* mapData, AV::uint32* vox, AV::uint32* secondary, AV::uint16 x, AV::uint16 y){
+        *secondary |= DO_NOT_PLACE_RIVERS_VOXEL_FLAG;
+    }
+    AV::uint8 WORM_FIELDS_DetermineAltitudeFunction(AV::uint8 altitude, AV::uint8 moisture, AV::uint8 altitudeDistance, AV::uint16 x, AV::uint16 y, const ExplorationMapData* mapData){
+        static const float DIST = 18.0f;
+        float modifier = (altitudeDistance > DIST ? DIST : static_cast<float>(altitudeDistance)) / DIST;
+        float originalAltitude = float(altitude);
+        float altDifference = originalAltitude - mapData->seaLevel;
+        float startAltDifference = 1;
+        float fa = mapData->seaLevel + startAltDifference * 0.25;
+        float a = mix<float>(fa, originalAltitude, 1.0 - modifier);
+        AV::uint8 out = static_cast<AV::uint8>(a);
+        return out;
+    }
+    //
+    //
     MapVoxelTypes SHALLOW_OCEAN_VoxFunction(AV::uint8 altitude, AV::uint8 moisture, const ExplorationMapData* mapData){
         return MapVoxelTypes::SAND;
     }
@@ -181,11 +206,6 @@ namespace ProceduralExplorationGameCore{
         }
     }
 
-    template <typename T>
-    T mix(const T& a, const T& b, float t) {
-        return a * (1.0f - t) + b * t;
-    }
-
     AV::uint8 SWAMP_DetermineAltitudeFunction(AV::uint8 altitude, AV::uint8 moisture, AV::uint8 altitudeDistance, AV::uint16 x, AV::uint16 y, const ExplorationMapData* mapData){
         PerlinNoise p(100);
         float pv = p.perlin2d(x, y, 0.10, 1);
@@ -235,9 +255,6 @@ namespace ProceduralExplorationGameCore{
     void HOT_SPRINGS_FinalVoxChangeFunction(const ExplorationMapData* mapData, AV::uint32* vox, AV::uint32* secondary, AV::uint16 x, AV::uint16 y){
         *secondary |= DO_NOT_PLACE_RIVERS_VOXEL_FLAG;
 
-        if((*vox & 0xFF) < mapData->seaLevel){
-            *secondary |= TEST_CHANGE_WATER_FLAG;
-        }
     }
 
     Biome::BiomeColour HOT_SPRINGS_WaterTextureColourChangeFunction(bool mask, AV::uint8 distance, const ExplorationMapData* mapData){
@@ -426,6 +443,7 @@ namespace ProceduralExplorationGameCore{
         Biome(&GRASS_LAND_VoxFunction, &MUSHROOM_CLUSTER_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
         Biome(&GEOTHERMAL_PLANES_VoxFunction, &GEOTHERMAL_PLANES_PlaceObjectsFunction, &GEOTHERMAL_PLANES_DetermineAltitudeFunction, &GEOTHERMAL_PLANES_FinalVoxChangeFunction, &HOT_SPRINGS_WaterTextureColourChangeFunction),
         Biome(&MUSHROOM_FOREST_VoxFunction, &MUSHROOM_FOREST_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &MUSHROOM_FOREST_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
+        Biome(&WORM_FIELDS_VoxFunction, &WORM_FIELDS_PlaceObjectsFunction, &WORM_FIELDS_DetermineAltitudeFunction, &WORM_FIELDS_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
         Biome(&SHALLOW_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
         Biome(&DEEP_OCEAN_VoxFunction, &NONE_PlaceObjectsFunction, &NONE_DetermineAltitudeFunction, &NONE_FinalVoxChangeFunction, &NONE_WaterTextureColourChangeFunction),
     };
@@ -455,6 +473,7 @@ namespace ProceduralExplorationGameCore{
             case RegionType::MUSHROOM_CLUSTER: targetBiome = BiomeId::MUSHROOM_CLUSTER; break;
             case RegionType::GEOTHERMAL_PLANES: targetBiome = BiomeId::GEOTHERMAL_PLANES; break;
             case RegionType::MUSHROOM_FOREST: targetBiome = BiomeId::MUSHROOM_FOREST; break;
+            case RegionType::WORM_FIELDS: targetBiome = BiomeId::WORM_FIELDS; break;
             default:{
                 targetBiome = BiomeId::GRASS_LAND;
             }
