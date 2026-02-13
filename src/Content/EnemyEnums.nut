@@ -8,5 +8,6 @@
     BEE,
     BEE_HIVE,
     DUST_MITE_WORKER,
+    GIANT_WORM,
 
 ");

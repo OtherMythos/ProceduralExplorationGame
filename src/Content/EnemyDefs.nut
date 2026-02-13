@@ -11,3 +11,4 @@
 ::Enemies[EnemyId.BEE] = Enemy("Bee", ::EnemyStats(70), CharacterModelType.BEE, EquippableId.NONE_ATTACK, EnemyTraversableTerrain.ALL, false);
 ::Enemies[EnemyId.BEE_HIVE] = Enemy("Bee Hive", ::EnemyStats(400), CharacterModelType.NONE, EquippableId.NONE, EnemyTraversableTerrain.ALL, false);
 ::Enemies[EnemyId.DUST_MITE_WORKER] = Enemy("Dust Mite Worker", ::EnemyStats(150), CharacterModelType.DUST_MITE_WORKER, EquippableId.NONE, EnemyTraversableTerrain.LAND, false);
+::Enemies[EnemyId.GIANT_WORM] = Enemy("Giant Worm", ::EnemyStats(300), CharacterModelType.NONE, EquippableId.NONE, EnemyTraversableTerrain.LAND, false);

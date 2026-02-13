@@ -143,6 +143,7 @@
         _doFile("res://src/Content/Enemies/BasicEnemyScript.nut");
         _doFile("res://src/Content/Enemies/BeeHiveScript.nut");
         _doFile("res://src/Content/Enemies/BeeEnemyScript.nut");
+        _doFile("res://src/Content/Enemies/WormEnemyScript.nut");
         _doFile("res://src/Content/Encounters/MessageInABottleScript.nut");
         _doFile("res://src/Content/Encounters/GeyserScript.nut");
         _doFile("res://src/Content/Encounters/MagmaShroomScript.nut");

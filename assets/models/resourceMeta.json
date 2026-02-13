@@ -42,6 +42,9 @@
         },
         "rocks.gox": {
             "separateLayers": true
+        },
+        "giantWorm.gox": {
+            "separateLayers": true
         }
     }
 }

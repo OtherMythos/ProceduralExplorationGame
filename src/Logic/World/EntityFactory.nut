@@ -376,12 +376,43 @@
 
         return entry;
     }
+
+    function constructGiantWorm_(pos, explorationScreen){
+        local manager = mConstructorWorld_.getEntityManager();
+        local zPos = getZForPos(pos);
+        local targetPos = Vec3(pos.x, zPos, pos.z);
+        local en = manager.createEntity(targetPos);
+        local entry = ActiveEnemyEntry(mConstructorWorld_, EnemyId.GIANT_WORM, targetPos, en);
+
+        local enemyStats = ::Enemies[EnemyId.GIANT_WORM].getStats();
+        local maxHealth = enemyStats.getHealth();
+
+        manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](maxHealth));
+
+        //Create a dummy scene node that the script will populate
+        local dummyNode = mBaseSceneNode_.createChildSceneNode();
+        dummyNode.setPosition(targetPos);
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](dummyNode, false));
+
+        //Attach the worm script which handles all the animation
+        local wormScript = ::WormEnemyScript(en);
+        manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](wormScript));
+
+        entry.setPosition(targetPos);
+        entry.setTargetCollisionWorld(_COLLISION_PLAYER);
+
+        return entry;
+    }
     //Perform enemy type specific logic.
     function constructEnemy(enemyType, pos, explorationScreen){
         local enemy = null;
         switch(enemyType){
             case EnemyId.BEE_HIVE:{
                 enemy = constructEnemyBaseBeehive_(pos, explorationScreen);
+                break;
+            }
+            case EnemyId.GIANT_WORM:{
+                enemy = constructGiantWorm_(pos, explorationScreen);
                 break;
             }
             default:{
