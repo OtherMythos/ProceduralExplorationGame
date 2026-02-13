@@ -835,3 +835,201 @@ particle_system magmaShroomEmitting
     }
 }
 
+particle_system giantWormEmerging
+{
+    material        ParticleAlphaWhite
+    particle_width  0.2
+    particle_height 0.2
+    cull_each       false
+    quota           3000
+    billboard_type  point
+
+    emitter Cylinder
+    {
+        angle           35
+        emission_rate   100
+        time_to_live    1.5
+        direction       0 1 0
+        velocity_min    6.0
+        velocity_max    8.0
+        width           8.5
+        height          8.5
+        depth           1.5
+    }
+
+    affector ColourInterpolator
+    {
+        time0 0
+        colour0 0.7 0.6 0.5 1.0
+
+        time1 0.5
+        colour1 0.7 0.6 0.5 0.6
+
+        time2 1.0
+        colour2 0.7 0.6 0.5 0
+    }
+
+    affector LinearForce
+    {
+        force_vector      0 -24 0
+        force_application add
+    }
+}
+
+particle_system giantWormDustCloud
+{
+    material        ParticleAlphaWhite
+    particle_width  0.6
+    particle_height 0.6
+    cull_each       false
+    quota           2000
+    billboard_type  point
+    local_space     true
+
+    emitter HollowEllipsoid
+    {
+        angle           45
+        emission_rate   400
+        time_to_live    1.0
+        direction       0 -1 0
+        velocity_min    1.0
+        velocity_max    2.0
+        width           10.0
+        height          10.0
+        depth           30.0
+        inner_width 0.6
+        inner_height 0.6
+        inner_depth 0.9
+    }
+
+    affector ColourInterpolator
+    {
+        time0 0
+        colour0 0.7 0.6 0.5 1.0
+
+        time1 0.5
+        colour1 1 1 1 0.8
+
+        time2 1.0
+        colour2 1 1 1 0.2
+    }
+
+    affector LinearForce
+    {
+        force_vector      0 -5 0
+        force_application add
+    }
+
+    affector DirectionRandomiser
+    {
+        randomness 2
+    }
+}
+
+particle_system giantWormGroundDust
+{
+    material        ParticleAlphaWhite
+    particle_width  1.5
+    particle_height 1.5
+    cull_each       false
+    quota           1500
+    billboard_type  point
+
+    emitter Cylinder
+    {
+        angle           20
+        emission_rate   50
+        time_to_live    1.0
+        direction       0 1 0
+        velocity_min    1.0
+        velocity_max    2.5
+        width           8.0
+        height          8.0
+        depth           1.0
+    }
+
+    affector ColourInterpolator
+    {
+        time0 0
+        colour0 0.7 0.6 0.5 0.5
+
+        time1 0.8
+        colour1 1 1 1 0.2
+
+        time2 1.0
+        colour2 1 1 1 0.0
+    }
+
+    affector LinearForce
+    {
+        force_vector      0 -1.0 0
+        force_application add
+    }
+
+    affector DirectionRandomiser
+    {
+        randomness 2
+    }
+
+    affector Scaler
+    {
+        rate 0.05
+        scale_range 0.5
+    }
+
+}
+
+particle_system giantWormShrapnel
+{
+    material        ParticleAlphaWhite
+    particle_width  0.25
+    particle_height 0.25
+    cull_each       false
+    quota           4000
+    billboard_type  point
+
+    emitter Cylinder
+    {
+        angle           50
+        emission_rate   300
+        time_to_live    1.2
+        direction       0 1 0
+        velocity_min    20.0
+        velocity_max    25.0
+        width           3.0
+        height          0.5
+        depth           3.0
+    }
+
+    affector ColourInterpolator
+    {
+        time0 0
+        colour0 0.7 0.6 0.5 1.0
+
+        time1 0.5
+        colour1 0.7 0.6 0.5 0.8
+
+        time2 1.0
+        colour2 1 1 1 0.0
+    }
+
+    affector LinearForce
+    {
+        force_vector      0 -30 0
+        force_application multiply
+    }
+
+    affector DirectionRandomiser
+    {
+        randomness 2
+    }
+
+    affector Scaler
+    {
+        rate 0.1
+        scale_range 0.0
+    }
+}
+
+
+

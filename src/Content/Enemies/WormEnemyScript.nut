@@ -2,6 +2,9 @@
     mEntity_ = null;
     mWorld_ = null;
     mParticleSystem_ = null;
+    mShrapnelParticles_ = null;
+    mDustCloudParticles_ = null;
+    mGroundDustParticles_ = null;
     mWormSegments_ = null;
     mWormHeadNode_ = null;
     mHeadMesh1Node_ = null;
@@ -22,7 +25,7 @@
 
     NUM_SEGMENTS = 5;
     SEGMENT_SCALE = 0.4;
-    HEAD_SCALE = 0.6;
+    HEAD_SCALE = 0.5;
 
     constructor(eid){
         mEntity_ = eid;
@@ -38,9 +41,20 @@
         mRootNode_ = rootNode;
         mRootNode_.setPosition(pos);
 
-        //Create particle system for the appearing stage
-        mParticleSystem_ = _scene.createParticleSystem("enemyTeleviseDust");
+        //Create particle system for the emerging stage
+        mParticleSystem_ = _scene.createParticleSystem("giantWormEmerging");
+        mParticleSystem_.setEmitting(false);
         mRootNode_.attachObject(mParticleSystem_);
+
+        //Create particle system for shrapnel fountain effect
+        mShrapnelParticles_ = _scene.createParticleSystem("giantWormShrapnel");
+        mShrapnelParticles_.setEmitting(false);
+        mRootNode_.attachObject(mShrapnelParticles_);
+
+        //Create particle system for ground dust at base of worm
+        mGroundDustParticles_ = _scene.createParticleSystem("giantWormGroundDust");
+        mGroundDustParticles_.setEmitting(false);
+        mRootNode_.attachObject(mGroundDustParticles_);
 
         //Create worm segments (will be hidden initially)
         for(local i = 0; i < NUM_SEGMENTS; i++){
@@ -71,6 +85,13 @@
         //Add Y-axis rotation for rippling effect
         local headBaseRotationY = 0.0; //Head starts at neutral for full ripple range
         mWormHeadNode_.setOrientation(Quat(headBaseRotationY, ::Vec3_UNIT_Y));
+
+        //Create particle system for dust cloud from worm body (attached to head)
+        mDustCloudParticles_ = _scene.createParticleSystem("giantWormDustCloud");
+        mDustCloudParticles_.setEmitting(false);
+        local headParticleNode = mWormHeadNode_.createChildSceneNode();
+        headParticleNode.setPosition(0, -8, 0);
+        headParticleNode.attachObject(mDustCloudParticles_);
 
         //Create first head mesh variant
         mHeadMesh1Node_ = mWormHeadNode_.createChildSceneNode();
@@ -147,6 +168,7 @@
                 if(mStageTimer_ >= CHOMP_STAGE_FRAMES){
                     mStageTimer_ = 0;
                     mCurrentStage_ = 5;
+                    _transitionToDescending();
                 }else{
                     _updateChomping();
                 }
@@ -172,11 +194,16 @@
         }
         mWormHeadNode_.setVisible(true);
         mParticleSystem_.setEmitting(false);
+        mShrapnelParticles_.setEmitting(true);
+        mDustCloudParticles_.setEmitting(true);
+        mGroundDustParticles_.setEmitting(true);
     }
 
     function _transitionToChasing(){
         //Start particle system and begin chasing player
         mParticleSystem_.setEmitting(true);
+        mDustCloudParticles_.setEmitting(false);
+        mGroundDustParticles_.setEmitting(false);
     }
 
     function _updateChasing(){
@@ -201,11 +228,21 @@
         }
         mWormHeadNode_.setVisible(false);
         mParticleSystem_.setEmitting(false);
+        mShrapnelParticles_.setEmitting(false);
+        mDustCloudParticles_.setEmitting(false);
+        mGroundDustParticles_.setEmitting(false);
     }
 
     function _transitionToChomping(){
         //Segments are already visible and positioned from rising stage
         //Chomping animation will be handled in _updateChomping
+        mShrapnelParticles_.setEmitting(false);
+    }
+
+    function _transitionToDescending(){
+        //Disable dust cloud particles and shrapnel during descent
+        mShrapnelParticles_.setEmitting(false);
+        mDustCloudParticles_.setEmitting(false);
     }
 
     function _updateRising(){
