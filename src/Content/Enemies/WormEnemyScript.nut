@@ -10,10 +10,12 @@
     mSetupComplete_ = false;
 
     //Stage timings in frames (60 FPS)
-    mCurrentStage_ = 0; //0=appearing, 1=rising, 2=chomping, 3=descending
+    //0=dormant, 1=chasing, 2=preparing, 3=rising, 4=chomping, 5=descending
+    mCurrentStage_ = 0;
     mStageTimer_ = 0;
 
-    PARTICLE_STAGE_FRAMES = 120;
+    CHASE_STAGE_FRAMES = 180; //Time spent chasing player
+    PREPARE_STAGE_FRAMES = 60; //Pause before emerging
     RISE_STAGE_FRAMES = 20;
     CHOMP_STAGE_FRAMES = 120;
     DESCEND_STAGE_FRAMES = 80;
@@ -105,38 +107,56 @@
         mStageTimer_++;
 
         switch(mCurrentStage_){
-            case 0:{ //Appearing stage - show particles
-                if(mStageTimer_ >= PARTICLE_STAGE_FRAMES){
+            case 0:{ //Dormant stage
+                if(mStageTimer_ >= 1){
                     mStageTimer_ = 0;
                     mCurrentStage_ = 1;
+                    _transitionToChasing();
+                }
+                break;
+            }
+            case 1:{ //Chasing stage - follow player with particles visible
+                if(mStageTimer_ >= CHASE_STAGE_FRAMES){
+                    mStageTimer_ = 0;
+                    mCurrentStage_ = 2;
+                    _transitionToPreparing();
+                }else{
+                    _updateChasing();
+                }
+                break;
+            }
+            case 2:{ //Preparing stage - pause before emerging
+                if(mStageTimer_ >= PREPARE_STAGE_FRAMES){
+                    mStageTimer_ = 0;
+                    mCurrentStage_ = 3;
                     _transitionToRising();
                 }
                 break;
             }
-            case 1:{ //Rising stage
+            case 3:{ //Rising stage
                 if(mStageTimer_ >= RISE_STAGE_FRAMES){
                     mStageTimer_ = 0;
-                    mCurrentStage_ = 2;
+                    mCurrentStage_ = 4;
                     _transitionToChomping();
                 }else{
                     _updateRising();
                 }
                 break;
             }
-            case 2:{ //Chomping stage
+            case 4:{ //Chomping stage
                 if(mStageTimer_ >= CHOMP_STAGE_FRAMES){
                     mStageTimer_ = 0;
-                    mCurrentStage_ = 3;
+                    mCurrentStage_ = 5;
                 }else{
                     _updateChomping();
                 }
                 break;
             }
-            case 3:{ //Descending stage
+            case 5:{ //Descending stage
                 if(mStageTimer_ >= DESCEND_STAGE_FRAMES){
                     mStageTimer_ = 0;
                     mCurrentStage_ = 0;
-                    _transitionToDisappearing();
+                    _transitionToDormant();
                 }else{
                     _updateDescending();
                 }
@@ -151,6 +171,35 @@
             mWormSegments_[i].setVisible(true);
         }
         mWormHeadNode_.setVisible(true);
+        mParticleSystem_.setEmitting(false);
+    }
+
+    function _transitionToChasing(){
+        //Start particle system and begin chasing player
+        mParticleSystem_.setEmitting(true);
+    }
+
+    function _updateChasing(){
+        //Follow the player while particles are visible
+        local world = ::Base.mExplorationLogic.mCurrentWorld_;
+        world.moveEnemyToPlayer(mEntity_);
+
+        //Update root node position to match entity
+        local manager = world.getEntityManager();
+        local pos = manager.getPosition(mEntity_);
+        mRootNode_.setPosition(pos);
+    }
+
+    function _transitionToPreparing(){
+        //Particle system continues emitting, but worm pauses movement
+    }
+
+    function _transitionToDormant(){
+        //Hide all worm segments
+        for(local i = 0; i < mWormSegments_.len(); i++){
+            mWormSegments_[i].setVisible(false);
+        }
+        mWormHeadNode_.setVisible(false);
         mParticleSystem_.setEmitting(false);
     }
 
@@ -224,14 +273,5 @@
         //Position head
         local headY = (NUM_SEGMENTS * 1.5) * progress;
         mWormHeadNode_.setPosition(0, headY - HEAD_SCALE, 0);
-    }
-
-    function _transitionToDisappearing(){
-        //Hide all worm segments
-        for(local i = 0; i < mWormSegments_.len(); i++){
-            mWormSegments_[i].setVisible(false);
-        }
-        mWormHeadNode_.setVisible(false);
-        mParticleSystem_.setEmitting(true);
     }
 }
