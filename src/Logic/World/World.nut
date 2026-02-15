@@ -716,6 +716,10 @@
         return mWorldComponentPool_.store(component);
     }
 
+    function getWorldComponent(component){
+        return mWorldComponentPool_.get(component);
+    }
+
     function unregisterWorldComponent(componentId){
         local component = mWorldComponentPool_.get(componentId);
         if(component != null){

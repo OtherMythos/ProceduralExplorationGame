@@ -88,6 +88,99 @@ local HotSpringsLogic = {
     }
 };
 
+local WormFieldsWorldGenComponent = class{
+    mWormScripts_ = [];
+
+    constructor(){
+        mWormScripts_ = [];
+    }
+
+    function update(){
+
+    }
+
+    function addWormScript(script){
+        mWormScripts_.append(script);
+    }
+
+    function setWormsActive(active){
+        foreach(script in mWormScripts_){
+            script.mIsActive_ = active;
+        }
+    }
+
+    function resetWorms(){
+        foreach(script in mWormScripts_){
+            script.mCurrentStage_ = 0;
+            script.mStageTimer_ = 0;
+            script.mIsActive_ = false;
+        }
+    }
+};
+
+local WormFieldsLogic = {
+    "mWormFieldsComponentId_": null,
+
+    "setup": function(regionData, world){
+        //Spawn 2 giant worms at random points in the region
+        local component = WormFieldsWorldGenComponent();
+
+        local points = regionData.coords;
+        if(points.len() >= 2){
+            //Pick two random points
+            local idx1 = _random.randInt(0, points.len());
+            local idx2 = _random.randInt(0, points.len());
+
+            local pos1 = ::MapGenHelpers.getPositionForPoint(points[idx1]);
+            local pos2 = ::MapGenHelpers.getPositionForPoint(points[idx2]);
+
+            //Construct worms with inactive state
+            local worm1 = world.createEnemy(EnemyId.GIANT_WORM, pos1);
+            local worm2 = world.createEnemy(EnemyId.GIANT_WORM, pos2);
+
+            //Get the scripts and add them to component
+            local manager = world.getEntityManager();
+            local script1 = manager.getComponent(worm1.getEID(), EntityComponents.SCRIPT).mScript;
+            local script2 = manager.getComponent(worm2.getEID(), EntityComponents.SCRIPT).mScript;
+
+            if(script1 != null){
+                script1.mIsActive_ = false;
+                component.addWormScript(script1);
+            }
+            if(script2 != null){
+                script2.mIsActive_ = false;
+                component.addWormScript(script2);
+            }
+        }
+
+        mWormFieldsComponentId_ = world.registerWorldComponent(component);
+    },
+
+    "update": function(world){
+        //TODO add worm fields specific logic here
+    },
+
+    "enter": function(world){
+        //Player entered worm fields - activate worms
+        if(mWormFieldsComponentId_ != null){
+            local component = world.getWorldComponent(mWormFieldsComponentId_);
+            if(component != null){
+                component.setWormsActive(true);
+            }
+        }
+    },
+
+    "leave": function(world){
+        //Player left worm fields - reset and deactivate worms
+        if(mWormFieldsComponentId_ != null){
+            local component = world.getWorldComponent(mWormFieldsComponentId_);
+            if(component != null){
+                component.resetWorms();
+            }
+        }
+    }
+};
+
 ::Biomes <- array(BiomeId.MAX, null);
 
 ::Biomes[BiomeId.NONE] = Biome("None", [], null, null, null, null);
@@ -104,3 +197,4 @@ local HotSpringsLogic = {
 ::Biomes[BiomeId.MUSHROOM_FOREST] = Biome("Mushroom Forest", [EnemyId.GOBLIN], null, null, null, null);
 ::Biomes[BiomeId.SHALLOW_OCEAN] = Biome("Shallow Ocean", [EnemyId.SQUID], null, null, null, null);
 ::Biomes[BiomeId.DEEP_OCEAN] = Biome("Deep Ocean", [EnemyId.SQUID], null, null, null, null);
+::Biomes[BiomeId.WORM_FIELDS] = Biome("Worm Fields", [], null, null, null, null, WormFieldsLogic);

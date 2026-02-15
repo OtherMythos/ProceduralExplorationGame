@@ -1,6 +1,7 @@
 ::WormEnemyScript <- class{
     mEntity_ = null;
     mWorld_ = null;
+    mIsActive_ = true; //Whether the worm should be active (e.g. player in region)
     mParticleSystem_ = null;
     mShrapnelParticles_ = null;
     mDustCloudParticles_ = null;
@@ -125,6 +126,10 @@
                 setup(mEntity_, sceneNodeComponent.mNode);
             }
         }
+
+        //Only proceed with animation if active
+        if(!mIsActive_) return;
+
         mStageTimer_++;
 
         switch(mCurrentStage_){

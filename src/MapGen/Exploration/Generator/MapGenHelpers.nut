@@ -134,6 +134,7 @@
             case RegionType.GEOTHERMAL_PLANES: return BiomeId.GEOTHERMAL_PLANES;
             case RegionType.MUSHROOM_CLUSTER: return BiomeId.MUSHROOM_CLUSTER;
             case RegionType.MUSHROOM_FOREST: return BiomeId.MUSHROOM_FOREST;
+            case RegionType.WORM_FIELDS: return BiomeId.WORM_FIELDS;
             default:{
                 return BiomeId.GRASS_LAND;
             }
