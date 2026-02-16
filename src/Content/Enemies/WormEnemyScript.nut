@@ -1,7 +1,7 @@
 ::WormEnemyScript <- class{
     mEntity_ = null;
     mWorld_ = null;
-    mIsActive_ = true; //Whether the worm should be active (e.g. player in region)
+    mStayDormant_ = true; //Whether the worm should remain in dormant phase
     mParticleSystem_ = null;
     mShrapnelParticles_ = null;
     mDustCloudParticles_ = null;
@@ -117,6 +117,7 @@
     }
 
     function update(frame){
+        //Only proceed with animation if active
         if(!mSetupComplete_){
             //Get root node from scene node component
             local world = ::Base.mExplorationLogic.mCurrentWorld_;
@@ -127,14 +128,11 @@
             }
         }
 
-        //Only proceed with animation if active
-        if(!mIsActive_) return;
-
         mStageTimer_++;
 
         switch(mCurrentStage_){
             case 0:{ //Dormant stage
-                if(mStageTimer_ >= 1){
+                if(mStageTimer_ >= 1 && !mStayDormant_){
                     mStageTimer_ = 0;
                     mCurrentStage_ = 1;
                     _transitionToChasing();

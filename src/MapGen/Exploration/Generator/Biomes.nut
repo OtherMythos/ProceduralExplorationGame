@@ -105,15 +105,13 @@ local WormFieldsWorldGenComponent = class{
 
     function setWormsActive(active){
         foreach(script in mWormScripts_){
-            script.mIsActive_ = active;
+            script.mStayDormant_ = !active;
         }
     }
 
     function resetWorms(){
         foreach(script in mWormScripts_){
-            script.mCurrentStage_ = 0;
-            script.mStageTimer_ = 0;
-            script.mIsActive_ = false;
+            script.mStayDormant_ = true;
         }
     }
 };
@@ -144,11 +142,11 @@ local WormFieldsLogic = {
             local script2 = manager.getComponent(worm2.getEID(), EntityComponents.SCRIPT).mScript;
 
             if(script1 != null){
-                script1.mIsActive_ = false;
+                script1.mStayDormant_ = true;
                 component.addWormScript(script1);
             }
             if(script2 != null){
-                script2.mIsActive_ = false;
+                script2.mStayDormant_ = true;
                 component.addWormScript(script2);
             }
         }
