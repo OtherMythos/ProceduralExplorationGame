@@ -212,7 +212,7 @@
     function _updateChasing(){
         //Follow the player while particles are visible
         local world = ::Base.mExplorationLogic.mCurrentWorld_;
-        world.moveEnemyToPlayer(mEntity_);
+        world.moveEnemyToPlayer(mEntity_, 0.2);
 
         //Update root node position to match entity
         local manager = world.getEntityManager();

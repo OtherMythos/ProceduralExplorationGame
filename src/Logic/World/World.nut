@@ -1909,13 +1909,13 @@
         return entity;
     }
 
-    function moveEnemyToPlayer(enemyId){
+    function moveEnemyToPlayer(enemyId, speed=0.10){
         if(!mActiveEnemies_.rawin(enemyId)) return;
         local enemyEntry = mActiveEnemies_[enemyId];
         if(enemyEntry == null) return;
         if(enemyEntry.isMidAttack()) return;
 
-        enemyEntry.moveToPoint(mPlayerEntry_.mPos_, 0.10);
+        enemyEntry.moveToPoint(mPlayerEntry_.mPos_, speed);
     }
     function moveEnemyInDirection(enemyId, dir, speedModifier = 1.0){
         if(!mActiveEnemies_.rawin(enemyId)) return;
