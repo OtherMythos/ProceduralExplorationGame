@@ -104,6 +104,7 @@ const DO_NOT_PLACE_RIVERS_VOXEL_FLAG = 0x10;
 const TEST_CHANGE_WATER_FLAG = 0x20;
 const DO_NOT_CHANGE_VOXEL = 0x40;
 const WATER_VOXEL = 0x80;
+const DO_NOT_PLACE_PATHS_VOXEL_FLAG = 0x100;
 
 /**
  * Generally aestetic things like trees, rocks, etc.

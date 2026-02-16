@@ -27,6 +27,11 @@ namespace ProceduralExplorationGameCore{
             return false;
         }
 
+        //Check if path placement is disabled for this voxel
+        if((*fullTertiaryVoxPtr & DO_NOT_PLACE_PATHS_VOXEL_FLAG) != 0){
+            return false;
+        }
+
         //Check altitude (sea level or higher)
         AV::uint8 altitude = *VOX_PTR_FOR_COORD_CONST(mapData, p);
         if(altitude < mapData->seaLevel){
