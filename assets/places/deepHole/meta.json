@@ -1,3 +1,4 @@
 {
-    "terrainHoleRadius": 4
+    "terrainHoleRadius": 4,
+    "disablePathPlacement": true
 }

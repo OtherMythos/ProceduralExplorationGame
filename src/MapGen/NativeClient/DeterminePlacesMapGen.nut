@@ -186,6 +186,18 @@
                 mMapData_.holeCount = holeIdx + 1;
             }
 
+            if(placeMetaData != null && placeMetaData.rawin("disablePathPlacement") && placeMetaData.disablePathPlacement){
+                local halfX = mData_.halfX;
+                local halfY = mData_.halfY;
+                for(local y = originY - halfY; y < originY + halfY; y++){
+                    for(local x = originX - halfX; x < originX + halfX; x++){
+                        local val = mMapData_.voxelFlagsForCoord(x, y);
+                        val = val | DO_NOT_PLACE_PATHS_VOXEL_FLAG;
+                        mMapData_.writeVoxelFlagsForCoord(x, y, val);
+                    }
+                }
+            }
+
             local tileOffsetX = 0;
             local tileOffsetY = 0;
             if(placeMetaData != null && placeMetaData.rawin("tileOffsetX")){
