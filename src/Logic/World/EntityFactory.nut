@@ -412,6 +412,17 @@
         entry.setPosition(targetPos);
         entry.setTargetCollisionWorld(_COLLISION_PLAYER);
 
+        //Add separation radius so enemies don't stack on top of each other.
+        local separationRadius = 2.5;
+        local separationStrength = 0.04;
+        local separationWorld = mConstructorWorld_.mSeparationCollisionWorld_;
+        local separationPointId = separationWorld.addCollisionPoint(targetPos.x, targetPos.z, separationRadius, 0xFF, _COLLISION_WORLD_ENTRY_EITHER);
+        manager.assignComponent(en, EntityComponents.SEPARATION_RADIUS, ::EntityManager.Components[EntityComponents.SEPARATION_RADIUS](separationPointId, separationRadius, separationStrength));
+        mConstructorWorld_.registerSeparationPoint_(separationPointId, entry);
+        entry.mSeparationPointId_ = separationPointId;
+        entry.mSeparationRadius_ = separationRadius;
+        entry.mSeparationStrength_ = separationStrength;
+
         return entry;
     }
     //Perform enemy type specific logic.
