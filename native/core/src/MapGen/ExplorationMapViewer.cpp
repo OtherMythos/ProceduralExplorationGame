@@ -64,7 +64,7 @@ namespace ProceduralExplorationGameCore{
         AV::uint32 drawVal = Ogre::ColourValue::Black.getAsABGR();
 
         if(drawOptions & (1 << (size_t)MapViewerDrawOptions::GROUND_TYPE)){
-            if(secondaryVox & RIVER_VOXEL_FLAG){
+            if(tertiaryVox & RIVER_VOXEL_FLAG){
                 drawVal = valueColours[(size_t)MapViewerColours::FRESH_WATER];
             }else{
                 drawVal = voxDefs[voxelMeta].colourABGR;
@@ -194,6 +194,7 @@ namespace ProceduralExplorationGameCore{
         AV::uint32* texPtr = static_cast<AV::uint32*>(tex->data);
         AV::uint32* voxPtr = static_cast<AV::uint32*>(mapData->voxelBuffer);
         AV::uint32* voxSecondaryPtr = static_cast<AV::uint32*>(mapData->secondaryVoxelBuffer);
+        AV::uint32* voxTertiaryPtr = static_cast<AV::uint32*>(mapData->tertiaryVoxelBuffer);
 
         MapGen* mapGen = PluginBaseSingleton::getMapGen();
         assert(mapGen);
@@ -203,10 +204,12 @@ namespace ProceduralExplorationGameCore{
             for(Ogre::uint32 x = 0; x < tex->width; x++){
                 AV::uint32 vox = static_cast<AV::uint32>(*voxPtr);
                 AV::uint32 voxSecondary = static_cast<AV::uint32>(*voxSecondaryPtr);
+                AV::uint32 voxTertiary = static_cast<AV::uint32>(*voxTertiaryPtr);
                 AV::uint8 altitude = static_cast<AV::uint8>(vox & 0xFF);
                 AV::uint8 regionId = static_cast<AV::uint8>((voxSecondary >> 8) & 0xFF);
                 voxPtr++;
                 voxSecondaryPtr++;
+                voxTertiaryPtr++;
 
                 if(altitude < mapData->seaLevel){
                     (*texPtr++) = valueColours[(size_t)MapViewerColours::OCEAN];
@@ -218,7 +221,7 @@ namespace ProceduralExplorationGameCore{
                     continue;
                 }
 
-                if(voxSecondary & RIVER_VOXEL_FLAG){
+                if(voxTertiary & RIVER_VOXEL_FLAG){
                     (*texPtr++) = valueColours[(size_t)MapViewerColours::FRESH_WATER];
                 }else{
                     AV::uint8 voxelMeta = ((vox >> 8) & 0xFF);

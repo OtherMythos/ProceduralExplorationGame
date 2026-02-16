@@ -77,14 +77,12 @@ namespace ProceduralExplorationGameCore{
             //Set speed modifier to 1.25x (0x1)
             VOXEL_META_SET_SPEED_MODIFIER(mapData, p, 0x2);
 
-            //Set DO_NOT_PLACE_TREES flag in secondary buffer
-            //AV::uint8* flagsPtr = VOXEL_FLAGS_PTR_FOR_COORD(mapData, p);
-            //*flagsPtr |= DO_NOT_PLACE_ITEMS_VOXEL_FLAG;
-            AV::uint32* fullSecondaryVoxPtr = FULL_PTR_FOR_COORD_SECONDARY(mapData, p);
-            *fullSecondaryVoxPtr |= DO_NOT_PLACE_ITEMS_VOXEL_FLAG;
+            //Set DO_NOT_PLACE_TREES flag in tertiary buffer
+            AV::uint32* fullTertiaryVoxPtr = FULL_PTR_FOR_COORD_TERTIARY(mapData, p);
+            *fullTertiaryVoxPtr |= DO_NOT_PLACE_ITEMS_VOXEL_FLAG;
 
             //Set DRAW_COLOUR_VOXEL_FLAG to use direct colour value
-            *fullSecondaryVoxPtr |= DRAW_COLOUR_VOXEL_FLAG;
+            *fullTertiaryVoxPtr |= DRAW_COLOUR_VOXEL_FLAG;
 
             //Set colour value to 248
             AV::uint8* voxPtr = VOX_VALUE_PTR_FOR_COORD(mapData, p);

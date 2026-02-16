@@ -479,7 +479,7 @@ namespace ProceduralExplorationGameCore{
 
         WorldPoint p = WRAP_WORLD_POINT(x, y);
 
-        AV::uint32* worldPtr = FULL_PTR_FOR_COORD_SECONDARY(mapData, p);
+        AV::uint32* worldPtr = FULL_PTR_FOR_COORD_TERTIARY(mapData, p);
         if(*worldPtr & (RIVER_VOXEL_FLAG | WATER_VOXEL)){
             sq_pushbool(vm, true);
             return 1;
@@ -730,6 +730,35 @@ namespace ProceduralExplorationGameCore{
         AV::uint32* ptr = FULL_PTR_FOR_COORD_SECONDARY(mapData, WRAP_WORLD_POINT(x, y));
 
         *ptr = static_cast<AV::uint32>(val);
+
+        return 0;
+    }
+
+    SQInteger ExplorationMapDataUserData::voxelFlagsForCoord(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger x, y;
+        sq_getinteger(vm, 2, &x);
+        sq_getinteger(vm, 3, &y);
+
+        AV::uint16 flags = VOXEL_FLAGS_GET(mapData, WRAP_WORLD_POINT(x, y));
+
+        sq_pushinteger(vm, static_cast<SQInteger>(flags));
+
+        return 1;
+    }
+
+    SQInteger ExplorationMapDataUserData::writeVoxelFlagsForCoord(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger x, y, val;
+        sq_getinteger(vm, 2, &x);
+        sq_getinteger(vm, 3, &y);
+        sq_getinteger(vm, 4, &val);
+
+        VOXEL_FLAGS_SET(mapData, WRAP_WORLD_POINT(x, y), static_cast<AV::uint16>(val));
 
         return 0;
     }
@@ -1030,10 +1059,8 @@ namespace ProceduralExplorationGameCore{
 
                 if(hasFlagsFile){
                     AV::uint8 flagValue = flagsOut.tileValues[x + y * out.tilesWidth];
-                    static const AV::uint32 VOXEL_FLAG_SHIFT = 24;
-                    AV::uint32 shiftedFlags = (static_cast<AV::uint32>(flagValue) << VOXEL_FLAG_SHIFT);
-                    AV::uint32* secondaryVoxPtr = FULL_PTR_FOR_COORD_SECONDARY(mapData, WRAP_WORLD_POINT(xxx, yyy));
-                    *secondaryVoxPtr |= (shiftedFlags);
+                    AV::uint32* tertiaryVoxPtr = FULL_PTR_FOR_COORD_TERTIARY(mapData, WRAP_WORLD_POINT(xxx, yyy));
+                    *tertiaryVoxPtr |= static_cast<AV::uint32>(flagValue);
                 }
 
                 if(altitudeOut.tileValues[x + y * out.tilesWidth] == 0){
@@ -1048,8 +1075,8 @@ namespace ProceduralExplorationGameCore{
                 newAltitude += (altitudeOut.tileValues[x + y * out.tilesWidth] - 1) * 8;
                 *altitudePtr = newAltitude;
 
-                AV::uint32* secondaryVoxPtr = FULL_PTR_FOR_COORD_SECONDARY(mapData, WRAP_WORLD_POINT(xxx, yyy));
-                *secondaryVoxPtr |= (DRAW_COLOUR_VOXEL_FLAG | DO_NOT_CHANGE_VOXEL);
+                AV::uint32* tertiaryVoxPtr = FULL_PTR_FOR_COORD_TERTIARY(mapData, WRAP_WORLD_POINT(xxx, yyy));
+                *tertiaryVoxPtr |= (DRAW_COLOUR_VOXEL_FLAG | DO_NOT_CHANGE_VOXEL);
             }
         }
 
@@ -1167,6 +1194,8 @@ namespace ProceduralExplorationGameCore{
         AV::ScriptUtils::addFunction(vm, writeVoxValueForCoord, "writeVoxValueForCoord", 4, ".iii");
         AV::ScriptUtils::addFunction(vm, secondaryValueForCoord, "secondaryValueForCoord", 3, ".ii");
         AV::ScriptUtils::addFunction(vm, writeSecondaryValueForCoord, "writeSecondaryValueForCoord", 4, ".iii");
+        AV::ScriptUtils::addFunction(vm, voxelFlagsForCoord, "voxelFlagsForCoord", 3, ".ii");
+        AV::ScriptUtils::addFunction(vm, writeVoxelFlagsForCoord, "writeVoxelFlagsForCoord", 4, ".iii");
 
         AV::ScriptUtils::addFunction(vm, getNumRegions, "getNumRegions");
         AV::ScriptUtils::addFunction(vm, getRegionTotal, "getRegionTotal", 2, ".i");

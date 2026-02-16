@@ -44,12 +44,15 @@ namespace ProceduralExplorationGameCore{
 
         const WorldPoint wrappedStartPoint = WRAP_WORLD_POINT(xa, ya);
         AV::uint32* fullSecondaryVoxPtr = FULL_PTR_FOR_COORD_SECONDARY(mapData, wrappedStartPoint);
+        AV::uint32* fullTertiaryVoxPtr = FULL_PTR_FOR_COORD_TERTIARY(mapData, wrappedStartPoint);
         AV::uint32* fullVoxPtr = FULL_PTR_FOR_COORD(mapData, wrappedStartPoint);
         for(int y = ya; y < yb; y++){
             for(int x = xa; x < xb; x++){
                 AV::uint32* voxPtr = fullVoxPtr;
                 AV::uint32* secondaryVoxPtr = fullSecondaryVoxPtr;
+                AV::uint32* tertiaryVoxPtr = fullTertiaryVoxPtr;
                 fullSecondaryVoxPtr++;
+                fullTertiaryVoxPtr++;
                 fullVoxPtr++;
                 AV::uint8 altitude = *voxPtr & 0xFF;
                 RegionId regionId = ((*secondaryVoxPtr) >> 8) & 0xFF;
@@ -62,7 +65,7 @@ namespace ProceduralExplorationGameCore{
                 Biome::FinalVoxChangeFunction func = b.getFinalVoxFunction();
                 assert(func != 0);
 
-                (*func)(mapData, fullVoxPtr, fullSecondaryVoxPtr, x, y);
+                (*func)(mapData, fullVoxPtr, fullSecondaryVoxPtr, fullTertiaryVoxPtr, x, y);
             }
         }
     }

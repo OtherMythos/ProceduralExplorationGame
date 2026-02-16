@@ -37,8 +37,8 @@ namespace ProceduralExplorationGameCore{
         }
 
         for(WorldPoint p : writePoints){
-            AV::uint32* fullSecondary = FULL_PTR_FOR_COORD_SECONDARY(mapData, p);
-            *fullSecondary |= RIVER_VOXEL_FLAG;
+            AV::uint32* fullTertiary = FULL_PTR_FOR_COORD_TERTIARY(mapData, p);
+            *fullTertiary |= RIVER_VOXEL_FLAG;
         }
 
         return true;

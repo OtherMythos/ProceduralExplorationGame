@@ -152,7 +152,7 @@ namespace ProceduralExplorationGameCore{
                     }
                 }
 
-                const AV::uint32* flags = FULL_PTR_FOR_COORD_SECONDARY(mapData, altitudePoint);
+                const AV::uint32* flags = FULL_PTR_FOR_COORD_TERTIARY(mapData, altitudePoint);
                 if(*flags & SKIP_DRAW_TERRAIN_VOXEL_FLAG){
                     b -= 4;
                     _writeToBuffer(&b, 0, 0, 0, 0);

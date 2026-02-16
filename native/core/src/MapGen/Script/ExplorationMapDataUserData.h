@@ -46,6 +46,8 @@ namespace ProceduralExplorationGameCore{
         static SQInteger writeVoxValueForCoord(HSQUIRRELVM vm);
         static SQInteger secondaryValueForCoord(HSQUIRRELVM vm);
         static SQInteger writeSecondaryValueForCoord(HSQUIRRELVM vm);
+        static SQInteger voxelFlagsForCoord(HSQUIRRELVM vm);
+        static SQInteger writeVoxelFlagsForCoord(HSQUIRRELVM vm);
         static SQInteger averageOutAltitudeRectangle(HSQUIRRELVM vm);
         static SQInteger averageOutAltitudeRadius(HSQUIRRELVM vm);
         static SQInteger setVoxelHighlightGroupRectangle(HSQUIRRELVM vm);

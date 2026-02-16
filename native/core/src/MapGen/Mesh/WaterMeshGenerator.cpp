@@ -191,7 +191,7 @@ namespace ProceduralExplorationGameCore{
 
                 if(xa < 0 || ya < 0 || xa >= gridWidth || ya >= gridHeight) continue;
 
-                const AV::uint32* fullFlags = FULL_PTR_FOR_COORD_SECONDARY(mapData, WRAP_WORLD_POINT(x, y));
+                const AV::uint32* fullFlags = FULL_PTR_FOR_COORD_TERTIARY(mapData, WRAP_WORLD_POINT(x, y));
 
                 resolvedFlags[xa + ya * gridWidth] |= (*fullFlags & TEST_CHANGE_WATER_FLAG) ? 1 : 0;
             }

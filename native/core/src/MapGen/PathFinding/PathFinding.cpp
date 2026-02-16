@@ -22,8 +22,8 @@ namespace ProceduralExplorationGameCore{
         }
 
         //Check for rivers
-        AV::uint32* fullSecondaryVoxPtr = FULL_PTR_FOR_COORD_SECONDARY(mapData, p);
-        if((*fullSecondaryVoxPtr & RIVER_VOXEL_FLAG) != 0){
+        AV::uint32* fullTertiaryVoxPtr = FULL_PTR_FOR_COORD_TERTIARY(mapData, p);
+        if((*fullTertiaryVoxPtr & RIVER_VOXEL_FLAG) != 0){
             return false;
         }
 

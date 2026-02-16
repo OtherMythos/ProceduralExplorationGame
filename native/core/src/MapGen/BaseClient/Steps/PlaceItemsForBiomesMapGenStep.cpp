@@ -45,22 +45,25 @@ namespace ProceduralExplorationGameCore{
 
         const WorldPoint wrappedStartPoint = WRAP_WORLD_POINT(xa, ya);
         AV::uint32* fullSecondaryVoxPtr = FULL_PTR_FOR_COORD_SECONDARY(mapData, wrappedStartPoint);
+        AV::uint32* fullTertiaryVoxPtr = FULL_PTR_FOR_COORD_TERTIARY(mapData, wrappedStartPoint);
         AV::uint32* fullVoxPtr = FULL_PTR_FOR_COORD(mapData, wrappedStartPoint);
         for(int y = ya; y < yb; y++){
             for(int x = xa; x < xb; x++){
                 AV::uint32* fullVoxPtrWrite = fullVoxPtr;
                 const AV::uint32 fullVox = *fullVoxPtr;
                 const AV::uint32 fullSecondaryVox = *fullSecondaryVoxPtr;
+                const AV::uint32 fullTertiaryVox = *fullTertiaryVoxPtr;
                 fullSecondaryVoxPtr++;
+                fullTertiaryVoxPtr++;
                 fullVoxPtr++;
                 AV::uint8 altitude = fullVox & 0xFF;
                 if(altitude < seaLevel){
                     //continue;
                 }
-                if(fullSecondaryVox & DO_NOT_PLACE_ITEMS_VOXEL_FLAG){
+                if(fullTertiaryVox & DO_NOT_PLACE_ITEMS_VOXEL_FLAG){
                     continue;
                 }
-                if(fullSecondaryVox & RIVER_VOXEL_FLAG){
+                if(fullTertiaryVox & RIVER_VOXEL_FLAG){
                     continue;
                 }
 

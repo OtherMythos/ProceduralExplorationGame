@@ -34,7 +34,7 @@ namespace ProceduralExplorationGameCore{
             if(landId == INVALID_LAND_ID) continue;
             WorldPoint landPoint = _findPointOnCoast(landData, landId);
             if(landPoint == INVALID_WORLD_POINT) continue;
-            if(*(FULL_PTR_FOR_COORD_SECONDARY(data, landPoint)) & DO_NOT_PLACE_RIVERS_VOXEL_FLAG){
+            if(*(FULL_PTR_FOR_COORD_TERTIARY(data, landPoint)) & DO_NOT_PLACE_RIVERS_VOXEL_FLAG){
                 continue;
             }
             out.push_back(landPoint);
@@ -89,7 +89,7 @@ namespace ProceduralExplorationGameCore{
             for(int i = 0; i < 100; i++){
                 MinNeighbourVal val = _findMinNeighbourAltitude(currentX, currentY, data->voxelBuffer, data);
                 WorldPoint totalId = WRAP_WORLD_POINT(val.x, val.y);
-                if(*(FULL_PTR_FOR_COORD_SECONDARY(data, totalId)) & DO_NOT_PLACE_RIVERS_VOXEL_FLAG){
+                if(*(FULL_PTR_FOR_COORD_TERTIARY(data, totalId)) & DO_NOT_PLACE_RIVERS_VOXEL_FLAG){
                     continue;
                 }
                 if(altitudes.find(totalId) != altitudes.end()){

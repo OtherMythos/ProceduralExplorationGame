@@ -81,10 +81,10 @@
     function _markRemovePlacedItems(originX, originY, halfX, halfY){
         for(local y = originY - halfY; y < originY + halfY; y++){
             for(local x = originX - halfX; x < originX + halfX; x++){
-                local val = mMapData_.secondaryValueForCoord(x, y);
+                local val = mMapData_.voxelFlagsForCoord(x, y);
 
                 val = val | (DO_NOT_PLACE_ITEMS_VOXEL_FLAG | DO_NOT_PLACE_RIVERS_VOXEL_FLAG);
-                mMapData_.writeSecondaryValueForCoord(x, y, val);
+                mMapData_.writeVoxelFlagsForCoord(x, y, val);
             }
         }
     }
@@ -173,9 +173,9 @@
                         local dy = y - originY;
                         if(dx * dx + dy * dy > radius * radius) continue;
 
-                        local val = mMapData_.secondaryValueForCoord(x, y);
+                        local val = mMapData_.voxelFlagsForCoord(x, y);
                         val = val | SKIP_DRAW_TERRAIN_VOXEL_FLAG;
-                        mMapData_.writeSecondaryValueForCoord(x, y, val);
+                        mMapData_.writeVoxelFlagsForCoord(x, y, val);
                     }
                 }
 

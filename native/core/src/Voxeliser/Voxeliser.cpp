@@ -408,6 +408,7 @@ namespace ProceduralExplorationGameCore{
         AV::uint32 seaLevel = mapData->uint32("seaLevel");
         AV::uint32* voxPtr = static_cast<AV::uint32*>(mapData->voxelBuffer);
         AV::uint32* secondaryVoxPtr = static_cast<AV::uint32*>(mapData->secondaryVoxelBuffer);
+        AV::uint32* tertiaryVoxPtr = static_cast<AV::uint32*>(mapData->tertiaryVoxelBuffer);
 
         MapGen* mapGen = PluginBaseSingleton::getMapGen();
         assert(mapGen);
@@ -433,9 +434,11 @@ namespace ProceduralExplorationGameCore{
             for(AV::uint32 x = 0; x < width; x++){
                 AV::uint32 vox = static_cast<AV::uint32>(*voxPtr);
                 AV::uint32 voxSecondary = static_cast<AV::uint32>(*secondaryVoxPtr);
+                AV::uint32 voxTertiary = static_cast<AV::uint32>(*tertiaryVoxPtr);
                 AV::uint8 regionId = static_cast<AV::uint8>((voxSecondary >> 8) & 0xFF);
                 voxPtr++;
                 secondaryVoxPtr++;
+                tertiaryVoxPtr++;
 
                 float voxFloat = (float)(vox & 0xFF);
                 if(voxFloat < seaLevel){
@@ -448,12 +451,12 @@ namespace ProceduralExplorationGameCore{
                 AV::uint8 altitude = static_cast<AV::uint8>(((voxFloat - (float)seaLevel) / (float)ABOVE_GROUND) * (float)WORLD_DEPTH) + 1;
                 AV::uint8 voxelMeta = (vox >> 8);
                 AV::uint8 v = 0;
-                if(voxSecondary & DRAW_COLOUR_VOXEL_FLAG){
+                if(voxTertiary & DRAW_COLOUR_VOXEL_FLAG){
                     v = voxelMeta;
                 }else{
                     v = voxDefs[voxelMeta].vId;
                 }
-                bool isRiver = voxSecondary & RIVER_VOXEL_FLAG;
+                bool isRiver = voxTertiary & RIVER_VOXEL_FLAG;
                 if(isRiver){
                     if(altitude <= 3){
                         altitude = 1;
@@ -474,12 +477,15 @@ namespace ProceduralExplorationGameCore{
         //Determine the final number of faces.
         voxPtr = static_cast<AV::uint32*>(mapData->voxelBuffer);
         secondaryVoxPtr = static_cast<AV::uint32*>(mapData->secondaryVoxelBuffer);
+        tertiaryVoxPtr = static_cast<AV::uint32*>(mapData->tertiaryVoxelBuffer);
         for(AV::uint32 y = 0; y < height; y++){
             for(AV::uint32 x = 0; x < width; x++){
                 AV::uint32 voxSecondary = static_cast<AV::uint32>(*secondaryVoxPtr);
+                AV::uint32 voxTertiary = static_cast<AV::uint32>(*tertiaryVoxPtr);
                 AV::uint8 regionId = static_cast<AV::uint8>((voxSecondary >> 8) & 0xFF);
                 voxPtr++;
                 secondaryVoxPtr++;
+                tertiaryVoxPtr++;
                 float vox = altitudes[x+y*width];
                 if(vox == -1.0f) continue;
                 RegionBufferEntry& bufEntry = regionEntries[regionId];
@@ -490,7 +496,7 @@ namespace ProceduralExplorationGameCore{
                 AV::uint8 v = (*reinterpret_cast<AV::uint32*>(&vox) >> 16) & 0xFF;
 
                 AV::uint8 flags = 0x0;
-                if(voxSecondary & SKIP_DRAW_TERRAIN_VOXEL_FLAG){
+                if(voxTertiary & SKIP_DRAW_TERRAIN_VOXEL_FLAG){
                     flags = 0x1;
                     //Ensure the face merger doesn't get to it, although if 0 already this might not work....
                     v = 0;

@@ -73,7 +73,7 @@ namespace ProceduralExplorationGameCore{
             }
         }
     }
-    void NONE_FinalVoxChangeFunction(const ExplorationMapData* mapData, AV::uint32* vox, AV::uint32* secondary, AV::uint16 x, AV::uint16 y){
+    void NONE_FinalVoxChangeFunction(const ExplorationMapData* mapData, AV::uint32* vox, AV::uint32* secondary, AV::uint32* tertiary, AV::uint16 x, AV::uint16 y){
 
     }
     //
@@ -115,8 +115,8 @@ namespace ProceduralExplorationGameCore{
     }
     void WORM_FIELDS_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture, AV::uint8 regionDistance){
     }
-    void WORM_FIELDS_FinalVoxChangeFunction(const ExplorationMapData* mapData, AV::uint32* vox, AV::uint32* secondary, AV::uint16 x, AV::uint16 y){
-        *secondary |= DO_NOT_PLACE_RIVERS_VOXEL_FLAG;
+    void WORM_FIELDS_FinalVoxChangeFunction(const ExplorationMapData* mapData, AV::uint32* vox, AV::uint32* secondary, AV::uint32* tertiary, AV::uint16 x, AV::uint16 y){
+        *tertiary |= DO_NOT_PLACE_RIVERS_VOXEL_FLAG;
     }
     AV::uint8 WORM_FIELDS_DetermineAltitudeFunction(AV::uint8 altitude, AV::uint8 moisture, AV::uint8 altitudeDistance, AV::uint16 x, AV::uint16 y, const ExplorationMapData* mapData){
         static const float DIST = 18.0f;
@@ -224,11 +224,11 @@ namespace ProceduralExplorationGameCore{
         return out;
     }
 
-    void SWAMP_FinalVoxChangeFunction(const ExplorationMapData* mapData, AV::uint32* vox, AV::uint32* secondary, AV::uint16 x, AV::uint16 y){
-        *secondary |= DO_NOT_PLACE_RIVERS_VOXEL_FLAG;
+    void SWAMP_FinalVoxChangeFunction(const ExplorationMapData* mapData, AV::uint32* vox, AV::uint32* secondary, AV::uint32* tertiary, AV::uint16 x, AV::uint16 y){
+        *tertiary |= DO_NOT_PLACE_RIVERS_VOXEL_FLAG;
 
         if((*vox & 0xFF) < mapData->seaLevel){
-            *secondary |= TEST_CHANGE_WATER_FLAG;
+            *tertiary |= TEST_CHANGE_WATER_FLAG;
         }
     }
 
@@ -252,8 +252,8 @@ namespace ProceduralExplorationGameCore{
         return out;
     }
 
-    void HOT_SPRINGS_FinalVoxChangeFunction(const ExplorationMapData* mapData, AV::uint32* vox, AV::uint32* secondary, AV::uint16 x, AV::uint16 y){
-        *secondary |= DO_NOT_PLACE_RIVERS_VOXEL_FLAG;
+    void HOT_SPRINGS_FinalVoxChangeFunction(const ExplorationMapData* mapData, AV::uint32* vox, AV::uint32* secondary, AV::uint32* tertiary, AV::uint16 x, AV::uint16 y){
+        *tertiary |= DO_NOT_PLACE_RIVERS_VOXEL_FLAG;
 
     }
 
@@ -335,11 +335,11 @@ namespace ProceduralExplorationGameCore{
         }
     }
 
-    void GEOTHERMAL_PLANES_FinalVoxChangeFunction(const ExplorationMapData* mapData, AV::uint32* vox, AV::uint32* secondary, AV::uint16 x, AV::uint16 y){
-        *secondary |= DO_NOT_PLACE_RIVERS_VOXEL_FLAG;
+    void GEOTHERMAL_PLANES_FinalVoxChangeFunction(const ExplorationMapData* mapData, AV::uint32* vox, AV::uint32* secondary, AV::uint32* tertiary, AV::uint16 x, AV::uint16 y){
+        *tertiary |= DO_NOT_PLACE_RIVERS_VOXEL_FLAG;
 
         if((*vox & 0xFF) < mapData->seaLevel){
-            *secondary |= TEST_CHANGE_WATER_FLAG;
+            *tertiary |= TEST_CHANGE_WATER_FLAG;
         }
     }
 
@@ -385,11 +385,11 @@ namespace ProceduralExplorationGameCore{
         }
     }
 
-    void MUSHROOM_FOREST_FinalVoxChangeFunction(const ExplorationMapData* mapData, AV::uint32* vox, AV::uint32* secondary, AV::uint16 x, AV::uint16 y){
-        *secondary |= DO_NOT_PLACE_RIVERS_VOXEL_FLAG;
+    void MUSHROOM_FOREST_FinalVoxChangeFunction(const ExplorationMapData* mapData, AV::uint32* vox, AV::uint32* secondary, AV::uint32* tertiary, AV::uint16 x, AV::uint16 y){
+        *tertiary |= DO_NOT_PLACE_RIVERS_VOXEL_FLAG;
 
         if((*vox & 0xFF) < mapData->seaLevel){
-            *secondary |= TEST_CHANGE_WATER_FLAG;
+            *tertiary |= TEST_CHANGE_WATER_FLAG;
         }
     }
 

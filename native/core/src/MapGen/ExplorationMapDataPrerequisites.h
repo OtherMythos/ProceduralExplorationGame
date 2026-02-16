@@ -107,25 +107,36 @@ namespace ProceduralExplorationGameCore{
     static inline const AV::uint8* REGION_DISTANCE_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
         return UINT8_PTR_FOR_COORD_SECONDARY<const AV::uint8*, const ExplorationMapData*, 2>(mapData, p);
     }
-    static inline AV::uint8* VOXEL_FLAGS_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
+    //Voxel flags stored in tertiary buffer bytes 0-1 (16 bits).
+    static inline AV::uint16* VOXEL_FLAGS_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
+        return reinterpret_cast<AV::uint16*>(UINT8_PTR_FOR_COORD_TERTIARY<AV::uint8*, ExplorationMapData*, 0>(mapData, p));
+    }
+    static inline const AV::uint16* VOXEL_FLAGS_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
+        return reinterpret_cast<const AV::uint16*>(UINT8_PTR_FOR_COORD_TERTIARY<const AV::uint8*, const ExplorationMapData*, 0>(mapData, p));
+    }
+
+    static inline AV::uint16 VOXEL_FLAGS_GET(const ExplorationMapData* mapData, WorldPoint p){
+        return *VOXEL_FLAGS_PTR_FOR_COORD_CONST(mapData, p);
+    }
+
+    static inline void VOXEL_FLAGS_SET(ExplorationMapData* mapData, WorldPoint p, AV::uint16 flags){
+        *VOXEL_FLAGS_PTR_FOR_COORD(mapData, p) = flags;
+    }
+
+    static inline void VOXEL_FLAGS_ADD(ExplorationMapData* mapData, WorldPoint p, AV::uint16 flags){
+        *VOXEL_FLAGS_PTR_FOR_COORD(mapData, p) |= flags;
+    }
+
+    static inline bool VOXEL_FLAGS_CHECK(const ExplorationMapData* mapData, WorldPoint p, AV::uint16 flags){
+        return (*VOXEL_FLAGS_PTR_FOR_COORD_CONST(mapData, p) & flags) != 0;
+    }
+
+    //Highlight group stored in secondary buffer byte 3.
+    static inline AV::uint8* VOXEL_HIGHLIGHT_GROUP_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
         return UINT8_PTR_FOR_COORD_SECONDARY<AV::uint8*, ExplorationMapData*, 3>(mapData, p);
     }
-    static inline const AV::uint8* VOXEL_FLAGS_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
-        return UINT8_PTR_FOR_COORD_SECONDARY<const AV::uint8*, const ExplorationMapData*, 3>(mapData, p);
-    }
-
-    static inline AV::uint8* VOXEL_META_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
-        return UINT8_PTR_FOR_COORD_TERTIARY<AV::uint8*, ExplorationMapData*, 0>(mapData, p);
-    }
-    static inline const AV::uint8* VOXEL_META_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
-        return UINT8_PTR_FOR_COORD_TERTIARY<const AV::uint8*, const ExplorationMapData*, 0>(mapData, p);
-    }
-
-    static inline AV::uint8* VOXEL_HIGHLIGHT_GROUP_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
-        return UINT8_PTR_FOR_COORD_TERTIARY<AV::uint8*, ExplorationMapData*, 2>(mapData, p);
-    }
     static inline const AV::uint8* VOXEL_HIGHLIGHT_GROUP_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
-        return UINT8_PTR_FOR_COORD_TERTIARY<const AV::uint8*, const ExplorationMapData*, 2>(mapData, p);
+        return UINT8_PTR_FOR_COORD_SECONDARY<const AV::uint8*, const ExplorationMapData*, 3>(mapData, p);
     }
 
     static inline AV::uint8 VOXEL_HIGHLIGHT_GROUP_GET(const ExplorationMapData* mapData, WorldPoint p){
@@ -136,6 +147,14 @@ namespace ProceduralExplorationGameCore{
     static inline void VOXEL_HIGHLIGHT_GROUP_SET(ExplorationMapData* mapData, WorldPoint p, AV::uint8 highlightGroup){
         AV::uint8* ptr = VOXEL_HIGHLIGHT_GROUP_PTR_FOR_COORD(mapData, p);
         *ptr = highlightGroup;
+    }
+
+    //Voxel meta stored in tertiary buffer byte 2.
+    static inline AV::uint8* VOXEL_META_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
+        return UINT8_PTR_FOR_COORD_TERTIARY<AV::uint8*, ExplorationMapData*, 2>(mapData, p);
+    }
+    static inline const AV::uint8* VOXEL_META_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
+        return UINT8_PTR_FOR_COORD_TERTIARY<const AV::uint8*, const ExplorationMapData*, 2>(mapData, p);
     }
 
     static inline AV::uint8 VOXEL_META_GET_DIFFUSE(const ExplorationMapData* mapData, WorldPoint p){
@@ -169,11 +188,12 @@ namespace ProceduralExplorationGameCore{
         }
     }
 
+    //Path ID stored in tertiary buffer byte 3.
     static inline PathId* PATH_ID_PTR_FOR_COORD(ExplorationMapData* mapData, WorldPoint p){
-        return reinterpret_cast<PathId*>(UINT8_PTR_FOR_COORD_TERTIARY<AV::uint8*, ExplorationMapData*, 1>(mapData, p));
+        return reinterpret_cast<PathId*>(UINT8_PTR_FOR_COORD_TERTIARY<AV::uint8*, ExplorationMapData*, 3>(mapData, p));
     }
     static inline const PathId* PATH_ID_PTR_FOR_COORD_CONST(const ExplorationMapData* mapData, WorldPoint p){
-        return reinterpret_cast<const PathId*>(UINT8_PTR_FOR_COORD_TERTIARY<const AV::uint8*, const ExplorationMapData*, 1>(mapData, p));
+        return reinterpret_cast<const PathId*>(UINT8_PTR_FOR_COORD_TERTIARY<const AV::uint8*, const ExplorationMapData*, 3>(mapData, p));
     }
 
 }

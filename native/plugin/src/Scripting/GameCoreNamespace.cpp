@@ -638,8 +638,8 @@ namespace ProceduralExplorationGamePlugin{
 
         for(ProceduralExplorationGameCore::WorldPoint y = 0; y < outBlend.tilesHeight; y++){
             for(ProceduralExplorationGameCore::WorldPoint x = 0; x < outBlend.tilesWidth; x++){
-                AV::uint32* secondary = ProceduralExplorationGameCore::FULL_PTR_FOR_COORD_SECONDARY(data, ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y));
-                *secondary |= ProceduralExplorationGameCore::DRAW_COLOUR_VOXEL_FLAG;
+                AV::uint32* tertiary = ProceduralExplorationGameCore::FULL_PTR_FOR_COORD_TERTIARY(data, ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y));
+                *tertiary |= ProceduralExplorationGameCore::DRAW_COLOUR_VOXEL_FLAG;
 
                 AV::uint8* voxPtr = ProceduralExplorationGameCore::VOX_VALUE_PTR_FOR_COORD(data, ProceduralExplorationGameCore::WRAP_WORLD_POINT(x, y));
                 *voxPtr = static_cast<AV::uint8>(outBlend.tileValues[x + y * outBlend.tilesWidth]);
