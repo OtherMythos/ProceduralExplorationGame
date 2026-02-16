@@ -187,12 +187,18 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
     mInWater_ = false;
     mAttackActive_ = false;
 
+    mSeparationPointId_ = null;
+    mSeparationRadius_ = 2.5;
+    mSeparationStrength_ = 0.04;
+    mSeparationOffset_ = null;
+
     constructor(creatorWorld, enemyType, enemyPos, entity){
         mCreatorWorld_ = creatorWorld;
         mEnemy_ = enemyType;
         mPos_ = enemyPos;
         mEntity_ = entity;
         mOrientation_ = ::Quat_IDENTITY.copy();
+        mSeparationOffset_ = Vec3(0, 0, 0);
     }
     function getEID(){
         //if(typeof mEntity_ == "integer") return mEntity_;
@@ -239,6 +245,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         }
         //if(mGizmo_) mGizmo_.setPosition(pos);
         if(mCollisionPoint_ != null) mCreatorWorld_.getTriggerWorld().mCollisionWorld_.setPositionForPoint(mCollisionPoint_, pos.x, pos.z);
+        if(mSeparationPointId_ != null) mCreatorWorld_.mSeparationCollisionWorld_.setPositionForPoint(mSeparationPointId_, pos.x, pos.z);
     }
     function getSceneNode(){
         //if(typeof mEntity_ == "integer"){
@@ -305,12 +312,28 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
     function move_(pos, amount){
         //Check for potential obstacles.
         local targetPos = pos;
+
+        //Fold separation offset into the target before the collision check
+        //so we only call checkEntityPositionPotential once.
+        local hasSeparation = (mSeparationOffset_.x != 0 || mSeparationOffset_.z != 0);
+        if(hasSeparation){
+            targetPos = Vec3(pos.x + mSeparationOffset_.x, pos.y, pos.z + mSeparationOffset_.z);
+        }
+
         if(mEntity_ != null){
-            local result = mCreatorWorld_.getEntityManager().checkEntityPositionPotential(mEntity_, pos);
+            local result = mCreatorWorld_.getEntityManager().checkEntityPositionPotential(mEntity_, targetPos);
             targetPos = result;
             //If we couldn't move at all (hard stop), return false
             if(result.x == mPos_.x && result.z == mPos_.z){
                 return false;
+            }
+        }
+
+        //Re-query height if separation shifted our X/Z.
+        if(hasSeparation){
+            targetPos.y = mCreatorWorld_.getZForPos(targetPos);
+            if(mInWater_){
+                if(::Enemies[mEnemy_].getAllowSwimState()) targetPos.y -= 1.8;
             }
         }
 
@@ -387,6 +410,10 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         }
         if(mCollisionPoint_ != null){
             mCreatorWorld_.getTriggerWorld().removeCollisionPoint(mCollisionPoint_);
+        }
+        if(mSeparationPointId_ != null){
+            mCreatorWorld_.removeSeparationPoint_(mSeparationPointId_);
+            mSeparationPointId_ = null;
         }
         mCreatorWorld_.mTargetManager_.notifyEntityDestroyed(this);
         mCreatorWorld_.mProjectileTargetManager_.notifyEntityDestroyed(this);
@@ -490,6 +517,19 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
 
         if(mStateMachineModel_ != null){
             mStateMachineModel_.update();
+        }
+
+        //Apply separation nudge for stationary enemies so they still spread apart.
+        if(mMoving_ <= 0 && (mSeparationOffset_.x != 0 || mSeparationOffset_.z != 0)){
+            local nudged = Vec3(mPos_.x + mSeparationOffset_.x, mPos_.y, mPos_.z + mSeparationOffset_.z);
+            if(mEntity_ != null){
+                nudged = mCreatorWorld_.getEntityManager().checkEntityPositionPotential(mEntity_, nudged);
+            }
+            nudged.y = mCreatorWorld_.getZForPos(nudged);
+            if(mInWater_){
+                if(::Enemies[mEnemy_].getAllowSwimState()) nudged.y -= 1.8;
+            }
+            setPosition(nudged);
         }
 
         //if(mGizmo_){

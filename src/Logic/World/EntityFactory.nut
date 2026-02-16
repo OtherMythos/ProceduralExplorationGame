@@ -305,6 +305,17 @@
         //local collisionRadius = 1;
         manager.assignComponent(en, EntityComponents.COLLISION_DETECTION, ::EntityManager.Components[EntityComponents.COLLISION_DETECTION](COLLISION_DETECTION_RADIUS, COLLISION_TYPE_ENEMY));
 
+        //Add separation radius so enemies don't stack on top of each other.
+        local separationRadius = 2.5;
+        local separationStrength = 0.04;
+        local separationWorld = mConstructorWorld_.mSeparationCollisionWorld_;
+        local separationPointId = separationWorld.addCollisionPoint(targetPos.x, targetPos.z, separationRadius, 0xFF, _COLLISION_WORLD_ENTRY_EITHER);
+        manager.assignComponent(en, EntityComponents.SEPARATION_RADIUS, ::EntityManager.Components[EntityComponents.SEPARATION_RADIUS](separationPointId, separationRadius, separationStrength));
+        mConstructorWorld_.registerSeparationPoint_(separationPointId, entry);
+        entry.mSeparationPointId_ = separationPointId;
+        entry.mSeparationRadius_ = separationRadius;
+        entry.mSeparationStrength_ = separationStrength;
+
         /*
         local worldMask = (0x1 << mConstructorWorld_.getWorldId());
         local billboard = ::BillboardManager.HealthBarBillboard(explorationScreen.mWindow_, worldMask)

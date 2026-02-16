@@ -31,6 +31,7 @@ enum EntityComponents{
     COMPASS_INDICATOR,
     MOVEMENT_PARTICLES,
     POSITION_LIMITER,
+    SEPARATION_RADIUS,
 
     MAX
 
@@ -557,6 +558,10 @@ EntityManager.EntityManager <- class{
             local comp = mComponents_[EntityComponents.COMPASS_INDICATOR].getCompForEid(eid);
             comp.mCreator.setPositionForPoint(comp.mPoint, newPos.x, newPos.z);
         }
+        if(mEntityComponentHashes_[idx] & (1<<EntityComponents.SEPARATION_RADIUS)){
+            local comp = mComponents_[EntityComponents.SEPARATION_RADIUS].getCompForEid(eid);
+            mCreatorWorld_.mSeparationCollisionWorld_.setPositionForPoint(comp.mPointId, newPos.x, newPos.z);
+        }
         if(mEntityComponentHashes_[idx] & (1<<EntityComponents.MOVEMENT_PARTICLES)){
             local comp = mComponents_[EntityComponents.MOVEMENT_PARTICLES].getCompForEid(eid);
             comp.mPositionChangedThisFrame = true;
@@ -638,6 +643,9 @@ EntityManager.EntityManager <- class{
                 else if(i == EntityComponents.COMPASS_INDICATOR){
                     mCreatorWorld_.destroyCompassIndicator_(component.mPoint);
                     component.mCreator.removeCollisionPoint(component.mPoint);
+                }
+                else if(i == EntityComponents.SEPARATION_RADIUS){
+                    mCreatorWorld_.removeSeparationPoint_(component.mPointId);
                 }
             }
         }

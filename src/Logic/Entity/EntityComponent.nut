@@ -426,3 +426,17 @@
     }
 
 };
+
+::EntityManager.Components[EntityComponents.SEPARATION_RADIUS] = class extends ::EntityManager.Component{
+
+    mRadius = 2.5;
+    mStrength = 0.04;
+    mPointId = null;
+
+    constructor(pointId, radius = 2.5, strength = 0.04){
+        mPointId = pointId;
+        mRadius = radius;
+        mStrength = strength;
+    }
+
+};

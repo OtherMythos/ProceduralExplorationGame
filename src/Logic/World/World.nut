@@ -459,6 +459,8 @@
     mCombatTargetCollisionWorld_ = null;
     mCollisionDetectionWorld_ = null;
     mCompassCollisionWorld_ = null;
+    mSeparationCollisionWorld_ = null;
+    mSeparationPointToEntry_ = null;
     mEntityManager_ = null;
     mWorldScaleSize_ = 1;
     mCameraAcceleration_ = null;
@@ -520,6 +522,8 @@
         mPlayerTargetRadius_ = {};
         mPlayerTargetRadiusProjectiles_ = {};
         mPerformingMoves_ = [];
+
+        mSeparationPointToEntry_ = {};
 
         mCameraAcceleration_ = Vec2();
 
@@ -674,6 +678,8 @@
 
         mActiveEnemies_.clear();
 
+        mSeparationPointToEntry_.clear();
+
         clearAllLocationFlags();
 
         mCameraEffectManager_.shutdown();
@@ -696,6 +702,7 @@
         mCombatTargetCollisionWorld_ = CollisionWorldWrapper(this, 2);
         mCollisionDetectionWorld_ = _gameCore.createCollisionDetectionWorld(3);
         mCompassCollisionWorld_ = CollisionWorld(_COLLISION_WORLD_OCTREE, 4);
+        mSeparationCollisionWorld_ = CollisionWorld(_COLLISION_WORLD_OCTREE, 5);
 
         mEntityManager_ = EntityManager.createEntityManager(this);
 
@@ -889,8 +896,88 @@
         mCombatTargetCollisionWorld_.processCollision();
         mCollisionDetectionWorld_.processCollision();
         mCompassCollisionWorld_.processCollision();
+        mSeparationCollisionWorld_.processCollision();
+        processSeparation_();
 
         updateCompassIndicators_();
+    }
+
+    function processSeparation_(){
+        //Clear previous frame's offsets before accumulating new ones.
+        foreach(i in mActiveEnemies_){
+            i.mSeparationOffset_.x = 0;
+            i.mSeparationOffset_.z = 0;
+        }
+
+        local numCollisions = mSeparationCollisionWorld_.getNumCollisions();
+        for(local i = 0; i < numCollisions; i++){
+            local pair = mSeparationCollisionWorld_.getCollisionPairForIdx(i);
+            local collisionStatus = (pair & 0xF000000000000000) >> 60;
+            //Only process active overlaps (entered or ongoing).
+            if(collisionStatus == 0x2) continue;
+
+            local firstPointId = pair & 0xFFFFFFF;
+            local secondPointId = (pair >> 30) & 0xFFFFFFF;
+
+            if(!mSeparationPointToEntry_.rawin(firstPointId)) continue;
+            if(!mSeparationPointToEntry_.rawin(secondPointId)) continue;
+
+            local entryA = mSeparationPointToEntry_[firstPointId];
+            local entryB = mSeparationPointToEntry_[secondPointId];
+
+            local posA = entryA.getPosition();
+            local posB = entryB.getPosition();
+
+            local radiusA = entryA.mSeparationRadius_;
+            local radiusB = entryB.mSeparationRadius_;
+            local combinedRadius = radiusA + radiusB;
+            local combinedRadiusSq = combinedRadius * combinedRadius;
+
+            local distSq = posA.squaredDistance(posB);
+            if(distSq >= combinedRadiusSq) continue;
+
+            local dist = posA.distance(posB);
+            local dirX = 0.0;
+            local dirZ = 0.0;
+            if(dist > 0.001){
+                local invDist = 1.0 / dist;
+                dirX = (posA.x - posB.x) * invDist;
+                dirZ = (posA.z - posB.z) * invDist;
+            }else{
+                //Overlapping exactly — use a small random offset to break symmetry.
+                local angle = _random.rand() * PI * 2.0;
+                dirX = sin(angle);
+                dirZ = cos(angle);
+                dist = 0.001;
+            }
+
+            //Smooth falloff: strongest when fully overlapping, zero at boundary.
+            local overlap = 1.0 - (dist / combinedRadius);
+            local strengthA = entryA.mSeparationStrength_;
+            local strengthB = entryB.mSeparationStrength_;
+            local avgStrength = (strengthA + strengthB) * 0.5;
+            local magnitude = avgStrength * overlap;
+
+            //Clamp to prevent sudden jumps.
+            local MAX_SEPARATION = 0.12;
+            if(magnitude > MAX_SEPARATION) magnitude = MAX_SEPARATION;
+
+            entryA.mSeparationOffset_.x += dirX * magnitude;
+            entryA.mSeparationOffset_.z += dirZ * magnitude;
+            entryB.mSeparationOffset_.x -= dirX * magnitude;
+            entryB.mSeparationOffset_.z -= dirZ * magnitude;
+        }
+    }
+
+    function registerSeparationPoint_(pointId, entry){
+        mSeparationPointToEntry_[pointId] <- entry;
+    }
+
+    function removeSeparationPoint_(pointId){
+        mSeparationCollisionWorld_.removeCollisionPoint(pointId);
+        if(mSeparationPointToEntry_.rawin(pointId)){
+            mSeparationPointToEntry_.rawdelete(pointId);
+        }
     }
 
     function updateCompassIndicators_(){
