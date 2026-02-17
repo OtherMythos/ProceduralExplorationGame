@@ -274,11 +274,11 @@
         if(datablock != null){
             local texture = ::CompositorManager.mTextures_[CompositorSceneType.RENDER_ICONS];
 
-            //local sampler = _hlms.getSamplerblock({
-            //    "mag": "point"
-            //});
-            //datablock.setTexture(0, texture, sampler);
-            datablock.setTexture(0, texture);
+            local sampler = _hlms.getSamplerblock({
+                "mag": "point"
+            });
+            datablock.setTexture(0, texture, sampler);
+            //datablock.setTexture(0, texture);
             datablock.setEnableAnimationMatrix(0, true);
         }
     }

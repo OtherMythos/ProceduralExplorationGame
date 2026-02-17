@@ -82,7 +82,7 @@ enum CompositorSceneType{
 
         setGameplayActive(false);
 
-        createRenderIconsWorkspace(_window.getSize() * ::resolutionMult);
+        createRenderIconsWorkspace(_window.getSize() * ::resolutionMult * 0.25);
     }
 
     function addExtraTexture(texture){

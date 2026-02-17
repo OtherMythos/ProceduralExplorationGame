@@ -98,7 +98,10 @@ compositor_node compositor/GameplayExplorationCompassNode
 compositor_node compositor/RenderIconsNode
 {
     in 0 renderTexture
-    target renderTexture
+
+    texture renderIconsRaw target_width target_height PFG_RGBA8_UNORM_SRGB
+
+    target renderIconsRaw
     {
         pass clear
         {
@@ -112,6 +115,22 @@ compositor_node compositor/RenderIconsNode
             camera compositor/foregroundEffectCamera
 
             identifier 16
+        }
+    }
+
+    target renderTexture
+    {
+        pass render_quad
+        {
+            load
+            {
+                all clear
+                clear_colour 0 0 0 0
+            }
+
+            material Postprocess/RenderIconsOutlineDraw
+
+            input 0 renderIconsRaw
         }
     }
 }
