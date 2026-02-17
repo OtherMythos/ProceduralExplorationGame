@@ -81,6 +81,10 @@
 ::DialogFacePlayerComponent <- class extends ::WorldComponent{
     mEntityId_ = null;
     mStartingOrientation_ = null;
+    mTargetAngle_ = null;
+    mRotationAxis_ = null;
+    mCurrentAngle_ = 0.0;
+    mAnimProgress_ = 0.0;
 
     constructor(world, entityId){
         base.constructor(world);
@@ -97,39 +101,48 @@
         local manager = mWorld_.getEntityManager();
         if(!manager.entityValid(mEntityId_)) return;
         if(!manager.hasComponent(mEntityId_, EntityComponents.SCENE_NODE)) return;
+        if(mStartingOrientation_ == null) return;
 
         local comp = manager.getComponent(mEntityId_, EntityComponents.SCENE_NODE);
         local entityNode = comp.mNode;
-        local playerPos = mWorld_.getPlayerPosition();
-        local entityPos = entityNode.getPositionVec3();
 
-        //Calculate direction from entity to player
-        local dirToPlayer = playerPos - entityPos;
-        dirToPlayer.y = 0;
-        dirToPlayer.normalise();
-        dirToPlayer = dirToPlayer * -1;
+        //Calculate and cache the target angle and axis on the first frame
+        if(mTargetAngle_ == null){
+            local playerPos = mWorld_.getPlayerPosition();
+            local entityPos = entityNode.getPositionVec3();
 
-        //Create a quaternion that points the entity towards the player
-        //Default forward is -Z, so we need to account for that
-        local forward = Vec3(0, 0, -1);
-        local axis = forward.cross(dirToPlayer);
-        local dot = forward.dot(dirToPlayer);
+            local dirToPlayer = playerPos - entityPos;
+            dirToPlayer.y = 0;
+            dirToPlayer.normalise();
+            dirToPlayer = dirToPlayer * -1;
 
-        local quat;
-        if(axis.length() < 0.001){
-            //Nearly parallel, check if same or opposite direction
-            if(dot > 0.0){
-                quat = Quat();
+            local forward = Vec3(0, 0, -1);
+            local axis = forward.cross(dirToPlayer);
+            local dot = forward.dot(dirToPlayer);
+
+            if(axis.length() < 0.001){
+                if(dot > 0.0){
+                    mTargetAngle_ = 0.0;
+                    mRotationAxis_ = Vec3(0, 1, 0);
+                }else{
+                    mTargetAngle_ = PI;
+                    mRotationAxis_ = Vec3(0, 1, 0);
+                }
             }else{
-                quat = Quat(PI, Vec3(0, 1, 0));
+                axis.normalise();
+                mRotationAxis_ = axis;
+                mTargetAngle_ = acos(dot);
             }
-        }else{
-            axis.normalise();
-            local angle = acos(dot);
-            quat = Quat(angle, axis);
         }
 
-        entityNode.setOrientation(quat);
+        if(mAnimProgress_ < 1.0){
+            mAnimProgress_ += 0.05;
+            if(mAnimProgress_ > 1.0) mAnimProgress_ = 1.0;
+
+            mCurrentAngle_ = ::calculateSimpleAnimation(0.0, mTargetAngle_, mAnimProgress_);
+            local quat = Quat(mCurrentAngle_, mRotationAxis_);
+            entityNode.setOrientation(quat);
+        }
     }
 
     function destroy(){
