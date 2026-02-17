@@ -244,7 +244,8 @@
                 local comp = manager.getComponent(entityId, EntityComponents.DIALOG);
                 local data = {
                     "path": comp.mDialogPath,
-                    "block": comp.mInitialBlock
+                    "block": comp.mInitialBlock,
+                    "entityId": entityId
                 };
 
                 ::Base.mActionManager.registerAction(ActionSlotType.TALK_TO, 0, data, entityId);

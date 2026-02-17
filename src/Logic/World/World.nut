@@ -465,6 +465,8 @@
     mWorldScaleSize_ = 1;
     mCameraAcceleration_ = null;
 
+    mCurrentDialogWorldComponentId_ = null;
+
     mWorldComponentPool_ = null;
 
     mMovementCooldown_ = 0;
@@ -2411,6 +2413,17 @@
         else if(data.mType == SpoilsComponentType.SINGLE_ENEMY){
             createEnemy(data.mFirst, position);
         }
+    }
+
+    function notifyDialogBegan(entityId){
+        local component = ::DialogFacePlayerComponent(this, entityId);
+        mCurrentDialogWorldComponentId_ = registerWorldComponent(component);
+    }
+
+    function notifyDialogEnded(){
+        assert(mCurrentDialogWorldComponentId_ != null);
+        unregisterWorldComponent(mCurrentDialogWorldComponentId_);
+        mCurrentDialogWorldComponentId_ = null;
     }
 
     function getStatsString(){

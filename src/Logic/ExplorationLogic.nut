@@ -26,6 +26,8 @@
     mGui_ = null;
     mInputs_ = null;
 
+    mCurrentDialogComponentId_ = null;
+
     constructor(){
 
         //TODO remove duplication.
@@ -326,12 +328,14 @@
         }
     }
 
-    function beginDialog(path, targetBlock=0){
+    function beginDialog(path, targetBlock=0, entityId=null){
         ::Base.mDialogManager.beginExecuting(path, targetBlock);
-        pauseExploration();
+        mCurrentWorld_.setLogicPaused(true);
+        mCurrentWorld_.notifyDialogBegan(entityId);
     }
     function notifyDialogEnded(){
-        unPauseExploration();
+        mCurrentWorld_.setLogicPaused(false);
+        mCurrentWorld_.notifyDialogEnded();
     }
 
     function notifyPlaceEnterState(id, entered){

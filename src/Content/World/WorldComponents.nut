@@ -78,6 +78,72 @@
     }
 };
 
+::DialogFacePlayerComponent <- class extends ::WorldComponent{
+    mEntityId_ = null;
+    mStartingOrientation_ = null;
+
+    constructor(world, entityId){
+        base.constructor(world);
+        mEntityId_ = entityId;
+        local manager = mWorld_.getEntityManager();
+        if(manager.hasComponent(mEntityId_, EntityComponents.SCENE_NODE)){
+            local comp = manager.getComponent(mEntityId_, EntityComponents.SCENE_NODE);
+            local node = comp.mNode;
+            mStartingOrientation_ = node.getOrientation();
+        }
+    }
+
+    function updateLogicPaused(){
+        local manager = mWorld_.getEntityManager();
+        if(!manager.entityValid(mEntityId_)) return;
+        if(!manager.hasComponent(mEntityId_, EntityComponents.SCENE_NODE)) return;
+
+        local comp = manager.getComponent(mEntityId_, EntityComponents.SCENE_NODE);
+        local entityNode = comp.mNode;
+        local playerPos = mWorld_.getPlayerPosition();
+        local entityPos = entityNode.getPositionVec3();
+
+        //Calculate direction from entity to player
+        local dirToPlayer = playerPos - entityPos;
+        dirToPlayer.y = 0;
+        dirToPlayer.normalise();
+        dirToPlayer = dirToPlayer * -1;
+
+        //Create a quaternion that points the entity towards the player
+        //Default forward is -Z, so we need to account for that
+        local forward = Vec3(0, 0, -1);
+        local axis = forward.cross(dirToPlayer);
+        local dot = forward.dot(dirToPlayer);
+
+        local quat;
+        if(axis.length() < 0.001){
+            //Nearly parallel, check if same or opposite direction
+            if(dot > 0.0){
+                quat = Quat();
+            }else{
+                quat = Quat(PI, Vec3(0, 1, 0));
+            }
+        }else{
+            axis.normalise();
+            local angle = acos(dot);
+            quat = Quat(angle, axis);
+        }
+
+        entityNode.setOrientation(quat);
+    }
+
+    function destroy(){
+        //Restore the original orientation
+        local manager = mWorld_.getEntityManager();
+        if(manager.entityValid(mEntityId_) && manager.hasComponent(mEntityId_, EntityComponents.SCENE_NODE)){
+            local comp = manager.getComponent(mEntityId_, EntityComponents.SCENE_NODE);
+            if(mStartingOrientation_ != null){
+                comp.mNode.setOrientation(mStartingOrientation_);
+            }
+        }
+    }
+};
+
 //NOTE temporary
 ::DebugCameraSpinComponent <- class extends ::WorldComponent{
     mRotationCounter_ = 0.0;
