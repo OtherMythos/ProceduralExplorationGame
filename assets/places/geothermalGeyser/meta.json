@@ -2,5 +2,6 @@
     "averageGroundRadius": [5, 10],
     "disablePlaceName": true,
     "tileOffsetX": 3,
-    "tileOffsetY": 3
+    "tileOffsetY": 3,
+    "disablePathPlacement": true
 }
