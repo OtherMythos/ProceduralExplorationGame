@@ -14,6 +14,9 @@ enum WormAttackType{
     mGroundDustParticles_ = null;
     mGroundDustNode_ = null;
     mGroundDustProximity_ = 3.0;     //Max height above ground to show dust
+    mDamageCollisionPoint_ = null;
+    mDamageRadius_ = 2.5;            //Radius of the worm contact damage area
+    mDamageAmount_ = 40;             //Damage dealt on contact
     mWormSegments_ = null;
     mWormHeadNode_ = null;
     mHeadMesh1Node_ = null;
@@ -45,7 +48,7 @@ enum WormAttackType{
     //Arc leap attack tweakable values
     mArcLeapDistance_ = 40.0;        //Total horizontal distance of the arc
     mArcLeapHeight_ = 20.0;         //Peak height of the arc above ground
-    mArcLeapFlightFrames_ = 360;    //Frames spent flying through the air
+    mArcLeapFlightFrames_ = 180;    //Frames spent flying through the air
     mArcSegmentSpacing_ = 2.0;      //World-space distance between segments during arc flight
     mArcLeapStartPos_ = null;       //World position where the worm emerges
     mArcLeapEndPos_ = null;         //World position where the worm lands
@@ -268,6 +271,7 @@ enum WormAttackType{
         mShrapnelParticles_.setEmitting(false);
         mDustCloudParticles_.setEmitting(false);
         mGroundDustParticles_.setEmitting(false);
+        _removeDamageRadius_();
     }
 
     //Helper to reset all body parts to a clean default state
@@ -337,9 +341,34 @@ enum WormAttackType{
             //Convert world position to local offset from root node
             mGroundDustNode_.setPosition(bestWorldPos.x - mArcLeapStartPos_.x, 0, bestWorldPos.z - mArcLeapStartPos_.z);
             mGroundDustParticles_.setEmitting(true);
+            //Match the damage radius position to the ground contact point
+            _addDamageRadius_(bestWorldPos.x, bestWorldPos.z);
         }else{
             mGroundDustParticles_.setEmitting(false);
+            _removeDamageRadius_();
         }
+    }
+
+    //Activate the damage collision point at the given world-space XZ position.
+    //If already active, moves it via setPositionForPoint rather than re-adding.
+    function _addDamageRadius_(x, z){
+        local world = ::Base.mExplorationLogic.mCurrentWorld_;
+        local damageWorld = world.getDamageWorld();
+        if(mDamageCollisionPoint_ != null){
+            damageWorld.setPositionForPoint(mDamageCollisionPoint_, x, z);
+            return;
+        }
+        local move = ::Combat.CombatMove(mDamageAmount_);
+        mDamageCollisionPoint_ = damageWorld.addCollisionSender(CollisionWorldTriggerResponses.PROJECTILE_DAMAGE, move, x, z, mDamageRadius_, _COLLISION_PLAYER);
+    }
+
+    //Remove the damage collision point if one exists.
+    function _removeDamageRadius_(){
+        if(mDamageCollisionPoint_ == null) return;
+        local world = ::Base.mExplorationLogic.mCurrentWorld_;
+        local damageWorld = world.getDamageWorld();
+        damageWorld.removeCollisionPoint(mDamageCollisionPoint_);
+        mDamageCollisionPoint_ = null;
     }
 
     //==========================================================
@@ -348,6 +377,23 @@ enum WormAttackType{
 
     function _chompTransitionToRising(){
         _showWormBody();
+
+        //Place the damage radius slightly toward the player from the root position
+        local world = ::Base.mExplorationLogic.mCurrentWorld_;
+        local playerPos = world.getPlayerPosition();
+        local rootPos = mRootNode_.getDerivedPositionVec3();
+        local dx = playerPos.x - rootPos.x;
+        local dz = playerPos.z - rootPos.z;
+        local dist = sqrt(dx * dx + dz * dz);
+        local offsetDist = 3.0;
+        if(dist > 0.001){
+            dx = (dx / dist) * offsetDist;
+            dz = (dz / dist) * offsetDist;
+        }else{
+            dx = 0.0;
+            dz = 0.0;
+        }
+        _addDamageRadius_(rootPos.x + dx, rootPos.z + dz);
     }
 
     function _chompUpdateRising(){
@@ -404,6 +450,7 @@ enum WormAttackType{
         //Disable dust cloud particles and shrapnel during descent
         mShrapnelParticles_.setEmitting(false);
         mDustCloudParticles_.setEmitting(false);
+        _removeDamageRadius_();
     }
 
     function _chompUpdateDescending(){
