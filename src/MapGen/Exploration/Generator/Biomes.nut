@@ -49,6 +49,10 @@ local GeoThermalLogic = {
 
 local HotSpringsLogic = {
     "mHotSpringsComponentId_": null,
+    "mHealthToDeliver_": 50,
+    "mTotalHealth_": 50,
+    "mElapsedTime_": 0.0,
+    "mParticleSystem_": null,
 
     "setup": function(regionData, world){
         local outPoints = [];
@@ -66,6 +70,7 @@ local HotSpringsLogic = {
         particleSystemNode.setScale(600, 1, 600);
 
         _gameCore.setupParticleEmitterPoints(particleSystem, outPoints);
+        mParticleSystem_ = particleSystem;
 
         local centrePos = ::MapGenHelpers.getPositionForPoint(regionData.centrePoint);
         world.mEntityFactory_.constructGenericDescriptionTrigger(centrePos, "hot springs", regionData.radius, 0.5);
@@ -76,7 +81,7 @@ local HotSpringsLogic = {
     },
     "enter": function(world){
         //Register the hot springs world gen component
-        local component = HotSpringsWorldGenComponent(world);
+        local component = HotSpringsWorldGenComponent(world, this, mParticleSystem_);
         mHotSpringsComponentId_ = world.registerWorldComponent(component);
     },
     "leave": function(world){

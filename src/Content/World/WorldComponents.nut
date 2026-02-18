@@ -1,17 +1,61 @@
 ::HotSpringsWorldGenComponent <- class extends ::WorldComponent{
-    waterCount = 0;
+    mLogic_ = null;
+    mIsActive_ = true;
+    mParticleSystem_ = null;
+    mLastDeliveryFactor_ = 0.0;
+
+    constructor(world, logic, particleSystem = null){
+        base.constructor(world);
+        mLogic_ = logic;
+        mParticleSystem_ = particleSystem;
+    }
+
     function update(){
+        if(!mIsActive_){
+            return;
+        }
+
+        //When all health is delivered, disable the particle system
+        if(mLogic_.mHealthToDeliver_ <= 0.001){
+            mLogic_.mHealthToDeliver_ = 0;
+            mIsActive_ = false;
+            if(mParticleSystem_ != null){
+                mParticleSystem_.setEmitting(false);
+            }
+            return;
+        }
+
         local playerPos = mWorld_.getPlayerPosition();
         local isInWater = mWorld_.getIsWaterForPosition(playerPos);
         if(isInWater){
-            //print("in the hot spring");
+            mLogic_.mElapsedTime_ += (1.0 / 60.0);
 
-            waterCount++;
-            if(waterCount % 60 == 0){
-                local entityManager = mWorld_.getEntityManager();
-                ::_applyHealthChangeOther(entityManager, mWorld_.getPlayerEID(), 1);
+            //Calculate health delivery on a curve
+            //Slow for first 2 seconds, speeds up, then becomes inactive
+            local mDeliveryDuration_ = 8.0;
+            local t = ::clampValue(mLogic_.mElapsedTime_ / mDeliveryDuration_, 0.0, 1.0);
+            local deliveryFactor;
+
+            if(t < 0.5){
+                //First 4 seconds (50% of 8s): slow delivery, easing in
+                deliveryFactor = ::Easing.easeInCubic(t / 0.5) * 0.5;
+            } else if(t < 1.0){
+                //Remaining 4 seconds: speed up with ease out
+                deliveryFactor = 0.5 + ::Easing.easeOutCubic((t - 0.5) / 0.5) * 0.5;
+            } else {
+                deliveryFactor = 1.0;
             }
 
+            //Calculate health delivered this frame based on the difference in delivery factor
+            //Use total health for calculation so it's not affected by remaining health changes
+            local healthToApplyThisFrame = (deliveryFactor - mLastDeliveryFactor_) * mLogic_.mTotalHealth_;
+            mLastDeliveryFactor_ = deliveryFactor;
+
+            if(healthToApplyThisFrame > 0.0001){
+                local entityManager = mWorld_.getEntityManager();
+                ::_applyHealthChangeOther(entityManager, mWorld_.getPlayerEID(), healthToApplyThisFrame);
+                mLogic_.mHealthToDeliver_ -= healthToApplyThisFrame;
+            }
         }
     }
 };
