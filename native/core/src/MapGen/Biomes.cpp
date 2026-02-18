@@ -311,8 +311,8 @@ namespace ProceduralExplorationGameCore{
 
     void GEOTHERMAL_PLANES_PlaceObjectsFunction(std::vector<PlacedItemData>& placedItems, const ExplorationMapData* mapData, AV::uint16 x, AV::uint16 y, AV::uint8 altitude, RegionId region, AV::uint8 flags, AV::uint8 moisture, AV::uint8 regionDistance){
         if(altitude >= mapData->seaLevel + 10){
-            //Place big rocks where paydirt appears
-            if(moisture >= mapData->seaLevel + 40){
+            //Place big rocks where paydirt appears. Place them a bit further into the region to prevent annoying collision.
+            if(moisture >= mapData->seaLevel + 40 && regionDistance >= 4){
                 if(processRValue(mapData, x, y, 6)){
                     //Spawn rock ore 30% of the time, regular rocks 70%
                     if(mapGenRandomIntMinMax(0, 18) < 3){
