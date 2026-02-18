@@ -32,6 +32,7 @@ enum EntityComponents{
     MOVEMENT_PARTICLES,
     POSITION_LIMITER,
     SEPARATION_RADIUS,
+    LIMIT_TO_REGION,
 
     MAX
 
@@ -455,6 +456,14 @@ EntityManager.EntityManager <- class{
         if(collisionRadius != null){
             local w = mCreatorWorld_.getCollisionDetectionWorld();
             if(w.checkCollisionPoint(pos.x, pos.z, collisionRadius, collisionHash, ignorePoint)){
+                return false;
+            }
+        }
+        //Check region limit
+        if((mEntityComponentHashes_[idx] & (1 << EntityComponents.LIMIT_TO_REGION)) != 0){
+            local regionComp = mComponents_[EntityComponents.LIMIT_TO_REGION].getCompForEid(eid);
+            local newRegion = mCreatorWorld_.getRegionForPosition(pos);
+            if(newRegion != null && newRegion != regionComp.mRegionId){
                 return false;
             }
         }

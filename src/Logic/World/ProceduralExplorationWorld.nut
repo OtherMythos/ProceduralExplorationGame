@@ -247,6 +247,12 @@
     }
 
     #Override
+    function getRegionForPosition(pos){
+        if(mMapData_ == null) return null;
+        return ::MapGenHelpers.getRegionForData(mMapData_, pos);
+    }
+
+    #Override
     function notifyPreparationComplete_(){
         mReady_ = true;
         base.setup();

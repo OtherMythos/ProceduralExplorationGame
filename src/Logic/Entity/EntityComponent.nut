@@ -440,3 +440,13 @@
     }
 
 };
+
+::EntityManager.Components[EntityComponents.LIMIT_TO_REGION] = class extends ::EntityManager.Component{
+
+    mRegionId = null;
+
+    constructor(regionId){
+        mRegionId = regionId;
+    }
+
+};

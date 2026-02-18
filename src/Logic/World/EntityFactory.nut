@@ -385,6 +385,14 @@
         local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SPOILS_DATA, spoilsData, null, null);
         mConstructorWorld_.getEntityManager().assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
 
+        //Limit forest guardian to the region it spawned in
+        if(enemyType == EnemyId.FOREST_GUARDIAN){
+            local regionId = mConstructorWorld_.getRegionForPosition(targetPos);
+            if(regionId != null){
+                manager.assignComponent(en, EntityComponents.LIMIT_TO_REGION, ::EntityManager.Components[EntityComponents.LIMIT_TO_REGION](regionId));
+            }
+        }
+
         return entry;
     }
 
@@ -422,6 +430,12 @@
         entry.mSeparationPointId_ = separationPointId;
         entry.mSeparationRadius_ = separationRadius;
         entry.mSeparationStrength_ = separationStrength;
+
+        //Limit worm to the region it spawned in
+        local regionId = mConstructorWorld_.getRegionForPosition(targetPos);
+        if(regionId != null){
+            manager.assignComponent(en, EntityComponents.LIMIT_TO_REGION, ::EntityManager.Components[EntityComponents.LIMIT_TO_REGION](regionId));
+        }
 
         return entry;
     }

@@ -588,6 +588,9 @@
     function getWorldTypeString(){
         return "World";
     }
+    function getRegionForPosition(pos){
+        return null;
+    }
     function getDefaultSkyColour(){
         return Vec3(0.5, 0.89, 1);
     }
