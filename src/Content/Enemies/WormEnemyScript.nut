@@ -12,6 +12,8 @@ enum WormAttackType{
     mShrapnelParticles_ = null;
     mDustCloudParticles_ = null;
     mGroundDustParticles_ = null;
+    mGroundDustNode_ = null;
+    mGroundDustProximity_ = 3.0;     //Max height above ground to show dust
     mWormSegments_ = null;
     mWormHeadNode_ = null;
     mHeadMesh1Node_ = null;
@@ -44,7 +46,7 @@ enum WormAttackType{
     mArcLeapDistance_ = 40.0;        //Total horizontal distance of the arc
     mArcLeapHeight_ = 20.0;         //Peak height of the arc above ground
     mArcLeapFlightFrames_ = 360;    //Frames spent flying through the air
-    mArcSegmentSpacing_ = 3.0;      //World-space distance between segments during arc flight
+    mArcSegmentSpacing_ = 2.0;      //World-space distance between segments during arc flight
     mArcLeapStartPos_ = null;       //World position where the worm emerges
     mArcLeapEndPos_ = null;         //World position where the worm lands
     mArcLeapDirection_ = null;      //Normalised XZ direction of travel
@@ -105,10 +107,12 @@ enum WormAttackType{
         mShrapnelParticles_.setEmitting(false);
         mRootNode_.attachObject(mShrapnelParticles_);
 
-        //Create particle system for ground dust at base of worm
+        //Create particle system for ground dust on its own child node so it can be repositioned
+        mGroundDustNode_ = mRootNode_.createChildSceneNode();
+        mGroundDustNode_.setPosition(0, 0, 0);
         mGroundDustParticles_ = _scene.createParticleSystem("giantWormGroundDust");
         mGroundDustParticles_.setEmitting(false);
-        mRootNode_.attachObject(mGroundDustParticles_);
+        mGroundDustNode_.attachObject(mGroundDustParticles_);
 
         //Create worm segments (will be hidden initially)
         for(local i = 0; i < NUM_SEGMENTS; i++){
@@ -287,6 +291,7 @@ enum WormAttackType{
         mParticleSystem_.setEmitting(false);
         mShrapnelParticles_.setEmitting(true);
         mDustCloudParticles_.setEmitting(true);
+        mGroundDustNode_.setPosition(0, 0, 0);
         mGroundDustParticles_.setEmitting(true);
     }
 
@@ -299,6 +304,41 @@ enum WormAttackType{
         }else{
             mHeadMesh1Node_.setVisible(false);
             mHeadMesh2Node_.setVisible(true);
+        }
+    }
+
+    //Find the worm part closest to ground level and position the dust node there.
+    //If nothing is close enough, disable emitting.
+    function _updateGroundDustForArc(){
+        local bestAbsY = 999.0;
+        local bestWorldPos = null;
+        local groundY = mArcLeapStartPos_.y;
+
+        //Check head
+        local headWorldPos = mWormHeadNode_.getDerivedPositionVec3();
+        local headDistToGround = abs(headWorldPos.y - groundY);
+        if(headDistToGround < bestAbsY){
+            bestAbsY = headDistToGround;
+            bestWorldPos = headWorldPos;
+        }
+
+        //Check segments
+        for(local i = 0; i < mWormSegments_.len(); i++){
+            local segWorldPos = mWormSegments_[i].getDerivedPositionVec3();
+            local segDistToGround = abs(segWorldPos.y - groundY);
+            if(segDistToGround < bestAbsY){
+                bestAbsY = segDistToGround;
+                bestWorldPos = segWorldPos;
+            }
+        }
+
+        //Only emit dust if the closest part is near ground level
+        if(bestWorldPos != null && bestAbsY <= mGroundDustProximity_){
+            //Convert world position to local offset from root node
+            mGroundDustNode_.setPosition(bestWorldPos.x - mArcLeapStartPos_.x, 0, bestWorldPos.z - mArcLeapStartPos_.z);
+            mGroundDustParticles_.setEmitting(true);
+        }else{
+            mGroundDustParticles_.setEmitting(false);
         }
     }
 
@@ -538,6 +578,9 @@ enum WormAttackType{
         //Animate head mesh alternation during flight
         local time = progress * PI * 3;
         _animateHeadMeshes(time);
+
+        //Position ground dust near the lowest part close to the ground
+        _updateGroundDustForArc();
     }
 
 
