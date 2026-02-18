@@ -171,4 +171,9 @@
         return mMapData_;
     }
 
+    #Override
+    function canPauseGame(){
+        return false;
+    }
+
 };

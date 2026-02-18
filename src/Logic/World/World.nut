@@ -2444,6 +2444,10 @@
         return mLogicPaused_;
     }
 
+    function canPauseGame(){
+        return true;
+    }
+
     function updatePlayerPos(playerPos){
         mPosition_ = playerPos;
     }

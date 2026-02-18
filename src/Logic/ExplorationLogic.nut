@@ -222,7 +222,9 @@
 
     function processMoveToBackground(id, data){
         print("Received move to background event");
-        setGamePaused(true);
+        if(mCurrentWorld_ != null && mCurrentWorld_.canPauseGame()){
+            setGamePaused(true);
+        }
     }
 
     function resetExploration_(){
