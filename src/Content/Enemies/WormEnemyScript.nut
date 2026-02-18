@@ -1,7 +1,7 @@
 ::WormEnemyScript <- class{
     mEntity_ = null;
     mWorld_ = null;
-    mStayDormant_ = true; //Whether the worm should remain in dormant phase
+    mStayDormant_ = false; //Whether the worm should remain in dormant phase
     mParticleSystem_ = null;
     mShrapnelParticles_ = null;
     mDustCloudParticles_ = null;
