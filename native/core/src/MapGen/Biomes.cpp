@@ -250,6 +250,12 @@ namespace ProceduralExplorationGameCore{
         float fa = mapData->seaLevel - 1;
         float a = mix<float>(fa, originalAltitude, 1.0-modifier);
         AV::uint8 out = static_cast<AV::uint8>(a);
+
+        //Prevent incorrect voxels if close to the sea.
+        if(altitudeDistance < 4 && out <= fa){
+            return altitude;
+        }
+
         return out;
     }
 
