@@ -307,7 +307,8 @@
 
         print("Pausing exploration");
         mExplorationPaused_ = true;
-        _state.setPauseState(0xFFFF);
+        _state.setPauseState(_PAUSE_SPECIFIC_ANIMATIONS | _PAUSE_PARTICLES);
+        _state.setAnimationPauseMask(GAMEPLAY_WORLD_ANIMATION_PAUSE);
     }
 
     function unPauseExploration(){

@@ -74,11 +74,14 @@
         if(anim == CharacterModelAnimId.NONE) return;
         stopAnimation(anim);
     }
-    function startAnimation(animId){
+    function startAnimation(animId, pauseMask=null){
         if(animId == CharacterModelAnimId.NONE) return;
         //local newAnim = _animation.createAnimation(animName, mNodes_);
         //local newAnim = _animation.createAnimation(animName, mNodes_);
         local newAnim = createAnimation(animId);
+        if(pauseMask != null){
+            newAnim.setPauseMask(pauseMask);
+        }
         mCurrentAnimations_.rawset(animId, newAnim);
         resetAnimTimes_();
     }

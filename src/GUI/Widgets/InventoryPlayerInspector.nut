@@ -37,8 +37,8 @@
             local combatStats = ::Base.mPlayerStats.mPlayerCombatStats;
             updateForEquipChange(combatStats.mEquippedItems, combatStats.mWieldActive);
 
-            mCharacterModel_.startAnimation(CharacterModelAnimId.BASE_LEGS_WALK);
-            mCharacterModel_.startAnimation(CharacterModelAnimId.BASE_ARMS_WALK);
+            mCharacterModel_.startAnimation(CharacterModelAnimId.BASE_LEGS_WALK, GUI_ANIMATION_PAUSE);
+            mCharacterModel_.startAnimation(CharacterModelAnimId.BASE_ARMS_WALK, GUI_ANIMATION_PAUSE);
 
             mModelAABB_ = mCharacterModel_.determineAABB();
             printf("Model aabb: %s", mModelAABB_.tostring());

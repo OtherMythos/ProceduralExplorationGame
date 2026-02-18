@@ -26,6 +26,10 @@ const PLAYER_COMPASS_DISTANCE = 32.0;
 const COLLISION_TYPE_PLAYER = 0x1;
 const COLLISION_TYPE_ENEMY = 0x2;
 
+//Global pause for the gameplay world only.
+const GAMEPLAY_WORLD_ANIMATION_PAUSE = 0x2;
+const GUI_ANIMATION_PAUSE = 0x4;
+
 enum FullscreenMode{
     WINDOWED,
     BORDERLESS_FULLSCREEN

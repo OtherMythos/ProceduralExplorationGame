@@ -779,6 +779,9 @@
 
     function setLogicPaused(paused){
         mLogicPaused_ = paused;
+
+        _state.setAnimationPauseMask(GAMEPLAY_WORLD_ANIMATION_PAUSE);
+        _state.setPauseState(paused ? (_PAUSE_SPECIFIC_ANIMATIONS | _PAUSE_PARTICLES) : 0);
     }
 
     function updateLogicPaused(){

@@ -334,6 +334,8 @@
         }
         */
 
+        _state.setDefaultAnimationPauseMask(GAMEPLAY_WORLD_ANIMATION_PAUSE);
+
         //TODO move this somewhere else.
         _animation.loadAnimationFile("res://build/assets/animation/baseAnimation.xml");
         _animation.loadAnimationFile("res://build/assets/characterAnimations/equippableAnimation.xml");
