@@ -23,7 +23,6 @@
 #include "Steps/DeterminePlayerStartMapGenStep.h"
 #include "Steps/DetermineGatewayPositionMapGenStep.h"
 #include "Steps/DetermineRegionsMapGenStep.h"
-#include "Steps/DetermineRegionTypesMapGenStep.h"
 #include "Steps/MergeExpandableRegionsMapGenStep.h"
 #include "Steps/BiomeVoxelMapGenStep.h"
 #include "Steps/WriteFinalRegionValuesMapGenStep.h"
@@ -79,7 +78,7 @@ namespace ProceduralExplorationGameCore{
             new MergeSmallRegionsMapGenStep(),
             new MergeIsolatedRegionsMapGenStep(),
             new CalculateRegionConcavityMapGenStep(),
-            new DetermineRegionTypesMapGenStep(),
+            new MapGenStepMarker("DetermineRegionTypes"),
             new MergeExpandableRegionsMapGenStep(),
             new RecalculateRegionEdgesMapGenStep(),
             new MergeIsolatedRegionsMapGenStep(),

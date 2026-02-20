@@ -670,6 +670,47 @@ namespace ProceduralExplorationGameCore{
         return 1;
     }
 
+    SQInteger ExplorationMapDataUserData::getRegionConcavity(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger idx;
+        sq_getinteger(vm, 2, &idx);
+
+        std::vector<RegionData>* regions = mapData->ptr<std::vector<RegionData>>("regionData");
+        sq_pushinteger(vm, static_cast<SQInteger>((*regions)[idx].concavity));
+
+        return 1;
+    }
+
+    SQInteger ExplorationMapDataUserData::setRegionType(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger idx, type;
+        sq_getinteger(vm, 2, &idx);
+        sq_getinteger(vm, 3, &type);
+
+        std::vector<RegionData>* regions = mapData->ptr<std::vector<RegionData>>("regionData");
+        (*regions)[idx].type = static_cast<RegionType>(type);
+
+        return 0;
+    }
+
+    SQInteger ExplorationMapDataUserData::setRegionMeta(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger idx, meta;
+        sq_getinteger(vm, 2, &idx);
+        sq_getinteger(vm, 3, &meta);
+
+        std::vector<RegionData>* regions = mapData->ptr<std::vector<RegionData>>("regionData");
+        (*regions)[idx].meta |= static_cast<AV::uint8>(meta);
+
+        return 0;
+    }
+
     SQInteger ExplorationMapDataUserData::voxValueForCoord(HSQUIRRELVM vm){
         ExplorationMapData* mapData;
         SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
@@ -1200,9 +1241,12 @@ namespace ProceduralExplorationGameCore{
         AV::ScriptUtils::addFunction(vm, getNumRegions, "getNumRegions");
         AV::ScriptUtils::addFunction(vm, getRegionTotal, "getRegionTotal", 2, ".i");
         AV::ScriptUtils::addFunction(vm, getRegionType, "getRegionType", 2, ".i");
+        AV::ScriptUtils::addFunction(vm, getRegionConcavity, "getRegionConcavity", 2, ".i");
         AV::ScriptUtils::addFunction(vm, getRegionTotalCoords, "getRegionTotalCoords", 2, ".i");
         AV::ScriptUtils::addFunction(vm, getRegionCoordForIdx, "getRegionCoordForIdx", 3, ".ii");
         AV::ScriptUtils::addFunction(vm, getRegionId, "getRegionId", 2, ".i");
+        AV::ScriptUtils::addFunction(vm, setRegionType, "setRegionType", 3, ".ii");
+        AV::ScriptUtils::addFunction(vm, setRegionMeta, "setRegionMeta", 3, ".ii");
 
         AV::ScriptUtils::addFunction(vm, averageOutAltitudeRectangle, "averageOutAltitudeRectangle", 8, ".iiiiiii");
         AV::ScriptUtils::addFunction(vm, averageOutAltitudeRadius, "averageOutAltitudeRadius", 7, ".iiiiii");
