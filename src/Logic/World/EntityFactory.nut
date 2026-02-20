@@ -420,6 +420,11 @@
         entry.setPosition(targetPos);
         entry.setTargetCollisionWorld(_COLLISION_PLAYER);
 
+        //Add compass indicator
+        local compassCollisionWorld = mConstructorWorld_.getCompassCollisionWorld();
+        local compassPoint = compassCollisionWorld.addCollisionPoint(targetPos.x, targetPos.z, 1, _COLLISION_PLAYER, _COLLISION_WORLD_ENTRY_SENDER);
+        manager.assignComponent(en, EntityComponents.COMPASS_INDICATOR, ::EntityManager.Components[EntityComponents.COMPASS_INDICATOR](compassPoint, compassCollisionWorld, CompassIndicatorType.ENEMY, en));
+
         //Add separation radius so enemies don't stack on top of each other.
         local separationRadius = 2.5;
         local separationStrength = 0.04;
