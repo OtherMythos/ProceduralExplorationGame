@@ -50,6 +50,9 @@
 
                 local regionTypeVal = mMapData_.getRegionType(i);
                 if(regionTypeVal == RegionType.NONE){
+                    local placeCount = mMapData_.getRegionPlaceCount(i);
+                    if(placeCount > 0) continue;
+
                     local total = mMapData_.getRegionTotal(i);
                     local concavity = mMapData_.getRegionConcavity(i);
 

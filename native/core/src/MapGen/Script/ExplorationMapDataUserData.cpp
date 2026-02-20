@@ -683,6 +683,19 @@ namespace ProceduralExplorationGameCore{
         return 1;
     }
 
+    SQInteger ExplorationMapDataUserData::getRegionPlaceCount(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger idx;
+        sq_getinteger(vm, 2, &idx);
+
+        std::vector<RegionData>* regions = mapData->ptr<std::vector<RegionData>>("regionData");
+        sq_pushinteger(vm, static_cast<SQInteger>((*regions)[idx].placeCount));
+
+        return 1;
+    }
+
     SQInteger ExplorationMapDataUserData::setRegionType(HSQUIRRELVM vm){
         ExplorationMapData* mapData;
         SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
@@ -1258,6 +1271,7 @@ namespace ProceduralExplorationGameCore{
         AV::ScriptUtils::addFunction(vm, getRegionTotal, "getRegionTotal", 2, ".i");
         AV::ScriptUtils::addFunction(vm, getRegionType, "getRegionType", 2, ".i");
         AV::ScriptUtils::addFunction(vm, getRegionConcavity, "getRegionConcavity", 2, ".i");
+        AV::ScriptUtils::addFunction(vm, getRegionPlaceCount, "getRegionPlaceCount", 2, ".i");
         AV::ScriptUtils::addFunction(vm, getRegionTotalCoords, "getRegionTotalCoords", 2, ".i");
         AV::ScriptUtils::addFunction(vm, getRegionCoordForIdx, "getRegionCoordForIdx", 3, ".ii");
         AV::ScriptUtils::addFunction(vm, getRegionId, "getRegionId", 2, ".i");
