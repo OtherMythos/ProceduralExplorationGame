@@ -27,6 +27,13 @@
                 <k t='240' position='0, 1, 0' rot='0, 360, 0'/>
             </t>
         </CollectableItemAnimation>
+        <SandUrnAnimation repeat='true' end='960'>
+            <t type='transform' target='0'>
+                <k t='0' position='0, 1, 0' rot='0, 0, 0'/>
+                <k t='480' position='0, 2, 0' rot='20, 180, 0'/>
+                <k t='960' position='0, 1, 0' rot='0, 360, 0'/>
+            </t>
+        </SandUrnAnimation>
         <CoinAnim repeat='true' end='240'>
             <t type='transform' target='0'>
                 <k t='0' position='0, 0.5, 0' rot='0, 0, 0'/>

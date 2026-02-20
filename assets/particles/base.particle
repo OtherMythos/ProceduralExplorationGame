@@ -1031,5 +1031,48 @@ particle_system giantWormShrapnel
     }
 }
 
+particle_system sandUrnDust
+{
+    material        ParticleAlphaWhite
+    particle_width  0.4
+    particle_height 0.4
+    cull_each       false
+    quota           3000
+    billboard_type  point
 
+    emitter Cylinder
+    {
+        angle           25
+        emission_rate   35
+        time_to_live    1.2
+        direction       0 1 0
+        velocity        4.0
+        width           32.0
+        depth           4.0
+        height          32.0
+    }
+
+    affector ColourInterpolator
+    {
+        time0 0
+        colour0 0.84 0.87 0.29 1.0
+
+        time1 0.5
+        colour1 0.84 0.87 0.29 0.5
+
+        time2 1.0
+        colour2 0.84 0.87 0.29 0
+    }
+
+    affector LinearForce
+    {
+        force_vector      0 -0.4 0
+        force_application multiply
+    }
+
+    affector DirectionRandomiser
+    {
+        randomness 5
+    }
+}
 

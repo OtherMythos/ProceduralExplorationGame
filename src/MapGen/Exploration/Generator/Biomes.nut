@@ -184,6 +184,62 @@ local WormFieldsLogic = {
     }
 };
 
+local SandUrnLogic = {
+    "mUrnsSpawned_": 0,
+    "mUrnChanceMultiplier_": 1,
+
+    "setup": function(regionData, world){
+        //Initialize sand urn spawning for this biome
+    },
+
+    "update": function(world){
+        //Each frame, check if a sand urn should spawn in the desert
+        //Urns spawn very rarely on sand - roughly once per 20 seconds at 60 fps
+        if(mUrnsSpawned_ >= 3) return;
+
+        local urnChance = _random.randInt(100 * mUrnChanceMultiplier_);
+        if(urnChance != 0) return;
+
+        //Find a spawn position
+        local playerPos = world.getPlayerPosition();
+        local spawnPos = playerPos + (_random.randVec3() - 0.5) * 200;
+        spawnPos.y = world.getZForPos(spawnPos);
+
+        //Check if this position is on sand (not water)
+        if(::MapGenHelpers.getIsWaterForPosition(world.mMapData_, spawnPos)){
+            return;
+        }
+
+        //Create the sand urn entity
+        local urnEntity = world.mEntityFactory_.constructSandUrn(spawnPos);
+
+        //Get a drift direction towards the player
+        local driftDirection = (playerPos - spawnPos);
+        driftDirection.y = 0;
+        driftDirection.normalise();
+
+        //Assign the drift direction to the urn script
+        if(world.getEntityManager().hasComponent(urnEntity, EntityComponents.SCRIPT)){
+            local scriptComponent = world.getEntityManager().getComponent(urnEntity, EntityComponents.SCRIPT);
+            scriptComponent.mScript.driftDirection = driftDirection;
+        }
+
+        //Track this urn and increase difficulty for next one
+        mUrnsSpawned_++;
+        mUrnChanceMultiplier_ *= 4;
+    },
+
+    "enter": function(world){
+        //Player entered desert - urns can spawn
+    },
+
+    "leave": function(world){
+        //Player left desert - reset urn spawning
+        mUrnsSpawned_ = 0;
+        mUrnChanceMultiplier_ = 1;
+    }
+};
+
 ::Biomes <- array(BiomeId.MAX, null);
 
 ::Biomes[BiomeId.NONE] = Biome("None", [], null, null, null, null);
@@ -192,7 +248,7 @@ local WormFieldsLogic = {
 ::Biomes[BiomeId.GRASS_FOREST] = Biome("Grass Forest", [EnemyId.GOBLIN], null, null, null, null);
 ::Biomes[BiomeId.CHERRY_BLOSSOM_FOREST] = Biome("Cherry Blossom Forest", [EnemyId.FOREST_GUARDIAN], null, null, null, null);
 ::Biomes[BiomeId.EXP_FIELD] = Biome("EXP Field", [], null, null, null, null);
-::Biomes[BiomeId.DESERT] = Biome("Desert", [EnemyId.SKELETON], null, null, 2, null);
+::Biomes[BiomeId.DESERT] = Biome("Desert", [EnemyId.SKELETON], null, null, 2, null, SandUrnLogic);
 ::Biomes[BiomeId.SWAMP] = Biome("Swamp", [EnemyId.GOBLIN], Vec3(0.05, 0.1, 0.08), Vec3(0.25, 0.25, 0.25), 0.25, Vec2(50, 200));
 ::Biomes[BiomeId.HOT_SPRINGS] = Biome("Hot Springs", [EnemyId.GOBLIN], null, null, null, null, HotSpringsLogic, false);
 ::Biomes[BiomeId.MUSHROOM_CLUSTER] = Biome("Mushroom Cluster", [EnemyId.GOBLIN], null, null, null, null, null, false);

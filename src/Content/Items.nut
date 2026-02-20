@@ -10,7 +10,8 @@ enum ItemType{
     LORE_CONTENT,
     EAT,
     DRINK,
-    MESSAGE_IN_A_BOTTLE
+    MESSAGE_IN_A_BOTTLE,
+    SAND_URN
 };
 
 //Separate rotation parameters into re-useable objects.

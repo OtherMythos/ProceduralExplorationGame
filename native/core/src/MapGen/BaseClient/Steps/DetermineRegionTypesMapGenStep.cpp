@@ -35,7 +35,7 @@ namespace ProceduralExplorationGameCore{
 
         std::vector<RegionId> blacklistedRegions;
 
-        static const std::array regionsToAdd{RegionType::CHERRY_BLOSSOM_FOREST, RegionType::WORM_FIELDS, RegionType::GEOTHERMAL_PLANES};
+        static const std::array regionsToAdd{RegionType::CHERRY_BLOSSOM_FOREST, RegionType::DESERT, RegionType::GEOTHERMAL_PLANES};
         for(RegionType r : regionsToAdd){
             size_t targetIdx = mapGenRandomIndex(freeRegions);
             if(targetIdx >= freeRegions.size()) continue;

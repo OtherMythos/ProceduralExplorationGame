@@ -942,6 +942,56 @@
         return en;
     }
 
+    function constructSandUrn(pos){
+        local manager = mConstructorWorld_.getEntityManager();
+        local targetPos = pos.copy();
+        targetPos.y = getZForPos(targetPos);
+
+        local en = manager.createEntity(targetPos);
+
+        local parentNode = mBaseSceneNode_.createChildSceneNode();
+        parentNode.setPosition(targetPos);
+        parentNode.setScale(0.1, 0.1, 0.1);
+
+        local item = _gameCore.createVoxMeshItem("smallPotion.voxMesh");
+        item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_SHADOW_VISIBILITY);
+
+        local animNode = parentNode.createChildSceneNode();
+        animNode.attachObject(item);
+
+        //Attach sand particle effect
+        local particleSystem = _scene.createParticleSystem("sandUrnDust");
+        animNode.attachObject(particleSystem);
+
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](parentNode, true));
+
+        //Create spinning animation
+        local animationInfo = _animation.createAnimationInfo([animNode]);
+        local anim = _animation.createAnimation("SandUrnAnimation", animationInfo);
+        anim.setTime(_random.randInt(0, 180));
+        manager.assignComponent(en, EntityComponents.ANIMATION, ::EntityManager.Components[EntityComponents.ANIMATION](anim));
+
+        //Create a script to handle drifting behaviour on sand
+        manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](::SandUrnScript(en)));
+
+        //Add spoils component which grants the sand urn item
+        local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.GIVE_ITEM, ::Item(ItemId.SAND_URN), null, null);
+        manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
+
+        //Register collision trigger for interaction
+        local triggerWorld = mConstructorWorld_.getTriggerWorld();
+        local collisionPoint = triggerWorld.addCollisionSender(CollisionWorldTriggerResponses.CLAIM_SAND_URN, en, targetPos.x, targetPos.z, 3, _COLLISION_PLAYER);
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT, ::EntityManager.Components[EntityComponents.COLLISION_POINT](collisionPoint, triggerWorld));
+
+        //Add collision detection for movement
+        manager.assignComponent(en, EntityComponents.COLLISION_DETECTION, ::EntityManager.Components[EntityComponents.COLLISION_DETECTION](2, COLLISION_TYPE_PLAYER));
+
+        //Set traversable terrain to land only (sand)
+        manager.assignComponent(en, EntityComponents.TRAVERSABLE_TERRAIN, ::EntityManager.Components[EntityComponents.TRAVERSABLE_TERRAIN](EnemyTraversableTerrain.LAND));
+
+        return en;
+    }
+
     function constructEnemyCollisionBlocker(parentNode, pos, radius){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = pos.copy();

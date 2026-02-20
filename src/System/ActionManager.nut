@@ -174,6 +174,14 @@ These actions might be things like 'talk', 'buy things from', etc.
                 }
                 break;
             }
+            case ActionSlotType.CLAIM_SAND_URN:{
+                local world = ::Base.mExplorationLogic.mCurrentWorld_;
+                local manager = world.getEntityManager();
+                if(manager.entityValid(data)){
+                    manager.destroyEntity(data, EntityDestroyReason.CONSUMED);
+                }
+                break;
+            }
             default:{
                 throw "Attempted to execute an invalid action slot.";
             }

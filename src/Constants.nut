@@ -173,6 +173,7 @@ enum CollisionWorldTriggerResponses{
     READ_LORE,
     PLACE_DESCRIPTION_TRIGGER,
     CLAIM_MESSAGE_IN_BOTTLE,
+    CLAIM_SAND_URN,
     CAMERA_EFFECT,
 
     MAX = 100
@@ -328,6 +329,7 @@ enum ActionSlotType{
     PICK,
     READ_LORE,
     CLAIM_MESSAGE_IN_BOTTLE,
+    CLAIM_SAND_URN,
 };
 
 enum SystemSetting{
@@ -357,6 +359,7 @@ enum SystemSetting{
     "Item Search",
     "Pick",
     "Read",
+    "Claim",
     "Claim"
 ];
 

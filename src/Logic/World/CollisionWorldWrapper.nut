@@ -329,6 +329,14 @@
                 ::Base.mActionManager.unsetAction(0, entityId);
             }
         });
+        ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.CLAIM_SAND_URN] <- TriggerResponse(function(world, entityId, second, collisionStatus){
+            if(collisionStatus == 0x1){
+                local isActive = ::Base.mPlayerStats.doesInventoryHaveFreeSlot();
+                ::Base.mActionManager.registerAction(ActionSlotType.CLAIM_SAND_URN, 0, entityId, entityId, isActive);
+            }else if(collisionStatus == 0x2){
+                ::Base.mActionManager.unsetAction(0, entityId);
+            }
+        });
         ::World.CollisionWorldWrapper.mTriggerResponses_[CollisionWorldTriggerResponses.CAMERA_EFFECT] <- TriggerResponse(function(world, effectData, second, collisionStatus){
             if(collisionStatus != 0x1) return;
             local effectId = effectData.effectId;
