@@ -6,6 +6,66 @@
         mMapData_ = mapData;
     }
 
+    function shouldMarkExpandable(regionType){
+        switch(regionType){
+            case RegionType.DESERT:
+            case RegionType.MUSHROOM_FOREST:
+            case RegionType.GEOTHERMAL_PLANES:
+            case RegionType.WORM_FIELDS:
+            case RegionType.SWAMP:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    function isValidRegionForType(regionType, total, concavity){
+        switch(regionType){
+            case RegionType.HOT_SPRINGS:
+                return total > 500 && total < 2000 && concavity >= 180;
+            case RegionType.MUSHROOM_CLUSTER:
+                return total > 300 && total < 800 && concavity >= 180;
+            default:
+                return false;
+        }
+    }
+
+    function pickRandomRegionTypes(count){
+        local allRegionTypes = [
+            RegionType.CHERRY_BLOSSOM_FOREST,
+            RegionType.DESERT,
+            RegionType.SWAMP,
+            RegionType.GEOTHERMAL_PLANES,
+            RegionType.MUSHROOM_FOREST,
+            RegionType.WORM_FIELDS
+        ];
+
+        local selectedTypes = [];
+        local usedIndices = [];
+
+        for(local i = 0; i < count && i < allRegionTypes.len(); i++){
+            local randomIdx = mMapData_.randomIntMinMax(0, allRegionTypes.len() - 1);
+
+            //Ensure we don't pick duplicates
+            local isUsed = false;
+            foreach(usedIdx in usedIndices){
+                if(usedIdx == randomIdx){
+                    isUsed = true;
+                    break;
+                }
+            }
+
+            if(!isUsed){
+                selectedTypes.append(allRegionTypes[randomIdx]);
+                usedIndices.append(randomIdx);
+            }else{
+                i--; //Retry this iteration
+            }
+        }
+
+        return selectedTypes;
+    }
+
     function processStep(){
         local freeRegions = [];
         //Mark regions 0, 1, 2 as free for assignment
@@ -15,12 +75,8 @@
 
         local blacklistedRegions = [];
 
-        //Place large region types
-        local regionsToAdd = [
-            RegionType.CHERRY_BLOSSOM_FOREST,
-            RegionType.WORM_FIELDS,
-            RegionType.GEOTHERMAL_PLANES
-        ];
+        //Place large region types - pick 3 random types from available biomes
+        local regionsToAdd = pickRandomRegionTypes(3);
 
         foreach(regionType in regionsToAdd){
             if(freeRegions.len() == 0) break;
@@ -32,7 +88,7 @@
             mMapData_.setRegionType(regionId, regionType);
 
             //Mark certain types as expandable
-            if(regionType == RegionType.DESERT || regionType == RegionType.MUSHROOM_FOREST || regionType == RegionType.GEOTHERMAL_PLANES || regionType == RegionType.WORM_FIELDS){
+            if(shouldMarkExpandable(regionType)){
                 mMapData_.setRegionMeta(regionId, RegionMeta.EXPANDABLE);
             }
 
@@ -65,14 +121,8 @@
                     local total = mMapData_.getRegionTotal(i);
                     local concavity = mMapData_.getRegionConcavity(i);
 
-                    if(regionType == RegionType.HOT_SPRINGS){
-                        if(total > 500 && total < 2000 && concavity >= 180){
-                            availableRegions.append(i);
-                        }
-                    }else{
-                        if(total > 300 && total < 800 && concavity >= 180){
-                            availableRegions.append(i);
-                        }
+                    if(isValidRegionForType(regionType, total, concavity)){
+                        availableRegions.append(i);
                     }
                 }
             }
