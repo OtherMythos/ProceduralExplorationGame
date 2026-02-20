@@ -712,6 +712,21 @@ namespace ProceduralExplorationGameCore{
         return 0;
     }
 
+    SQInteger ExplorationMapDataUserData::incrementRegionPlaceCount(HSQUIRRELVM vm){
+        ExplorationMapData* mapData;
+        SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
+
+        SQInteger idx;
+        sq_getinteger(vm, 2, &idx);
+
+        std::vector<RegionData>* regions = mapData->ptr<std::vector<RegionData>>("regionData");
+        if((*regions)[idx].placeCount < 255){
+            (*regions)[idx].placeCount++;
+        }
+
+        return 0;
+    }
+
     SQInteger ExplorationMapDataUserData::voxValueForCoord(HSQUIRRELVM vm){
         ExplorationMapData* mapData;
         SCRIPT_ASSERT_RESULT(ExplorationMapDataUserData::readExplorationMapDataFromUserData(vm, 1, &mapData));
@@ -1248,6 +1263,7 @@ namespace ProceduralExplorationGameCore{
         AV::ScriptUtils::addFunction(vm, getRegionId, "getRegionId", 2, ".i");
         AV::ScriptUtils::addFunction(vm, setRegionType, "setRegionType", 3, ".ii");
         AV::ScriptUtils::addFunction(vm, setRegionMeta, "setRegionMeta", 3, ".ii");
+        AV::ScriptUtils::addFunction(vm, incrementRegionPlaceCount, "incrementRegionPlaceCount", 2, ".i");
 
         AV::ScriptUtils::addFunction(vm, averageOutAltitudeRectangle, "averageOutAltitudeRectangle", 8, ".iiiiiii");
         AV::ScriptUtils::addFunction(vm, averageOutAltitudeRadius, "averageOutAltitudeRadius", 7, ".iiiiii");

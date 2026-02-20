@@ -44,6 +44,7 @@ namespace ProceduralExplorationGameCore{
         static SQInteger getRegionId(HSQUIRRELVM vm);
         static SQInteger setRegionType(HSQUIRRELVM vm);
         static SQInteger setRegionMeta(HSQUIRRELVM vm);
+        static SQInteger incrementRegionPlaceCount(HSQUIRRELVM vm);
 
         static SQInteger voxValueForCoord(HSQUIRRELVM vm);
         static SQInteger writeVoxValueForCoord(HSQUIRRELVM vm);

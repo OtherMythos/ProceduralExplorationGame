@@ -30,6 +30,7 @@ namespace ProceduralExplorationGameCore{
         RegionType type;
         AV::uint8 meta;
         AV::uint8 concavity;
+        AV::uint8 placeCount;
         std::vector<WorldPoint> coords;
         std::vector<WorldPoint> edges;
         WorldPoint deepestPoint;

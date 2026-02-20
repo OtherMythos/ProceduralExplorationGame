@@ -157,13 +157,17 @@
 
             mPlacesCollisionWorld_.addCollisionPoint(originX, originY, radius);
 
+            local regionId = mMapData_.getRegionId(region);
             local outputPlaceData = {
                 "originX": originX,
                 "originY": originY,
                 "originWrapped": point,
                 "placeId": placeId,
-                "region": mMapData_.getRegionId(region)
+                "region": regionId
             };
+
+            //Increment place count for this region
+            mMapData_.incrementRegionPlaceCount(regionId);
 
             if(placeMetaData != null && placeMetaData.rawin("terrainHoleRadius")){
                 local radius = placeMetaData.terrainHoleRadius;
