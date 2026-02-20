@@ -693,6 +693,7 @@ namespace ProceduralExplorationGameCore{
 
         std::vector<RegionData>* regions = mapData->ptr<std::vector<RegionData>>("regionData");
         (*regions)[idx].type = static_cast<RegionType>(type);
+        (*regions)[idx].meta |= static_cast<AV::uint8>(RegionMeta::NEEDS_ALTITUDE_RECALCULATION);
 
         return 0;
     }

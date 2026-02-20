@@ -93,7 +93,8 @@ enum RegionType{
 
 enum RegionMeta{
     MAIN_REGION = 0x1,
-    EXPANDABLE = 0x2
+    EXPANDABLE = 0x2,
+    NEEDS_ALTITUDE_RECALCULATION = 0x4
 };
 
 const DO_NOT_PLACE_ITEMS_VOXEL_FLAG = 0x1;

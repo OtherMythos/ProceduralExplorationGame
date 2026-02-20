@@ -96,47 +96,6 @@
             freeRegions.remove(targetIdx);
         }
 
-        //Place small region types with specific criteria
-        local smallRegionsToAdd = [
-            RegionType.HOT_SPRINGS,
-            RegionType.MUSHROOM_CLUSTER
-        ];
-
-        foreach(regionType in smallRegionsToAdd){
-            local availableRegions = [];
-
-            for(local i = 0; i < mMapData_.getNumRegions(); i++){
-                //Check if this region is blacklisted
-                local isBlacklisted = false;
-                foreach(blacklistedId in blacklistedRegions){
-                    if(blacklistedId == i){
-                        isBlacklisted = true;
-                        break;
-                    }
-                }
-                if(isBlacklisted) continue;
-
-                local regionTypeVal = mMapData_.getRegionType(i);
-                if(regionTypeVal == RegionType.NONE){
-                    local total = mMapData_.getRegionTotal(i);
-                    local concavity = mMapData_.getRegionConcavity(i);
-
-                    if(isValidRegionForType(regionType, total, concavity)){
-                        availableRegions.append(i);
-                    }
-                }
-            }
-
-            if(availableRegions.len() > 0){
-                local targetIdx = mMapData_.randomIntMinMax(0, availableRegions.len() - 1);
-                local regionId = availableRegions[targetIdx];
-
-                mMapData_.setRegionType(regionId, regionType);
-                mMapData_.setRegionMeta(regionId, RegionMeta.MAIN_REGION);
-                blacklistedRegions.append(regionId);
-            }
-        }
-
         return true;
     }
 };

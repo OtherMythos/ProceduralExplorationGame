@@ -41,6 +41,7 @@
 #include "Steps/GenerateWaterMeshMapGenStep.h"
 #include "Steps/GenerateVoxelDiffuseMapGenStep.h"
 #include "Steps/CalculateRegionConcavityMapGenStep.h"
+#include "Steps/RecalculateRegionAltitudeMapGenStep.h"
 
 #include "MapGen/Mesh/WaterMeshGenerator.h"
 #include "System/OgreResourceHelper.h"
@@ -94,6 +95,8 @@ namespace ProceduralExplorationGameCore{
             new MapGenStepMarker("DeterminePlaces"),
             new RecalculateRegionEdgesMapGenStep(),
             new CalculateRegionDistanceMapGenStep(),
+            new MapGenStepMarker("DetermineSmallerRegionTypes"),
+            new RecalculateRegionAltitudeMapGenStep(),
             new BiomeVoxelMapGenStep(),
             new BiomeFinalChangesMapGenStep(),
 
