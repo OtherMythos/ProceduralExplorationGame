@@ -64,7 +64,6 @@
                 local regionId = availableRegions[targetIdx];
 
                 mMapData_.setRegionType(regionId, regionType);
-                print("Assigned region " + regionId + " type " + regionType);
                 mMapData_.setRegionMeta(regionId, RegionMeta.MAIN_REGION);
                 blacklistedRegions.append(regionId);
             }

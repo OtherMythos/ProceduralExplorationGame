@@ -197,7 +197,7 @@ local SandUrnLogic = {
         //Urns spawn very rarely on sand - roughly once per 20 seconds at 60 fps
         if(mUrnsSpawned_ >= 3) return;
 
-        local urnChance = _random.randInt(100 * mUrnChanceMultiplier_);
+        local urnChance = _random.randInt(1200 * mUrnChanceMultiplier_);
         if(urnChance != 0) return;
 
         //Find a spawn position
