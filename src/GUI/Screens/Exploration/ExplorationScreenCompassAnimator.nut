@@ -4,6 +4,7 @@
     mSceneNode_ = null;
     mPanelTrackNode_ = null;
     mWorldId_ = -1;
+    mType_ = -1;
 
     constructor(worldId, distance, radian, parentNode, compassNode, window){
         mWorldId_ = worldId;
@@ -31,6 +32,7 @@
     }
 
     function setType(type){
+        mType_ = type;
         if(type == CompassIndicatorType.ENEMY){
             mSceneNode_.getAttachedObject(0).setDatablock("guiExplorationCompassIndicatorEnemy");
         }else if(type == CompassIndicatorType.NPC){
@@ -42,6 +44,9 @@
 
     function updatePanelPosition(){
         local derivedPos = mPanelTrackNode_.getDerivedPositionVec3();
+        if(mType_ == CompassIndicatorType.PLAYER){
+            derivedPos.z -= 0.1;
+        }
         mSceneNode_.setPosition(derivedPos);
     }
 

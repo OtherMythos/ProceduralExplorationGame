@@ -63,6 +63,7 @@ enum ProximityComponentType{
 };
 
 enum CompassIndicatorType{
+    PLAYER,
     ENEMY,
     NPC,
     ITEM

@@ -1125,8 +1125,10 @@
 
     function setupPlayerCompass_(){
         //Add player indicator to compass (distance 0, radian 0)
-        local playerIndicatorId = mGui_.mCompassAnimator_.addCompassIndicator(getWorldId(), 0, 0);
+        local compassAnimator = mGui_.mCompassAnimator_;
+        local playerIndicatorId = compassAnimator.addCompassIndicator(getWorldId(), 0, 0);
         mCompassIndicatorTracking_.rawset(-1, playerIndicatorId); //Use -1 as sentinel for player
+        compassAnimator.setCompassIndicatorType(playerIndicatorId, CompassIndicatorType.PLAYER);
     }
 
     function processStatusAfflictionChange_(entity){
