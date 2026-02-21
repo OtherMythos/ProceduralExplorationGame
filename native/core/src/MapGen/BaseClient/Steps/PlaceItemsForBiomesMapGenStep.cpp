@@ -68,8 +68,7 @@ namespace ProceduralExplorationGameCore{
                 }
 
                 AV::uint8 moisture = fullSecondaryVox & 0xFF;
-                //TODO remove the need for flags
-                AV::uint8 flags = 0;
+                AV::uint16 flags = static_cast<AV::uint16>(fullTertiaryVox & 0xFFFF);
                 RegionId regionId = (fullSecondaryVox >> 8) & 0xFF;
                 AV::uint8 regionDistance = (fullSecondaryVox >> 16) & 0xFF;
 

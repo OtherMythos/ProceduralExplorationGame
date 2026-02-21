@@ -27,6 +27,7 @@
 #include "Steps/BiomeVoxelMapGenStep.h"
 #include "Steps/WriteFinalRegionValuesMapGenStep.h"
 #include "Steps/PlaceItemsForBiomesMapGenStep.h"
+#include "Steps/DetermineBeachVoxelsMapGenStep.h"
 #include "Steps/MergeSmallRegionsMapGenStep.h"
 #include "Steps/MergeIsolatedRegionsMapGenStep.h"
 #include "Steps/GenerateWaterTextureMapGenStep.h"
@@ -111,6 +112,7 @@ namespace ProceduralExplorationGameCore{
             //new DeterminePlayerStartMapGenStep(),
             //new DetermineGatewayPositionMapGenStep(),
             new CalculateWaterDistanceMapGenStep(),
+            new DetermineBeachVoxelsMapGenStep(),
             new PlaceItemsForBiomesMapGenStep(),
             new GenerateWaterTextureMapGenStep(),
             new GenerateWaterMeshMapGenStep(),
