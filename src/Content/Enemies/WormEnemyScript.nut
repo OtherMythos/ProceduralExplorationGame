@@ -53,6 +53,7 @@ enum WormAttackType{
     mArcLeapStartPos_ = null;       //World position where the worm emerges
     mArcLeapEndPos_ = null;         //World position where the worm lands
     mArcLeapDirection_ = null;      //Normalised XZ direction of travel
+    mArcCurrentDist_ = 0.0;         //Actual horizontal leap distance used for the current arc (may be shorter than mArcLeapDistance_ if region-limited)
 
     NUM_SEGMENTS = 5;
     SEGMENT_SCALE = 0.4;
@@ -82,12 +83,13 @@ enum WormAttackType{
             {duration = DESCEND_STAGE_FRAMES, transition = _chompTransitionToDescending.bindenv(this), update = _chompUpdateDescending.bindenv(this)}
         ];
 
-        //Arc leap attack: chase -> prepare -> flight -> dormant
+        //Arc leap attack: chase -> prepare -> flight -> land -> dormant
         mAttackDefs_[WormAttackType.ARC_LEAP] <- [
             {duration = 1,                      transition = _transitionToDormant.bindenv(this),           update = null},
             {duration = CHASE_STAGE_FRAMES,     transition = _transitionToChasing.bindenv(this),           update = _updateChasing.bindenv(this)},
             {duration = PREPARE_STAGE_FRAMES,   transition = _transitionToPreparing.bindenv(this),         update = null},
-            {duration = mArcLeapFlightFrames_,  transition = _arcTransitionToFlight.bindenv(this),         update = _arcUpdateFlight.bindenv(this)}
+            {duration = mArcLeapFlightFrames_,  transition = _arcTransitionToFlight.bindenv(this),         update = _arcUpdateFlight.bindenv(this)},
+            {duration = 1,                      transition = _arcTransitionToLand_.bindenv(this),          update = null}
         ];
     }
 
@@ -551,20 +553,40 @@ enum WormAttackType{
         //Extend start and end by the body length so the worm fully
         //emerges from and disappears into the ground.
         local bodyLength = (NUM_SEGMENTS + 1) * mArcSegmentSpacing_;
+
+        //If the worm has LIMIT_TO_REGION, ensure the landing position stays within its region.
+        //Try progressively shorter distances until one lands in the same region.
+        local actualDist = mArcLeapDistance_;
+        local limitComp = manager.getComponent(mEntity_, EntityComponents.LIMIT_TO_REGION);
+        if(limitComp != null){
+            local fractions = [1.0, 0.75, 0.5, 0.25];
+            foreach(fraction in fractions){
+                local tryDist = mArcLeapDistance_ * fraction;
+                local tryLandX = wormPos.x + dirX * tryDist;
+                local tryLandZ = wormPos.z + dirZ * tryDist;
+                local region = world.getRegionForPosition(Vec3(tryLandX, 0, tryLandZ));
+                if(region == null || region == limitComp.mRegionId){
+                    actualDist = tryDist;
+                    break;
+                }
+            }
+        }
+        mArcCurrentDist_ = actualDist;
+
         mArcLeapStartPos_ = Vec3(
             wormPos.x - dirX * bodyLength,
             playerPos.y,
             wormPos.z - dirZ * bodyLength
         );
         mArcLeapEndPos_ = Vec3(
-            wormPos.x + dirX * (mArcLeapDistance_ + bodyLength),
+            wormPos.x + dirX * (actualDist + bodyLength),
             playerPos.y,
-            wormPos.z + dirZ * (mArcLeapDistance_ + bodyLength)
+            wormPos.z + dirZ * (actualDist + bodyLength)
         );
         mArcLeapDirection_ = Vec3(dirX, 0, dirZ);
 
         //Calculate the ground fraction - the portion of the total arc that is underground at each end
-        local totalDist = mArcLeapDistance_ + 2.0 * bodyLength;
+        local totalDist = actualDist + 2.0 * bodyLength;
         mArcGroundFraction_ = bodyLength / totalDist;
 
         //Move the root node to the start position and show the worm immediately
@@ -594,7 +616,7 @@ enum WormAttackType{
 
         //Total body length in local units (segments + head)
         local bodyLength = (NUM_SEGMENTS + 1) * mArcSegmentSpacing_;
-        local totalArcDist = mArcLeapDistance_ + 2.0 * bodyLength;
+        local totalArcDist = mArcCurrentDist_ + 2.0 * bodyLength;
 
         //The head leads at parameter t = progress.
         //Each successive body segment trails behind by one segment spacing in arc parameter space.
@@ -628,6 +650,24 @@ enum WormAttackType{
 
         //Position ground dust near the lowest part close to the ground
         _updateGroundDustForArc();
+    }
+
+    //Called once when the arc leap flight ends. Teleports the entity to the landing position
+    //so the next attack cycle begins from there.
+    function _arcTransitionToLand_(){
+        local world = ::Base.mExplorationLogic.mCurrentWorld_;
+        //Strip the underground body-length extension from mArcLeapEndPos_ to get the actual ground contact point.
+        local bodyLength = (NUM_SEGMENTS + 1) * mArcSegmentSpacing_;
+        local landX = mArcLeapEndPos_.x - mArcLeapDirection_.x * bodyLength;
+        local landZ = mArcLeapEndPos_.z - mArcLeapDirection_.z * bodyLength;
+        local landY = world.getZForPos(Vec3(landX, 0, landZ));
+        local landPos = Vec3(landX, landY, landZ);
+
+        //Update all position-dependent systems via the enemy entry.
+        if(world.mActiveEnemies_.rawin(mEntity_)){
+            world.mActiveEnemies_[mEntity_].setPosition(landPos);
+        }
+        mRootNode_.setPosition(landPos);
     }
 
 
