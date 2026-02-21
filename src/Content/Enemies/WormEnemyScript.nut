@@ -123,7 +123,7 @@ enum WormAttackType{
             segmentNode.setPosition(0, 0, 0);
             local cube = _gameCore.createVoxMeshItem("giantWorm.body.voxMesh");
             cube.setDatablock("baseVoxelMaterial");
-            cube.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
+            cube.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_VISIBILITY_DANGEROUS);
             segmentNode.attachObject(cube);
             //Add slight random scale variation to prevent z-fighting
             local randomOffsetSegment = (_random.rand() - 0.5) * 0.02 * SEGMENT_SCALE * 2;
@@ -158,7 +158,7 @@ enum WormAttackType{
         mHeadMesh1Node_ = mWormHeadNode_.createChildSceneNode();
         local head1 = _gameCore.createVoxMeshItem("giantWorm.head.1.voxMesh");
         head1.setDatablock("baseVoxelMaterial");
-        head1.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
+        head1.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_VISIBILITY_DANGEROUS);
         mHeadMesh1Node_.attachObject(head1);
         mHeadMesh1Node_.setVisible(false);
 
@@ -166,7 +166,7 @@ enum WormAttackType{
         mHeadMesh2Node_ = mWormHeadNode_.createChildSceneNode();
         local head2 = _gameCore.createVoxMeshItem("giantWorm.head.2.voxMesh");
         head2.setDatablock("baseVoxelMaterial");
-        head2.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
+        head2.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_VISIBILITY_DANGEROUS);
         mHeadMesh2Node_.attachObject(head2);
         mHeadMesh2Node_.setVisible(false);
 
