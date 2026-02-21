@@ -386,7 +386,6 @@
 
         base.update();
         if(mLogicPaused_) return;
-        checkForEnemyAppear();
         checkForDistractionAppear();
         checkForCometAppear();
         checkForMessageInBottleAppear();
@@ -606,6 +605,12 @@
 
         updateCameraPosition();
 
+    }
+
+    #Override
+    function notifyPlayerMoved(){
+        base.notifyPlayerMoved();
+        checkForEnemyAppear();
     }
 
     function easeOutQuat(x) {
