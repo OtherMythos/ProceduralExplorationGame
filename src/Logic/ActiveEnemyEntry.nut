@@ -481,6 +481,11 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         }
     }
 
+    function isWieldActive(){
+        if(mCombatData_ == null) return false;
+        return mCombatData_.mWieldActive;
+    }
+
     function update(){
         if(mMoving_ > 0){
             mMoving_--;

@@ -23,6 +23,10 @@ BasicEnemyMachine = class extends ::CombatStateMachine{
     chaseFrameCount = 0;
     playerSpottedRadius = 32;
 
+    //Wield distance constants with hysteresis to prevent glitching
+    wieldActivationDistance = 10;
+    wieldDeactivationDistance = 12; //0.8 of activation distance
+
     idleState = {
         "update": function(ctx, e, data) {
         },
@@ -75,9 +79,13 @@ BasicEnemyMachine = class extends ::CombatStateMachine{
             local pos = world.getEntityManager().getPosition(e);
             local distance = pos.distance(world.getPlayerPosition());
             local activeEnemy = world.mActiveEnemies_[e];
-            //if(distance <= 5){
-                activeEnemy.setWieldActive(distance <= 10);
-            //}
+            //Apply hysteresis to wield state: activate at longer distance, deactivate at shorter distance
+            local currentlyWielding = activeEnemy.isWieldActive();
+            if(currentlyWielding){
+                activeEnemy.setWieldActive(distance <= ctx.wieldDeactivationDistance);
+            }else{
+                activeEnemy.setWieldActive(distance <= ctx.wieldActivationDistance);
+            }
 
             //print("distance " + distance);
 
