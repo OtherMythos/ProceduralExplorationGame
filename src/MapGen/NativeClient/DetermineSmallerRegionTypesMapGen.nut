@@ -67,7 +67,7 @@
                 local regionId = availableRegions[targetIdx];
 
                 mMapData_.setRegionType(regionId, regionType);
-                mMapData_.setRegionMeta(regionId, RegionMeta.MAIN_REGION);
+                mMapData_.setRegionMeta(regionId, RegionMeta.NEEDS_ALTITUDE_RECALCULATION | RegionMeta.MAIN_REGION);
                 blacklistedRegions.append(regionId);
             }
         }
