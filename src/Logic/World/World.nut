@@ -2409,6 +2409,9 @@
         else if(data.mType == SpoilsComponentType.PICK_KEEP_PLACED_ITEM){
             ::Base.mPlayerStats.addToInventory(data.mFirst);
             _event.transmit(Event.ITEM_GIVEN, data.mFirst);
+            if(data.mThird != null){
+                spawnWorldEffect(data.mThird, position);
+            }
                 //Destroy the old entity and replace with a new one.
 
                 local sceneNode = mEntityManager_.getComponent(en, EntityComponents.SCENE_NODE).mNode;

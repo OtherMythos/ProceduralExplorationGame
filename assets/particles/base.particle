@@ -1080,6 +1080,58 @@ particle_system simpleItemDestroy
     }
 }
 
+particle_system treePickedLeaves
+{
+    material        ParticleAlphaWhite
+    particle_width  0.3
+    particle_height 0.3
+    cull_each       false
+    quota           300
+    billboard_type  point
+
+    emitter Cylinder
+    {
+        angle           180
+        emission_rate   250
+        time_to_live    1
+        direction       0 1 0
+        velocity_min    0.5
+        velocity_max    1.0
+        duration        0.2
+        width           4
+        height          4
+        depth           4
+    }
+
+    affector ColourInterpolator
+    {
+        time0 0
+        colour0 0.2 0.8 0.2 1.0
+
+        time1 0.5
+        colour1 0.2 0.7 0.2 0.8
+
+        time2 1.0
+        colour2 0.2 0.6 0.2 0.0
+    }
+
+    affector LinearForce
+    {
+        force_vector      0 -1 0
+        force_application add
+    }
+
+    affector Scaler
+    {
+        rate -0.2
+    }
+
+    affector DirectionRandomiser
+    {
+        randomness 1
+    }
+}
+
 particle_system sandUrnDust
 {
     material        ParticleAlphaWhite

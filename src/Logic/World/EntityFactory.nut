@@ -661,7 +661,7 @@
             assert(targetChange != null);
             assert(targetItem != null);
 
-            local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.PICK_KEEP_PLACED_ITEM, ::Item(targetItem), targetChange, null, EntityDestroyReason.CONSUMED);
+            local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.PICK_KEEP_PLACED_ITEM, ::Item(targetItem), targetChange, WorldEffectId.TREE_PICKED, EntityDestroyReason.CONSUMED);
             manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
         }else if(
             itemType == PlacedItemId.FLOWER_RED ||
