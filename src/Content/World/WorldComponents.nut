@@ -201,6 +201,96 @@
     }
 };
 
+::DialogCameraZoomComponent <- class extends ::WorldComponent{
+    mEntityId_ = null;
+    mAnimProgress_ = 0.0;
+    mStartCamPos_ = null;
+    mStartLookAt_ = null;
+    mTargetCamPos_ = null;
+    mTargetLookAt_ = null;
+
+    constructor(world, entityId, startCamPos, startLookAt){
+        base.constructor(world);
+        mEntityId_ = entityId;
+        mStartCamPos_ = startCamPos;
+        mStartLookAt_ = startLookAt;
+    }
+
+    function updateLogicPaused(){
+        print("hello")
+        if(mStartCamPos_ == null) return;
+
+        local manager = mWorld_.getEntityManager();
+        if(!manager.entityValid(mEntityId_)) return;
+        if(!manager.hasComponent(mEntityId_, EntityComponents.SCENE_NODE)) return;
+
+        //Calculate and cache the target camera state on the first frame
+        if(mTargetCamPos_ == null){
+            local comp = manager.getComponent(mEntityId_, EntityComponents.SCENE_NODE);
+            local entityNode = comp.mNode;
+            local entityPos = entityNode.getPositionVec3();
+            local playerPos = mWorld_.getPlayerPosition();
+
+            //Get entity height from AABB, fall back to a sensible default
+            local entityHeight = 8.0;
+            local aabb = mWorld_.getEntityAABB(mEntityId_);
+            local aabbSize = aabb.getSize();
+            if(aabbSize.y > 0.1){
+                entityHeight = aabbSize.y;
+            }
+
+            //Direction from player to NPC (XZ only)
+            local dir = Vec3(entityPos.x - playerPos.x, 0.0, entityPos.z - playerPos.z);
+            local separation = dir.length();
+            dir.normalise();
+
+            //Perpendicular axis to the player-NPC line
+            local perp = Vec3(-dir.z, 0.0, dir.x);
+
+            //Midpoint between the two characters as the look-at anchor
+            local midX = (playerPos.x + entityPos.x) * 0.5;
+            local midZ = (playerPos.z + entityPos.z) * 0.5;
+            local midY = entityPos.y + entityHeight * 0.3;
+            local midPoint = Vec3(midX, midY, midZ);
+
+            //Camera stand-off: far enough to frame both characters
+            local distance = separation * 0.8;
+            if(entityHeight * 2.0 > distance){ distance = entityHeight * 2.0; }
+            //Higher camera looking down at the characters
+            local heightOffset = entityHeight * 1.8;
+
+            //Slight forward angle towards the NPC (blend perpendicular with forward direction)
+            local angleBlend = 0.3;
+            local blendedDir = perp + (dir * angleBlend);
+            blendedDir.normalise();
+
+            //Pick whichever side keeps the camera closest to where it already is
+            local candA = Vec3(midX + blendedDir.x * distance, midPoint.y + heightOffset, midZ + blendedDir.z * distance);
+            local candB = Vec3(midX - blendedDir.x * distance, midPoint.y + heightOffset, midZ - blendedDir.z * distance);
+            local diffA = mStartCamPos_ - candA;
+            local diffB = mStartCamPos_ - candB;
+            mTargetCamPos_ = (diffA.length() <= diffB.length()) ? candA : candB;
+            mTargetLookAt_ = midPoint;
+        }
+
+        if(mAnimProgress_ < 1.0){
+            mAnimProgress_ += 0.05;
+            if(mAnimProgress_ > 1.0) mAnimProgress_ = 1.0;
+        }
+
+        local a = ::Easing.easeOutCubic(mAnimProgress_);
+        local currentPos = ::calculateSimpleAnimation(mStartCamPos_, mTargetCamPos_, a);
+        local currentLookAt = ::calculateSimpleAnimation(mStartLookAt_, mTargetLookAt_, a);
+
+        local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION);
+        if(camera == null) return;
+        camera.getParentNode().setPosition(currentPos);
+        camera.lookAt(currentLookAt);
+    }
+
+    function destroy(){}
+};
+
 //NOTE temporary
 ::DebugCameraSpinComponent <- class extends ::WorldComponent{
     mRotationCounter_ = 0.0;

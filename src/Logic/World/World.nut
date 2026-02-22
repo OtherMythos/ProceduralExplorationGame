@@ -466,6 +466,7 @@
     mCameraAcceleration_ = null;
 
     mCurrentDialogWorldComponentId_ = null;
+    mCurrentDialogCameraComponentId_ = null;
 
     mWorldComponentPool_ = null;
 
@@ -2430,14 +2431,25 @@
     }
 
     function notifyDialogBegan(entityId){
-        local component = ::DialogFacePlayerComponent(this, entityId);
-        mCurrentDialogWorldComponentId_ = registerWorldComponent(component);
+        local faceComponent = ::DialogFacePlayerComponent(this, entityId);
+        mCurrentDialogWorldComponentId_ = registerWorldComponent(faceComponent);
+        local playerPos = getPlayerPosition();
+        local zPos = getZForPos(playerPos);
+        local cameraData = calculateCameraPositionAndLookAt(playerPos, zPos, mCurrentZoomLevel_);
+        if(cameraData != null){
+            local cameraComponent = ::DialogCameraZoomComponent(this, entityId, cameraData[0], cameraData[1]);
+            mCurrentDialogCameraComponentId_ = registerWorldComponent(cameraComponent);
+        }
     }
 
     function notifyDialogEnded(){
         assert(mCurrentDialogWorldComponentId_ != null);
         unregisterWorldComponent(mCurrentDialogWorldComponentId_);
         mCurrentDialogWorldComponentId_ = null;
+        if(mCurrentDialogCameraComponentId_ != null){
+            unregisterWorldComponent(mCurrentDialogCameraComponentId_);
+            mCurrentDialogCameraComponentId_ = null;
+        }
     }
 
     function getStatsString(){
@@ -2724,6 +2736,11 @@
     #Stub
     function zoomChanged_(){
 
+    }
+
+    #Stub
+    function calculateCameraPositionAndLookAt(targetPos, zPos, targetDistance){
+        return null;
     }
 
     function notifyModalPopupScreen(){

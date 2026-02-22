@@ -53,6 +53,19 @@
         floorNode.setScale(150, 500, 150);
     }
 
+    function calculateCameraPositionAndLookAt(targetPos, zPos, targetDistance){
+        local xPos = cos(mRotation_.x) * targetDistance;
+        local yPos = sin(mRotation_.x) * targetDistance;
+        local rot = Vec3(xPos, 0, yPos);
+        yPos = sin(mRotation_.y) * targetDistance;
+        rot += Vec3(0, yPos, 0);
+
+        local cameraPos = Vec3(targetPos.x, zPos, targetPos.z) + rot;
+        local lookAtPos = Vec3(targetPos.x, zPos, targetPos.z);
+
+        return [cameraPos, lookAtPos];
+    }
+
     function updateCameraPosition(){
         local zPos = getZForPos(mPosition_);
 
@@ -60,14 +73,9 @@
         assert(camera != null);
         local parentNode = camera.getParentNode();
 
-        local xPos = cos(mRotation_.x)*mCurrentZoomLevel_;
-        local yPos = sin(mRotation_.x)*mCurrentZoomLevel_;
-        local rot = Vec3(xPos, 0, yPos);
-        yPos = sin(mRotation_.y)*mCurrentZoomLevel_;
-        rot += Vec3(0, yPos, 0);
-
-        parentNode.setPosition(Vec3(mPosition_.x, zPos, mPosition_.z) + rot );
-        camera.lookAt(mPosition_.x, zPos, mPosition_.z);
+        local cameraData = calculateCameraPositionAndLookAt(mPosition_, zPos, mCurrentZoomLevel_);
+        parentNode.setPosition(cameraData[0]);
+        camera.lookAt(cameraData[1]);
     }
 
     function processCameraMove(x, y){
