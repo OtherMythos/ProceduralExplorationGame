@@ -22,6 +22,25 @@
     return en;
 }
 
+::WorldEffects[WorldEffectId.SIMPLE_ITEM_DESTROY] = function(pos, parentSceneNode, world){
+    local manager = world.getEntityManager();
+    local zPos = world.getZForPos(pos);
+    local targetPos = Vec3(pos.x, zPos + 0.3, pos.z);
+
+    local en = manager.createEntity(targetPos);
+
+    local effectNode = parentSceneNode.createChildSceneNode();
+    effectNode.setPosition(targetPos);
+
+    local dustParticleSystem = _scene.createParticleSystem("simpleItemDestroy");
+    effectNode.attachObject(dustParticleSystem);
+
+    manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](effectNode, true));
+    manager.assignComponent(en, EntityComponents.LIFETIME, ::EntityManager.Components[EntityComponents.LIFETIME](300));
+
+    return en;
+}
+
 ::WorldEffects[WorldEffectId.WATER_SPLASH] = function(pos, parentSceneNode, world){
     local manager = world.getEntityManager();
     local zPos = world.getZForPos(pos);

@@ -1031,6 +1031,55 @@ particle_system giantWormShrapnel
     }
 }
 
+particle_system simpleItemDestroy
+{
+    material        ParticleAlphaWhite
+    particle_width  0.2
+    particle_height 0.2
+    cull_each       false
+    quota           500
+    billboard_type  point
+
+    emitter Point
+    {
+        angle           180
+        emission_rate   200
+        time_to_live    1.2
+        direction       0 1 0
+        velocity_min    1.5
+        velocity_max    4.0
+        duration        0.1
+    }
+
+    affector ColourInterpolator
+    {
+        time0 0
+        colour0 0.9 0.9 0.85 1.0
+
+        time1 0.5
+        colour1 0.8 0.8 0.75 0.6
+
+        time2 1.0
+        colour2 0.7 0.7 0.65 0.0
+    }
+
+    affector LinearForce
+    {
+        force_vector      0 -8 0
+        force_application add
+    }
+
+    affector Scaler
+    {
+        rate 0.2
+    }
+
+    affector DirectionRandomiser
+    {
+        randomness 0.2
+    }
+}
+
 particle_system sandUrnDust
 {
     material        ParticleAlphaWhite

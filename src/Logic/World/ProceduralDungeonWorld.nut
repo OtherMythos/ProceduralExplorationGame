@@ -179,7 +179,7 @@
             local orientation = Quat(-PI/(decoration.orientation.rotX), ::Vec3_UNIT_X);
             orientation *= Quat(decoration.orientation.rotY, ::Vec3_UNIT_Y);
             local model = decoration.orientation.isSkeletonBody ? "skeletonBody.voxMesh" : "skeletonHead.voxMesh";
-            mEntityFactory_.constructSimpleItem(mParentNode_, model, targetPos, 0.25, null, null, 10, orientation);
+            mEntityFactory_.constructSimpleItem(mParentNode_, model, targetPos, 0.25, null, null, 10, orientation, null, null, WorldEffectId.SIMPLE_ITEM_DESTROY);
         }
 
         local chestPos = mMapData_.objectPositions.chest * mWorldScaleSize_ + mOffset_;

@@ -510,7 +510,7 @@
 
         return en;
     }
-    function constructSimpleItem(parentNode, meshPath, pos, scale, collisionRadius=null, spoilData=null, totalHealth=null, orientation=null, posOffset=null, forceZ=null){
+    function constructSimpleItem(parentNode, meshPath, pos, scale, collisionRadius=null, spoilData=null, totalHealth=null, orientation=null, posOffset=null, forceZ=null, worldEffect=null){
         local manager = mConstructorWorld_.getEntityManager();
         local targetPos = pos.copy();
         if(forceZ != null){
@@ -571,8 +571,13 @@
             }
         }
 
-        if(spoilData != null){
-            local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SPOILS_DATA, spoilData, null, null);
+        local finalSpoilData = spoilData;
+        if(worldEffect != null){
+            finalSpoilData = spoilData != null ? spoilData : [];
+            finalSpoilData.append(::SpoilsEntry(SPOILS_ENTRIES.SPAWN_WORLD_EFFECT, worldEffect));
+        }
+        if(finalSpoilData != null){
+            local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SPOILS_DATA, finalSpoilData, null, null);
             manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
         }
         if(totalHealth != null){

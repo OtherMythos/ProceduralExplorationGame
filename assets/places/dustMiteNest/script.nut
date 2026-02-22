@@ -13,7 +13,7 @@
             local orientation = Quat(-PI/(_random.rand()*1.5+1), ::Vec3_UNIT_X);
             orientation *= Quat(_random.rand()*PI - PI/2, ::Vec3_UNIT_Y);
             local model = _random.randInt(4) == 0 ? "skeletonBody.voxMesh" : "skeletonHead.voxMesh";
-            entityFactory.constructSimpleItem(node, model, targetPos, 0.15, null, null, 10, orientation);
+            entityFactory.constructSimpleItem(node, model, targetPos, 0.15, null, null, 10, orientation, null, null, WorldEffectId.SIMPLE_ITEM_DESTROY);
         }
 
         world.createEnemy(EnemyId.DUST_MITE_WORKER, pos + Vec3(12, 0, 8));
