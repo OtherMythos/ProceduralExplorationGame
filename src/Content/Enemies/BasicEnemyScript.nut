@@ -22,6 +22,11 @@ BasicEnemyMachine = class extends ::CombatStateMachine{
     maxChaseFrames = -1;
     chaseFrameCount = 0;
     playerSpottedRadius = 32;
+    shockDuration = 120;
+    shockFrameCount = 0;
+    turnAnimationFrames = 10;
+    startAngle = 0;
+    targetAngle = 0;
 
     //Wield distance constants with hysteresis to prevent glitching
     wieldActivationDistance = 10;
@@ -32,7 +37,7 @@ BasicEnemyMachine = class extends ::CombatStateMachine{
         },
         "notify": function(ctx, id, e, data){
             if(id == BasicEnemyEvents.PLAYER_SPOTTED){
-                ctx.switchState(ctx.chasingPlayerState);
+                ctx.switchState(ctx.shockedState);
             }
         }
     };
@@ -60,7 +65,48 @@ BasicEnemyMachine = class extends ::CombatStateMachine{
         },
         "notify": function(ctx, id, e, data){
             if(id == BasicEnemyEvents.PLAYER_SPOTTED){
+                ctx.switchState(ctx.shockedState);
+            }
+        }
+    };
+    shockedState = {
+        "start": function(ctx, e) {
+            ctx.shockFrameCount = 0;
+            local world = ::Base.mExplorationLogic.mCurrentWorld_;
+            local activeEnemy = world.mActiveEnemies_[e];
+            //Extract angle from current orientation quaternion
+            local orientation = activeEnemy.getOrientation();
+            ctx.startAngle = 2.0 * atan2(orientation.y, orientation.w);
+        },
+        "update": function(ctx, e, data) {
+            local world = ::Base.mExplorationLogic.mCurrentWorld_;
+            local activeEnemy = world.mActiveEnemies_[e];
+
+            //Calculate target angle to face player (updated each frame as player moves)
+            local playerPos = world.getPlayerPosition();
+            local enemyPos = world.getEntityManager().getPosition(e);
+            local directionToPlayer = playerPos - enemyPos;
+            ctx.targetAngle = atan2(directionToPlayer.x, directionToPlayer.z);
+
+            //Animate the turn over the first few frames
+            if(ctx.shockFrameCount < ctx.turnAnimationFrames){
+                local t = ctx.shockFrameCount.tofloat() / ctx.turnAnimationFrames.tofloat();
+                local interpolatedAngle = ctx.startAngle * (1.0 - t) + ctx.targetAngle * t;
+                local direction = Vec2(sin(interpolatedAngle), cos(interpolatedAngle));
+                activeEnemy.setDirection(direction);
+            }else{
+                local direction = Vec2(sin(ctx.targetAngle), cos(ctx.targetAngle));
+                activeEnemy.setDirection(direction);
+            }
+
+            ctx.shockFrameCount++;
+            if(ctx.shockFrameCount >= ctx.shockDuration){
                 ctx.switchState(ctx.chasingPlayerState);
+            }
+        },
+        "notify": function(ctx, id, e, data){
+            if(id == BasicEnemyEvents.PLAYER_NOT_SPOTTED){
+                ctx.switchState(ctx.idleWalk ? ctx.idleWalkState : ctx.idleState);
             }
         }
     };
