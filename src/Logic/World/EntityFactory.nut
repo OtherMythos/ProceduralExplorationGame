@@ -1488,6 +1488,16 @@
         local particleSystemSecond = _scene.createParticleSystem("enemyTeleviseDustBase");
         node.attachObject(particleSystemSecond);
 
+        local totalHealth = ::Enemies[enemyId].getStats().getHealth() * 0.25;
+        manager.assignComponent(en, EntityComponents.HEALTH, ::EntityManager.Components[EntityComponents.HEALTH](totalHealth));
+
+        local damageWorld = mConstructorWorld_.getDamageWorld();
+        local damagePoint = damageWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_ENEMY);
+
+        local allAfflictionsMask = 0xFF;
+        manager.assignComponent(en, EntityComponents.STATUS_AFFLICTION_IMMUNITY,
+            ::EntityManager.Components[EntityComponents.STATUS_AFFLICTION_IMMUNITY](allAfflictionsMask));
+
         local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SINGLE_ENEMY, enemyId, null, null, EntityDestroyReason.LIFETIME);
         manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
 
