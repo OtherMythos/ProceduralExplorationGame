@@ -1286,8 +1286,14 @@
             if(mActiveEnemies_.rawin(entity)){
                 local e = mActiveEnemies_[entity];
                 local characterModel = e.getModel();
-                if(characterModel == null) return;
-                d = characterModel.determineWorldAABB();
+                if(characterModel != null){
+                    d = characterModel.determineWorldAABB();
+                }else{
+                    //No character model (e.g. beehive uses a raw vox mesh), fall back to scene node
+                    local sceneNode = mEntityManager_.getComponent(entity, EntityComponents.SCENE_NODE).mNode;
+                    if(sceneNode.getNumAttachedObjects() <= 0) return;
+                    d = sceneNode.getAttachedObject(0).getWorldAabbUpdated();
+                }
             }else if(entity == getPlayerEID()){
                 local e = mPlayerEntry_;
                 local characterModel = e.getModel();
