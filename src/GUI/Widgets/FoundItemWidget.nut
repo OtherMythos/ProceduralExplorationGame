@@ -10,6 +10,7 @@
     mDebugMeshPanel_ = null;
     mGradientPanel_ = null;
     mBackgroundButton_ = null;
+    mIconPanel_ = null;
 
     mPosition_ = Vec2(0, 0);
     mMeshSize_ = null;
@@ -58,7 +59,7 @@
             return;
         }
 
-        mRenderIcon_ = ::RenderIconManager.createIcon(meshName, true);
+        mRenderIcon_ = ::RenderIconManager.createIcon(meshName, true, true);
     }
 
     function createLabel_(){
@@ -78,6 +79,16 @@
         mGradientPanel_.setClickable(false);
         mGradientPanel_.setDatablock("simpleGradient");
         mGradientPanel_.setColour(ColourValue(1, 1, 1, 0.5));
+
+        if(mRenderIcon_ != null){
+            mIconPanel_ = mParentWindow_.createPanel();
+            mIconPanel_.setSize(mMeshSize_);
+            mIconPanel_.setClickable(false);
+            local datablock = mRenderIcon_.getDatablock();
+            if(datablock != null){
+                mIconPanel_.setDatablock(datablock);
+            }
+        }
 
         mDebugPanel_ = mParentWindow_.createPanel();
         mDebugPanel_.setSize(mFullSize_);
@@ -185,9 +196,8 @@
         if(mBackgroundButton_ != null){
             mBackgroundButton_.setVisible(visible);
         }
-        if(mRenderIcon_ != null){
-            //RenderIconManager doesn't expose setVisible, but we can control via parent node visibility
-            //For now, leaving this as a placeholder
+        if(mIconPanel_ != null){
+            mIconPanel_.setVisible(visible);
         }
     }
 
@@ -216,6 +226,12 @@
         if(mBackgroundButton_ != null){
             _gui.destroy(mBackgroundButton_);
             mBackgroundButton_ = null;
+        }
+        if(mIconPanel_ != null){
+            //Clear datablock reference before the render icon is destroyed
+            mIconPanel_.setDatablock("simpleGrey");
+            _gui.destroy(mIconPanel_);
+            mIconPanel_ = null;
         }
         if(mRenderIcon_ != null){
             mRenderIcon_.destroy();
@@ -283,8 +299,15 @@
         local animScale = startScale + (endScale - startScale) * easeProgress;
         local animSize = mFoundAnimationFinalSize_ * animScale;
 
-        mRenderIcon_.setPosition(animPos);
-        mRenderIcon_.setSize(animSize.x, animSize.y);
+        //mRenderIcon_.setPosition(animPos);
+        //mRenderIcon_.setSize(animSize.x, animSize.y);
+
+        //Position the icon panel to match the render icon area
+        if(mIconPanel_ != null){
+            local panelPos = Vec2(animPos.x - animSize.x / 2, animPos.y - animSize.y / 2);
+            mIconPanel_.setPosition(panelPos);
+            mIconPanel_.setSize(animSize.x, animSize.y);
+        }
 
         //Animate opacity of gradient panel and label
         if(mGradientPanel_ != null){

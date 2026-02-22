@@ -593,10 +593,12 @@ enum ExplorationScreenWidgetType{
             local scale = 1.0 - easeProgress;
 
             //TODO remove direct access to widget members
-            if(widget.mRenderIcon_ != null){
+            if(widget.mIconPanel_ != null){
                 local iconSize = widget.mFoundAnimationFinalSize_ * scale;
-                widget.mRenderIcon_.setPosition(Vec2(newPos.x + widget.mFullSize_.x / 2, newPos.y + widget.mMeshSize_.y / 2));
-                widget.mRenderIcon_.setSize(iconSize.x, iconSize.y);
+                local centreX = newPos.x + widget.mFullSize_.x / 2;
+                local centreY = newPos.y + widget.mMeshSize_.y / 2;
+                widget.mIconPanel_.setPosition(Vec2(centreX - iconSize.x / 2, centreY - iconSize.y / 2));
+                widget.mIconPanel_.setSize(iconSize.x, iconSize.y);
             }
 
             if(widget.mLabel_ != null){
