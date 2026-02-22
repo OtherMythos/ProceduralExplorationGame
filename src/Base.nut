@@ -497,7 +497,8 @@
     function forceTextureMaterialLoad(datablock){
         local forceLoader = TextureForceLoader([
             "voxelPalette.png",
-            "font_icons.png"
+            "font_icons.png",
+            "simpleGradient.png"
         ]);
         forceLoader.shutdown();
     }
