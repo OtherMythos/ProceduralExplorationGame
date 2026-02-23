@@ -346,6 +346,8 @@
         _gui.loadSkins("res://build/assets/skins/ui.json");
         _gui.loadSkins("res://build/assets/skins/itemSkins.json");
 
+        _gui.loadSkins("res://build/assets/skins/DarkGloss/Skins.colibri.json");
+
         applyCompositorModifications();
 
         loadFiles();

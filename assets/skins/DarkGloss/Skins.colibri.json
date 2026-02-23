@@ -1,0 +1,337 @@
+{
+    "skins" :
+    {
+        "Button_idle" :
+        {
+            "material" : "AtlasTransparent",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "top_left": [0, 0, 20, 20],
+                "top": [20, 0, 216, 20],
+                "top_right": [236, 0, 20, 20],
+                "center_left": [0, 20, 20, 83],
+                "center": [20, 20, 216, 83],
+                "center_right": [236, 20, 20, 83],
+                "bottom_left": [0, 103, 20, 25],
+                "bottom": [20, 103, 216, 25],
+                "bottom_right": [236, 103, 20, 25]
+            },
+            "borders" :
+            {
+                "all" : [20, 0],
+                "bottom": [25, 0]
+            }
+        },
+        "Button_disabled" :
+        {
+            "copy_from" : "Button_idle",
+            "material" : "AtlasDisabled"
+        },
+        "Button_highlighted_cursor" :
+        {
+            "copy_from" : "Button_idle"
+        },
+        "Button_highlighted_button" :
+        {
+            "copy_from" : "Button_idle"
+        },
+        "Button_highlighted_button_and_cursor" :
+        {
+            "copy_from" : "Button_highlighted_button"
+        },
+        "Button_pressed" :
+        {
+            "copy_from" : "Button_idle",
+            "material" : "Atlas",
+            "grid_uv" :
+            {
+                "enclosing" : [[0, 256, 256, 128], [4, 4]]
+            }
+        },
+
+        "Background" :
+        {
+            "material" : "Atlas",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "enclosing" : [[0, 384, 128, 128], [2, 20], [2, 2]]
+            },
+            "borders" :
+            {
+                "all" : [2, 2],
+                "top" : [20, 20]
+            }
+        },
+        "EmptyBg" :
+        {
+            "material" : "EmptyBg",
+            "tex_resolution" : [1, 1],
+            "grid_uv" :
+            {
+                "all" :[0, 0, 1, 1]
+            },
+            "borders" :
+            {
+                "all" : [0, 0]
+            }
+        },
+
+        "RadarChart" :
+        {
+            "copy_from" : "EmptyBg",
+            "material" : "RadarChart"
+        },
+        "RadarChartDisabled" :
+        {
+            "copy_from" : "RadarChart",
+            "material" : "RadarChartDisabled"
+        },
+
+        "GraphChart" :
+        {
+            "copy_from" : "EmptyBg",
+            "material" : "GraphChart"
+        },
+        "GraphChartDisabled" :
+        {
+            "copy_from" : "GraphChart",
+            "material" : "GraphChartDisabled"
+        },
+
+        "SpinnerBtnDecrement_idle" :
+        {
+            "material" : "AtlasTransparent",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "comment" :
+                ["We use center_right w/ empty pixel so we can",
+                "increase the hitbox for touch systems.",
+                "SpinnerBtnIncrement does the same in the opposite direction"],
+                "center_right" : [160, 384, 1, 1],
+                "center" : [160, 416, 64, 32]
+            },
+            "borders" :
+            {
+                "right" : [15, 0]
+            }
+        },
+        "SpinnerBtnDecrement_disabled" :
+        {
+            "copy_from" : "SpinnerBtnDecrement_idle",
+            "material" : "AtlasDisabled"
+        },
+        "SpinnerBtnDecrement_highlighted_cursor" :
+        {
+            "copy_from" : "SpinnerBtnDecrement_idle",
+            "material" : "AtlasBrighterTransparent"
+        },
+        "SpinnerBtnDecrement_highlighted_button_and_cursor" :
+        {
+            "copy_from" : "SpinnerBtnDecrement_highlighted_cursor",
+            "material" : "AtlasBrighterTransparent"
+        },
+
+        "SpinnerBtnIncrement_idle" :
+        {
+            "material" : "AtlasTransparent",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "center_left" : [160, 384, 1, 1],
+                "center" : [160, 384, 64, 32]
+            },
+            "borders" :
+            {
+                "left" : [15, 0]
+            }
+        },
+        "SpinnerBtnIncrement_disabled" :
+        {
+            "copy_from" : "SpinnerBtnIncrement_idle",
+            "material" : "AtlasDisabled"
+        },
+        "SpinnerBtnIncrement_highlighted_cursor" :
+        {
+            "copy_from" : "SpinnerBtnIncrement_idle",
+            "material" : "AtlasBrighterTransparent"
+        },
+        "SpinnerBtnIncrement_highlighted_button_and_cursor" :
+        {
+            "copy_from" : "SpinnerBtnIncrement_highlighted_cursor",
+            "material" : "AtlasBrighterTransparent"
+        },
+
+        "CheckboxTickmarkUnchecked" :
+        {
+            "material" : "Atlas",
+            "tex_resolution" : [512, 512],
+            "grid_uv" : { "center" : [128, 384, 32, 32] }
+        },
+        "CheckboxTickmarkChecked" :
+        {
+            "copy_from" : "CheckboxTickmarkUnchecked",
+            "grid_uv" : { "center" : [128, 416, 32, 32] }
+        },
+        "CheckboxTickmarkThirdState" :
+        {
+            "copy_from" : "CheckboxTickmarkUnchecked",
+            "grid_uv" : { "center" : [128, 448, 32, 32] }
+        },
+
+        "ToggleButton_idle" :
+        {
+            "copy_from" : "Button_idle",
+            "material" : "AtlasRed"
+        },
+        "ToggleButton_disabled" :
+        {
+            "copy_from" : "ToggleButton_idle",
+            "material" : "AtlasRedDisabled"
+        },
+        "ToggleButton_highlighted_cursor" :
+        {
+            "copy_from" : "ToggleButton_idle",
+            "material" : "AtlasRedBrighter"
+        },
+        "ToggleButton_highlighted_button" :
+        {
+            "copy_from" : "Button_highlighted_button",
+            "material" : "AtlasRed"
+        },
+        "ToggleButton_highlighted_button_and_cursor" :
+        {
+            "copy_from" : "ToggleButton_highlighted_button",
+            "material" : "AtlasRedBrighter"
+        },
+        "ToggleButton_pressed" :
+        {
+            "copy_from" : "Button_pressed",
+            "material" : "AtlasRed"
+        },
+
+        "ProgressbarLayer0" :
+        {
+            "material" : "ProgressBarLayerProgress",
+            "tex_resolution" : [128, 64],
+            "grid_uv" : { "center" : [0, 0, 128, 64] },
+            "colour" : [0.2, 0.7, 0.0]
+        },
+        "ProgressbarLayer1" :
+        {
+            "material" : "AtlasTransparent",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "enclosing" : [[256, 0, 256, 128], [20, 20]]
+            },
+            "borders" :
+            {
+                "all" : [5, 10]
+            }
+        }
+    },
+
+    "skin_packs" :
+    {
+        "Button" :
+        {
+            "auto" : "Button"
+        },
+        "Background" :
+        {
+            "all" : "Background"
+        },
+        "Spinner" :
+        {
+            "auto" : "Button",
+            "highlighted_button_and_cursor" : "Button_highlighted_button"
+        },
+        "SpinnerBtnDecrement" :
+        {
+            "auto" : "SpinnerBtnDecrement",
+            "window_scroll_arrow_size" : 64.0
+        },
+        "SpinnerBtnIncrement" :
+        {
+            "auto" : "SpinnerBtnIncrement",
+            "window_scroll_arrow_size" : 64.0
+        },
+        "CheckboxTickmarkChecked" :
+        {
+            "all" : "CheckboxTickmarkChecked"
+        },
+        "CheckboxTickmarkUnchecked" :
+        {
+            "all" : "CheckboxTickmarkUnchecked"
+        },
+        "CheckboxTickmarkThirdState" :
+        {
+            "all" : "CheckboxTickmarkThirdState"
+        },
+        "ToggleButton" :
+        {
+            "auto" : "ToggleButton"
+        },
+        "ProgressbarLayer0" :
+        {
+            "all" : "ProgressbarLayer0",
+            "progress_bar_type" : "behind_glass",
+            "progress_anim_speed" : 0.5,
+            "progress_anim_length" : 0.5,
+            "progress_bar_animated" : true
+        },
+        "ProgressbarLayer1" :
+        {
+            "all" : "ProgressbarLayer1"
+        },
+        "SliderLine" :
+        {
+            "auto" : "Button",
+            "slider_line_size" : 5.0,
+            "slider_handle_proportion" : [0.8, 0.8],
+            "slider_handle_position_top_left_proportion" : 0.5,
+            "slider_always_inside" : false,
+            "slider_exclude_borders" : false,
+            "slider_handle_border_is_halo" : false
+        },
+        "RadarChart" :
+        {
+            "all" : "RadarChart",
+            "disabled" : "RadarChartDisabled"
+        },
+        "GraphChart" :
+        {
+            "all" : "GraphChart",
+            "disabled" : "GraphChartDisabled"
+        }
+    },
+
+    "default_skin_packs" :
+    {
+        "Window"                : "Background",
+        "WindowArrowScrollTop"  : "SpinnerBtnDecrement",
+        "WindowArrowScrollLeft" : "SpinnerBtnDecrement",
+        "WindowArrowScrollRight": "SpinnerBtnIncrement",
+        "WindowArrowScrollBottom": "SpinnerBtnIncrement",
+        "Button"                : "Button",
+        "Spinner"               : "Spinner",
+        "SpinnerBtnDecrement"   : "SpinnerBtnDecrement",
+        "SpinnerBtnIncrement"   : "SpinnerBtnIncrement",
+        "Checkbox"              : "Button",
+        "CheckboxTickmarkUnchecked"     : "CheckboxTickmarkUnchecked",
+        "CheckboxTickmarkChecked"       : "CheckboxTickmarkChecked",
+        "CheckboxTickmarkThirdState"    : "CheckboxTickmarkThirdState",
+        "Editbox"               : "Button",
+        "ProgressbarLayer0"     : "ProgressbarLayer0",
+        "ProgressbarLayer1"     : "ProgressbarLayer1",
+        "SliderLine"            : "SliderLine",
+        "SliderHandle"          : "Button",
+        "ToggleButtonUnchecked" : "Button",
+        "ToggleButtonChecked"   : "ToggleButton",
+        "RadarChart"            : "RadarChart",
+        "GraphChart"            : "GraphChart"
+    }
+}
