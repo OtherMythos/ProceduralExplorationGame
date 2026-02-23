@@ -129,6 +129,7 @@
         //Stop the base effect particle system
         if(mBaseEffectParticleSystem_ != null){
             mBaseEffectParticleSystem_.setEmitting(false);
+            mParticleSystem_.setEmitting(false);
         }
     }
 
