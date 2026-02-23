@@ -299,10 +299,11 @@
         local animScale = startScale + (endScale - startScale) * easeProgress;
         local animSize = mFoundAnimationFinalSize_ * animScale;
 
-        //mRenderIcon_.setPosition(animPos);
-        //mRenderIcon_.setSize(animSize.x, animSize.y);
+        //Update render icon position in the shared texture (drives UV coords on the cutout material)
+        mRenderIcon_.setPosition(animPos);
+        mRenderIcon_.setSize(animSize.x, animSize.y);
 
-        //Position the icon panel to match the render icon area
+        //Position the icon panel to match the render icon area (centre -> top-left conversion)
         if(mIconPanel_ != null){
             local panelPos = Vec2(animPos.x - animSize.x / 2, animPos.y - animSize.y / 2);
             mIconPanel_.setPosition(panelPos);

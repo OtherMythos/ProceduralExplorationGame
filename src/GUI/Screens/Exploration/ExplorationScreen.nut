@@ -597,6 +597,9 @@ enum ExplorationScreenWidgetType{
                 local iconSize = widget.mFoundAnimationFinalSize_ * scale;
                 local centreX = newPos.x + widget.mFullSize_.x / 2;
                 local centreY = newPos.y + widget.mMeshSize_.y / 2;
+                local centre = Vec2(centreX, centreY);
+                widget.mRenderIcon_.setPosition(centre);
+                widget.mRenderIcon_.setSize(iconSize.x, iconSize.y);
                 widget.mIconPanel_.setPosition(Vec2(centreX - iconSize.x / 2, centreY - iconSize.y / 2));
                 widget.mIconPanel_.setSize(iconSize.x, iconSize.y);
             }
