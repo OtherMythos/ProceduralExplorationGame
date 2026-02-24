@@ -10,17 +10,17 @@
                 "top_left": [0, 0, 20, 20],
                 "top": [20, 0, 216, 20],
                 "top_right": [236, 0, 20, 20],
-                "center_left": [0, 20, 20, 76],
-                "center": [20, 20, 216, 76],
-                "center_right": [236, 20, 20, 76],
-                "bottom_left": [0, 96, 20, 32],
-                "bottom": [20, 96, 216, 32],
-                "bottom_right": [236, 96, 20, 32]
+                "center_left": [0, 20, 20, 60],
+                "center": [20, 20, 216, 60],
+                "center_right": [236, 20, 20, 60],
+                "bottom_left": [0, 80, 20, 48],
+                "bottom": [20, 80, 216, 48],
+                "bottom_right": [236, 80, 20, 48]
             },
             "borders" :
             {
                 "all" : [5, 0],
-                "bottom": [8, 0]
+                "bottom": [12, 0]
             }
         },
         "Button_disabled" :
