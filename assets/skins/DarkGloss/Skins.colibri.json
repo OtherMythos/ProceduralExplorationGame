@@ -10,17 +10,17 @@
                 "top_left": [0, 0, 20, 20],
                 "top": [20, 0, 216, 20],
                 "top_right": [236, 0, 20, 20],
-                "center_left": [0, 20, 20, 83],
-                "center": [20, 20, 216, 83],
-                "center_right": [236, 20, 20, 83],
-                "bottom_left": [0, 103, 20, 25],
-                "bottom": [20, 103, 216, 25],
-                "bottom_right": [236, 103, 20, 25]
+                "center_left": [0, 20, 20, 76],
+                "center": [20, 20, 216, 76],
+                "center_right": [236, 20, 20, 76],
+                "bottom_left": [0, 96, 20, 32],
+                "bottom": [20, 96, 216, 32],
+                "bottom_right": [236, 96, 20, 32]
             },
             "borders" :
             {
-                "all" : [20, 0],
-                "bottom": [25, 0]
+                "all" : [5, 0],
+                "bottom": [8, 0]
             }
         },
         "Button_disabled" :
@@ -311,11 +311,6 @@
 
     "default_skin_packs" :
     {
-        "Window"                : "Background",
-        "WindowArrowScrollTop"  : "SpinnerBtnDecrement",
-        "WindowArrowScrollLeft" : "SpinnerBtnDecrement",
-        "WindowArrowScrollRight": "SpinnerBtnIncrement",
-        "WindowArrowScrollBottom": "SpinnerBtnIncrement",
         "Button"                : "Button",
         "Spinner"               : "Spinner",
         "SpinnerBtnDecrement"   : "SpinnerBtnDecrement",
