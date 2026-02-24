@@ -7,20 +7,19 @@
             "tex_resolution" : [512, 512],
             "grid_uv" :
             {
-                "top_left": [0, 0, 20, 20],
-                "top": [20, 0, 216, 20],
-                "top_right": [236, 0, 20, 20],
-                "center_left": [0, 20, 20, 60],
-                "center": [20, 20, 216, 60],
-                "center_right": [236, 20, 20, 60],
-                "bottom_left": [0, 80, 20, 48],
-                "bottom": [20, 80, 216, 48],
-                "bottom_right": [236, 80, 20, 48]
+                "top_left": [0, 0, 40, 40],
+                "top": [40, 0, 176, 40],
+                "top_right": [216, 0, 40, 40],
+                "center_left": [0, 40, 40, 48],
+                "center": [40, 40, 176, 48],
+                "center_right": [216, 40, 40, 48],
+                "bottom_left": [0, 88, 40, 40],
+                "bottom": [40, 88, 176, 40],
+                "bottom_right": [216, 88, 40, 40]
             },
             "borders" :
             {
-                "all" : [5, 0],
-                "bottom": [12, 0]
+                "all" : [10, 0]
             }
         },
         "Button_disabled" :
