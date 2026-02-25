@@ -4,7 +4,7 @@
         "Button_idle_1" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 896],
+            "tex_resolution" : [512, 1024],
             "grid_uv" :
             {
                 "top_left": [0, 0, 20, 20],
@@ -26,7 +26,7 @@
         "Button_idle_2" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 896],
+            "tex_resolution" : [512, 1024],
             "grid_uv" :
             {
                 "top_left": [0, 128, 40, 40],
@@ -47,7 +47,7 @@
         "Button_idle_3" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 896],
+            "tex_resolution" : [512, 1024],
             "grid_uv" :
             {
                 "top_left": [256, 128, 40, 40],
@@ -69,7 +69,7 @@
         "Button_idle_4" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 896],
+            "tex_resolution" : [512, 1024],
             "grid_uv" :
             {
                 "top_left": [256, 256, 40, 40],
@@ -91,7 +91,7 @@
         "Button_idle_5" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 896],
+            "tex_resolution" : [512, 1024],
             "grid_uv" :
             {
                 "top_left": [256, 384, 40, 40],
@@ -113,7 +113,7 @@
         "Button_idle_6" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 896],
+            "tex_resolution" : [512, 1024],
             "grid_uv" :
             {
                 "top_left": [0, 512, 40, 40],
@@ -135,7 +135,7 @@
         "Button_idle_7" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 896],
+            "tex_resolution" : [512, 1024],
             "grid_uv" :
             {
                 "top_left": [0, 640, 40, 40],
@@ -157,7 +157,7 @@
         "Button_idle_8" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 896],
+            "tex_resolution" : [512, 1024],
             "grid_uv" :
             {
                 "top_left": [0, 768, 40, 40],
@@ -176,9 +176,31 @@
                 "bottom" : [10, 0]
             }
         },
+        "Button_idle_9" :
+        {
+            "material" : "AtlasTransparent",
+            "tex_resolution" : [512, 1024],
+            "grid_uv" :
+            {
+                "top_left": [0, 896, 46, 42],
+                "top": [46, 896, 164, 42],
+                "top_right": [210, 896, 46, 42],
+                "center_left": [0, 938, 46, 40],
+                "center": [46, 938, 164, 40],
+                "center_right": [210, 938, 46, 40],
+                "bottom_left": [0, 978, 46, 46],
+                "bottom": [46, 978, 164, 46],
+                "bottom_right": [210, 978, 46, 46]
+            },
+            "borders" :
+            {
+                "all" : [10, 0],
+                "bottom" : [10, 0]
+            }
+        },
         "Button_idle" :
         {
-            "copy_from" : "Button_idle_8"
+            "copy_from" : "Button_idle_9"
         },
         "Button_disabled" :
         {
@@ -210,7 +232,7 @@
         "Background" :
         {
             "material" : "Atlas",
-            "tex_resolution" : [512, 896],
+            "tex_resolution" : [512, 1024],
             "grid_uv" :
             {
                 "enclosing" : [[0, 384, 128, 128], [2, 20], [2, 2]]
@@ -260,7 +282,7 @@
         "SpinnerBtnDecrement_idle" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 896],
+            "tex_resolution" : [512, 1024],
             "grid_uv" :
             {
                 "comment" :
@@ -294,7 +316,7 @@
         "SpinnerBtnIncrement_idle" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 896],
+            "tex_resolution" : [512, 1024],
             "grid_uv" :
             {
                 "center_left" : [160, 384, 1, 1],
@@ -324,7 +346,7 @@
         "CheckboxTickmarkUnchecked" :
         {
             "material" : "Atlas",
-            "tex_resolution" : [512, 896],
+            "tex_resolution" : [512, 1024],
             "grid_uv" : { "center" : [128, 384, 32, 32] }
         },
         "CheckboxTickmarkChecked" :
@@ -379,7 +401,7 @@
         "ProgressbarLayer1" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 896],
+            "tex_resolution" : [512, 1024],
             "grid_uv" :
             {
                 "enclosing" : [[256, 0, 256, 128], [20, 20]]

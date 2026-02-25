@@ -20,6 +20,7 @@
             "Button_idle_6",
             "Button_idle_7",
             "Button_idle_8",
+            "Button_idle_9",
         ];
 
         foreach(i,c in buttonSkin){
