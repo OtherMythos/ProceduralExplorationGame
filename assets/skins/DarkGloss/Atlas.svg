@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+<svg width="512" height="896" xmlns="http://www.w3.org/2000/svg">
   <!-- Button_idle_1 (efff9f5e - Improvements to button layout) at 0,0 -->
   <rect x="0" y="0" width="256" height="128" rx="20" ry="20" fill="white"/>
   <rect x="10" y="10" width="236" height="82" rx="12.5" ry="12.5" fill="red"/>
@@ -15,4 +15,14 @@
   <!-- Button_idle_5 (ee89fab4 - Thin outline only at the bottom) at 256,384 -->
   <rect x="257" y="384" width="254" height="128" rx="40" ry="40" fill="white"/>
   <rect x="256" y="384" width="256" height="118" rx="35" ry="35" fill="red"/>
+  <!-- Button_idle_6 (chamfered/bevelled corners) at 0,512 -->
+  <path d="M 40,512 L 216,512 L 256,552 L 256,600 L 216,640 L 40,640 L 0,600 L 0,552 Z" fill="white"/>
+  <path d="M 42,519 L 214,519 L 249,554 L 249,598 L 214,633 L 42,633 L 7,598 L 7,554 Z" fill="red"/>
+  <!-- Button_idle_7 (double thickness white outline) at 0,640 -->
+  <path d="M 40,640 L 216,640 L 256,680 L 256,728 L 216,768 L 40,768 L 0,728 L 0,680 Z" fill="white"/>
+  <path d="M 42,652 L 214,652 L 244,682 L 244,726 L 214,756 L 42,756 L 12,726 L 12,682 Z" fill="red"/>
+  <!-- Button_idle_8 (chamfered with 2px black underline on bottom) at 0,768 -->
+  <path d="M 40,768 L 216,768 L 256,808 L 256,856 L 216,896 L 40,896 L 0,856 L 0,808 Z" fill="white"/>
+  <path d="M 42,775 L 214,775 L 249,810 L 249,854 L 214,889 L 42,889 L 7,854 L 7,810 Z" fill="#4c0000"/>
+  <path d="M 42,775 L 214,775 L 249,810 L 249,854 L 214,871 L 42,871 L 7,854 L 7,810 Z" fill="red"/>
 </svg>

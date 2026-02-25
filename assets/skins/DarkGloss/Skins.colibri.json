@@ -4,7 +4,7 @@
         "Button_idle_1" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 512],
+            "tex_resolution" : [512, 896],
             "grid_uv" :
             {
                 "top_left": [0, 0, 20, 20],
@@ -26,7 +26,7 @@
         "Button_idle_2" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 512],
+            "tex_resolution" : [512, 896],
             "grid_uv" :
             {
                 "top_left": [0, 128, 40, 40],
@@ -47,7 +47,7 @@
         "Button_idle_3" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 512],
+            "tex_resolution" : [512, 896],
             "grid_uv" :
             {
                 "top_left": [256, 128, 40, 40],
@@ -69,7 +69,7 @@
         "Button_idle_4" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 512],
+            "tex_resolution" : [512, 896],
             "grid_uv" :
             {
                 "top_left": [256, 256, 40, 40],
@@ -91,7 +91,7 @@
         "Button_idle_5" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 512],
+            "tex_resolution" : [512, 896],
             "grid_uv" :
             {
                 "top_left": [256, 384, 40, 40],
@@ -110,9 +110,75 @@
                 "bottom" : [10, 0]
             }
         },
+        "Button_idle_6" :
+        {
+            "material" : "AtlasTransparent",
+            "tex_resolution" : [512, 896],
+            "grid_uv" :
+            {
+                "top_left": [0, 512, 40, 40],
+                "top": [40, 512, 176, 40],
+                "top_right": [216, 512, 40, 40],
+                "center_left": [0, 552, 40, 48],
+                "center": [40, 552, 176, 48],
+                "center_right": [216, 552, 40, 48],
+                "bottom_left": [0, 600, 40, 40],
+                "bottom": [40, 600, 176, 40],
+                "bottom_right": [216, 600, 40, 40]
+            },
+            "borders" :
+            {
+                "all" : [10, 0],
+                "bottom" : [10, 0]
+            }
+        },
+        "Button_idle_7" :
+        {
+            "material" : "AtlasTransparent",
+            "tex_resolution" : [512, 896],
+            "grid_uv" :
+            {
+                "top_left": [0, 640, 40, 40],
+                "top": [40, 640, 176, 40],
+                "top_right": [216, 640, 40, 40],
+                "center_left": [0, 680, 40, 48],
+                "center": [40, 680, 176, 48],
+                "center_right": [216, 680, 40, 48],
+                "bottom_left": [0, 728, 40, 40],
+                "bottom": [40, 728, 176, 40],
+                "bottom_right": [216, 728, 40, 40]
+            },
+            "borders" :
+            {
+                "all" : [10, 0],
+                "bottom" : [10, 0]
+            }
+        },
+        "Button_idle_8" :
+        {
+            "material" : "AtlasTransparent",
+            "tex_resolution" : [512, 896],
+            "grid_uv" :
+            {
+                "top_left": [0, 768, 40, 40],
+                "top": [40, 768, 176, 40],
+                "top_right": [216, 768, 40, 40],
+                "center_left": [0, 808, 40, 46],
+                "center": [40, 808, 176, 46],
+                "center_right": [216, 808, 40, 46],
+                "bottom_left": [0, 854, 40, 42],
+                "bottom": [40, 854, 176, 42],
+                "bottom_right": [216, 854, 40, 42]
+            },
+            "borders" :
+            {
+                "all" : [10, 0],
+                "bottom" : [10, 0]
+            }
+        },
         "Button_idle" :
         {
-            "copy_from" : "Button_idle_5"
+            "copy_from" : "Button_idle_8"
         },
         "Button_disabled" :
         {
@@ -144,7 +210,7 @@
         "Background" :
         {
             "material" : "Atlas",
-            "tex_resolution" : [512, 512],
+            "tex_resolution" : [512, 896],
             "grid_uv" :
             {
                 "enclosing" : [[0, 384, 128, 128], [2, 20], [2, 2]]
@@ -194,7 +260,7 @@
         "SpinnerBtnDecrement_idle" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 512],
+            "tex_resolution" : [512, 896],
             "grid_uv" :
             {
                 "comment" :
@@ -228,7 +294,7 @@
         "SpinnerBtnIncrement_idle" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 512],
+            "tex_resolution" : [512, 896],
             "grid_uv" :
             {
                 "center_left" : [160, 384, 1, 1],
@@ -258,7 +324,7 @@
         "CheckboxTickmarkUnchecked" :
         {
             "material" : "Atlas",
-            "tex_resolution" : [512, 512],
+            "tex_resolution" : [512, 896],
             "grid_uv" : { "center" : [128, 384, 32, 32] }
         },
         "CheckboxTickmarkChecked" :
@@ -313,7 +379,7 @@
         "ProgressbarLayer1" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 512],
+            "tex_resolution" : [512, 896],
             "grid_uv" :
             {
                 "enclosing" : [[256, 0, 256, 128], [20, 20]]
