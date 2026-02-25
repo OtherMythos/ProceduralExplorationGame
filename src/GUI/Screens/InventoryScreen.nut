@@ -379,7 +379,7 @@ enum InventoryBusEvents{
 
         local inspectorSize = mPlayerInspector_.getSize();
         //inspectorSize.x = mInventoryGrid_.getSize().x
-        inspectorSize.x = ::drawable.x * 0.9;
+        inspectorSize.x = ::drawable.x;
         mPlayerInspector_.setSize(inspectorSize);
         mPlayerInspector_.setPosition(0, startPos);
         //container.sizeInner();
@@ -392,7 +392,8 @@ enum InventoryBusEvents{
         //}
 
         local gridStart = mPlayerInspector_.getPosition() + mPlayerInspector_.getSize();
-        gridStart.x = ::drawable.x * 0.05;
+        local gridSize = mInventoryGrid_.getSize();
+        gridStart.x = 20;
         mInventoryGrid_.setPosition(gridStart);
         if(mStorageGrid_ != null){
             mStorageGrid_.setPosition(gridStart);

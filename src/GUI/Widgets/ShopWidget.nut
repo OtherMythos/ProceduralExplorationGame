@@ -31,6 +31,7 @@
         mBackgroundPanel_.setSize(mParent_.getSizeAfterClipping().x, 230);
         mBackgroundPanel_.setDatablock("simpleGrey");
         mBackgroundPanel_.setPosition(0, yPos);
+        mBackgroundPanel_.setSkin("Button_idle");
 
         local innerPadding = INNER_PADDING;
 
