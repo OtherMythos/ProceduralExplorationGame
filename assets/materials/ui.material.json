@@ -66,6 +66,15 @@
         {
             "diffuse" : [0.98, 1.0, 0.25, 1.0]
         },
+        "gui/InventoryWidget" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse" : [1, 1, 1, 0.6],
+            "diffuse_map0" :
+            {
+                "texture": "inventoryWidgetSecond.png"
+            }
+        },
         "gui/spriteBase" :
         {
             "blendblock": "gui/uiBlend",

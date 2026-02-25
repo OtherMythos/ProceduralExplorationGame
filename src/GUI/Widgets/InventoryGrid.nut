@@ -5,20 +5,21 @@
     mBus_ = null;
 
     EQUIP_GRID_VALUES = [
-        "inventory_slot_head",
-        "inventory_slot_body",
-        "inventory_slot_left_hand",
-        "inventory_slot_right_hand",
-        "inventory_slot_legs",
-        "inventory_slot_feet",
-        "inventory_slot_accessory",
-        "inventory_slot_accessory"
+        "InventoryWidget",
+        "InventoryWidget",
+        "InventoryWidget",
+        "InventoryWidget",
+        "InventoryWidget",
+        "InventoryWidget",
+        "InventoryWidget",
+        "InventoryWidget"
     ];
 
     SELECTION_INDICATOR_PADDING = 4;
 
     mHoverInfo_ = null;
     mButtonCover_ = null;
+    mBackgroundPanel_ = null;
     mWindow_ = null;
     mOverlayWin_ = null;
 
@@ -94,7 +95,7 @@
     }
 
     function setSkinForBackgroundEquippables(backgroundWidget, idx, populated){
-        backgroundWidget.setSkin(populated ? "inventory_slot" : EQUIP_GRID_VALUES[idx]);
+        backgroundWidget.setSkin(populated ? "InventoryWidget" : EQUIP_GRID_VALUES[idx]);
     }
 
     function initialise(parentWin, gridSize, overlayWin, inventoryWidth, inventoryHeight){
@@ -126,12 +127,23 @@
         mGridPadding_ = gridPadding;
         local iconSize = ::ScreenManager.calculateRatio(gridSize.tofloat() * 1.0);
         if(mButtonCover_) mButtonCover_.setSize(gridRatio, gridRatio);
+
+        //Create background panel for entire grid
+        mBackgroundPanel_ = parentWin.createPanel();
+        mBackgroundPanel_.setSize(inventoryWidth * gridRatio, inventoryHeight * gridRatio);
+        mBackgroundPanel_.setPosition(0, 0);
+        local targetOpacity = (mInventoryType_ == InventoryGridType.INVENTORY_EQUIPPABLES ? 0.0 : 0.7);
+        mBackgroundPanel_.setColour(ColourValue(0.1, 0.1, 0.1, targetOpacity));
+        mBackgroundPanel_.setClickable(false);
+        //mBackgroundPanel_.setSkin("EmptyBg");
+        mBackgroundPanel_.setClickable(false);
+
         for(local y = 0; y < inventoryHeight; y++){
             for(local x = 0; x < inventoryWidth; x++){
                 local background = parentWin.createPanel();
                 background.setSize(gridRatio, gridRatio);
                 background.setPosition(x * gridRatio, y * gridRatio);
-                background.setSkin("inventory_slot");
+                background.setSkin("InventoryWidget");
                 mBackgrounds_.append(background);
 
                 local iconPanel = parentWin.createPanel();
@@ -374,6 +386,17 @@
 
     function notifyLayout(){
         mResolvedPos_ = mBackgrounds_[0].getDerivedPosition();
+        if(mBackgroundPanel_ != null && mBackgrounds_.len() > 0){
+            //Calculate panel size based on actual grid layout
+            local firstPos = mBackgrounds_[0].getDerivedPosition();
+            local lastIdx = mBackgrounds_.len() - 1;
+            local lastPos = mBackgrounds_[lastIdx].getDerivedPosition();
+            local lastSize = mBackgrounds_[lastIdx].getSize();
+            local panelWidth = (lastPos.x - firstPos.x) + lastSize.x;
+            local panelHeight = (lastPos.y - firstPos.y) + lastSize.y;
+            mBackgroundPanel_.setSize(panelWidth, panelHeight);
+            mBackgroundPanel_.setPosition(firstPos);
+        }
     }
 
     function update(){
@@ -430,6 +453,9 @@
     function setPosition(pos){
         //mWindow_.setPosition(pos);
         //TODO this could be improved.
+        if(mBackgroundPanel_ != null){
+            mBackgroundPanel_.setPosition(mBackgroundPanel_.getPosition() + pos);
+        }
         foreach(i in mBackgrounds_){
             i.setPosition(i.getPosition() + pos);
         }

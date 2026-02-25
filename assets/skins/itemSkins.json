@@ -15,13 +15,22 @@
                 "all" : [0, 0, 32, 32]
             }
         },
-        "inventory_slot" :
+        "InventoryWidget" :
         {
-            "copy_from" : "SpriteBase",
+            "material" : "gui/InventoryWidget",
+            "tex_resolution" : [256, 256],
+            "borders" :
+            {
+                "all" : [0, 0]
+            },
             "grid_uv" :
             {
-                "all" : [224, 128, 16, 16]
+                "all" : [0, 0, 256, 256]
             }
+        },
+        "inventory_slot" :
+        {
+            "copy_from" : "Widget"
         },
         "inventory_slot_head" :
         {
