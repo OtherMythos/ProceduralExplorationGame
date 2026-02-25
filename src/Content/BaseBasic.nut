@@ -64,6 +64,7 @@
         _doFile("res://src/GUI/Screens/FoundOrbScreen.nut");
         _doFile("res://src/GUI/Screens/BankDepositWithdrawScreen.nut");
         _doFile("res://src/GUI/Screens/ArtifactScreen.nut");
+        _doFile("res://src/GUI/Screens/GUITestScreen.nut");
 
         _doFile("res://src/GUI/Widgets/BankWidget.nut");
         _doFile("res://src/GUI/Widgets/ShopWidget.nut");

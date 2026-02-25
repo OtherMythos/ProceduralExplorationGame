@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
-  <rect x="1" y="0" width="254" height="128" rx="40" ry="40" fill="white"/>
-  <rect x="0" y="0" width="256" height="118" rx="35" ry="35" fill="red"/>
+  <!-- Button_idle_1 (efff9f5e - Improvements to button layout) at 0,0 -->
+  <rect x="0" y="0" width="256" height="128" rx="20" ry="20" fill="white"/>
+  <rect x="10" y="10" width="236" height="82" rx="12.5" ry="12.5" fill="red"/>
+  <!-- Button_idle_2 (f31b0118 - Thicker lines, no bottom thickness) at 0,128 -->
+  <rect x="0" y="128" width="256" height="128" rx="40" ry="40" fill="white"/>
+  <rect x="20" y="148" width="216" height="88" rx="25" ry="25" fill="red"/>
+  <!-- Button_idle_3 (c917271d - Thicker lines, thicker bottom) at 256,128 -->
+  <rect x="256" y="128" width="256" height="128" rx="40" ry="40" fill="white"/>
+  <rect x="276" y="148" width="216" height="68" rx="25" ry="25" fill="red"/>
+  <!-- Button_idle_4 (2045ac69 - Thin outline thicker bottom) at 256,256 -->
+  <rect x="256" y="256" width="256" height="128" rx="40" ry="40" fill="white"/>
+  <rect x="261" y="261" width="246" height="108" rx="35" ry="35" fill="red"/>
+  <!-- Button_idle_5 (ee89fab4 - Thin outline only at the bottom) at 256,384 -->
+  <rect x="257" y="384" width="254" height="128" rx="40" ry="40" fill="white"/>
+  <rect x="256" y="384" width="256" height="118" rx="35" ry="35" fill="red"/>
 </svg>

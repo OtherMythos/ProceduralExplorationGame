@@ -25,6 +25,7 @@
     BANK_DEPOSIT_WITHDRAW_SCREEN,
     GAME_TITLE_SCREEN,
     ARTIFACT_SCREEN,
+    GUI_TEST_SCREEN
 
 ");
 
@@ -53,5 +54,6 @@
     "FoundOrbScreen",
     "BankDepositWithdrawScreen",
     "GameTitleScreen",
-    "artifactScreen"
+    "artifactScreen",
+    "GUITestScreen",
 ]);
