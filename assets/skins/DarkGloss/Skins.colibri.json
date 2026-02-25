@@ -266,7 +266,7 @@
         },
         "Button_idle" :
         {
-            "copy_from" : "Button_idle_11"
+            "copy_from" : "Button_idle_10"
         },
         "Button_disabled" :
         {
