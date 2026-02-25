@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="512" height="1152" xmlns="http://www.w3.org/2000/svg">
+<svg width="512" height="1408" xmlns="http://www.w3.org/2000/svg">
   <!-- Button_idle_1 (efff9f5e - Improvements to button layout) at 0,0 -->
   <rect x="0" y="0" width="256" height="128" rx="20" ry="20" fill="white"/>
   <rect x="10" y="10" width="236" height="82" rx="12.5" ry="12.5" fill="red"/>
@@ -32,4 +32,12 @@
   <path d="M 44,1024 L 212,1024 Q 216,1024 219,1027 L 253,1061 Q 256,1064 256,1068 L 256,1108 Q 256,1112 253,1115 L 219,1149 Q 216,1152 212,1152 L 44,1152 Q 40,1152 37,1149 L 3,1115 Q 0,1112 0,1108 L 0,1068 Q 0,1064 3,1061 L 37,1027 Q 40,1024 44,1024 Z" fill="white"/>
   <path d="M 46,1036 L 210,1036 Q 214,1036 217,1039 L 241,1063 Q 244,1066 244,1070 L 244,1106 Q 244,1110 241,1113 L 217,1137 Q 214,1140 210,1140 L 46,1140 Q 42,1140 39,1137 L 15,1113 Q 12,1110 12,1106 L 12,1070 Q 12,1066 15,1063 L 39,1039 Q 42,1036 46,1036 Z" fill="black"/>
   <path d="M 51,1041 L 205,1041 Q 212,1041 213,1043 L 237,1067 Q 239,1068 239,1075 L 239,1101 Q 239,1108 237,1109 L 213,1133 Q 211,1135 205,1135 L 51,1135 Q 44,1135 43,1133 L 19,1109 Q 17,1108 17,1101 L 17,1075 Q 17,1068 19,1067 L 43,1043 Q 44,1041 51,1041 Z" fill="red"/>
+  <!-- Button_idle_11 (based on Button_idle_5 with black 5px inside stroke) at 256,1152 -->
+  <rect x="257" y="1152" width="254" height="128" rx="40" ry="40" fill="white"/>
+  <rect x="262" y="1157" width="244" height="118" rx="35" ry="35" fill="black"/>
+  <rect x="267" y="1162" width="234" height="108" rx="30" ry="30" fill="red"/>
+  <!-- Button_idle_12 (based on Button_idle_5 with black outline, white bottom accent) at 256,1280 -->
+  <rect x="257" y="1280" width="254" height="128" rx="40" ry="40" fill="white"/>
+  <rect x="256" y="1280" width="256" height="118" rx="35" ry="35" fill="black"/>
+  <rect x="258" y="1282" width="252" height="114" rx="35" ry="35" fill="red"/>
 </svg>

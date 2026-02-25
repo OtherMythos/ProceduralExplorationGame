@@ -93,6 +93,8 @@
             "Button_idle_8",
             "Button_idle_9",
             "Button_idle_10",
+            "Button_idle_11",
+            "Button_idle_12",
         ];
 
         foreach(i, c in buttonSkin){
@@ -131,6 +133,8 @@
             "Button_idle_8",
             "Button_idle_9",
             "Button_idle_10",
+            "Button_idle_11",
+            "Button_idle_12",
         ];
 
         local panelSize = 120;

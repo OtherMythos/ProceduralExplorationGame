@@ -4,7 +4,7 @@
         "Button_idle_1" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 1152],
+            "tex_resolution" : [512, 1408],
             "grid_uv" :
             {
                 "top_left": [0, 0, 20, 20],
@@ -26,7 +26,7 @@
         "Button_idle_2" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 1152],
+            "tex_resolution" : [512, 1408],
             "grid_uv" :
             {
                 "top_left": [0, 128, 40, 40],
@@ -47,7 +47,7 @@
         "Button_idle_3" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 1152],
+            "tex_resolution" : [512, 1408],
             "grid_uv" :
             {
                 "top_left": [256, 128, 40, 40],
@@ -69,7 +69,7 @@
         "Button_idle_4" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 1152],
+            "tex_resolution" : [512, 1408],
             "grid_uv" :
             {
                 "top_left": [256, 256, 40, 40],
@@ -91,7 +91,7 @@
         "Button_idle_5" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 1152],
+            "tex_resolution" : [512, 1408],
             "grid_uv" :
             {
                 "top_left": [256, 384, 40, 40],
@@ -113,7 +113,7 @@
         "Button_idle_6" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 1152],
+            "tex_resolution" : [512, 1408],
             "grid_uv" :
             {
                 "top_left": [0, 512, 40, 40],
@@ -135,7 +135,7 @@
         "Button_idle_7" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 1152],
+            "tex_resolution" : [512, 1408],
             "grid_uv" :
             {
                 "top_left": [0, 640, 40, 40],
@@ -157,7 +157,7 @@
         "Button_idle_8" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 1152],
+            "tex_resolution" : [512, 1408],
             "grid_uv" :
             {
                 "top_left": [0, 768, 40, 40],
@@ -179,7 +179,7 @@
         "Button_idle_9" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 1152],
+            "tex_resolution" : [512, 1408],
             "grid_uv" :
             {
                 "top_left": [0, 896, 46, 42],
@@ -201,7 +201,7 @@
         "Button_idle_10" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [512, 1152],
+            "tex_resolution" : [512, 1408],
             "grid_uv" :
             {
                 "top_left": [0, 1024, 46, 42],
@@ -220,9 +220,53 @@
                 "bottom" : [10, 0]
             }
         },
+        "Button_idle_11" :
+        {
+            "material" : "AtlasTransparent",
+            "tex_resolution" : [512, 1408],
+            "grid_uv" :
+            {
+                "top_left": [256, 1152, 40, 40],
+                "top": [296, 1152, 174, 40],
+                "top_right": [470, 1152, 42, 40],
+                "center_left": [256, 1192, 40, 44],
+                "center": [296, 1192, 174, 44],
+                "center_right": [470, 1192, 42, 44],
+                "bottom_left": [256, 1236, 40, 44],
+                "bottom": [296, 1236, 174, 44],
+                "bottom_right": [470, 1236, 42, 44]
+            },
+            "borders" :
+            {
+                "all" : [10, 0],
+                "bottom" : [10, 0]
+            }
+        },
+        "Button_idle_12" :
+        {
+            "material" : "AtlasTransparent",
+            "tex_resolution" : [512, 1408],
+            "grid_uv" :
+            {
+                "top_left": [256, 1280, 40, 40],
+                "top": [296, 1280, 176, 40],
+                "top_right": [472, 1280, 40, 40],
+                "center_left": [256, 1320, 40, 48],
+                "center": [296, 1320, 176, 48],
+                "center_right": [472, 1320, 40, 48],
+                "bottom_left": [256, 1368, 40, 40],
+                "bottom": [296, 1368, 176, 40],
+                "bottom_right": [472, 1368, 40, 40]
+            },
+            "borders" :
+            {
+                "all" : [10, 0],
+                "bottom" : [10, 0]
+            }
+        },
         "Button_idle" :
         {
-            "copy_from" : "Button_idle_10"
+            "copy_from" : "Button_idle_11"
         },
         "Button_disabled" :
         {

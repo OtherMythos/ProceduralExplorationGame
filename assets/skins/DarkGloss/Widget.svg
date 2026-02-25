@@ -1,0 +1,49 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer diamond (white outline shape) -->
+  <!--
+  <rect
+    x="46"
+    y="46"
+    width="164"
+    height="164"
+    rx="28"
+    ry="28"
+    transform="rotate(45 128 128)"
+    fill="black"
+  />
+  -->
+
+  <rect
+    x="48"
+    y="48"
+    width="160"
+    height="160"
+    rx="28"
+    ry="28"
+    transform="rotate(45 128 128)"
+    fill="white"
+  />
+
+  <rect
+    x="60"
+    y="60"
+    width="136"
+    height="136"
+    rx="23"
+    ry="23"
+    transform="rotate(45 128 128)"
+    fill="black"
+  />
+
+  <!-- Inner diamond (red center, larger to reduce outline thickness) -->
+  <rect
+    x="62"
+    y="62"
+    width="132"
+    height="132"
+    rx="22"
+    ry="22"
+    transform="rotate(45 128 128)"
+    fill="#E10600"
+  />
+</svg>
