@@ -92,6 +92,11 @@ enum InventoryBusEvents{
     mPlayerStats_ = null;
     mPlayerInspector_ = null;
 
+    mEquippableLeftBg_ = null;
+    mEquippableRightBg_ = null;
+    mEquippableLeftGradient_ = null;
+    mEquippableRightGradient_ = null;
+
     mLayerIdx = 0;
 
     mUseSecondaryGrid_ = false;
@@ -297,6 +302,21 @@ enum InventoryBusEvents{
         }
         mHoverInfo_ = ::InventoryHoverItemInfo(mOverlayWindow_);
 
+        // Create equippable background panels and gradient overlays early
+        mEquippableLeftBg_ = mWindow_.createPanel();
+        mEquippableLeftBg_.setSize(0, 0);
+        mEquippableLeftBg_.setPosition(-1000, -1000);
+        mEquippableLeftBg_.setSkin("Button_idle");
+        mEquippableLeftBg_.setColour(ColourValue(0.1, 0.1, 0.1, 0.7));
+        mEquippableLeftBg_.setClickable(false);
+
+        mEquippableRightBg_ = mWindow_.createPanel();
+        mEquippableRightBg_.setSize(0, 0);
+        mEquippableRightBg_.setPosition(-1000, -1000);
+        mEquippableRightBg_.setSkin("Button_idle");
+        mEquippableRightBg_.setColour(ColourValue(0.1, 0.1, 0.1, 0.7));
+        mEquippableRightBg_.setClickable(false);
+
         //Add one for the equippables slot and another for general padding.
         local gridSize = calculateGridSize();
 
@@ -379,9 +399,11 @@ enum InventoryBusEvents{
 
         local inspectorSize = mPlayerInspector_.getSize();
         //inspectorSize.x = mInventoryGrid_.getSize().x
-        inspectorSize.x = ::drawable.x;
+        local widgetSize = mInventoryEquippedGrid_.getWidgetSize();
+        inspectorSize.x = ::drawable.x - widgetSize.x * 2;
         mPlayerInspector_.setSize(inspectorSize);
-        mPlayerInspector_.setPosition(0, startPos);
+        mPlayerInspector_.setPosition(widgetSize.x, startPos);
+        local inspectorSize = mPlayerInspector_.getSize();
         //container.sizeInner();
         //if(!mobile){
             repositionEquippablesGrid();
@@ -419,7 +441,7 @@ enum InventoryBusEvents{
         //local leftPos = mPlayerInspector_.getModelExtentLeft();
         local leftPos = Vec2();
         local rightPos = mPlayerInspector_.getSize();
-        rightPos.x -= widgetSize.x;
+        rightPos.x += widgetSize.x;
 
         local leftGreatestY = startPos.y;
         local rightGreatestY = startPos.y;
@@ -437,24 +459,24 @@ enum InventoryBusEvents{
             }
         }
 
-        // Add background panels behind the two equippable columns
-        local leftBg = mWindow_.createPanel();
+        // Update background panels behind the two equippable columns
+        local colValue = ColourValue(0.1, 0.1, 0.1, 0.7);
         local leftBgPos = Vec2(leftPos.x, startPos.y);
         local leftBgSize = Vec2(widgetSize.x, max(0, leftGreatestY - startPos.y));
-        leftBg.setPosition(leftBgPos);
-        leftBg.setSize(leftBgSize);
-        leftBg.setColour(ColourValue(0.1, 0.1, 0.1, 0.7));
-        leftBg.setSkin("Button_idle");
-        leftBg.setClickable(false);
+        mEquippableLeftBg_.setPosition(leftBgPos);
+        mEquippableLeftBg_.setSize(leftBgSize);
+        mEquippableLeftBg_.setColour(colValue);
+        mEquippableLeftBg_.setSkin("Button_idle");
+        mEquippableLeftBg_.setClickable(false);
 
-        local rightBg = mWindow_.createPanel();
+        //local rightBg = mWindow_.createPanel();
         local rightBgPos = Vec2(rightPos.x, startPos.y);
         local rightBgSize = Vec2(widgetSize.x, max(0, rightGreatestY - startPos.y));
-        rightBg.setPosition(rightBgPos);
-        rightBg.setSize(rightBgSize);
-        rightBg.setColour(ColourValue(0.1, 0.1, 0.1, 0.7));
-        rightBg.setSkin("Button_idle");
-        rightBg.setClickable(false);
+        mEquippableRightBg_.setPosition(rightBgPos);
+        mEquippableRightBg_.setSize(rightBgSize);
+        mEquippableRightBg_.setColour(colValue);
+        mEquippableRightBg_.setSkin("Button_idle");
+        mEquippableRightBg_.setClickable(false);
 
         // Add subtle gradients overlaying the backgrounds
         local gradientLeft = mWindow_.createPanel();
@@ -488,9 +510,12 @@ enum InventoryBusEvents{
     function updateStorageToggleButtonText_(){
         if(mStorageToggleButton_ != null){
             mStorageToggleButton_.setText(!mShowingStorage_ ? "Inventory" : "Storage");
+            local newSize = mStorageToggleButton_.getSize();
+            newSize.y = newSize.y * 0.75;
+            mStorageToggleButton_.setSize(newSize);
 
             local targetPos = mPlayerInspector_.getPosition() + mPlayerInspector_.getSize();
-            targetPos.x = mPlayerInspector_.getSize().x / 2 - mStorageToggleButton_.getSize().x / 2;
+            targetPos.x = mPlayerInspector_.getPosition().x + mPlayerInspector_.getSize().x / 2 - mStorageToggleButton_.getSize().x / 2;
             targetPos.y -= mStorageToggleButton_.getSize().y;
             mStorageToggleButton_.setPosition(targetPos);
         }
