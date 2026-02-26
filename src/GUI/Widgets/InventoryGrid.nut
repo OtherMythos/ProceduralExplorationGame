@@ -132,7 +132,10 @@
         mBackgroundPanel_ = parentWin.createPanel();
         mBackgroundPanel_.setSize(inventoryWidth * gridRatio, inventoryHeight * gridRatio);
         mBackgroundPanel_.setPosition(0, 0);
-        local targetOpacity = (mInventoryType_ == InventoryGridType.INVENTORY_EQUIPPABLES ? 0.0 : 0.7);
+        local targetOpacity = 0.7;
+        if(mInventoryType_ == InventoryGridType.INVENTORY_EQUIPPABLES){
+            mBackgroundPanel_.setVisible(false);
+        }
         mBackgroundPanel_.setColour(ColourValue(0.1, 0.1, 0.1, targetOpacity));
         mBackgroundPanel_.setClickable(false);
         mBackgroundPanel_.setSkin("Button_idle");
@@ -512,6 +515,7 @@
                 mRenderIcons_[idx].setPosition(iconCentrePos + offsetVec);
             }
         }
+        mBackgroundPanel_.setPosition(mWidgets_[0].getPosition());
     }
 
     function toggleSelection_(idx){

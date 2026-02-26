@@ -420,15 +420,59 @@ enum InventoryBusEvents{
         local leftPos = Vec2();
         local rightPos = mPlayerInspector_.getSize();
         rightPos.x -= widgetSize.x;
-        //leftPos.x -= widgetSize.x;
+
+        local leftGreatestY = startPos.y;
+        local rightGreatestY = startPos.y;
+
         for(local i = 0; i < EquippedSlotTypes.MAX-1; i++){
             local target = (i < 4 ? leftPos : rightPos).copy();
             target.y = 0;
             target.y += (i % 4) * widgetSize.y;
             target.y += startPos.y;
             mInventoryEquippedGrid_.setPositionForIdx(i, target);
+            if(i < 4){
+                if(target.y + widgetSize.y > leftGreatestY) leftGreatestY = target.y + widgetSize.y;
+            }else{
+                if(target.y + widgetSize.y > rightGreatestY) rightGreatestY = target.y + widgetSize.y;
+            }
         }
-        //mInventoryEquippedGrid_.setSize(mInventoryEquippedGrid_.calculateChildrenSize());
+
+        // Add background panels behind the two equippable columns
+        local leftBg = mWindow_.createPanel();
+        local leftBgPos = Vec2(leftPos.x, startPos.y);
+        local leftBgSize = Vec2(widgetSize.x, max(0, leftGreatestY - startPos.y));
+        leftBg.setPosition(leftBgPos);
+        leftBg.setSize(leftBgSize);
+        leftBg.setColour(ColourValue(0.1, 0.1, 0.1, 0.7));
+        leftBg.setSkin("Button_idle");
+        leftBg.setClickable(false);
+
+        local rightBg = mWindow_.createPanel();
+        local rightBgPos = Vec2(rightPos.x, startPos.y);
+        local rightBgSize = Vec2(widgetSize.x, max(0, rightGreatestY - startPos.y));
+        rightBg.setPosition(rightBgPos);
+        rightBg.setSize(rightBgSize);
+        rightBg.setColour(ColourValue(0.1, 0.1, 0.1, 0.7));
+        rightBg.setSkin("Button_idle");
+        rightBg.setClickable(false);
+
+        // Add subtle gradients overlaying the backgrounds
+        local gradientLeft = mWindow_.createPanel();
+        local gradientLeftPos = Vec2(widgetSize.x, startPos.y);
+        gradientLeft.setPosition(gradientLeftPos);
+        gradientLeft.setSize(Vec2(64, max(0, leftGreatestY - startPos.y)));
+        gradientLeft.setColour(ColourValue(1, 1, 1, 0.5));
+        gradientLeft.setDatablock("gui/simpleGradient");
+        gradientLeft.setClickable(false);
+
+        local gradientRight = mWindow_.createPanel();
+        local gradientRightPos = Vec2(rightPos.x - 64, startPos.y);
+        gradientRight.setPosition(gradientRightPos);
+        gradientRight.setSize(Vec2(64, max(0, rightGreatestY - startPos.y)));
+        gradientRight.setColour(ColourValue(1, 1, 1, 0.5));
+        gradientRight.setDatablock("gui/simpleGradient");
+        gradientRight.setOrientation(PI);
+        gradientRight.setClickable(false);
     }
 
     function toggleStorageVisibility(){

@@ -191,6 +191,14 @@
     return maxHeight;
 }
 
+::max <- function(a, b){
+    return (a > b) ? a : b;
+}
+
+::min <- function(a, b){
+    return (a < b) ? a : b;
+}
+
 ::mix <- function(a, b, amount) {
     return a * (1.0 - amount) + b * amount;
 }
