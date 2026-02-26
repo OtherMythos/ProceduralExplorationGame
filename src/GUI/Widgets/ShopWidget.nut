@@ -31,7 +31,7 @@
         mBackgroundPanel_.setSize(mParent_.getSizeAfterClipping().x, 230);
         mBackgroundPanel_.setDatablock("simpleGrey");
         mBackgroundPanel_.setPosition(0, yPos);
-        mBackgroundPanel_.setSkin("Button_idle");
+        mBackgroundPanel_.setSkinPack("Panel_dark");
 
         local innerPadding = INNER_PADDING;
 
@@ -46,7 +46,7 @@
         local backgroundSize = mBackgroundPanel_.getSize();
         mInnerPanel_.setSize(backgroundSize.x - innerPadding * 2, backgroundSize.y - mTitle_.getSize().x - innerPadding);
         mInnerPanel_.setPosition(innerPadding, yPos);
-        mInnerPanel_.setDatablock("placeMapIndicator");
+        mInnerPanel_.setSkinPack("Panel_light");
 
         mInventoryBus_ = ::InventoryScreenObject.InventoryInfoBus();
         mBusCallbackId_ = mInventoryBus_.registerCallback(busCallback, this);

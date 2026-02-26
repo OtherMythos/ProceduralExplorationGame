@@ -138,7 +138,7 @@
         }
         mBackgroundPanel_.setColour(ColourValue(0.1, 0.1, 0.1, targetOpacity));
         mBackgroundPanel_.setClickable(false);
-        mBackgroundPanel_.setSkin("Button_idle");
+        mBackgroundPanel_.setSkinPack("Panel_dark");
         mBackgroundPanel_.setClickable(false);
 
         for(local y = 0; y < inventoryHeight; y++){

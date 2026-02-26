@@ -34,7 +34,7 @@ enum BankDepositWithdrawAmount{
         mWindow_.setBreadthFirst(true);
         mWindow_.setZOrder(61);
 
-        mWindow_.setSkin("Button_idle");
+        mWindow_.setSkin("Panel_dark");
 
         local layoutLine = _gui.createLayoutLine();
 
