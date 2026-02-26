@@ -15,19 +15,6 @@
                 "all" : [0, 0, 32, 32]
             }
         },
-        "InventoryWidget" :
-        {
-            "material" : "gui/InventoryWidget",
-            "tex_resolution" : [256, 256],
-            "borders" :
-            {
-                "all" : [0, 0]
-            },
-            "grid_uv" :
-            {
-                "all" : [0, 0, 256, 256]
-            }
-        },
         "inventory_slot" :
         {
             "copy_from" : "Widget"

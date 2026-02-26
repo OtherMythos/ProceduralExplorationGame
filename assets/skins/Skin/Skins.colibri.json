@@ -22,6 +22,19 @@
                 "all" : [10, 0],
                 "bottom" : [10, 0]
             }
+        },
+        "InventoryWidget" :
+        {
+            "material" : "gui/InventoryWidget",
+            "tex_resolution" : [256, 256],
+            "borders" :
+            {
+                "all" : [0, 0]
+            },
+            "grid_uv" :
+            {
+                "all" : [0, 0, 256, 256]
+            }
         }
     },
 
