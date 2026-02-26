@@ -9,9 +9,9 @@
 
     function setup(data){
 
-        _gui.loadSkins("res://build/assets/skins/DarkGloss/Skins.colibri.json");
-        _resources.addResourceLocation("res://build/assets/skins/DarkGloss", "FileSystem", "DarkGloss");
-        _resources.initialiseResourceGroup("DarkGloss");
+        _gui.loadSkins("res://build/assets/skins/TestSkin/Skins.colibri.json");
+        _resources.addResourceLocation("res://build/assets/skins/TestSkin", "FileSystem", "TestSkin");
+        _resources.initialiseResourceGroup("TestSkin");
 
         //Create main navigation window
         mWindow_ = _gui.createWindow("TestScreen");
