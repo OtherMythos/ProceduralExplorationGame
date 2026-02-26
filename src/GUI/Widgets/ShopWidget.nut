@@ -46,7 +46,7 @@
         local backgroundSize = mBackgroundPanel_.getSize();
         mInnerPanel_.setSize(backgroundSize.x - innerPadding * 2, backgroundSize.y - mTitle_.getSize().x);
         mInnerPanel_.setPosition(innerPadding, yPos);
-        mInnerPanel_.setSkinPack("Panel_light");
+        mInnerPanel_.setSkinPack("Panel_grey");
 
         mInventoryBus_ = ::InventoryScreenObject.InventoryInfoBus();
         mBusCallbackId_ = mInventoryBus_.registerCallback(busCallback, this);

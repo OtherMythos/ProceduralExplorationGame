@@ -34,7 +34,7 @@
         mInnerPanel_.setSize(backgroundSize.x - innerPadding * 2, backgroundSize.y - yPos - innerPadding);
         mInnerPanel_.setPosition(innerPadding, yPos);
         mInnerPanel_.setDatablock("placeMapIndicator");
-        mInnerPanel_.setSkinPack("Panel_light");
+        mInnerPanel_.setSkinPack("Panel_grey");
 
         local xPos = mInnerPanel_.getPosition().x;
         local yPos = mInnerPanel_.getPosition().y;
@@ -50,6 +50,7 @@
         moneyIcon.setSize(moneySize, moneySize);
         moneyIcon.setPosition(xPos, yPos);
         mSavingsCounter_.setPosition(mSavingsCounter_.getPosition() + Vec2(moneySize, -5));
+        mSavingsCounter_.setShadowOutline(true, ColourValue(0.05, 0.05, 0.05, 1.0), Vec2(1, 1));
 
         yPos += moneySize;
 
