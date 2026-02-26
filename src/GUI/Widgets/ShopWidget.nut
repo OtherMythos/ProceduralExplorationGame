@@ -11,7 +11,7 @@
     mInventoryWidth_ = 5;
     mInventoryHeight_ = 5;
 
-    INNER_PADDING = 5;
+    INNER_PADDING = 10;
 
     mInventory_ = null;
     mInventoryGrid_ = null;
@@ -44,14 +44,14 @@
 
         mInnerPanel_ = mParent_.createPanel();
         local backgroundSize = mBackgroundPanel_.getSize();
-        mInnerPanel_.setSize(backgroundSize.x - innerPadding * 2, backgroundSize.y - mTitle_.getSize().x - innerPadding);
+        mInnerPanel_.setSize(backgroundSize.x - innerPadding * 2, backgroundSize.y - mTitle_.getSize().x);
         mInnerPanel_.setPosition(innerPadding, yPos);
         mInnerPanel_.setSkinPack("Panel_light");
 
         mInventoryBus_ = ::InventoryScreenObject.InventoryInfoBus();
         mBusCallbackId_ = mInventoryBus_.registerCallback(busCallback, this);
 
-        mInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID, mInventoryBus_, null, null);
+        mInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID, mInventoryBus_, null, null, false, false);
         mInventoryGrid_.initialise(mParent_, gridSize, null, mInventoryWidth_, mInventoryHeight_);
         mInventoryGrid_.setPosition(mInnerPanel_.getPosition());
 

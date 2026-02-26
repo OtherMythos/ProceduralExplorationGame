@@ -17,8 +17,9 @@
 
         mBackgroundPanel_.setSize(mParent_.getSizeAfterClipping().x, 200);
         mBackgroundPanel_.setDatablock("simpleGrey");
+        mBackgroundPanel_.setSkinPack("Panel_dark");
 
-        local innerPadding = 5;
+        local innerPadding = 10;
 
         mTitle_ = mParent_.createLabel();
         mTitle_.setDefaultFontSize(mTitle_.getDefaultFontSize() * 1.1);
@@ -33,6 +34,7 @@
         mInnerPanel_.setSize(backgroundSize.x - innerPadding * 2, backgroundSize.y - yPos - innerPadding);
         mInnerPanel_.setPosition(innerPadding, yPos);
         mInnerPanel_.setDatablock("placeMapIndicator");
+        mInnerPanel_.setSkinPack("Panel_light");
 
         local xPos = mInnerPanel_.getPosition().x;
         local yPos = mInnerPanel_.getPosition().y;
@@ -54,7 +56,7 @@
         {
             local withdrawButton = mParent_.createButton();
             withdrawButton.setText("Withdraw");
-            withdrawButton.setPosition(xPos, yPos);
+            withdrawButton.setPosition(xPos, yPos - 5);
             withdrawButton.setDefaultFontSize(withdrawButton.getDefaultFontSize() * 1.8);
             local size = withdrawButton.getSize();
             withdrawButton.setSize(mInnerPanel_.getSize().x / 2, size.y * 1.5);
@@ -65,7 +67,7 @@
 
             local depositButton = mParent_.createButton();
             depositButton.setText("Deposit");
-            depositButton.setPosition(xPos + mInnerPanel_.getSize().x / 2, yPos);
+            depositButton.setPosition(xPos + mInnerPanel_.getSize().x / 2, yPos - 5);
             depositButton.setDefaultFontSize(depositButton.getDefaultFontSize() * 1.8);
             local size = depositButton.getSize();
             depositButton.setSize(mInnerPanel_.getSize().x / 2, size.y * 1.5);
@@ -75,6 +77,15 @@
             }, _GUI_ACTION_PRESSED, this);
 
             ::evenOutButtonsForHeight([withdrawButton, depositButton]);
+
+            foreach(i in [withdrawButton, depositButton]){
+                local start = i.getCentre();
+                local size = i.getSize();
+                size.y *= 0.8;
+                size.x -= 5;
+                i.setSize(size);
+                i.setCentre(start);
+            }
         }
 
         _event.subscribe(Event.BANK_MONEY_CHANGED, receiveBankMoneyChanged, this);

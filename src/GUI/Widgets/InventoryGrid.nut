@@ -20,6 +20,7 @@
     mHoverInfo_ = null;
     mButtonCover_ = null;
     mBackgroundPanel_ = null;
+    mDrawBackground_ = true;
     mWindow_ = null;
     mOverlayWin_ = null;
 
@@ -42,7 +43,7 @@
     mRenderIcons_ = null;
     mRenderIconAnimationTime_ = 0;
 
-    constructor(inventoryType, bus, hoverInfo, buttonCover, multiSelection = false){
+    constructor(inventoryType, bus, hoverInfo, buttonCover, multiSelection = false, drawBackground = true){
         mInventoryType_ = inventoryType;
         mBus_ = bus;
         mHoverInfo_ = hoverInfo;
@@ -50,6 +51,7 @@
         mBackgrounds_ = [];
         mStoredHiddenStates_ = {};
         mMultiSelection_ = multiSelection;
+        mDrawBackground_ = drawBackground;
         mSelectedItems_ = [];
         mSelectionIndicators_ = [];
         mRenderIcons_ = [];
@@ -128,18 +130,19 @@
         local iconSize = ::ScreenManager.calculateRatio(gridSize.tofloat() * 1.0);
         if(mButtonCover_) mButtonCover_.setSize(gridRatio, gridRatio);
 
-        //Create background panel for entire grid
-        mBackgroundPanel_ = parentWin.createPanel();
-        mBackgroundPanel_.setSize(inventoryWidth * gridRatio, inventoryHeight * gridRatio);
-        mBackgroundPanel_.setPosition(0, 0);
-        local targetOpacity = 0.7;
-        if(mInventoryType_ == InventoryGridType.INVENTORY_EQUIPPABLES){
-            mBackgroundPanel_.setVisible(false);
+        //Create background panel for entire grid (optional)
+        if(mDrawBackground_){
+            mBackgroundPanel_ = parentWin.createPanel();
+            mBackgroundPanel_.setSize(inventoryWidth * gridRatio, inventoryHeight * gridRatio);
+            mBackgroundPanel_.setPosition(0, 0);
+            local targetOpacity = 0.7;
+            mBackgroundPanel_.setColour(ColourValue(0.1, 0.1, 0.1, targetOpacity));
+            mBackgroundPanel_.setClickable(false);
+            mBackgroundPanel_.setSkinPack("Panel_dark");
+            mBackgroundPanel_.setClickable(false);
+        }else{
+            mBackgroundPanel_ = null;
         }
-        mBackgroundPanel_.setColour(ColourValue(0.1, 0.1, 0.1, targetOpacity));
-        mBackgroundPanel_.setClickable(false);
-        mBackgroundPanel_.setSkinPack("Panel_dark");
-        mBackgroundPanel_.setClickable(false);
 
         for(local y = 0; y < inventoryHeight; y++){
             for(local x = 0; x < inventoryWidth; x++){
@@ -515,7 +518,9 @@
                 mRenderIcons_[idx].setPosition(iconCentrePos + offsetVec);
             }
         }
-        mBackgroundPanel_.setPosition(mWidgets_[0].getPosition());
+        if(mBackgroundPanel_ != null){
+            mBackgroundPanel_.setPosition(mWidgets_[0].getPosition());
+        }
     }
 
     function toggleSelection_(idx){

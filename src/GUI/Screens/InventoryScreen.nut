@@ -330,7 +330,7 @@ enum InventoryBusEvents{
         //mInventoryGrid_.addToLayout(layoutLine);
         mInventoryGrid_.addToLayout(layoutHorizontal);
 
-        mInventoryEquippedGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_EQUIPPABLES, mInventoryBus_, mHoverInfo_, buttonCover, mMultiSelection_);
+        mInventoryEquippedGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_EQUIPPABLES, mInventoryBus_, mHoverInfo_, buttonCover, mMultiSelection_, false);
         mInventoryEquippedGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, null, null);
         //mInventoryEquippedGrid_.addToLayout(layoutLine);
         //mInventoryEquippedGrid_.addToLayout(layoutHorizontal);
@@ -466,7 +466,7 @@ enum InventoryBusEvents{
         mEquippableLeftBg_.setPosition(leftBgPos);
         mEquippableLeftBg_.setSize(leftBgSize);
         mEquippableLeftBg_.setColour(colValue);
-        mEquippableLeftBg_.setSkin("Panel_dark");
+        mEquippableLeftBg_.setSkinPack("Panel_dark");
         mEquippableLeftBg_.setClickable(false);
 
         //local rightBg = mWindow_.createPanel();
@@ -475,7 +475,7 @@ enum InventoryBusEvents{
         mEquippableRightBg_.setPosition(rightBgPos);
         mEquippableRightBg_.setSize(rightBgSize);
         mEquippableRightBg_.setColour(colValue);
-        mEquippableRightBg_.setSkin("Panel_dark");
+        mEquippableRightBg_.setSkinPack("Panel_dark");
         mEquippableRightBg_.setClickable(false);
 
         // Add subtle gradients overlaying the backgrounds
