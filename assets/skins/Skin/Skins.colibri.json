@@ -70,14 +70,27 @@
         "InventoryWidget" :
         {
             "material" : "gui/InventoryWidget",
-            "tex_resolution" : [256, 384],
+            "tex_resolution" : [256, 512],
             "borders" :
             {
                 "all" : [0, 0]
             },
             "grid_uv" :
             {
-                "all" : [0, 0, 256, 384]
+                "all" : [0, 0, 256, 256]
+            }
+        },
+        "InventoryWidget_light" :
+        {
+            "material" : "gui/InventoryWidget",
+            "tex_resolution" : [256, 512],
+            "borders" :
+            {
+                "all" : [0, 0]
+            },
+            "grid_uv" :
+            {
+                "all" : [0, 256, 256, 256]
             }
         }
     },
