@@ -23,6 +23,6 @@ BUILD_INPUT=${SCRIPT_DIR}/assets/
 docker run --name asset-builder-container --rm \
     -v "$BUILD_OUTPUT:$BUILD_OUTPUT" \
     -v "$BUILD_INPUT:$BUILD_INPUT" ${VOLUME_EXTRAS} \
-    ghcr.io/othermythos/asset-builder-image-voxel:latest -m AssetModuleGox --input $BUILD_INPUT --output $BUILD_OUTPUT $*
+    ghcr.io/othermythos/asset-builder-image-voxel:latest -m AssetModuleGox AssetModuleSkinPalette --input $BUILD_INPUT --output $BUILD_OUTPUT $*
 
 #chmod -R 777 $BUILD_OUTPUT
