@@ -1,7 +1,7 @@
 {
     "skins" :
     {
-        "Panel_dark_idle" :
+        "Panel_COLOUR_idle" :
         {
             "material" : "AtlasTransparent",
             "tex_resolution" : [256, 384],
@@ -16,50 +16,6 @@
                 "bottom_left": [0, 82, 46, 46],
                 "bottom": [46, 82, 164, 46],
                 "bottom_right": [210, 82, 46, 46]
-            },
-            "borders" :
-            {
-                "all" : [10, 0],
-                "bottom" : [10, 0]
-            }
-        },
-        "Panel_light_idle" :
-        {
-            "material" : "AtlasTransparent",
-            "tex_resolution" : [256, 384],
-            "grid_uv" :
-            {
-                "top_left": [0, 128, 46, 42],
-                "top": [46, 128, 164, 42],
-                "top_right": [210, 128, 46, 42],
-                "center_left": [0, 170, 46, 40],
-                "center": [46, 170, 164, 40],
-                "center_right": [210, 170, 46, 40],
-                "bottom_left": [0, 210, 46, 46],
-                "bottom": [46, 210, 164, 46],
-                "bottom_right": [210, 210, 46, 46]
-            },
-            "borders" :
-            {
-                "all" : [10, 0],
-                "bottom" : [10, 0]
-            }
-        },
-        "Panel_grey_idle" :
-        {
-            "material" : "AtlasTransparent",
-            "tex_resolution" : [256, 384],
-            "grid_uv" :
-            {
-                "top_left": [0, 256, 46, 42],
-                "top": [46, 256, 164, 42],
-                "top_right": [210, 256, 46, 42],
-                "center_left": [0, 298, 46, 40],
-                "center": [46, 298, 164, 40],
-                "center_right": [210, 298, 46, 40],
-                "bottom_left": [0, 338, 46, 46],
-                "bottom": [46, 338, 164, 46],
-                "bottom_right": [210, 338, 46, 46]
             },
             "borders" :
             {
@@ -97,34 +53,18 @@
 
     "skin_packs" :
     {
-        "Button_dark" :
+        "Button_COLOUR" :
         {
-            "auto" : "Panel_dark"
+            "auto" : "Panel_COLOUR"
         },
-        "Button_light" :
+        "Panel_COLOUR" :
         {
-            "auto" : "Panel_light"
-        },
-            "Button_grey" :
-            {
-                "auto" : "Panel_grey"
-            },
-            "Panel_grey" :
-            {
-                "auto" : "Panel_grey"
-            },
-        "Panel_dark" :
-        {
-            "auto" : "Panel_dark"
-        },
-        "Panel_light" :
-        {
-            "auto" : "Panel_light"
+            "auto" : "Panel_COLOUR"
         }
     },
 
     "default_skin_packs" :
     {
-        "Button" : "Button_dark"
+        "Button" : "Button_blue"
     }
 }

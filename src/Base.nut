@@ -345,7 +345,8 @@
 
         _gui.loadSkins("res://build/assets/skins/ui.json");
         _gui.loadSkins("res://build/assets/skins/itemSkins.json");
-        _gui.loadSkins("res://build/assets/skins/Skin/Skins.colibri.json");
+
+        loadSkin("palette1");
 
         applyCompositorModifications();
 
@@ -366,6 +367,12 @@
     }
     function setupFullscreen(){
         setFullscreenState(FullscreenMode.BORDERLESS_FULLSCREEN);
+    }
+
+    function loadSkin(skinName){
+        _resources.addResourceLocation("res://build/assets/skins/" + skinName, "FileSystem", "GUISkin");
+        _resources.initialiseResourceGroup("GUISkin");
+        _gui.loadSkins(format("res://build/assets/skins/%s/Skins.colibri.json", skinName));
     }
 
     function applyCompositorModifications(){

@@ -1,0 +1,34 @@
+{
+    "colours": {
+        "green": {
+            "hex": "#0x2e7d5b"
+        },
+        "blue": {
+            "hex": "#0x2c6e9b"
+        },
+        "purple": {
+            "hex": "#0x5b4b8a"
+        },
+        "yellow": {
+            "hex": "#0xd4a017"
+        },
+        "red": {
+            "hex": "#0xb23a3a"
+        },
+        "black": {
+            "hex": "#0x000000"
+        },
+        "darkGrey": {
+            "hex": "#0x404040"
+        },
+        "midGrey": {
+            "hex": "#0x808080"
+        },
+        "lightGrey": {
+            "hex": "#0xbfbfbf"
+        },
+        "white": {
+            "hex": "#0xffffff"
+        }
+    }
+}

@@ -24,3 +24,4 @@ RUN VoxelConverterTool
 
 COPY voxelConverter.py /builder/voxelConverter.py
 COPY AssetModuleGox.py /scripts/assetPipeline/assetModules/AssetModuleGox.py
+COPY AssetModuleSkinPalette.py /scripts/assetPipeline/assetModules/AssetModuleSkinPalette.py
