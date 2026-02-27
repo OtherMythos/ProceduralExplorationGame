@@ -484,7 +484,7 @@ enum InventoryBusEvents{
         gradientLeft.setPosition(gradientLeftPos);
         gradientLeft.setSize(Vec2(64, max(0, leftGreatestY - startPos.y)));
         gradientLeft.setColour(ColourValue(1, 1, 1, 0.5));
-        gradientLeft.setDatablock("gui/simpleGradient");
+        gradientLeft.setDatablock("gui/linearGradient");
         gradientLeft.setClickable(false);
 
         local gradientRight = mWindow_.createPanel();
@@ -492,7 +492,7 @@ enum InventoryBusEvents{
         gradientRight.setPosition(gradientRightPos);
         gradientRight.setSize(Vec2(64, max(0, rightGreatestY - startPos.y)));
         gradientRight.setColour(ColourValue(1, 1, 1, 0.5));
-        gradientRight.setDatablock("gui/simpleGradient");
+        gradientRight.setDatablock("gui/linearGradient");
         gradientRight.setOrientation(PI);
         gradientRight.setClickable(false);
     }

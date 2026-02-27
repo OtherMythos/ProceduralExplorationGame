@@ -138,7 +138,7 @@
             local targetOpacity = 0.7;
             mBackgroundPanel_.setColour(ColourValue(0.1, 0.1, 0.1, targetOpacity));
             mBackgroundPanel_.setClickable(false);
-            mBackgroundPanel_.setSkinPack("Panel_dark");
+            mBackgroundPanel_.setSkinPack("Panel_light");
             mBackgroundPanel_.setClickable(false);
         }else{
             mBackgroundPanel_ = null;
