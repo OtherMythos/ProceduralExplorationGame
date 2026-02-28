@@ -146,7 +146,7 @@ enum InventoryItemHelperScreenFunctions{
         mWindow_.setPosition(winPos);
 
         if(mItemInfoPanel_){
-            mItemInfoPanel_.setPosition(itemInfoPos.x, itemInfoPos.y);
+            mItemInfoPanel_.setPosition(itemInfoPos.x, itemInfoPos.y - 5);
         }
 
         mData_.bus.notifyEvent(InventoryBusEvents.ITEM_HELPER_SCREEN_BEGAN, null);
