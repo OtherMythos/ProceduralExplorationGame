@@ -90,6 +90,7 @@ enum InventoryItemHelperScreenFunctions{
         local buttonOptions = buttonData[0];
         local buttonFunctions = buttonData[1];
         local buttonEnabled = buttonData[2];
+        local buttonSkins = buttonData[3];
 
         local firstEnabledButton = null;
         foreach(c,i in buttonOptions){
@@ -99,6 +100,11 @@ enum InventoryItemHelperScreenFunctions{
             button.attachListenerForEvent(buttonFunctions[c], _GUI_ACTION_PRESSED, this);
             button.setExpandHorizontal(true);
             button.setTextHorizontalAlignment(_TEXT_ALIGN_LEFT);
+
+            if(buttonSkins[c] != null){
+                button.setSkinPack(buttonSkins[c]);
+            }
+
             layoutLine.addCell(button);
 
             if(!buttonEnabled[c]){
@@ -232,6 +238,7 @@ enum InventoryItemHelperScreenFunctions{
         local buttonOptions = [];
         local buttonFunctions = [];
         local buttonEnabled = [];
+        local buttonSkins = [];
 
         local isShop = mData_.rawin("isShop") && mData_.isShop;
         local inventoryFull = mData_.rawin("inventoryFull") && mData_.inventoryFull;
@@ -243,11 +250,13 @@ enum InventoryItemHelperScreenFunctions{
             local itemPrice = mData_.item.mData_;
             local playerMoney = mData_.rawin("playerMoney") ? mData_.playerMoney : 0;
             buttonEnabled.append(playerMoney >= itemPrice && !inventoryFull);
+            buttonSkins.append(null);
         }else if(itemType == ItemType.EQUIPPABLE){
             if(mData_.gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
                 buttonOptions.append(UNICODE_HELMET + " UnEquip");
                 buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.UNEQUIP]);
                 buttonEnabled.append(!inventoryFull);
+                buttonSkins.append(null);
             }else{
                 local equipData = ::Equippables[item.getEquippableData()];
                 local equipSlot = equipData.getEquippedSlot();
@@ -258,32 +267,40 @@ enum InventoryItemHelperScreenFunctions{
                     buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.EQUIP_RIGHT_HAND]);
                     buttonEnabled.append(true);
                     buttonEnabled.append(true);
+                    buttonSkins.append(null);
+                    buttonSkins.append(null);
                 }else{
                     buttonOptions.append(UNICODE_HELMET + " Equip");
                     buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.EQUIP]);
                     buttonEnabled.append(true);
+                    buttonSkins.append(null);
                 }
             }
         }else if(itemType == ItemType.LORE_CONTENT){
             buttonOptions.append("Read");
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.READ]);
             buttonEnabled.append(true);
+            buttonSkins.append(null);
         }else if(itemType == ItemType.EAT){
             buttonOptions.append(UNICODE_EAT + " Eat");
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.USE]);
             buttonEnabled.append(true);
+            buttonSkins.append(null);
         }else if(itemType == ItemType.DRINK){
             buttonOptions.append(UNICODE_DRINK + " Drink");
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.USE]);
             buttonEnabled.append(true);
+            buttonSkins.append(null);
         }else if(itemType == ItemType.MESSAGE_IN_A_BOTTLE){
             buttonOptions.append("Open");
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.OPEN]);
             buttonEnabled.append(true);
+            buttonSkins.append(null);
         }else{
             buttonOptions.append(UNICODE_EAT + " Use");
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.USE]);
             buttonEnabled.append(true);
+            buttonSkins.append(null);
         }
 
         if(!isShop){
@@ -292,22 +309,26 @@ enum InventoryItemHelperScreenFunctions{
                 buttonOptions.append(UNICODE_COINS + " Sell");
                 buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.SELL]);
                 buttonEnabled.append(true);
+                buttonSkins.append(null);
             }else{
                 buttonOptions.append(UNICODE_COINS + " Scrap");
                 buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.SCRAP]);
                 buttonEnabled.append(true);
+                buttonSkins.append(null);
             }
 
             if(mData_.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
                 buttonOptions.append(UNICODE_INTO_INVENTORY + " Inventory");
                 buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.MOVE_TO_INVENTORY]);
                 buttonEnabled.append(true);
+                buttonSkins.append(null);
             }
 
             if(mData_.secondaryGrid && mData_.gridType == InventoryGridType.INVENTORY_GRID){
                 buttonOptions.append(UNICODE_LEAVE_INVENTORY + " Inventory");
                 buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.MOVE_OUT_OF_INVENTORY]);
                 buttonEnabled.append(true);
+                buttonSkins.append(null);
             }
 
             // Add storage transfer options if storage is supported
@@ -325,6 +346,7 @@ enum InventoryItemHelperScreenFunctions{
                 local sourceItem = sourceInv.getItemForIdx(mData_.idx);
                 local hasTargetSpace = targetInv.getNumSlotsFree() > 0;
                 buttonEnabled.append(sourceItem != null && hasTargetSpace);
+                buttonSkins.append(null);
             }
         }
 
@@ -332,8 +354,9 @@ enum InventoryItemHelperScreenFunctions{
         buttonOptions.append(UNICODE_CROSS + " Cancel");
         buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.CANCEL]);
         buttonEnabled.append(true);
+        buttonSkins.append("Button_red");
 
-        return [buttonOptions, buttonFunctions, buttonEnabled];
+        return [buttonOptions, buttonFunctions, buttonEnabled, buttonSkins];
     }
 
     function closeInventoryScreen_(){
