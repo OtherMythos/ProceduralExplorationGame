@@ -346,7 +346,7 @@
         _gui.loadSkins("res://build/assets/skins/ui.json");
         _gui.loadSkins("res://build/assets/skins/itemSkins.json");
 
-        loadSkin("palette3");
+        loadSkin("palette1");
 
         applyCompositorModifications();
 

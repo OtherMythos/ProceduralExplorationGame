@@ -18,6 +18,7 @@
         mWindow_.setClipBorders(10, 10, 10, 10);
         mWindow_.setBreadthFirst(true);
         mWindow_.setZOrder(61);
+        mWindow_.setSkinPack("Button_midGrey");
 
         local layoutLine = _gui.createLayoutLine();
 
@@ -86,8 +87,12 @@
         local winSizeClipping = mWindow_.getSizeAfterClipping();
         backButton.setPosition(0, winSizeClipping.y - backButton.getSize().y);
         backButton.setSize(winSizeClipping.x, backButton.getSize().y);
+        backButton.setSkinPack("Button_blue");
         backButton.setFocus();
 
+        local tickmarkSize = invertCamera.getTickmarkSize();
+        invertCamera.setTickmarkMarginAndSize(7, 0, 40, 40);
+        joystickSideCheckbox.setTickmarkMarginAndSize(7, 0, 40, 40);
 
         setupValuesFromSystemSettings();
     }

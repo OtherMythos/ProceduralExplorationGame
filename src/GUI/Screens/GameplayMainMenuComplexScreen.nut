@@ -640,7 +640,8 @@ enum GameplayComplexMenuBusEvents{
             "iconPosition": Vec2(0, 0),
             "label": "Explore",
             "labelPosition": Vec2(80, 0),
-            "labelSizeModifier": 2
+            "labelSizeModifier": 2,
+            "skinPack": "Panel_blue"
         });
         playIconButton.setSize(Vec2(240, 80));
         playIconButton.setPosition(Vec2(MARGIN + explorationMap.getSize().x / 2 - playIconButton.getSize().x / 2, currentY));

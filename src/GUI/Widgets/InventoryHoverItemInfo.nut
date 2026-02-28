@@ -23,6 +23,7 @@
         mHoverWin_.setZOrder(200);
         mHoverWin_.setClickable(false);
         mHoverWin_.setKeyboardNavigable(false);
+        mHoverWin_.setSkinPack("Button_midGrey");
 
         local layout = _gui.createLayoutLine();
         mTitleLabel_ = mHoverWin_.createLabel();

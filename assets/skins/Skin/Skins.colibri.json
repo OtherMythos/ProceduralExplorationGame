@@ -65,6 +65,11 @@
 
     "default_skin_packs" :
     {
-        "Button" : "Button_blue"
+        "Button" : "Button_lightGrey",
+        "Spinner" : "Button_lightGrey",
+        "Checkbox" : "Button_lightGrey",
+        "CheckboxTickmarkUnchecked" : "Button_midGrey",
+        "CheckboxTickmarkChecked" : "Button_green",
+        "Editbox" : "Button_lightGrey"
     }
 }

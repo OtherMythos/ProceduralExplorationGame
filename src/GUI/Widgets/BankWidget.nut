@@ -61,6 +61,7 @@
             withdrawButton.setDefaultFontSize(withdrawButton.getDefaultFontSize() * 1.8);
             local size = withdrawButton.getSize();
             withdrawButton.setSize(mInnerPanel_.getSize().x / 2, size.y * 1.5);
+            withdrawButton.setSkinPack("Panel_blue");
             withdrawButton.attachListenerForEvent(function(widget, action){
                 ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
                 ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.BANK_DEPOSIT_WITHDRAW_SCREEN, {"deposit": false}), null, 3);
@@ -72,6 +73,7 @@
             depositButton.setDefaultFontSize(depositButton.getDefaultFontSize() * 1.8);
             local size = depositButton.getSize();
             depositButton.setSize(mInnerPanel_.getSize().x / 2, size.y * 1.5);
+            depositButton.setSkinPack("Panel_blue");
             depositButton.attachListenerForEvent(function(widget, action){
                 ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
                 ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.BANK_DEPOSIT_WITHDRAW_SCREEN, {"deposit": true}), null, 3);

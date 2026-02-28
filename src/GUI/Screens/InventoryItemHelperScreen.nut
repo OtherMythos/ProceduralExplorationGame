@@ -50,6 +50,7 @@ enum InventoryItemHelperScreenFunctions{
         mWindow_.setSize(800, 800);
         //mWindow_.setPosition(data.pos);
         mWindow_.setClipBorders(10, 10, 10, 10);
+        mWindow_.setSkinPack("Button_midGrey");
 
         local layoutLine = _gui.createLayoutLine();
 
@@ -157,7 +158,7 @@ enum InventoryItemHelperScreenFunctions{
 
         local background = panelContainerWindow.createPanel();
         background.setSize(panelSize);
-        background.setSkin("inventory_slot");
+        background.setSkin("InventoryWidget");
         background.setClickable(false);
 
         local iconPanel = panelContainerWindow.createPanel();

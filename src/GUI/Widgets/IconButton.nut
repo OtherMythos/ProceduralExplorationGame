@@ -96,6 +96,10 @@
             }
             mLabel_.setText(data.label);
         }
+
+        if(data.rawin("skinPack")){
+            mButton_.setSkinPack(data.skinPack);
+        }
     }
 
     function setSize(size){
