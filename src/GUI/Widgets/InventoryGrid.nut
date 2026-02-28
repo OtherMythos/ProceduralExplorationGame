@@ -97,7 +97,7 @@
     }
 
     function setSkinForBackgroundEquippables(backgroundWidget, idx, populated){
-        backgroundWidget.setSkin(populated ? "InventoryWidget_light" : EQUIP_GRID_VALUES[idx]);
+        backgroundWidget.setSkin(populated ? "InventoryWidget" : EQUIP_GRID_VALUES[idx]);
     }
 
     function initialise(parentWin, gridSize, overlayWin, inventoryWidth, inventoryHeight){
@@ -138,8 +138,7 @@
             local targetOpacity = 0.7;
             mBackgroundPanel_.setColour(ColourValue(0.1, 0.1, 0.1, targetOpacity));
             mBackgroundPanel_.setClickable(false);
-            mBackgroundPanel_.setSkinPack("Panel_light");
-            mBackgroundPanel_.setClickable(false);
+            mBackgroundPanel_.setSkinPack("Panel_darkGrey");
         }else{
             mBackgroundPanel_ = null;
         }
@@ -149,7 +148,7 @@
                 local background = parentWin.createPanel();
                 background.setSize(gridRatio, gridRatio);
                 background.setPosition(x * gridRatio, y * gridRatio);
-                background.setSkin("InventoryWidget_light");
+                background.setSkin("InventoryWidget");
                 mBackgrounds_.append(background);
 
                 local iconPanel = parentWin.createPanel();

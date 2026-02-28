@@ -17,7 +17,7 @@
 
         mBackgroundPanel_.setSize(mParent_.getSizeAfterClipping().x, 200);
         mBackgroundPanel_.setDatablock("simpleGrey");
-        mBackgroundPanel_.setSkinPack("Panel_dark");
+        mBackgroundPanel_.setSkinPack("Panel_darkGrey");
 
         local innerPadding = 10;
 
@@ -34,7 +34,7 @@
         mInnerPanel_.setSize(backgroundSize.x - innerPadding * 2, backgroundSize.y - yPos - innerPadding);
         mInnerPanel_.setPosition(innerPadding, yPos);
         mInnerPanel_.setDatablock("placeMapIndicator");
-        mInnerPanel_.setSkinPack("Panel_grey");
+        mInnerPanel_.setSkinPack("Panel_lightGrey");
 
         local xPos = mInnerPanel_.getPosition().x;
         local yPos = mInnerPanel_.getPosition().y;

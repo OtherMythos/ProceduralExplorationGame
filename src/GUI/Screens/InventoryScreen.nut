@@ -306,14 +306,14 @@ enum InventoryBusEvents{
         mEquippableLeftBg_ = mWindow_.createPanel();
         mEquippableLeftBg_.setSize(0, 0);
         mEquippableLeftBg_.setPosition(-1000, -1000);
-        mEquippableLeftBg_.setSkin("Panel_dark");
+        mEquippableLeftBg_.setSkin("Panel_darkGrey");
         mEquippableLeftBg_.setColour(ColourValue(0.1, 0.1, 0.1, 0.7));
         mEquippableLeftBg_.setClickable(false);
 
         mEquippableRightBg_ = mWindow_.createPanel();
         mEquippableRightBg_.setSize(0, 0);
         mEquippableRightBg_.setPosition(-1000, -1000);
-        mEquippableRightBg_.setSkin("Panel_dark");
+        mEquippableRightBg_.setSkin("Panel_darkGrey");
         mEquippableRightBg_.setColour(ColourValue(0.1, 0.1, 0.1, 0.7));
         mEquippableRightBg_.setClickable(false);
 
@@ -466,7 +466,7 @@ enum InventoryBusEvents{
         mEquippableLeftBg_.setPosition(leftBgPos);
         mEquippableLeftBg_.setSize(leftBgSize);
         mEquippableLeftBg_.setColour(colValue);
-        mEquippableLeftBg_.setSkinPack("Panel_dark");
+        mEquippableLeftBg_.setSkinPack("Panel_darkGrey");
         mEquippableLeftBg_.setClickable(false);
 
         //local rightBg = mWindow_.createPanel();
@@ -475,7 +475,7 @@ enum InventoryBusEvents{
         mEquippableRightBg_.setPosition(rightBgPos);
         mEquippableRightBg_.setSize(rightBgSize);
         mEquippableRightBg_.setColour(colValue);
-        mEquippableRightBg_.setSkinPack("Panel_dark");
+        mEquippableRightBg_.setSkinPack("Panel_darkGrey");
         mEquippableRightBg_.setClickable(false);
 
         // Add subtle gradients overlaying the backgrounds
