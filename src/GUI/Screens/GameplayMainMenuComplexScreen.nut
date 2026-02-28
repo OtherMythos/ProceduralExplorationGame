@@ -663,10 +663,11 @@ enum GameplayComplexMenuBusEvents{
                 "label": orbCount.tostring(),
                 "labelPosition": Vec2(60, -10),
                 "labelSizeModifier": 2,
-                "usePanelForButton": true
+                "usePanelForButton": true,
+                "skinPack": "Panel_white"
             });
             //orbCounter.setSize(Vec2(140, 60));
-            orbCounter.setPosition(explorationMap.getPosition());
+            orbCounter.setPosition(explorationMap.getPosition() + Vec2(5, 5));
             local minSize = orbCounter.getMinimumSize();
             orbCounter.setSize(Vec2(minSize.x + 10, 60));
             orbCounter.setButtonColour(ColourValue(0.2, 0.2, 0.2, 0.8));

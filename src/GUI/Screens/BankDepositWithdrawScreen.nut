@@ -47,7 +47,7 @@ enum BankDepositWithdrawAmount{
 
         local description = mWindow_.createLabel();
         description.setText(getDescriptionString_());
-        description.sizeToFit(mWindow_.getSizeAfterClipping().x);
+        description.sizeToFit(mWindow_.getSizeAfterClipping().x * 0.95);
         layoutLine.addCell(description);
 
         for(local i = 0; i < BankDepositWithdrawAmount.MAX; i++){
@@ -55,6 +55,8 @@ enum BankDepositWithdrawAmount{
             button.setText(wrapOptionLabel_(i));
             button.attachListenerForEvent(depositAmountButtonCallback, _GUI_ACTION_PRESSED, this);
             button.setUserId(i);
+            local buttonSize = button.getSize();
+            button.setSize(buttonSize.x, buttonSize.y * 0.8);
 
             local hasEnoughMoney = checkIsOptionAvailable_(i);
 
