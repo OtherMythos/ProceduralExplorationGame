@@ -150,7 +150,8 @@
             "iconPosition": Vec2(50, 0),
             "label": "Explore",
             "labelPosition": Vec2(130, 0),
-            "labelSizeModifier": 2
+            "labelSizeModifier": 2,
+            "skinPack": "Panel_blue"
         });
         local playSize = Vec2(340, 80);
         playIconButton.setSize(playSize);

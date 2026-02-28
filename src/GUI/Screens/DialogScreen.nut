@@ -164,6 +164,8 @@
             mContainerWindow_.setPosition(winSize.x * 0.20, winSize.y * 0.65);
         }
 
+        mContainerWindow_.setSkinPack("Button_midGrey");
+
         mContainerWindow_.setClickable(!mobile);
 
         mTextContainer_ = mContainerWindow_.createAnimatedLabel();

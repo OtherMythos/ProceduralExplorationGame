@@ -27,14 +27,13 @@ enum BankDepositWithdrawAmount{
         createBackgroundScreen_();
         createBackgroundCloseButton_();
 
-        mWindow_ = _gui.createWindow("SettingsScreen");
+        mWindow_ = _gui.createWindow("BankDepositWithdrawScreen");
         mWindow_.setSize(winWidth, winHeight);
         mWindow_.setPosition(_window.getWidth() * 0.1, _window.getHeight() * 0.1);
         mWindow_.setClipBorders(10, 10, 10, 10);
         mWindow_.setBreadthFirst(true);
         mWindow_.setZOrder(61);
-
-        mWindow_.setSkin("Panel_darkGrey");
+        mWindow_.setSkinPack("Button_midGrey");
 
         local layoutLine = _gui.createLayoutLine();
 
@@ -72,8 +71,9 @@ enum BankDepositWithdrawAmount{
         local actionButton = mWindow_.createButton();
         actionButton.setText(getTitleString_());
         actionButton.attachListenerForEvent(actionButtonCallback, _GUI_ACTION_PRESSED, this);
-        actionButton.setSize(mWindow_.getSizeAfterClipping().x, actionButton.getSize().y * 1.4);
+        actionButton.setSize(mWindow_.getSizeAfterClipping().x, actionButton.getSize().y * 1.2);
         actionButton.setPosition(0, mWindow_.getSizeAfterClipping().y - actionButton.getSize().y);
+        actionButton.setSkinPack("Button_blue");
         mActionButton_ = actionButton;
 
         layoutLine.setSize(mWindow_.getSizeAfterClipping());
