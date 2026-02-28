@@ -100,6 +100,8 @@ enum InventoryItemHelperScreenFunctions{
             button.attachListenerForEvent(buttonFunctions[c], _GUI_ACTION_PRESSED, this);
             button.setExpandHorizontal(true);
             button.setTextHorizontalAlignment(_TEXT_ALIGN_LEFT);
+            local buttonSize = button.getSize();
+            button.setSize(buttonSize.x, buttonSize.y * 0.8);
 
             if(buttonSkins[c] != null){
                 button.setSkinPack(buttonSkins[c]);
@@ -117,6 +119,9 @@ enum InventoryItemHelperScreenFunctions{
         if(firstEnabledButton != null){
             firstEnabledButton.setFocus();
         }
+
+        layoutLine.setMarginForAllCells(0, 5);
+        layoutLine.setPosition(0, -5);
 
         layoutLine.layout();
 
