@@ -306,15 +306,15 @@ enum InventoryBusEvents{
         mEquippableLeftBg_ = mWindow_.createPanel();
         mEquippableLeftBg_.setSize(0, 0);
         mEquippableLeftBg_.setPosition(-1000, -1000);
-        mEquippableLeftBg_.setSkin("Panel_darkGrey");
-        mEquippableLeftBg_.setColour(ColourValue(0.1, 0.1, 0.1, 0.7));
+        mEquippableLeftBg_.setSkin("Panel_lightGrey");
+        //mEquippableLeftBg_.setColour(ColourValue(0.1, 0.1, 0.1, 0.7));
         mEquippableLeftBg_.setClickable(false);
 
         mEquippableRightBg_ = mWindow_.createPanel();
         mEquippableRightBg_.setSize(0, 0);
         mEquippableRightBg_.setPosition(-1000, -1000);
-        mEquippableRightBg_.setSkin("Panel_darkGrey");
-        mEquippableRightBg_.setColour(ColourValue(0.1, 0.1, 0.1, 0.7));
+        mEquippableRightBg_.setSkin("Panel_lightGrey");
+        //mEquippableRightBg_.setColour(ColourValue(0.1, 0.1, 0.1, 0.7));
         mEquippableRightBg_.setClickable(false);
 
         //Add one for the equippables slot and another for general padding.
@@ -423,6 +423,7 @@ enum InventoryBusEvents{
 
         if(mSupportsStorage_){
             mStorageToggleButton_ = mWindow_.createButton();
+            mStorageToggleButton_.setSkinPack("Button_blue");
             updateStorageToggleButtonText_();
             mStorageToggleButton_.attachListenerForEvent(function(widget, action){
                 toggleStorageVisibility();
@@ -465,8 +466,8 @@ enum InventoryBusEvents{
         local leftBgSize = Vec2(widgetSize.x, max(0, leftGreatestY - startPos.y));
         mEquippableLeftBg_.setPosition(leftBgPos);
         mEquippableLeftBg_.setSize(leftBgSize);
-        mEquippableLeftBg_.setColour(colValue);
-        mEquippableLeftBg_.setSkinPack("Panel_darkGrey");
+        //mEquippableLeftBg_.setColour(colValue);
+        mEquippableLeftBg_.setSkinPack("Panel_lightGrey");
         mEquippableLeftBg_.setClickable(false);
 
         //local rightBg = mWindow_.createPanel();
@@ -474,8 +475,8 @@ enum InventoryBusEvents{
         local rightBgSize = Vec2(widgetSize.x, max(0, rightGreatestY - startPos.y));
         mEquippableRightBg_.setPosition(rightBgPos);
         mEquippableRightBg_.setSize(rightBgSize);
-        mEquippableRightBg_.setColour(colValue);
-        mEquippableRightBg_.setSkinPack("Panel_darkGrey");
+        //mEquippableRightBg_.setColour(colValue);
+        mEquippableRightBg_.setSkinPack("Panel_lightGrey");
         mEquippableRightBg_.setClickable(false);
 
         // Add subtle gradients overlaying the backgrounds
@@ -483,7 +484,7 @@ enum InventoryBusEvents{
         local gradientLeftPos = Vec2(widgetSize.x, startPos.y);
         gradientLeft.setPosition(gradientLeftPos);
         gradientLeft.setSize(Vec2(64, max(0, leftGreatestY - startPos.y)));
-        gradientLeft.setColour(ColourValue(1, 1, 1, 0.5));
+        //gradientLeft.setColour(ColourValue(1, 1, 1, 0.5));
         gradientLeft.setDatablock("gui/linearGradient");
         gradientLeft.setClickable(false);
 

@@ -136,9 +136,9 @@
             mBackgroundPanel_.setSize(inventoryWidth * gridRatio, inventoryHeight * gridRatio);
             mBackgroundPanel_.setPosition(0, 0);
             local targetOpacity = 0.7;
-            mBackgroundPanel_.setColour(ColourValue(0.1, 0.1, 0.1, targetOpacity));
+            //mBackgroundPanel_.setColour(ColourValue(0.1, 0.1, 0.1, targetOpacity));
             mBackgroundPanel_.setClickable(false);
-            mBackgroundPanel_.setSkinPack("Panel_darkGrey");
+            mBackgroundPanel_.setSkinPack("Panel_lightGrey");
         }else{
             mBackgroundPanel_ = null;
         }
