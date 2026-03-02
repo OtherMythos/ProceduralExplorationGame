@@ -40,9 +40,15 @@ hlms gui/InventoryWidget unlit
 	scene_blend alpha_blend
 	diffuse_map Widget.png
 }
-hlms gui/linearGradient unlit
+hlms gui/linearGradientLeft unlit
 {
 	depth_check off
 	scene_blend alpha_blend
-	diffuse_map linearGradient.png
+	diffuse_map linearGradientLeft.png
+}
+hlms gui/linearGradientRight unlit
+{
+	depth_check off
+	scene_blend alpha_blend
+	diffuse_map linearGradientRight.png
 }

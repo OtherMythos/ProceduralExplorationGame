@@ -415,10 +415,11 @@ enum InventoryBusEvents{
 
         local gridStart = mPlayerInspector_.getPosition() + mPlayerInspector_.getSize();
         local gridSize = mInventoryGrid_.getSize();
-        gridStart.x = 20;
-        mInventoryGrid_.setPosition(gridStart);
+        gridStart.x = 12;
+        local targetGridPos = gridStart + Vec2(5, 5);
+        mInventoryGrid_.setPosition(targetGridPos);
         if(mStorageGrid_ != null){
-            mStorageGrid_.setPosition(gridStart);
+            mStorageGrid_.setPosition(targetGridPos);
         }
 
         if(mSupportsStorage_){
@@ -484,8 +485,8 @@ enum InventoryBusEvents{
         local gradientLeftPos = Vec2(widgetSize.x, startPos.y);
         gradientLeft.setPosition(gradientLeftPos);
         gradientLeft.setSize(Vec2(64, max(0, leftGreatestY - startPos.y)));
-        //gradientLeft.setColour(ColourValue(1, 1, 1, 0.5));
-        gradientLeft.setDatablock("gui/linearGradient");
+        gradientLeft.setColour(ColourValue(1, 1, 1, 0.5));
+        gradientLeft.setDatablock("gui/linearGradientLeft");
         gradientLeft.setClickable(false);
 
         local gradientRight = mWindow_.createPanel();
@@ -493,8 +494,7 @@ enum InventoryBusEvents{
         gradientRight.setPosition(gradientRightPos);
         gradientRight.setSize(Vec2(64, max(0, rightGreatestY - startPos.y)));
         gradientRight.setColour(ColourValue(1, 1, 1, 0.5));
-        gradientRight.setDatablock("gui/linearGradient");
-        gradientRight.setOrientation(PI);
+        gradientRight.setDatablock("gui/linearGradientRight");
         gradientRight.setClickable(false);
     }
 

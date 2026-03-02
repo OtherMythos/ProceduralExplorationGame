@@ -133,7 +133,7 @@
         //Create background panel for entire grid (optional)
         if(mDrawBackground_){
             mBackgroundPanel_ = parentWin.createPanel();
-            mBackgroundPanel_.setSize(inventoryWidth * gridRatio, inventoryHeight * gridRatio);
+            mBackgroundPanel_.setSize(inventoryWidth * gridRatio + 10, inventoryHeight * gridRatio + 10);
             mBackgroundPanel_.setPosition(0, 0);
             local targetOpacity = 0.7;
             //mBackgroundPanel_.setColour(ColourValue(0.1, 0.1, 0.1, targetOpacity));
@@ -393,14 +393,16 @@
         mResolvedPos_ = mBackgrounds_[0].getDerivedPosition();
         if(mBackgroundPanel_ != null && mBackgrounds_.len() > 0){
             //Calculate panel size based on actual grid layout
-            local firstPos = mBackgrounds_[0].getDerivedPosition();
-            local lastIdx = mBackgrounds_.len() - 1;
-            local lastPos = mBackgrounds_[lastIdx].getDerivedPosition();
-            local lastSize = mBackgrounds_[lastIdx].getSize();
-            local panelWidth = (lastPos.x - firstPos.x) + lastSize.x;
-            local panelHeight = (lastPos.y - firstPos.y) + lastSize.y;
-            mBackgroundPanel_.setSize(panelWidth, panelHeight);
-            mBackgroundPanel_.setPosition(firstPos);
+            //local firstPos = mBackgrounds_[0].getDerivedPosition();
+            //local lastIdx = mBackgrounds_.len() - 1;
+            //local lastPos = mBackgrounds_[lastIdx].getDerivedPosition();
+            //local lastSize = mBackgrounds_[lastIdx].getSize();
+            //local panelWidth = (lastPos.x - firstPos.x) + lastSize.x;
+            //local panelHeight = (lastPos.y - firstPos.y) + lastSize.y;
+
+            //local backgroundPos = Vec2(5, 5);
+            //mBackgroundPanel_.setSize(panelWidth, panelHeight);
+            //mBackgroundPanel_.setPosition(firstPos - backgroundPos);
         }
     }
 
@@ -458,9 +460,6 @@
     function setPosition(pos){
         //mWindow_.setPosition(pos);
         //TODO this could be improved.
-        if(mBackgroundPanel_ != null){
-            mBackgroundPanel_.setPosition(mBackgroundPanel_.getPosition() + pos);
-        }
         foreach(i in mBackgrounds_){
             i.setPosition(i.getPosition() + pos);
         }
@@ -473,6 +472,9 @@
             if(mRenderIcons_[c] != null){
                 mRenderIcons_[c].setPosition(i.getCentre());
             }
+        }
+        if(mBackgroundPanel_ != null){
+            mBackgroundPanel_.setPosition(mBackgrounds_[0].getPosition() - Vec2(5, 5));
         }
     }
     function setSize(size){
@@ -518,7 +520,7 @@
             }
         }
         if(mBackgroundPanel_ != null){
-            mBackgroundPanel_.setPosition(mWidgets_[0].getPosition());
+            //mBackgroundPanel_.setPosition(mWidgets_[0].getPosition());
         }
     }
 
