@@ -153,6 +153,13 @@
                 "texture": "icon_heart.png"
             }
         },
+        "closeCrossIcon" :
+        {
+            "blendblock": "gui/uiBlend",
+            "diffuse_map0": {
+                "texture": "icon_cross.png"
+            }
+        },
         "coinsIcon" :
         {
             "blendblock": "gui/uiBlend",

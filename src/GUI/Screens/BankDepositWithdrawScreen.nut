@@ -35,6 +35,8 @@ enum BankDepositWithdrawAmount{
         mWindow_.setZOrder(61);
         mWindow_.setSkinPack("Button_midGrey");
 
+        createScreenCloseButton();
+
         local layoutLine = _gui.createLayoutLine();
 
         local title = mWindow_.createLabel();
