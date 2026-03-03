@@ -484,7 +484,7 @@
     function calculateChildrenSize(){
         //return Vec2(100, 100);
         //return mWindow_.calculateChildrenSize();
-        local panelSize = mBackgrounds_[0].getSize() / 2;
+        local panelSize = mBackgrounds_[0].getSize();
         local ret = Vec2(mInventoryWidth_ * panelSize.x, mInventoryHeight_ * panelSize.y);
         return ret;
     }

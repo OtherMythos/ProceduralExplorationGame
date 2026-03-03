@@ -119,6 +119,7 @@ enum InventoryBusEvents{
     mBusCallbackId_ = null;
     mStorageToggleButton_ = null;
     mAcceptButton_ = null;
+    mRightSideHelperButtons_ = null;
 
 
     InventoryContainer = class{
@@ -218,6 +219,8 @@ enum InventoryBusEvents{
 
         local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
 
+        mRightSideHelperButtons_ = [];
+
         local inventoryButton = null;
         local backButtonDisabled = false;
         if(data.rawin("disableBackButton") && data.disableBackButton){
@@ -234,11 +237,11 @@ enum InventoryBusEvents{
 
             inventoryButton = ::IconButton(mWindow_, "backButtonIcon");
             inventoryButton.setSize(Vec2(64, 64));
-            inventoryButton.setPosition(Vec2(10, 10 + startOffset));
             inventoryButton.attachListenerForEvent(function(widget, action){
                 ::HapticManager.triggerSimpleHaptic(HapticType.SELECTION);
                 closeInventory();
             }, _GUI_ACTION_PRESSED, this);
+            mRightSideHelperButtons_.append(inventoryButton);
         }
 
         if(mMultiSelection_){
@@ -349,15 +352,16 @@ enum InventoryBusEvents{
             mStorageGrid_.addToLayout(layoutHorizontal);
         }
 
-        mInventoryGrid_.connectNeighbours(mInventoryEquippedGrid_, inventoryButton);
+        mInventoryGrid_.connectNeighbours(mInventoryEquippedGrid_, mRightSideHelperButtons_.len() > 0 ? mRightSideHelperButtons_[0] : null);
         if(mSecondaryInventoryGrid_ != null){
-            mInventoryEquippedGrid_.connectNeighbours([mInventoryGrid_, mSecondaryInventoryGrid_], inventoryButton);
-            mSecondaryInventoryGrid_.connectNeighbours(mInventoryEquippedGrid_, inventoryButton);
+            mInventoryEquippedGrid_.connectNeighbours([mInventoryGrid_, mSecondaryInventoryGrid_], mRightSideHelperButtons_.len() > 0 ? mRightSideHelperButtons_[0] : null);
+            mSecondaryInventoryGrid_.connectNeighbours(mInventoryEquippedGrid_, mRightSideHelperButtons_.len() > 0 ? mRightSideHelperButtons_[0] : null);
         }else{
-            mInventoryEquippedGrid_.connectNeighbours(mInventoryGrid_, inventoryButton);
+            mInventoryEquippedGrid_.connectNeighbours(mInventoryGrid_, mRightSideHelperButtons_.len() > 0 ? mRightSideHelperButtons_[0] : null);
         }
 
-        if(inventoryButton){
+        if(mRightSideHelperButtons_.len() > 0){
+            local inventoryButton = mRightSideHelperButtons_[0];
             inventoryButton.setNextWidget(mInventoryGrid_.mWidgets_[0], _GUI_BORDER_RIGHT);
             inventoryButton.setNextWidget(mInventoryGrid_.mWidgets_[0], _GUI_BORDER_BOTTOM);
 
@@ -377,11 +381,7 @@ enum InventoryBusEvents{
         layoutLine.addCell(layoutHorizontal);
 
         layoutLine.setMarginForAllCells(0, 5);
-        local startPos = 0;
-        if(inventoryButton){
-            startPos = inventoryButton.getPosition().y + inventoryButton.getSize().y;
-        }
-        layoutLine.setPosition(::drawable.x * 0.05, startPos);
+        layoutLine.setPosition(::drawable.x * 0.05, 10);
         layoutLine.setSize(::drawable.x * 0.9, ::drawable.y * 0.9);
         layoutLine.setHardMaxSize(::drawable.x * 0.9, ::drawable.y * 0.9);
         layoutLine.layout();
@@ -402,13 +402,13 @@ enum InventoryBusEvents{
         local widgetSize = mInventoryEquippedGrid_.getWidgetSize();
         inspectorSize.x = ::drawable.x - widgetSize.x * 2;
         mPlayerInspector_.setSize(inspectorSize);
-        mPlayerInspector_.setPosition(widgetSize.x, startPos);
+        mPlayerInspector_.setPosition(widgetSize.x, 10);
         local inspectorSize = mPlayerInspector_.getSize();
         //container.sizeInner();
         //if(!mobile){
             repositionEquippablesGrid();
 
-            inspectorSize.y = mInventoryEquippedGrid_.getSize().y;
+            inspectorSize.y = mInventoryEquippedGrid_.getSize().y / 2;
             mPlayerInspector_.setSize(inspectorSize);
             mPlayerInspector_.notifyLayout();
         //}
@@ -425,13 +425,16 @@ enum InventoryBusEvents{
         if(mSupportsStorage_){
             mStorageToggleButton_ = mWindow_.createButton();
             mStorageToggleButton_.setSkinPack("Button_blue");
-            updateStorageToggleButtonText_();
+            mStorageToggleButton_.setDefaultFontSize(mStorageToggleButton_.getDefaultFontSize() * 0.5);
             mStorageToggleButton_.attachListenerForEvent(function(widget, action){
                 toggleStorageVisibility();
                 ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
             }, _GUI_ACTION_PRESSED, this);
+            mRightSideHelperButtons_.append(mStorageToggleButton_);
         }
 
+        positionRightSideHelperButtons_();
+        updateStorageToggleButtonText_();
     }
 
     function repositionEquippablesGrid(){
@@ -505,20 +508,43 @@ enum InventoryBusEvents{
 
         mInventoryGrid_.setHidden(mShowingStorage_);
         mStorageGrid_.setHidden(!mShowingStorage_);
+        positionRightSideHelperButtons_();
         updateStorageToggleButtonText_();
     }
 
     function updateStorageToggleButtonText_(){
         if(mStorageToggleButton_ != null){
-            mStorageToggleButton_.setText(!mShowingStorage_ ? "Inventory" : "Storage");
-            local newSize = mStorageToggleButton_.getSize();
-            newSize.y = newSize.y * 0.75;
-            mStorageToggleButton_.setSize(newSize);
+            mStorageToggleButton_.setText(!mShowingStorage_ ? "Inventory" : "Storage", false);
+            //local newSize = mStorageToggleButton_.getSize();
+            //newSize.y = newSize.y * 0.75;
+            //mStorageToggleButton_.setSize(newSize);
+        }
+    }
 
-            local targetPos = mPlayerInspector_.getPosition() + mPlayerInspector_.getSize();
-            targetPos.x = mPlayerInspector_.getPosition().x + mPlayerInspector_.getSize().x / 2 - mStorageToggleButton_.getSize().x / 2;
-            targetPos.y -= mStorageToggleButton_.getSize().y;
-            mStorageToggleButton_.setPosition(targetPos);
+    function positionRightSideHelperButtons_(){
+        if(mRightSideHelperButtons_ == null||mInventoryGrid_ == null) return;
+
+        //Get the active grid (storage or inventory)
+        local activeGrid = mShowingStorage_ && mStorageGrid_ != null ? mStorageGrid_ : mInventoryGrid_;
+        local gridPos = activeGrid.getPosition();
+        local gridSize = activeGrid.getSize();
+        local buttonXPos = gridPos.x + gridSize.x + 10;
+        local buttonYPos = gridPos.y;
+
+        foreach(buttonIdx, button in mRightSideHelperButtons_){
+            //Calculate available space for this button
+            local availableWidth = ::drawable.x - buttonXPos - 10;
+            local remainingHeight = ::drawable.y - buttonYPos - 10;
+
+            //Make the button square if there's space, respecting margins
+            local buttonSize = min(availableWidth, remainingHeight);
+            buttonSize = max(buttonSize, 64);
+
+            button.setSize(Vec2(buttonSize, buttonSize));
+            button.setPosition(Vec2(buttonXPos, buttonYPos));
+
+            //Move to next button position
+            buttonYPos += buttonSize + 10;
         }
     }
 
