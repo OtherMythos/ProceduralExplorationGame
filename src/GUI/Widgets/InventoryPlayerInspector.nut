@@ -22,7 +22,7 @@
         function setup(parentPanel){
             local winSize = parentPanel.getSize();
 
-            local compId = ::CompositorManager.createCompositorWorkspace("renderTextureInventoryWorkspace", winSize * ::resolutionMult, CompositorSceneType.INVENTORY_PLAYER_INSPECTOR, false, false);
+            local compId = ::CompositorManager.createCompositorWorkspace("renderTextureInventoryWorkspace", winSize * ::resolutionMult * 0.25, CompositorSceneType.INVENTORY_PLAYER_INSPECTOR, true, false);
             mDatablock_ = ::CompositorManager.getDatablockForCompositor(compId);
             mCompositorId_ = compId;
 
@@ -41,7 +41,6 @@
             mCharacterModel_.startAnimation(CharacterModelAnimId.BASE_ARMS_WALK, GUI_ANIMATION_PAUSE);
 
             mModelAABB_ = mCharacterModel_.determineAABB();
-            printf("Model aabb: %s", mModelAABB_.tostring());
 
             {
                 local centre = mModelAABB_.getCentre();

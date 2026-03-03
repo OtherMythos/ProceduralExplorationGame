@@ -40,7 +40,10 @@ compositor_node renderTextureFGEffectNode
 compositor_node renderTextureInventoryNode
 {
     in 0 renderTexture
-    target renderTexture
+
+    texture renderInventoryRaw target_width target_height PFG_RGBA8_UNORM_SRGB
+
+    target renderInventoryRaw
     {
         pass clear
         {
@@ -52,6 +55,22 @@ compositor_node renderTextureInventoryNode
             rq_last 51
 
             identifier 10
+        }
+    }
+
+    target renderTexture
+    {
+        pass render_quad
+        {
+            load
+            {
+                all clear
+                clear_colour 0 0 0 0
+            }
+
+            material Postprocess/RenderIconsOutlineDraw
+
+            input 0 renderInventoryRaw
         }
     }
 }
