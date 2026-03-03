@@ -97,7 +97,6 @@
             if(!mNode_) return;
             mCurrentScreenPos_ = pos.copy();
             local objectPos = ::EffectManager.getWorldPositionForWindowPos(mCurrentScreenPos_);
-            print("objet post" + objectPos);
             mNode_.setPosition(objectPos.x, objectPos.y, 70);
 
             //Update holepunch matrix if using cutout material

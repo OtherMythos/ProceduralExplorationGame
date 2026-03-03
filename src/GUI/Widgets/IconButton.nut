@@ -130,11 +130,15 @@
             mIcon_.setPosition(pos + mData_.rawget("iconPosition"));
         }
         if(mLabel_ != null){
-            local labelPos = Vec2();
             if(mData_.rawin("labelPosition")){
-                labelPos = mData_.rawget("labelPosition");
+                local labelPos = mData_.rawget("labelPosition");
+                mLabel_.setPosition(pos + labelPos);
+            }else if(mData_.rawin("labelCentre")){
+                local labelPos = mData_.rawget("labelCentre");
+                mLabel_.setCentre(pos + labelPos);
+            }else{
+                mLabel_.setPosition(pos);
             }
-            mLabel_.setPosition(pos + labelPos);
         }
     }
 

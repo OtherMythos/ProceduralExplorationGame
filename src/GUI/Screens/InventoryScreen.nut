@@ -423,9 +423,15 @@ enum InventoryBusEvents{
         }
 
         if(mSupportsStorage_){
-            mStorageToggleButton_ = mWindow_.createButton();
-            mStorageToggleButton_.setSkinPack("Button_blue");
-            mStorageToggleButton_.setDefaultFontSize(mStorageToggleButton_.getDefaultFontSize() * 0.5);
+            mStorageToggleButton_ = ::IconButtonComplex(mWindow_, {
+                "icon": "bagIcon",
+                "iconSize": Vec2(64, 64),
+                "iconPosition": Vec2(6, 0),
+                "label": "",
+                "labelCentre": Vec2(32, 45),
+                "labelSizeModifier": 0.75,
+                "skinPack": "Panel_blue"
+            });
             mStorageToggleButton_.attachListenerForEvent(function(widget, action){
                 toggleStorageVisibility();
                 ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
@@ -514,7 +520,10 @@ enum InventoryBusEvents{
 
     function updateStorageToggleButtonText_(){
         if(mStorageToggleButton_ != null){
-            mStorageToggleButton_.setText(!mShowingStorage_ ? "Inventory" : "Storage", false);
+            mStorageToggleButton_.setText(!mShowingStorage_ ? "Inventory" : "Storage");
+            local storageSize = mStorageToggleButton_.getSize();
+            mStorageToggleButton_.mData_.labelCentre = Vec2(storageSize.x * 0.5, storageSize.y * 0.75);
+            mStorageToggleButton_.setPosition(mStorageToggleButton_.getPosition());
             //local newSize = mStorageToggleButton_.getSize();
             //newSize.y = newSize.y * 0.75;
             //mStorageToggleButton_.setSize(newSize);
