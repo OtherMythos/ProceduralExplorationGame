@@ -56,6 +56,8 @@ namespace ProceduralExplorationGamePlugin
         assert(p);
         if(p->getDefinition()->mIdentifier == 10){
             hlms->_setProperty("disableFog", true);
+            hlms->_setProperty("removeAmbient", true);
+            hlms->_setProperty("disableLightChanges", true);
         }
         else if(p->getDefinition()->mIdentifier == 11){
             hlms->_setProperty("invisibleTerrain", true);
