@@ -1155,6 +1155,8 @@ enum ExplorationScreenWidgetType{
         local joystickPos = mPlayerDirectButton.getPosition() - directSize * 0.25;
         if(::SystemSettings.getSetting(SystemSetting.JOYSTICK_LEFT_SIDE)){
             joystickPos.x = 0;
+            local buttonPos = joystickPos + directSize * 0.25;
+            mPlayerDirectButton.setPosition(buttonPos);
         }
         mPlayerDirectJoystick_.setPosition(joystickPos);
     }
