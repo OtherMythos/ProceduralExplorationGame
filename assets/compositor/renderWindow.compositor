@@ -298,6 +298,24 @@ compositor_node clearRenderWindowNode
 {
     in 0 renderWindowTexture
 
+    texture rt0 target_width_scaled 0.077 target_height_scaled 0.077 PFG_RGBA32_FLOAT
+
+    target rt0
+    {
+        pass render_quad
+        {
+            material Postprocess/DarkGuiBackground
+            load
+            {
+                all clear
+            }
+            store
+            {
+                all store_or_resolve
+            }
+        }
+    }
+
     target renderWindowTexture
     {
         pass clear
@@ -306,16 +324,8 @@ compositor_node clearRenderWindowNode
         }
         pass render_quad
         {
-            material Postprocess/DarkGuiBackground
-            load
-            {
-                depth clear
-                stencil clear
-            }
-            store
-            {
-                all store_or_resolve
-            }
+            material Postprocess/CopyPixelate
+            input 0 rt0
         }
     }
 

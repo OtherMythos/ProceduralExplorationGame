@@ -116,13 +116,13 @@ void main()
 	float wave = sin((uv.x + uv.y + pattern) * 6.0 + time * 2.0);
 	pattern += wave * 0.05;
 
-	vec3 baseColor = vec3(0.04, 0.06, 0.09);
-	vec3 accent    = vec3(0.10, 0.14, 0.20);
+	vec3 baseColor = vec3(0.02, 0.03, 0.045);
+	vec3 accent    = vec3(0.20, 0.24, 0.30);
 
 	vec3 color = mix(baseColor, accent, pattern);
 
 	float vignette = smoothstep(0.8, 0.2, length(uv));
 	color *= vignette;
 
-	returnFinalColour(vec4(color, 1.0));
+	returnFinalColour(vec4(color * (color + 0.3) * color * 64 * vec3(0.8, 0.8, 1.0) * 0.1, 1.0));
 }

@@ -68,10 +68,6 @@ fragment float4 main_metal
 	float2 uv = inPs.uv0 - 0.5;
 	uv.x *= p.iResolution.x / p.iResolution.y;
 
-	//Pixelate the UVs to quarter resolution
-	float pixelSize = 0.012;
-	uv = floor(uv / pixelSize) * pixelSize;
-
 	float time = p.iTime * 0.15;
 
 	float2 flow = float2(

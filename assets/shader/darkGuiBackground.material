@@ -39,7 +39,7 @@ material Postprocess/DarkGuiBackground
 
 			fragment_program_ref Postprocess/darkGuiBackground_ps
 			{
-				param_named iResolution float3 400 800 1
+				param_named_auto iResolution viewport_size
 				param_named_auto iTime time 0.3
 			}
 
