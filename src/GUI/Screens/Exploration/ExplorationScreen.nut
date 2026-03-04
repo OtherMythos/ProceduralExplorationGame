@@ -1612,6 +1612,5 @@ _doFile("script://ExplorationWorldMapDisplay.nut");
 _doFile("script://ExplorationMovesContainer.nut");
 _doFile("script://ExplorationEndScreen.nut");
 _doFile("script://ExplorationPlayerDeathScreen.nut");
-_doFile("script://ExplorationStatsContainer.nut");
 _doFile("script://ExplorationTooltipManager.nut");
 _doFile("script://ExplorationPlayerActionsContainer.nut");
