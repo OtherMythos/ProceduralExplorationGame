@@ -23,6 +23,7 @@
         createScreenCloseButton();
 
         local layoutLine = _gui.createLayoutLine();
+        local buttonList_ = [];
 
         local title = mWindow_.createLabel();
         title.setDefaultFontSize(title.getDefaultFontSize() * 2);
@@ -39,6 +40,7 @@
             ::SystemSettings.setSettingsValue(SystemSetting.INVERT_CAMERA_CONTROLLER, widget.getValue());
         }, _GUI_ACTION_RELEASED);
         layoutLine.addCell(invertCamera);
+        buttonList_.append(invertCamera);
         mSettingsWidgets_[SystemSetting.INVERT_CAMERA_CONTROLLER] = invertCamera;
 
         local wireframeButton = mWindow_.createButton();
@@ -48,6 +50,7 @@
             ::toggleDrawWireframe();
         }, _GUI_ACTION_PRESSED);
         layoutLine.addCell(wireframeButton);
+        buttonList_.append(wireframeButton);
         mSettingsWidgets_[SystemSetting.TOGGLE_WIREFRAME] = wireframeButton;
 
         local renderStatsButton = mWindow_.createButton();
@@ -57,6 +60,7 @@
             _window.toggleRenderStats();
         }, _GUI_ACTION_PRESSED);
         layoutLine.addCell(renderStatsButton);
+        buttonList_.append(renderStatsButton);
         mSettingsWidgets_[SystemSetting.TOGGLE_WIREFRAME] = renderStatsButton;
 
         local joystickSideCheckbox = mWindow_.createCheckbox();
@@ -66,11 +70,18 @@
             ::SystemSettings.setSettingsValue(SystemSetting.JOYSTICK_LEFT_SIDE, widget.getValue());
         }, _GUI_ACTION_RELEASED);
         layoutLine.addCell(joystickSideCheckbox);
+        buttonList_.append(joystickSideCheckbox);
         mSettingsWidgets_[SystemSetting.JOYSTICK_LEFT_SIDE] = joystickSideCheckbox;
 
-        layoutLine.setMarginForAllCells(0, 20);
+        layoutLine.setMarginForAllCells(0, 10);
         //layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
         layoutLine.setSize(winWidth, winHeight);
+
+        //Apply height sizing to buttons
+        foreach(button in buttonList_){
+            local buttonSize = button.getSize();
+            button.setSize(buttonSize.x, buttonSize.y * 0.8);
+        }
 
         //Display current world seed information
         local seedLabel = mWindow_.createLabel();
