@@ -47,17 +47,28 @@
             button.setText(i);
             button.attachListenerForEvent(buttonFunctions[c], _GUI_ACTION_PRESSED, this);
             button.setExpandHorizontal(true);
-            button.setMinSize(0, 100);
             layoutLine.addCell(button);
-            if(c == 0) button.setFocus();
+            if(c == 0){
+                button.setFocus();
+                button.setSkinPack("Button_blue");
+            }
             mButtons_.append(button);
         }
 
         layoutLine.setMarginForAllCells(0, ::ScreenManager.calculateRatio(20));
         layoutLine.setPosition(::drawable.x * 0.05, 50);
         layoutLine.setSize(::drawable.x * 0.9, ::drawable.y * 0.9);
-        layoutLine.setHardMaxSize(::drawable.x * 0.9, ::drawable.y * 0.9);
+        //layoutLine.setHardMaxSize(::drawable.x * 0.9, ::drawable.y * 0.9);
         layoutLine.layout();
+
+        foreach(c,i in mButtons_){
+            if(c == 0) continue;
+            local centre = i.getCentre();
+            local newSize = i.getSize();
+            newSize *= 0.95;
+            i.setSize(newSize);
+            i.setCentre(centre);
+        }
 
         //TODO rather than doing this in screens it would make more sense to have a system to manage it.
         mActionSetId_ = ::InputManager.pushActionSet(InputActionSets.MENU);
