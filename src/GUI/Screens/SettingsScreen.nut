@@ -1,10 +1,17 @@
 ::ScreenManager.Screens[Screen.SETTINGS_SCREEN] = class extends ::Screen{
 
     mSettingsWidgets_ = null
+    mLayoutLine_ = null
+    mButtonList_ = null
+    mHiddenWidgets_ = null
+    mTitleRevealCount_ = 0
+    mWidgetsRevealed_ = false
 
     function setup(data){
 
         mSettingsWidgets_ = array(SystemSetting.MAX);
+        mButtonList_ = [];
+        mHiddenWidgets_ = {};
 
         local winWidth = _window.getWidth() * 0.8;
         local winHeight = _window.getHeight() * 0.8;
@@ -22,8 +29,7 @@
 
         createScreenCloseButton();
 
-        local layoutLine = _gui.createLayoutLine();
-        local buttonList_ = [];
+        mLayoutLine_ = _gui.createLayoutLine();
 
         local title = mWindow_.createLabel();
         title.setDefaultFontSize(title.getDefaultFontSize() * 2);
@@ -31,7 +37,7 @@
         title.setGridLocation(_GRID_LOCATION_CENTER);
         title.setText("Settings");
         title.sizeToFit(mWindow_.getSizeAfterClipping().x);
-        layoutLine.addCell(title);
+        mLayoutLine_.addCell(title);
 
         local invertCamera = mWindow_.createCheckbox();
         invertCamera.setText("Invert Camera");
@@ -39,29 +45,9 @@
             ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
             ::SystemSettings.setSettingsValue(SystemSetting.INVERT_CAMERA_CONTROLLER, widget.getValue());
         }, _GUI_ACTION_RELEASED);
-        layoutLine.addCell(invertCamera);
-        buttonList_.append(invertCamera);
+        mLayoutLine_.addCell(invertCamera);
+        mButtonList_.append(invertCamera);
         mSettingsWidgets_[SystemSetting.INVERT_CAMERA_CONTROLLER] = invertCamera;
-
-        local wireframeButton = mWindow_.createButton();
-        wireframeButton.setText("Toggle wireframe");
-        wireframeButton.attachListenerForEvent(function(widget, action){
-            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
-            ::toggleDrawWireframe();
-        }, _GUI_ACTION_PRESSED);
-        layoutLine.addCell(wireframeButton);
-        buttonList_.append(wireframeButton);
-        mSettingsWidgets_[SystemSetting.TOGGLE_WIREFRAME] = wireframeButton;
-
-        local renderStatsButton = mWindow_.createButton();
-        renderStatsButton.setText("Toggle Render Stats");
-        renderStatsButton.attachListenerForEvent(function(widget, action){
-            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
-            _window.toggleRenderStats();
-        }, _GUI_ACTION_PRESSED);
-        layoutLine.addCell(renderStatsButton);
-        buttonList_.append(renderStatsButton);
-        mSettingsWidgets_[SystemSetting.TOGGLE_WIREFRAME] = renderStatsButton;
 
         local joystickSideCheckbox = mWindow_.createCheckbox();
         joystickSideCheckbox.setText("Joystick on Left Side");
@@ -69,26 +55,20 @@
             ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
             ::SystemSettings.setSettingsValue(SystemSetting.JOYSTICK_LEFT_SIDE, widget.getValue());
         }, _GUI_ACTION_RELEASED);
-        layoutLine.addCell(joystickSideCheckbox);
-        buttonList_.append(joystickSideCheckbox);
+        mLayoutLine_.addCell(joystickSideCheckbox);
+        mButtonList_.append(joystickSideCheckbox);
         mSettingsWidgets_[SystemSetting.JOYSTICK_LEFT_SIDE] = joystickSideCheckbox;
 
-        layoutLine.setMarginForAllCells(0, 10);
-        //layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
-        layoutLine.setSize(winWidth, winHeight);
+        mLayoutLine_.setMarginForAllCells(0, 10);
+        mLayoutLine_.setSize(winWidth, winHeight);
 
         //Apply height sizing to buttons
-        foreach(button in buttonList_){
+        foreach(button in mButtonList_){
             local buttonSize = button.getSize();
             button.setSize(buttonSize.x, buttonSize.y * 0.8);
         }
 
-        //Display current world seed information
-        local seedLabel = mWindow_.createLabel();
-        seedLabel.setText(getWorldSeedString_());
-        layoutLine.addCell(seedLabel);
-
-        layoutLine.layout();
+        mLayoutLine_.layout();
 
         local backButton = mWindow_.createButton();
         backButton.setDefaultFontSize(backButton.getDefaultFontSize() * 1.5);
@@ -107,7 +87,64 @@
         invertCamera.setTickmarkMarginAndSize(7, 0, 40, 40);
         joystickSideCheckbox.setTickmarkMarginAndSize(7, 0, 40, 40);
 
+        //Create invisible reveal button by the title
+        local revealButton = mWindow_.createButton();
+        revealButton.attachListenerForEvent(function(widget, action){
+            print("Settings title pressed");
+            mTitleRevealCount_++;
+            if(mTitleRevealCount_ >= 3){
+                revealHiddenWidgets_();
+            }
+        }, _GUI_ACTION_PRESSED, this);
+        revealButton.setSize(title.getSize());
+        revealButton.setPosition(title.getPosition());
+        revealButton.setVisualsEnabled(false);
+
         setupValuesFromSystemSettings();
+    }
+
+    function revealHiddenWidgets_(){
+        if(mWidgetsRevealed_){
+            return;
+        }
+        mWidgetsRevealed_ = true;
+
+        //Create wireframe button
+        local wireframeButton = mWindow_.createButton();
+        wireframeButton.setText("Toggle wireframe");
+        wireframeButton.attachListenerForEvent(function(widget, action){
+            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
+            ::toggleDrawWireframe();
+        }, _GUI_ACTION_PRESSED);
+        mLayoutLine_.addCell(wireframeButton);
+        mButtonList_.append(wireframeButton);
+        mHiddenWidgets_["wireframe"] <- wireframeButton;
+
+        //Create render stats button
+        local renderStatsButton = mWindow_.createButton();
+        renderStatsButton.setText("Toggle Render Stats");
+        renderStatsButton.attachListenerForEvent(function(widget, action){
+            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
+            _window.toggleRenderStats();
+        }, _GUI_ACTION_PRESSED);
+        mLayoutLine_.addCell(renderStatsButton);
+        mButtonList_.append(renderStatsButton);
+        mHiddenWidgets_["renderStats"] <- renderStatsButton;
+
+        //Create seed label
+        local seedLabel = mWindow_.createLabel();
+        seedLabel.setText(getWorldSeedString_());
+        mLayoutLine_.addCell(seedLabel);
+        mHiddenWidgets_["seedLabel"] <- seedLabel;
+
+        //Apply height sizing to new buttons
+        foreach(button in [wireframeButton, renderStatsButton]){
+            local buttonSize = button.getSize();
+            button.setSize(buttonSize.x, buttonSize.y * 0.8);
+        }
+
+        //Re-layout
+        mLayoutLine_.layout();
     }
 
     function closeSettings(){
