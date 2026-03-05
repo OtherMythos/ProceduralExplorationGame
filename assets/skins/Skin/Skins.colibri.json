@@ -23,6 +23,28 @@
                 "bottom" : [10, 0]
             }
         },
+        "Panel_COLOUR_smallEdge_idle" :
+        {
+            "material" : "AtlasSmallEdgeTransparent",
+            "tex_resolution" : [256, 384],
+            "grid_uv" :
+            {
+                "top_left": [0, 0, 46, 42],
+                "top": [46, 0, 164, 42],
+                "top_right": [210, 0, 46, 42],
+                "center_left": [0, 42, 46, 40],
+                "center": [46, 42, 164, 40],
+                "center_right": [210, 42, 46, 40],
+                "bottom_left": [0, 82, 46, 46],
+                "bottom": [46, 82, 164, 46],
+                "bottom_right": [210, 82, 46, 46]
+            },
+            "borders" :
+            {
+                "all" : [10, 0],
+                "bottom" : [10, 0]
+            }
+        },
         "InventoryWidget" :
         {
             "material" : "gui/InventoryWidget",
@@ -60,6 +82,14 @@
         "Panel_COLOUR" :
         {
             "auto" : "Panel_COLOUR"
+        },
+        "Button_COLOUR_smallEdge" :
+        {
+            "auto" : "Panel_COLOUR_smallEdge"
+        },
+        "Panel_COLOUR_smallEdge" :
+        {
+            "auto" : "Panel_COLOUR_smallEdge"
         }
     },
 

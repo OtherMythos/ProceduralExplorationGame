@@ -71,7 +71,7 @@
 
             local healthBar = ::GuiWidgets.ProgressBar(window);
             local barSize = statsSize.x / 2 - leftCount;
-            local barHeight = 35;
+            local barHeight = 40;
             healthBar.setSize(barSize, barHeight);
             healthBar.setPercentage(0.5);
             healthBar.setBorder(6);

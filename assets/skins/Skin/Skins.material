@@ -14,6 +14,12 @@ hlms AtlasTransparent unlit
 	scene_blend alpha_blend
 	diffuse_map Atlas.png
 }
+hlms AtlasSmallEdgeTransparent unlit
+{
+	depth_check off
+	scene_blend alpha_blend
+	diffuse_map AtlasSmallEdge.png
+}
 hlms AtlasDisabled unlit
 {
 	depth_check off

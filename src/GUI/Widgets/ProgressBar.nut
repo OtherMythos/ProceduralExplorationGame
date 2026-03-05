@@ -37,7 +37,7 @@
         mChildBar_.setSize(mSize_);
         mWindowContainer_.setSize(mSize_);
         //mChildBar_.setColour(BAR_COLOUR);
-        mChildBar_.setSkinPack("Panel_red");
+        mChildBar_.setSkinPack("Button_red_smallEdge");
 
         mParentContainer_.setClickable(false);
         mChildBar_.setClickable(false);
