@@ -13,6 +13,9 @@
 		);
 	//}
 	#undef material
+
+	//Prevent the variable from shadowing the next time the material is inserted.
+	#define materialId materialIdSecond
 @end
 @end
 
