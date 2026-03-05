@@ -100,6 +100,9 @@ namespace ProceduralExplorationGamePlugin{
             if(v & ProceduralExplorationGameCore::HLMS_FLOOR_DECALS){
                 hlms->setProperty("floorDecals", true);
             }
+            if(v & ProceduralExplorationGameCore::HLMS_SPRITE_ANIM){
+                hlms->setProperty("spriteAnim", true);
+            }
         }
         void calculateHashForPreCaster( Ogre::HlmsPbsAVCustom* hlms, Ogre::Renderable *renderable, Ogre::PiecesMap *inOutPieces, const Ogre::PiecesMap *normalPassPieces ){
             _defineProperties<true>(hlms, renderable);

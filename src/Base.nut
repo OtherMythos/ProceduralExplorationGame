@@ -508,6 +508,7 @@
             "font_icons.png",
             "simpleGradient.png",
             "icon_cross.png",
+            "fireSprites.png",
         ]);
         forceLoader.shutdown();
     }

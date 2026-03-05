@@ -1,17 +1,19 @@
 @piece( custom_ps_preExecution )
-/*
-	#define material materialArray[inPs.materialId]
-
-	@property( diffuse_map )
-	if(material.userValue[0].x == 1.0){
-			float2 animUV = inPs.uv@value(uv_diffuse);
-			animUV.x = animUV.x + sin(material.userValue[0].y * 2) * 0.001;
-			animUV.y = animUV.y + cos(material.userValue[0].y * 2) * 0.001;
-
-			inPs.uv0.xy = animUV;
-	}
-	@end
-*/
+@property( spriteAnim )
+	@insertpiece( LoadMaterial )
+	#undef UV_DIFFUSE
+	#define UV_DIFFUSE(x) animUV
+	float2 originalUV = inPs.uv0.xy;
+	//Animate texture sampling via user value
+	//if(material.userValue[0].x > 0.0){
+		uint frame = uint(material.userValue[0].x);
+		float2 animUV = float2(
+			(int(frame) / 32.0) + originalUV.x / 32.0,
+			originalUV.y
+		);
+	//}
+	#undef material
+@end
 @end
 
 @piece( custom_passBuffer )

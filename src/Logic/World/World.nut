@@ -46,6 +46,7 @@
 
     function setup(parent, aabb){
         mSceneNode_ = parent.createChildSceneNode();
+        local targetNode = mSceneNode_.createChildSceneNode();
         //local animNode = mSceneNode_.createChildSceneNode();
 
         //local gizmoScale = Vec3();
@@ -55,18 +56,20 @@
         local targetItem = _scene.createItem("gizmoEffectBox.mesh");
         mAnimDB_ = ::DatablockManager.quickCloneDatablock("statusEffectFlame");
         targetItem.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_EFFECTS);
+        _gameCore.writeFlagsToItem(targetItem, HLMS_SPRITE_ANIM);
         targetItem.setDatablock(mAnimDB_);
         targetItem.setCastsShadows(false);
-        mSceneNode_.attachObject(targetItem);
-        mSceneNode_.setScale(radius, radius, radius);
+        targetNode.attachObject(targetItem);
+        targetNode.setScale(radius, radius, radius);
         centre.y = radius;
+        targetNode.setPosition(0, 1.2, 0);
         mSceneNode_.setPosition(centre);
     }
 
     function update(){
         mCount_++;
-        local val = (floor(mCount_ / 10) % 32) + 1;
-        mAnimDB_.setTexture(_PBSM_DIFFUSE, format("frame%02d.webp", val));
+        local val = (floor(mCount_ / 10) % 32);
+        mAnimDB_.setUserValue(0, (val).tofloat(), 0, 0, 0);
     }
 
 }

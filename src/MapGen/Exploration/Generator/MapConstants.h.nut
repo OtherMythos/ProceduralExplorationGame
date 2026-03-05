@@ -74,6 +74,7 @@ const HLMS_OCEAN_VERTICES = 0x8;
 const HLMS_TREE_VERTICES = 0x10;
 const HLMS_WIND_STREAKS = 0x20;
 const HLMS_FLOOR_DECALS = 0x40;
+const HLMS_SPRITE_ANIM = 0x80;
 
 enum RegionType{
     NONE,
