@@ -506,7 +506,8 @@
         local forceLoader = TextureForceLoader([
             "voxelPalette.png",
             "font_icons.png",
-            "simpleGradient.png"
+            "simpleGradient.png",
+            "icon_cross.png",
         ]);
         forceLoader.shutdown();
     }
