@@ -60,7 +60,7 @@ enum GameplayComplexMenuBusEvents{
 
             local linePanel = win.createPanel();
             linePanel.setSize(::drawable.x, 2);
-            linePanel.setPosition(0, ::drawable.y - totalHeight);
+            linePanel.setPosition(0, 0);
             linePanel.setDatablock("unlitBlack");
 
             local padding = 10;
