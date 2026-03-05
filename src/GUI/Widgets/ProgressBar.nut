@@ -8,7 +8,9 @@
 
     mLabel_ = null;
     mLabelObject_ = null;
+    mLabelWindow_ = null;
 
+    mWindowContainer_ = null;
     mParentContainer_ = null;
     mChildBar_ = null;
 
@@ -24,11 +26,18 @@
 
         mParentContainer_ = parent.createPanel();
         mParentContainer_.setSize(mSize_);
-        mParentContainer_.setColour(BACKGROUND_COLOUR);
+        //mParentContainer_.setColour(BACKGROUND_COLOUR);
+        mParentContainer_.setSkinPack("Panel_midGrey");
 
-        mChildBar_ = parent.createPanel();
+        mWindowContainer_ = parent.createWindow();
+        mWindowContainer_.setSkinPack("WindowSkinNoBorder");
+        mWindowContainer_.setVisualsEnabled(false);
+
+        mChildBar_ = mWindowContainer_.createPanel();
         mChildBar_.setSize(mSize_);
-        mChildBar_.setColour(BAR_COLOUR);
+        mWindowContainer_.setSize(mSize_);
+        //mChildBar_.setColour(BAR_COLOUR);
+        mChildBar_.setSkinPack("Panel_red");
 
         mParentContainer_.setClickable(false);
         mChildBar_.setClickable(false);
@@ -58,8 +67,8 @@
     }
 
     function setColour(colour){
-        mParentContainer_.setColour(ColourValue(0.05, 0.05, 0.05, colour.a));
-        mChildBar_.setColour(ColourValue(0.9, 0.1, 0.1, colour.a));
+        mParentContainer_.setColour(ColourValue(1, 1, 1, colour.a));
+        mChildBar_.setColour(ColourValue(1, 1, 1, colour.a));
         if(mLabelObject_ != null){
             mLabelObject_.setColour(colour);
         }
@@ -71,7 +80,10 @@
     }
 
     function _constructLabel(){
-        mLabelObject_ = mParentWin_.createLabel();
+        mLabelWindow_ = mParentWin_.createWindow();
+        mLabelWindow_.setSkinPack("WindowSkinNoBorder");
+        mLabelWindow_.setVisualsEnabled(false);
+        mLabelObject_ = mLabelWindow_.createLabel();
         positionLabel_();
     }
 
@@ -82,15 +94,18 @@
     function destroy(){
         _gui.destroy(mParentContainer_);
         _gui.destroy(mChildBar_);
+        _gui.destroy(mWindowContainer_);
         if(mLabelObject_){
+            _gui.destroy(mLabelWindow_);
             _gui.destroy(mLabelObject_);
         }
     }
 
     function positionLabel_(){
         if(mLabelObject_ == null) return;
+        mLabelWindow_.setPosition(mPos_);
         local sizeDiv = mSize_ / 2;
-        mLabelObject_.setCentre(sizeDiv + mPos_);
+        mLabelObject_.setCentre(sizeDiv);
     }
 
     function getPosition(){
@@ -99,7 +114,8 @@
     function setPosition(x, y){
         local pos = Vec2(x, y);
         mParentContainer_.setPosition(pos);
-        mChildBar_.setPosition(pos + Vec2(mBorder_, mBorder_));
+        mWindowContainer_.setPosition(pos);
+        mChildBar_.setPosition(mBorder_, mBorder_);
         positionLabel_();
         mPos_ = pos;
     }
@@ -132,7 +148,11 @@
     function processSize_(){
         mParentContainer_.setSize(mSize_);
         local intendedSize = mSize_ - Vec2(mBorder_ * 2, mBorder_ * 2);
-        mChildBar_.setSize(intendedSize.x * mPercentage_, intendedSize.y);
+        mChildBar_.setSize(intendedSize);
+        if(mLabelWindow_ != null){
+            mLabelWindow_.setSize(mSize_);
+        }
+        mWindowContainer_.setSize(mSize_.x * mPercentage_, mSize_.y);
         positionLabel_();
     }
 

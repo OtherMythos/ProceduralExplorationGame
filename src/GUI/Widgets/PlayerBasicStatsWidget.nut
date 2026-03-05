@@ -74,7 +74,7 @@
             local barHeight = 35;
             healthBar.setSize(barSize, barHeight);
             healthBar.setPercentage(0.5);
-            healthBar.setBorder(2);
+            healthBar.setBorder(6);
             healthBar.setPosition(leftCount, statsSize.y / 2 - barHeight / 2);
             healthBar.setLabel("120/240");
             mPlayerHealthBar_ = healthBar;
