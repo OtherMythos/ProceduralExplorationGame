@@ -75,15 +75,6 @@
                 "texture": "Widget.png"
             }
         },
-        "gui/spriteBase" :
-        {
-            "blendblock": "gui/uiBlend",
-            "diffuse_map0" :
-            {
-                "sampler": "gui/uiSpriteScale",
-                "texture": "sprites.png"
-            }
-        },
         "gui/inventoryHighlightCover" :
         {
             "blendblock": "gui/uiBlend",

@@ -344,7 +344,6 @@
         createLights();
 
         _gui.loadSkins("res://build/assets/skins/ui.json");
-        _gui.loadSkins("res://build/assets/skins/itemSkins.json");
 
         loadSkin("palette1");
 
