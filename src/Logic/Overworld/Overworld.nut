@@ -309,6 +309,8 @@
         mAnimIncrement_ += 0.01;
         updateWaterBlock(mWaterDatablock_);
         updateWaterBlock(mOutsideWaterDatablock_);
+
+        _gameCore.setVoxelHighlightGroup(0);
     }
 
     #Override
