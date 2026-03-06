@@ -225,6 +225,12 @@
             }
         }
 
+        local detectionWorld = mConstructorWorld_.getCollisionDetectionWorld();
+        local collisionDetectionPoint = detectionWorld.addCollisionPoint(targetPos.x, targetPos.z, 1, 0xFF, _COLLISION_WORLD_ENTRY_SENDER);
+
+        local collisionRadius = 1.5;
+        manager.assignComponent(en, EntityComponents.COLLISION_DETECTION, ::EntityManager.Components[EntityComponents.COLLISION_DETECTION](collisionRadius, COLLISION_TYPE_PLAYER, collisionDetectionPoint));
+
         entry.setPosition(targetPos);
 
         return entry;
