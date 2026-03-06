@@ -61,6 +61,7 @@ enum InventoryBusEvents{
     }
 
     function shutdown(){
+        ::PlayerStatsOverlayManager.unregisterScreen("InventoryScreen");
         mInventoryObj_.shutdown();
         base.shutdown();
         ::InputManager.popActionSet(mActionSetId_);
@@ -69,6 +70,7 @@ enum InventoryBusEvents{
     function setZOrder(idx){
         base.setZOrder(idx);
         mInventoryObj_.setZOrder(idx);
+        ::PlayerStatsOverlayManager.registerScreen("InventoryScreen", idx);
     }
 
     function update(){

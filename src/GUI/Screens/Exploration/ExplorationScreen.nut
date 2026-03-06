@@ -652,6 +652,11 @@ enum ExplorationScreenWidgetType{
         }
     };
 
+    function setZOrder(idx){
+        base.setZOrder(idx);
+        ::PlayerStatsOverlayManager.registerScreen("ExplorationScreen", idx);
+    }
+
     function setup(data){
         mExplorationScreenWidgetType_ = array(ExplorationScreenWidgetType.MAX);
 
@@ -675,8 +680,8 @@ enum ExplorationScreenWidgetType{
 
         local mobileInterface = (::Base.getTargetInterface() == TargetInterface.MOBILE);
 
-        local statsWidget = ::GuiWidgets.PlayerBasicStatsWidget();
-        statsWidget.setup(mWindow_);
+        ::PlayerStatsOverlayManager.setup();
+        local statsWidget = ::PlayerStatsOverlayManager.getWidget();
         statsWidget.setPosition(Vec2(0, 0));
         statsWidget.setPlayerStats(::Base.mPlayerStats);
         mExplorationStatsContainer_ = statsWidget;
@@ -1455,7 +1460,8 @@ enum ExplorationScreenWidgetType{
         mInventoryWidget_.shutdown();
         mFoundItemIconsManager_.shutdown();
         mCompassAnimator_.shutdown();
-        mExplorationStatsContainer_.shutdown();
+        ::PlayerStatsOverlayManager.unregisterScreen("ExplorationScreen");
+        ::PlayerStatsOverlayManager.shutdown();
         if(mPlayerDirectJoystick_){
             mPlayerDirectJoystick_.shutdown();
         }
