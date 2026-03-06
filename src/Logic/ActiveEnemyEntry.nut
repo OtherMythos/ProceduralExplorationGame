@@ -227,9 +227,11 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
             mStateMachineModel_.notifyWaterState(inWater);
             //Trigger water splash effect when entering water
             if(inWater){
-                mCreatorWorld_.spawnWorldEffect(WorldEffectId.WATER_SPLASH, mPos_);
-                //Remove fire status afflictions when entering water
-                mCreatorWorld_.removeFireAffliction(mEntity_);
+                if(::Enemies[mEnemy_].getAllowSwimState()){
+                    mCreatorWorld_.spawnWorldEffect(WorldEffectId.WATER_SPLASH, mPos_);
+                    //Remove fire status afflictions when entering water
+                    mCreatorWorld_.removeFireAffliction(mEntity_);
+                }
             }
         }
         mInWater_ = inWater;
