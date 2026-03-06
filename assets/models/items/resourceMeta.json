@@ -1,0 +1,10 @@
+{
+    "Universal":{
+        "readables.gox": {
+            "separateLayers": true
+        },
+        "fruit.gox": {
+            "separateLayers": true
+        }
+    }
+}

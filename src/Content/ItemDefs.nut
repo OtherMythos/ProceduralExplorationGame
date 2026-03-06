@@ -13,10 +13,10 @@
 ::Items[ItemId.BONE_MACE] = ItemDef("Bone Mace", "Large clobbering clump of ex-person erecter.", "boneMace.voxMesh", ItemType.EQUIPPABLE, 5, null, EquippableId.REGULAR_SWORD, ItemEquipTransformType.BASIC_SWORD);
 ::Items[ItemId.SIMPLE_STAFF] = ItemDef("Simple Staff", "A rickety magic staff", "simpleStaff.voxMesh", ItemType.EQUIPPABLE, 5, null, EquippableId.REGULAR_STAFF, ItemEquipTransformType.BASIC_STAFF);
 
-::Items[ItemId.BOOK_OF_GOBLIN_STORIES] = ItemDef("Book of Goblin Stories", "A crudely written tomb of popular goblin stories", "boneMace.voxMesh", ItemType.LORE_CONTENT, 0, "BookOfGoblinTales.nut", EquippableId.NONE);
-::Items[ItemId.APPLE] = ItemDef("Apple", "Fibrous fruit", "apple.voxMesh", ItemType.EAT, 5, null, EquippableId.NONE);
-::Items[ItemId.COCONUT] = ItemDef("Coconut", "Weirdly milky for a fruit", "apple.voxMesh", ItemType.EAT, 5, null, EquippableId.NONE);
-::Items[ItemId.RED_BERRIES] = ItemDef("Red Berries", "Red and fruity", "apple.voxMesh", ItemType.EAT, 5, null, EquippableId.NONE);
+::Items[ItemId.BOOK_OF_GOBLIN_STORIES] = ItemDef("Book of Goblin Stories", "A crudely written tomb of popular goblin stories", "readables.brownBook.voxMesh", ItemType.LORE_CONTENT, 0, "BookOfGoblinTales.nut", EquippableId.NONE);
+::Items[ItemId.APPLE] = ItemDef("Apple", "Fibrous fruit", "fruit.apple.voxMesh", ItemType.EAT, 5, null, EquippableId.NONE);
+::Items[ItemId.COCONUT] = ItemDef("Coconut", "Weirdly milky for a fruit", "fruit.coconut.voxMesh", ItemType.EAT, 5, null, EquippableId.NONE);
+::Items[ItemId.RED_BERRIES] = ItemDef("Red Berries", "Red and fruity", "fruit.redBerries.voxMesh", ItemType.EAT, 5, null, EquippableId.NONE);
 ::Items[ItemId.FLOWER_WHITE] = ItemDef("White Flower", "A white delecate flower", "flower.flowerWhite.voxMesh", ItemType.EAT, 5, null, EquippableId.NONE);
 ::Items[ItemId.FLOWER_RED] = ItemDef("Red Flower", "A red delecate flower", "flower.flowerRed.voxMesh", ItemType.EAT, 5, null, EquippableId.NONE);
 ::Items[ItemId.FLOWER_PURPLE] = ItemDef("Purple Flower", "A purple delecate flower", "flower.flowerPurple.voxMesh", ItemType.EAT, 5, null, EquippableId.NONE);
@@ -26,7 +26,7 @@
 ::Items[ItemId.MAGMA_SHROOM] = ItemDef("Magma Shroom", "A peculiar mushroom that radiates heat", "mushrooms.mushroom.magma.voxMesh", ItemType.EAT, 10, null, EquippableId.NONE);
 ::Items[ItemId.MESSAGE_IN_A_BOTTLE] = ItemDef("Message in a Bottle", "A mysterious message sealed in a glass bottle. It has washed ashore from distant seas.", "simpleSword.voxMesh", ItemType.MESSAGE_IN_A_BOTTLE, 0, null, EquippableId.NONE);
 ::Items[ItemId.SAND_URN] = ItemDef("Sand Urn", "An ancient urn that has travelled across the desert sands. It contains something mysterious.", "simpleSword.voxMesh", ItemType.SAND_URN, 0, null, EquippableId.NONE);
-::Items[ItemId.NOTE_SCRAP] = ItemDef("Note Scrap", "A scrap of paper found inside the message in a bottle.", null, ItemType.LORE_CONTENT, 0, null, EquippableId.NONE);
+::Items[ItemId.NOTE_SCRAP] = ItemDef("Note Scrap", "A scrap of paper found inside the message in a bottle.", "readables.noteScrap.voxMesh", ItemType.LORE_CONTENT, 0, null, EquippableId.NONE);
 ::Items[ItemId.FALLEN_STAR] = ItemDef("Fallen Star", "A glimmering star that has fallen from the heavens.", "fallenStar.voxMesh", ItemType.EAT, 5, null, EquippableId.NONE);
 //-------------------------------
 
