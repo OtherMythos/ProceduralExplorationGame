@@ -55,7 +55,6 @@ enum ItemEquipTransformType{
     function getEquipTransforms(wield, wieldActive){ return mItem_.getEquipTransforms(wield, wieldActive); }
     function getSellValue(){ return mItem_.getSellValue(); }
     function getScrapVal(){ return mItem_.getScrapVal(); }
-    function getIcon(){ return mItem_.getIcon(); }
     function toStats(){
         return ::ItemHelper.itemToStats(mItemId_);
     }
@@ -70,18 +69,16 @@ enum ItemEquipTransformType{
     mMesh = null;
     mType = ItemType.NONE;
     mSellValue = 0;
-    mIcon = null;
     mDefData = null;
 
     mEquippableData = EquippableId.NONE;
     mEquipTransformType = ItemEquipTransformType.NONE;
 
-    constructor(name, desc, mesh, icon, type, sellValue, defData, equippableData=null, equippableTransformType=ItemEquipTransformType.NONE){
+    constructor(name, desc, mesh, type, sellValue, defData, equippableData=null, equippableTransformType=ItemEquipTransformType.NONE){
         mName = name;
         mDesc = desc;
         mMesh = mesh;
         mType = type;
-        mIcon = icon;
         mSellValue = sellValue;
         mEquippableData = equippableData;
         mDefData = defData;
@@ -113,7 +110,6 @@ enum ItemEquipTransformType{
         }
     }
 
-    function getIcon(){ return mIcon == null ? "icon_none" : mIcon; }
     function getMesh(){ return mMesh == null ? "smallPotion.voxMesh" : mMesh; }
 }
 
