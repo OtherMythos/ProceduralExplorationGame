@@ -103,6 +103,20 @@ local SpreadCoinEffectStateMachine = class extends ::Util.StateMachine{
         mCoins_ = createInitialCoins(mNumCoins_, mParentNode_, mStartPos_, mScale_);
         mCoinPos_ = setupCoinPositions(mNumCoins_, Vec2(-mCellSize_ * CELL_WIDTH / 2, -mCellSize_ * CELL_HEIGHT / 2), mCellSize_);
 
+        //Clamp coin positions so they cannot leave the screen during the spread stage.
+        local topLeft = ::EffectManager.getWorldPositionForWindowPos(Vec2(0, 0));
+        local bottomRight = ::EffectManager.getWorldPositionForWindowPos(Vec2(_window.getWidth(), _window.getHeight()));
+        local minX = topLeft.x < bottomRight.x ? topLeft.x : bottomRight.x;
+        local maxX = topLeft.x > bottomRight.x ? topLeft.x : bottomRight.x;
+        local minY = topLeft.y < bottomRight.y ? topLeft.y : bottomRight.y;
+        local maxY = topLeft.y > bottomRight.y ? topLeft.y : bottomRight.y;
+        for(local i = 0; i < mCoinPos_.len(); i++) {
+            local absPos = mStartPos_ + mCoinPos_[i];
+            local clampedX = ::clampValue(absPos.x, minX, maxX);
+            local clampedY = ::clampValue(absPos.y, minY, maxY);
+            mCoinPos_[i] = Vec2(clampedX, clampedY) - mStartPos_;
+        }
+
         mStateMachine_ = SpreadCoinEffectStateMachine({"coins": mCoins_, "pos": mCoinPos_, "start": mStartPos_, "end": mEndPos_, "scale": mScale_, "halfScale": mScale_ / 2});
         mStateMachine_.setState(SpreadCoinEffectStages.INITIAL_EXPAND);
 
