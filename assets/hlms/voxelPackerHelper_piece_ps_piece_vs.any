@@ -14,8 +14,10 @@
 	//}
 	#undef material
 
-	//Prevent the variable from shadowing the next time the material is inserted.
-	#define materialId materialIdSecond
+	@property( syntax != metal )
+		//Prevent the variable from shadowing the next time the material is inserted.
+		#define materialId materialIdSecond
+	@end
 @end
 @end
 
