@@ -1957,6 +1957,16 @@
         if(!placementValid){
             return null;
         }
+        //Check terrain traversal limitations for this enemy type.
+        local enemyDef = ::Enemies[enemyType];
+        local traversable = enemyDef.getTraversableTerrain();
+        if(traversable != EnemyTraversableTerrain.ALL){
+            local isWater = getIsWaterForPosition(pos);
+            local terrainType = isWater ? EnemyTraversableTerrain.WATER : EnemyTraversableTerrain.LAND;
+            if(!(traversable & terrainType)){
+                return null;
+            }
+        }
         return createEnemy(enemyType, pos);
     }
     function checkEnemyCollisionPlacement(pos){
