@@ -12,6 +12,7 @@
 
     mWindowContainer_ = null;
     mParentContainer_ = null;
+    mInnerPanel_ = null;
     mChildBar_ = null;
 
     BACKGROUND_DATABLOCK = "gui/progressBarBackground";
@@ -38,6 +39,10 @@
         mWindowContainer_.setSize(mSize_);
         //mChildBar_.setColour(BAR_COLOUR);
         mChildBar_.setSkinPack("Button_red_smallEdge");
+
+        mInnerPanel_ = mWindowContainer_.createPanel();
+        mInnerPanel_.setSkin("Panel_edge_red_colour");
+        //mInnerPanel_.setColour(ColourValue(0.277, 0.090, 0.090, 1));
 
         mParentContainer_.setClickable(false);
         mChildBar_.setClickable(false);
@@ -114,8 +119,8 @@
     function setPosition(x, y){
         local pos = Vec2(x, y);
         mParentContainer_.setPosition(pos);
-        mWindowContainer_.setPosition(pos);
-        mChildBar_.setPosition(mBorder_, mBorder_);
+        mWindowContainer_.setPosition(pos + Vec2(mBorder_, mBorder_));
+        //mChildBar_.setPosition(mBorder_, mBorder_);
         positionLabel_();
         mPos_ = pos;
     }
@@ -152,8 +157,17 @@
         if(mLabelWindow_ != null){
             mLabelWindow_.setSize(mSize_);
         }
-        mWindowContainer_.setSize(mSize_.x * mPercentage_, mSize_.y);
+        //mWindowContainer_.setSize(mSize_.x * mPercentage_, mSize_.y);
+        local finalSize = Vec2(intendedSize.x * mPercentage_, intendedSize.y);
+        mWindowContainer_.setSize(finalSize);
         positionLabel_();
+
+        local innerOffset = 0;
+        if((intendedSize - finalSize).x > 3){
+            innerOffset = 3;
+        }
+        mInnerPanel_.setPosition(mWindowContainer_.getSize().x-innerOffset, 0);
+        mInnerPanel_.setSize(5, mSize_.y);
     }
 
     function setVisible(visible){
