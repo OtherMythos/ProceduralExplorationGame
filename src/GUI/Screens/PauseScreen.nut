@@ -70,6 +70,8 @@
             i.setCentre(centre);
         }
 
+        ::evenOutButtonsForHeight(mButtons_);
+
         //TODO rather than doing this in screens it would make more sense to have a system to manage it.
         mActionSetId_ = ::InputManager.pushActionSet(InputActionSets.MENU);
     }
