@@ -4,6 +4,7 @@
 
 #include "PluginBaseSingleton.h"
 #include "MapGen/MapGen.h"
+#include "Ogre/PaletteValues.h"
 
 #include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 #include "ExplorationMapDataPrerequisites.h"
@@ -66,6 +67,8 @@ namespace ProceduralExplorationGameCore{
         if(drawOptions & (1 << (size_t)MapViewerDrawOptions::GROUND_TYPE)){
             if(tertiaryVox & RIVER_VOXEL_FLAG){
                 drawVal = valueColours[(size_t)MapViewerColours::FRESH_WATER];
+            }else if(tertiaryVox & DRAW_COLOUR_VOXEL_FLAG){
+                drawVal = PALETTE[voxelMeta];
             }else{
                 drawVal = voxDefs[voxelMeta].colourABGR;
             }
@@ -223,6 +226,9 @@ namespace ProceduralExplorationGameCore{
 
                 if(voxTertiary & RIVER_VOXEL_FLAG){
                     (*texPtr++) = valueColours[(size_t)MapViewerColours::FRESH_WATER];
+                }else if(voxTertiary & DRAW_COLOUR_VOXEL_FLAG){
+                    AV::uint8 voxelMeta = ((vox >> 8) & 0xFF);
+                    (*texPtr++) = PALETTE[voxelMeta];
                 }else{
                     AV::uint8 voxelMeta = ((vox >> 8) & 0xFF);
                     (*texPtr++) = voxDefs[(size_t)voxelMeta].colourABGR;
