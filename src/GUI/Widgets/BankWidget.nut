@@ -58,7 +58,7 @@
             local withdrawButton = mParent_.createButton();
             withdrawButton.setText("Withdraw");
             withdrawButton.setPosition(xPos, yPos - 5);
-            withdrawButton.setDefaultFontSize(withdrawButton.getDefaultFontSize() * 1.8);
+            withdrawButton.setDefaultFontSize(withdrawButton.getDefaultFontSize() * 1.5);
             local size = withdrawButton.getSize();
             withdrawButton.setSize(mInnerPanel_.getSize().x / 2, size.y * 1.5);
             withdrawButton.setSkinPack("Panel_blue");
@@ -70,7 +70,7 @@
             local depositButton = mParent_.createButton();
             depositButton.setText("Deposit");
             depositButton.setPosition(xPos + mInnerPanel_.getSize().x / 2, yPos - 5);
-            depositButton.setDefaultFontSize(depositButton.getDefaultFontSize() * 1.8);
+            depositButton.setDefaultFontSize(depositButton.getDefaultFontSize() * 1.5);
             local size = depositButton.getSize();
             depositButton.setSize(mInnerPanel_.getSize().x / 2, size.y * 1.5);
             depositButton.setSkinPack("Panel_blue");
@@ -85,7 +85,7 @@
                 local start = i.getCentre();
                 local size = i.getSize();
                 size.y *= 0.8;
-                size.x -= 5;
+                size.x -= 10;
                 i.setSize(size);
                 i.setCentre(start);
             }
