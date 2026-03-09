@@ -149,6 +149,27 @@
         }
     }
 
+    function scaleHeightForLabel(){
+        if(mLabel_ == null) return;
+        local size = getSize();
+        local buttonPos = mButton_.getPosition();
+
+        //Capture the centre before sizeToFit changes the label dimensions
+        local labelPos = mLabel_.getPosition();
+        local labelSize = mLabel_.getSize();
+        local labelCentre = labelPos + (labelSize / 2);
+
+        mLabel_.sizeToFit(size.x * 0.95);
+        mLabel_.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
+
+        //Re-centre at the original centre point so short and long text stay aligned
+        mLabel_.setCentre(labelCentre);
+
+        local newLabelPos = mLabel_.getPosition();
+        local newLabelSize = mLabel_.getSize();
+        setSize(Vec2(size.x, (newLabelPos.y + newLabelSize.y) - buttonPos.y));
+    }
+
 };
 
 //Base class for IconButtonComplex animators

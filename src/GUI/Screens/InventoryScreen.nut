@@ -566,6 +566,7 @@ enum InventoryBusEvents{
             mAcceptButton_.mData_.iconCentre = Vec2(acceptSize.x * 0.5, acceptSize.y * 0.35);
             mAcceptButton_.mData_.labelCentre = Vec2(acceptSize.x * 0.5, acceptSize.y * 0.75);
             mAcceptButton_.setPosition(mAcceptButton_.getPosition());
+            mAcceptButton_.scaleHeightForLabel();
         }
     }
 
