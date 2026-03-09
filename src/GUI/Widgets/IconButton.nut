@@ -45,6 +45,10 @@
         mIcon_.setVisible(vis);
     }
 
+    function setSkinPack(skinPack){
+        mButton_.setSkinPack(skinPack);
+    }
+
     function setButtonColour(colour){
         mButton_.setColour(colour);
     }

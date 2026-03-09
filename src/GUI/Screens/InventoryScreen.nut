@@ -245,6 +245,7 @@ enum InventoryBusEvents{
                 ::HapticManager.triggerSimpleHaptic(HapticType.SELECTION);
                 closeInventory();
             }, _GUI_ACTION_PRESSED, this);
+            inventoryButton.setSkinPack("Panel_blue");
             mRightSideHelperButtons_.append(inventoryButton);
         }
 
@@ -260,7 +261,7 @@ enum InventoryBusEvents{
                 "label": multiSelectionLabel,
                 "labelCentre": Vec2(32, 50),
                 "labelSizeModifier": 0.75,
-                "skinPack": "Panel_blue"
+                "skinPack": "Panel_green"
             });
 
             mAcceptButton_.setDisabled(true);
