@@ -30,13 +30,14 @@
         createScreenCloseButton();
 
         mLayoutLine_ = _gui.createLayoutLine();
+        local afterClip = mWindow_.getSizeAfterClipping();
 
         local title = mWindow_.createLabel();
         title.setDefaultFontSize(title.getDefaultFontSize() * 2);
         title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
         title.setGridLocation(_GRID_LOCATION_CENTER);
         title.setText("Settings");
-        title.sizeToFit(mWindow_.getSizeAfterClipping().x);
+        title.sizeToFit(afterClip.x);
         mLayoutLine_.addCell(title);
 
         local invertCamera = mWindow_.createCheckbox();
@@ -45,6 +46,7 @@
             ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
             ::SystemSettings.setSettingsValue(SystemSetting.INVERT_CAMERA_CONTROLLER, widget.getValue());
         }, _GUI_ACTION_RELEASED);
+        invertCamera.setTextHorizontalAlignment(_TEXT_ALIGN_LEFT);
         mLayoutLine_.addCell(invertCamera);
         mButtonList_.append(invertCamera);
         mSettingsWidgets_[SystemSetting.INVERT_CAMERA_CONTROLLER] = invertCamera;
@@ -55,20 +57,22 @@
             ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
             ::SystemSettings.setSettingsValue(SystemSetting.JOYSTICK_LEFT_SIDE, widget.getValue());
         }, _GUI_ACTION_RELEASED);
+        joystickSideCheckbox.setTextHorizontalAlignment(_TEXT_ALIGN_LEFT);
         mLayoutLine_.addCell(joystickSideCheckbox);
         mButtonList_.append(joystickSideCheckbox);
         mSettingsWidgets_[SystemSetting.JOYSTICK_LEFT_SIDE] = joystickSideCheckbox;
 
         mLayoutLine_.setMarginForAllCells(0, 10);
-        mLayoutLine_.setSize(winWidth, winHeight);
+        mLayoutLine_.setSize(afterClip.x, afterClip.y);
 
+        mLayoutLine_.layout();
         //Apply height sizing to buttons
         foreach(button in mButtonList_){
             local buttonSize = button.getSize();
-            button.setSize(buttonSize.x, buttonSize.y * 0.8);
+            button.setSize(afterClip.x, buttonSize.y * 0.8);
         }
+        local maxHeight = ::evenOutButtonsForHeight(mButtonList_);
 
-        mLayoutLine_.layout();
 
         local backButton = mWindow_.createButton();
         backButton.setDefaultFontSize(backButton.getDefaultFontSize() * 1.5);
