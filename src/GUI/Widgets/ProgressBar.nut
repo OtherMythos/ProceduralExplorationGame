@@ -77,6 +77,10 @@
         if(mLabelObject_ != null){
             mLabelObject_.setColour(colour);
         }
+        if(mInnerPanel_ != null){
+            local newColour = colour.a * colour.a * colour.a;
+            mInnerPanel_.setColour(ColourValue(1.0, 1.0, 1.0, newColour));
+        }
     }
 
     function setZOrder(zOrder){
