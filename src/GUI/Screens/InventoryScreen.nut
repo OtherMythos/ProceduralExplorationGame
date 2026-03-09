@@ -544,7 +544,7 @@ enum InventoryBusEvents{
         local gridPos = activeGrid.getPosition();
         local gridSize = activeGrid.getSize();
         local buttonXPos = gridPos.x + gridSize.x + 10;
-        local buttonYPos = gridPos.y;
+        local buttonYPos = gridPos.y - GRID_BACKGROUND_PADDING;
 
         foreach(buttonIdx, button in mRightSideHelperButtons_){
             //Calculate available space for this button
