@@ -519,6 +519,8 @@ enum InventoryBusEvents{
 
         mInventoryGrid_.setHidden(mShowingStorage_);
         mStorageGrid_.setHidden(!mShowingStorage_);
+        mInventoryGrid_.notifyPositionChanged();
+        mStorageGrid_.notifyPositionChanged();
         positionRightSideHelperButtons_();
         updateStorageToggleButtonText_();
     }
