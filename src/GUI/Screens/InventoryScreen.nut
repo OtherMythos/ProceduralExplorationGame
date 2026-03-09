@@ -99,6 +99,8 @@ enum InventoryBusEvents{
     mEquippableLeftGradient_ = null;
     mEquippableRightGradient_ = null;
 
+    GRID_BACKGROUND_PADDING = 5;
+
     mLayerIdx = 0;
 
     mUseSecondaryGrid_ = false;
@@ -402,23 +404,24 @@ enum InventoryBusEvents{
         local inspectorSize = mPlayerInspector_.getSize();
         //inspectorSize.x = mInventoryGrid_.getSize().x
         local widgetSize = mInventoryEquippedGrid_.getWidgetSize();
-        inspectorSize.x = ::drawable.x - widgetSize.x * 2;
+        inspectorSize.x = ::drawable.x - widgetSize.x * 2 - GRID_BACKGROUND_PADDING * 2;
         mPlayerInspector_.setSize(inspectorSize);
-        mPlayerInspector_.setPosition(widgetSize.x, 10);
+        mPlayerInspector_.setPosition(widgetSize.x + GRID_BACKGROUND_PADDING * 3, 10);
         local inspectorSize = mPlayerInspector_.getSize();
         //container.sizeInner();
         //if(!mobile){
             repositionEquippablesGrid();
 
-            inspectorSize.y = mInventoryEquippedGrid_.getSize().y / 2;
+            inspectorSize.x -= GRID_BACKGROUND_PADDING * 4;
+            inspectorSize.y = (mInventoryEquippedGrid_.getSize().y / 2) + GRID_BACKGROUND_PADDING * 2;
             mPlayerInspector_.setSize(inspectorSize);
             mPlayerInspector_.notifyLayout();
         //}
 
-        local gridStart = mPlayerInspector_.getPosition() + mPlayerInspector_.getSize();
+        local gridStart = mPlayerInspector_.getPosition() + mPlayerInspector_.getSize() + GRID_BACKGROUND_PADDING;
         local gridSize = mInventoryGrid_.getSize();
-        gridStart.x = 12;
-        local targetGridPos = gridStart + Vec2(5, 5);
+        gridStart.x = GRID_BACKGROUND_PADDING;
+        local targetGridPos = gridStart + Vec2(GRID_BACKGROUND_PADDING, GRID_BACKGROUND_PADDING);
         mInventoryGrid_.setPosition(targetGridPos);
         if(mStorageGrid_ != null){
             mStorageGrid_.setPosition(targetGridPos);
@@ -452,7 +455,7 @@ enum InventoryBusEvents{
         //mInventoryEquippedGrid_.setSize(::drawable);
         //local rightPos = mPlayerInspector_.getModelExtentRight();
         //local leftPos = mPlayerInspector_.getModelExtentLeft();
-        local leftPos = Vec2();
+        local leftPos = Vec2(GRID_BACKGROUND_PADDING * 2, GRID_BACKGROUND_PADDING * 2);
         local rightPos = mPlayerInspector_.getSize();
         rightPos.x += widgetSize.x;
 
@@ -461,7 +464,7 @@ enum InventoryBusEvents{
 
         for(local i = 0; i < EquippedSlotTypes.MAX-1; i++){
             local target = (i < 4 ? leftPos : rightPos).copy();
-            target.y = 0;
+            target.y = GRID_BACKGROUND_PADDING;
             target.y += (i % 4) * widgetSize.y;
             target.y += startPos.y;
             mInventoryEquippedGrid_.setPositionForIdx(i, target);
@@ -474,8 +477,8 @@ enum InventoryBusEvents{
 
         // Update background panels behind the two equippable columns
         local colValue = ColourValue(0.1, 0.1, 0.1, 0.7);
-        local leftBgPos = Vec2(leftPos.x, startPos.y);
-        local leftBgSize = Vec2(widgetSize.x, max(0, leftGreatestY - startPos.y));
+        local leftBgPos = Vec2(leftPos.x - GRID_BACKGROUND_PADDING, startPos.y);
+        local leftBgSize = Vec2(widgetSize.x + GRID_BACKGROUND_PADDING * 2, max(0, leftGreatestY - startPos.y) + GRID_BACKGROUND_PADDING);
         mEquippableLeftBg_.setPosition(leftBgPos);
         mEquippableLeftBg_.setSize(leftBgSize);
         //mEquippableLeftBg_.setColour(colValue);
@@ -483,8 +486,8 @@ enum InventoryBusEvents{
         mEquippableLeftBg_.setClickable(false);
 
         //local rightBg = mWindow_.createPanel();
-        local rightBgPos = Vec2(rightPos.x, startPos.y);
-        local rightBgSize = Vec2(widgetSize.x, max(0, rightGreatestY - startPos.y));
+        local rightBgPos = Vec2(rightPos.x - GRID_BACKGROUND_PADDING, startPos.y);
+        local rightBgSize = Vec2(widgetSize.x + GRID_BACKGROUND_PADDING * 2, max(0, rightGreatestY - startPos.y) + GRID_BACKGROUND_PADDING);
         mEquippableRightBg_.setPosition(rightBgPos);
         mEquippableRightBg_.setSize(rightBgSize);
         //mEquippableRightBg_.setColour(colValue);
@@ -493,17 +496,17 @@ enum InventoryBusEvents{
 
         // Add subtle gradients overlaying the backgrounds
         local gradientLeft = mWindow_.createPanel();
-        local gradientLeftPos = Vec2(widgetSize.x, startPos.y);
+        local gradientLeftPos = Vec2(widgetSize.x + GRID_BACKGROUND_PADDING * 3, startPos.y);
         gradientLeft.setPosition(gradientLeftPos);
-        gradientLeft.setSize(Vec2(64, max(0, leftGreatestY - startPos.y)));
+        gradientLeft.setSize(Vec2(64, max(0, leftGreatestY - startPos.y) + GRID_BACKGROUND_PADDING));
         gradientLeft.setColour(ColourValue(1, 1, 1, 0.5));
         gradientLeft.setDatablock("gui/linearGradientLeft");
         gradientLeft.setClickable(false);
 
         local gradientRight = mWindow_.createPanel();
-        local gradientRightPos = Vec2(rightPos.x - 64, startPos.y);
+        local gradientRightPos = Vec2(rightPos.x - 64 - GRID_BACKGROUND_PADDING, startPos.y);
         gradientRight.setPosition(gradientRightPos);
-        gradientRight.setSize(Vec2(64, max(0, rightGreatestY - startPos.y)));
+        gradientRight.setSize(Vec2(64, max(0, rightGreatestY - startPos.y) + GRID_BACKGROUND_PADDING));
         gradientRight.setColour(ColourValue(1, 1, 1, 0.5));
         gradientRight.setDatablock("gui/linearGradientRight");
         gradientRight.setClickable(false);
@@ -545,8 +548,8 @@ enum InventoryBusEvents{
 
         foreach(buttonIdx, button in mRightSideHelperButtons_){
             //Calculate available space for this button
-            local availableWidth = ::drawable.x - buttonXPos - 10;
-            local remainingHeight = ::drawable.y - buttonYPos - 10;
+            local availableWidth = ::drawable.x - buttonXPos - GRID_BACKGROUND_PADDING;
+            local remainingHeight = ::drawable.y - buttonYPos - GRID_BACKGROUND_PADDING;
 
             //Make the button square if there's space, respecting margins
             local buttonSize = min(availableWidth, remainingHeight);
