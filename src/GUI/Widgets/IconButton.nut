@@ -128,6 +128,9 @@
         base.setPosition(pos);
         if(mData_.rawin("iconPosition")){
             mIcon_.setPosition(pos + mData_.rawget("iconPosition"));
+        }else if(mData_.rawin("iconCentre")){
+            local iconPos = mData_.rawget("iconCentre");
+            mIcon_.setCentre(pos + iconPos);
         }
         if(mLabel_ != null){
             if(mData_.rawin("labelPosition")){

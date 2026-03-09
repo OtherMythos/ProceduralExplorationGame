@@ -428,7 +428,7 @@ enum InventoryBusEvents{
             mStorageToggleButton_ = ::IconButtonComplex(mWindow_, {
                 "icon": "bagIcon",
                 "iconSize": Vec2(64, 64),
-                "iconPosition": Vec2(6, 0),
+                "iconCentre": Vec2(6, 0),
                 "label": "",
                 "labelCentre": Vec2(32, 45),
                 "labelSizeModifier": 0.75,
@@ -525,6 +525,7 @@ enum InventoryBusEvents{
             mStorageToggleButton_.setText(!mShowingStorage_ ? "Inventory" : "Storage");
             local storageSize = mStorageToggleButton_.getSize();
             mStorageToggleButton_.mData_.labelCentre = Vec2(storageSize.x * 0.5, storageSize.y * 0.75);
+            mStorageToggleButton_.mData_.iconCentre = Vec2(storageSize.x * 0.5, storageSize.y * 0.45);
             mStorageToggleButton_.setPosition(mStorageToggleButton_.getPosition());
             //local newSize = mStorageToggleButton_.getSize();
             //newSize.y = newSize.y * 0.75;
