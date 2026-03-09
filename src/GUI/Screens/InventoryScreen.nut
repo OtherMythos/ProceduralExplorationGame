@@ -253,26 +253,22 @@ enum InventoryBusEvents{
             if(data.rawin("acceptButtonLabel")){
                 multiSelectionLabel = data.acceptButtonLabel;
             }
-            local acceptButtonPos = backButtonDisabled ? Vec2(10, 10 + startOffset) : Vec2(10 + 64 + 10, 10 + startOffset);
             mAcceptButton_ = ::IconButtonComplex(mWindow_, {
                 "icon": "greenTickX2",
                 "iconSize": Vec2(48, 48),
-                "iconPosition": Vec2(8, 8),
+                "iconCentre": Vec2(32, 22),
                 "label": multiSelectionLabel,
-                "labelPosition": Vec2(64, 0),
-                "labelSizeModifier": 1.5
+                "labelCentre": Vec2(32, 50),
+                "labelSizeModifier": 0.75,
+                "skinPack": "Panel_blue"
             });
-
-            mAcceptButton_.setPosition(acceptButtonPos);
-
-            local minSize = mAcceptButton_.getMinimumSize();
-            mAcceptButton_.setSize(Vec2(minSize.x + 10, 66));
 
             mAcceptButton_.setDisabled(true);
             mAcceptButton_.attachListenerForEvent(function(widget, action){
                 ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
                 acceptSelection_();
             }, _GUI_ACTION_PRESSED, this);
+            mRightSideHelperButtons_.append(mAcceptButton_);
         }
 
         local layoutLine = _gui.createLayoutLine();
@@ -562,6 +558,13 @@ enum InventoryBusEvents{
 
             //Move to next button position
             buttonYPos += buttonSize + 10;
+        }
+
+        if(mAcceptButton_ != null){
+            local acceptSize = mAcceptButton_.getSize();
+            mAcceptButton_.mData_.iconCentre = Vec2(acceptSize.x * 0.5, acceptSize.y * 0.35);
+            mAcceptButton_.mData_.labelCentre = Vec2(acceptSize.x * 0.5, acceptSize.y * 0.75);
+            mAcceptButton_.setPosition(mAcceptButton_.getPosition());
         }
     }
 
