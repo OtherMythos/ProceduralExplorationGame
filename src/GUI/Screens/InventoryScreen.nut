@@ -406,7 +406,7 @@ enum InventoryBusEvents{
         local widgetSize = mInventoryEquippedGrid_.getWidgetSize();
         inspectorSize.x = ::drawable.x - widgetSize.x * 2 - GRID_BACKGROUND_PADDING * 2;
         mPlayerInspector_.setSize(inspectorSize);
-        mPlayerInspector_.setPosition(widgetSize.x + GRID_BACKGROUND_PADDING * 3, 10);
+        mPlayerInspector_.setPosition(widgetSize.x + GRID_BACKGROUND_PADDING * 3, startOffset);
         local inspectorSize = mPlayerInspector_.getSize();
         //container.sizeInner();
         //if(!mobile){

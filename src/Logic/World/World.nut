@@ -2229,7 +2229,9 @@
                 targetData.stats <- ::Base.mPlayerStats;
             }
             if(!targetData.rawin("startOffset")){
-                targetData.startOffset <- insets.top;
+                local offset = insets.top;
+                offset += 50;
+                targetData.startOffset <- offset;
             }
         }
         notifyModalPopupScreen();
