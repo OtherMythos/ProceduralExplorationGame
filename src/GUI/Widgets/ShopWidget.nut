@@ -110,6 +110,7 @@
             "size": size,
             "gridItemPos": posForIdx,
             "gridItemSize": gridItemSize,
+            "gridItemDatablock": targetGrid.getDatablockForIdx(idx),
             "item": selectedItem,
             "idx": idx,
             "gridType": inventoryData.gridType,

@@ -181,11 +181,16 @@ enum InventoryItemHelperScreenFunctions{
         panelContainerWindow.setPosition(mData_.gridItemPos);
         mPanelContainerWindow_ = panelContainerWindow;
 
-        //Create holepunch datablock for rendering from the render icons texture
-        local panelDerivedPos = iconPanel.getDerivedPosition();
-        local panelSize3d = iconPanel.getSize();
-        local datablock = ::RenderIconManager.createRenderIconDatablock(panelDerivedPos, panelSize3d);
-        iconPanel.setDatablock(datablock);
+        //Use the existing render icon datablock from the grid so the UV is correct regardless of scroll
+        if(mData_.rawin("gridItemDatablock") && mData_.gridItemDatablock != null){
+            iconPanel.setDatablock(mData_.gridItemDatablock);
+        }else{
+            //Fallback: create holepunch datablock from the current derived position
+            local panelDerivedPos = iconPanel.getDerivedPosition();
+            local panelSize3d = iconPanel.getSize();
+            local datablock = ::RenderIconManager.createRenderIconDatablock(panelDerivedPos, panelSize3d);
+            iconPanel.setDatablock(datablock);
+        }
     }
 
     function determinePositionForScreen_(targetPos, windowSize, data){

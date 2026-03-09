@@ -492,6 +492,9 @@
         local currentScroll = mWindow_.getCurrentScroll();
         return mWidgets_[idx].getDerivedPosition() - currentScroll - (mWindow_.getSizeAfterClipping() - mWindow_.getSize()) / 2;
     }
+    function getDatablockForIdx(idx){
+        return mItemIcons_[idx].getDatablock();
+    }
     function getSizeForIdx(idx){
         return mWidgets_[idx].getSize();
     }
