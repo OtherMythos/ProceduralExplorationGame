@@ -439,7 +439,11 @@
             local artifact = itemData.artifactId;
             targetPath = "res://build/assets/readables/" + artifact + ".nut";
         }else{
-            targetPath = "res://build/assets/readables/" + item.getDefData();
+            local defData = item.getDefData();
+            if(defData == null){
+                defData = "null.nut";
+            }
+            targetPath = "res://build/assets/readables/" + defData;
         }
         if(targetPath == null){
             throw "Could not find lore content for item " + item;
