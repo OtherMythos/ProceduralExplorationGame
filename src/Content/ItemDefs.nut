@@ -28,6 +28,7 @@
 ::Items[ItemId.SAND_URN] = ItemDef("Sand Urn", "An ancient urn that has travelled across the desert sands. It contains something mysterious.", "simpleSword.voxMesh", ItemType.SAND_URN, 0, null, EquippableId.NONE);
 ::Items[ItemId.NOTE_SCRAP] = ItemDef("Note Scrap", "A scrap of paper found inside the message in a bottle.", "readables.noteScrap.voxMesh", ItemType.LORE_CONTENT, 0, null, EquippableId.NONE);
 ::Items[ItemId.FALLEN_STAR] = ItemDef("Fallen Star", "A glimmering star that has fallen from the heavens.", "fallenStar.voxMesh", ItemType.EAT, 5, null, EquippableId.NONE);
+::Items[ItemId.BLUE_ORE] = ItemDef("Blue Ore", "A chunk of blue ore mined from a rock.", "ore.blueOre.voxMesh", ItemType.NONE, 5, null, EquippableId.NONE);
 //-------------------------------
 
 ::ItemHelper.itemToStats <- function(item){

@@ -3,6 +3,9 @@
         "readables.gox": {
             "separateLayers": true
         },
+        "ore.gox": {
+            "separateLayers": true
+        },
         "fruit.gox": {
             "separateLayers": true
         }

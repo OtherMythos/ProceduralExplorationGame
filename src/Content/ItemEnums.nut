@@ -26,6 +26,7 @@
     MESSAGE_IN_A_BOTTLE,
     NOTE_SCRAP,
     FALLEN_STAR,
-    SAND_URN
+    SAND_URN,
+    BLUE_ORE
 
 ");

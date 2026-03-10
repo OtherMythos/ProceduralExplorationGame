@@ -768,7 +768,7 @@
 
         if(itemType == PlacedItemId.ROCK_ORE){
             local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SPOILS_DATA, [
-                ::SpoilsEntry(SPOILS_ENTRIES.DROPPED_ITEMS, ::Item(ItemId.APPLE)),
+                ::SpoilsEntry(SPOILS_ENTRIES.DROPPED_ITEMS, ::Item(ItemId.BLUE_ORE)),
                 ::SpoilsEntry(SPOILS_ENTRIES.SPAWN_WORLD_EFFECT, WorldEffectId.BROKEN_ROCK)
             ], null, null);
             manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
