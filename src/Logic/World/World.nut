@@ -2767,6 +2767,11 @@
 
     function notifyModalPopupDismissed(){
         mMouseContext_.releaseStateForFinger("popup");
+        //Reset the double-tap timer so that a tap which opened the modal
+        //(and froze the timer while the world update loop was paused)
+        //cannot be misread as the first half of a double-tap on resume.
+        mMouseContext_.mDoubleClickTimer_ = 0;
+        mMouseContext_.mDoubleClick_ = false;
     }
 
     function _tostring() {
