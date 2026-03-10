@@ -12,6 +12,7 @@
     mInventoryHeight_ = 5;
 
     INNER_PADDING = 10;
+    GRID_PADDING = 5;
 
     mInventory_ = null;
     mInventoryGrid_ = null;
@@ -28,7 +29,7 @@
         local gridSize = calculateGridSize();
 
         mBackgroundPanel_ = mParent_.createPanel();
-        mBackgroundPanel_.setSize(mParent_.getSizeAfterClipping().x, 230);
+        mBackgroundPanel_.setSize(mParent_.getSizeAfterClipping().x, 230 + GRID_PADDING * 2);
         mBackgroundPanel_.setDatablock("simpleGrey");
         mBackgroundPanel_.setPosition(0, yPos);
         mBackgroundPanel_.setSkinPack("Panel_darkGrey");
@@ -44,7 +45,7 @@
 
         mInnerPanel_ = mParent_.createPanel();
         local backgroundSize = mBackgroundPanel_.getSize();
-        mInnerPanel_.setSize(backgroundSize.x - innerPadding * 2, backgroundSize.y - mTitle_.getSize().x);
+        mInnerPanel_.setSize(backgroundSize.x - innerPadding * 2, backgroundSize.y - mTitle_.getSize().x - GRID_PADDING);
         mInnerPanel_.setPosition(innerPadding, yPos);
         mInnerPanel_.setSkinPack("Panel_lightGrey");
 
@@ -53,7 +54,7 @@
 
         mInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID, mInventoryBus_, null, null, false, false);
         mInventoryGrid_.initialise(mParent_, gridSize, null, mInventoryWidth_, mInventoryHeight_);
-        mInventoryGrid_.setPosition(mInnerPanel_.getPosition());
+        mInventoryGrid_.setPosition(mInnerPanel_.getPosition() + GRID_PADDING);
 
         local distributor = ::FindableDistributor();
         local items = distributor.determineShopItems(mInventoryWidth_, mInventoryHeight_);
