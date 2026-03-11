@@ -931,7 +931,7 @@
 
         local parentNode = mBaseSceneNode_.createChildSceneNode();
         parentNode.setPosition(targetPos);
-        local item = _gameCore.createVoxMeshItem("smallPotion.voxMesh");
+        local item = _gameCore.createVoxMeshItem("collectables.messageInABottle.voxMesh");
         item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_SHADOW_VISIBILITY);
         parentNode.setScale(0.1, 0.1, 0.1);
         parentNode.attachObject(item);
@@ -969,7 +969,7 @@
         parentNode.setPosition(targetPos);
         parentNode.setScale(0.1, 0.1, 0.1);
 
-        local item = _gameCore.createVoxMeshItem("smallPotion.voxMesh");
+        local item = _gameCore.createVoxMeshItem("collectables.hauntedUrn.voxMesh");
         item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_SHADOW_VISIBILITY);
 
         local animNode = parentNode.createChildSceneNode();

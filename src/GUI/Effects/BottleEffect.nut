@@ -104,7 +104,7 @@ local BottleEffectStateMachine = class extends ::Util.StateMachine{
     function createBottle(parentNode, centre, scale){
         local bottleNode = parentNode.createChildSceneNode();
         local animNode = bottleNode.createChildSceneNode();
-        local bottleItem = _gameCore.createVoxMeshItem("smallPotion.voxMesh");
+        local bottleItem = _gameCore.createVoxMeshItem("collectables.messageInABottle.voxMesh");
         bottleItem.setRenderQueueGroup(RENDER_QUEUE_EFFECT_FG);
         animNode.attachObject(bottleItem);
         animNode.setScale(scale, scale, scale);

@@ -24,8 +24,8 @@
 ::Items[ItemId.MUSHROOM_2] = ItemDef("Mushroom", "A peculiar fungal growth.", "mushrooms.mushroom.2.voxMesh", ItemType.EAT, 5, null, EquippableId.NONE);
 ::Items[ItemId.MUSHROOM_3] = ItemDef("Mushroom", "A peculiar fungal growth.", "mushrooms.mushroom.3.voxMesh", ItemType.EAT, 5, null, EquippableId.NONE);
 ::Items[ItemId.MAGMA_SHROOM] = ItemDef("Magma Shroom", "A peculiar mushroom that radiates heat.", "mushrooms.mushroom.magma.voxMesh", ItemType.EAT, 10, null, EquippableId.NONE);
-::Items[ItemId.MESSAGE_IN_A_BOTTLE] = ItemDef("Message in a Bottle", "A mysterious message sealed in a glass bottle. It has washed ashore from distant seas.", "simpleSword.voxMesh", ItemType.MESSAGE_IN_A_BOTTLE, 0, null, EquippableId.NONE);
-::Items[ItemId.SAND_URN] = ItemDef("Sand Urn", "An ancient urn that has travelled across the desert sands. It contains something mysterious.", "simpleSword.voxMesh", ItemType.SAND_URN, 0, null, EquippableId.NONE);
+::Items[ItemId.MESSAGE_IN_A_BOTTLE] = ItemDef("Message in a Bottle", "A mysterious message sealed in a glass bottle. It has washed ashore from distant seas.", "collectables.messageInABottle.voxMesh", ItemType.MESSAGE_IN_A_BOTTLE, 0, null, EquippableId.NONE);
+::Items[ItemId.SAND_URN] = ItemDef("Haunted Urn", "An ancient urn that has travelled across the desert sands. It contains something mysterious.", "collectables.hauntedUrn.voxMesh", ItemType.SAND_URN, 0, null, EquippableId.NONE);
 ::Items[ItemId.NOTE_SCRAP] = ItemDef("Note Scrap", "A scrap of paper found inside the message in a bottle.", "readables.noteScrap.voxMesh", ItemType.LORE_CONTENT, 0, null, EquippableId.NONE);
 ::Items[ItemId.FALLEN_STAR] = ItemDef("Fallen Star", "A glimmering star that has fallen from the heavens.", "fallenStar.voxMesh", ItemType.ITEM, 5, null, EquippableId.NONE);
 ::Items[ItemId.BLUE_ORE] = ItemDef("Blue Ore", "A chunk of blue ore mined from a rock.", "ore.blueOre.voxMesh", ItemType.ITEM, 5, null, EquippableId.NONE);
