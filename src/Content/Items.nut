@@ -111,7 +111,7 @@ enum ItemEquipTransformType{
         }
     }
 
-    function getMesh(){ return mMesh == null ? "smallPotion.voxMesh" : mMesh; }
+    function getMesh(){ return mMesh == null ? "questionMark.voxMesh" : mMesh; }
 }
 
 ::ItemEquipTransform <- class{
