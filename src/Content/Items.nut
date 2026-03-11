@@ -249,9 +249,11 @@ local commonScale = Vec3(1.4, 1.4, 1.0);
         }
         else if(itemType == ItemType.NONE){
             //Easter egg
-            ::Base.mPlayerStats.setPlayerHealth(1);
             local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
-            currentWorld.spawnEnemies(currentWorld.getPlayerPosition(), 10, 5);
+            if(currentWorld != null){
+                ::Base.mPlayerStats.setPlayerHealth(1);
+                currentWorld.spawnEnemies(currentWorld.getPlayerPosition(), 10, 5);
+            }
         }else{
             assert(false);
         }
