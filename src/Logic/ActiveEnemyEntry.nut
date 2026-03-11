@@ -138,7 +138,13 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
     function start(ctx){
         ctx.mCount_ = 15;
         ctx.mDashReturnState_ = ctx.getPreviousState();
-        if(ctx.mDashReturnState_ == null) ctx.mDashReturnState_ = ActiveEnemyAnimationStage.WALKING;
+        //Never return to IDLE after a dash - the dash movement leaves mMoving_ > 0,
+        //which prevents STARTED_MOVING from firing and breaks walk animation.
+        //Return to the appropriate movement state instead; if the player truly stops,
+        //STOPPED_MOVING will fire naturally and transition back to IDLE.
+        if(ctx.mDashReturnState_ == null || ctx.mDashReturnState_ == ActiveEnemyAnimationStage.IDLE){
+            ctx.mDashReturnState_ = ctx.mInWater_ ? ActiveEnemyAnimationStage.SWIMMING : ActiveEnemyAnimationStage.WALKING;
+        }
     }
     function update(ctx){
         ctx.mCount_--;
