@@ -254,6 +254,16 @@
         return retVal;
     }
 
+    /**
+     * Reset the double-click/tap detection timer and state.
+     * Call this when a modal screen or dialog dismisses to prevent stale
+     * timers from triggering unwanted double-tap actions on resume.
+     */
+    function resetDoubleClickState(){
+        mDoubleClickTimer_ = 0;
+        mDoubleClick_ = false;
+    }
+
     function setGuiObject(guiObj){
         mGui_ = guiObj;
     }

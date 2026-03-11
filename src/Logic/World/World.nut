@@ -2461,6 +2461,9 @@
     }
 
     function notifyDialogEnded(){
+        //Reset the double-tap timer so the tap that dismissed the dialog
+        //cannot be misread as the first half of a double-tap after logic resumes.
+        mMouseContext_.resetDoubleClickState();
         assert(mCurrentDialogWorldComponentId_ != null);
         unregisterWorldComponent(mCurrentDialogWorldComponentId_);
         mCurrentDialogWorldComponentId_ = null;
@@ -2770,8 +2773,7 @@
         //Reset the double-tap timer so that a tap which opened the modal
         //(and froze the timer while the world update loop was paused)
         //cannot be misread as the first half of a double-tap on resume.
-        mMouseContext_.mDoubleClickTimer_ = 0;
-        mMouseContext_.mDoubleClick_ = false;
+        mMouseContext_.resetDoubleClickState();
     }
 
     function _tostring() {
