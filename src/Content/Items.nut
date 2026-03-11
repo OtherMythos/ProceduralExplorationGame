@@ -4,6 +4,7 @@ enum ItemId{
 
 enum ItemType{
     NONE,
+    ITEM,
     EQUIPPABLE,
     CONSUMABLE,
     MONEY,

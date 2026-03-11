@@ -306,6 +306,8 @@ enum InventoryItemHelperScreenFunctions{
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.OPEN]);
             buttonEnabled.append(true);
             buttonSkins.append(null);
+        }else if(itemType == ItemType.ITEM){
+            //Items don't have any extra options.
         }else{
             buttonOptions.append(UNICODE_EAT + " Use");
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.USE]);
