@@ -657,6 +657,12 @@ EntityManager.EntityManager <- class{
                 else if(i == EntityComponents.SEPARATION_RADIUS){
                     mCreatorWorld_.removeSeparationPoint_(component.mPointId);
                 }
+
+                if(i == EntityComponents.SCENE_NODE){
+                    if(component.mDeferDestroyOnDestruction){
+                        component.mNode.destroyNodeAndChildren();
+                    }
+                }
             }
         }
     }

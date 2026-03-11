@@ -110,10 +110,12 @@
 
     mNode = null;
     mDestroyOnDestruction = false;
+    mDeferDestroyOnDestruction = false;
 
-    constructor(node, destroyOnDestruction=false){
+    constructor(node, destroyOnDestruction=false, deferDestroyOnDestruction=false){
         mNode = node;
         mDestroyOnDestruction = destroyOnDestruction;
+        mDeferDestroyOnDestruction = deferDestroyOnDestruction;
     }
 
 };

@@ -271,7 +271,7 @@
         //TODO add a component for the character model.
         enemyNode.setScale(0.5, 0.5, 0.5);
         //_component.sceneNode.add(en, enemyNode);
-        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](enemyNode));
+        manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](enemyNode, false, true));
         entry.setModel(characterModel);
 
         local triggerWorld = mConstructorWorld_.getTriggerWorld();
