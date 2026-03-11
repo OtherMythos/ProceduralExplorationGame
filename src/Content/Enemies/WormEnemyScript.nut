@@ -58,6 +58,7 @@ enum WormAttackType{
     NUM_SEGMENTS = 5;
     SEGMENT_SCALE = 0.4;
     HEAD_SCALE = 0.5;
+    mHeadSubmergeOffset_ = 0.0; //World-space distance from the head node origin to the top of the mesh, used to fully submerge the worm
 
     constructor(eid){
         mEntity_ = eid;
@@ -164,6 +165,14 @@ enum WormAttackType{
         mHeadMesh1Node_.attachObject(head1);
         mHeadMesh1Node_.setVisible(false);
 
+        //Compute the submerge offset from the head mesh AABB so the worm is fully underground when dormant
+        {
+            local aabb = head1.getLocalAabb();
+            local halfSize = aabb.getHalfSize();
+            local centre = aabb.getCentre();
+            mHeadSubmergeOffset_ = (centre.y + halfSize.y) * HEAD_SCALE;
+        }
+
         //Create second head mesh variant
         mHeadMesh2Node_ = mWormHeadNode_.createChildSceneNode();
         local head2 = _gameCore.createVoxMeshItem("giantWorm.head.2.voxMesh");
@@ -264,6 +273,8 @@ enum WormAttackType{
     }
 
     function _transitionToDormant(){
+        //Move all parts underground before hiding so a parent setVisible(true) cannot expose them above ground
+        _resetWormBody();
         //Hide all worm segments
         for(local i = 0; i < mWormSegments_.len(); i++){
             mWormSegments_[i].setVisible(false);
@@ -276,14 +287,14 @@ enum WormAttackType{
         _removeDamageRadius_();
     }
 
-    //Helper to reset all body parts to a clean default state
+    //Helper to reset all body parts to a clean default state, fully underground
     function _resetWormBody(){
         for(local i = 0; i < mWormSegments_.len(); i++){
-            mWormSegments_[i].setPosition(0, 0, 0);
+            mWormSegments_[i].setPosition(0, -mHeadSubmergeOffset_, 0);
             local baseRotationY = (i.tofloat() / NUM_SEGMENTS) * 0.3;
             mWormSegments_[i].setOrientation(Quat(baseRotationY, ::Vec3_UNIT_Y));
         }
-        mWormHeadNode_.setPosition(0, 0, 0);
+        mWormHeadNode_.setPosition(0, -mHeadSubmergeOffset_, 0);
         mWormHeadNode_.setOrientation(Quat());
     }
 
@@ -405,12 +416,12 @@ enum WormAttackType{
         //Position segments as a rising column
         for(local i = 0; i < mWormSegments_.len(); i++){
             local segmentY = (i * 1.5) * progress; //Each segment is 1.5 units apart
-            mWormSegments_[i].setPosition(0, segmentY - HEAD_SCALE, 0);
+            mWormSegments_[i].setPosition(0, segmentY - mHeadSubmergeOffset_, 0);
         }
 
         //Position head above segments
         local headY = (NUM_SEGMENTS * 1.5) * progress;
-        mWormHeadNode_.setPosition(0, headY - HEAD_SCALE, 0);
+        mWormHeadNode_.setPosition(0, headY - mHeadSubmergeOffset_, 0);
     }
 
     function _chompTransitionToChomping(){
@@ -428,7 +439,7 @@ enum WormAttackType{
         for(local i = 0; i < mWormSegments_.len(); i++){
             local baseY = (i * 1.5);
             local waveOffset = sin(time + (i * 0.3)) * 0.15; //Sine wave with phase offset per segment
-            mWormSegments_[i].setPosition(waveOffset, baseY + waveOffset * 0.1 - HEAD_SCALE, 0);
+            mWormSegments_[i].setPosition(waveOffset, baseY + waveOffset * 0.1 - mHeadSubmergeOffset_, 0);
 
             //Add rippling Y-axis rotation
             local baseRotationY = (i.tofloat() / NUM_SEGMENTS) * 0.3;
@@ -439,7 +450,7 @@ enum WormAttackType{
         //Head follows with more amplitude
         local baseHeadY = (NUM_SEGMENTS * 1.5);
         local headWave = sin(time) * 0.2;
-        mWormHeadNode_.setPosition(headWave, baseHeadY + headWave * 0.1 - HEAD_SCALE, 0);
+        mWormHeadNode_.setPosition(headWave, baseHeadY + headWave * 0.1 - mHeadSubmergeOffset_, 0);
         //Add rippling Y-axis rotation to head
         local headBaseRotationY = 0.0;
         local headRippleRotation = sin(time) * 0.45;
@@ -462,12 +473,12 @@ enum WormAttackType{
         //Position segments descending
         for(local i = 0; i < mWormSegments_.len(); i++){
             local segmentY = (i * 1.5) * progress;
-            mWormSegments_[i].setPosition(0, segmentY - HEAD_SCALE, 0);
+            mWormSegments_[i].setPosition(0, segmentY - mHeadSubmergeOffset_, 0);
         }
 
         //Position head
         local headY = (NUM_SEGMENTS * 1.5) * progress;
-        mWormHeadNode_.setPosition(0, headY - HEAD_SCALE, 0);
+        mWormHeadNode_.setPosition(0, headY - mHeadSubmergeOffset_, 0);
     }
 
     //==========================================================
