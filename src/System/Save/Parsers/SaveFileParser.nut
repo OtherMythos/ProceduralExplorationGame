@@ -50,10 +50,10 @@
     function performSchemaCheckTable_(table, schemaTable){
         //Loop through both schemaTable and checking table to ensure no keys are missing.
         foreach(c,i in schemaTable){
-            if(!table.rawin(c)) return false;
+            if(!table.rawin(c)) return format("Missing required key: %s", c);
         }
         foreach(c,i in table){
-            if(!schemaTable.rawin(c)) return false;
+            if(!schemaTable.rawin(c)) return format("Extra key not in schema: %s", c);
 
             //Determine if the json schema includes a table.
             local checkType = schemaTable.rawget(c);
@@ -62,19 +62,25 @@
 
             local localType = (typeof i);
             if(schemaType != OBJECT_TYPE.ANY){
-                if(localType != schemaType) return false;
+                if(localType != schemaType) return format("Type mismatch for key '%s': expected %s, got %s", c, schemaType, localType);
 
                 if(localType == OBJECT_TYPE.TABLE){
-                    if(!performSchemaCheckTable_(i, checkType)) return false;
+                    local nestedError = performSchemaCheckTable_(i, checkType);
+                    if(nestedError != null) return format("Error in nested table '%s': %s", c, nestedError);
                 }
             }
         }
 
-        return true;
+        return null;
     }
     function performSchemaCheck(data){
         assert(mJSONSchema_ != null);
-        return performSchemaCheckTable_(data, mJSONSchema_);
+        local result = performSchemaCheckTable_(data, mJSONSchema_);
+        if(result != null){
+            print("Schema validation failed: " + result);
+            return false;
+        }
+        return true;
     }
 
     /**
