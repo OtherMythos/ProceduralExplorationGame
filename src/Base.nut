@@ -370,7 +370,8 @@
     }
 
     function loadSkin(skinName){
-        _resources.addResourceLocation("res://build/assets/skins/" + skinName, "FileSystem", "GUISkin");
+        local platform = _settings.getPlatform();
+        _resources.addResourceLocation("res://build/assets/skins/" + skinName, platform == _PLATFORM_ANDROID ? "APKFileSystem" : "FileSystem", "GUISkin");
         _resources.initialiseResourceGroup("GUISkin");
         _gui.loadSkins(format("res://build/assets/skins/%s/Skins.colibri.json", skinName));
     }
