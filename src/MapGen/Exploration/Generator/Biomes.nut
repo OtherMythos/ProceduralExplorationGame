@@ -131,8 +131,8 @@ local WormFieldsLogic = {
         local points = regionData.coords;
         if(points.len() >= 2){
             //Pick two random points
-            local idx1 = _random.randInt(0, points.len());
-            local idx2 = _random.randInt(0, points.len());
+            local idx1 = _random.randIndex(points);
+            local idx2 = _random.randIndex(points);
 
             local pos1 = ::MapGenHelpers.getPositionForPoint(points[idx1]);
             local pos2 = ::MapGenHelpers.getPositionForPoint(points[idx2]);
