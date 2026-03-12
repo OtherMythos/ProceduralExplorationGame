@@ -5,6 +5,8 @@
 #include "Ogre/OgreVoxMeshItem.h"
 #include "Collision/CollisionDetectionWorld.h"
 
+#include "System/Util/Scene/ParticleSystemTimeHelper.h"
+
 #include "MapGen/BaseClient/MapGenBaseClientPrerequisites.h"
 
 namespace ProceduralExplorationGameCore{
@@ -62,8 +64,9 @@ namespace ProceduralExplorationGameCore{
         else if(idx == 3){
             const Ogre::String& particleSystemName = strings[d.idx];
 
-            Ogre::ParticleSystem* particleSystem=AV::BaseSingleton::getSceneManager()->createParticleSystem(particleSystemName);
+            Ogre::ParticleSystem* particleSystem = AV::BaseSingleton::getSceneManager()->createParticleSystem(particleSystemName);
             if(particleSystem){
+                AV::ParticleSystemTimeHelper::notifyParticleSystemAttachment(particleSystem);
                 parent->attachObject(particleSystem);
             }
         }
