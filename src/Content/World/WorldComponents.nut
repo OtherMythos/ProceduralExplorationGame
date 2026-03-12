@@ -48,10 +48,13 @@
 
             //Calculate health delivered this frame based on the difference in delivery factor
             //Use total health for calculation so it's not affected by remaining health changes
-            local healthToApplyThisFrame = (deliveryFactor - mLastDeliveryFactor_) * mLogic_.mTotalHealth_;
+            //Track cumulative integer health to avoid float accumulation in entity state
+            local totalDelivered = (deliveryFactor * mLogic_.mTotalHealth_).tointeger();
+            local lastDelivered = (mLastDeliveryFactor_ * mLogic_.mTotalHealth_).tointeger();
             mLastDeliveryFactor_ = deliveryFactor;
 
-            if(healthToApplyThisFrame > 0.0001){
+            local healthToApplyThisFrame = totalDelivered - lastDelivered;
+            if(healthToApplyThisFrame > 0){
                 local entityManager = mWorld_.getEntityManager();
                 ::_applyHealthChangeOther(entityManager, mWorld_.getPlayerEID(), healthToApplyThisFrame);
                 mLogic_.mHealthToDeliver_ -= healthToApplyThisFrame;

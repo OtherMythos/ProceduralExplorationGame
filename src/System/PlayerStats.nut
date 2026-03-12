@@ -117,6 +117,11 @@
             mCurrentData_.storage[c] = (i == null ? null : i.getId());
         }
 
+        if(typeof mCurrentData_.playerHealth == "float"){
+            //The save file expects an integer, floats might make their way in by accident due to Squirrel's dynamic typing.
+            throw "Float value has been set for player health";
+        }
+
         // Sync artifacts to data
         mCurrentData_.foundArtifacts = ::Base.mArtifactCollection.getArtifacts();
 
