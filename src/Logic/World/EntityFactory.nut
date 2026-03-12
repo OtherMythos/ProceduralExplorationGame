@@ -202,10 +202,13 @@
         local combatTargetWorld = mConstructorWorld_.getCombatTargetWorld();
         local combatTargetPoint = combatTargetWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_ENEMY);
 
-        manager.assignComponent(en, EntityComponents.COLLISION_POINT_TWO,
-            ::EntityManager.Components[EntityComponents.COLLISION_POINT_TWO](
-                damagePoint, combatTargetPoint,
-                damageWorld, combatTargetWorld
+        local detectionWorld = mConstructorWorld_.getCollisionDetectionWorld();
+        local collisionDetectionPoint = detectionWorld.addCollisionPoint(targetPos.x, targetPos.z, 1.5, 0xFF, _COLLISION_WORLD_ENTRY_SENDER);
+
+        manager.assignComponent(en, EntityComponents.COLLISION_POINT_THREE,
+            ::EntityManager.Components[EntityComponents.COLLISION_POINT_THREE](
+                damagePoint, combatTargetPoint, collisionDetectionPoint,
+                damageWorld, combatTargetWorld, detectionWorld
             )
         );
 
@@ -224,12 +227,6 @@
                 }
             }
         }
-
-        local detectionWorld = mConstructorWorld_.getCollisionDetectionWorld();
-        local collisionDetectionPoint = detectionWorld.addCollisionPoint(targetPos.x, targetPos.z, 1, 0xFF, _COLLISION_WORLD_ENTRY_SENDER);
-
-        local collisionRadius = 1.5;
-        manager.assignComponent(en, EntityComponents.COLLISION_DETECTION, ::EntityManager.Components[EntityComponents.COLLISION_DETECTION](collisionRadius, COLLISION_TYPE_PLAYER, collisionDetectionPoint));
 
         entry.setPosition(targetPos);
 
