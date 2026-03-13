@@ -8,6 +8,7 @@
 #include "MapGen/Script/ExplorationMapDataUserData.h"
 #include "Scripting/VisitedPlaceMapDataUserData.h"
 #include "Scripting/DataPointFileUserData.h"
+#include "Scripting/MeshParticleEmitterUserData.h"
 
 #include "Voxeliser/VoxSceneDumper.h"
 #include "Ogre.h"
@@ -150,6 +151,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptVM::setupDelegateTable(ProceduralExplorationGameCore::ExplorationMapDataUserData::setupDelegateTable<false>);
         AV::ScriptVM::setupDelegateTable(VisitedPlaceMapDataUserData::setupDelegateTable);
         AV::ScriptVM::setupDelegateTable(DataPointFileParserUserData::setupDelegateTable);
+        AV::ScriptVM::setupDelegateTable(MeshParticleEmitterUserData::setupDelegateTable);
 
         ProceduralExplorationGameCore::MapGen* mapGen = new ProceduralExplorationGameCore::MapGen();
         ProceduralExplorationGameCore::PluginBaseSingleton::initialise(mapGen, 0, new ProceduralExplorationGameCore::MapGenScriptManager(), new ProceduralExplorationGameCore::PlacedItemManager());

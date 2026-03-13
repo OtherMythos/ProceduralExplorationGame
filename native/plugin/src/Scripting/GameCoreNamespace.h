@@ -80,6 +80,8 @@ namespace ProceduralExplorationGamePlugin{
         static SQInteger removePlacedItem(HSQUIRRELVM vm);
         static SQInteger getPlacedItemsInRadius(HSQUIRRELVM vm);
 
+        static SQInteger createMeshParticleEmitter(HSQUIRRELVM vm);
+
         static ProceduralExplorationGameCore::VisitedPlacesParser* currentVisitedPlacesParser;
 
         static SQInteger update(HSQUIRRELVM vm);

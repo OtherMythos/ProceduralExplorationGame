@@ -61,6 +61,9 @@
 
 #include "GameCorePBSHlmsListener.h"
 
+#include "MeshParticleEmitterUserData.h"
+#include "Ogre/MeshParticleEmitter.h"
+
 #include "../../../../src/Versions.h.nut"
 
 #include <sqstdblob.h>
@@ -1117,6 +1120,18 @@ namespace ProceduralExplorationGamePlugin{
         return 0;
     }
 
+    SQInteger GameCoreNamespace::createMeshParticleEmitter(HSQUIRRELVM vm){
+        Ogre::SceneNode* parentNode = 0;
+        SCRIPT_CHECK_RESULT(AV::SceneNodeUserData::readSceneNodeFromUserData(vm, 2, &parentNode));
+
+        Ogre::SceneManager* sceneManager = AV::BaseSingleton::getSceneManager();
+        ProceduralExplorationGameCore::MeshParticleEmitter* emitter = new ProceduralExplorationGameCore::MeshParticleEmitter(parentNode, sceneManager);
+
+        MeshParticleEmitterUserData::meshParticleEmitterToUserData(vm, emitter);
+
+        return 1;
+    }
+
     void GameCoreNamespace::setupNamespace(HSQUIRRELVM vm){
         AV::ScriptUtils::addFunction(vm, getGameCoreVersion, "getGameCoreVersion");
 
@@ -1183,6 +1198,8 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, getPlacedItemsInRadius, "getPlacedItemsInRadius", 4, ".nnn");
 
         AV::ScriptUtils::addFunction(vm, createDataPointFileParser, "DataPointFile");
+
+        AV::ScriptUtils::addFunction(vm, createMeshParticleEmitter, "createMeshParticleEmitter", 2, ".u");
     }
 
 };
