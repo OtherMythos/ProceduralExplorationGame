@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Setup Environment
         run: |
           sudo apt-get update && sudo apt-get install -y libxaw7-dev libxrandr-dev libxcb-randr0-dev libx11-dev xserver-xorg-dev xorg-dev libx11-xcb1 libxcb-res0-dev xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev libgtk-3-dev
@@ -38,7 +38,7 @@ jobs:
           cmake --build .
           cp "plugin/libProceduralExplorationGamePlugin.so" "plugin/libProceduralExplorationGamePlugin_${{ matrix.buildType }}-linux-x86_64.so"
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: libProceduralExplorationGamePlugin_${{ matrix.buildType }}-linux-x86_64.so
           path: "native/build/plugin/libProceduralExplorationGamePlugin_${{ matrix.buildType }}-linux-x86_64.so"
@@ -51,7 +51,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Download artifact
         uses: dawidd6/action-download-artifact@v3
         with:
@@ -74,12 +74,12 @@ jobs:
           cp "plugin/${{ matrix.buildType }}-iphoneos/libProceduralExplorationGamePlugin_static.a" "${{ github.workspace }}/libProceduralExplorationGamePlugin_ios_static_${{ matrix.buildType }}.a"
           cp "core/${{ matrix.buildType }}-iphoneos/libProceduralExplorationGameNativeCore.a" "${{ github.workspace }}/libProceduralExplorationGameNativeCore_ios_static_${{ matrix.buildType }}.a"
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: libProceduralExplorationGamePlugin_ios_static_${{ matrix.buildType }}.a
           path: "${{ github.workspace }}/libProceduralExplorationGamePlugin_ios_static_${{ matrix.buildType }}.a"
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: libProceduralExplorationGameNativeCore_ios_static_${{ matrix.buildType }}.a
           path: "${{ github.workspace }}/libProceduralExplorationGameNativeCore_ios_static_${{ matrix.buildType }}.a"
@@ -93,7 +93,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Download artifact
         uses: dawidd6/action-download-artifact@v3
         with:
@@ -137,7 +137,7 @@ jobs:
           cmake --build . --target ALL_BUILD --config ${{ matrix.buildType }}
           cp "plugin/${{ matrix.buildType }}/libProceduralExplorationGamePlugin.so" "plugin/libProceduralExplorationGamePlugin_${{ matrix.buildType }}-macos-${{ matrix.buildArch }}.so"
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: libProceduralExplorationGamePlugin_${{ matrix.buildType }}-macos-${{ matrix.buildArch }}.so
           path: "native/build/plugin/libProceduralExplorationGamePlugin_${{ matrix.buildType }}-macos-${{ matrix.buildArch }}.so"
@@ -150,7 +150,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Download prebuilt Android dependencies
         uses: dawidd6/action-download-artifact@v3
         with:
@@ -193,12 +193,12 @@ jobs:
           cp plugin/libProceduralExplorationGamePlugin_static.a /home/runner/libProceduralExplorationGamePlugin_android_static_${{ matrix.buildType }}.a
           cp core/libProceduralExplorationGameNativeCore.a /home/runner/libProceduralExplorationGameNativeCore_android_static_${{ matrix.buildType }}.a
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: libProceduralExplorationGamePlugin_android_static_${{ matrix.buildType }}.a
           path: "/home/runner/libProceduralExplorationGamePlugin_android_static_${{ matrix.buildType }}.a"
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: libProceduralExplorationGameNativeCore_android_static_${{ matrix.buildType }}.a
           path: "/home/runner/libProceduralExplorationGameNativeCore_android_static_${{ matrix.buildType }}.a"
@@ -211,7 +211,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Download artifact
         uses: dawidd6/action-download-artifact@v3
         with:
@@ -248,7 +248,7 @@ jobs:
           cmake --build . --config ${{ matrix.buildType }}
           cp "plugin/${{ matrix.buildType }}/ProceduralExplorationGamePlugin.dll" "plugin/${{ matrix.buildType }}/ProceduralExplorationGamePlugin_${{ matrix.buildType }}-windows-x86_64.dll"
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ProceduralExplorationGamePlugin_${{ matrix.buildType }}-windows-x86_64.dll
           path: "native/build/plugin/${{ matrix.buildType }}/ProceduralExplorationGamePlugin_${{ matrix.buildType }}-windows-x86_64.dll"
@@ -262,7 +262,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set outputs
         id: vars
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
@@ -356,7 +356,7 @@ jobs:
           cp native/plugin/src/ProceduralExplorationGameCorePlugin.h /tmp/distribution/plugins/include/native/plugin/src/ProceduralExplorationGameCorePlugin.h
           cp CMakeLists.txt StaticPlugins.h /tmp/distribution
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: distribution-${{ steps.vars.outputs.sha_short }}
           path: /tmp/distribution
@@ -426,7 +426,7 @@ jobs:
           create-dmg av.app
           cp *.dmg /tmp/buildMacOS-${{ matrix.buildType }}-${{ needs.build.outputs.sha_short }}.dmg
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: buildMacOS-${{ matrix.buildType }}-${{ needs.build.outputs.sha_short }}.dmg
           path: /tmp/buildMacOS-${{ matrix.buildType }}-${{ needs.build.outputs.sha_short }}.dmg
@@ -588,7 +588,7 @@ jobs:
           mkdir plugins\
           cp ${{ github.workspace }}\ProceduralExplorationGamePlugin_${{ matrix.buildType }}-windows-x86_64.dll plugins\
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: buildWindows-${{ matrix.buildType }}-${{ needs.build.outputs.sha_short }}
           path: ${{ github.workspace }}
@@ -643,7 +643,7 @@ jobs:
           rm -rf squashfs-root
           mv av-x86_64.AppImage buildLinux-${{ matrix.buildType }}-${{ needs.build.outputs.sha_short }}.AppImage
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: buildLinux-${{ matrix.buildType }}-${{ needs.build.outputs.sha_short }}.AppImage
           path: ${{ github.workspace }}/buildLinux-${{ matrix.buildType }}-${{ needs.build.outputs.sha_short }}.AppImage
@@ -660,7 +660,7 @@ jobs:
         run: echo "BUILD_TYPE_LOWER=$(echo '${{ matrix.buildType }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
       - name: Checkout avEngine-android
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: OtherMythos/avEngine-android
           path: avEngine-android
@@ -670,7 +670,7 @@ jobs:
           rm -rf avEngine-android/app/src/main/avEngine
 
       - name: Checkout engine
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: avEngine-android/app/src/main/avEngine
           repository: 'OtherMythos/avEngine'
@@ -743,7 +743,7 @@ jobs:
           $ANDROID_HOME/build-tools/34.0.0/apksigner verify "$SIGNED_APK_PATH"
 
       - name: Upload APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: avEngine-android-${{ matrix.buildType }}.apk
           path: |
@@ -790,11 +790,11 @@ jobs:
           repo: OtherMythos/avEngine
           workflow: buildLinux.yml
       - name: Checkout Game Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: ./checkout
       - name: Checkout avTools
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: ./avTools
           repository: OtherMythos/avTools
@@ -822,7 +822,7 @@ jobs:
           files: |
             results.xml
       - name: Upload Logs Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: testLogs-${{ matrix.buildType }}-${{ matrix.rendersystem }}
@@ -893,12 +893,12 @@ jobs:
               Write-Host "VK_ICD_FILENAMES set to: $icdPath\lvp_icd.x86_64.json"
             }
         - name: Checkout Game Code
-          uses: actions/checkout@v4
+          uses: actions/checkout@v6
           with:
             path: ./checkout
 
         - name: Checkout avTools
-          uses: actions/checkout@v4
+          uses: actions/checkout@v6
           with:
             path: ./avTools
             repository: OtherMythos/avTools
@@ -936,7 +936,7 @@ jobs:
             Get-Content results.xml
 
         - name: Upload Logs Artifact
-          uses: actions/upload-artifact@v4
+          uses: actions/upload-artifact@v6
           if: always()
           with:
             name: testLogs-Windows-${{ matrix.buildType }}-${{ matrix.rendersystem }}
