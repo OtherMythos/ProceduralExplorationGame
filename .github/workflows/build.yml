@@ -18,7 +18,7 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y libxaw7-dev libxrandr-dev libxcb-randr0-dev libx11-dev xserver-xorg-dev xorg-dev libx11-xcb1 libxcb-res0-dev xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev libgtk-3-dev
       - name: Download artifact
-        uses: dawidd6/action-download-artifact@v3
+        uses: dawidd6/action-download-artifact@v8
         with:
           name: avBuiltLinux-${{ matrix.buildType }}.tar.gz
           repo: OtherMythos/avBuild
@@ -53,7 +53,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Download artifact
-        uses: dawidd6/action-download-artifact@v3
+        uses: dawidd6/action-download-artifact@v8
         with:
           name: avBuiltiOS_${{ matrix.buildType }}.tar.gz
           repo: OtherMythos/avBuild
@@ -95,7 +95,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Download artifact
-        uses: dawidd6/action-download-artifact@v3
+        uses: dawidd6/action-download-artifact@v8
         with:
           name: avBuiltMacOS_${{ matrix.buildArch }}_${{ matrix.buildType }}.tar.gz
           repo: OtherMythos/avBuild
@@ -152,7 +152,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Download prebuilt Android dependencies
-        uses: dawidd6/action-download-artifact@v3
+        uses: dawidd6/action-download-artifact@v8
         with:
           name: avBuiltAndroid-${{ matrix.buildType }}.tar.gz
           repo: OtherMythos/avBuild
@@ -213,13 +213,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Download artifact
-        uses: dawidd6/action-download-artifact@v3
+        uses: dawidd6/action-download-artifact@v8
         with:
           name: avBuiltWindows-${{ matrix.buildType }}.zip
           repo: OtherMythos/avBuild
           workflow: windows.yml
       - name: Download avCore artifact
-        uses: dawidd6/action-download-artifact@v3
+        uses: dawidd6/action-download-artifact@v8
         with:
           name: avCore-${{ matrix.buildType }}.lib
           repo: OtherMythos/avEngine
@@ -392,7 +392,7 @@ jobs:
           security import certificate.p12 -k "$RUNNER_TEMP/build.keychain-db" -P "$CERTIFICATE_P12_PASSWORD" -A -t cert -f pkcs12
           security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$RUNNER_TEMP/build.keychain-db"
       - name: Clone Build
-        uses: dawidd6/action-download-artifact@v3
+        uses: dawidd6/action-download-artifact@v8
         with:
           name: av-${{ matrix.buildType }}.dmg
           repo: OtherMythos/avEngine
@@ -470,7 +470,7 @@ jobs:
           name: distribution-${{ needs.build.outputs.sha_short }}
           path: /tmp/dist
       - name: Download artifact
-        uses: dawidd6/action-download-artifact@v3
+        uses: dawidd6/action-download-artifact@v8
         with:
           name: avBuiltiOS_${{ matrix.buildType }}.tar.gz
           repo: OtherMythos/avBuild
@@ -572,7 +572,7 @@ jobs:
 
     steps:
       - name: Clone Build
-        uses: dawidd6/action-download-artifact@v3
+        uses: dawidd6/action-download-artifact@v8
         with:
           name: avEngineWindows-${{ matrix.buildType }}.zip
           repo: OtherMythos/avEngine
@@ -602,7 +602,7 @@ jobs:
 
     steps:
       - name: Clone Build
-        uses: dawidd6/action-download-artifact@v3
+        uses: dawidd6/action-download-artifact@v8
         with:
           name: av-x86_64-${{ matrix.buildType }}.AppImage
           repo: OtherMythos/avEngine
@@ -676,7 +676,7 @@ jobs:
           repository: 'OtherMythos/avEngine'
 
       - name: Download prebuilt Android dependencies
-        uses: dawidd6/action-download-artifact@v3
+        uses: dawidd6/action-download-artifact@v8
         with:
           name: avBuiltAndroid-${{ matrix.buildType }}.tar.gz
           repo: OtherMythos/avBuild
@@ -784,7 +784,7 @@ jobs:
           fi
 
       - name: Clone Build
-        uses: dawidd6/action-download-artifact@v3
+        uses: dawidd6/action-download-artifact@v8
         with:
           name: av-x86_64-${{ matrix.buildType }}.AppImage
           repo: OtherMythos/avEngine
@@ -909,7 +909,7 @@ jobs:
             name: distribution-${{ needs.build.outputs.sha_short }}
 
         - name: Download Windows Build
-          uses: dawidd6/action-download-artifact@v3
+          uses: dawidd6/action-download-artifact@v8
           with:
             name: avEngineWindows-${{ matrix.buildType }}.zip
             repo: OtherMythos/avEngine
