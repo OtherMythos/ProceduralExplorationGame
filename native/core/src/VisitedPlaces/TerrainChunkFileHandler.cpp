@@ -73,7 +73,8 @@ namespace ProceduralExplorationGameCore{
         std::filesystem::path p(resolvedMapsDir);
         p = p / mapName / fileName;
         if(!std::filesystem::exists(p)){
-            GAME_CORE_ERROR("File at path '{}' does not exist.", p.string());
+            //GAME_CORE_ERROR("File at path '{}' does not exist.", p.string());
+            return false;
         }
 
         bool result = parseFileToData_<T>(outData, p.string(), destination);

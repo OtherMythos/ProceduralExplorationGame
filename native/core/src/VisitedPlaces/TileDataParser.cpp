@@ -87,7 +87,8 @@ namespace ProceduralExplorationGameCore{
         AV::FilePath p(resolvedMapsDir);
         p = p / AV::FilePath(mapName) / AV::FilePath(fileName);
         if(!p.exists()){
-            GAME_CORE_ERROR("File at path '{}' does not exist.", p.string());
+            //GAME_CORE_ERROR("File at path '{}' does not exist.", p.string());
+            return false;
         }
 
         bool result = parseFileToData_<D, T>(outData, p.string(), destination);
