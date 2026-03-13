@@ -40,12 +40,6 @@ hlms AtlasBrighterTransparent unlit
 	scene_blend alpha_blend
 	diffuse_map Atlas.png
 }
-hlms gui/InventoryWidget unlit
-{
-	depth_check off
-	scene_blend alpha_blend
-	diffuse_map Widget.png
-}
 hlms gui/linearGradientLeft unlit
 {
 	depth_check off
