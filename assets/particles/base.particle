@@ -161,8 +161,6 @@ particle_system playerFeetDust
         time_to_live    0.8
         direction       0 1 0
         velocity        10.0
-        inner_width     0.8
-        inner_height    0.8
         width           2.5
         height          2.5
         depth           0.01
@@ -187,9 +185,6 @@ particle_system playerFeetDust
 
 	affector DeflectorPlaneProceduralWorld
 	{
-		plane_point	0 1 0
-		plane_normal	0 1 0
-		bounce	0.5
 	}
 }
 
@@ -621,9 +616,6 @@ particle_system brokenRockPebbles
 
     affector DeflectorPlaneProceduralWorld
 	{
-		plane_point	0 1 0
-		plane_normal	0 1 0
-		bounce	0.5
 	}
 }
 
@@ -728,8 +720,6 @@ particle_system waterSplash
 
     affector DeflectorPlaneProceduralWorld
     {
-        plane_point 0 1 0
-        plane_normal 0 1 0
         bounce 0.3
     }
 }
@@ -970,13 +960,6 @@ particle_system giantWormGroundDust
     {
         randomness 2
     }
-
-    affector Scaler
-    {
-        rate 0.05
-        scale_range 0.5
-    }
-
 }
 
 particle_system giantWormShrapnel
@@ -1022,12 +1005,6 @@ particle_system giantWormShrapnel
     affector DirectionRandomiser
     {
         randomness 2
-    }
-
-    affector Scaler
-    {
-        rate 0.1
-        scale_range 0.0
     }
 }
 
