@@ -84,6 +84,14 @@ compositor_node renderMainGameplayNode
         pass render_scene
         {
             rq_first 15
+            rq_last 18
+
+            camera explorationCamera
+            shadows default_simpleShadowNode
+        }
+        pass render_scene
+        {
+            rq_first 19
             rq_last 21
 
             camera explorationCamera
