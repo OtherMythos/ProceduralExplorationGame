@@ -1,10 +1,10 @@
 [
   {
-    "seed": "0x000001C000D003DE",
+    "seed": "0x01C0D0DE",
     "description": "Broken as a result of changing the check in ad31b1f"
   },
   {
-    "seed": "0x0000012C01F0005E",
+    "seed": "0x012CF05E",
     "description": "The player was spawning at 0,0"
   }
 ]

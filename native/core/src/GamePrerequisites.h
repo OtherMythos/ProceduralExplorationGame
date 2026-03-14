@@ -29,7 +29,7 @@ namespace ProceduralExplorationGameCore{
         DataPointWrapped wrapped;
     };
 
-    //A single packed 64-bit seed. Layout: bits[63:32] = base, bits[31:16] = moisture, bits[15:0] = variation.
-    typedef AV::uint64 SeedValue;
+    //A single packed 32-bit seed. Layout: bits[31:16] = base, bits[15:8] = moisture, bits[7:0] = variation.
+    typedef AV::uint32 SeedValue;
 
 }

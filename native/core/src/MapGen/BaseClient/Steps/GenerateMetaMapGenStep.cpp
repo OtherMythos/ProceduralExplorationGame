@@ -65,10 +65,10 @@ namespace ProceduralExplorationGameCore{
         mapData->uint32("height", mapData->height);
         mapData->uint32("seaLevel", input->uint32("seaLevel"));
 
-        SeedValue seed           = input->seedValue("seed");
-        AV::uint32 seedBase      = static_cast<AV::uint32>((seed >> 32) & 0xFFFFFFFF);
-        AV::uint32 moistureSeed  = static_cast<AV::uint32>((seed >> 16) & 0xFFFF);
-        AV::uint32 variationSeed = static_cast<AV::uint32>(seed & 0xFFFF);
+        SeedValue seed = input->seedValue("seed");
+        AV::uint32 seedBase = static_cast<AV::uint32>((seed >> 16) & 0xFFFF);
+        AV::uint32 moistureSeed = static_cast<AV::uint32>((seed >> 8) & 0xFF);
+        AV::uint32 variationSeed = static_cast<AV::uint32>(seed & 0xFF);
         mapData->seedValue("seed", seed);
         mapData->uint32("seedBase", seedBase);
         mapData->uint32("moistureSeed", moistureSeed);

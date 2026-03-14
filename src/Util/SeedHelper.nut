@@ -1,28 +1,26 @@
-//Helper functions for packing and unpacking the 64-bit world seed.
-//Layout: bits[63:32] = base (32-bit), bits[31:16] = moisture (16-bit), bits[15:0] = variation (16-bit).
+//Helper functions for packing and unpacking the 32-bit world seed.
+//Layout: bits[31:16] = base (16-bit), bits[15:8] = moisture (8-bit), bits[7:0] = variation (8-bit).
 ::SeedHelper <- {
 
     function pack(seedBase, moisture, variation){
-        return (seedBase << 32) | (moisture << 16) | variation;
+        return (seedBase << 16) | (moisture << 8) | variation;
     }
 
     function getBase(seed){
-        return (seed >> 32) & 0xFFFFFFFF;
-    }
-
-    function getMoisture(seed){
         return (seed >> 16) & 0xFFFF;
     }
 
-    function getVariation(seed){
-        return seed & 0xFFFF;
+    function getMoisture(seed){
+        return (seed >> 8) & 0xFF;
     }
 
-    //Returns the seed formatted as a 16-digit hex string e.g. "0x00001234ABCD0099".
+    function getVariation(seed){
+        return seed & 0xFF;
+    }
+
+    //Returns the seed formatted as an 8-digit hex string e.g. "0x01C0D0DE".
     function toHex(seed){
-        local hi = (seed >> 32) & 0xFFFFFFFF;
-        local lo = seed & 0xFFFFFFFF;
-        return format("0x%08X%08X", hi, lo);
+        return format("0x%08X", seed);
     }
 
     //Parses a hex string (with or without "0x" prefix) into a 64-bit seed value.
@@ -52,16 +50,12 @@
 
     //Generates a new random seed with full-range components.
     function generate(){
-        local baseLow = _random.randInt(0x10000);
-        local baseHigh = _random.randInt(0x10000);
-        local baseSeed = (baseHigh << 16) | baseLow;
-        local moisture = _random.randInt(0x10000);
-        local variation = _random.randInt(0x10000);
+        local baseSeed = _random.randInt(0x10000);
+        local moisture = _random.randInt(0x100);
+        local variation = _random.randInt(0x100);
 
         //NOTE: For now reduce the complexity as only in the range of 1000 was tested.
         baseSeed = _random.randInt(1000);
-        moisture = _random.randInt(1000);
-        variation = _random.randInt(1000);
 
         return pack(baseSeed, moisture, variation);
     }
