@@ -87,4 +87,18 @@ namespace ProceduralExplorationGameCore{
         setEntry(name, d);
     }
 
+    SeedValue MapGenDataContainer::seedValue(const std::string& name) const{
+        MapDataEntry out;
+        MAP_ASSERT_RESULT(readEntry(name, &out, MapDataEntryType::SEED_VALUE));
+
+        return out.value.seedValue;
+    }
+
+    void MapGenDataContainer::seedValue(const std::string& name, SeedValue val){
+        MapDataEntry d;
+        d.value.seedValue = val;
+        d.type = MapDataEntryType::SEED_VALUE;
+        setEntry(name, d);
+    }
+
 }

@@ -9,6 +9,8 @@
     function setup(){
         _gameCore.registerMapGenClient("testClient", "res://../../src/MapGen/NativeClient/MapGenNativeClient.nut", {"basePath": "res://../../"});
         _gameCore.recollectMapGenSteps();
+
+        mStartSeed_ = _random.randInt(1000);
     }
 
     function update(){
@@ -28,24 +30,22 @@
     }
 
     function getSeedsForGenerate(){
-        local targetSeed = mStartSeed_ + mMapNumCount_;
-        local targetVariationSeed = mStartSeed_ + mMapNumCount_;
-        local targetMoistureSeed = mStartSeed_ + mMapNumCount_;
+        local targetSeed = ::SeedHelper.pack(
+            mStartSeed_ + mMapNumCount_,   //seedBase
+            mStartSeed_ + mMapNumCount_,   //moisture
+            mStartSeed_ + mMapNumCount_    //variation
+        );
 
         mMapNumCount_++;
 
         local values = [
             "PROCEDURAL EXPLORATION SEEDS",
-            "SEED   " + targetSeed,
-            "MOISTURE   " + targetMoistureSeed,
-            "VARIATION   " + targetVariationSeed,
+            "SEED   " + ::SeedHelper.toHex(targetSeed),
         ];
         ::printTextBox(values);
 
         return {
-            "seed": targetSeed,
-            "variationSeed": targetVariationSeed,
-            "moistureSeed": targetMoistureSeed,
+            "seed": 0x00002A2F4D5D15FC,
         };
     }
 
@@ -54,8 +54,6 @@
 
         local inputData = {
             "seed": s.seed,
-            "variationSeed": s.variationSeed,
-            "moistureSeed": s.moistureSeed,
             "width": 600,
             "height": 600,
             "numRivers": 24,

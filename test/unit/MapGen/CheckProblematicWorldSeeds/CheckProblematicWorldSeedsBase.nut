@@ -50,8 +50,6 @@
             local values = [
                 "SEED " + mCurrentSeedIndex_ + " " + (nativeData != null ? "PASSED" : "FAILED"),
                 "Seed: " + seedEntry.seed,
-                "Moisture: " + seedEntry.moistureSeed,
-                "Variation: " + seedEntry.variationSeed,
                 "Description: " + seedEntry.description,
             ];
             ::printTextBox(values);
@@ -76,9 +74,7 @@
         local seedEntry = mProblematicSeeds_[mCurrentSeedIndex_];
 
         local inputData = {
-            "seed": seedEntry.seed,
-            "variationSeed": seedEntry.variationSeed,
-            "moistureSeed": seedEntry.moistureSeed,
+            "seed": ::SeedHelper.parseHex(seedEntry.seed),
             "width": 600,
             "height": 600,
             "numRivers": 24,
@@ -90,8 +86,6 @@
             "GENERATING SEED",
             "Index: " + mCurrentSeedIndex_,
             "Seed: " + seedEntry.seed,
-            "Moisture: " + seedEntry.moistureSeed,
-            "Variation: " + seedEntry.variationSeed,
             "Description: " + seedEntry.description,
         ];
         ::printTextBox(values);

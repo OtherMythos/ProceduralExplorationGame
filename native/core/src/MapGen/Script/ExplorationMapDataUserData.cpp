@@ -253,6 +253,9 @@ namespace ProceduralExplorationGameCore{
             if(entry.second.type == MapDataEntryType::UINT32){
                 pushInteger(vm, entry.first.c_str(), entry.second.value.uint32);
             }
+            else if(entry.second.type == MapDataEntryType::SEED_VALUE){
+                pushInteger(vm, entry.first.c_str(), static_cast<SQInteger>(entry.second.value.seedValue));
+            }
             else if(entry.second.type == MapDataEntryType::WORLD_POINT){
                 pushInteger(vm, entry.first.c_str(), entry.second.value.worldPoint);
             }

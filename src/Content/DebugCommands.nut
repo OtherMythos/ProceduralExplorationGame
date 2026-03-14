@@ -8,10 +8,7 @@
 
     local worldType = currentWorld.getWorldType();
     if(worldType == WorldTypes.PROCEDURAL_EXPLORATION_WORLD){
-    local text = @"Seed: %i
-moistureSeed: %i
-variationSeed: %i";
-        out = format(text, mapData.seed, mapData.moistureSeed, mapData.variationSeed);
+        out = "Seed: " + ::SeedHelper.toHex(mapData.seed);
     }
     else if(worldType == WorldTypes.PROCEDURAL_DUNGEON_WORLD){
         out = "Dungeons do not use seeds yet.";

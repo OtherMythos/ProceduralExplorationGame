@@ -8,6 +8,7 @@ function start(){
     _doFile("res://../../src/Constants.nut");
     _doFile("res://../../src/Content/PlaceEnums.nut");
     _doFile("res://../../src/Content/VoxelEnums.nut");
+    _doFile("res://../../src/Util/SeedHelper.nut");
     ::EnumDef.commitEnums();
     _doFile("res://../../src/Content/Places.nut");
     _doFile("res://../../src/Content/PlaceDefs.nut");

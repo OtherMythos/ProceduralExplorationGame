@@ -17,9 +17,6 @@ enum VoxPickerType{
     mCompositorTexture_ = null
     mSeedLabel_ = null
     mSeedEditbox_ = null
-    mMoistureSeedLabel_ = null
-    mMoistureSeedEditbox_ = null
-    mVariationSeedEditbox_ = null
     mGenerationPopup_ = null
     mVoxPickerActive_ = false
     mInputData_ = null
@@ -40,8 +37,6 @@ enum VoxPickerType{
     mTimerLabel_ = null
 
     mSeed_ = 0
-    mMoistureSeed_ = 0
-    mVariation_ = 0
 
     mGenerationInProgress_ = false
 
@@ -231,43 +226,13 @@ enum VoxPickerType{
         mSeedEditbox_ = seedEditbox;
 
 
-        local moistureSeedLabel = mControlsWindow_.createLabel();
-        moistureSeedLabel.setText("Moisture seed");
-        layout.addCell(moistureSeedLabel);
-        mMoistureSeedLabel_ = moistureSeedLabel;
-
-        local moistureSeedEditbox = mControlsWindow_.createEditbox();
-        moistureSeedEditbox.setSize(300, 50);
-        layout.addCell(moistureSeedEditbox);
-        mMoistureSeedEditbox_ = moistureSeedEditbox;
-
-        local variationLabel = mControlsWindow_.createLabel();
-        variationLabel.setText("Variation");
-        layout.addCell(variationLabel);
-
-        local variationSeedEditbox = mControlsWindow_.createEditbox();
-        variationSeedEditbox.setSize(300, 50);
-        layout.addCell(variationSeedEditbox);
-        mVariationSeedEditbox_ = variationSeedEditbox;
-
         local generateButton = mControlsWindow_.createButton();
         generateButton.setText("Generate")
         generateButton.attachListenerForEvent(function(widget, action){
             local text = mSeedEditbox_.getText();
-            print("Input text: " + text.tostring());
-            local intText = text.tointeger();
-            ::WorldGenTool.setSeed(intText);
-
-            local moistureText = mMoistureSeedEditbox_.getText();
-            print("Input moisture text: " + moistureText.tostring());
-            local moistureIntText = moistureText.tointeger();
-            ::WorldGenTool.setMoistureSeed(moistureIntText);
-
-            local variationText = mVariationSeedEditbox_.getText();
-            print("Variation text: " + variationText.tostring());
-            local varIntText = variationText.tointeger();
-            ::WorldGenTool.setVariation(varIntText);
-
+            print("Input seed: " + text.tostring());
+            local parsedSeed = ::SeedHelper.parseHex(text);
+            ::WorldGenTool.setSeed(parsedSeed);
             ::WorldGenTool.generate();
         }, _GUI_ACTION_PRESSED, this);
         layout.addCell(generateButton);
@@ -383,29 +348,14 @@ enum VoxPickerType{
     }
 
     function setRandomSeed(){
-        local seed = _random.randInt(0, 100000);
-        setSeed(seed);
-        seed = _random.randInt(0, 100000);
-        setMoistureSeed(seed);
-        seed = _random.randInt(0, 100000);
-        setVariation(seed);
+        setSeed(::SeedHelper.generate());
     }
 
-    function setSeed(seedValue){
-        mSeedLabel_.setText("Seed: " + seedValue.tostring());
-        mSeedEditbox_.setText(seedValue.tostring());
-        mSeed_ = seedValue;
-    }
-
-    function setMoistureSeed(seedValue){
-        mMoistureSeedLabel_.setText("Moisture seed: " + seedValue.tostring());
-        mMoistureSeedEditbox_.setText(seedValue.tostring());
-        mMoistureSeed_ = seedValue;
-    }
-
-    function setVariation(variation){
-        mVariationSeedEditbox_.setText(variation.tostring());
-        mVariation_ = variation;
+    function setSeed(seed){
+        local hexStr = ::SeedHelper.toHex(seed);
+        mSeedLabel_.setText("Seed: " + hexStr);
+        mSeedEditbox_.setText(hexStr);
+        mSeed_ = seed;
     }
 
     function setVoxPickerEnabled(enabled){
@@ -488,41 +438,19 @@ enum VoxPickerType{
         //mTimerLabel_.setText(format("total seconds: %.5f", mapData.stats.totalSeconds));
     }
 
-    function generate_(seed, variation, moisture){
-        local gen = ::MapGen();
-        local data = {
-            "seed": seed,
-            "variationSeed": variation,
-            "moistureSeed": moisture,
-            "width": 600,
-            "height": 600,
-            "numRivers": 24,
-            "numRegions": 16,
-            "seaLevel": 100,
-            "altitudeBiomes": [10, 100],
-            "placeFrequency": [0, 1, 1, 4, 4, 30]
-        };
-        local outData = gen.generate(data);
-        return outData;
-    }
     function generate(){
         if(mCurrentNativeMapData_ != null){
             _gameCore.destroyMapData(mCurrentNativeMapData_);
             mCurrentNativeMapData_ = null;
         }
 
-        local targetSeed = _settings.getUserSetting("seed");
-        local targetVariationSeed = _settings.getUserSetting("variationSeed");
-        local targetMoistureSeed = _settings.getUserSetting("moistureSeed");
+        local overrideSeed = _settings.getUserSetting("seed");
+        local targetSeed = overrideSeed != null ? overrideSeed : mSeed_;
 
-        targetSeed = targetSeed == null ? mSeed_ : targetSeed;
-        targetVariationSeed = targetVariationSeed == null ? mVariation_ : targetVariationSeed;
-        targetMoistureSeed = targetMoistureSeed == null ? mMoistureSeed_ : targetMoistureSeed;
+        print("Generating with seed: " + ::SeedHelper.toHex(targetSeed));
 
         mInputData_ = {
             "seed": targetSeed,
-            "variationSeed": targetVariationSeed,
-            "moistureSeed": targetMoistureSeed,
             "width": 600,
             "height": 600,
             "numRivers": 24,

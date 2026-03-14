@@ -21,7 +21,7 @@ namespace ProceduralExplorationGameCore{
         const AV::uint32 width = mapData->width;
         const AV::uint32 height = mapData->height;
 
-        PerlinNoise noiseGen(mapData->uint32("seed"));
+        PerlinNoise noiseGen(mapData->uint32("seedBase"));
 
         for(AV::uint32 y = 0; y < height; y++){
             for(AV::uint32 x = 0; x < width; x++){

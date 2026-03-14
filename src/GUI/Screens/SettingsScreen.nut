@@ -176,8 +176,7 @@
         local worldType = currentWorld.getWorldType();
         if(worldType == WorldTypes.PROCEDURAL_EXPLORATION_WORLD){
             local mapData = currentWorld.getMapData();
-            local text = "Seed: %i, %i, %i";
-            out = format(text, mapData.seed, mapData.moistureSeed, mapData.variationSeed);
+            out = "Seed: " + ::SeedHelper.toHex(mapData.seed);
         }
         return out;
     }

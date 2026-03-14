@@ -15,13 +15,15 @@ namespace ProceduralExplorationGameCore{
         UINT32,
         WORLD_POINT,
         VOID_PTR,
-        SIZE_TYPE
+        SIZE_TYPE,
+        SEED_VALUE
     };
     union MapDataEntryValue{
         AV::uint32 uint32;
         WorldPoint worldPoint;
         void* ptr;
         size_t size;
+        SeedValue seedValue;
     };
     enum class MapDataReadResult{
         SUCCESS,
@@ -75,5 +77,8 @@ namespace ProceduralExplorationGameCore{
 
         WorldPoint worldPoint(const std::string& name) const;
         void worldPoint(const std::string& name, WorldPoint val);
+
+        SeedValue seedValue(const std::string& name) const;
+        void seedValue(const std::string& name, SeedValue val);
     };
 }

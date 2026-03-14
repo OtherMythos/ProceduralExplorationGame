@@ -48,6 +48,7 @@ function start(){
 
     _doFile("res://src/Util/StateMachine.nut");
     _doFile("res://src/Util/CombatStateMachine.nut");
+    _doFile("res://src/Util/SeedHelper.nut");
 
     _event.subscribe(_EVENT_SYSTEM_WINDOW_RESIZE, recieveWindowResize, this);
     _event.subscribe(_EVENT_SYSTEM_APPLICATION_DID_ENTER_BACKGROUND, receiveEnterBackground, this);

@@ -46,7 +46,7 @@ namespace ProceduralExplorationGameCore{
         const AV::uint32 width = mapData->width;
 
         {
-            PerlinNoise noiseGen(mapData->uint32("seed"));
+            PerlinNoise noiseGen(mapData->uint32("seedBase"));
 
             float* voxPtr = static_cast<float*>(mapData->voidPtr("voxelBuffer"));
             for(AV::uint32 y = ya; y < yb; y++){

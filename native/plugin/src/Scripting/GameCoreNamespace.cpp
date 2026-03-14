@@ -141,44 +141,14 @@ namespace ProceduralExplorationGamePlugin{
             if(t == OT_INTEGER){
                 SQInteger val;
                 sq_getinteger(vm, -1, &val);
-                /*
-                if(strcmp(k, "width") == 0){
-                    //data->width = static_cast<AV::uint32>(val);
-                    data->uint32("width", static_cast<AV::uint32>(val));
+                if(strcmp(k, "seed") == 0){
+                    data->seedValue("seed", static_cast<ProceduralExplorationGameCore::SeedValue>(val));
+                } else {
+                    ProceduralExplorationGameCore::MapDataEntry e;
+                    e.value.uint32 = static_cast<AV::uint32>(val);
+                    e.type = ProceduralExplorationGameCore::MapDataEntryType::UINT32;
+                    data->setEntry(k, e);
                 }
-                else if(strcmp(k, "height") == 0){
-                    //data->height = static_cast<AV::uint32>(val);
-                    data->uint32("height", static_cast<AV::uint32>(val));
-                }
-                else if(strcmp(k, "seed") == 0){
-                    //data->seed = static_cast<AV::uint32>(val);
-                    data->uint32("seed", static_cast<AV::uint32>(val));
-                }
-                else if(strcmp(k, "moistureSeed") == 0){
-                    //data->moistureSeed = static_cast<AV::uint32>(val);
-                    data->uint32("moistureSeed", static_cast<AV::uint32>(val));
-                }
-                else if(strcmp(k, "variationSeed") == 0){
-                    //data->variationSeed = static_cast<AV::uint32>(val);
-                    data->uint32("variationSeed", static_cast<AV::uint32>(val));
-                }
-                else if(strcmp(k, "seaLevel") == 0){
-                    //data->seaLevel = static_cast<AV::uint32>(val);
-                    data->uint32("seaLevel", static_cast<AV::uint32>(val));
-                }
-                else if(strcmp(k, "numRivers") == 0){
-                    //data->numRivers = static_cast<AV::uint32>(val);
-                    data->uint32("numRivers", static_cast<AV::uint32>(val));
-                }
-                else if(strcmp(k, "numRegions") == 0){
-                    //data->numRegions = static_cast<AV::uint32>(val);
-                    data->uint32("numRegions", static_cast<AV::uint32>(val));
-                }
-                 */
-                ProceduralExplorationGameCore::MapDataEntry e;
-                e.value.uint32 = static_cast<AV::uint32>(val);
-                e.type = ProceduralExplorationGameCore::MapDataEntryType::UINT32;
-                data->setEntry(k, e);
             }
             else if(t == OT_ARRAY){
                 /*
