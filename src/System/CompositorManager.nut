@@ -180,6 +180,15 @@ enum CompositorSceneType{
         return id;
     }
 
+    function refreshCompositorWorkspace(id){
+        local data = mActiveCompositors_[id];
+        _compositor.removeWorkspace(data.mWorkspace);
+        _gameCore.setCameraForNode("renderMainGameplayNode", ::cameraTestValue);
+        data.mWorkspace = _compositor.addWorkspace([data.mTexture], data.mCamera, data.mName, true);
+
+        refreshRenderWindowWorkspace_();
+    }
+
     function resizeCompositor(compositor, size){
         local data = mActiveCompositors_[compositor];
 

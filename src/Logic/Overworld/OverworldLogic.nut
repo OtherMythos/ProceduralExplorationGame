@@ -202,6 +202,10 @@ enum OverworldStates{
         mCompositor_ = ::CompositorManager.createCompositorWorkspace("renderWindowWorkspaceGameplayTexture", mRenderableSize_, CompositorSceneType.OVERWORLD, true, false);
     }
 
+    function refreshCompositor_(){
+        ::CompositorManager.refreshCompositorWorkspace(mCompositor_);
+    }
+
     function getCurrentSelectedRegion(){
         return mWorld_.getCurrentSelectedRegion();
     }
@@ -215,7 +219,7 @@ enum OverworldStates{
     function shutdown_(){
         mParentSceneNode_.destroyNodeAndChildren();
         mWorld_.shutdown();
-        shutdownCompositor_()
+        shutdownCompositor_();
 
         print("Shutting down overworld");
     }

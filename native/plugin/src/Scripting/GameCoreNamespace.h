@@ -37,6 +37,7 @@ namespace ProceduralExplorationGamePlugin{
 
         static SQInteger disableShadows(HSQUIRRELVM vm);
         static SQInteger setupCompositorDefs(HSQUIRRELVM vm);
+        static SQInteger setMainNodeViewportScissor(HSQUIRRELVM vm);
 
         static SQInteger createDataPointFileParser(HSQUIRRELVM vm);
 

@@ -784,6 +784,35 @@ namespace ProceduralExplorationGamePlugin{
         return 0;
     }
 
+    SQInteger GameCoreNamespace::setMainNodeViewportScissor(HSQUIRRELVM vm){
+        SQFloat left, top, width, height;
+        sq_getfloat(vm, 2, &left);
+        sq_getfloat(vm, 3, &top);
+        sq_getfloat(vm, 4, &width);
+        sq_getfloat(vm, 5, &height);
+
+        Ogre::CompositorManager2 *compositorManager = Ogre::Root::getSingleton().getCompositorManager2();
+        Ogre::CompositorNodeDef* nodeDef = compositorManager->getNodeDefinitionNonConst("renderMainGameplayNode");
+        for(int i = 0; i < nodeDef->getNumTargetPasses(); i++){
+            Ogre::CompositorTargetDef* def = nodeDef->getTargetPass(i);
+            for(Ogre::CompositorPassDef* p : def->getCompositorPassesNonConst()){
+                if(p->getType() != Ogre::CompositorPassType::PASS_SCENE) continue;
+
+                Ogre::CompositorPassSceneDef* sceneDef = dynamic_cast<Ogre::CompositorPassSceneDef*>(p);
+                sceneDef->mVpRect[0].mVpLeft = 0.0;
+                sceneDef->mVpRect[0].mVpTop = 0.0;
+                sceneDef->mVpRect[0].mVpWidth = 1.0;
+                sceneDef->mVpRect[0].mVpHeight = 1.0;
+                sceneDef->mVpRect[0].mVpScissorLeft = left;
+                sceneDef->mVpRect[0].mVpScissorTop = top;
+                sceneDef->mVpRect[0].mVpScissorWidth = width;
+                sceneDef->mVpRect[0].mVpScissorHeight = height;
+            }
+        }
+
+        return 0;
+    }
+
     SQInteger GameCoreNamespace::setupCompositorDefs(HSQUIRRELVM vm){
         SQInteger width, height;
         sq_getinteger(vm, 2, &width);
@@ -1133,6 +1162,7 @@ namespace ProceduralExplorationGamePlugin{
 
         AV::ScriptUtils::addFunction(vm, disableShadows, "disableShadows");
         AV::ScriptUtils::addFunction(vm, setupCompositorDefs, "setupCompositorDefs", 3, ".ii");
+        AV::ScriptUtils::addFunction(vm, setMainNodeViewportScissor, "setMainNodeViewportScissor", 5, ".nnnn");
 
         AV::ScriptUtils::addFunction(vm, registerVoxel, "registerVoxel", 4, ".nnu");
 

@@ -410,12 +410,26 @@ enum GameplayComplexMenuBusEvents{
         if(event == GameplayComplexMenuBusEvents.SHOW_EXPLORATION_MAP_STARTED){
             setExplorationMapVisible(false);
             ::OverworldLogic.requestState(OverworldStates.ZOOMED_IN);
+            _gameCore.setMainNodeViewportScissor(0.0, 0.0, 1.0, 1.0);
+            ::OverworldLogic.refreshCompositor_();
         }
         else if(event == GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_STARTED){
             ::OverworldLogic.requestState(OverworldStates.ZOOMED_OUT);
+            _gameCore.setMainNodeViewportScissor(0.0, 0.0, 1.0, 1.0);
+            ::OverworldLogic.refreshCompositor_();
         }
         else if(event == GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_FINISHED){
             setExplorationMapVisible(true);
+            local panel = mTabWindows_[0].getMapPanel();
+            local pos = panel.getDerivedPosition();
+            local size = panel.getSize();
+            _gameCore.setMainNodeViewportScissor(
+                pos.x / ::drawable.x,
+                pos.y / ::drawable.y,
+                size.x / ::drawable.x,
+                size.y / ::drawable.y
+            );
+            ::OverworldLogic.refreshCompositor_();
         }
     }
 
@@ -614,6 +628,8 @@ enum GameplayComplexMenuBusEvents{
         mMapPanel_ = explorationMap;
 
         _gameCore.setCameraForNode("renderMainGameplayNode", "compositor/camera" + ::CompositorManager.mTotalCompositors_);
+        ::cameraTestValue <- "compositor/camera" + ::CompositorManager.mTotalCompositors_;
+
         /*
         {
             local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
