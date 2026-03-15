@@ -134,7 +134,7 @@
     }
 
     function setExplorationCurrentZoom(zoom){
-        mCurrentData_.playerZoom = zoom;
+        mCurrentData_.playerZoom = zoom.tofloat();
     }
     function getExplorationCurrentZoom(){
         if(mCurrentData_ == null) return 0.0;
