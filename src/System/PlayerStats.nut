@@ -65,11 +65,24 @@
         }
     }
 
+    function serialiseItem_(item){
+        if(item == null) return null;
+        local idStr = ::ItemIdNames[item.getId()];
+        local data = item.getData();
+        if(data == null) return idStr;
+        return {"id": idStr, "data": data};
+    }
+
     function resolveItemId_(itemVal){
         if(itemVal == null) return null;
         if(typeof itemVal == "string"){
             local id = ::ItemIdLookup.rawin(itemVal) ? ::ItemIdLookup.rawget(itemVal) : ItemId.NONE;
             return ::Item(id);
+        }
+        if(typeof itemVal == "table"){
+            local id = (::ItemIdLookup.rawin(itemVal.id)) ? ::ItemIdLookup.rawget(itemVal.id) : ItemId.NONE;
+            local data = itemVal.rawin("data") ? itemVal.data : null;
+            return ::Item(id, data);
         }
         return ::Item(itemVal);
     }
@@ -114,16 +127,16 @@
         //Sync up the inventory items to the data.
         assert(mInventory_.mInventoryItems_.len() == mCurrentData_.inventory.len());
         foreach(c,i in mInventory_.mInventoryItems_){
-            mCurrentData_.inventory[c] = (i == null ? null : ::ItemIdNames[i.getId()]);
+            mCurrentData_.inventory[c] = serialiseItem_(i);
         }
         foreach(c,i in mPlayerCombatStats.mEquippedItems.mItems){
             if(i == null) continue;
-            mCurrentData_.playerEquipped[c] = (i == null ? null : ::ItemIdNames[i.getId()]);
+            mCurrentData_.playerEquipped[c] = serialiseItem_(i);
         }
 
         // Sync storage items to data
         foreach(c,i in mItemStorage_.mInventoryItems_){
-            mCurrentData_.storage[c] = (i == null ? null : ::ItemIdNames[i.getId()]);
+            mCurrentData_.storage[c] = serialiseItem_(i);
         }
 
         if(typeof mCurrentData_.playerHealth == "float"){
