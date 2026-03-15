@@ -30,3 +30,5 @@
     BLUE_ORE
 
 ");
+
+::EnumDef.enableLookup("ItemId");

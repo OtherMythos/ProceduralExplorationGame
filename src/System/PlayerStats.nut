@@ -65,15 +65,24 @@
         }
     }
 
+    function resolveItemId_(itemVal){
+        if(itemVal == null) return null;
+        if(typeof itemVal == "string"){
+            local id = ::ItemIdLookup.rawin(itemVal) ? ::ItemIdLookup.rawget(itemVal) : ItemId.NONE;
+            return ::Item(id);
+        }
+        return ::Item(itemVal);
+    }
+
     function setSaveData(data, slotIdx){
         mCurrentSaveSlot_ = slotIdx;
         mCurrentData_ = data;
         local inventoryData = data.inventory.apply(function(itemVal){
-            return itemVal == null ? null : ::Item(itemVal);
-        });
+            return resolveItemId_(itemVal);
+        }.bindenv(this));
         local equipData = data.playerEquipped.apply(function(itemVal){
-            return itemVal == null ? null : ::Item(itemVal);
-        });
+            return resolveItemId_(itemVal);
+        }.bindenv(this));
         initTime();
         mInventory_.rawSetItems(inventoryData);
         mInventory_.setMoney(data.playerCoins);
@@ -84,8 +93,8 @@
         // Handle storage if it exists in save data
         if(data.rawin("storage")){
             local storageData = data.storage.apply(function(itemVal){
-                return itemVal == null ? null : ::Item(itemVal);
-            });
+                return resolveItemId_(itemVal);
+            }.bindenv(this));
             mItemStorage_.rawSetItems(storageData);
         }
 
@@ -105,16 +114,16 @@
         //Sync up the inventory items to the data.
         assert(mInventory_.mInventoryItems_.len() == mCurrentData_.inventory.len());
         foreach(c,i in mInventory_.mInventoryItems_){
-            mCurrentData_.inventory[c] = (i == null ? null : i.getId());
+            mCurrentData_.inventory[c] = (i == null ? null : ::ItemIdNames[i.getId()]);
         }
         foreach(c,i in mPlayerCombatStats.mEquippedItems.mItems){
             if(i == null) continue;
-            mCurrentData_.playerEquipped[c] = (i == null ? null : i.getId());
+            mCurrentData_.playerEquipped[c] = (i == null ? null : ::ItemIdNames[i.getId()]);
         }
 
         // Sync storage items to data
         foreach(c,i in mItemStorage_.mInventoryItems_){
-            mCurrentData_.storage[c] = (i == null ? null : i.getId());
+            mCurrentData_.storage[c] = (i == null ? null : ::ItemIdNames[i.getId()]);
         }
 
         if(typeof mCurrentData_.playerHealth == "float"){

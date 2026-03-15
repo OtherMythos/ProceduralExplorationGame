@@ -7,6 +7,7 @@ This class merges enum definition into a string and then compiles that as a Squi
 ::EnumDef <- {
 
     mEnums_ = {}
+    mEnumLookups_ = {}
 
     function addToEnum(name, content, includeNone=true){
         if(!mEnums_.rawin(name)){
@@ -38,6 +39,16 @@ This class merges enum definition into a string and then compiles that as a Squi
         }
     }
 
+    /**
+     * Opt in an enum to have string lookup tables generated at commitEnums() time.
+     * Generates two globals:
+     *   ::XNames  - array of string names indexed by enum integer value
+     *   ::XLookup - table mapping string name -> integer value
+     */
+    function enableLookup(name){
+        mEnumLookups_.rawset(name, true);
+    }
+
     function commitEnums(){
         foreach(c,i in mEnums_){
             i += "\nMAX\n};";
@@ -45,6 +56,28 @@ This class merges enum definition into a string and then compiles that as a Squi
             local buffer = _compileBuffer(i);
             buffer();
         }
+        foreach(c,i in mEnumLookups_){
+            buildLookupTables_(c);
+        }
+    }
+
+    function buildLookupTables_(name){
+        local raw = mEnums_.rawget(name);
+        //Strip the leading 'enum X {\nNONE,' or 'enum X {\n' header.
+        local headerEnd = raw.find("{");
+        local body = raw.slice(headerEnd + 1);
+        //Split into tokens on commas and newlines.
+        local parts = split(body, ",\n");
+        local names = [];
+        local lookup = {};
+        foreach(part in parts){
+            local token = strip(part);
+            if(token.len() == 0 || token == "MAX") continue;
+            names.append(token);
+            lookup.rawset(token, names.len() - 1);
+        }
+        getroottable().rawset(name + "Names", names);
+        getroottable().rawset(name + "Lookup", lookup);
     }
 
 };
