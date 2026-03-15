@@ -182,10 +182,10 @@
         if( mAnimCount_ == 1.0 ){
             if( mAnimFinished_ == false ){
                 if( !mTitleFullScreen_ ){
-                    if( mScreenData_.data.bus != null ){
-                        mScreenData_.data.bus.notifyEvent( GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_FINISHED, null );
-                    }
-                    if(!mAnimateIn_ ){
+                    if( !mAnimateIn_ ){
+                        if( mScreenData_.data.bus != null ){
+                            mScreenData_.data.bus.notifyEvent( GameplayComplexMenuBusEvents.CLOSE_EXPLORATION_FINISHED, null );
+                        }
                         ::ScreenManager.transitionToScreen( null, null, mLayerIdx );
                         ::OverworldLogic.requestState(OverworldStates.ZOOMED_OUT);
                     }

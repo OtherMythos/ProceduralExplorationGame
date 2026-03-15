@@ -761,6 +761,9 @@ enum GameplayComplexMenuBusEvents{
     }
 
     function returnToTitleScreen_(){
+        _gameCore.setMainNodeViewportScissor(0.0, 0.0, 1.0, 1.0);
+        ::OverworldLogic.refreshCompositor_();
+
         //Re-setup the title screen on layer 2 with panel coordinates
         local explorationMap = getMapPanel();
         local titleData = {
