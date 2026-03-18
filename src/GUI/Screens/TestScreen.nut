@@ -37,6 +37,8 @@
             "Trigger single text popup",
             "Read book",
             "Generate render icon",
+            "Trigger collectible effect (bottle)",
+            "Trigger collectible effect (urn)",
             "Haptic Light",
             "Haptic Medium",
             "Haptic Heavy",
@@ -91,6 +93,12 @@
                 local secondPanel = mWindow_.createPanel();
                 secondPanel.setPosition(Vec2(40, 40));
                 secondPanel.setSize(Vec2(10, 10));
+            },
+            function(widget, action){
+                ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.COLLECTABLE_OPEN_EFFECT, {"meshName": "collectables.messageInABottle.voxMesh", "itemScale": 10}));
+            },
+            function(widget, action){
+                ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.COLLECTABLE_OPEN_EFFECT, {"meshName": "collectables.hauntedUrn.voxMesh", "itemScale": 10}));
             },
             function(widget, action){
                 _gameCore.triggerLightHapticFeedback();

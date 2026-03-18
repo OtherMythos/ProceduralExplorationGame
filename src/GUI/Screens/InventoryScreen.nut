@@ -661,7 +661,7 @@ enum InventoryBusEvents{
             //Convert window position to world position
             local worldPos = ::EffectManager.getWorldPositionForWindowPos(itemCentre);
 
-            ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.BOTTLE_EFFECT, {"startPos": worldPos, "bottleScale": 10}));
+            ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.COLLECTABLE_OPEN_EFFECT, {"startPos": worldPos, "itemScale": 10}));
             setItemForInventory(inventoryData, ::Item(ItemId.NOTE_SCRAP, {"artifactId": 0}));
         }
         else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_TO_INVENTORY){

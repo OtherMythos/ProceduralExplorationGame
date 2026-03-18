@@ -240,7 +240,7 @@
         _doFile("res://src/GUI/Effects/LinearEXPOrbEffect.nut");
         _doFile("res://src/GUI/Effects/FoundItemEffect.nut");
         _doFile("res://src/GUI/Effects/FoundItemEffectIdle.nut");
-        _doFile("res://src/GUI/Effects/BottleEffect.nut");
+        _doFile("res://src/GUI/Effects/CollectibleEffect.nut");
         ::EffectManager.setup();
 
         _doFile("res://src/GUI/ScreenManager.nut");
