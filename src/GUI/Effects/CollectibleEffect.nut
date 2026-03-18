@@ -4,6 +4,8 @@ const COLLECTIBLE_EFFECT_ROTATION_AMOUNT = 0.1;
 const COLLECTIBLE_EFFECT_NUM_BEAMS = 4;
 const COLLECTIBLE_EFFECT_BEAM_LENGTH = 5.0;
 const COLLECTIBLE_EFFECT_BEAM_THICKNESS = 150;
+const COLLECTIBLE_EFFECT_BEAM_TILT_AMOUNT = 0.3; //Radians of tilt applied per beam appearance
+const COLLECTIBLE_EFFECT_RETURN_SPEED = 0.08; //How quickly the item tries to return to default orientation each frame
 
 
 enum CollectibleEffectStages{
@@ -37,15 +39,20 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
         }
     };
     CollectibleEffectStateMachine.mStates_[CollectibleEffectStages.VIBRATE_AND_ROTATE] = class extends ::Util.State{
-        mTotalCount_ = 50
+        mTotalCount_ = 100
         mNextState_ = CollectibleEffectStages.BREAK;
         mBeams_ = null;
         mBeamLengthMultipliers_ = null;
+        mTiltX_ = 0.0;
+        mTiltZ_ = 0.0;
 
         function start(data){
             data.bottle.setPosition(data.centre.x, data.centre.y, COLLECTIBLE_EFFECT_ITEM_Z);
             mBeams_ = array(COLLECTIBLE_EFFECT_NUM_BEAMS);
             mBeamLengthMultipliers_ = array(COLLECTIBLE_EFFECT_NUM_BEAMS);
+            //Random small base tilt so the item never starts perfectly upright
+            mTiltX_ = ((rand() % 200) - 100) / 1000.0; //-0.1 to 0.1
+            mTiltZ_ = ((rand() % 200) - 100) / 1000.0; //-0.1 to 0.1
             for(local i = 0; i < COLLECTIBLE_EFFECT_NUM_BEAMS; i++){
                 mBeams_[i] = null;
                 mBeamLengthMultipliers_[i] = 0.5 + (rand() % 1000) / 1000.0; //0.5 to 1.5
@@ -59,10 +66,9 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
 
             data.bottle.setPosition(data.centre.x + vibrationX, data.centre.y + vibrationY, COLLECTIBLE_EFFECT_ITEM_Z);
 
-            //Apply rotation that increases with time
-            local rotationAmount = p * COLLECTIBLE_EFFECT_ROTATION_AMOUNT;
-            local quat = Quat(rotationAmount, Vec3(0.2, 0.5, 1));
-            data.bottle.setOrientation(quat);
+            //Tilt returns towards default orientation each frame
+            mTiltX_ = mTiltX_ * (1.0 - COLLECTIBLE_EFFECT_RETURN_SPEED);
+            mTiltZ_ = mTiltZ_ * (1.0 - COLLECTIBLE_EFFECT_RETURN_SPEED);
 
             //Create and animate beams progressively
             local beamStartDelay = 0.2; //Delay before first beam appears
@@ -70,8 +76,11 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
                 local beamStartTime = beamStartDelay + (i * 0.10); //Each beam starts 0.10 of the state later
                 if(p >= beamStartTime){
                     if(mBeams_[i] == null){
-                        //Create new beam
+                        //Create new beam and apply a tilt kick
                         mBeams_[i] = data.effect.createBeam(data, i);
+                        local tiltDir = (rand() % 628) / 100.0;
+                        mTiltX_ += cos(tiltDir) * COLLECTIBLE_EFFECT_BEAM_TILT_AMOUNT;
+                        mTiltZ_ += sin(tiltDir) * COLLECTIBLE_EFFECT_BEAM_TILT_AMOUNT;
                     }
 
                     //Animate beam - appears more quickly as the state progresses
@@ -84,6 +93,11 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
                     }
                 }
             }
+
+            //Apply accumulated tilt to the item's orientation
+            local quatX = Quat(mTiltX_, Vec3(1, 0, 0));
+            local quatZ = Quat(mTiltZ_, Vec3(0, 0, 1));
+            data.bottle.setOrientation(quatX * quatZ);
         }
     };
     CollectibleEffectStateMachine.mStates_[CollectibleEffectStages.BREAK] = class extends ::Util.State{
