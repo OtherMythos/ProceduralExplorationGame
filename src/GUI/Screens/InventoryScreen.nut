@@ -666,8 +666,9 @@ enum InventoryBusEvents{
                 "startPos": worldPos,
                 "itemScale": 10,
                 "foundMeshName": ::Items[ItemId.NOTE_SCRAP].getMesh(),
+                "artifactId": ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_1,
                 "onClose": function() {
-                    setItemForInventory(capturedInventoryData, ::Item(ItemId.NOTE_SCRAP, {"artifactId": 0}));
+                    setItemForInventory(capturedInventoryData, ::Item(ItemId.NOTE_SCRAP, {"artifactId": ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_1}));
                 }.bindenv(this)
             }), null, 3);
         }

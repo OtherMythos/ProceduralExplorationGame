@@ -13,3 +13,8 @@
     MESSAGE_IN_A_BOTTLE_SCRAP,
     ROCK_FRAGMENT,
 ");
+
+::EnumDef.addToString("ArtifactTypeString", [
+    "Bottle Scrap",
+    "Rock Fragment",
+]);

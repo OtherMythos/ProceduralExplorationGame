@@ -3,6 +3,7 @@
     mEffect_ = null;
     mFoundEffect_ = null;
     mBackButton_ = null;
+    mCollectButton_ = null;
     mLabel_ = null;
     mGradientPanel_ = null;
     mLabelAlpha_ = 0.0;
@@ -21,6 +22,7 @@
     mStartPos_ = null;
     mItemScale_ = 10.0;
     mFoundMeshName_ = null;
+    mArtifactId_ = null;
 
     function setup(data){
         local winWidth = ::drawable.x;
@@ -39,24 +41,58 @@
         gradientPanel.setClickable(false);
         mGradientPanel_ = gradientPanel;
 
+        local buttonWidth = winWidth * 0.9;
+        local buttonHeight = 100;
+        local buttonX = winWidth * 0.05;
+        local buttonGap = 20;
+        local backButtonY = winHeight - buttonHeight - winWidth * 0.05 - insets.bottom;
+        local collectButtonY = backButtonY - buttonHeight - buttonGap;
+
         local label = mWindow_.createLabel();
         label.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
         label.setSize(winWidth, label.getSize().y);
-        label.setText("You found an item!");
+
+        local labelText = "You found an item!";
+        if("artifactId" in data){
+            local artifactId = data.artifactId;
+            if(artifactId >= 0 && artifactId < ArtifactId.MAX && ::Artifacts[artifactId] != null){
+                local artifact = ::Artifacts[artifactId];
+                labelText = artifact.getName() + "!";
+            }
+        }
+        label.setText(labelText);
         ::calculateFontWidth_(label, winWidth * 0.80);
-        label.setCentre(winWidth / 2, winHeight * 0.67);
+        local labelY = collectButtonY - buttonGap - label.getSize().y / 2;
+        label.setCentre(winWidth / 2, labelY);
         label.setShadowOutline(true, ColourValue(0, 0, 0, 1), Vec2(2, 2));
         label.setColour(ColourValue(1, 1, 1, 0));
         mLabel_ = label;
+
+        local collectButton = mWindow_.createButton();
+        collectButton.setDefaultFontSize(collectButton.getDefaultFontSize() * 1.5);
+        collectButton.setText("Add to Collection");
+        collectButton.setExpandHorizontal(true);
+        collectButton.setMinSize(0, buttonHeight);
+        collectButton.setSize(buttonWidth, buttonHeight);
+        collectButton.setPosition(buttonX, collectButtonY);
+        collectButton.attachListenerForEvent(function(widget, action){
+            ::Base.mArtifactCollection.addArtifact(mArtifactId_);
+            mOnClose_ = null; //Skip inventory logic
+            ::ScreenManager.queueTransition(null, null, mLayerIdx);
+        }, _GUI_ACTION_PRESSED, this);
+        collectButton.setColour(ColourValue(1, 1, 1, 0));
+        collectButton.setTextColour(ColourValue(1, 1, 1, 0));
+        collectButton.setDisabled(true);
+        mCollectButton_ = collectButton;
 
         local button = mWindow_.createButton();
         button.setDefaultFontSize(button.getDefaultFontSize() * 1.5);
         button.setText("Back");
         button.setSkinPack("Button_blue");
         button.setExpandHorizontal(true);
-        button.setMinSize(0, 100);
-        button.setSize(winWidth * 0.9, 100);
-        button.setPosition(winWidth * 0.05, winHeight - 100 - winWidth * 0.05 - insets.bottom);
+        button.setMinSize(0, buttonHeight);
+        button.setSize(buttonWidth, buttonHeight);
+        button.setPosition(buttonX, backButtonY);
         button.attachListenerForEvent(function(widget, action){
             if(mFoundEffect_ != null){
                 mFoundEffect_.beginShrink();
@@ -74,6 +110,7 @@
         if("startPos" in data) mStartPos_ = data.startPos;
         if("itemScale" in data) mItemScale_ = data.itemScale;
         if("foundMeshName" in data) mFoundMeshName_ = data.foundMeshName;
+        if("artifactId" in data) mArtifactId_ = data.artifactId;
 
         local effectData = {};
         if("startPos" in data) effectData.startPos <- data.startPos;
@@ -148,6 +185,8 @@
                 local col = ColourValue(1, 1, 1, mButtonAlpha_);
                 mBackButton_.setColour(col);
                 mBackButton_.setTextColour(col);
+                mCollectButton_.setColour(col);
+                mCollectButton_.setTextColour(col);
             }
         }
 
@@ -156,8 +195,13 @@
             local col = ColourValue(1, 1, 1, mButtonAlpha_);
             mBackButton_.setColour(col);
             mBackButton_.setTextColour(col);
+            mCollectButton_.setColour(col);
+            mCollectButton_.setTextColour(col);
             if(mButtonAlpha_ >= 1.0){
                 mBackButton_.setDisabled(false);
+                if(mArtifactId_ != null && !::Base.mArtifactCollection.hasArtifact(mArtifactId_)){
+                    mCollectButton_.setDisabled(false);
+                }
             }
         }
     }
