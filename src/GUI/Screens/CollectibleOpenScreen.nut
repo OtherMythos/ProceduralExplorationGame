@@ -6,6 +6,7 @@
     mLabelAlpha_ = 0.0;
     mButtonAlpha_ = 0.0;
     mUIRevealing_ = false;
+    mOnClose_ = null;
 
     function setup(data){
         local winWidth = ::drawable.x;
@@ -52,6 +53,7 @@
         if("itemScale" in data) effectData.itemScale <- data.itemScale;
         if("meshName" in data) effectData.meshName <- data.meshName;
         if("shrapnelMeshes" in data) effectData.shrapnelMeshes <- data.shrapnelMeshes;
+        if("onClose" in data) mOnClose_ = data.onClose;
 
         local wrappedData = ::EffectManager.EffectData(Effect.COLLECTABLE_OPEN_EFFECT, effectData);
         local effectClass = ::EffectManager.Effects[Effect.COLLECTABLE_OPEN_EFFECT];
@@ -94,6 +96,10 @@
         if(mEffect_ != null){
             mEffect_.destroy();
             mEffect_ = null;
+        }
+        if(mOnClose_ != null){
+            mOnClose_();
+            mOnClose_ = null;
         }
         base.shutdown();
     }
