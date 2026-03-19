@@ -661,7 +661,7 @@ enum InventoryBusEvents{
             //Convert window position to world position
             local worldPos = ::EffectManager.getWorldPositionForWindowPos(itemCentre);
 
-            ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.COLLECTABLE_OPEN_EFFECT, {"startPos": worldPos, "itemScale": 10}));
+            ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COLLECTABLE_OPEN_SCREEN, {"startPos": worldPos, "itemScale": 10}), null, 3);
             setItemForInventory(inventoryData, ::Item(ItemId.NOTE_SCRAP, {"artifactId": 0}));
         }
         else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_TO_INVENTORY){

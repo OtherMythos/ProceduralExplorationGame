@@ -95,10 +95,10 @@
                 secondPanel.setSize(Vec2(10, 10));
             },
             function(widget, action){
-                ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.COLLECTABLE_OPEN_EFFECT, {"meshName": "collectables.messageInABottle.voxMesh", "itemScale": 10}));
+                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COLLECTABLE_OPEN_SCREEN, {"meshName": "collectables.messageInABottle.voxMesh", "itemScale": 15}));
             },
             function(widget, action){
-                ::EffectManager.displayEffect(::EffectManager.EffectData(Effect.COLLECTABLE_OPEN_EFFECT, {"meshName": "collectables.hauntedUrn.voxMesh", "itemScale": 10}));
+                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COLLECTABLE_OPEN_SCREEN, {"meshName": "collectables.hauntedUrn.voxMesh", "itemScale": 15}));
             },
             function(widget, action){
                 _gameCore.triggerLightHapticFeedback();

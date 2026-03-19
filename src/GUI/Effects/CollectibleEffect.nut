@@ -361,6 +361,10 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
         return beamNode;
     }
 
+    function getStage(){
+        return mStateMachine_.mCurrentState_;
+    }
+
     function update(){
         return mStateMachine_.update();
     }

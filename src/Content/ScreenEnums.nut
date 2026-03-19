@@ -25,6 +25,7 @@
     BANK_DEPOSIT_WITHDRAW_SCREEN,
     GAME_TITLE_SCREEN,
     ARTIFACT_SCREEN,
+    COLLECTABLE_OPEN_SCREEN,
     GUI_TEST_SCREEN
 
 ");
@@ -55,5 +56,6 @@
     "BankDepositWithdrawScreen",
     "GameTitleScreen",
     "artifactScreen",
+    "collectableOpenScreen",
     "GUITestScreen",
 ]);

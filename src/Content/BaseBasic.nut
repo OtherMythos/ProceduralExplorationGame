@@ -62,6 +62,7 @@
         _doFile("res://src/GUI/Screens/SettingsScreen.nut");
         _doFile("res://src/GUI/Screens/OtherMythosSplashScreen.nut");
         _doFile("res://src/GUI/Screens/FoundOrbScreen.nut");
+        _doFile("res://src/GUI/Screens/CollectibleOpenScreen.nut");
         _doFile("res://src/GUI/Screens/BankDepositWithdrawScreen.nut");
         _doFile("res://src/GUI/Screens/ArtifactScreen.nut");
         _doFile("res://src/GUI/Screens/GUITestScreen.nut");
