@@ -239,6 +239,7 @@
             layoutLine.addCell(typeLabel);
 
             //Artifact items for this type
+            ids.sort();
             foreach(artifactId in ids){
                 local artifactWidget = ::ArtifactWidget(mArtifactScrollPanel_);
                 artifactWidget.setup(Vec2(150, 100), Vec2(0, 0));
