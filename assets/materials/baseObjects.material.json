@@ -50,7 +50,7 @@
             "macroblock": "noCull",
             "blendblock": "unlitBlend",
 
-            "diffuse" : [1, 1, 1, 0.5]
+            "diffuse" : [1, 1, 1, 0.9]
         }
     },
 

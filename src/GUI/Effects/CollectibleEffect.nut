@@ -134,6 +134,17 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
         function update(p, data){
             local numPieces = mPieceNodes_.len();
             local eased = p * p;
+
+            //Fade beams out over the first half of the break
+            local beamAlpha = max(0.0, 1.0 - p * 2.0);
+            for(local i = 0; i < data.beamDatablocks.len(); i++){
+                if(data.beamDatablocks[i] != null){
+                    local colour = data.beamDatablocks[i].getColour();
+                    colour.a = beamAlpha;
+                    data.beamDatablocks[i].setColour(colour);
+                }
+            }
+
             for(local i = 0; i < numPieces; i++){
                 local dir = mPieceDirections_[i];
                 local dist = eased * data.scale * 10.0;
@@ -163,6 +174,7 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
     mVoxItem_ = null;
     mBeamAngles_ = null;
     mBaseQuat_ = null;
+    mBeamDatablocks_ = null;
 
     mCentre_ = Vec2(0, 0);
     mStartPos_ = Vec2(0, 0);
@@ -197,6 +209,8 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
 
         mItem_ = createVoxelItem(mParentNode_, mStartPos_, mScale_, mMeshName_);
 
+        mBeamDatablocks_ = array(COLLECTIBLE_EFFECT_NUM_BEAMS, null);
+
         //Create base orientation once so all states use the same angle
         local baseAngleX = 0.2 + ((rand() % 200) - 100) / 1000.0;
         local baseAngleZ = -0.15 + ((rand() % 200) - 100) / 1000.0;
@@ -209,7 +223,8 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
             "scale": mScale_,
             "effect": this,
             "baseQuat": mBaseQuat_,
-            "shrapnelMeshes": mShrapnelMeshes_
+            "shrapnelMeshes": mShrapnelMeshes_,
+            "beamDatablocks": mBeamDatablocks_
         };
 
         mStateMachine_ = CollectibleEffectStateMachine(stateMachineData);
@@ -218,6 +233,12 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
 
     function destroy(){
         mParentNode_.destroyNodeAndChildren();
+        for(local i = 0; i < mBeamDatablocks_.len(); i++){
+            if(mBeamDatablocks_[i] != null){
+                ::DatablockManager.removeDatablock(mBeamDatablocks_[i]);
+                mBeamDatablocks_[i] = null;
+            }
+        }
     }
 
     function createVoxelItem(parentNode, centre, scale, meshName){
@@ -299,9 +320,15 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
 
         //Create a cube for the beam
         local cube = _scene.createItem("cube");
-        cube.setDatablock("testBox");
+        //Clone the datablock so each beam can have its alpha modified independently
+        local clonedDatablock = ::DatablockManager.quickCloneDatablock("testBox");
+        //Ensure the beam starts fully visible
+        cube.setDatablock(clonedDatablock);
         cube.setRenderQueueGroup(RENDER_QUEUE_EFFECT_FG);
         positionNode.attachObject(cube);
+
+        //Store the cloned datablock so the BREAK state can fade it
+        data.beamDatablocks[beamIndex] = clonedDatablock;
 
         //Generate unique angles to avoid similar beam directions
         local angleMargin = 0.8; //Radians
