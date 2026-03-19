@@ -10,6 +10,13 @@
     mGradientAlpha_ = 1.0;
     mGradientFadingOut_ = false;
     mUIRevealing_ = false;
+    mRising_ = false;
+    mRiseFrame_ = 0;
+    mRiseTotalFrames_ = 30;
+    mGradientStartScreenY_ = 0.0;
+    mGradientTargetScreenY_ = 0.0;
+    mItemStartWorldY_ = 0.0;
+    mItemTargetWorldY_ = 0.0;
     mOnClose_ = null;
     mStartPos_ = null;
     mItemScale_ = 10.0;
@@ -85,9 +92,9 @@
 
     function update(){
         if(mEffect_ != null){
-            if(!mUIRevealing_ && mEffect_.getStage() == CollectibleEffectStages.BREAK){
-                mUIRevealing_ = true;
+            if(!mUIRevealing_ && !mRising_ && mEffect_.getStage() == CollectibleEffectStages.BREAK){
                 startFoundEffect_();
+                startRise_();
             }
             local running = mEffect_.update();
             if(!running){
@@ -103,6 +110,22 @@
                 mFoundEffect_.destroy();
                 mFoundEffect_ = null;
                 ::ScreenManager.queueTransition(null, null, mLayerIdx);
+            }
+        }
+
+        if(mRising_){
+            mRiseFrame_++;
+            local p = min(1.0, mRiseFrame_.tofloat() / mRiseTotalFrames_.tofloat());
+            local eased = p * p;
+            local currentScreenY = mGradientStartScreenY_ + (mGradientTargetScreenY_ - mGradientStartScreenY_) * eased;
+            mGradientPanel_.setCentre(::drawable.x / 2, currentScreenY);
+            if(mFoundEffect_ != null){
+                local currentWorldY = mItemStartWorldY_ + (mItemTargetWorldY_ - mItemStartWorldY_) * eased;
+                mFoundEffect_.setCentre(0, currentWorldY);
+            }
+            if(p >= 1.0){
+                mRising_ = false;
+                mUIRevealing_ = true;
             }
         }
 
@@ -137,6 +160,16 @@
                 mBackButton_.setDisabled(false);
             }
         }
+    }
+
+    function startRise_(){
+        mRising_ = true;
+        mRiseFrame_ = 0;
+        mGradientStartScreenY_ = ::drawable.y / 2;
+        mGradientTargetScreenY_ = ::drawable.y * 0.35;
+        mItemStartWorldY_ = 0.0;
+        local targetWorldPos = ::EffectManager.getWorldPositionForWindowPos(Vec2(::drawable.x / 2, ::drawable.y * 0.35));
+        mItemTargetWorldY_ = targetWorldPos.y;
     }
 
     function startFoundEffect_(){

@@ -82,6 +82,7 @@ local CollectableItemEffectStateMachine = class extends ::Util.StateMachine{
     mParentNode_ = null;
     mItem_ = null;
     mStateMachine_ = null;
+    mStateMachineData_ = null;
 
     function setup(data){
         local meshName = "collectables.messageInABottle.voxMesh";
@@ -95,19 +96,23 @@ local CollectableItemEffectStateMachine = class extends ::Util.StateMachine{
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
         mItem_ = createItem_(mParentNode_, meshName);
 
-        local stateMachineData = {
+        mStateMachineData_ = {
             "item": mItem_,
             "centre": ::Vec2_ZERO,
             "scale": scale,
             "targetPos": targetPos
         };
 
-        mStateMachine_ = CollectableItemEffectStateMachine(stateMachineData);
+        mStateMachine_ = CollectableItemEffectStateMachine(mStateMachineData_);
         mStateMachine_.setState(CollectableItemEffectStages.HOVER);
     }
 
     function destroy(){
         mParentNode_.destroyNodeAndChildren();
+    }
+
+    function setCentre(x, y){
+        mStateMachineData_.centre = Vec2(x, y);
     }
 
     function beginShrink(){
