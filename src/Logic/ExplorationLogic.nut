@@ -461,7 +461,7 @@
         if(!_system.exists(readablePath)) throw "Could not find lore content for path " + readablePath;
         _doFile(readablePath);
 
-        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.READABLE_CONTENT_SCREEN, {"content": readable}), null, 3);
+        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.READABLE_CONTENT_SCREEN, {"content": readable}), null, 4);
         getroottable().rawdelete("readable");
 
         pauseExploration();

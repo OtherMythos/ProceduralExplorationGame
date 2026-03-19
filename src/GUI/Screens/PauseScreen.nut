@@ -3,14 +3,18 @@
 
     mActionSetId_ = null;
 
-    buttonOptions = ["Resume", "Settings", "Return to Main Menu"];
+    buttonOptions = ["Resume", "Settings", "Artifacts", "Return to Main Menu"];
     buttonFunctions = [
         function(widget, action){
             ::Base.mExplorationLogic.setGamePaused(false);
             closeScreen();
         },
         function(widget, action){
-            ::ScreenManager.queueTransition(Screen.SETTINGS_SCREEN, null, 3);
+            ::ScreenManager.queueTransition(Screen.SETTINGS_SCREEN, null, mLayerIdx + 1);
+        },
+        function(widget, action){
+            ::ScreenManager.transitionToScreen(Screen.ARTIFACT_SCREEN, null, mLayerIdx + 1);
+            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
         },
         function(widget, action){
             ::Base.mExplorationLogic.setGamePaused(false);
