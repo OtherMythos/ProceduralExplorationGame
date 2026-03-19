@@ -141,8 +141,19 @@
         mLayoutLine_.addCell(seedLabel);
         mHiddenWidgets_["seedLabel"] <- seedLabel;
 
+        //Create debug console button
+        local debugConsoleButton = mWindow_.createButton();
+        debugConsoleButton.setText("Toggle Debug Console");
+        debugConsoleButton.attachListenerForEvent(function(widget, action){
+            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
+            ::DebugConsole.toggleActive();
+        }, _GUI_ACTION_PRESSED);
+        mLayoutLine_.addCell(debugConsoleButton);
+        mButtonList_.append(debugConsoleButton);
+        mHiddenWidgets_["debugConsole"] <- debugConsoleButton;
+
         //Apply height sizing to new buttons
-        foreach(button in [wireframeButton, renderStatsButton]){
+        foreach(button in [wireframeButton, renderStatsButton, debugConsoleButton]){
             local buttonSize = button.getSize();
             button.setSize(buttonSize.x, buttonSize.y * 0.8);
         }

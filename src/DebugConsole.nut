@@ -2,6 +2,7 @@
     mParentWindow_ = null
     mCommandBox_ = null
     mOutputLabel_ = null
+    mCloseButton_ = null
 
     mCommands_ = null
     mOutput_ = null
@@ -42,6 +43,10 @@
         setActive(!mActive_);
     }
 
+    function getIsMobile(){
+        return (platform == _PLATFORM_IOS || platform == _PLATFORM_ANDROID);
+    }
+
     function setActive(active){
         mActive_ = active;
         mParentWindow_.setVisible(active);
@@ -50,11 +55,14 @@
         if(active){
             assert(mCommandBox_ == null);
 
-            //Create the command box.
+            local isMobile = getIsMobile();
             local actual = mParentWindow_.getSizeAfterClipping();
+            local consoleHeight = isMobile ? actual.y / 2 : actual.y;
+
+            //Create the command box.
             mCommandBox_ = mParentWindow_.createEditbox();
             mCommandBox_.setSize(actual.x, 100);
-            mCommandBox_.setPosition(0, actual.y - 100);
+            mCommandBox_.setPosition(0, consoleHeight - 100);
 
             mCommandBox_.setText(COMMAND_POINTER);
             mCommandBox_.setFocus();
@@ -65,11 +73,27 @@
 
             positionOutputLabel();
 
+            //Create close button on mobile
+            if(isMobile){
+                mCloseButton_ = mParentWindow_.createButton();
+                mCloseButton_.setText("X");
+                mCloseButton_.setSize(50, 50);
+                mCloseButton_.setPosition(actual.x - 50, 0);
+                mCloseButton_.attachListenerForEvent(function(widget, action){
+                    ::DebugConsole.toggleActive();
+                }, _GUI_ACTION_PRESSED);
+            }
+
             mActionSetId_ = ::InputManager.pushActionSet(InputActionSets.DEBUG_CONSOLE);
         }else{
             assert(mCommandBox_ != null);
             _gui.destroy(mCommandBox_);
             mCommandBox_ = null;
+
+            if(mCloseButton_ != null){
+                _gui.destroy(mCloseButton_);
+                mCloseButton_ = null;
+            }
 
             ::InputManager.popActionSet(mActionSetId_);
         }
@@ -110,6 +134,11 @@
 
     function resize(){
         mParentWindow_.setSize(_window.getSize());
+        //Reposition close button if console is active
+        if(mActive_ && mCloseButton_ != null){
+            local actual = mParentWindow_.getSizeAfterClipping();
+            mCloseButton_.setPosition(actual.x - 50, 0);
+        }
     }
 
     function editboxCallback(widget, action){
@@ -168,7 +197,9 @@
 
     function positionOutputLabel(){
         local actual = mParentWindow_.getSizeAfterClipping();
-        mOutputLabel_.setPosition(0, actual.y - 100 - mOutputLabel_.getSize().y);
+        local isMobile = ::Base.getTargetInterface() == TargetInterface.MOBILE;
+        local consoleHeight = isMobile ? actual.y / 2 : actual.y;
+        mOutputLabel_.setPosition(0, consoleHeight - 100 - mOutputLabel_.getSize().y);
     }
 
     function registerCommand(name, desc, numParams, typeMask, callback){
