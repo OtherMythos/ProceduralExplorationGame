@@ -665,6 +665,7 @@ enum InventoryBusEvents{
             ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COLLECTABLE_OPEN_SCREEN, {
                 "startPos": worldPos,
                 "itemScale": 10,
+                "foundMeshName": ::Items[ItemId.NOTE_SCRAP].getMesh(),
                 "onClose": function() {
                     setItemForInventory(capturedInventoryData, ::Item(ItemId.NOTE_SCRAP, {"artifactId": 0}));
                 }.bindenv(this)

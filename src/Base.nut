@@ -241,6 +241,7 @@
         _doFile("res://src/GUI/Effects/FoundItemEffect.nut");
         _doFile("res://src/GUI/Effects/FoundItemEffectIdle.nut");
         _doFile("res://src/GUI/Effects/CollectibleEffect.nut");
+        _doFile("res://src/GUI/Effects/CollectableItemEffect.nut");
         ::EffectManager.setup();
 
         _doFile("res://src/GUI/ScreenManager.nut");

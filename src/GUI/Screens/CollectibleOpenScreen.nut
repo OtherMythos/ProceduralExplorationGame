@@ -1,12 +1,19 @@
 ::ScreenManager.Screens[Screen.COLLECTABLE_OPEN_SCREEN] = class extends ::Screen{
 
     mEffect_ = null;
+    mFoundEffect_ = null;
     mBackButton_ = null;
     mLabel_ = null;
+    mGradientPanel_ = null;
     mLabelAlpha_ = 0.0;
     mButtonAlpha_ = 0.0;
+    mGradientAlpha_ = 1.0;
+    mGradientFadingOut_ = false;
     mUIRevealing_ = false;
     mOnClose_ = null;
+    mStartPos_ = null;
+    mItemScale_ = 10.0;
+    mFoundMeshName_ = null;
 
     function setup(data){
         local winWidth = ::drawable.x;
@@ -14,6 +21,7 @@
         local insets = _window.getScreenSafeAreaInsets();
 
         mWindow_ = _gui.createWindow("CollectibleOpenScreen");
+        mWindow_.setClipBorders(0, 0, 0, 0);
         mWindow_.setSize(::drawable);
 
         local gradientSize = winWidth * 0.6;
@@ -22,6 +30,7 @@
         gradientPanel.setCentre(winWidth / 2, winHeight / 2);
         gradientPanel.setDatablock("simpleGradient");
         gradientPanel.setClickable(false);
+        mGradientPanel_ = gradientPanel;
 
         local label = mWindow_.createLabel();
         label.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
@@ -36,17 +45,28 @@
         local button = mWindow_.createButton();
         button.setDefaultFontSize(button.getDefaultFontSize() * 1.5);
         button.setText("Back");
+        button.setSkinPack("Button_blue");
         button.setExpandHorizontal(true);
         button.setMinSize(0, 100);
         button.setSize(winWidth * 0.9, 100);
         button.setPosition(winWidth * 0.05, winHeight - 100 - winWidth * 0.05 - insets.bottom);
         button.attachListenerForEvent(function(widget, action){
-            ::ScreenManager.queueTransition(null, null, mLayerIdx);
+            if(mFoundEffect_ != null){
+                mFoundEffect_.beginShrink();
+                mBackButton_.setDisabled(true);
+                mGradientFadingOut_ = true;
+            } else {
+                ::ScreenManager.queueTransition(null, null, mLayerIdx);
+            }
         }, _GUI_ACTION_PRESSED, this);
         button.setColour(ColourValue(1, 1, 1, 0));
         button.setTextColour(ColourValue(1, 1, 1, 0));
         button.setDisabled(true);
         mBackButton_ = button;
+
+        if("startPos" in data) mStartPos_ = data.startPos;
+        if("itemScale" in data) mItemScale_ = data.itemScale;
+        if("foundMeshName" in data) mFoundMeshName_ = data.foundMeshName;
 
         local effectData = {};
         if("startPos" in data) effectData.startPos <- data.startPos;
@@ -67,6 +87,7 @@
         if(mEffect_ != null){
             if(!mUIRevealing_ && mEffect_.getStage() == CollectibleEffectStages.BREAK){
                 mUIRevealing_ = true;
+                startFoundEffect_();
             }
             local running = mEffect_.update();
             if(!running){
@@ -76,9 +97,35 @@
             }
         }
 
+        if(mFoundEffect_ != null){
+            local running = mFoundEffect_.update();
+            if(!running){
+                mFoundEffect_.destroy();
+                mFoundEffect_ = null;
+                ::ScreenManager.queueTransition(null, null, mLayerIdx);
+            }
+        }
+
         if(mUIRevealing_ && mLabelAlpha_ < 1.0){
             mLabelAlpha_ = min(1.0, mLabelAlpha_ + (1.0 / 20.0));
             mLabel_.setColour(ColourValue(1, 1, 1, mLabelAlpha_));
+        }
+
+        if(mGradientFadingOut_){
+            if(mGradientAlpha_ > 0.0){
+                mGradientAlpha_ = max(0.0, mGradientAlpha_ - (1.0 / 30.0));
+                mGradientPanel_.setColour(ColourValue(1, 1, 1, mGradientAlpha_));
+            }
+            if(mLabelAlpha_ > 0.0){
+                mLabelAlpha_ = max(0.0, mLabelAlpha_ - (1.0 / 30.0));
+                mLabel_.setColour(ColourValue(1, 1, 1, mLabelAlpha_));
+            }
+            if(mButtonAlpha_ > 0.0){
+                mButtonAlpha_ = max(0.0, mButtonAlpha_ - (1.0 / 30.0));
+                local col = ColourValue(1, 1, 1, mButtonAlpha_);
+                mBackButton_.setColour(col);
+                mBackButton_.setTextColour(col);
+            }
         }
 
         if(mLabelAlpha_ >= 1.0 && mButtonAlpha_ < 1.0){
@@ -92,10 +139,27 @@
         }
     }
 
+    function startFoundEffect_(){
+        if(mFoundMeshName_ == null) return;
+        local foundEffectData = {
+            "meshName": mFoundMeshName_,
+            "itemScale": mItemScale_,
+            "targetPos": mStartPos_
+        };
+        local wrappedData = ::EffectManager.EffectData(Effect.COLLECTABLE_ITEM_EFFECT, foundEffectData);
+        local effectClass = ::EffectManager.Effects[Effect.COLLECTABLE_ITEM_EFFECT];
+        mFoundEffect_ = effectClass(wrappedData);
+        mFoundEffect_.setup(foundEffectData);
+    }
+
     function shutdown(){
         if(mEffect_ != null){
             mEffect_.destroy();
             mEffect_ = null;
+        }
+        if(mFoundEffect_ != null){
+            mFoundEffect_.destroy();
+            mFoundEffect_ = null;
         }
         if(mOnClose_ != null){
             mOnClose_();
