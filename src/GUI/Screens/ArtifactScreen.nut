@@ -3,8 +3,11 @@
     mBackgroundPanel_ = null;
     mButton_ = null;
     mIconPanel_ = null;
+    mGradientPanel_ = null;
+    mRenderIcon_ = null;
     mLabel_ = null;
     mArtifactId_ = ArtifactId.NONE;
+    mAnimTime_ = 0.0;
 
     constructor(parentWindow){
         mParentWindow_ = parentWindow;
@@ -14,10 +17,30 @@
         //Background panel
         mBackgroundPanel_ = mParentWindow_.createPanel();
         mBackgroundPanel_.setSize(size);
+        mBackgroundPanel_.setSkinPack("Panel_midGrey");
 
-        //Icon panel
+        //Icon panel (receives render icon datablock for 3D display)
+        local iconSize = Vec2(size.x * 0.4, size.y * 0.6);
+
+        mGradientPanel_ = mParentWindow_.createPanel();
+        mGradientPanel_.setSize(iconSize * 1.5);
+        mGradientPanel_.setDatablock("simpleGradient");
+        mGradientPanel_.setClickable(false);
+
         mIconPanel_ = mParentWindow_.createPanel();
-        mIconPanel_.setSize(size.x * 0.4, size.y * 0.6);
+        mIconPanel_.setSize(iconSize);
+
+        mRenderIcon_ = ::RenderIconManager.createIcon("readables.noteScrap.voxMesh", true, true);
+        mRenderIcon_.setSize(iconSize.x, iconSize.y);
+        local orientation = Quat();
+        orientation += Quat(0.5, ::Vec3_UNIT_Y);
+        orientation += Quat(-0.5, ::Vec3_UNIT_Z);
+        orientation += Quat(1.0, ::Vec3_UNIT_X);
+        mRenderIcon_.setOrientation(orientation);
+        local datablock = mRenderIcon_.getDatablock();
+        if(datablock != null){
+            mIconPanel_.setDatablock(datablock);
+        }
 
         //Label
         mLabel_ = mParentWindow_.createLabel();
@@ -40,14 +63,21 @@
 
         //Background panel and button at origin
         mBackgroundPanel_.setPosition(position);
-        mBackgroundPanel_.setColour(ColourValue(0.1, 0.1, 0.1, 0.8));
+        //mBackgroundPanel_.setColour(ColourValue(0.1, 0.1, 0.1, 0.8));
         mButton_.setPosition(position);
 
         //Icon positioned in upper-middle area
         local iconX = position.x + (size.x / 2 - mIconPanel_.getSize().x / 2);
         local iconY = position.y;
+        local iconCentreX = iconX + mIconPanel_.getSize().x / 2;
+        local iconCentreY = iconY + 10 + mIconPanel_.getSize().y / 2;
+        mGradientPanel_.setCentre(iconCentreX, iconCentreY);
         mIconPanel_.setPosition(iconX, iconY + 10);
         mIconPanel_.setClickable(false);
+
+        //Centre render icon on icon panel
+        local iconCentre = mIconPanel_.getPosition() + mIconPanel_.getSize() / 2;
+        mRenderIcon_.setPosition(iconCentre);
 
         //Label positioned below icon
         local labelY = position.y + mIconPanel_.getSize().y + 5;
@@ -59,8 +89,13 @@
         local artifactDef = ::Artifacts[artifactId];
         mLabel_.setText(artifactDef.getName());
         mLabel_.sizeToFit(mBackgroundPanel_.getSize().x * 0.9);
-        //Icon is hardcoded to item_noteScrap for now
-        mIconPanel_.setSkin("item_noteScrap");
+
+        //Update render icon mesh
+        mRenderIcon_.setMesh(::Items[ItemId.NOTE_SCRAP].getMesh());
+        local datablock = mRenderIcon_.getDatablock();
+        if(datablock != null){
+            mIconPanel_.setDatablock(datablock);
+        }
 
         //Adjust background panel size to cover entire label
         local position = mBackgroundPanel_.getPosition();
@@ -73,6 +108,20 @@
         mButton_.setSize(mBackgroundPanel_.getSize());
     }
 
+    function update(){
+        mAnimTime_ += 0.01;
+        local rotY = Quat(sin(mAnimTime_ * 1.5), ::Vec3_UNIT_Y);
+        local rotX = Quat(sin(mAnimTime_ * 2.0), ::Vec3_UNIT_X);
+        local baseOrient = Quat();
+        baseOrient += Quat(0.5, ::Vec3_UNIT_Y);
+        baseOrient += Quat(-0.5, ::Vec3_UNIT_Z);
+        baseOrient += Quat(1.0, ::Vec3_UNIT_X);
+        local animatedOrient = baseOrient;
+        animatedOrient += rotY;
+        animatedOrient += rotX;
+        mRenderIcon_.setOrientation(animatedOrient);
+    }
+
     function onArtifactSelected_(){
         local artifactDef = ::Artifacts[mArtifactId_];
         local path = artifactDef.getScript();
@@ -82,7 +131,15 @@
     }
 
     function shutdown(){
+        if(mIconPanel_ != null){
+            mIconPanel_.setDatablock("simpleGrey");
+        }
+        if(mRenderIcon_ != null){
+            mRenderIcon_.destroy();
+            mRenderIcon_ = null;
+        }
         _gui.destroy(mBackgroundPanel_);
+        _gui.destroy(mGradientPanel_);
         _gui.destroy(mButton_);
         _gui.destroy(mIconPanel_);
         _gui.destroy(mLabel_);
@@ -93,6 +150,7 @@
 
     mWindow_ = null;
     mArtifactScrollPanel_ = null;
+    mArtifactWidgets_ = null;
     mActionSetId_ = null;
     mPaddingTop_ = 0;
 
@@ -169,7 +227,7 @@
         //Create UI for each artifact type
         local layoutLine = _gui.createLayoutLine();
         //layoutLine.setOrientation(_ORIENTATION_VERTICAL);
-        local widgets = [];
+        mArtifactWidgets_ = [];
         local artifactIds = [];
 
         foreach(typeId, ids in artifactTypes){
@@ -185,7 +243,7 @@
                 local artifactWidget = ::ArtifactWidget(mArtifactScrollPanel_);
                 artifactWidget.setup(Vec2(150, 100), Vec2(0, 0));
                 layoutLine.addCell(artifactWidget.mBackgroundPanel_);
-                widgets.append(artifactWidget);
+                mArtifactWidgets_.append(artifactWidget);
                 artifactIds.append(artifactId);
             }
         }
@@ -205,19 +263,19 @@
         layoutLine.layout();
 
         //Position widgets after layout
-        foreach(widget in widgets){
+        foreach(widget in mArtifactWidgets_){
             widget.setPosition(widget.mBackgroundPanel_.getPosition());
         }
 
         //Set artifacts after layout and positioning
-        for(local i = 0; i < widgets.len(); i++){
-            widgets[i].setArtifact(artifactIds[i]);
+        for(local i = 0; i < mArtifactWidgets_.len(); i++){
+            mArtifactWidgets_[i].setArtifact(artifactIds[i]);
         }
 
         layoutLine.layout();
 
         //Position widgets after layout
-        foreach(widget in widgets){
+        foreach(widget in mArtifactWidgets_){
             widget.setPosition(widget.mBackgroundPanel_.getPosition());
         }
     }
@@ -233,7 +291,20 @@
         }
     }
 
+    function update(){
+        if(mArtifactWidgets_ == null) return;
+        foreach(widget in mArtifactWidgets_){
+            widget.update();
+        }
+    }
+
     function shutdown(){
+        if(mArtifactWidgets_ != null){
+            foreach(widget in mArtifactWidgets_){
+                widget.shutdown();
+            }
+            mArtifactWidgets_ = null;
+        }
         base.shutdown();
         ::InputManager.popActionSet(mActionSetId_);
     }
