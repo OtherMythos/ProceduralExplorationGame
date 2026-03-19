@@ -105,17 +105,53 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
         }
     };
     CollectibleEffectStateMachine.mStates_[CollectibleEffectStages.BREAK] = class extends ::Util.State{
-        mTotalCount_ = 10
+        mTotalCount_ = 30
         mNextState_ = CollectibleEffectStages.NONE;
+        mPieceNodes_ = null;
+        mPieceDirections_ = null;
+
         function start(data){
-            //Remove the original bottle and prepare for break animation
-            //In future, this will create two broken pieces and animate them
-        }
-        function update(p, data){
-            //Scale down the bottle as it breaks
+            //Hide the original item
             local scaleNode = data.bottle.getChild(0);
-            local newScale = (1.0 - p) * data.scale;
-            scaleNode.setScale(newScale, newScale, newScale);
+            scaleNode.setScale(0, 0, 0);
+
+            //Spawn shrapnel pieces
+            local pieces = data.shrapnelMeshes;
+            local numPieces = pieces.len();
+            mPieceNodes_ = array(numPieces);
+            mPieceDirections_ = array(numPieces);
+
+            for(local i = 0; i < numPieces; i++){
+                local pieceNode = data.effect.createShrapnelPiece(pieces[i], data);
+                mPieceNodes_[i] = pieceNode;
+
+                //Spread pieces evenly around a circle so they fly apart
+                local angle = (6.28318 / numPieces) * i + (rand() % 100) / 500.0;
+                mPieceDirections_[i] = Vec3(cos(angle), sin(angle), 0);
+            }
+        }
+
+        function update(p, data){
+            local numPieces = mPieceNodes_.len();
+            local eased = p * p;
+            for(local i = 0; i < numPieces; i++){
+                local dir = mPieceDirections_[i];
+                local dist = eased * data.scale * 10.0;
+                mPieceNodes_[i].setPosition(
+                    data.centre.x + dir.x * dist,
+                    data.centre.y + dir.y * dist * -4,
+                    COLLECTIBLE_EFFECT_ITEM_Z + dir.z * dist
+                );
+
+                //Spin and fade out by shrinking
+                local spinQuat = Quat(p * 3.14159 * 2.0 * (i % 2 == 0 ? 1.0 : -1.0), Vec3(dir.y, dir.x, 0.5));
+                mPieceNodes_[i].setOrientation(spinQuat);
+
+                local scaleNode = mPieceNodes_[i].getChild(0);
+                local shrinkP = max(0.0, (p - 0.5) * 1); //Delay shrink until halfway through
+                local newScale = (1.0 - shrinkP) * data.scale;
+                scaleNode.setScale(newScale, newScale, newScale);
+            }
         }
     };
 }
@@ -132,6 +168,11 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
     mStartPos_ = Vec2(0, 0);
     mScale_ = 1.0;
     mMeshName_ = "collectables.messageInABottle.voxMesh";
+    mShrapnelMeshes_ = [
+        "collectableShrapnel.messageInABottle.1.voxMesh",
+        "collectableShrapnel.messageInABottle.2.voxMesh",
+        "collectableShrapnel.messageInABottle.3.voxMesh",
+    ];
 
     mStateMachine_ = null;
 
@@ -147,6 +188,9 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
         }
         if("meshName" in data){
             mMeshName_ = data.meshName;
+        }
+        if("shrapnelMeshes" in data){
+            mShrapnelMeshes_ = data.shrapnelMeshes;
         }
 
         mParentNode_ = _scene.getRootSceneNode().createChildSceneNode();
@@ -164,7 +208,8 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
             "startPos": mStartPos_,
             "scale": mScale_,
             "effect": this,
-            "baseQuat": mBaseQuat_
+            "baseQuat": mBaseQuat_,
+            "shrapnelMeshes": mShrapnelMeshes_
         };
 
         mStateMachine_ = CollectibleEffectStateMachine(stateMachineData);
@@ -225,6 +270,17 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
 
         //Fallback if we can't find unique angles
         return {"angle1": (rand() % 628) / 100.0, "angle2": (rand() % 628) / 100.0, "angle3": (rand() % 628) / 100.0};
+    }
+
+    function createShrapnelPiece(meshName, data){
+        local pieceNode = mParentNode_.createChildSceneNode();
+        local animNode = pieceNode.createChildSceneNode();
+        local voxItem = _gameCore.createVoxMeshItem(meshName);
+        voxItem.setRenderQueueGroup(RENDER_QUEUE_EFFECT_FG);
+        animNode.attachObject(voxItem);
+        animNode.setScale(data.scale, data.scale, data.scale);
+        pieceNode.setPosition(data.centre.x, data.centre.y, COLLECTIBLE_EFFECT_ITEM_Z);
+        return pieceNode;
     }
 
     function createBeam(data, beamIndex){

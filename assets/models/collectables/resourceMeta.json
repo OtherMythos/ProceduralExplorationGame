@@ -2,6 +2,9 @@
     "Universal":{
         "collectables.gox": {
             "separateLayers": true
+        },
+        "collectableShrapnel.gox": {
+            "separateLayers": true
         }
     }
 }

@@ -32,6 +32,13 @@
         {
             "src_blend_factor" : "one",
             "dst_blend_factor" : "one_minus_src_alpha"
+        },
+        "unlitBlend" :
+        {
+            "src_blend_factor": "src_alpha",
+            "dst_blend_factor": "one_minus_src_alpha",
+            "src_alpha_blend_factor": "one_minus_dst_alpha",
+            "dst_alpha_blend_factor": "one"
         }
     },
 
@@ -41,18 +48,9 @@
         {
             "workflow": "specular_fresnel",
             "macroblock": "noCull",
-            "blendblock": "blend",
+            "blendblock": "unlitBlend",
 
-            "diffuse" :
-            {
-                "value" : [1, 1, 1, 0.5]
-            },
-
-            "transparency" :
-            {
-                "value" : 0.5,
-                "mode" : "Transparent"
-            }
+            "diffuse" : [1, 1, 1, 0.5]
         }
     },
 
