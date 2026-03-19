@@ -1,6 +1,6 @@
 ::ScreenManager <- {
 
-    "MAX_SCREENS": 4,
+    "MAX_SCREENS": 6,
     "MAX_PREV_SCREENS": 3,
     //Contains screen objects rather than construction data.
     "mActiveScreens_": null,
