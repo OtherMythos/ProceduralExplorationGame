@@ -701,14 +701,6 @@ enum ExplorationScreenWidgetType{
         //mExplorationItemsContainer_.addToLayout(layoutLine);
 
         //mExplorationEnemiesContainer_ = ExplorationEnemiesContainer(mWindow_, mExplorationBus_);
-        //mExplorationMovesContainer_ = ExplorationMovesContainer(mWindow_, mExplorationBus_);
-        if(mobileInterface){
-            //mExplorationMovesContainer_.addToLayout(layoutLine);
-        }else{
-            //mExplorationMovesContainer_.setPosition(Vec2(0, 0));
-            //mExplorationMovesContainer_.setSize(400, 100);
-        }
-        //mExplorationScreenWidgetType_[ExplorationScreenWidgetType.MOVES_CONTAINER] = mExplorationMovesContainer_;
         mWorldMapDisplay_.addToLayout(layoutLine);
         mExplorationScreenWidgetType_[ExplorationScreenWidgetType.MINIMAP] = mWorldMapDisplay_;
 
@@ -728,12 +720,8 @@ enum ExplorationScreenWidgetType{
         local insets = _window.getScreenSafeAreaInsets();
         mWorldMapDisplay_.positionWorldMapDisplay(Vec2(mWorldMapDisplay_.getMapViewerPosition().x, insets.top + statsWidget.getSize().y));
         //mExplorationStatsContainer_.getSize().y
-        //mExplorationMovesContainer_.sizeForButtons();
 
-        mScreenInputCheckList_ = [
-            //mExplorationStatsContainer_//,
-            //mExplorationMovesContainer_
-        ];
+        mScreenInputCheckList_ = [];
 
         local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
         if(mobile){
@@ -989,7 +977,6 @@ enum ExplorationScreenWidgetType{
 
         if(screenshotMode){
             mExplorationStatsContainer_.setVisible(false);
-            //mExplorationMovesContainer_.setVisible(false);
         }
 
         mExplorationStatsContainer_.setPosition(Vec2(0, insets.top));
@@ -1178,8 +1165,6 @@ enum ExplorationScreenWidgetType{
 
     function update(){
         mLogicInterface_.tickUpdate();
-        //mExplorationMovesContainer_.update();
-        //mExplorationStatsContainer_.update();
         mWorldMapDisplay_.update();
         mDiscoverLevelUpScreen_.update();
 
@@ -1615,7 +1600,6 @@ enum ExplorationScreenWidgetType{
 
 _doFile("script://ExplorationScreenCompassAnimator.nut");
 _doFile("script://ExplorationWorldMapDisplay.nut");
-_doFile("script://ExplorationMovesContainer.nut");
 _doFile("script://ExplorationEndScreen.nut");
 _doFile("script://ExplorationPlayerDeathScreen.nut");
 _doFile("script://ExplorationTooltipManager.nut");
