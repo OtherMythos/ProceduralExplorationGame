@@ -9,7 +9,8 @@
             "depth_write" : false
         },
         "noCull":{
-            "cull_mode" : "none"
+            "cull_mode" : "none",
+            "depth_check" : true
         }
     },
 
@@ -31,6 +32,27 @@
         {
             "src_blend_factor" : "one",
             "dst_blend_factor" : "one_minus_src_alpha"
+        }
+    },
+
+    "unlit":
+    {
+        "testBox" :
+        {
+            "workflow": "specular_fresnel",
+            "macroblock": "noCull",
+            "blendblock": "blend",
+
+            "diffuse" :
+            {
+                "value" : [1, 1, 1, 0.5]
+            },
+
+            "transparency" :
+            {
+                "value" : 0.5,
+                "mode" : "Transparent"
+            }
         }
     },
 

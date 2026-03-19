@@ -32,6 +32,9 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
             local currentPos = data.startPos + (data.centre - data.startPos) * p;
             data.bottle.setPosition(currentPos.x, currentPos.y, COLLECTIBLE_EFFECT_ITEM_Z);
 
+            //Apply base orientation so no snap when transitioning to vibrate phase
+            data.bottle.setOrientation(data.baseQuat);
+
             //Scale in during movement
             local scaleNode = data.bottle.getChild(0);
             local newScale = p * data.scale;
@@ -45,14 +48,15 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
         mBeamLengthMultipliers_ = null;
         mTiltX_ = 0.0;
         mTiltZ_ = 0.0;
+        mBaseQuat_ = null;
 
         function start(data){
             data.bottle.setPosition(data.centre.x, data.centre.y, COLLECTIBLE_EFFECT_ITEM_Z);
             mBeams_ = array(COLLECTIBLE_EFFECT_NUM_BEAMS);
             mBeamLengthMultipliers_ = array(COLLECTIBLE_EFFECT_NUM_BEAMS);
-            //Random small base tilt so the item never starts perfectly upright
-            mTiltX_ = ((rand() % 200) - 100) / 1000.0; //-0.1 to 0.1
-            mTiltZ_ = ((rand() % 200) - 100) / 1000.0; //-0.1 to 0.1
+            //Start dynamic tilt at zero; beam kicks will push it away from the base
+            mTiltX_ = 0.0;
+            mTiltZ_ = 0.0;
             for(local i = 0; i < COLLECTIBLE_EFFECT_NUM_BEAMS; i++){
                 mBeams_[i] = null;
                 mBeamLengthMultipliers_[i] = 0.5 + (rand() % 1000) / 1000.0; //0.5 to 1.5
@@ -61,8 +65,8 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
 
         function update(p, data){
             //Apply vibration based on sine wave
-            local vibrationX = sin(p * 3.14159 * 8) * COLLECTIBLE_EFFECT_VIBRATION_AMOUNT * data.scale;
-            local vibrationY = cos(p * 3.14159 * 8) * COLLECTIBLE_EFFECT_VIBRATION_AMOUNT * data.scale;
+            local vibrationX = sin(p * 3.14159 * 16) * COLLECTIBLE_EFFECT_VIBRATION_AMOUNT * data.scale;
+            local vibrationY = cos(p * 3.14159 * 16) * COLLECTIBLE_EFFECT_VIBRATION_AMOUNT * data.scale;
 
             data.bottle.setPosition(data.centre.x + vibrationX, data.centre.y + vibrationY, COLLECTIBLE_EFFECT_ITEM_Z);
 
@@ -94,10 +98,10 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
                 }
             }
 
-            //Apply accumulated tilt to the item's orientation
+            //Apply accumulated tilt on top of the shared base rotation
             local quatX = Quat(mTiltX_, Vec3(1, 0, 0));
             local quatZ = Quat(mTiltZ_, Vec3(0, 0, 1));
-            data.bottle.setOrientation(quatX * quatZ);
+            data.bottle.setOrientation(data.baseQuat * quatX * quatZ);
         }
     };
     CollectibleEffectStateMachine.mStates_[CollectibleEffectStages.BREAK] = class extends ::Util.State{
@@ -122,6 +126,7 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
     mItem_ = null;
     mVoxItem_ = null;
     mBeamAngles_ = null;
+    mBaseQuat_ = null;
 
     mCentre_ = Vec2(0, 0);
     mStartPos_ = Vec2(0, 0);
@@ -148,12 +153,18 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
 
         mItem_ = createVoxelItem(mParentNode_, mStartPos_, mScale_, mMeshName_);
 
+        //Create base orientation once so all states use the same angle
+        local baseAngleX = 0.2 + ((rand() % 200) - 100) / 1000.0;
+        local baseAngleZ = -0.15 + ((rand() % 200) - 100) / 1000.0;
+        mBaseQuat_ = Quat(baseAngleX, Vec3(1, 0, 0)) * Quat(baseAngleZ, Vec3(0, 0, 1));
+
         local stateMachineData = {
             "bottle": mItem_,
             "centre": mCentre_,
             "startPos": mStartPos_,
             "scale": mScale_,
-            "effect": this
+            "effect": this,
+            "baseQuat": mBaseQuat_
         };
 
         mStateMachine_ = CollectibleEffectStateMachine(stateMachineData);
@@ -232,6 +243,7 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
 
         //Create a cube for the beam
         local cube = _scene.createItem("cube");
+        cube.setDatablock("testBox");
         cube.setRenderQueueGroup(RENDER_QUEUE_EFFECT_FG);
         positionNode.attachObject(cube);
 
@@ -246,12 +258,13 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
         mBeamAngles_[beamIndex] = angles;
 
         local quat = Quat(randomAngle1, Vec3(1, 0, 0));
+        //quat *= Quat(PI, Vec3(0, 1, 0));
         quat = quat * Quat(randomAngle2, Vec3(0, 1, 0));
-        //quat = quat * Quat(randomAngle3, Vec3(0, 0, 1));
+        quat = quat * Quat(randomAngle3 * 0.05, Vec3(0, 0, 1));
         beamNode.setOrientation(quat);
 
         //Position at the item centre plus a slight offset
-        local offsetAmount = 0.5;
+        local offsetAmount = 20;
         local offset = Vec3(
             cos(randomAngle1) * offsetAmount,
             sin(randomAngle2) * offsetAmount,
