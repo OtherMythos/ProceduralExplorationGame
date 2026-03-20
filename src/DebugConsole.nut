@@ -44,6 +44,7 @@
     }
 
     function getIsMobile(){
+        local platform = _settings.getPlatform();
         return (platform == _PLATFORM_IOS || platform == _PLATFORM_ANDROID);
     }
 
@@ -197,7 +198,7 @@
 
     function positionOutputLabel(){
         local actual = mParentWindow_.getSizeAfterClipping();
-        local isMobile = ::Base.getTargetInterface() == TargetInterface.MOBILE;
+        local isMobile = getIsMobile();
         local consoleHeight = isMobile ? actual.y / 2 : actual.y;
         mOutputLabel_.setPosition(0, consoleHeight - 100 - mOutputLabel_.getSize().y);
     }
