@@ -50,10 +50,10 @@ enum ExplorationScreenWidgetType{
     mSwipeCompassTargetOpacity_ = 0.0;
     mSwipeCompassCurrentOpacity_ = 0.0;
     mSwipeHoldTimer_ = 0;
-    static SWIPE_HOLD_THRESHOLD = 60; //1 second at 60fps
+    static SWIPE_HOLD_THRESHOLD = 30; //1 second at 60fps
     static SWIPE_HOLD_REPEAT_INTERVAL = 15; //Repeat attack every 0.25 seconds
     //Hold finger still on player for this many frames to open the special moves ring
-    static SPECIAL_MOVES_HOLD_THRESHOLD = 30; //0.75 seconds at 60fps
+    static SPECIAL_MOVES_HOLD_THRESHOLD = 20; //0.75 seconds at 60fps
     //Pixel movement below this is considered "still" for special moves activation
     static SPECIAL_MOVES_MOVEMENT_THRESHOLD = 15.0;
     mSpecialMovesHoldActive_ = false;
