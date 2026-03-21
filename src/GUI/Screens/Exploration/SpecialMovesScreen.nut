@@ -76,11 +76,16 @@
     mButtons_ = null;
     mRingCentre_ = null;
     mSelectedIndex_ = -1;
-    mWasMouseDown_ = false;
+    //The finger id from MultiTouchManager that triggered this screen
+    mFingerId_ = null;
+    mFingerWasActive_ = false;
 
     function setup(data){
         if(data != null && data.rawin("centre")){
             mRingCentre_ = data.rawget("centre");
+        }
+        if(data != null && data.rawin("fingerId")){
+            mFingerId_ = data.rawget("fingerId");
         }
         recreate();
     }
@@ -94,8 +99,8 @@
         mSelectedIndex_ = -1;
         createButtons_();
         positionButtons_();
-        //Initialise with current button state so we don't fire a spurious release
-        mWasMouseDown_ = _input.getMouseButton(_MB_LEFT);
+        //Check if the finger is currently tracked
+        mFingerWasActive_ = (mFingerId_ != null && ::MultiTouchManager.getFingerPosition(mFingerId_) != null);
     }
 
     function createButtons_(){
@@ -121,34 +126,45 @@
         }
     }
 
+    function getFingerPixelPos_(){
+        if(mFingerId_ == null) return null;
+        local pos = ::MultiTouchManager.getFingerPosition(mFingerId_);
+        if(pos == null) return null;
+        //Touch positions from MultiTouchManager are normalised 0-1; convert to pixel space
+        return Vec2(pos.x * ::canvasSize.x, pos.y * ::canvasSize.y);
+    }
+
     function update(){
-        local mouseDown = _input.getMouseButton(_MB_LEFT);
-        local mousePos = Vec2(_input.getMouseX(), _input.getMouseY());
+        local fingerPos = getFingerPixelPos_();
+        local fingerActive = (fingerPos != null);
 
         local centreX = mRingCentre_ != null ? mRingCentre_.x : _window.getWidth() / 2.0;
         local centreY = mRingCentre_ != null ? mRingCentre_.y : _window.getHeight() / 2.0;
 
-        local dx = mousePos.x - centreX;
-        local dy = mousePos.y - centreY;
-        local dist = sqrt(dx * dx + dy * dy);
-
-        //Determine which angular segment the finger is in (only past the deadzone)
+        //Determine selection from finger position
         local newSelectedIndex = -1;
-        if(dist >= SELECTION_DEADZONE){
-            local angle = atan2(dy, dx);
-            local startAngle = -PI / 2.0;
-            local angleStep = (PI * 2.0) / NUM_BUTTONS;
-            local halfStep = angleStep * 0.5;
+        if(fingerActive){
+            local dx = fingerPos.x - centreX;
+            local dy = fingerPos.y - centreY;
+            local dist = sqrt(dx * dx + dy * dy);
 
-            for(local i = 0; i < NUM_BUTTONS; i++){
-                local segCentre = startAngle + angleStep * i;
-                local diff = angle - segCentre;
-                //Normalise diff to [-PI, PI]
-                while(diff > PI) diff -= PI * 2.0;
-                while(diff < -PI) diff += PI * 2.0;
-                if(diff >= -halfStep && diff < halfStep){
-                    newSelectedIndex = i;
-                    break;
+            //Only select past the deadzone radius
+            if(dist >= SELECTION_DEADZONE){
+                local angle = atan2(dy, dx);
+                local startAngle = -PI / 2.0;
+                local angleStep = (PI * 2.0) / NUM_BUTTONS;
+                local halfStep = angleStep * 0.5;
+
+                for(local i = 0; i < NUM_BUTTONS; i++){
+                    local segCentre = startAngle + angleStep * i;
+                    local diff = angle - segCentre;
+                    //Normalise diff to [-PI, PI]
+                    while(diff > PI) diff -= PI * 2.0;
+                    while(diff < -PI) diff += PI * 2.0;
+                    if(diff >= -halfStep && diff < halfStep){
+                        newSelectedIndex = i;
+                        break;
+                    }
                 }
             }
         }
@@ -170,16 +186,23 @@
         }
 
         //On finger release, trigger the selected move (if any) and close
-        if(mWasMouseDown_ && !mouseDown){
+        if(mFingerWasActive_ && !fingerActive){
             if(mSelectedIndex_ >= 0){
                 print("Special move " + (mSelectedIndex_ + 1) + " triggered!");
             }
             closeScreen();
         }
-        mWasMouseDown_ = mouseDown;
+        mFingerWasActive_ = fingerActive;
     }
 
     function shutdown(){
+        //Release the SPECIAL_MOVES world state for this finger
+        if(mFingerId_ != null){
+            local world = ::Base.mExplorationLogic.mCurrentWorld_;
+            if(world != null){
+                world.releaseStateForFinger(mFingerId_);
+            }
+        }
         base.shutdown();
     }
 };

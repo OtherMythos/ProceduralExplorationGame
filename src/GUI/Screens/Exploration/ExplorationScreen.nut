@@ -811,7 +811,8 @@ enum ExplorationScreenWidgetType{
             mPlayerDirectButton.setOnPressed(function(fingerId, pos){
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
                 if(currentWorld == null) return false;
-                return currentWorld.requestDirectingPlayerForFinger(fingerId);
+                local result = currentWorld.requestDirectingPlayerForFinger(fingerId);
+                return result;
             }.bindenv(this));
             mPlayerDirectButton.setOnReleased(function(fingerId){
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
@@ -863,12 +864,16 @@ enum ExplorationScreenWidgetType{
             mCameraButton.setOnPressed(function(fingerId, pos){
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
                 if(currentWorld == null) return false;
-                return currentWorld.requestOrientingCameraWithMovementForFinger(fingerId);
+                local result = currentWorld.requestOrientingCameraWithMovementForFinger(fingerId);
+                return result;
             }.bindenv(this));
             mCameraButton.setOnReleased(function(fingerId){
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
                 if(currentWorld != null){
                     currentWorld.releaseStateForFinger(fingerId);
+                    //Feed the double-tap timer on release so claimed fingers
+                    //(from TOUCH_MOTION late-begin) still trigger dash.
+                    currentWorld.notifyDoubleTapCheck();
                 }
             }.bindenv(this));
             mCameraButton.setOnTapped(function(fingerId, pos){
@@ -937,6 +942,9 @@ enum ExplorationScreenWidgetType{
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
                 if(currentWorld != null){
                     currentWorld.releaseStateForFinger(fingerId);
+                    //Feed the double-tap timer on release so dash detection
+                    //works even when the finger was claimed by late-begin.
+                    currentWorld.notifyDoubleTapCheck();
                 }
             }.bindenv(this));
             mCameraButton.setOnTapped(function(fingerId, pos){
@@ -1038,12 +1046,14 @@ enum ExplorationScreenWidgetType{
             mCompassButton.setPosition(Vec2(compassPos.x, compassPos.y));
             mCompassButton.setSize(Vec2(compassSize.x, compassSize.y));
 
-            mPlayerDirectButton.setSize(Vec2(100, 100));
-            mPlayerDirectButton.setPosition(Vec2(mZoomModifierButton.getPosition().x - 100, mCompassAnimator_.getPosition().y - 100));
+            //Size the MultiTouchButton to match the full joystick visual
+            //so touches on the outer ring are not lost to the camera button.
+            local joystickCoreSize = Vec2(100, 100);
+            local joystickVisualSize = joystickCoreSize + joystickCoreSize * 0.5;
+            mPlayerDirectButton.setSize(joystickVisualSize);
+            mPlayerDirectButton.setPosition(Vec2(mZoomModifierButton.getPosition().x - joystickVisualSize.x, mCompassAnimator_.getPosition().y - joystickVisualSize.y));
             mPlayerDirectButton.setVisible(true);
-
-            local directSize = mPlayerDirectButton.getSize();
-            mPlayerDirectJoystick_.setSize(directSize + directSize * 0.5);
+            mPlayerDirectJoystick_.setSize(joystickVisualSize);
             repositionJoystick_();
 
             local zoomLinesSize = mZoomLines_.getSize();
@@ -1153,12 +1163,11 @@ enum ExplorationScreenWidgetType{
         if(mPlayerDirectJoystick_ == null || mPlayerDirectButton == null){
             return;
         }
-        local directSize = mPlayerDirectButton.getSize();
-        local joystickPos = mPlayerDirectButton.getPosition() - directSize * 0.25;
+        //Button and visual are now the same size, so just align them.
+        local joystickPos = mPlayerDirectButton.getPosition();
         if(::SystemSettings.getSetting(SystemSetting.JOYSTICK_LEFT_SIDE)){
             joystickPos.x = 0;
-            local buttonPos = joystickPos + directSize * 0.25;
-            mPlayerDirectButton.setPosition(buttonPos);
+            mPlayerDirectButton.setPosition(joystickPos);
         }
         mPlayerDirectJoystick_.setPosition(joystickPos);
     }
@@ -1276,10 +1285,13 @@ enum ExplorationScreenWidgetType{
                         mSwipeCompassTargetOpacity_ = 0.0;
                         local world = ::Base.mExplorationLogic.mCurrentWorld_;
                         if(world != null && mSwipeAttackFingerId_ != null){
+                            //Transition the finger from SWIPING_ATTACK to SPECIAL_MOVES
+                            //so the projectile attack cannot fire while selecting.
                             world.releaseStateForFinger(mSwipeAttackFingerId_);
+                            world.requestSpecialMovesForFinger(mSwipeAttackFingerId_);
                         }
                         local centre = getPlayerScreenCentre_();
-                        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.SPECIAL_MOVES_SCREEN, {"centre": centre}), null, 3);
+                        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.SPECIAL_MOVES_SCREEN, {"centre": centre, "fingerId": mSwipeAttackFingerId_}), null, 3);
                         return;
                     }
                 }

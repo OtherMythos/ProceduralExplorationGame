@@ -145,7 +145,6 @@
             local accepted = mOnPressed_(fid, pos);
             //If the callback explicitly returns false, reject the finger.
             if(accepted == false){
-
                 delete mActiveTouches_[fid];
                 return;
             }

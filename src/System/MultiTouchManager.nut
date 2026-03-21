@@ -12,6 +12,10 @@
     //Desktop mouse-to-touch spoofing state.
     mMouseWasPressed_ = false
 
+    //Raw native finger identifiers, keyed by string finger ID.
+    //Used to re-query positions for fingers that started at (0,0).
+    mRawFingerIds_ = {}
+
     function setup(){
         _event.subscribe(_EVENT_SYSTEM_INPUT_TOUCH_BEGAN, recieveTouchBegan, this);
         _event.subscribe(_EVENT_SYSTEM_INPUT_TOUCH_ENDED, recieveTouchEnded, this);
@@ -47,6 +51,7 @@
         local f = data.tostring();        //Grab the last known position before removing.
         local lastPos = mFingers_.rawin(f) ? mFingers_[f] : null;
         mFingers_.rawdelete(f);
+        if(f in mRawFingerIds_) delete mRawFingerIds_[f];
 
         local idx = mTouches_.find(f);
         if(idx != null){
@@ -62,7 +67,6 @@
                 break;
             }
         }
-
         //Dispatch end to registered buttons.
         foreach(btn in mButtons_){
             btn.notifyTouchEnded_(f);
@@ -72,7 +76,6 @@
         //(no TOUCH_MOTION fired). Dispatch a tap notification so
         //buttons can detect double-tap gestures.
         if(!wasClaimed && lastPos != null){
-
             foreach(btn in mButtons_){
                 btn.notifyTouchTapped_(f, lastPos);
             }
@@ -108,7 +111,7 @@
                 //Use first-match-wins for late-begin: once a button claims
                 //an unclaimed finger, stop dispatching to further buttons.
                 local claimed = false;
-                foreach(btn in mButtons_){
+                foreach(idx, btn in mButtons_){
                     if(claimed && !btn.isFingerActive(f)) continue;
                     local accepted = btn.notifyTouchMoved_(f, pos);
                     if(accepted){
@@ -124,10 +127,14 @@
     function recieveTouchBegan(id, data){
         local f = data.fingerId.tostring();
 
+        //Store the raw native finger identifier so we can re-query
+        //its position later if the initial position is (0,0).
+        mRawFingerIds_[f] <- data.fingerId;
+
         //Try to get the initial position from the event data.
         local pos = Vec2();
         try{
-            local touchPos = _input.getTouchPosition(data);
+            local touchPos = _input.getTouchPosition(data.fingerId);
             if(touchPos != null) pos = touchPos;
         }catch(e){
         }
@@ -163,6 +170,49 @@
     }
 
     /**
+     * Called each frame to resolve fingers that began at (0,0).
+     * On iOS, TOUCH_BEGAN often lacks position data. If the finger
+     * stays still, no TOUCH_MOTION fires either, leaving buttons
+     * unable to claim it via late-begin. This function re-queries
+     * the engine for the real position and dispatches a synthetic
+     * motion event so buttons can perform their hit-test.
+     */
+    function pumpUnresolvedTouches(){
+        foreach(fid, pos in mFingers_){
+            if(pos.x != 0 || pos.y != 0) continue;
+            if(!(fid in mRawFingerIds_)) continue;
+
+            //Skip if any button already claimed this finger.
+            local alreadyClaimed = false;
+            foreach(btn in mButtons_){
+                if(btn.isFingerActive(fid)){
+                    alreadyClaimed = true;
+                    break;
+                }
+            }
+            if(alreadyClaimed) continue;
+
+            //Try to get the real position from the engine.
+            local realPos = null;
+            try{
+                realPos = _input.getTouchPosition(mRawFingerIds_[fid]);
+            }catch(e){}
+            if(realPos == null) continue;
+            if(realPos.x == 0 && realPos.y == 0) continue;
+
+            mFingers_[fid] = realPos;
+
+            //Dispatch as motion so late-begin can claim the finger.
+            local claimed = false;
+            foreach(btn in mButtons_){
+                if(claimed && !btn.isFingerActive(fid)) continue;
+                local accepted = btn.notifyTouchMoved_(fid, realPos);
+                if(accepted) claimed = true;
+            }
+        }
+    }
+
+    /**
      * Called each frame on desktop to synthesise touch events from
      * mouse input. Translates left-click press/drag/release into
      * the same touch began/motion/ended pipeline that real fingers
@@ -182,7 +232,6 @@
 
             if(!mMouseWasPressed_){
                 //Synthesise touch-began.
-
                 mFingers_.rawset(fid, pos);
                 mTouches_.append(fid);
                 foreach(btn in mButtons_){
@@ -219,7 +268,6 @@
                     btn.notifyTouchEnded_(fid);
                 }
                 if(!wasClaimed && lastPos != null){
-
                     foreach(btn in mButtons_){
                         btn.notifyTouchTapped_(fid, lastPos);
                     }

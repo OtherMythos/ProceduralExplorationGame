@@ -113,7 +113,7 @@
 
         //Attach ambient dust particles to player.
         local dustParticleSystem = _scene.createParticleSystem("playerWalkingDust");
-        playerNode.attachObject(dustParticleSystem);
+        //playerNode.attachObject(dustParticleSystem);
 
         //Attach feet dust particles to player.
         local feetDustParticleSystem = _scene.createParticleSystem("playerFeetDust");

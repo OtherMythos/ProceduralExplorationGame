@@ -111,6 +111,7 @@ enum WorldMousePressContexts{
     //In the case of a window that takes the full screen with exploration in the back, ensure clicks to leave don't result in a flag press.
     POPUP_WINDOW,
     SWIPING_ATTACK,
+    SPECIAL_MOVES,
 };
 
 //Profiles define how the game should operate,

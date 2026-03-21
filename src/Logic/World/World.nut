@@ -810,11 +810,16 @@
 
         //On desktop, synthesise touch events from mouse input so
         //MultiTouchButtons can handle camera/zoom dispatch.
-        //Also pump when ForceMobileInterface is active, since the
-        //mobile UI is being driven by a real mouse, not a touchscreen.
-        if(::Base.getTargetInterface() != TargetInterface.MOBILE || ::Base.isProfileActive(GameProfile.FORCE_MOBILE_INTERFACE)){
+        //Only pump on actual desktop platforms — on real mobile devices
+        //the OS provides proper touch events, so mouse spoofing would
+        //create duplicate fingers.
+        local platform = _settings.getPlatform();
+        if(platform != _PLATFORM_IOS && platform != _PLATFORM_ANDROID){
             ::MultiTouchManager.pumpMouseInput();
         }
+        //On mobile, resolve fingers that started at (0,0) and
+        //haven't received a TOUCH_MOTION yet (stationary holds).
+        ::MultiTouchManager.pumpUnresolvedTouches();
 
         checkCameraChange();
         checkOrientatingCamera();
@@ -1567,12 +1572,6 @@
     }
     function requestOrientingCameraWithMovementForFinger(fingerId){
         local result = mMouseContext_.requestStateForFinger(fingerId, WorldMousePressContexts.ORIENTING_CAMERA_WITH_MOVEMENT);
-        if(result){
-            //A drag/hold started — clear the double-tap timer so a stale
-            //timer cannot accidentally trigger a dash mid-drag.
-            mMouseContext_.mDoubleClickTimer_ = 0;
-            mMouseContext_.mDoubleClick_ = false;
-        }
         return result;
     }
     /**
@@ -1591,6 +1590,9 @@
     }
     function requestSwipingAttackForFinger(fingerId){
         return mMouseContext_.requestStateForFinger(fingerId, WorldMousePressContexts.SWIPING_ATTACK);
+    }
+    function requestSpecialMovesForFinger(fingerId){
+        return mMouseContext_.requestStateForFinger(fingerId, WorldMousePressContexts.SPECIAL_MOVES);
     }
     function releaseStateForFinger(fingerId){
         //If this finger was driving the joystick, clear the origin.

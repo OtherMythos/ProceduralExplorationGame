@@ -57,6 +57,11 @@
             [WorldMousePressContexts.DIRECTING_PLAYER, WorldMousePressContexts.SWIPING_ATTACK],
             //Directing player and zoom.
             [WorldMousePressContexts.DIRECTING_PLAYER, WorldMousePressContexts.ZOOMING],
+            //Special moves can coexist with camera, zoom, and player directing.
+            [WorldMousePressContexts.ORIENTING_CAMERA, WorldMousePressContexts.SPECIAL_MOVES],
+            [WorldMousePressContexts.ORIENTING_CAMERA_WITH_MOVEMENT, WorldMousePressContexts.SPECIAL_MOVES],
+            [WorldMousePressContexts.ZOOMING, WorldMousePressContexts.SPECIAL_MOVES],
+            [WorldMousePressContexts.DIRECTING_PLAYER, WorldMousePressContexts.SPECIAL_MOVES],
         ];
 
         mBlockingStates_ = [
@@ -82,13 +87,11 @@
 
         //If this finger already owns a state, deny (release first).
         if(fid in mFingerStates_){
-
             return false;
         }
 
         //If this state is already owned by another finger, deny.
         if(state in mStateFingers_){
-
             return false;
         }
 
@@ -105,7 +108,6 @@
         //Check compatibility with every currently active state.
         foreach(activeState, _ in mStateFingers_){
             if(!arePairCompatible_(state, activeState)){
-
                 return false;
             }
         }
@@ -115,7 +117,6 @@
         //Block GUI input while any state is active so engine GUI
         //elements (minimap, stats etc.) don't receive stray clicks.
         if(mGui_) mGui_.notifyBlockInput(true);
-
         return true;
     }
 
@@ -124,7 +125,9 @@
      */
     function releaseStateForFinger(fingerId){
         local fid = fingerId.tostring();
-        if(!(fid in mFingerStates_)) return;
+        if(!(fid in mFingerStates_)){
+            return;
+        }
 
         local state = mFingerStates_[fid];
         delete mFingerStates_[fid];
@@ -298,5 +301,13 @@
             }
         }
         return false;
+    }
+
+    function dumpStates_(){
+        local parts = [];
+        foreach(state, fid in mStateFingers_){
+            parts.append(fid + "=>" + state);
+        }
+        return "[" + (parts.len() > 0 ? parts[0] : "") + (parts.len() > 1 ? ", " + parts[1] : "") + (parts.len() > 2 ? ", " + parts[2] : "") + "]";
     }
 };
