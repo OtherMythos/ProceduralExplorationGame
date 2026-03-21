@@ -4,6 +4,10 @@
     static SELECTED_SIZE_BONUS = 14;
     //Lerp speed for the size animation each frame
     static ANIM_SPEED = 0.2;
+    //Speed at which intro animation progresses per frame (0-1)
+    static INTRO_SPEED = 0.1;
+    //Scale multiplier at the very start of the intro
+    static INTRO_SCALE_START = 0.6;
 
     mPanel_ = null;
     mLabel_ = null;
@@ -11,12 +15,17 @@
     mCurrentSize_ = 0.0;
     mTargetSize_ = 0.0;
     mBasePos_ = null;
+    //Intro animation progress: 0 = start, 1 = complete
+    mIntroT_ = 1.0;
+    //Offset from final position to origin, lerped to zero during intro
+    mIntroOffset_ = null;
 
     constructor(parent, text, size){
         mBaseSize_ = size;
         mCurrentSize_ = size.tofloat();
         mTargetSize_ = mCurrentSize_;
         mBasePos_ = Vec2(0, 0);
+        mIntroOffset_ = Vec2(0, 0);
 
         mPanel_ = parent.createPanel();
         mPanel_.setSkinPack("Panel_midGrey");
@@ -30,6 +39,12 @@
         mLabel_.setClickable(false);
         //Fix the label to the base size so only the panel animates
         mLabel_.setSize(size, size);
+    }
+
+    function startIntro(origin){
+        mIntroT_ = 0.0;
+        //Offset so the button centre starts at origin and slides to its final position
+        mIntroOffset_ = Vec2(origin.x - mBasePos_.x - mBaseSize_ * 0.5, origin.y - mBasePos_.y - mBaseSize_ * 0.5);
     }
 
     function setPosition(pos){
@@ -48,17 +63,36 @@
     }
 
     function update(){
+        if(mIntroT_ < 1.0){
+            mIntroT_ += INTRO_SPEED;
+            if(mIntroT_ > 1.0){ mIntroT_ = 1.0; }
+        }
         mCurrentSize_ += (mTargetSize_ - mCurrentSize_) * ANIM_SPEED;
-        mPanel_.setSize(mCurrentSize_, mCurrentSize_);
+        //easeOutBack gives a subtle overshoot pop on scale
+        local easedScale = ::Easing.easeOutBack(mIntroT_);
+        local introScale = INTRO_SCALE_START + (1.0 - INTRO_SCALE_START) * easedScale;
+        local displaySize = mCurrentSize_ * introScale;
+        mPanel_.setSize(displaySize, displaySize);
+        //easeOutQuad for a fast initial fade that settles quickly
+        local easedAlpha = ::Easing.easeOutQuad(mIntroT_);
+        mPanel_.setColour(ColourValue(1, 1, 1, easedAlpha));
+        mLabel_.setColour(ColourValue(1, 1, 1, easedAlpha));
         updatePositions_();
     }
 
     function updatePositions_(){
+        local easedScale = ::Easing.easeOutBack(mIntroT_);
+        local introScale = INTRO_SCALE_START + (1.0 - INTRO_SCALE_START) * easedScale;
+        local displaySize = mCurrentSize_ * introScale;
         //Grow/shrink the panel symmetrically around the base position
-        local offset = (mCurrentSize_ - mBaseSize_) * 0.5;
-        mPanel_.setPosition(Vec2(mBasePos_.x - offset, mBasePos_.y - offset));
-        //Label stays anchored at the base position
-        mLabel_.setPosition(mBasePos_);
+        local offset = (displaySize - mBaseSize_) * 0.5;
+        //easeOutCubic for smooth deceleration as buttons slide to their positions
+        local easedPos = ::Easing.easeOutCubic(mIntroT_);
+        local ix = mIntroOffset_.x * (1.0 - easedPos);
+        local iy = mIntroOffset_.y * (1.0 - easedPos);
+        mPanel_.setPosition(Vec2(mBasePos_.x - offset + ix, mBasePos_.y - offset + iy));
+        //Label slides with the panel during intro, then stays at base position
+        mLabel_.setPosition(Vec2(mBasePos_.x + ix, mBasePos_.y + iy));
     }
 };
 
@@ -99,6 +133,14 @@
         mSelectedIndex_ = -1;
         createButtons_();
         positionButtons_();
+        //Animate buttons in from the ring centre
+        local origin = Vec2(
+            mRingCentre_ != null ? mRingCentre_.x : _window.getWidth() / 2.0,
+            mRingCentre_ != null ? mRingCentre_.y : _window.getHeight() / 2.0
+        );
+        for(local i = 0; i < NUM_BUTTONS; i++){
+            mButtons_[i].startIntro(origin);
+        }
         //Check if the finger is currently tracked
         mFingerWasActive_ = (mFingerId_ != null && ::MultiTouchManager.getFingerPosition(mFingerId_) != null);
     }
