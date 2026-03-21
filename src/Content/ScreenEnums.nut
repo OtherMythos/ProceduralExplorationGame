@@ -26,7 +26,8 @@
     GAME_TITLE_SCREEN,
     ARTIFACT_SCREEN,
     COLLECTABLE_OPEN_SCREEN,
-    GUI_TEST_SCREEN
+    GUI_TEST_SCREEN,
+    SPECIAL_MOVES_SCREEN
 
 ");
 
@@ -58,4 +59,5 @@
     "artifactScreen",
     "collectableOpenScreen",
     "GUITestScreen",
+    "specialMovesScreen",
 ]);

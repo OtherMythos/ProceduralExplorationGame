@@ -52,6 +52,12 @@ enum ExplorationScreenWidgetType{
     mSwipeHoldTimer_ = 0;
     static SWIPE_HOLD_THRESHOLD = 60; //1 second at 60fps
     static SWIPE_HOLD_REPEAT_INTERVAL = 15; //Repeat attack every 0.25 seconds
+    //Hold finger still on player for this many frames to open the special moves ring
+    static SPECIAL_MOVES_HOLD_THRESHOLD = 30; //0.75 seconds at 60fps
+    //Pixel movement below this is considered "still" for special moves activation
+    static SPECIAL_MOVES_MOVEMENT_THRESHOLD = 15.0;
+    mSpecialMovesHoldActive_ = false;
+    mSwipeAttackFingerId_ = null;
     mDiscoverLevelUpScreen_ = null;
     mInventoryWidget_ = null;
     mLayoutLine_ = null;
@@ -780,6 +786,8 @@ enum ExplorationScreenWidgetType{
                 mSwipeHoldTimer_ = 0;
                 mSwipeCompassRotation_ = 0.0;
                 mSwipeCompassTargetOpacity_ = 0.0;
+                mSpecialMovesHoldActive_ = false;
+                mSwipeAttackFingerId_ = fingerId;
             }.bindenv(this));
             mSwipeAttackButton_.setOnMoved(function(fingerId, pos){
                 if(!mSwipeTapActive_) return;
@@ -795,6 +803,8 @@ enum ExplorationScreenWidgetType{
                     mSwipeCompassTargetOpacity_ = 0.0;
                     onSwipeAttackExecute_();
                 }
+                mSpecialMovesHoldActive_ = false;
+                mSwipeAttackFingerId_ = null;
             }.bindenv(this));
 
             mPlayerDirectButton = MultiTouchButton(Vec2(0, 0), Vec2(100, 100));
@@ -1256,6 +1266,24 @@ enum ExplorationScreenWidgetType{
             //Still need to advance the hold timer and trigger repeats.
             if(mSwipeTapActive_){
                 mSwipeHoldTimer_++;
+
+                //Long still-hold on player: open the special moves ring
+                if(mSwipeHoldTimer_ == SPECIAL_MOVES_HOLD_THRESHOLD && !mSpecialMovesHoldActive_){
+                    local movement = (mSwipeTapEndPos_ - mSwipeTapStartPos_).length();
+                    if(movement < SPECIAL_MOVES_MOVEMENT_THRESHOLD){
+                        mSpecialMovesHoldActive_ = true;
+                        mSwipeTapActive_ = false;
+                        mSwipeCompassTargetOpacity_ = 0.0;
+                        local world = ::Base.mExplorationLogic.mCurrentWorld_;
+                        if(world != null && mSwipeAttackFingerId_ != null){
+                            world.releaseStateForFinger(mSwipeAttackFingerId_);
+                        }
+                        local centre = getPlayerScreenCentre_();
+                        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.SPECIAL_MOVES_SCREEN, {"centre": centre}), null, 3);
+                        return;
+                    }
+                }
+
                 if(mSwipeHoldTimer_ >= SWIPE_HOLD_THRESHOLD){
                     mSwipeCompassTargetOpacity_ = 1.0;
                     local holdTime = mSwipeHoldTimer_ - SWIPE_HOLD_THRESHOLD;
@@ -1339,6 +1367,24 @@ enum ExplorationScreenWidgetType{
                 onSwipeAttackExecute_();
             }
         }
+    }
+
+    function getPlayerScreenCentre_(){
+        local world = ::Base.mExplorationLogic.mCurrentWorld_;
+        if(world == null) return Vec2(_window.getWidth() / 2.0, _window.getHeight() / 2.0);
+
+        local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION);
+        local aabb = world.mPlayerEntry_.getModel().determineWorldAABB();
+        local playerPos = aabb.getCentre();
+        local windowPos = camera.getWorldPosInWindow(playerPos);
+
+        local panelSize = _window.getSize();
+        local halfW = panelSize.x / 2.0;
+        local halfH = panelSize.y / 2.0;
+        local screenX = halfW + (halfW * windowPos.x);
+        local screenY = halfH + (halfH * -windowPos.y);
+
+        return Vec2(screenX, screenY);
     }
 
     function onSwipeAttackExecute_(){
@@ -1466,7 +1512,18 @@ enum ExplorationScreenWidgetType{
         if(mSwipeAttackButton_ != null){
             mSwipeAttackButton_.shutdown();
         }
+        //Null native panel refs before base destroys mWindow_, so the Squirrel
+        //wrapper doesn't linger as a non-null but dead object.
+        mSwipeCompassPanel_ = null;
         base.shutdown();
+    }
+
+    function notifyResize(){
+        //base.notifyResize() calls _gui.destroy(mWindow_), which invalidates all
+        //child panels. Null them out first so the Squirrel wrappers don't
+        //survive as non-null but dead native objects.
+        mSwipeCompassPanel_ = null;
+        base.notifyResize();
     }
 
     function busCallback(event, data){
