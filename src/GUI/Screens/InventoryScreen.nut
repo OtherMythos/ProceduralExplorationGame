@@ -125,6 +125,13 @@ enum InventoryBusEvents{
     mAcceptButton_ = null;
     mRightSideHelperButtons_ = null;
 
+    //Drag-and-drop state
+    DRAG_THRESHOLD = 15;
+    mDragState_ = null;
+    mDragPanel_ = null;
+    mDragTouchButton_ = null;
+    mPendingSelectData_ = null;
+
 
     InventoryContainer = class{
         mWindow_ = null;
@@ -443,6 +450,361 @@ enum InventoryBusEvents{
 
         positionRightSideHelperButtons_();
         updateStorageToggleButtonText_();
+        setupDrag_();
+    }
+
+    function setupDrag_(){
+        local gridSize = calculateGridSize().tofloat();
+        local slotSize = ::ScreenManager.calculateRatio(gridSize);
+
+        mDragPanel_ = mOverlayWindow_.createPanel();
+        mDragPanel_.setSize(slotSize, slotSize);
+        mDragPanel_.setClickable(false);
+        mDragPanel_.setZOrder(200);
+        mDragPanel_.setHidden(true);
+
+        mDragTouchButton_ = ::MultiTouchButton(Vec2(0, 0), Vec2(::drawable.x, ::drawable.y));
+        mDragTouchButton_.setOnPressed(function(fingerId, normPos){
+            //Only one drag at a time
+            if(mDragState_ != null) return;
+            local canvasPos = Vec2(normPos.x * ::canvasSize.x, normPos.y * ::canvasSize.y);
+            local slot = getDraggableSlotAtPos_(canvasPos);
+            if(slot == null) return;
+            mDragState_ = {
+                "active": false,
+                "fingerId": fingerId,
+                "sourceGrid": slot.grid,
+                "sourceIdx": slot.idx,
+                "sourceGridType": slot.gridType,
+                "startCanvasPos": canvasPos.copy(),
+                "currentCanvasPos": canvasPos.copy(),
+                "lastHighlightGrid": null,
+                "lastHighlightIdx": -1
+            };
+        }.bindenv(this));
+
+        mDragTouchButton_.setOnMoved(function(fingerId, normPos){
+            if(mDragState_ == null) return;
+            if(mDragState_.fingerId != fingerId) return;
+            local canvasPos = Vec2(normPos.x * ::canvasSize.x, normPos.y * ::canvasSize.y);
+            mDragState_.currentCanvasPos = canvasPos.copy();
+            if(!mDragState_.active){
+                local dx = canvasPos.x - mDragState_.startCanvasPos.x;
+                local dy = canvasPos.y - mDragState_.startCanvasPos.y;
+                local dist = sqrt(dx * dx + dy * dy);
+                if(dist > DRAG_THRESHOLD){
+                    startDrag_(canvasPos);
+                }
+            }else{
+                updateDragPanel_(canvasPos);
+                updateDragHighlight_(canvasPos);
+            }
+        }.bindenv(this));
+
+        mDragTouchButton_.setOnReleased(function(fingerId){
+            if(mDragState_ == null) return;
+            if(mDragState_.fingerId != fingerId) return;
+            if(mDragState_.active){
+                endDrag_(mDragState_.currentCanvasPos);
+            }else{
+                cancelDrag_();
+                //Tap with no drag — open the item info screen now that the finger is up
+                if(mPendingSelectData_ != null){
+                    ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
+                    selectItem(mPendingSelectData_);
+                    mPendingSelectData_ = null;
+                }
+            }
+        }.bindenv(this));
+    }
+
+    function getDraggableSlotAtPos_(canvasPos){
+        local grids = [
+            {"grid": mInventoryGrid_, "gridType": InventoryGridType.INVENTORY_GRID},
+            {"grid": mInventoryEquippedGrid_, "gridType": InventoryGridType.INVENTORY_EQUIPPABLES}
+        ];
+        if(mSecondaryInventoryGrid_ != null){
+            grids.append({"grid": mSecondaryInventoryGrid_, "gridType": InventoryGridType.INVENTORY_GRID_SECONDARY});
+        }
+        if(mStorageGrid_ != null && !mStorageGrid_.getHidden()){
+            grids.append({"grid": mStorageGrid_, "gridType": InventoryGridType.INVENTORY_GRID});
+        }
+
+        foreach(entry in grids){
+            local grid = entry.grid;
+            if(grid == null) continue;
+            local idx = grid.getSlotAtCanvasPos(canvasPos);
+            if(idx == null) continue;
+            local item = getItemForGridSlot_(entry.gridType, idx);
+            if(item == null) continue;
+            return {
+                "grid": grid,
+                "gridType": entry.gridType,
+                "idx": idx,
+                "item": item
+            };
+        }
+        return null;
+    }
+
+    function getItemForGridSlot_(gridType, idx){
+        if(gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
+            return mPlayerStats_.getEquippedItem(idx + 1);
+        }else if(gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
+            return mSecondaryItems_[idx];
+        }else{
+            return getTargetInventory_().getItemForIdx(idx);
+        }
+    }
+
+    function startDrag_(canvasPos){
+        mDragState_.active = true;
+        mPendingSelectData_ = null;
+
+        //Dismiss any open helper screen
+        ::ScreenManager.transitionToScreen(null, null, mLayerIdx + 1);
+
+        //Copy the render icon's datablock to the drag panel so it shows the item
+        //The render icon stays in place — moving it would break the hole-punch UV region
+        local datablock = mDragState_.sourceGrid.getDatablockForIdx(mDragState_.sourceIdx);
+        if(datablock != null){
+            mDragPanel_.setDatablock(datablock);
+        }
+        mDragState_.sourceGrid.setIconVisibleForIdx(mDragState_.sourceIdx, false);
+        mDragPanel_.setHidden(false);
+        updateDragPanel_(canvasPos);
+    }
+
+    function updateDragPanel_(canvasPos){
+        local size = mDragPanel_.getSize();
+        mDragPanel_.setPosition(canvasPos - size * 0.5);
+    }
+
+    function updateDragHighlight_(canvasPos){
+        //Find what slot the cursor is over
+        local target = getAnySlotAtPos_(canvasPos);
+
+        //Clear previous highlight
+        if(mDragState_.lastHighlightGrid != null){
+            mDragState_.lastHighlightGrid.setSlotHighlighted(mDragState_.lastHighlightIdx, false);
+            mDragState_.lastHighlightGrid = null;
+            mDragState_.lastHighlightIdx = -1;
+        }
+
+        if(target == null) return;
+        if(!isValidDragTarget_(mDragState_, target)) return;
+
+        target.grid.setSlotHighlighted(target.idx, true);
+        mDragState_.lastHighlightGrid = target.grid;
+        mDragState_.lastHighlightIdx = target.idx;
+    }
+
+    function getAnySlotAtPos_(canvasPos){
+        local grids = [
+            {"grid": mInventoryGrid_, "gridType": InventoryGridType.INVENTORY_GRID},
+            {"grid": mInventoryEquippedGrid_, "gridType": InventoryGridType.INVENTORY_EQUIPPABLES}
+        ];
+        if(mSecondaryInventoryGrid_ != null){
+            grids.append({"grid": mSecondaryInventoryGrid_, "gridType": InventoryGridType.INVENTORY_GRID_SECONDARY});
+        }
+        if(mStorageGrid_ != null && !mStorageGrid_.getHidden()){
+            grids.append({"grid": mStorageGrid_, "gridType": InventoryGridType.INVENTORY_GRID});
+        }
+
+        foreach(entry in grids){
+            local grid = entry.grid;
+            if(grid == null) continue;
+            local idx = grid.getSlotAtCanvasPos(canvasPos);
+            if(idx == null) continue;
+            local item = getItemForGridSlot_(entry.gridType, idx);
+            return {
+                "grid": grid,
+                "gridType": entry.gridType,
+                "idx": idx,
+                "item": item
+            };
+        }
+        return null;
+    }
+
+    function slotGroupAccepts_(naturalSlot, targetSlot){
+        local handGroup = (naturalSlot == EquippedSlotTypes.LEFT_HAND || naturalSlot == EquippedSlotTypes.RIGHT_HAND || naturalSlot == EquippedSlotTypes.HAND);
+        local accessoryGroup = (naturalSlot == EquippedSlotTypes.ACCESSORY_1 || naturalSlot == EquippedSlotTypes.ACCESSORY_2);
+        if(handGroup){
+            return (targetSlot == EquippedSlotTypes.LEFT_HAND || targetSlot == EquippedSlotTypes.RIGHT_HAND);
+        }else if(accessoryGroup){
+            return (targetSlot == EquippedSlotTypes.ACCESSORY_1 || targetSlot == EquippedSlotTypes.ACCESSORY_2);
+        }else{
+            return naturalSlot == targetSlot;
+        }
+    }
+
+    function isValidDragTarget_(source, target){
+        //Same slot
+        if(source.sourceGrid == target.grid && source.sourceIdx == target.idx) return false;
+
+        if(target.gridType == InventoryGridType.INVENTORY_GRID ||
+           target.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
+            return true;
+        }
+
+        //Target is equippables -- check item compatibility
+        if(target.gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
+            local item = getItemForGridSlot_(source.sourceGridType, source.sourceIdx);
+            if(item == null) return false;
+            local equippableId = item.getEquippableData();
+            if(equippableId == EquippableId.NONE) return false;
+            local naturalSlot = ::Equippables[equippableId].getEquippedSlot();
+            local targetSlot = target.idx + 1;
+            if(!slotGroupAccepts_(naturalSlot, targetSlot)) return false;
+
+            //If target slot is occupied (equip-to-equip swap), check target item fits source slot
+            if(source.sourceGridType == InventoryGridType.INVENTORY_EQUIPPABLES && target.item != null){
+                local targetEquippableId = target.item.getEquippableData();
+                if(targetEquippableId == EquippableId.NONE) return false;
+                local targetNaturalSlot = ::Equippables[targetEquippableId].getEquippedSlot();
+                local sourceSlot = source.sourceIdx + 1;
+                if(!slotGroupAccepts_(targetNaturalSlot, sourceSlot)) return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    function endDrag_(canvasPos){
+        local target = getAnySlotAtPos_(canvasPos);
+
+        //Clear highlight
+        if(mDragState_.lastHighlightGrid != null){
+            mDragState_.lastHighlightGrid.setSlotHighlighted(mDragState_.lastHighlightIdx, false);
+        }
+
+        if(target == null || !isValidDragTarget_(mDragState_, target)){
+            cancelDrag_();
+            return;
+        }
+
+        mDragState_.sourceGrid.setIconVisibleForIdx(mDragState_.sourceIdx, true);
+        mDragPanel_.setDatablock("simpleGrey");
+        mDragPanel_.setHidden(true);
+
+        performDragDrop_(mDragState_, target);
+        mDragState_ = null;
+    }
+
+    function cancelDrag_(){
+        if(mDragState_ != null){
+            if(mDragState_.active){
+                mDragState_.sourceGrid.setIconVisibleForIdx(mDragState_.sourceIdx, true);
+                mDragPanel_.setDatablock("simpleGrey");
+                mDragPanel_.setHidden(true);
+                if(mDragState_.lastHighlightGrid != null){
+                    mDragState_.lastHighlightGrid.setSlotHighlighted(mDragState_.lastHighlightIdx, false);
+                }
+            }
+        }
+        mDragState_ = null;
+    }
+
+    function performDragDrop_(source, target){
+        local srcType = source.sourceGridType;
+        local srcIdx = source.sourceIdx;
+        local dstType = target.gridType;
+        local dstIdx = target.idx;
+
+        if((srcType == InventoryGridType.INVENTORY_GRID || srcType == InventoryGridType.INVENTORY_GRID_SECONDARY) &&
+           (dstType == InventoryGridType.INVENTORY_GRID || dstType == InventoryGridType.INVENTORY_GRID_SECONDARY)){
+            //Inventory <-> inventory swap
+            local srcInv = srcType == InventoryGridType.INVENTORY_GRID_SECONDARY ? null : getTargetInventory_();
+            local dstInv = dstType == InventoryGridType.INVENTORY_GRID_SECONDARY ? null : getTargetInventory_();
+            local srcItem = srcType == InventoryGridType.INVENTORY_GRID_SECONDARY ?
+                mSecondaryItems_[srcIdx] : srcInv.getItemForIdx(srcIdx);
+            local dstItem = dstType == InventoryGridType.INVENTORY_GRID_SECONDARY ?
+                mSecondaryItems_[dstIdx] : dstInv.getItemForIdx(dstIdx);
+
+            if(srcType == InventoryGridType.INVENTORY_GRID_SECONDARY){
+                mSecondaryItems_[srcIdx] = dstItem;
+                mSecondaryInventoryGrid_.setNewGridIcons(mSecondaryItems_);
+            }else{
+                srcInv.setItemForIdx(dstItem, srcIdx);
+            }
+            if(dstType == InventoryGridType.INVENTORY_GRID_SECONDARY){
+                mSecondaryItems_[dstIdx] = srcItem;
+                mSecondaryInventoryGrid_.setNewGridIcons(mSecondaryItems_);
+            }else{
+                dstInv.setItemForIdx(srcItem, dstIdx);
+            }
+
+        }else if((srcType == InventoryGridType.INVENTORY_GRID || srcType == InventoryGridType.INVENTORY_GRID_SECONDARY) &&
+                 dstType == InventoryGridType.INVENTORY_EQUIPPABLES){
+            //Inventory -> equippable
+            local srcInv = srcType == InventoryGridType.INVENTORY_GRID_SECONDARY ? null : getTargetInventory_();
+            local item = srcType == InventoryGridType.INVENTORY_GRID_SECONDARY ?
+                mSecondaryItems_[srcIdx] : srcInv.getItemForIdx(srcIdx);
+            local equipSlot = dstIdx + 1;
+
+            if(srcType == InventoryGridType.INVENTORY_GRID_SECONDARY){
+                mSecondaryItems_[srcIdx] = null;
+                mSecondaryInventoryGrid_.setNewGridIcons(mSecondaryItems_);
+            }else{
+                srcInv.setItemForIdx(null, srcIdx);
+            }
+
+            local previousEquipped = mPlayerStats_.equipItem(item, equipSlot);
+            if(previousEquipped != null){
+                if(srcType == InventoryGridType.INVENTORY_GRID_SECONDARY){
+                    mSecondaryItems_[srcIdx] = previousEquipped;
+                    mSecondaryInventoryGrid_.setNewGridIcons(mSecondaryItems_);
+                }else{
+                    srcInv.setItemForIdx(previousEquipped, srcIdx);
+                }
+            }
+
+        }else if(srcType == InventoryGridType.INVENTORY_EQUIPPABLES &&
+                 (dstType == InventoryGridType.INVENTORY_GRID || dstType == InventoryGridType.INVENTORY_GRID_SECONDARY)){
+            //Equippable -> inventory
+            local equipSlot = srcIdx + 1;
+            local equippedItem = mPlayerStats_.getEquippedItem(equipSlot);
+            local dstInv = dstType == InventoryGridType.INVENTORY_GRID_SECONDARY ? null : getTargetInventory_();
+            local dstItem = dstType == InventoryGridType.INVENTORY_GRID_SECONDARY ?
+                mSecondaryItems_[dstIdx] : dstInv.getItemForIdx(dstIdx);
+
+            mPlayerStats_.unEquipItem(equipSlot);
+
+            //If there was an item in the destination slot and it fits the vacated equip slot, equip it there
+            if(dstItem != null){
+                local dstEquippableId = dstItem.getEquippableData();
+                if(dstEquippableId != EquippableId.NONE){
+                    local dstNaturalSlot = ::Equippables[dstEquippableId].getEquippedSlot();
+                    if(slotGroupAccepts_(dstNaturalSlot, equipSlot)){
+                        mPlayerStats_.equipItem(dstItem, equipSlot);
+                        dstItem = null; //consumed into equip slot, don't place in inventory
+                    }
+                }
+            }
+
+            if(dstType == InventoryGridType.INVENTORY_GRID_SECONDARY){
+                mSecondaryItems_[dstIdx] = equippedItem;
+                mSecondaryInventoryGrid_.setNewGridIcons(mSecondaryItems_);
+            }else{
+                dstInv.setItemForIdx(equippedItem, dstIdx);
+                //If dstItem wasn't consumable into the equip slot, it stays where it was (no change needed)
+            }
+
+        }else if(srcType == InventoryGridType.INVENTORY_EQUIPPABLES &&
+                 dstType == InventoryGridType.INVENTORY_EQUIPPABLES){
+            //Equippable <-> equippable swap
+            local srcSlot = srcIdx + 1;
+            local dstSlot = dstIdx + 1;
+            local srcItem = mPlayerStats_.getEquippedItem(srcSlot);
+            local dstItem = mPlayerStats_.getEquippedItem(dstSlot);
+
+            mPlayerStats_.unEquipItem(srcSlot);
+            if(dstItem != null) mPlayerStats_.unEquipItem(dstSlot);
+
+            mPlayerStats_.equipItem(srcItem, dstSlot);
+            if(dstItem != null) mPlayerStats_.equipItem(dstItem, srcSlot);
+        }
     }
 
     function repositionEquippablesGrid(){
@@ -615,8 +977,8 @@ enum InventoryBusEvents{
 
     function busCallback(event, data){
         if(event == InventoryBusEvents.ITEM_SELECTED){
-            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
-            selectItem(data);
+            //Defer by one frame so a drag-threshold move can cancel this before the screen opens
+            mPendingSelectData_ = data;
         }
         else if(event == InventoryBusEvents.ITEM_GROUP_SELECTION_CHANGED){
             updateAcceptButtonState_();
@@ -1002,6 +1364,11 @@ enum InventoryBusEvents{
         _event.unsubscribe(Event.INVENTORY_CONTENTS_CHANGED, receiveInventoryChangedEvent);
         _event.unsubscribe(Event.STORAGE_CONTENTS_CHANGED, receiveStorageChangedEvent);
         _event.unsubscribe(Event.PLAYER_EQUIP_CHANGED, receivePlayerEquipChangedEvent);
+        cancelDrag_();
+        if(mDragTouchButton_ != null){
+            mDragTouchButton_.shutdown();
+            mDragTouchButton_ = null;
+        }
     }
 
     function update(){
@@ -1020,8 +1387,33 @@ enum InventoryBusEvents{
             mPlayerInspector_.update();
         }
 
+        //World.update() is paused while the inventory is open, so mouse-to-touch
+        //spoofing won't run from there. Pump it here instead on desktop.
+        local platform = _settings.getPlatform();
+        if(platform != _PLATFORM_IOS && platform != _PLATFORM_ANDROID){
+            ::MultiTouchManager.pumpMouseInput();
+
+            //For a very fast click the mouse can be pressed and released between two
+            //update() calls, meaning pumpMouseInput sees getMouseButton()=false both
+            //frames and never fires a touch-began/ended pair. In that case mDragState_
+            //stays null and mPendingSelectData_ is never consumed. Detect this here:
+            //if we have a pending select, no drag was started, and the mouse is now up,
+            //the user did a fast tap so fire the select immediately.
+            if(mPendingSelectData_ != null && mDragState_ == null && !_input.getMouseButton(_MB_LEFT)){
+                ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
+                selectItem(mPendingSelectData_);
+                mPendingSelectData_ = null;
+            }
+        }
+
         if(_input.getButtonAction(::InputManager.menuBack, _INPUT_PRESSED)){
             if(::ScreenManager.isScreenTop(mLayerIdx)) closeInventory();
+        }
+
+        //Keep drag panel and highlight in sync between touch events
+        if(mDragState_ != null && mDragState_.active){
+            updateDragPanel_(mDragState_.currentCanvasPos);
+            updateDragHighlight_(mDragState_.currentCanvasPos);
         }
     }
 

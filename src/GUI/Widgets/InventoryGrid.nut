@@ -42,6 +42,8 @@
     mSelectionIndicators_ = null;
     mRenderIcons_ = null;
     mRenderIconAnimationTime_ = 0;
+    mCurrentHighlightIdx_ = null;
+    mIsHidden_ = false;
 
     constructor(inventoryType, bus, hoverInfo, buttonCover, multiSelection = false, drawBackground = true){
         mInventoryType_ = inventoryType;
@@ -362,12 +364,16 @@
 
     function setHidden(hidden){
         local offscreenPos = Vec2(-1000, -1000);
-
+        mIsHidden_ = hidden;
         if(hidden){
             setPosition(offscreenPos);
         }else{
             setPosition(-offscreenPos);
         }
+    }
+
+    function getHidden(){
+        return mIsHidden_;
     }
 
     function setButtonCoverHidden(hidden){
@@ -554,5 +560,73 @@
             if(selected) count++;
         }
         return count;
+    }
+
+    /**
+    Return the slot idx whose widget bounds contain canvasPos (pixel space), or null if none.
+    */
+    function getSlotAtCanvasPos(canvasPos){
+        for(local i = 0; i < mWidgets_.len(); i++){
+            local widget = mWidgets_[i];
+            local pos = widget.getDerivedPosition();
+            local size = widget.getSize();
+            if(canvasPos.x >= pos.x && canvasPos.y >= pos.y &&
+               canvasPos.x < pos.x + size.x && canvasPos.y < pos.y + size.y){
+                return i;
+            }
+        }
+        return null;
+    }
+
+    /**
+    Used to hide the source slot background panel while it is being dragged.
+    The render icon is intentionally left visible so callers can reposition it
+    to follow the cursor. Call notifyPositionChanged() to restore its position.
+    */
+    function setIconVisibleForIdx(idx, visible){
+        if(idx < 0 || idx >= mItemIcons_.len()) return;
+        mItemIcons_[idx].setVisible(visible);
+    }
+
+    /**
+    Reposition the render icon for a slot to an arbitrary canvas-space position.
+    Used to make the item icon follow the cursor while dragging.
+    */
+    function moveDragRenderIconToPos(idx, canvasPos){
+        if(idx < 0 || idx >= mRenderIcons_.len()) return;
+        if(mRenderIcons_[idx] != null){
+            mRenderIcons_[idx].setPosition(canvasPos);
+        }
+    }
+
+    /**
+    Highlight or un-highlight a slot background for drag-target feedback.
+    Passing highlighted=true stores idx in mCurrentHighlightIdx_ and changes the skin.
+    Passing highlighted=false restores the original skin.
+    */
+    function setSlotHighlighted(idx, highlighted){
+        if(idx < 0 || idx >= mBackgrounds_.len()) return;
+        local bg = mBackgrounds_[idx];
+        if(highlighted){
+            mCurrentHighlightIdx_ = idx;
+            bg.setSkin("InventoryWidgetHighlight");
+        }else{
+            mCurrentHighlightIdx_ = null;
+            if(mInventoryType_ == InventoryGridType.INVENTORY_EQUIPPABLES){
+                local hasItem = mItemIcons_[idx].getVisible();
+                setSkinForBackgroundEquippables(bg, idx, hasItem);
+            }else{
+                bg.setSkin("InventoryWidget");
+            }
+        }
+    }
+
+    /**
+    Clear any currently highlighted slot, restoring its original skin.
+    */
+    function clearHighlight(){
+        if(mCurrentHighlightIdx_ != null){
+            setSlotHighlighted(mCurrentHighlightIdx_, false);
+        }
     }
 };
