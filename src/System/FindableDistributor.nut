@@ -17,6 +17,7 @@
     function determineShopItems(width, height){
         local totalSlots = width * height;
         local items = array(totalSlots, null);
+        local prices = array(totalSlots, null);
 
         //Calculate 25% empty slots
         local emptySlots = (totalSlots * 25) / 100;
@@ -34,30 +35,36 @@
         }
 
         local itemsToPlace = [];
+        local pricesToPlace = [];
 
         //Add rare items to list
         for(local i = 0; i < numRareItems; i++){
             local randomRareIdx = rand() % mRareItems_.len();
             local rarePrice = 100 + (rand() % 101);
-            itemsToPlace.append(::Item(mRareItems_[randomRareIdx], rarePrice));
+            itemsToPlace.append(::Item(mRareItems_[randomRareIdx]));
+            pricesToPlace.append(rarePrice);
         }
 
         //Add common items to list
         for(local i = 0; i < numCommonItems; i++){
             local randomCommonIdx = rand() % mCommonItems_.len();
             local commonPrice = 10 + (rand() % 16);
-            itemsToPlace.append(::Item(mCommonItems_[randomCommonIdx], commonPrice));
+            itemsToPlace.append(::Item(mCommonItems_[randomCommonIdx]));
+            pricesToPlace.append(commonPrice);
         }
 
-        //Shuffle items
+        //Shuffle items and prices together
         for(local i = itemsToPlace.len() - 1; i > 0; i--){
             local randomIdx = rand() % (i + 1);
-            local temp = itemsToPlace[i];
+            local tempItem = itemsToPlace[i];
+            local tempPrice = pricesToPlace[i];
             itemsToPlace[i] = itemsToPlace[randomIdx];
-            itemsToPlace[randomIdx] = temp;
+            pricesToPlace[i] = pricesToPlace[randomIdx];
+            itemsToPlace[randomIdx] = tempItem;
+            pricesToPlace[randomIdx] = tempPrice;
         }
 
-        //Place items at random positions
+        //Place items and prices at random positions
         local itemIdx = 0;
         for(local i = 0; i < itemsToPlace.len(); i++){
             local randomPos = rand() % totalSlots;
@@ -65,8 +72,12 @@
                 randomPos = (randomPos + 1) % totalSlots;
             }
             items[randomPos] = itemsToPlace[i];
+            prices[randomPos] = pricesToPlace[i];
         }
 
-        return items;
+        return {
+            "items": items,
+            "prices": prices
+        };
     }
 };

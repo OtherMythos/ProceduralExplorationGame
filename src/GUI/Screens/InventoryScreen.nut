@@ -1024,7 +1024,8 @@ enum InventoryBusEvents{
             //Convert window position to world position
             local worldPos = ::EffectManager.getWorldPositionForWindowPos(itemCentre);
 
-            local targetArtifact = ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_1;
+            local itemData = data.item.getData();
+            local targetArtifact = itemData == null ? ArtifactId.NONE : itemData;
 
             local capturedInventoryData = inventoryData;
             local effectData = {

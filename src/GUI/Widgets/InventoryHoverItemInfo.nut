@@ -9,6 +9,7 @@
 
     mActive_ = false;
     mHideValueInfo_ = false;
+    mPrice_ = 0;
 
     constructor(overlayWindow, isBuyable = false, hideValueInfo = false){
         mHideValueInfo_ = hideValueInfo;
@@ -77,7 +78,8 @@
         return mHoverWin_.getSize();
     }
 
-    function setItem(item){
+    function setItem(item, price = 0){
+        mPrice_ = price;
         //Set to a big size so the sizers don't try and steal from neighbour widgets.
         mHoverWin_.setSize(1000, 1000);
 
@@ -105,7 +107,7 @@
         }
 
         if(mPriceLabel_ != null){
-            mPriceLabel_.setText(UNICODE_COINS + " " + item.mData_);
+            mPriceLabel_.setText(UNICODE_COINS + " " + mPrice_);
             mPriceLabel_.setDefaultFont(6);
             layout.addCell(mPriceLabel_);
         }

@@ -15,6 +15,7 @@
     GRID_PADDING = 5;
 
     mInventory_ = null;
+    mPrices_ = null;
     mInventoryGrid_ = null;
 
     constructor(parent){
@@ -57,8 +58,9 @@
         mInventoryGrid_.setPosition(mInnerPanel_.getPosition() + GRID_PADDING);
 
         local distributor = ::FindableDistributor();
-        local items = distributor.determineShopItems(mInventoryWidth_, mInventoryHeight_);
-        mInventory_ = items;
+        local shopData = distributor.determineShopItems(mInventoryWidth_, mInventoryHeight_);
+        mInventory_ = shopData["items"];
+        mPrices_ = shopData["prices"];
         refreshGrid_()
 
     }
@@ -118,6 +120,7 @@
             "bus": mInventoryBus_,
             "secondaryGrid": false,
             "isShop": true,
+            "itemPrice": mPrices_[idx],
             "playerMoney": ::Base.mPlayerStats.getMoney(),
             "inventoryFull": ::Base.mPlayerStats.mInventory_.getNumSlotsFree() == 0,
             "showItemInfo": true
@@ -134,7 +137,7 @@
         local shopItem = mInventory_[idx];
         if(shopItem == null) return;
 
-        local price = shopItem.mData_;
+        local price = mPrices_[idx];
         local playerMoney = ::Base.mPlayerStats.getMoney();
 
         if(playerMoney < price) return;
@@ -142,6 +145,7 @@
         ::Base.mPlayerStats.mInventory_.changeMoney(-price);
         ::Base.mPlayerStats.addToInventory(shopItem);
         mInventory_[idx] = null;
+        mPrices_[idx] = null;
         refreshGrid_();
     }
 

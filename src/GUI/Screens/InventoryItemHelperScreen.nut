@@ -67,7 +67,7 @@ enum InventoryItemHelperScreenFunctions{
         local inventoryFull = mData_.rawin("inventoryFull") && mData_.inventoryFull;
         local isShop = mData_.rawin("isShop") && mData_.isShop;
         if(isShop){
-            local itemPrice = mData_.item.mData_;
+            local itemPrice = mData_.rawin("itemPrice") ? mData_.itemPrice : 0;
             local playerMoney = mData_.rawin("playerMoney") ? mData_.playerMoney : 0;
             local warningText = null;
 
@@ -136,7 +136,8 @@ enum InventoryItemHelperScreenFunctions{
         if(showItemInfo){
             local isShop = mData_.rawin("isShop") && mData_.isShop;
             mItemInfoPanel_ = ::InventoryHoverItemInfo(null, isShop, isShop);
-            mItemInfoPanel_.setItem(data.item);
+            local itemPrice = mData_.rawin("itemPrice") ? mData_.itemPrice : 0;
+            mItemInfoPanel_.setItem(data.item, itemPrice);
             mItemInfoPanel_.setVisible(true);
         }
 
@@ -261,7 +262,7 @@ enum InventoryItemHelperScreenFunctions{
             buttonOptions.append(UNICODE_COINS + " Buy");
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.BUY]);
             // Check if player can afford the item and has inventory space
-            local itemPrice = mData_.item.mData_;
+            local itemPrice = mData_.rawin("itemPrice") ? mData_.itemPrice : 0;
             local playerMoney = mData_.rawin("playerMoney") ? mData_.playerMoney : 0;
             buttonEnabled.append(playerMoney >= itemPrice && !inventoryFull);
             buttonSkins.append(null);
