@@ -1025,7 +1025,7 @@ enum InventoryBusEvents{
             local worldPos = ::EffectManager.getWorldPositionForWindowPos(itemCentre);
 
             local capturedInventoryData = inventoryData;
-            ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COLLECTABLE_OPEN_SCREEN, {
+            local effectData = {
                 "startPos": worldPos,
                 "item": data.item,
                 "itemScale": 10,
@@ -1035,7 +1035,18 @@ enum InventoryBusEvents{
                 "onClose": function() {
                     setItemForInventory(capturedInventoryData, ::Item(ItemId.NOTE_SCRAP, {"artifactId": ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_1}));
                 }.bindenv(this)
-            }), null, 3);
+            };
+
+            local itemId = data.item.getId();
+            if(itemId == ItemId.SAND_URN){
+                effectData.shrapnelMeshes <- [
+                    "collectableShrapnel.hauntedUrn.1.voxMesh",
+                    "collectableShrapnel.hauntedUrn.2.voxMesh",
+                    "collectableShrapnel.hauntedUrn.3.voxMesh",
+                ];
+            }
+
+            ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COLLECTABLE_OPEN_SCREEN, effectData), null, 3);
         }
         else if(event == InventoryBusEvents.ITEM_INFO_REQUEST_MOVE_TO_INVENTORY){
             local item = mSecondaryItems_[data.idx];
