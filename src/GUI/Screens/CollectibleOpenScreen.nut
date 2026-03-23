@@ -78,7 +78,12 @@
         collectButton.attachListenerForEvent(function(widget, action){
             ::Base.mArtifactCollection.addArtifact(mArtifactId_);
             mOnClose_ = null; //Skip inventory logic
-            ::ScreenManager.queueTransition(null, null, mLayerIdx);
+            ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.ARTIFACT_SCREEN, {
+                "animArtifactId": mArtifactId_,
+                "animSourcePos": Vec2(::drawable.x / 2, ::drawable.y * 0.35),
+                "animSourceSize": Vec2(80, 80),
+                "animMeshName": mFoundMeshName_
+            }), null, mLayerIdx);
         }, _GUI_ACTION_PRESSED, this);
         collectButton.setColour(ColourValue(1, 1, 1, 0));
         collectButton.setTextColour(ColourValue(1, 1, 1, 0));

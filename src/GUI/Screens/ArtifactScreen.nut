@@ -154,6 +154,16 @@
     mArtifactWidgets_ = null;
     mActionSetId_ = null;
     mPaddingTop_ = 0;
+    mAnimRenderIcon_ = null;
+    mAnimPanel_ = null;
+    mAnimFrame_ = 0;
+    mAnimTotalFrames_ = 45;
+    mAnimStartPos_ = null;
+    mAnimEndPos_ = null;
+    mAnimStartSize_ = null;
+    mAnimEndSize_ = null;
+    mAnimating_ = false;
+    mAnimTargetWidget_ = null;
 
     function setup(data){
         createBackgroundScreen_();
@@ -205,6 +215,10 @@
 
         //Populate artifact types
         populateArtifacts_();
+
+        if("animArtifactId" in data) {
+            setupAnimation_(data);
+        }
 
         mActionSetId_ = ::InputManager.pushActionSet(InputActionSets.MENU);
 
@@ -298,6 +312,97 @@
         foreach(widget in mArtifactWidgets_){
             widget.update();
         }
+        if(mAnimating_) {
+            updateAnimation_();
+        }
+    }
+
+    function setupAnimation_(data){
+        if(mArtifactWidgets_ == null) return;
+        local artifactId = data.animArtifactId;
+        local targetWidget = null;
+        foreach(widget in mArtifactWidgets_) {
+            if(widget.mArtifactId_ == artifactId) {
+                targetWidget = widget;
+                break;
+            }
+        }
+        if(targetWidget == null) return;
+
+        local iconPos = targetWidget.mIconPanel_.getPosition();
+        local iconSize = targetWidget.mIconPanel_.getSize();
+        mAnimEndPos_ = iconPos + iconSize / 2;
+        mAnimEndSize_ = Vec2(iconSize.x, iconSize.y);
+        mAnimStartPos_ = Vec2(data.animSourcePos.x, data.animSourcePos.y);
+        mAnimStartSize_ = Vec2(data.animSourceSize.x, data.animSourceSize.y);
+
+        local meshName = ("animMeshName" in data && data.animMeshName != null) ? data.animMeshName : "readables.noteScrap.voxMesh";
+        mAnimRenderIcon_ = ::RenderIconManager.createIcon(meshName, true, true);
+        local orient = Quat();
+        orient += Quat(0.5, ::Vec3_UNIT_Y);
+        orient += Quat(-0.5, ::Vec3_UNIT_Z);
+        orient += Quat(1.0, ::Vec3_UNIT_X);
+        mAnimRenderIcon_.setOrientation(orient);
+        mAnimRenderIcon_.setSize(mAnimStartSize_.x, mAnimStartSize_.y);
+        mAnimRenderIcon_.setPosition(mAnimStartPos_);
+
+        local datablock = mAnimRenderIcon_.getDatablock();
+        if(datablock != null) {
+            mAnimPanel_ = mWindow_.createPanel();
+            mAnimPanel_.setSize(mAnimStartSize_);
+            mAnimPanel_.setCentre(mAnimStartPos_.x, mAnimStartPos_.y);
+            mAnimPanel_.setDatablock(datablock);
+            mAnimPanel_.setClickable(false);
+        }
+
+        targetWidget.mIconPanel_.setColour(ColourValue(1, 1, 1, 0));
+        mAnimTargetWidget_ = targetWidget;
+        mAnimFrame_ = 0;
+        mAnimating_ = true;
+    }
+
+    function updateAnimation_(){
+        mAnimFrame_++;
+        local p = min(1.0, mAnimFrame_.tofloat() / mAnimTotalFrames_.tofloat());
+        local eased = ::Easing.easeInOutCubic(p);
+
+        local currentPos = mAnimStartPos_ + (mAnimEndPos_ - mAnimStartPos_) * eased;
+        local currentSize = mAnimStartSize_ + (mAnimEndSize_ - mAnimStartSize_) * eased;
+
+        mAnimRenderIcon_.setPosition(currentPos);
+        mAnimRenderIcon_.setSize(currentSize.x, currentSize.y);
+
+        local animTime = mAnimFrame_.tofloat() * 0.05;
+        local rotY = Quat(sin(animTime * 1.5), ::Vec3_UNIT_Y);
+        local baseOrient = Quat();
+        baseOrient += Quat(0.5, ::Vec3_UNIT_Y);
+        baseOrient += Quat(-0.5, ::Vec3_UNIT_Z);
+        baseOrient += Quat(1.0, ::Vec3_UNIT_X);
+        local animOrient = baseOrient;
+        animOrient += rotY;
+        mAnimRenderIcon_.setOrientation(animOrient);
+
+        if(mAnimPanel_ != null) {
+            mAnimPanel_.setSize(currentSize);
+            mAnimPanel_.setCentre(currentPos.x, currentPos.y);
+        }
+
+        if(p >= 1.0) {
+            mAnimating_ = false;
+            if(mAnimTargetWidget_ != null) {
+                mAnimTargetWidget_.mIconPanel_.setColour(ColourValue(1, 1, 1, 1));
+                mAnimTargetWidget_ = null;
+            }
+            if(mAnimPanel_ != null) {
+                mAnimPanel_.setDatablock("simpleGrey");
+                _gui.destroy(mAnimPanel_);
+                mAnimPanel_ = null;
+            }
+            if(mAnimRenderIcon_ != null) {
+                mAnimRenderIcon_.destroy();
+                mAnimRenderIcon_ = null;
+            }
+        }
     }
 
     function shutdown(){
@@ -306,6 +411,15 @@
                 widget.shutdown();
             }
             mArtifactWidgets_ = null;
+        }
+        if(mAnimPanel_ != null) {
+            mAnimPanel_.setDatablock("simpleGrey");
+            _gui.destroy(mAnimPanel_);
+            mAnimPanel_ = null;
+        }
+        if(mAnimRenderIcon_ != null) {
+            mAnimRenderIcon_.destroy();
+            mAnimRenderIcon_ = null;
         }
         base.shutdown();
         ::InputManager.popActionSet(mActionSetId_);
