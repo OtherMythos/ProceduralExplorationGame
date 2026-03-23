@@ -873,13 +873,13 @@ enum ExplorationScreenWidgetType{
                     currentWorld.releaseStateForFinger(fingerId);
                     //Feed the double-tap timer on release so claimed fingers
                     //(from TOUCH_MOTION late-begin) still trigger dash.
-                    currentWorld.notifyDoubleTapCheck();
+                    notifyDoubleTapCheck();
                 }
             }.bindenv(this));
             mCameraButton.setOnTapped(function(fingerId, pos){
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
                 if(currentWorld != null){
-                    currentWorld.notifyDoubleTapCheck();
+                    notifyDoubleTapCheck();
                 }
             }.bindenv(this));
             mExplorationScreenWidgetType_[ExplorationScreenWidgetType.CAMERA_BUTTON] = mCameraButton;
@@ -944,13 +944,13 @@ enum ExplorationScreenWidgetType{
                     currentWorld.releaseStateForFinger(fingerId);
                     //Feed the double-tap timer on release so dash detection
                     //works even when the finger was claimed by late-begin.
-                    currentWorld.notifyDoubleTapCheck();
+                    notifyDoubleTapCheck();
                 }
             }.bindenv(this));
             mCameraButton.setOnTapped(function(fingerId, pos){
                 local currentWorld = ::Base.mExplorationLogic.mCurrentWorld_;
                 if(currentWorld != null){
-                    currentWorld.notifyDoubleTapCheck();
+                    notifyDoubleTapCheck();
                 }
             }.bindenv(this));
             mExplorationScreenWidgetType_[ExplorationScreenWidgetType.CAMERA_BUTTON] = mCameraButton;
@@ -1180,6 +1180,11 @@ enum ExplorationScreenWidgetType{
 
     function receiveScreenChanged(id, data){
         mFoundItemIconsManager_.clearAllWidgets();
+    }
+
+    function notifyDoubleTapCheck(){
+        if(mLogicInterface_.isPaused()) return;
+        ::Base.mExplorationLogic.mCurrentWorld_.notifyDoubleTapCheck();
     }
 
     function update(){

@@ -1579,6 +1579,7 @@
      * Feeds the double-click timer and triggers a dash on double-tap.
      */
     function notifyDoubleTapCheck(){
+        if(isLogicPaused()) return;
         if(mMouseContext_.mDoubleClickTimer_ > 0){
             mMouseContext_.mDoubleClick_ = true;
         }

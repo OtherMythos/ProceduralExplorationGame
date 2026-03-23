@@ -484,6 +484,10 @@
         }
     }
 
+    function isPaused(){
+        return mExplorationPaused_;
+    }
+
     function toggleWieldActive(){
         ::Base.mExplorationLogic.toggleWieldActive();
     }
