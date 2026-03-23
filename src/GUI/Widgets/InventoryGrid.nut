@@ -566,9 +566,10 @@
     Return the slot idx whose widget bounds contain canvasPos (pixel space), or null if none.
     */
     function getSlotAtCanvasPos(canvasPos){
+        local scroll = mWindow_.getCurrentScroll();
         for(local i = 0; i < mWidgets_.len(); i++){
             local widget = mWidgets_[i];
-            local pos = widget.getDerivedPosition();
+            local pos = widget.getDerivedPosition() - scroll;
             local size = widget.getSize();
             if(canvasPos.x >= pos.x && canvasPos.y >= pos.y &&
                canvasPos.x < pos.x + size.x && canvasPos.y < pos.y + size.y){
