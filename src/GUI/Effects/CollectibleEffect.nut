@@ -176,22 +176,23 @@ local CollectibleEffectStateMachine = class extends ::Util.StateMachine{
     mBaseQuat_ = null;
     mBeamDatablocks_ = null;
 
-    mCentre_ = Vec2(0, 0);
-    mStartPos_ = Vec2(0, 0);
+    mCentre_ = null;
+    mStartPos_ = null;
     mScale_ = 1.0;
     mMeshName_ = "collectables.messageInABottle.voxMesh";
-    mShrapnelMeshes_ = [
-        "collectableShrapnel.messageInABottle.1.voxMesh",
-        "collectableShrapnel.messageInABottle.2.voxMesh",
-        "collectableShrapnel.messageInABottle.3.voxMesh",
-    ];
+    mShrapnelMeshes_ = null;
 
     mStateMachine_ = null;
 
     function setup(data){
-        mCentre_ = ::Vec2_ZERO;
-        mStartPos_ = ::Vec2_ZERO;
+        mCentre_ = Vec2(0, 0);
+        mStartPos_ = Vec2(0, 0);
         mBeamAngles_ = array(COLLECTIBLE_EFFECT_NUM_BEAMS);
+        mShrapnelMeshes_ = [
+            "collectableShrapnel.messageInABottle.1.voxMesh",
+            "collectableShrapnel.messageInABottle.2.voxMesh",
+            "collectableShrapnel.messageInABottle.3.voxMesh",
+        ];
         if("startPos" in data){
             mStartPos_ = data.startPos;
         }
