@@ -1027,7 +1027,9 @@ enum InventoryBusEvents{
             local capturedInventoryData = inventoryData;
             ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.COLLECTABLE_OPEN_SCREEN, {
                 "startPos": worldPos,
+                "item": data.item,
                 "itemScale": 10,
+                "meshName": data.item.getMesh(),
                 "foundMeshName": ::Items[ItemId.NOTE_SCRAP].getMesh(),
                 "artifactId": ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_1,
                 "onClose": function() {

@@ -21,6 +21,7 @@ enum InventoryItemHelperScreenFunctions{
 ::ScreenManager.Screens[Screen.INVENTORY_ITEM_HELPER_SCREEN] = class extends ::Screen{
 
     mData_ = null;
+    mButtonData_ = null;
 
     mPanelContainerWindow_ = null;
 
@@ -91,6 +92,7 @@ enum InventoryItemHelperScreenFunctions{
         local buttonFunctions = buttonData[1];
         local buttonEnabled = buttonData[2];
         local buttonSkins = buttonData[3];
+        mButtonData_ = buttonData[4];
 
         local firstEnabledButton = null;
         foreach(c,i in buttonOptions){
@@ -102,6 +104,7 @@ enum InventoryItemHelperScreenFunctions{
             button.setTextHorizontalAlignment(_TEXT_ALIGN_LEFT);
             local buttonSize = button.getSize();
             button.setSize(buttonSize.x, buttonSize.y * 0.8);
+            button.setUserId(c);
 
             if(buttonSkins[c] != null){
                 button.setSkinPack(buttonSkins[c]);
@@ -249,6 +252,7 @@ enum InventoryItemHelperScreenFunctions{
         local buttonFunctions = [];
         local buttonEnabled = [];
         local buttonSkins = [];
+        local buttonData = [];
 
         local isShop = mData_.rawin("isShop") && mData_.isShop;
         local inventoryFull = mData_.rawin("inventoryFull") && mData_.inventoryFull;
@@ -261,12 +265,14 @@ enum InventoryItemHelperScreenFunctions{
             local playerMoney = mData_.rawin("playerMoney") ? mData_.playerMoney : 0;
             buttonEnabled.append(playerMoney >= itemPrice && !inventoryFull);
             buttonSkins.append(null);
+            buttonData.append(null);
         }else if(itemType == ItemType.EQUIPPABLE){
             if(mData_.gridType == InventoryGridType.INVENTORY_EQUIPPABLES){
                 buttonOptions.append(UNICODE_HELMET + " UnEquip");
                 buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.UNEQUIP]);
                 buttonEnabled.append(!inventoryFull);
                 buttonSkins.append(null);
+                buttonData.append(null);
             }else{
                 local equipData = ::Equippables[item.getEquippableData()];
                 local equipSlot = equipData.getEquippedSlot();
@@ -279,11 +285,14 @@ enum InventoryItemHelperScreenFunctions{
                     buttonEnabled.append(true);
                     buttonSkins.append(null);
                     buttonSkins.append(null);
+                    buttonData.append(null);
+                    buttonData.append(null);
                 }else{
                     buttonOptions.append(UNICODE_HELMET + " Equip");
                     buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.EQUIP]);
                     buttonEnabled.append(true);
                     buttonSkins.append(null);
+                    buttonData.append(null);
                 }
             }
         }else if(itemType == ItemType.LORE_CONTENT){
@@ -291,21 +300,25 @@ enum InventoryItemHelperScreenFunctions{
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.READ]);
             buttonEnabled.append(true);
             buttonSkins.append(null);
+            buttonData.append(null);
         }else if(itemType == ItemType.EAT){
             buttonOptions.append(UNICODE_EAT + " Eat");
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.USE]);
             buttonEnabled.append(true);
             buttonSkins.append(null);
+            buttonData.append(null);
         }else if(itemType == ItemType.DRINK){
             buttonOptions.append(UNICODE_DRINK + " Drink");
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.USE]);
             buttonEnabled.append(true);
             buttonSkins.append(null);
-        }else if(itemType == ItemType.MESSAGE_IN_A_BOTTLE){
+            buttonData.append(null);
+        }else if(itemType == ItemType.MESSAGE_IN_A_BOTTLE || itemType == ItemType.SAND_URN){
             buttonOptions.append("Open");
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.OPEN]);
             buttonEnabled.append(true);
             buttonSkins.append(null);
+            buttonData.append(item);
         }else if(itemType == ItemType.ITEM){
             //Items don't have any extra options.
         }else{
@@ -313,6 +326,7 @@ enum InventoryItemHelperScreenFunctions{
             buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.USE]);
             buttonEnabled.append(true);
             buttonSkins.append(null);
+            buttonData.append(null);
         }
 
         if(!isShop){
@@ -322,11 +336,13 @@ enum InventoryItemHelperScreenFunctions{
                 buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.SELL]);
                 buttonEnabled.append(true);
                 buttonSkins.append(null);
+                buttonData.append(null);
             }else{
                 buttonOptions.append(UNICODE_COINS + " Scrap");
                 buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.SCRAP]);
                 buttonEnabled.append(true);
                 buttonSkins.append(null);
+                buttonData.append(null);
             }
 
             if(mData_.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
@@ -334,6 +350,7 @@ enum InventoryItemHelperScreenFunctions{
                 buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.MOVE_TO_INVENTORY]);
                 buttonEnabled.append(true);
                 buttonSkins.append(null);
+                buttonData.append(null);
             }
 
             if(mData_.secondaryGrid && mData_.gridType == InventoryGridType.INVENTORY_GRID){
@@ -341,6 +358,7 @@ enum InventoryItemHelperScreenFunctions{
                 buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.MOVE_OUT_OF_INVENTORY]);
                 buttonEnabled.append(true);
                 buttonSkins.append(null);
+                buttonData.append(null);
             }
 
             // Add storage transfer options if storage is supported
@@ -359,6 +377,7 @@ enum InventoryItemHelperScreenFunctions{
                 local hasTargetSpace = targetInv.getNumSlotsFree() > 0;
                 buttonEnabled.append(sourceItem != null && hasTargetSpace);
                 buttonSkins.append(null);
+                buttonData.append(null);
             }
         }
 
@@ -367,8 +386,9 @@ enum InventoryItemHelperScreenFunctions{
         buttonFunctions.append(mButtonFunctions_[InventoryItemHelperScreenFunctions.CANCEL]);
         buttonEnabled.append(true);
         buttonSkins.append("Button_red");
+        buttonData.append(null);
 
-        return [buttonOptions, buttonFunctions, buttonEnabled, buttonSkins];
+        return [buttonOptions, buttonFunctions, buttonEnabled, buttonSkins, buttonData];
     }
 
     function closeInventoryScreen_(){
@@ -447,7 +467,9 @@ b[InventoryItemHelperScreenFunctions.BUY] = function(widget, action){
     closeInventoryScreen_();
 };
 b[InventoryItemHelperScreenFunctions.OPEN] = function(widget, action){
-    local data = {"idx": mData_.idx, "gridType": mData_.gridType};
+    local widgetId = widget.getUserId();
+    local item = mButtonData_[widgetId];
+    local data = {"idx": mData_.idx, "gridType": mData_.gridType, "item": item};
     mData_.bus.notifyEvent(InventoryBusEvents.ITEM_INFO_REQUEST_OPEN, data);
     closeInventoryScreen_();
 };
