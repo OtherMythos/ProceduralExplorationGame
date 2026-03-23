@@ -25,6 +25,7 @@
         mGradientPanel_ = mParentWindow_.createPanel();
         mGradientPanel_.setSize(iconSize * 1.5);
         mGradientPanel_.setDatablock("simpleGradient");
+        mGradientPanel_.setColour(ColourValue(1, 1, 1, 0.5));
         mGradientPanel_.setClickable(false);
 
         mIconPanel_ = mParentWindow_.createPanel();
