@@ -355,7 +355,8 @@
             mAnimPanel_.setClickable(false);
         }
 
-        targetWidget.mIconPanel_.setColour(ColourValue(1, 1, 1, 0));
+        targetWidget.mIconPanel_.setVisible(false);
+        targetWidget.mRenderIcon_.setVisible(false);
         mAnimTargetWidget_ = targetWidget;
         mAnimFrame_ = 0;
         mAnimating_ = true;
@@ -390,7 +391,8 @@
         if(p >= 1.0) {
             mAnimating_ = false;
             if(mAnimTargetWidget_ != null) {
-                mAnimTargetWidget_.mIconPanel_.setColour(ColourValue(1, 1, 1, 1));
+                mAnimTargetWidget_.mIconPanel_.setVisible(true);
+                mAnimTargetWidget_.mRenderIcon_.setVisible(true);
                 mAnimTargetWidget_ = null;
             }
             if(mAnimPanel_ != null) {
