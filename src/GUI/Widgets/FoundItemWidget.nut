@@ -13,6 +13,7 @@
     mIconPanel_ = null;
 
     mPosition_ = Vec2(0, 0);
+    mLayerIdx_ = 0;
     mMeshSize_ = null;
     mFullSize_ = Vec2(98, 98);
     mAnimationRotation_ = 0.0;
@@ -33,9 +34,10 @@
     static FOUND_ANIMATION_START_SCALE = 0.1;
     static REMOVAL_ANIMATION_DURATION = 0.3;
 
-    constructor(parentWindow, itemDef, scale=1.0){
+    constructor(parentWindow, itemDef, scale=1.0, layerIdx=0){
         mParentWindow_ = parentWindow;
         mItemDef_ = itemDef;
+        mLayerIdx_ = layerIdx;
 
         mFoundAnimationStartPos_ = Vec2_ZERO;
         mFoundAnimationFinalPos_ = Vec2_ZERO;
@@ -59,7 +61,7 @@
             return;
         }
 
-        mRenderIcon_ = ::RenderIconManager.createIcon(meshName, true, true);
+        mRenderIcon_ = ::RenderIconManager.createIcon(meshName, true, true, mLayerIdx_);
     }
 
     function createLabel_(){

@@ -448,7 +448,7 @@ enum GameplayComplexMenuBusEvents{
         mShopPanel_ = ::ShopWidget(mWindow_);
         local shopStart = mBankPanel_.getSize() + 10;
         shopStart.x = 0;
-        mShopPanel_.setup(shopStart);
+        mShopPanel_.setup(shopStart, mLayerIdx);
 
         mCurrentPos_ = Vec2();
     }

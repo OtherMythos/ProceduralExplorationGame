@@ -102,7 +102,7 @@
         backgroundWidget.setSkin(populated ? "InventoryWidget" : EQUIP_GRID_VALUES[idx]);
     }
 
-    function initialise(parentWin, gridSize, overlayWin, inventoryWidth, inventoryHeight){
+    function initialise(parentWin, gridSize, overlayWin, inventoryWidth, inventoryHeight, layerIdx = 0){
         //mWindow_ = parentWin.createWindow("InventoryGrid");
         //mWindow_.setSkinPack("WindowSkinNoBorder");
         //mWindow_.setBreadthFirst(true);
@@ -161,7 +161,7 @@
                 mItemIcons_[x + y * inventoryWidth] = iconPanel;
 
                 //Create render icon for 3D mesh display
-                local renderIcon = ::RenderIconManager.createIcon("smallPotion.voxMesh", true, true);
+                local renderIcon = ::RenderIconManager.createIcon("smallPotion.voxMesh", true, true, layerIdx);
                 local iconCentrePos = Vec2(x * gridRatio, y * gridRatio);
                 renderIcon.setPosition(iconCentrePos);
                 local renderSize = iconSize * 1.0;

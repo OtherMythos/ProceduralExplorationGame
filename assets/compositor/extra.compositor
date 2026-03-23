@@ -114,46 +114,6 @@ compositor_node compositor/GameplayExplorationCompassNode
     out 0 renderTexture
 }
 
-compositor_node compositor/RenderIconsNode
-{
-    in 0 renderTexture
-
-    texture renderIconsRaw target_width target_height PFG_RGBA8_UNORM_SRGB
-
-    target renderIconsRaw
-    {
-        pass clear
-        {
-            colour_value 0 0 0 0
-        }
-        pass render_scene
-        {
-            rq_first 70
-            rq_last 71
-
-            camera compositor/foregroundEffectCamera
-
-            identifier 16
-        }
-    }
-
-    target renderTexture
-    {
-        pass render_quad
-        {
-            load
-            {
-                all clear
-                clear_colour 0 0 0 0
-            }
-
-            material Postprocess/RenderIconsOutlineDraw
-
-            input 0 renderIconsRaw
-        }
-    }
-}
-
 workspace renderTextureInventoryWorkspace
 {
     connect_output renderTextureInventoryNode 0
@@ -173,8 +133,4 @@ workspace compositor/GamplayInventoryRingWorkspace
 workspace compositor/GamplayExplorationCompassWorkspace
 {
     connect_output compositor/GameplayExplorationCompassNode 0
-}
-workspace compositor/RenderIconsWorkspace
-{
-    connect_output compositor/RenderIconsNode 0
 }

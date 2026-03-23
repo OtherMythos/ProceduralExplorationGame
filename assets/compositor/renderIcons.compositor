@@ -1,0 +1,264 @@
+compositor_node compositor/RenderIconsNode_0
+{
+    in 0 renderTexture
+
+    texture renderIconsRaw target_width target_height PFG_RGBA8_UNORM_SRGB
+
+    target renderIconsRaw
+    {
+        pass clear
+        {
+            colour_value 0 0 0 0
+        }
+        pass render_scene
+        {
+            rq_first 70
+            rq_last 71
+
+            camera compositor/foregroundEffectCamera
+
+            identifier 16
+        }
+    }
+
+    target renderTexture
+    {
+        pass render_quad
+        {
+            load
+            {
+                all clear
+                clear_colour 0 0 0 0
+            }
+
+            material Postprocess/RenderIconsOutlineDraw
+
+            input 0 renderIconsRaw
+        }
+    }
+}
+
+compositor_node compositor/RenderIconsNode_1
+{
+    in 0 renderTexture
+
+    texture renderIconsRaw target_width target_height PFG_RGBA8_UNORM_SRGB
+
+    target renderIconsRaw
+    {
+        pass clear
+        {
+            colour_value 0 0 0 0
+        }
+        pass render_scene
+        {
+            rq_first 71
+            rq_last 72
+
+            camera compositor/foregroundEffectCamera
+
+            identifier 16
+        }
+    }
+
+    target renderTexture
+    {
+        pass render_quad
+        {
+            load
+            {
+                all clear
+                clear_colour 0 0 0 0
+            }
+
+            material Postprocess/RenderIconsOutlineDraw
+
+            input 0 renderIconsRaw
+        }
+    }
+}
+
+compositor_node compositor/RenderIconsNode_2
+{
+    in 0 renderTexture
+
+    texture renderIconsRaw target_width target_height PFG_RGBA8_UNORM_SRGB
+
+    target renderIconsRaw
+    {
+        pass clear
+        {
+            colour_value 0 0 0 0
+        }
+        pass render_scene
+        {
+            rq_first 72
+            rq_last 73
+
+            camera compositor/foregroundEffectCamera
+
+            identifier 16
+        }
+    }
+
+    target renderTexture
+    {
+        pass render_quad
+        {
+            load
+            {
+                all clear
+                clear_colour 0 0 0 0
+            }
+
+            material Postprocess/RenderIconsOutlineDraw
+
+            input 0 renderIconsRaw
+        }
+    }
+}
+
+compositor_node compositor/RenderIconsNode_3
+{
+    in 0 renderTexture
+
+    texture renderIconsRaw target_width target_height PFG_RGBA8_UNORM_SRGB
+
+    target renderIconsRaw
+    {
+        pass clear
+        {
+            colour_value 0 0 0 0
+        }
+        pass render_scene
+        {
+            rq_first 73
+            rq_last 74
+
+            camera compositor/foregroundEffectCamera
+
+            identifier 16
+        }
+    }
+
+    target renderTexture
+    {
+        pass render_quad
+        {
+            load
+            {
+                all clear
+                clear_colour 0 0 0 0
+            }
+
+            material Postprocess/RenderIconsOutlineDraw
+
+            input 0 renderIconsRaw
+        }
+    }
+}
+
+compositor_node compositor/RenderIconsNode_4
+{
+    in 0 renderTexture
+
+    texture renderIconsRaw target_width target_height PFG_RGBA8_UNORM_SRGB
+
+    target renderIconsRaw
+    {
+        pass clear
+        {
+            colour_value 0 0 0 0
+        }
+        pass render_scene
+        {
+            rq_first 74
+            rq_last 75
+
+            camera compositor/foregroundEffectCamera
+
+            identifier 16
+        }
+    }
+
+    target renderTexture
+    {
+        pass render_quad
+        {
+            load
+            {
+                all clear
+                clear_colour 0 0 0 0
+            }
+
+            material Postprocess/RenderIconsOutlineDraw
+
+            input 0 renderIconsRaw
+        }
+    }
+}
+
+compositor_node compositor/RenderIconsNode_5
+{
+    in 0 renderTexture
+
+    texture renderIconsRaw target_width target_height PFG_RGBA8_UNORM_SRGB
+
+    target renderIconsRaw
+    {
+        pass clear
+        {
+            colour_value 0 0 0 0
+        }
+        pass render_scene
+        {
+            rq_first 75
+            rq_last 76
+
+            camera compositor/foregroundEffectCamera
+
+            identifier 16
+        }
+    }
+
+    target renderTexture
+    {
+        pass render_quad
+        {
+            load
+            {
+                all clear
+                clear_colour 0 0 0 0
+            }
+
+            material Postprocess/RenderIconsOutlineDraw
+
+            input 0 renderIconsRaw
+        }
+    }
+}
+
+workspace compositor/RenderIconsWorkspace_0
+{
+    connect_output compositor/RenderIconsNode_0 0
+}
+workspace compositor/RenderIconsWorkspace_1
+{
+    connect_output compositor/RenderIconsNode_1 0
+}
+workspace compositor/RenderIconsWorkspace_2
+{
+    connect_output compositor/RenderIconsNode_2 0
+}
+workspace compositor/RenderIconsWorkspace_3
+{
+    connect_output compositor/RenderIconsNode_3 0
+}
+workspace compositor/RenderIconsWorkspace_4
+{
+    connect_output compositor/RenderIconsNode_4 0
+}
+workspace compositor/RenderIconsWorkspace_5
+{
+    connect_output compositor/RenderIconsNode_5 0
+}

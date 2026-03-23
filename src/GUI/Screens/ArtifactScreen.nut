@@ -13,7 +13,7 @@
         mParentWindow_ = parentWindow;
     }
 
-    function setup(size, position){
+    function setup(size, position, layerIdx = 0){
         //Background panel
         mBackgroundPanel_ = mParentWindow_.createPanel();
         mBackgroundPanel_.setSize(size);
@@ -31,7 +31,7 @@
         mIconPanel_ = mParentWindow_.createPanel();
         mIconPanel_.setSize(iconSize);
 
-        mRenderIcon_ = ::RenderIconManager.createIcon("readables.noteScrap.voxMesh", true, true);
+        mRenderIcon_ = ::RenderIconManager.createIcon("readables.noteScrap.voxMesh", true, true, layerIdx);
         mRenderIcon_.setSize(iconSize.x, iconSize.y);
         local orientation = Quat();
         orientation += Quat(0.5, ::Vec3_UNIT_Y);
@@ -257,7 +257,7 @@
             ids.sort();
             foreach(artifactId in ids){
                 local artifactWidget = ::ArtifactWidget(mArtifactScrollPanel_);
-                artifactWidget.setup(Vec2(150, 100), Vec2(0, 0));
+                artifactWidget.setup(Vec2(150, 100), Vec2(0, 0), mLayerIdx);
                 layoutLine.addCell(artifactWidget.mBackgroundPanel_);
                 mArtifactWidgets_.append(artifactWidget);
                 artifactIds.append(artifactId);
@@ -337,7 +337,7 @@
         mAnimStartSize_ = Vec2(data.animSourceSize.x, data.animSourceSize.y);
 
         local meshName = ("animMeshName" in data && data.animMeshName != null) ? data.animMeshName : "readables.noteScrap.voxMesh";
-        mAnimRenderIcon_ = ::RenderIconManager.createIcon(meshName, true, true);
+        mAnimRenderIcon_ = ::RenderIconManager.createIcon(meshName, true, true, mLayerIdx);
         local orient = Quat();
         orient += Quat(0.5, ::Vec3_UNIT_Y);
         orient += Quat(-0.5, ::Vec3_UNIT_Z);

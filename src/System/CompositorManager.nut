@@ -1,10 +1,16 @@
 //Some compositor scenes are generic.
 //Giving them a designated type allows for things like easy access to cameras and queries.
+const RENDER_ICON_LAYER_COUNT = 6;
 enum CompositorSceneType{
     EXPLORATION,
     INVENTORY_PLAYER_INSPECTOR,
     OVERWORLD,
-    RENDER_ICONS,
+    RENDER_ICONS_LAYER_0,
+    RENDER_ICONS_LAYER_1,
+    RENDER_ICONS_LAYER_2,
+    RENDER_ICONS_LAYER_3,
+    RENDER_ICONS_LAYER_4,
+    RENDER_ICONS_LAYER_5,
 
     MAX,
     NONE
@@ -82,7 +88,7 @@ enum CompositorSceneType{
 
         setGameplayActive(false);
 
-        createRenderIconsWorkspace(_window.getSize() * ::resolutionMult * 0.25);
+        createRenderIconsWorkspaces_(_window.getSize() * ::resolutionMult * 0.25);
     }
 
     function addExtraTexture(texture){
@@ -221,11 +227,15 @@ enum CompositorSceneType{
         return data == null ? null : data.mCamera;
     }
 
-    function createRenderIconsWorkspace(size){
-        local workspaceId = createCompositorWorkspace("compositor/RenderIconsWorkspace", size, CompositorSceneType.RENDER_ICONS, false, true);
-        local texture = mTextures_[CompositorSceneType.RENDER_ICONS];
+    function createRenderIconsWorkspaces_(size){
+        for(local layer = 0; layer < RENDER_ICON_LAYER_COUNT; layer++){
+            local sceneType = CompositorSceneType.RENDER_ICONS_LAYER_0 + layer;
+            createCompositorWorkspace("compositor/RenderIconsWorkspace_" + layer, size, sceneType, false, true);
+        }
+    }
 
-        return workspaceId;
+    function getTextureForIconLayer(layerIdx){
+        return mTextures_[CompositorSceneType.RENDER_ICONS_LAYER_0 + layerIdx];
     }
 
     function getDatablockForCompositor(id){

@@ -191,7 +191,7 @@ enum InventoryItemHelperScreenFunctions{
             //Fallback: create holepunch datablock from the current derived position
             local panelDerivedPos = iconPanel.getDerivedPosition();
             local panelSize3d = iconPanel.getSize();
-            local datablock = ::RenderIconManager.createRenderIconDatablock(panelDerivedPos, panelSize3d);
+            local datablock = ::RenderIconManager.createRenderIconDatablock(panelDerivedPos, panelSize3d, mLayerIdx);
             iconPanel.setDatablock(datablock);
         }
     }

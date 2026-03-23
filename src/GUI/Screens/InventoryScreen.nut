@@ -337,18 +337,18 @@ enum InventoryBusEvents{
         local layoutHorizontal = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
         mInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID, mInventoryBus_, mHoverInfo_, buttonCover, mMultiSelection_);
         local inventoryHeight = mInventory_.getInventorySize() / mInventoryWidth;
-        mInventoryGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, mInventoryWidth, inventoryHeight);
+        mInventoryGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, mInventoryWidth, inventoryHeight, mLayerIdx);
         //mInventoryGrid_.addToLayout(layoutLine);
         mInventoryGrid_.addToLayout(layoutHorizontal);
 
         mInventoryEquippedGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_EQUIPPABLES, mInventoryBus_, mHoverInfo_, buttonCover, mMultiSelection_, false);
-        mInventoryEquippedGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, null, null);
+        mInventoryEquippedGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, null, null, mLayerIdx);
         //mInventoryEquippedGrid_.addToLayout(layoutLine);
         //mInventoryEquippedGrid_.addToLayout(layoutHorizontal);
 
         if(mUseSecondaryGrid_){
             mSecondaryInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID_SECONDARY, mInventoryBus_, mHoverInfo_, buttonCover, mMultiSelection_);
-            mSecondaryInventoryGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, mSecondaryWidth_, mSecondaryHeight_);
+            mSecondaryInventoryGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, mSecondaryWidth_, mSecondaryHeight_, mLayerIdx);
             //mSecondaryInventoryGrid_.addToLayout(layoutLine);
             mSecondaryInventoryGrid_.addToLayout(layoutHorizontal);
         }
@@ -356,7 +356,7 @@ enum InventoryBusEvents{
         if(mSupportsStorage_){
             mStorageGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID, mInventoryBus_, mHoverInfo_, buttonCover, mMultiSelection_);
             local storageHeight = mItemStorage_.getInventorySize() / mInventoryWidth;
-            mStorageGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, mInventoryWidth, storageHeight);
+            mStorageGrid_.initialise(mWindow_, gridSize, mOverlayWindow_, mInventoryWidth, storageHeight, mLayerIdx);
             mStorageGrid_.addToLayout(layoutHorizontal);
         }
 

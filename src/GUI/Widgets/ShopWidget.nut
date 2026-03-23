@@ -21,7 +21,7 @@
         mParent_ = parent;
     }
 
-    function setup(startPos){
+    function setup(startPos, layerIdx = 0){
         local yPos = startPos.y;
 
         mInventoryWidth_ = 5;
@@ -53,7 +53,7 @@
         mBusCallbackId_ = mInventoryBus_.registerCallback(busCallback, this);
 
         mInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID, mInventoryBus_, null, null, false, false);
-        mInventoryGrid_.initialise(mParent_, gridSize, null, mInventoryWidth_, mInventoryHeight_);
+        mInventoryGrid_.initialise(mParent_, gridSize, null, mInventoryWidth_, mInventoryHeight_, layerIdx);
         mInventoryGrid_.setPosition(mInnerPanel_.getPosition() + GRID_PADDING);
 
         local distributor = ::FindableDistributor();

@@ -373,9 +373,14 @@ compositor_node renderWindowNode
     in 2 otherTex2
 
     in 3 texture1
-    in 4 texture2
-    in 5 texture3
-    in 6 texture4
+    in 4 renderIconsTex0
+    in 5 renderIconsTex1
+    in 6 renderIconsTex2
+    in 7 renderIconsTex3
+    in 8 renderIconsTex4
+    in 9 renderIconsTex5
+    in 10 extraTex1
+    in 11 extraTex2
 
     target renderWindowTexture
     {
@@ -386,9 +391,14 @@ compositor_node renderWindowNode
             expose otherTex2
 
             expose texture1
-            expose texture2
-            expose texture3
-            expose texture4
+            expose renderIconsTex0
+            expose renderIconsTex1
+            expose renderIconsTex2
+            expose renderIconsTex3
+            expose renderIconsTex4
+            expose renderIconsTex5
+            expose extraTex1
+            expose extraTex2
 
             load
             {
@@ -446,6 +456,11 @@ workspace renderWindowWorkspaceGameplay
     connect_external 4 renderWindowNode 4
     connect_external 5 renderWindowNode 5
     connect_external 6 renderWindowNode 6
+    connect_external 7 renderWindowNode 7
+    connect_external 8 renderWindowNode 8
+    connect_external 9 renderWindowNode 9
+    connect_external 10 renderWindowNode 10
+    connect_external 11 renderWindowNode 11
 }
 
 workspace renderWindowWorkspaceGameplayWithEffects
@@ -462,6 +477,11 @@ workspace renderWindowWorkspaceGameplayWithEffects
     connect_external 4 renderWindowNode 4
     connect_external 5 renderWindowNode 5
     connect_external 6 renderWindowNode 6
+    connect_external 7 renderWindowNode 7
+    connect_external 8 renderWindowNode 8
+    connect_external 9 renderWindowNode 9
+    connect_external 10 renderWindowNode 10
+    connect_external 11 renderWindowNode 11
 }
 
 workspace renderWindowWorkspace
@@ -474,7 +494,12 @@ workspace renderWindowWorkspace
     connect_external 2 renderWindowNode 2
 
     connect_external 3 renderWindowNode 3
-    connect_external 3 renderWindowNode 4
-    connect_external 3 renderWindowNode 5
-    connect_external 4 renderWindowNode 6
+    connect_external 4 renderWindowNode 4
+    connect_external 5 renderWindowNode 5
+    connect_external 6 renderWindowNode 6
+    connect_external 7 renderWindowNode 7
+    connect_external 8 renderWindowNode 8
+    connect_external 9 renderWindowNode 9
+    connect_external 3 renderWindowNode 10
+    connect_external 3 renderWindowNode 11
 }

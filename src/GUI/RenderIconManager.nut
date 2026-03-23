@@ -13,6 +13,7 @@
         mDebugPanel_ = null;
         mDebugWindow_ = null;
         mCutoutMaterial_ = false;
+        mLayerIdx_ = 0;
         mDatablock_ = null;
         mAnimMatrix_ = [
             1, 0, 0, 0,
@@ -21,11 +22,12 @@
             0, 0, 0, 1,
         ];
 
-        constructor(parentNode, centreMesh=false, debugWindow=null, cutoutMaterial=false){
+        constructor(parentNode, centreMesh=false, debugWindow=null, cutoutMaterial=false, layerIdx=0){
             mParentNode_ = parentNode;
             mCentreMesh_ = centreMesh;
             mDebugWindow_ = debugWindow;
             mCutoutMaterial_ = cutoutMaterial;
+            mLayerIdx_ = layerIdx;
             //this.mParentNode_.setVisible(false);
         }
 
@@ -50,7 +52,7 @@
             }
 
             local item = _gameCore.createVoxMeshItem(mesh);
-            item.setRenderQueueGroup(mCutoutMaterial_ ? RENDER_QUEUE_RENDER_ICONS : RENDER_QUEUE_EFFECT_FG);
+            item.setRenderQueueGroup(mCutoutMaterial_ ? RENDER_QUEUE_RENDER_ICONS + mLayerIdx_ : RENDER_QUEUE_EFFECT_FG);
 
             //Create a child node for the mesh if centring is enabled
             if(mCentreMesh_){
@@ -224,8 +226,8 @@
 
     }
 
-    function createIcon(mesh = null, centreMesh = false, cutoutMaterial = false){
-        local newIcon = RenderIcon(mParentNode_, centreMesh, mDebugWindow_, cutoutMaterial);
+    function createIcon(mesh = null, centreMesh = false, cutoutMaterial = false, layerIdx = 0){
+        local newIcon = RenderIcon(mParentNode_, centreMesh, mDebugWindow_, cutoutMaterial, layerIdx);
         if(mesh != null){
             newIcon.setMesh(mesh);
         }
@@ -240,7 +242,7 @@
             });
             local datablock = _hlms.unlit.createDatablock("renderIconDatablock" + mTotalDatablocks_, blendBlock);
             newIcon.setDatablock(datablock);
-            attachTextureToDatablock(datablock);
+            attachTextureToDatablock(datablock, layerIdx);
             mTotalDatablocks_++;
         }
 
@@ -269,9 +271,9 @@
         return mRenderIconTexture_;
     }
 
-    function attachTextureToDatablock(datablock){
+    function attachTextureToDatablock(datablock, layerIdx = 0){
         if(datablock != null){
-            local texture = ::CompositorManager.mTextures_[CompositorSceneType.RENDER_ICONS];
+            local texture = ::CompositorManager.getTextureForIconLayer(layerIdx);
 
             local sampler = _hlms.getSamplerblock({
                 "mag": "point"
@@ -282,7 +284,7 @@
         }
     }
 
-    function createRenderIconDatablock(screenPos, screenSize){
+    function createRenderIconDatablock(screenPos, screenSize, layerIdx = 0){
         //Create a new datablock for rendering a holepunched region
         local blendBlock = _hlms.getBlendblock({
             "src_blend_factor": _HLMS_SBF_SOURCE_ALPHA,
@@ -291,7 +293,7 @@
             "dst_alpha_blend_factor": _HLMS_SBF_ONE
         });
         local datablock = _hlms.unlit.createDatablock("renderIconPanelDatablock" + mTotalDatablocks_, blendBlock);
-        attachTextureToDatablock(datablock);
+        attachTextureToDatablock(datablock, layerIdx);
         mTotalDatablocks_++;
 
         //Set up the holepunch matrix

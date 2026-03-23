@@ -537,7 +537,7 @@ enum ExplorationScreenWidgetType{
             }
 
             //Create new widget
-            local newWidget = ::GuiWidgets.FoundItemWidget(mParentWindow_, itemDef, 0.3);
+            local newWidget = ::GuiWidgets.FoundItemWidget(mParentWindow_, itemDef, 0.3, mLayerIdx);
             mItemWidgets_.append(newWidget);
             mWidgetTimeouts_.append(0);
 
