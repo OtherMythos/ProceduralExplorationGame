@@ -467,6 +467,7 @@ enum InventoryBusEvents{
         mDragTouchButton_.setOnPressed(function(fingerId, normPos){
             //Only one drag at a time
             if(mDragState_ != null) return;
+            if(mMultiSelection_) return;
             local canvasPos = Vec2(normPos.x * ::canvasSize.x, normPos.y * ::canvasSize.y);
             local slot = getDraggableSlotAtPos_(canvasPos);
             if(slot == null) return;
