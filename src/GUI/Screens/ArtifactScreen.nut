@@ -9,8 +9,9 @@
     mArtifactId_ = ArtifactId.NONE;
     mAnimTime_ = 0.0;
 
-    constructor(parentWindow){
+    constructor(parentWindow, artifactId){
         mParentWindow_ = parentWindow;
+        mArtifactId_ = artifactId;
     }
 
     function setup(size, position, layerIdx = 0){
@@ -31,7 +32,12 @@
         mIconPanel_ = mParentWindow_.createPanel();
         mIconPanel_.setSize(iconSize);
 
-        mRenderIcon_ = ::RenderIconManager.createIcon("readables.noteScrap.voxMesh", true, true, layerIdx);
+        local meshName = "readables.noteScrap.voxMesh";
+        if(mArtifactId_ != ArtifactId.NONE){
+            local artifactDef = ::Artifacts[mArtifactId_];
+            meshName = artifactDef.getMesh();
+        }
+        mRenderIcon_ = ::RenderIconManager.createIcon(meshName, true, true, layerIdx);
         mRenderIcon_.setSize(iconSize.x, iconSize.y);
         local orientation = Quat();
         orientation += Quat(0.5, ::Vec3_UNIT_Y);
@@ -92,7 +98,7 @@
         mLabel_.sizeToFit(mBackgroundPanel_.getSize().x * 0.9);
 
         //Update render icon mesh
-        mRenderIcon_.setMesh(::Items[ItemId.NOTE_SCRAP].getMesh());
+        mRenderIcon_.setMesh(artifactDef.getMesh());
         local datablock = mRenderIcon_.getDatablock();
         if(datablock != null){
             mIconPanel_.setDatablock(datablock);
@@ -256,7 +262,7 @@
             //Artifact items for this type
             ids.sort();
             foreach(artifactId in ids){
-                local artifactWidget = ::ArtifactWidget(mArtifactScrollPanel_);
+                local artifactWidget = ::ArtifactWidget(mArtifactScrollPanel_, artifactId);
                 artifactWidget.setup(Vec2(150, 100), Vec2(0, 0), mLayerIdx);
                 layoutLine.addCell(artifactWidget.mBackgroundPanel_);
                 mArtifactWidgets_.append(artifactWidget);
@@ -336,7 +342,13 @@
         mAnimStartPos_ = Vec2(data.animSourcePos.x, data.animSourcePos.y);
         mAnimStartSize_ = Vec2(data.animSourceSize.x, data.animSourceSize.y);
 
-        local meshName = ("animMeshName" in data && data.animMeshName != null) ? data.animMeshName : "readables.noteScrap.voxMesh";
+        local meshName = "readables.noteScrap.voxMesh";
+        if("animMeshName" in data && data.animMeshName != null){
+            meshName = data.animMeshName;
+        }else{
+            local artifactDef = ::Artifacts[artifactId];
+            meshName = artifactDef.getMesh();
+        }
         mAnimRenderIcon_ = ::RenderIconManager.createIcon(meshName, true, true, mLayerIdx);
         local orient = Quat();
         orient += Quat(0.5, ::Vec3_UNIT_Y);

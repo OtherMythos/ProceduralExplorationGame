@@ -1024,16 +1024,18 @@ enum InventoryBusEvents{
             //Convert window position to world position
             local worldPos = ::EffectManager.getWorldPositionForWindowPos(itemCentre);
 
+            local targetArtifact = ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_1;
+
             local capturedInventoryData = inventoryData;
             local effectData = {
                 "startPos": worldPos,
                 "item": data.item,
                 "itemScale": 10,
                 "meshName": data.item.getMesh(),
-                "foundMeshName": ::Items[ItemId.NOTE_SCRAP].getMesh(),
-                "artifactId": ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_1,
+                "foundMeshName": ::Artifacts[targetArtifact].getMesh(),
+                "artifactId": targetArtifact,
                 "onClose": function() {
-                    setItemForInventory(capturedInventoryData, ::Item(ItemId.NOTE_SCRAP, {"artifactId": ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_1}));
+                    setItemForInventory(capturedInventoryData, ::Item(ItemId.NOTE_SCRAP, {"artifactId": targetArtifact}));
                 }.bindenv(this)
             };
 

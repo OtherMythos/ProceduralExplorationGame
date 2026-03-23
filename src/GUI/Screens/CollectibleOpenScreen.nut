@@ -81,8 +81,7 @@
             ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.ARTIFACT_SCREEN, {
                 "animArtifactId": mArtifactId_,
                 "animSourcePos": Vec2(::drawable.x / 2, ::drawable.y * 0.35),
-                "animSourceSize": Vec2(80, 80),
-                "animMeshName": mFoundMeshName_
+                "animSourceSize": Vec2(80, 80)
             }), null, mLayerIdx);
         }, _GUI_ACTION_PRESSED, this);
         collectButton.setColour(ColourValue(1, 1, 1, 0));
