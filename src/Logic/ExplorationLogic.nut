@@ -453,7 +453,8 @@
     }
 
     function readReadable(readable){
-        local targetPath = format("res://build/assets/readables/%s.nut", readable);
+        local readableTarget = readable == null ? "null" : readable;
+        local targetPath = format("res://build/assets/readables/%s.nut", readableTarget);
         readLoreContentPath(targetPath);
     }
 

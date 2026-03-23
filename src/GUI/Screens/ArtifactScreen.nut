@@ -132,9 +132,7 @@
     function onArtifactSelected_(){
         local artifactDef = ::Artifacts[mArtifactId_];
         local path = artifactDef.getScript();
-        if(path != null){
-            ::Base.mExplorationLogic.readReadable(path);
-        }
+        ::Base.mExplorationLogic.readReadable(path);
     }
 
     function shutdown(){
