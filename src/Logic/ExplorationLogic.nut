@@ -437,7 +437,8 @@
         local itemData = item.getData();
         if(itemData != null){
             local artifact = itemData.artifactId;
-            targetPath = "res://build/assets/readables/" + artifact + ".nut";
+            local artifactScript = ::Artifacts[artifact].getScript();
+            targetPath = "res://build/assets/readables/" + artifactScript + ".nut";
         }else{
             local defData = item.getDefData();
             if(defData == null){
