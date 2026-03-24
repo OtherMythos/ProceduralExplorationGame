@@ -14,6 +14,13 @@
         ItemId.MESSAGE_IN_A_BOTTLE
     ];
 
+    //Artifacts that can be placed in message in a bottle
+    static mMessageBottleArtifacts_ = [
+        ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_1,
+        ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_2,
+        ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_3
+    ];
+
     function determineShopItems(width, height){
         local totalSlots = width * height;
         local items = array(totalSlots, null);
@@ -41,7 +48,16 @@
         for(local i = 0; i < numRareItems; i++){
             local randomRareIdx = rand() % mRareItems_.len();
             local rarePrice = 100 + (rand() % 101);
-            itemsToPlace.append(::Item(mRareItems_[randomRareIdx]));
+            local rareItemId = mRareItems_[randomRareIdx];
+            local itemData = null;
+
+            //If this is a message in a bottle, assign an artifact
+            if(rareItemId == ItemId.MESSAGE_IN_A_BOTTLE){
+                local randomArtifactIdx = rand() % mMessageBottleArtifacts_.len();
+                itemData = mMessageBottleArtifacts_[randomArtifactIdx];
+            }
+
+            itemsToPlace.append(::Item(rareItemId, itemData));
             pricesToPlace.append(rarePrice);
         }
 
