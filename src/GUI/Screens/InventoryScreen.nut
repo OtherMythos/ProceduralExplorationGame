@@ -994,10 +994,12 @@ enum InventoryBusEvents{
             if(data.gridType == InventoryGridType.INVENTORY_GRID){
                 local targetInventory = getTargetInventory_();
                 local itemForIdx = targetInventory.getItemForIdx(data.idx);
+                getGridForData_(data).playConsumeAnimation(data.idx, itemForIdx.getMesh());
                 ::ItemHelper.actuateItem(itemForIdx);
                 targetInventory.removeFromInventory(data.idx);
             }else if(data.gridType == InventoryGridType.INVENTORY_GRID_SECONDARY){
                 local item = mSecondaryItems_[data.idx];
+                mSecondaryInventoryGrid_.playConsumeAnimation(data.idx, item.getMesh());
                 mSecondaryItems_[data.idx] = null;
                 mSecondaryInventoryGrid_.setNewGridIcons(mSecondaryItems_);
                 ::ItemHelper.actuateItem(item);
@@ -1165,6 +1167,10 @@ enum InventoryBusEvents{
     }
 
     function disposeOfItem(inventoryData, isSell){
+        local peekItem = getItemForGridSlot_(inventoryData.gridType, inventoryData.idx);
+        if(peekItem != null){
+            getGridForData_(inventoryData).playConsumeAnimation(inventoryData.idx, peekItem.getMesh());
+        }
         local targetItem = removeFromInventory_(inventoryData);
         if(targetItem == null) return;
 

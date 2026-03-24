@@ -42,6 +42,9 @@
     mSelectionIndicators_ = null;
     mRenderIcons_ = null;
     mRenderIconAnimationTime_ = 0;
+    mShrinkAnimations_ = null;
+    mIconSize_ = 0;
+    mLayerIdx_ = 0;
     mCurrentHighlightIdx_ = null;
     mIsHidden_ = false;
 
@@ -57,6 +60,7 @@
         mSelectedItems_ = [];
         mSelectionIndicators_ = [];
         mRenderIcons_ = [];
+        mShrinkAnimations_ = {};
     }
 
     /**
@@ -96,6 +100,42 @@
                 renderIcon.setVisible(true);
             }
         }
+    }
+
+    /**
+    Play a shrink-to-zero animation for the given slot.
+    Creates a dedicated render icon so it doesn't conflict with the grid's slot icons.
+    meshName must be the mesh used by the item being consumed.
+    */
+    function playConsumeAnimation(idx, meshName){
+        if(meshName == null) return;
+        if(idx < 0 || idx >= mRenderIcons_.len()) return;
+        //Derive the slot's current centre position from its background panel
+        local bg = mBackgrounds_[idx];
+        local slotPos = bg.getPosition();
+        local slotSize = bg.getSize();
+        local centre = slotPos + slotSize / 2;
+
+        local renderIcon = ::RenderIconManager.createIcon(meshName, true, true, mLayerIdx_ + 1);
+        renderIcon.setPosition(centre);
+        renderIcon.setSize(mIconSize_, mIconSize_);
+        local orientation = Quat();
+        orientation += Quat(0.5, ::Vec3_UNIT_Y);
+        orientation += Quat(-0.5, ::Vec3_UNIT_Z);
+        orientation += Quat(1.0, ::Vec3_UNIT_X);
+        renderIcon.setOrientation(orientation);
+
+        local iconPanel = null;
+        local datablock = renderIcon.getDatablock();
+        if(datablock != null){
+            iconPanel = mWindow_.createPanel();
+            iconPanel.setClickable(false);
+            iconPanel.setDatablock(datablock);
+            iconPanel.setSize(mIconSize_, mIconSize_);
+            iconPanel.setPosition(centre - Vec2(mIconSize_ / 2, mIconSize_ / 2));
+        }
+
+        mShrinkAnimations_[idx] <- {"progress": 0.0, "renderIcon": renderIcon, "iconPanel": iconPanel};
     }
 
     function setSkinForBackgroundEquippables(backgroundWidget, idx, populated){
@@ -165,6 +205,8 @@
                 local iconCentrePos = Vec2(x * gridRatio, y * gridRatio);
                 renderIcon.setPosition(iconCentrePos);
                 local renderSize = iconSize * 1.0;
+                mIconSize_ = iconSize;
+                mLayerIdx_ = layerIdx;
                 renderIcon.setSize(renderSize, renderSize);
                 local orientation = Quat();
                 orientation += Quat(0.5, ::Vec3_UNIT_Y);
@@ -416,24 +458,58 @@
         //Update render icon animations
         mRenderIconAnimationTime_ += 0.01;
 
+        //Process consume shrink animations
+        local toRemove_ = null;
+        foreach(idx, anim in mShrinkAnimations_){
+            anim.progress += (1.0 / 24.0);
+            local scale = 1.0 - anim.progress;
+            if(scale < 0.0) scale = 0.0;
+            local size = mIconSize_ * ::Easing.easeOutQuart(scale);
+            local halfSize = size / 2;
+            local centre = mBackgrounds_[idx].getPosition() + mBackgrounds_[idx].getSize() / 2;
+            anim.renderIcon.setSize(size, size);
+            if(anim.iconPanel != null){
+                anim.iconPanel.setSize(size, size);
+                anim.iconPanel.setPosition(centre - Vec2(halfSize, halfSize));
+            }
+            if(anim.progress >= 1.0){
+                if(toRemove_ == null) toRemove_ = [];
+                toRemove_.append(idx);
+                if(anim.iconPanel != null){
+                    _gui.destroy(anim.iconPanel);
+                }
+                anim.renderIcon.destroy();
+            }
+        }
+        if(toRemove_ != null){
+            foreach(idx in toRemove_){
+                delete mShrinkAnimations_[idx];
+            }
+        }
+
+        //Calculate rotation animation around Y and X axes
+        local rotY = Quat(sin(mRenderIconAnimationTime_ * 1.5), ::Vec3_UNIT_Y);
+        local rotX = Quat(sin(mRenderIconAnimationTime_ * 2.0), ::Vec3_UNIT_X);
+
+        //Get the base orientation and combine with animation
+        local baseOrient = Quat();
+        baseOrient += Quat(0.5, ::Vec3_UNIT_Y);
+        baseOrient += Quat(-0.5, ::Vec3_UNIT_Z);
+        baseOrient += Quat(1.0, ::Vec3_UNIT_X);
+
+        local animatedOrient = baseOrient;
+        animatedOrient += rotY;
+        animatedOrient += rotX;
+
         foreach(renderIcon in mRenderIcons_){
             if(renderIcon != null){
-                //Calculate rotation animation around Y and X axes
-                local rotY = Quat(sin(mRenderIconAnimationTime_ * 1.5), ::Vec3_UNIT_Y);
-                local rotX = Quat(sin(mRenderIconAnimationTime_ * 2.0), ::Vec3_UNIT_X);
-
-                //Get the base orientation and combine with animation
-                local baseOrient = Quat();
-                baseOrient += Quat(0.5, ::Vec3_UNIT_Y);
-                baseOrient += Quat(-0.5, ::Vec3_UNIT_Z);
-                baseOrient += Quat(1.0, ::Vec3_UNIT_X);
-
-                local animatedOrient = baseOrient;
-                animatedOrient += rotY;
-                animatedOrient += rotX;
-
                 renderIcon.setOrientation(animatedOrient);
             }
+        }
+
+        //Apply the same rotation to active consume animation icons
+        foreach(idx, anim in mShrinkAnimations_){
+            anim.renderIcon.setOrientation(animatedOrient);
         }
     }
 
@@ -451,6 +527,15 @@
             }
         }
         mRenderIcons_.clear();
+
+        //Destroy any in-progress consume animation icons
+        foreach(idx, anim in mShrinkAnimations_){
+            anim.renderIcon.destroy();
+            if(anim.iconPanel != null){
+                _gui.destroy(anim.iconPanel);
+            }
+        }
+        mShrinkAnimations_.clear();
     }
 
     function busCallback(event, data){
