@@ -40,6 +40,12 @@ enum ItemEquipTransformType{
     constructor(item=ItemId.NONE, data=null){
         mItemId_ = item;
         mItem_ = ::Items[item];
+        if(mItem_.mGivenData){
+            //Rather than using a reference, copy the def so the data can be stored in it.
+            mItem_ = mItem_.copy();
+            mItem_.mGivenData = data;
+        }
+
         mData_ = data;
     }
 
@@ -71,6 +77,9 @@ enum ItemEquipTransformType{
     mType = ItemType.NONE;
     mSellValue = 0;
     mDefData = null;
+    //Some items might want access to the item data in a def.
+    //This is normally uncommon, but is used for artifacts to return custom names and descriptions.
+    mGivenData = null;
 
     mEquippableData = EquippableId.NONE;
     mEquipTransformType = ItemEquipTransformType.NONE;
@@ -95,6 +104,12 @@ enum ItemEquipTransformType{
         return ::wrapToString(::ItemDef, "ItemDef", mName);
     }
 
+    function getItemDefClass() { return ::ItemDef; }
+
+    function copy(){
+        return getItemDefClass()(mName, mDesc, mMesh, mType, mSellValue, mDefData, mEquippableData, mEquipTransformType);
+    }
+
     function getId(){ return mId; }
     function getType(){ return mType; }
     function getName(){ return mName; }
@@ -112,6 +127,25 @@ enum ItemEquipTransformType{
     }
 
     function getMesh(){ return mMesh == null ? "questionMark.voxMesh" : mMesh; }
+}
+
+::ItemArtifactDef <- class extends ::ItemDef{
+
+    function getItemDefClass() { return ::ItemArtifactDef; }
+
+    function getName() {
+        if(mGivenData != null){
+            return ::Artifacts[mGivenData.artifactId].getName();
+        }
+        return base.getName();
+    }
+
+    function getMesh() {
+        if(mGivenData != null){
+            return ::Artifacts[mGivenData.artifactId].getMesh();
+        }
+        return base.getMesh();
+    }
 }
 
 ::ItemEquipTransform <- class{
