@@ -119,7 +119,9 @@ enum GameplayComplexMenuBusEvents{
                     "label": tabLabel,
                     "currentAnim": 0.0,
                     "targetAnim": 0.0,
-                    "startPos": pos
+                    "startPos": pos,
+                    "bounceProgress": 0.0,
+                    "bounceActive": false
                 });
             }
 
@@ -136,20 +138,34 @@ enum GameplayComplexMenuBusEvents{
             foreach(idx, i in mButtons_){
                 local current = i.currentAnim;
                 local target = i.targetAnim;
-                if(current == target && idx != mCurrentSelectedTab_) continue;
+                //Only update animation state for selected tab or if still animating
+                if(current != target || idx == mCurrentSelectedTab_){
+                    current = ::accelerationClampCoordinate_(current, target, 0.1);
+                    i.currentAnim = current;
+                }
 
-                current = ::accelerationClampCoordinate_(current, target, 0.1);
-
-                i.currentAnim = current;
                 local startPos = i.startPos;
                 local pulseOffset = 0.0;
+                local bounceOffset = 0.0;
 
                 //Add subtle pulse effect to selected tab icon
                 if(idx == mCurrentSelectedTab_){
                     pulseOffset = sin(mPulseTime_) * 1.5; //Sine wave pulse, max 2.0 pixels
                 }
 
-                i.icon.setPosition(startPos.x, startPos.y - current * 20 + pulseOffset);
+                //Bounce animation for item acquisition
+                if(i.bounceActive){
+                    i.bounceProgress += 1.0 / (0.4 * 60.0);
+                    if(i.bounceProgress >= 1.0){
+                        i.bounceProgress = 1.0;
+                        i.bounceActive = false;
+                    }
+                    //Use sine wave to go up and back down smoothly
+                    bounceOffset = -sin(i.bounceProgress * PI) * 20;
+                }
+
+                i.icon.setPosition(startPos.x, startPos.y - current * 20 + pulseOffset + bounceOffset);
+                i.icon.setSize(SIZE, SIZE);
                 i.label.setTextColour(1, 1, 1, current);
             }
         }
@@ -176,6 +192,29 @@ enum GameplayComplexMenuBusEvents{
 
         function getSize(){
             return Vec2(mNumPanels_ * (SIZE + 10), SIZE + 15);
+        }
+
+        //Returns the screen-space centre position of the icon for tab idx
+        function getTabIconScreenCentre(idx){
+            local button = mButtons_[idx];
+            local buttonPos = button.startPos;
+            return Vec2(
+                mPosition_.x + buttonPos.x + SIZE / 2,
+                mPosition_.y + buttonPos.y + SIZE / 2
+            );
+        }
+
+        //Returns the size of a single tab icon
+        function getTabIconSize(){
+            return Vec2(SIZE, SIZE);
+        }
+
+        //Triggers a bounce animation on the specified tab icon
+        function triggerTabBounce(idx){
+            if(idx >= 0 && idx < mButtons_.len()){
+                mButtons_[idx].bounceProgress = 0.0;
+                mButtons_[idx].bounceActive = true;
+            }
         }
 
     };
@@ -338,6 +377,11 @@ enum GameplayComplexMenuBusEvents{
         mCurrentTab_ = 0;
         notifyTabChange(mCurrentTab_);
         updateTabPosition_(1.0);
+
+        //Subscribe to shop item acquired event to bounce the inventory tab
+        _event.subscribe(Event.SHOP_ITEM_ACQUIRED, function(widget, action){
+            mTabPanel_.triggerTabBounce(1);
+        }, this);
     }
 
     function update(){
@@ -379,6 +423,13 @@ enum GameplayComplexMenuBusEvents{
 
     function getWindow(){
         return mWindow_;
+    }
+
+    function getTabIconInfo(tabIdx){
+        return {
+            "pos": mTabPanel_.getTabIconScreenCentre(tabIdx),
+            "size": mTabPanel_.getTabIconSize()
+        };
     }
 
     function notifyTabChange(idx){
@@ -449,6 +500,11 @@ enum GameplayComplexMenuBusEvents{
         local shopStart = mBankPanel_.getSize() + 10;
         shopStart.x = 0;
         mShopPanel_.setup(shopStart, 0);
+
+        local parent = mParent_;
+        mShopPanel_.mGetInventoryTabInfo_ = function(){
+            return parent.getTabIconInfo(1);
+        };
 
         mCurrentPos_ = Vec2();
     }

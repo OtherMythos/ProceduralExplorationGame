@@ -241,6 +241,8 @@ enum Event{
     INVENTORY_CLOSED = 1043,
 
     GAME_MOVED_TO_BACKGROUND = 1044,
+
+    SHOP_ITEM_ACQUIRED = 1045,
 };
 
 enum FoundObjectType{

@@ -1,3 +1,104 @@
+::ShopBuyAnimation <- class{
+
+    mRenderIcon_ = null;
+    mWindow_ = null;
+    mIconPanel_ = null;
+    mProgress_ = 0.0;
+    mStartPos_ = null;
+    mEndPos_ = null;
+    mStartSize_ = null;
+    mEndSize_ = null;
+
+    static DURATION = 0.6;
+
+    constructor(itemDef, startCentre, startSize, endCentre, endSize){
+        mStartPos_ = startCentre;
+        mEndPos_ = endCentre;
+        mStartSize_ = startSize;
+        mEndSize_ = endSize;
+
+        local meshName = itemDef.getMesh();
+        if(meshName == null) return;
+
+        mRenderIcon_ = ::RenderIconManager.createIcon(meshName, true, true, 2);
+        local datablock = mRenderIcon_.getDatablock();
+        if(datablock != null){
+            //Set initial orientation similar to inventory grid items
+            local orientation = Quat();
+            orientation += Quat(0.5, ::Vec3_UNIT_Y);
+            orientation += Quat(-0.5, ::Vec3_UNIT_Z);
+            orientation += Quat(1.0, ::Vec3_UNIT_X);
+            mRenderIcon_.setOrientation(orientation);
+
+            mWindow_ = _gui.createWindow("ShopBuyAnimation");
+            mWindow_.setSize(::drawable.x, ::drawable.y);
+            mWindow_.setVisualsEnabled(false);
+            mWindow_.setClickable(false);
+
+            mIconPanel_ = mWindow_.createPanel();
+            mIconPanel_.setClickable(false);
+            mIconPanel_.setDatablock(datablock);
+        }
+    }
+
+    function update(){
+        if(mRenderIcon_ == null) return true;
+
+        mProgress_ += 1.0 / (DURATION * 60.0);
+        if(mProgress_ > 1.0) mProgress_ = 1.0;
+
+        local t = mProgress_;
+        //X uses easeInQuart - slow start then accelerating snap across
+        local easeX = ::Easing.easeOutBack(t);
+        //Y uses easeOutBack - overshoots slightly for a looping arc feel
+        local easeY = ::Easing.easeInCubic(t);
+        local pos = Vec2(
+            mStartPos_.x + (mEndPos_.x - mStartPos_.x) * easeX,
+            mStartPos_.y + (mEndPos_.y - mStartPos_.y) * easeY
+        );
+
+        local easeSize = ::Easing.easeInQuart(t);
+        local size = mStartSize_ + (mEndSize_ - mStartSize_) * easeSize;
+
+        //Scale down to 0 in the final quarter as it hits the inventory icon
+        local scaleMult = 1.0;
+        if(t > 0.75){
+            local scaleT = (t - 0.75) / 0.25;
+            scaleMult = 1.0 - ::Easing.easeInQuad(scaleT);
+        }
+        size = size * scaleMult;
+
+        mRenderIcon_.setPosition(pos);
+        mRenderIcon_.setSize(size.x, size.y);
+
+        if(mIconPanel_ != null){
+            mIconPanel_.setPosition(Vec2(pos.x - size.x / 2, pos.y - size.y / 2));
+            print(size);
+            mIconPanel_.setSize(size.x, size.y);
+            //Fade out in final quarter of animation
+            local alpha = t > 0.75 ? 1.0 - (t - 0.75) / 0.25 : 1.0;
+            mIconPanel_.setColour(ColourValue(1, 1, 1, alpha));
+        }
+
+        return mProgress_ >= 1.0;
+    }
+
+    function shutdown(){
+        if(mIconPanel_ != null){
+            _gui.destroy(mIconPanel_);
+            mIconPanel_ = null;
+        }
+        if(mWindow_ != null){
+            _gui.destroy(mWindow_);
+            mWindow_ = null;
+        }
+        if(mRenderIcon_ != null){
+            mRenderIcon_.destroy();
+            mRenderIcon_ = null;
+        }
+    }
+};
+
 ::ShopWidget <- class{
 
     mParent_ = null;
@@ -17,6 +118,8 @@
     mInventory_ = null;
     mPrices_ = null;
     mInventoryGrid_ = null;
+    mBuyAnimations_ = null;
+    mGetInventoryTabInfo_ = null;
 
     constructor(parent){
         mParent_ = parent;
@@ -61,6 +164,7 @@
         local shopData = distributor.determineShopItems(mInventoryWidth_, mInventoryHeight_);
         mInventory_ = shopData["items"];
         mPrices_ = shopData["prices"];
+        mBuyAnimations_ = [];
         refreshGrid_()
 
     }
@@ -147,6 +251,16 @@
         mInventory_[idx] = null;
         mPrices_[idx] = null;
         refreshGrid_();
+
+        //Start fly-to-inventory animation
+        if(mGetInventoryTabInfo_ != null){
+            local tabInfo = mGetInventoryTabInfo_();
+            local gridPos = mInventoryGrid_.getPositionForIdx(idx);
+            local gridSize = mInventoryGrid_.getSizeForIdx(idx);
+            local startCentre = gridPos + gridSize / 2;
+            local anim = ::ShopBuyAnimation(shopItem, startCentre, gridSize, tabInfo.pos, tabInfo.size);
+            mBuyAnimations_.append(anim);
+        }
     }
 
     function calculateGridSize(){
@@ -161,12 +275,30 @@
 
     function update(){
         mInventoryGrid_.update();
+
+        //Update active buy animations
+        local i = 0;
+        while(i < mBuyAnimations_.len()){
+            if(mBuyAnimations_[i].update()){
+                mBuyAnimations_[i].shutdown();
+                mBuyAnimations_.remove(i);
+                //Emit event when buy animation completes
+                _event.transmit(Event.SHOP_ITEM_ACQUIRED, null);
+            }else{
+                i++;
+            }
+        }
     }
 
     function shutdown(){
         mInventoryBus_.deregisterCallback(mBusCallbackId_);
 
         mInventoryGrid_.shutdown();
+
+        foreach(anim in mBuyAnimations_){
+            anim.shutdown();
+        }
+        mBuyAnimations_.clear();
     }
 
 };
