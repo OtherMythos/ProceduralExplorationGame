@@ -530,10 +530,10 @@
 
         //Destroy any in-progress consume animation icons
         foreach(idx, anim in mShrinkAnimations_){
-            anim.renderIcon.destroy();
             if(anim.iconPanel != null){
                 _gui.destroy(anim.iconPanel);
             }
+            anim.renderIcon.destroy();
         }
         mShrinkAnimations_.clear();
     }
