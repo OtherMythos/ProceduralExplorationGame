@@ -16,14 +16,18 @@
     mAnimTime_ = 0;
     mAnimFrame_ = 0;
 
-    //Content panel (hidden during intro)
+    //Close animation state
+    mIsClosing_ = false;
+    mCloseAnimFrame_ = 0;
     mContentPanel_ = null;
     mContentPos_ = null;
     mContentShown_ = false;
+    mContentFadeFrame_ = 0;
 
     static SLIDE_FRAMES = 30;
     static ZOOM_FRAMES = 25;
     static CONTENT_SHOW_FRAME = 53;
+    static CONTENT_FADE_FRAMES = 20;
 
     function setup(data){
         createBackgroundScreen_();
@@ -66,7 +70,7 @@
         mContentPanel_.setSkinPack("Panel_midGrey");
         mContentPanel_.setPosition(Vec2(-10000, -10000));
         mContentPanel_.setBreadthFirst(true);
-        mContentPanel_.setColour(ColourValue(1, 1, 1, 0.95));
+        mContentPanel_.setColour(ColourValue(1, 1, 1, 0));
 
         local layoutLine = _gui.createLayoutLine();
 
@@ -159,13 +163,19 @@
 
     function update(){
         if(_input.getButtonAction(::InputManager.menuBack, _INPUT_PRESSED)){
-            if(::ScreenManager.isScreenTop(mLayerIdx)) closeScreen();
+            if(::ScreenManager.isScreenTop(mLayerIdx) && !mIsClosing_) closeScreen();
         }
         updateAnimation_();
     }
 
     function updateAnimation_(){
         if(mBgRenderIcon_ == null) return;
+
+        //Handle close animation
+        if(mIsClosing_){
+            updateCloseAnimation_();
+            return;
+        }
 
         mAnimFrame_++;
         mAnimTime_ += 0.05;
@@ -180,6 +190,12 @@
             if(mBgPanel_ != null){
                 mBgPanel_.setSize(mBgInitialSize_);
                 mBgPanel_.setCentre(currentPos.x, currentPos.y);
+                mBgPanel_.setColour(ColourValue(1, 1, 1, 0.95));
+            }
+            //Fade in background screen during phase 1
+            if(mBackgroundWindow_ != null){
+                local bgOpacity = p * 0.8;
+                mBackgroundWindow_.setColour(ColourValue(1.0, 1.0, 1.0, bgOpacity));
             }
         //Phase 2: zoom to fill the screen
         } else if(mAnimFrame_ <= SLIDE_FRAMES + ZOOM_FRAMES){
@@ -191,6 +207,11 @@
             if(mBgPanel_ != null){
                 mBgPanel_.setSize(currentSize);
                 mBgPanel_.setCentre(mBgEndPos_.x, mBgEndPos_.y);
+                mBgPanel_.setColour(ColourValue(1, 1, 1, 0.95));
+            }
+            //Maintain background opacity during phase 2
+            if(mBackgroundWindow_ != null){
+                mBackgroundWindow_.setColour(ColourValue(1.0, 1.0, 1.0, 0.8));
             }
         }
 
@@ -198,6 +219,15 @@
         if(!mContentShown_ && mAnimFrame_ >= CONTENT_SHOW_FRAME){
             mContentShown_ = true;
             mContentPanel_.setPosition(mContentPos_);
+            mContentFadeFrame_ = 0;
+        }
+
+        //Fade in content panel
+        if(mContentShown_ && mContentFadeFrame_ < CONTENT_FADE_FRAMES){
+            mContentFadeFrame_++;
+            local p = min(1.0, mContentFadeFrame_.tofloat() / CONTENT_FADE_FRAMES.tofloat());
+            local eased = ::Easing.easeInOutCubic(p);
+            mContentPanel_.setColour(ColourValue(1, 1, 1, eased * 0.95));
         }
 
         //Idle spin - half speed
@@ -210,10 +240,45 @@
         mBgRenderIcon_.setOrientation(animOrient);
     }
 
-    function closeScreen(){
-        ::ScreenManager.backupScreen(mLayerIdx);
+    function updateCloseAnimation_(){
+        if(mBgRenderIcon_ == null) return;
 
+        mCloseAnimFrame_++;
+
+        //Shrink from fill size back to initial size with fade out
+        if(mCloseAnimFrame_ <= ZOOM_FRAMES){
+            local p = min(1.0, mCloseAnimFrame_.tofloat() / ZOOM_FRAMES.tofloat());
+            local eased = ::Easing.easeInOutCubic(p);
+            local currentSize = mBgFillSize_ + (mBgInitialSize_ - mBgFillSize_) * eased;
+            mBgRenderIcon_.setPosition(mBgEndPos_);
+            mBgRenderIcon_.setSize(currentSize.x, currentSize.y);
+            if(mBgPanel_ != null){
+                mBgPanel_.setSize(currentSize);
+                mBgPanel_.setCentre(mBgEndPos_.x, mBgEndPos_.y);
+                //Fade out opacity
+                local opacity = 1.0 - p;
+                mBgPanel_.setColour(ColourValue(1, 1, 1, opacity));
+            }
+            //Fade out background screen
+            if(mBackgroundWindow_ != null){
+                local opacity = 1.0 - p;
+                mBackgroundWindow_.setColour(ColourValue(1.0, 1.0, 1.0, opacity * 0.8));
+            }
+        } else {
+            //Close animation complete, perform actual close
+            finishClose_();
+        }
+    }
+
+    function finishClose_(){
+        ::ScreenManager.backupScreen(mLayerIdx);
         ::Base.mExplorationLogic.unPauseExploration();
+    }
+
+    function closeScreen(){
+        mIsClosing_ = true;
+        mCloseAnimFrame_ = 0;
+        mContentPanel_.setPosition(Vec2(-10000, -10000));
     }
 
     function shutdown(){
