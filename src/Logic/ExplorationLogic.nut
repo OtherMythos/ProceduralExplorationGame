@@ -450,20 +450,23 @@
             throw "Could not find lore content for item " + item;
         }
 
-        readLoreContentPath(targetPath);
+        local meshName = item.getMesh();
+        readLoreContentPath(targetPath, meshName);
     }
 
-    function readReadable(readable){
+    function readReadable(readable, meshName = null){
         local readableTarget = readable == null ? "null" : readable;
         local targetPath = format("res://build/assets/readables/%s.nut", readableTarget);
-        readLoreContentPath(targetPath);
+        readLoreContentPath(targetPath, meshName);
     }
 
-    function readLoreContentPath(readablePath){
+    function readLoreContentPath(readablePath, meshName = null){
         if(!_system.exists(readablePath)) throw "Could not find lore content for path " + readablePath;
         _doFile(readablePath);
 
-        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.READABLE_CONTENT_SCREEN, {"content": readable}), null, 4);
+        local screenData = {"content": readable};
+        if(meshName != null) screenData.rawset("meshName", meshName);
+        ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.READABLE_CONTENT_SCREEN, screenData), null, 4);
         getroottable().rawdelete("readable");
 
         pauseExploration();

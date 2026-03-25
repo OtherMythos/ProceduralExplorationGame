@@ -3,9 +3,29 @@
     mWindow_ = null;
     mReadableContent_ = null;
     mActionSetId_ = null;
+    mMeshName_ = null;
+
+    //Background mesh render
+    mBgRenderIcon_ = null;
+    mBgPanel_ = null;
+    mBgStartPos_ = null;
+    mBgEndPos_ = null;
+    mBgInitialSize_ = null;
+    mBgFillSize_ = null;
+
+    mAnimTime_ = 0;
+    mAnimFrame_ = 0;
+
+    //Content panel (hidden during intro)
+    mContentPanel_ = null;
+    mContentPos_ = null;
+    mContentShown_ = false;
+
+    static SLIDE_FRAMES = 30;
+    static ZOOM_FRAMES = 25;
+    static CONTENT_SHOW_FRAME = 53;
 
     function setup(data){
-
         createBackgroundScreen_();
 
         if(data != null && data.rawin("content")){
@@ -18,32 +38,89 @@
             ];
         }
 
+        mMeshName_ = (data != null && data.rawin("meshName")) ? data.meshName : "readables.noteScrap.voxMesh";
+        mAnimFrame_ = 0;
+        mAnimTime_ = 0;
+        mContentShown_ = false;
+
         mWindow_ = _gui.createWindow("ReadableContentScreen");
-        mWindow_.setSize(_window.getWidth(), _window.getHeight());
-        mWindow_.setSkinPack("WindowSkinNoBorder");
-        mWindow_.setSize(::drawable * 0.8);
+        mWindow_.setSize(::drawable);
+        mWindow_.setVisualsEnabled(false);
         mWindow_.setBreadthFirst(true);
+        mWindow_.setClipBorders(0, 0, 0, 0);
+
+        //Background mesh panel (created first so it renders behind content)
+        setupBgMesh_();
+
+        //Content panel in centre with grey skin
+        local contentSize = ::drawable.copy();
+        contentSize.x *= 0.8;
+        contentSize.y *= 0.5;
+        mContentPos_ = Vec2(
+            (::drawable.x - contentSize.x) * 0.5,
+            (::drawable.y - contentSize.y) * 0.5
+        );
+
+        mContentPanel_ = mWindow_.createWindow("ReadableContentPanel");
+        mContentPanel_.setSize(contentSize);
+        mContentPanel_.setSkinPack("Panel_midGrey");
+        mContentPanel_.setPosition(Vec2(-10000, -10000));
+        mContentPanel_.setBreadthFirst(true);
+        mContentPanel_.setColour(ColourValue(1, 1, 1, 0.95));
 
         local layoutLine = _gui.createLayoutLine();
 
         foreach(i in mReadableContent_){
-            local label = mWindow_.createLabel();
+            local label = mContentPanel_.createLabel();
             label.setText(i);
-            label.sizeToFit(mWindow_.getSize().x);
+            label.sizeToFit(contentSize.x * 0.9);
+            label.setShadowOutline(true, ColourValue(0, 0, 0), Vec2(2, 2));
             layoutLine.addCell(label);
         }
 
-        //layoutLine.setMarginForAllCells(0, 20);
-        //layoutLine.setGridLocationForAllCells(_GRID_LOCATION_CENTER);
-        layoutLine.setSize(mWindow_.getSize());
+        layoutLine.setSize(contentSize);
         layoutLine.layout();
 
-        constructButtons(mWindow_.getSize());
+        constructButtons_();
 
         mActionSetId_ = ::InputManager.pushActionSet(InputActionSets.MENU);
     }
 
-    function constructButtons(winSize){
+    function setupBgMesh_(){
+        local initDim = ::drawable.x * 0.45;
+        mBgInitialSize_ = Vec2(initDim, initDim);
+        local fillDim = max(::drawable.x, ::drawable.y) * 0.65;
+        mBgFillSize_ = Vec2(fillDim, fillDim);
+
+        local centreX = ::drawable.x * 0.5;
+        local centreY = ::drawable.y * 0.5;
+        mBgEndPos_ = Vec2(centreX, centreY);
+        mBgStartPos_ = Vec2(centreX, ::drawable.y + mBgInitialSize_.y * 0.5);
+
+        mBgRenderIcon_ = ::RenderIconManager.createIcon(mMeshName_, true, true, mLayerIdx);
+        mBgRenderIcon_.setSize(mBgInitialSize_.x, mBgInitialSize_.y);
+        mBgRenderIcon_.setPosition(mBgStartPos_);
+
+        local orient = Quat();
+        orient += Quat(0.5, ::Vec3_UNIT_Y);
+        orient += Quat(1.0, ::Vec3_UNIT_X);
+        mBgRenderIcon_.setOrientation(orient);
+
+        local datablock = mBgRenderIcon_.getDatablock();
+        if(datablock != null){
+            mBgPanel_ = mWindow_.createPanel();
+            mBgPanel_.setSize(mBgInitialSize_);
+            mBgPanel_.setDatablock(datablock);
+            mBgPanel_.setClickable(false);
+            mBgPanel_.setCentre(mBgStartPos_.x, mBgStartPos_.y);
+        }
+    }
+
+    function constructButtons_(){
+        local insets = _window.getScreenSafeAreaInsets();
+        local buttonMargin = 10;
+        local buttonY = ::drawable.y - insets.bottom - buttonMargin;
+
         local mHorizontalLayout_ = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
 
         local buttonLabels = [
@@ -64,7 +141,7 @@
         ];
 
         local buttons = [];
-        foreach(c,i in buttonLabels){
+        foreach(c, i in buttonLabels){
             local button = mWindow_.createButton();
             button.setText(i);
             button.attachListenerForEvent(buttonFunctions[c], _GUI_ACTION_PRESSED, this);
@@ -76,7 +153,7 @@
         local maxHeight = ::evenOutButtonsForHeight(buttons);
 
         mHorizontalLayout_.setMarginForAllCells(10, 0);
-        mHorizontalLayout_.setPosition(0, winSize.y - maxHeight - 10);
+        mHorizontalLayout_.setPosition(buttonMargin, buttonY - maxHeight);
         mHorizontalLayout_.layout();
     }
 
@@ -84,13 +161,71 @@
         if(_input.getButtonAction(::InputManager.menuBack, _INPUT_PRESSED)){
             if(::ScreenManager.isScreenTop(mLayerIdx)) closeScreen();
         }
+        updateAnimation_();
+    }
+
+    function updateAnimation_(){
+        if(mBgRenderIcon_ == null) return;
+
+        mAnimFrame_++;
+        mAnimTime_ += 0.05;
+
+        //Phase 1: slide up from off-screen to centre
+        if(mAnimFrame_ <= SLIDE_FRAMES){
+            local p = min(1.0, mAnimFrame_.tofloat() / SLIDE_FRAMES.tofloat());
+            local eased = ::Easing.easeOutBack(p);
+            local currentPos = mBgStartPos_ + (mBgEndPos_ - mBgStartPos_) * eased;
+            mBgRenderIcon_.setPosition(currentPos);
+            mBgRenderIcon_.setSize(mBgInitialSize_.x, mBgInitialSize_.y);
+            if(mBgPanel_ != null){
+                mBgPanel_.setSize(mBgInitialSize_);
+                mBgPanel_.setCentre(currentPos.x, currentPos.y);
+            }
+        //Phase 2: zoom to fill the screen
+        } else if(mAnimFrame_ <= SLIDE_FRAMES + ZOOM_FRAMES){
+            local p = min(1.0, (mAnimFrame_ - SLIDE_FRAMES).tofloat() / ZOOM_FRAMES.tofloat());
+            local eased = ::Easing.easeInOutCubic(p);
+            local currentSize = mBgInitialSize_ + (mBgFillSize_ - mBgInitialSize_) * eased;
+            mBgRenderIcon_.setPosition(mBgEndPos_);
+            mBgRenderIcon_.setSize(currentSize.x, currentSize.y);
+            if(mBgPanel_ != null){
+                mBgPanel_.setSize(currentSize);
+                mBgPanel_.setCentre(mBgEndPos_.x, mBgEndPos_.y);
+            }
+        }
+
+        //Reveal content panel once zoom has nearly finished
+        if(!mContentShown_ && mAnimFrame_ >= CONTENT_SHOW_FRAME){
+            mContentShown_ = true;
+            mContentPanel_.setPosition(mContentPos_);
+        }
+
+        //Idle spin - half speed
+        local rotY = Quat(sin(mAnimTime_ * 0.75) * 0.05, ::Vec3_UNIT_Y);
+        local baseOrient = Quat();
+        baseOrient += Quat(0.5, ::Vec3_UNIT_Y);
+        baseOrient += Quat(1.0, ::Vec3_UNIT_X);
+        local animOrient = baseOrient;
+        animOrient += rotY;
+        mBgRenderIcon_.setOrientation(animOrient);
     }
 
     function closeScreen(){
         ::ScreenManager.backupScreen(mLayerIdx);
 
         ::Base.mExplorationLogic.unPauseExploration();
+    }
 
+    function shutdown(){
+        if(mBgPanel_ != null){
+            mBgPanel_.setDatablock("simpleGrey");
+            mBgPanel_ = null;
+        }
+        if(mBgRenderIcon_ != null){
+            mBgRenderIcon_.destroy();
+            mBgRenderIcon_ = null;
+        }
+        base.shutdown();
         ::InputManager.popActionSet(mActionSetId_);
     }
 };
