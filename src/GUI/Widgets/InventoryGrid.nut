@@ -78,15 +78,18 @@
             local widget = mItemIcons_[i - offset];
             local renderIcon = mRenderIcons_[i - offset];
             local item = inv[i];
+            local background = mBackgrounds_[i - offset];
 
-            if(mInventoryType_ == InventoryGridType.INVENTORY_EQUIPPABLES){
-                local background = mBackgrounds_[i - offset];
-                setSkinForBackgroundEquippables(background, i-offset, item != null);
-            }
             if(item == null){
                 widget.setVisible(false);
                 if(renderIcon != null){
                     renderIcon.setVisible(false);
+                }
+                //Set empty slot colour
+                background.setColour(ColourValue(0.3, 0.3, 0.3, 0.8));
+                //Update equippables skin for empty slots
+                if(mInventoryType_ == InventoryGridType.INVENTORY_EQUIPPABLES){
+                    //setSkinForBackgroundEquippables(background, i-offset, false);
                 }
                 //Skip this to save a bit of time.
                 //widget.setSkin("item_none");
@@ -98,6 +101,13 @@
             renderIcon.setMesh(item.getMesh());
             if(renderIcon != null){
                 renderIcon.setVisible(true);
+            }
+            //Set background colour based on item type
+            local itemType = item.getType();
+            background.setColour(getColourForItemType_(itemType));
+            //Update equippables skin for populated slots
+            if(mInventoryType_ == InventoryGridType.INVENTORY_EQUIPPABLES){
+                //setSkinForBackgroundEquippables(background, i-offset, true);
             }
         }
     }
@@ -140,6 +150,29 @@
 
     function setSkinForBackgroundEquippables(backgroundWidget, idx, populated){
         backgroundWidget.setSkin(populated ? "InventoryWidget" : EQUIP_GRID_VALUES[idx]);
+    }
+
+    /**
+    Get colour for background slot based on item type.
+    */
+    function getColourForItemType_(itemType){
+        switch(itemType){
+            case ItemType.EQUIPPABLE:
+                return ColourValue(0.2, 0.3, 0.8, 0.8);  //blue
+            case ItemType.CONSUMABLE:
+            case ItemType.DRINK:
+            case ItemType.EAT:
+                return ColourValue(0.1, 0.4, 0.1, 0.8);  //green
+            case ItemType.LORE_CONTENT:
+                return ColourValue(0.25, 0.1, 0.35, 0.8); //purple
+            case ItemType.MONEY:
+                return ColourValue(0.4, 0.35, 0.1, 0.8);  //yellow/gold
+            case ItemType.MESSAGE_IN_A_BOTTLE:
+            case ItemType.SAND_URN:
+                return ColourValue(0.7, 0.1, 0.7, 0.8);  //magenta
+            default:
+                return ColourValue(0.3, 0.3, 0.3, 0.8);   //grey
+        }
     }
 
     function initialise(parentWin, gridSize, overlayWin, inventoryWidth, inventoryHeight, layerIdx = 0){
@@ -190,7 +223,11 @@
                 local background = parentWin.createPanel();
                 background.setSize(gridRatio, gridRatio);
                 background.setPosition(x * gridRatio, y * gridRatio);
-                background.setSkin("InventoryWidget");
+                background.setSkin("InventoryWidget_light");
+                //background.setColour(ColourValue(0.3, 0.3, 0.3, 0.8));
+                //background.setColour(ColourValue(0.4, 0.1, 0.1, 0.8));
+                //background.setColour(ColourValue(0.1, 0.3, 0.1, 0.8));
+                background.setColour(ColourValue(0.1, 0.1, 0.4, 0.8));
                 mBackgrounds_.append(background);
 
                 local iconPanel = parentWin.createPanel();
@@ -695,14 +732,14 @@
         local bg = mBackgrounds_[idx];
         if(highlighted){
             mCurrentHighlightIdx_ = idx;
-            bg.setSkin("InventoryWidgetHighlight");
+            //bg.setSkin("InventoryWidgetHighlight");
         }else{
             mCurrentHighlightIdx_ = null;
             if(mInventoryType_ == InventoryGridType.INVENTORY_EQUIPPABLES){
                 local hasItem = mItemIcons_[idx].getVisible();
-                setSkinForBackgroundEquippables(bg, idx, hasItem);
+                //setSkinForBackgroundEquippables(bg, idx, hasItem);
             }else{
-                bg.setSkin("InventoryWidget");
+                //bg.setSkin("InventoryWidget");
             }
         }
     }

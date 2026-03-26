@@ -69,7 +69,7 @@
         "gui/InventoryWidget" :
         {
             "blendblock": "gui/uiBlend",
-            "diffuse" : [1, 1, 1, 0.6],
+            "diffuse" : [1, 1, 1, 1],
             "diffuse_map0" :
             {
                 "texture": "Widget.png"
