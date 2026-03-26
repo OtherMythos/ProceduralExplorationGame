@@ -222,7 +222,10 @@
 
     function processMoveToBackground(id, data){
         print("Received move to background event");
-        if(mCurrentWorld_ != null && mCurrentWorld_.canPauseGame()){
+        //Guard against the engine firing this event more than once per background
+        //cycle. Without this check each duplicate event inflates mPauseCount_,
+        //requiring an equal number of extra Resume presses to clear.
+        if(mCurrentWorld_ != null && mCurrentWorld_.canPauseGame() && ::ScreenManager.getScreenIdForLayer(2) != Screen.PAUSE_SCREEN){
             setGamePaused(true);
         }
     }
@@ -504,7 +507,7 @@
             mCurrentWorld_.notifyModalPopupScreen();
         }else{
             unPauseExploration();
-            ::ScreenManager.transitionToScreen(Screen.PAUSE_SCREEN, null, 2);
+            ::ScreenManager.transitionToScreen(null, null, 2);
         }
     }
 };
