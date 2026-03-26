@@ -94,6 +94,9 @@ enum InventoryBusEvents{
     mPlayerStats_ = null;
     mPlayerInspector_ = null;
 
+    mGradientLeft_ = null;
+    mGradientRight_ = null;
+
     mEquippableLeftBg_ = null;
     mEquippableRightBg_ = null;
     mEquippableLeftGradient_ = null;
@@ -313,6 +316,15 @@ enum InventoryBusEvents{
         }
         mHoverInfo_ = ::InventoryHoverItemInfo(mOverlayWindow_);
 
+        //Add one for the equippables slot and another for general padding.
+        local gridSize = calculateGridSize();
+
+            mPlayerInspector_ = ::GuiWidgets.InventoryPlayerInspector();
+            mPlayerInspector_.setup(mWindow_);
+
+        mGradientLeft_ = mWindow_.createPanel();
+        mGradientRight_ = mWindow_.createPanel();
+
         // Create equippable background panels and gradient overlays early
         mEquippableLeftBg_ = mWindow_.createPanel();
         mEquippableLeftBg_.setSize(0, 0);
@@ -327,12 +339,6 @@ enum InventoryBusEvents{
         mEquippableRightBg_.setSkin("Panel_lightGrey");
         //mEquippableRightBg_.setColour(ColourValue(0.1, 0.1, 0.1, 0.7));
         mEquippableRightBg_.setClickable(false);
-
-        //Add one for the equippables slot and another for general padding.
-        local gridSize = calculateGridSize();
-
-            mPlayerInspector_ = ::GuiWidgets.InventoryPlayerInspector();
-            mPlayerInspector_.setup(mWindow_);
 
         local layoutHorizontal = _gui.createLayoutLine(_LAYOUT_HORIZONTAL);
         mInventoryGrid_ = ::GuiWidgets.InventoryGrid(InventoryGridType.INVENTORY_GRID, mInventoryBus_, mHoverInfo_, buttonCover, mMultiSelection_);
@@ -408,9 +414,9 @@ enum InventoryBusEvents{
         local inspectorSize = mPlayerInspector_.getSize();
         //inspectorSize.x = mInventoryGrid_.getSize().x
         local widgetSize = mInventoryEquippedGrid_.getWidgetSize();
-        inspectorSize.x = ::drawable.x - widgetSize.x * 2 - GRID_BACKGROUND_PADDING * 2;
+        inspectorSize.x = ::drawable.x - widgetSize.x * 2 + GRID_BACKGROUND_PADDING * 3;
         mPlayerInspector_.setSize(inspectorSize);
-        mPlayerInspector_.setPosition(widgetSize.x + GRID_BACKGROUND_PADDING * 3, startOffset);
+        mPlayerInspector_.setPosition(widgetSize.x, startOffset);
         local inspectorSize = mPlayerInspector_.getSize();
         //container.sizeInner();
         //if(!mobile){
@@ -817,7 +823,7 @@ enum InventoryBusEvents{
         //local leftPos = mPlayerInspector_.getModelExtentLeft();
         local leftPos = Vec2(GRID_BACKGROUND_PADDING * 2, GRID_BACKGROUND_PADDING * 2);
         local rightPos = mPlayerInspector_.getSize();
-        rightPos.x += widgetSize.x;
+        rightPos.x += widgetSize.x - GRID_BACKGROUND_PADDING * 5;
 
         local leftGreatestY = startPos.y;
         local rightGreatestY = startPos.y;
@@ -855,16 +861,16 @@ enum InventoryBusEvents{
         mEquippableRightBg_.setClickable(false);
 
         // Add subtle gradients overlaying the backgrounds
-        local gradientLeft = mWindow_.createPanel();
-        local gradientLeftPos = Vec2(widgetSize.x + GRID_BACKGROUND_PADDING * 3, startPos.y);
+        local gradientLeft = mGradientLeft_;
+        local gradientLeftPos = Vec2(widgetSize.x + GRID_BACKGROUND_PADDING * 1, startPos.y);
         gradientLeft.setPosition(gradientLeftPos);
         gradientLeft.setSize(Vec2(64, max(0, leftGreatestY - startPos.y) + GRID_BACKGROUND_PADDING));
         gradientLeft.setColour(ColourValue(1, 1, 1, 0.5));
         gradientLeft.setDatablock("gui/linearGradientLeft");
         gradientLeft.setClickable(false);
 
-        local gradientRight = mWindow_.createPanel();
-        local gradientRightPos = Vec2(rightPos.x - 64 - GRID_BACKGROUND_PADDING, startPos.y);
+        local gradientRight = mGradientRight_;
+        local gradientRightPos = Vec2(rightPos.x - 64 + GRID_BACKGROUND_PADDING, startPos.y);
         gradientRight.setPosition(gradientRightPos);
         gradientRight.setSize(Vec2(64, max(0, rightGreatestY - startPos.y) + GRID_BACKGROUND_PADDING));
         gradientRight.setColour(ColourValue(1, 1, 1, 0.5));
