@@ -40,6 +40,14 @@
         local world = ::Base.mExplorationLogic.mCurrentWorld_;
         local beeEid = beeEntry.getEID();
         local manager = world.getEntityManager();
+
+        assert(manager.hasComponent(mEid_, EntityComponents.COLLISION_POINT_THREE));
+        if(manager.hasComponent(beeEid, EntityComponents.COLLISION_DETECTION)){
+            local beeCollision = manager.getComponent(beeEid, EntityComponents.COLLISION_DETECTION);
+            local hiveCollision = manager.getComponent(mEid_, EntityComponents.COLLISION_POINT_THREE);
+            beeCollision.mIgnorePoint = hiveCollision.mPointThird;
+        }
+
         if(manager.hasComponent(beeEid, EntityComponents.SCRIPT)){
             local comp = manager.getComponent(beeEid, EntityComponents.SCRIPT);
             local hivePos = manager.getPosition(mEid_);
