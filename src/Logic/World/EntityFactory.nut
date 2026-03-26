@@ -938,7 +938,7 @@
         manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](::MessageInABottleScript(en)));
 
         //Add spoils component which grants the message in a bottle item
-        local artifact = ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_1;
+        local artifact = ::Base.mFindableDistributor.determineArtifactForItem(ItemId.MESSAGE_IN_A_BOTTLE);
         local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.GIVE_ITEM, ::Item(ItemId.MESSAGE_IN_A_BOTTLE, artifact), null, null);
         manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
 
@@ -989,7 +989,7 @@
         manager.assignComponent(en, EntityComponents.SCRIPT, ::EntityManager.Components[EntityComponents.SCRIPT](::SandUrnScript(en)));
 
         //Add spoils component which grants the sand urn item
-        local artifact = ArtifactId.ROCK_FRAGMENT_1;
+        local artifact = ::Base.mFindableDistributor.determineArtifactForItem(ItemId.SAND_URN);
         local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.GIVE_ITEM, ::Item(ItemId.SAND_URN, artifact), null, null);
         manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);
 

@@ -14,12 +14,29 @@
         ItemId.MESSAGE_IN_A_BOTTLE
     ];
 
-    //Artifacts that can be placed in message in a bottle
-    static mMessageBottleArtifacts_ = [
-        ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_1,
-        ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_2,
-        ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_3
-    ];
+    mArtifactPools_ = null;
+
+    constructor(){
+
+        mArtifactPools_ = {};
+
+        mArtifactPools_[ItemId.MESSAGE_IN_A_BOTTLE] <- [
+            ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_1,
+            ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_2,
+            ArtifactId.MESSAGE_IN_A_BOTTLE_SCRAP_3
+        ];
+        mArtifactPools_[ItemId.SAND_URN] <- [
+            ArtifactId.ROCK_FRAGMENT_1
+        ];
+
+    }
+
+    function determineArtifactForItem(itemId){
+        if(!mArtifactPools_.rawin(itemId)) return null;
+
+        local artifactPool = mArtifactPools_[itemId];
+        return artifactPool[_random.randIndex(artifactPool)];
+    }
 
     function determineShopItems(width, height){
         local totalSlots = width * height;
@@ -53,8 +70,7 @@
 
             //If this is a message in a bottle, assign an artifact
             if(rareItemId == ItemId.MESSAGE_IN_A_BOTTLE){
-                local randomArtifactIdx = rand() % mMessageBottleArtifacts_.len();
-                itemData = mMessageBottleArtifacts_[randomArtifactIdx];
+                itemData = determineArtifactForItem(rareItemId);
             }
 
             itemsToPlace.append(::Item(rareItemId, itemData));

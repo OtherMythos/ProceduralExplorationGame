@@ -160,8 +160,7 @@
         mInventoryGrid_.initialise(mParent_, gridSize, null, mInventoryWidth_, mInventoryHeight_, layerIdx);
         mInventoryGrid_.setPosition(mInnerPanel_.getPosition() + GRID_PADDING);
 
-        local distributor = ::FindableDistributor();
-        local shopData = distributor.determineShopItems(mInventoryWidth_, mInventoryHeight_);
+        local shopData = ::Base.mFindableDistributor.determineShopItems(mInventoryWidth_, mInventoryHeight_);
         mInventory_ = shopData["items"];
         mPrices_ = shopData["prices"];
         mBuyAnimations_ = [];

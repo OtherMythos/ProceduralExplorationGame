@@ -17,6 +17,7 @@
     mLottieManager = null
     mIconButtonComplexAnimationManager = null
     mArtifactCollection = null
+    mFindableDistributor = null
 
     mGlobalDirectionLight = null
 
@@ -194,6 +195,7 @@
         ::HapticManager.initialise();
 
         _doFile("res://src/System/FindableDistributor.nut");
+        mFindableDistributor = ::FindableDistributor();
 
         _doFile("res://src/MapGen/Exploration/Generator/Biomes.nut");
         _doFile("res://src/MapGen/MapViewer.nut");
