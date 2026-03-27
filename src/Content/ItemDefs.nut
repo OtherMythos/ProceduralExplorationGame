@@ -27,7 +27,7 @@
 ::Items[ItemId.MESSAGE_IN_A_BOTTLE] = ItemDef("Message in a Bottle", "A mysterious message sealed in a glass bottle. It has washed ashore from distant seas.", "collectables.messageInABottle.voxMesh", ItemType.MESSAGE_IN_A_BOTTLE, 0, null, EquippableId.NONE);
 ::Items[ItemId.SAND_URN] = ItemDef("Haunted Urn", "An ancient urn that has travelled across the desert sands. It contains something mysterious.", "collectables.hauntedUrn.voxMesh", ItemType.SAND_URN, 0, null, EquippableId.NONE);
 ::Items[ItemId.FALLEN_STAR] = ItemDef("Fallen Star", "A glimmering star that has fallen from the heavens.", "fallenStar.voxMesh", ItemType.ITEM, 5, null, EquippableId.NONE);
-::Items[ItemId.BLUE_ORE] = ItemDef("Blue Ore", "A chunk of blue ore mined from a rock.", "ore.blueOre.voxMesh", ItemType.ITEM, 5, null, EquippableId.NONE);
+::Items[ItemId.BLUE_ORE] = ItemDef("Blue Ore", "A chunk of blue ore mined from a rock.", "ore.blueOre.voxMesh", ItemType.ITEM, 5, null, EquippableId.NONE, ItemEquipTransformType.NONE, 1.6);
 
 ::Items[ItemId.NOTE_SCRAP] = ItemArtifactDef("Note Scrap", "A scrap of paper found inside the message in a bottle.", "readables.noteScrap.voxMesh", ItemType.LORE_CONTENT, 0, null, EquippableId.NONE);
 ::Items[ItemId.NOTE_SCRAP].mGivenData = true;

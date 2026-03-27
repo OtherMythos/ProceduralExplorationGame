@@ -62,6 +62,7 @@ enum ItemEquipTransformType{
     function getEquipTransforms(wield, wieldActive){ return mItem_.getEquipTransforms(wield, wieldActive); }
     function getSellValue(){ return mItem_.getSellValue(); }
     function getScrapVal(){ return mItem_.getScrapVal(); }
+    function getMeshWorldScale(){ return mItem_.getMeshWorldScale(); }
     function toStats(){
         return ::ItemHelper.itemToStats(mItemId_);
     }
@@ -83,8 +84,9 @@ enum ItemEquipTransformType{
 
     mEquippableData = EquippableId.NONE;
     mEquipTransformType = ItemEquipTransformType.NONE;
+    mMeshWorldScale = 1.0;
 
-    constructor(name, desc, mesh, type, sellValue, defData, equippableData=null, equippableTransformType=ItemEquipTransformType.NONE){
+    constructor(name, desc, mesh, type, sellValue, defData, equippableData=null, equippableTransformType=ItemEquipTransformType.NONE, meshWorldScale=1.0){
         mName = name;
         mDesc = desc;
         mMesh = mesh;
@@ -93,7 +95,7 @@ enum ItemEquipTransformType{
         mEquippableData = equippableData;
         mDefData = defData;
         mEquipTransformType = equippableTransformType;
-
+        mMeshWorldScale = meshWorldScale;
         //Sanity checks.
         if(mType == ItemType.CONSUMABLE){
             assert(mEquippableData == EquippableId.NONE);
@@ -107,7 +109,7 @@ enum ItemEquipTransformType{
     function getItemDefClass() { return ::ItemDef; }
 
     function copy(){
-        local ret = getItemDefClass()(mName, mDesc, mMesh, mType, mSellValue, mDefData, mEquippableData, mEquipTransformType);
+        local ret = getItemDefClass()(mName, mDesc, mMesh, mType, mSellValue, mDefData, mEquippableData, mEquipTransformType, mMeshWorldScale);
         ret.mId = mId;
         return ret;
     }
@@ -129,6 +131,7 @@ enum ItemEquipTransformType{
     }
 
     function getMesh(){ return mMesh == null ? "questionMark.voxMesh" : mMesh; }
+    function getMeshWorldScale(){ return mMeshWorldScale; }
 }
 
 ::ItemArtifactDef <- class extends ::ItemDef{

@@ -1222,9 +1222,17 @@
         parentNode.setScale(OBJECT_SCALE, OBJECT_SCALE, OBJECT_SCALE);
         parentNode.setPosition(targetPos);
         local particleSystem = _scene.createParticleSystem("particle_collectableItem");
-        local animNode = parentNode.createChildSceneNode();
+        local meshWorldScale = wrappedItem.getMeshWorldScale();
+        local animNode = null;
+        if(meshWorldScale != 1.0){
+            local scaleNode = parentNode.createChildSceneNode();
+            scaleNode.setScale(meshWorldScale, meshWorldScale, meshWorldScale);
+            animNode = scaleNode.createChildSceneNode();
+        }else{
+            animNode = parentNode.createChildSceneNode();
+        }
         animNode.attachObject(item);
-        animNode.attachObject(particleSystem);
+        parentNode.attachObject(particleSystem);
         manager.assignComponent(en, EntityComponents.SCENE_NODE, ::EntityManager.Components[EntityComponents.SCENE_NODE](parentNode, true));
 
         local triggerWorld = mConstructorWorld_.getTriggerWorld();
