@@ -25,7 +25,7 @@
     function processDataPointBecameVisible(world, pos, major, minor, node){
         if(major == 1){
             if(minor == 0){
-                local newNPC = world.createNPCWithDialog(pos, "res://build/assets/dialog/test.dialog", 0, null);
+                local newNPC = world.createNPCWithDialog(pos, "res://src/Content/Quest/InheritanceQuest/InheritanceQuest.dialog", 100, null);
             }
         }
     }

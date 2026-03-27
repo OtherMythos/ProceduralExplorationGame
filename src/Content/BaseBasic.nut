@@ -74,6 +74,9 @@
 
         _doFile("res://src/Content/World/WorldComponents.nut");
 
+        //Quests
+        _doFile("res://src/Content/Quest/InheritanceQuest/InheritanceQuest.nut");
+
         _doFile("res://src/Logic/World/CameraEffects/CameraShakeEffect.nut");
         _doFile("res://src/Content/CameraEffectDefs.nut");
 
