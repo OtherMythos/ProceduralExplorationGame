@@ -107,6 +107,7 @@
     }
 
     function update(){
+        mTotalGlyphs_ = mTextContainer_.getNumGlyphs();
         if(mAnimating_){
             mAnimationProgress_ += mGlyphsPerFrame_;
             if(mAnimationProgress_ >= mTotalGlyphs_){
@@ -181,15 +182,6 @@
         local winSize = mContainerWindow_.getSizeAfterClipping();
         mNextDialogButton_.setPosition(winSize.x - buttonSize.x, winSize.y - buttonSize.y);
 
-        for(local i = 0; i < 4; i++){
-            local button = mWindow_.createButton();
-            button.setText(" ");
-            button.setVisible(false);
-            button.setUserId(i);
-            button.attachListenerForEvent(optionButtonPressed, _GUI_ACTION_PRESSED, this);
-            mDialogOptionsButtons_[i] = button;
-        }
-
         //Setup Lottie animations
         local animSize = Vec2(64, 64);
         mLottieAnimationPanelBackground_ = mContainerWindow_.createPanel();
@@ -242,6 +234,20 @@
             mFullScreenInputButton_.attachListenerForEvent(nextButtonPressed, _GUI_ACTION_PRESSED, this);
         }
 
+        local buttonTargetWindows = mWindow_;
+        if(mobile){
+            buttonTargetWindows = mFullScreenInputWindow_;
+        }
+
+        for(local i = 0; i < 4; i++){
+            local button = mFullScreenInputWindow_.createButton();
+            button.setText(" ");
+            button.setVisible(false);
+            button.setUserId(i);
+            button.attachListenerForEvent(optionButtonPressed, _GUI_ACTION_PRESSED, this);
+            mDialogOptionsButtons_[i] = button;
+        }
+
         setDialogVisible(false);
     }
 
@@ -270,7 +276,7 @@
         }
 
         mTextContainer_.sizeToFit(mContainerWindow_.getSize().x * 0.95);
-        mTotalGlyphs_ = targetText.len();
+        mTotalGlyphs_ = mTextContainer_.getNumGlyphs();
         mAnimationProgress_ = 0.0;
         mAnimating_ = true;
 

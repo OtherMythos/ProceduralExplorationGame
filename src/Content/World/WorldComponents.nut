@@ -220,7 +220,7 @@
     }
 
     function updateLogicPaused(){
-        print("hello")
+        //print("hello")
         if(mStartCamPos_ == null) return;
 
         local manager = mWorld_.getEntityManager();
