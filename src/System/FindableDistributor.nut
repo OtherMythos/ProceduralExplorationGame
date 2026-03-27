@@ -35,7 +35,9 @@
         if(!mArtifactPools_.rawin(itemId)) return null;
 
         local artifactPool = mArtifactPools_[itemId];
-        return artifactPool[_random.randIndex(artifactPool)];
+        return {
+            "artifactId": artifactPool[_random.randIndex(artifactPool)]
+        };
     }
 
     function determineShopItems(width, height){

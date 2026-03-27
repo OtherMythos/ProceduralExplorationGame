@@ -1033,7 +1033,7 @@ enum InventoryBusEvents{
             local worldPos = ::EffectManager.getWorldPositionForWindowPos(itemCentre);
 
             local itemData = data.item.getData();
-            local targetArtifact = itemData == null ? ArtifactId.NONE : itemData;
+            local targetArtifact = itemData == null ? ArtifactId.NONE : itemData.artifactId;
 
             local capturedInventoryData = inventoryData;
             local effectData = {
