@@ -356,10 +356,11 @@
             if(i < options.len()){
                 button.setText(options[i]);
                 button.setVisible(true);
-                local buttonWidth = button.getSize().x * 1.5;
+                local buttonWidth = button.getSize().x;
+                button.setTextHorizontalAlignment(_TEXT_ALIGN_RIGHT);
                 button.setSize(buttonWidth, BUTTON_SIZE);
 
-                button.setPosition(containerPos.x + containerSize.x - buttonWidth, containerPos.y - BUTTON_SIZE * (options.len() - i));
+                button.setPosition(containerPos.x + containerSize.x - buttonWidth + 10, containerPos.y - BUTTON_SIZE * (options.len() - i) + i * 5 - 5);
             }else{
                 button.setVisible(false);
             }
