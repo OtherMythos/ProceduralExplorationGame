@@ -33,6 +33,7 @@
 
     function setup(data){
         createBackgroundScreen_();
+        createBackgroundCloseButton_();
 
         if(data != null && data.rawin("content")){
             mReadableContent_ = data.content;
@@ -54,6 +55,7 @@
         mWindow_.setVisualsEnabled(false);
         mWindow_.setBreadthFirst(true);
         mWindow_.setClipBorders(0, 0, 0, 0);
+        mWindow_.setClickable(false);
 
         //Background mesh panel (created first so it renders behind content)
         setupBgMesh_();
@@ -326,6 +328,7 @@
     }
 
     function closeScreen(){
+        if(mIsClosing_) return;
         mIsClosing_ = true;
         mCloseAnimFrame_ = 0;
         mContentPanel_.setPosition(Vec2(-10000, -10000));
