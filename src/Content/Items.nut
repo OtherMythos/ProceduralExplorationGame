@@ -107,7 +107,9 @@ enum ItemEquipTransformType{
     function getItemDefClass() { return ::ItemDef; }
 
     function copy(){
-        return getItemDefClass()(mName, mDesc, mMesh, mType, mSellValue, mDefData, mEquippableData, mEquipTransformType);
+        local ret = getItemDefClass()(mName, mDesc, mMesh, mType, mSellValue, mDefData, mEquippableData, mEquipTransformType);
+        ret.mId = mId;
+        return ret;
     }
 
     function getId(){ return mId; }
