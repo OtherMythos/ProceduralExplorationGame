@@ -136,15 +136,19 @@ enum ItemEquipTransformType{
     function getItemDefClass() { return ::ItemArtifactDef; }
 
     function getName() {
-        if(mGivenData != null){
-            return ::Artifacts[mGivenData.artifactId].getName();
+        if(mGivenData != null && mGivenData != true){
+            if(mGivenData.rawin("artifactId")){
+                return ::Artifacts[mGivenData.artifactId].getName();
+            }
         }
         return base.getName();
     }
 
     function getMesh() {
-        if(mGivenData != null){
-            return ::Artifacts[mGivenData.artifactId].getMesh();
+        if(mGivenData != null && mGivenData != true){
+            if(mGivenData.rawin("artifactId")){
+                return ::Artifacts[mGivenData.artifactId].getMesh();
+            }
         }
         return base.getMesh();
     }
