@@ -10,6 +10,7 @@
     mActive_ = false;
     mHideValueInfo_ = false;
     mPrice_ = 0;
+    mArtifactLabel_ = null;
 
     constructor(overlayWindow, isBuyable = false, hideValueInfo = false){
         mHideValueInfo_ = hideValueInfo;
@@ -110,6 +111,26 @@
             mPriceLabel_.setText(UNICODE_COINS + " " + mPrice_);
             mPriceLabel_.setDefaultFont(6);
             layout.addCell(mPriceLabel_);
+        }
+
+        {
+            if(mArtifactLabel_ != null){
+                _gui.destroy(mArtifactLabel_);
+                mArtifactLabel_ = null;
+            }
+            local artifactId = item.getData();
+            if(artifactId != null){
+                if(artifactId.rawin("artifactId") && item.getType() == ItemType.LORE_CONTENT){
+                    artifactId = artifactId.artifactId;
+                }
+            }
+            if(artifactId != null && ::Base.mArtifactCollection.hasArtifact(artifactId)){
+                mArtifactLabel_ = mHoverWin_.createLabel();
+                mArtifactLabel_.setText("Artifact already found.");
+                mArtifactLabel_.setDefaultFont(6);
+                mArtifactLabel_.setTextColour(0.8, 0.2, 0.8);
+                layout.addCell(mArtifactLabel_);
+            }
         }
 
         layout.setMarginForAllCells(0, -10);
