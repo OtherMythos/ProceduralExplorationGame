@@ -1,3 +1,70 @@
+local DialogOptionButton = class{
+    mButton_ = null;
+    mLabel_ = null;
+    mSize_ = null;
+    static PADDING_X = 20;
+    static PADDING_Y = 2;
+
+    function setup(parentWindow){
+        mButton_ = parentWindow.createButton();
+        mLabel_ = parentWindow.createLabel();
+        mSize_ = null;
+
+        mButton_.setVisualsEnabled(true);
+        mLabel_.setClickable(false);
+    }
+
+    function setText(text){
+        mLabel_.setText(text);
+        mSize_ = null;
+    }
+
+    function setVisible(visible){
+        mButton_.setVisible(visible);
+        mLabel_.setVisible(visible);
+    }
+
+    function setUserId(id){
+        mButton_.setUserId(id);
+    }
+
+    function attachListenerForEvent(callback, eventType, environment){
+        mButton_.attachListenerForEvent(callback, eventType, environment);
+    }
+
+    function setPosition(x, y){
+        mButton_.setPosition(x, y);
+        mLabel_.setPosition(x + PADDING_X, y + PADDING_Y);
+    }
+
+    function setZOrder(zorder){
+        mButton_.setZOrder(zorder);
+        mLabel_.setZOrder(zorder + 1);
+    }
+
+    function sizeToFit(maxWidth){
+        mLabel_.sizeToFit(maxWidth);
+        local labelSize = mLabel_.getSize();
+        mButton_.setSize(labelSize.x + PADDING_X * 2, labelSize.y + PADDING_Y * 2);
+        mSize_ = mButton_.getSize();
+    }
+
+    function getSize(){
+        if(mSize_ == null){
+            mSize_ = mButton_.getSize();
+        }
+        return mSize_;
+    }
+
+    function setTextHorizontalAlignment(alignment){
+        mLabel_.setTextHorizontalAlignment(alignment);
+    }
+
+    function setTextColour(r, g, b, a){
+        mLabel_.setTextColour(r, g, b, a);
+    }
+}
+
 ::ScreenManager.Screens[Screen.DIALOG_SCREEN] = class extends ::Screen{
 
     mTextContainer_ = null;
@@ -240,12 +307,11 @@
         }
 
         for(local i = 0; i < 4; i++){
-            local button = mFullScreenInputWindow_.createButton();
-            button.setText(" ");
-            button.setVisible(false);
-            button.setUserId(i);
-            button.attachListenerForEvent(optionButtonPressed, _GUI_ACTION_PRESSED, this);
-            mDialogOptionsButtons_[i] = button;
+            local optionButton = DialogOptionButton();
+            optionButton.setup(mFullScreenInputWindow_);
+            optionButton.setUserId(i);
+            optionButton.attachListenerForEvent(optionButtonPressed, _GUI_ACTION_PRESSED, this);
+            mDialogOptionsButtons_[i] = optionButton;
         }
 
         setDialogVisible(false);
@@ -348,22 +414,43 @@
     }
 
     function setNewDialogOptions(options){
-        local BUTTON_SIZE = 50;
         local containerPos = mContainerWindow_.getPosition();
         local containerSize = mContainerWindow_.getSize();
-        for(local i = 0; i < 4; i++){
-            local button = mDialogOptionsButtons_[i];
-            if(i < options.len()){
-                button.setText(options[i]);
-                button.setVisible(true);
-                local buttonWidth = button.getSize().x;
-                button.setTextHorizontalAlignment(_TEXT_ALIGN_RIGHT);
-                button.setSize(buttonWidth, BUTTON_SIZE);
+        local maxLabelWidth = ::drawable.x * 0.75;
+        local yBaseOffset = containerPos.y - 10;
+        local maxWidth = 0;
+        local buttonWidgets = [];
 
-                button.setPosition(containerPos.x + containerSize.x - buttonWidth + 10, containerPos.y - BUTTON_SIZE * (options.len() - i) + i * 5 - 5);
-            }else{
-                button.setVisible(false);
+        //First pass: size all buttons and find max width
+        for(local i = 0; i < options.len(); i++){
+            local optionButton = mDialogOptionsButtons_[i];
+            optionButton.setText(options[i]);
+            optionButton.sizeToFit(maxLabelWidth);
+            optionButton.setVisible(true);
+            optionButton.setTextHorizontalAlignment(_TEXT_ALIGN_RIGHT);
+
+            local buttonSize = optionButton.getSize();
+            if(buttonSize.x > maxWidth){
+                maxWidth = buttonSize.x;
             }
+            buttonWidgets.push(optionButton);
+        }
+
+        //Second pass: position buttons vertically, right-aligned
+        local currentYPos = yBaseOffset;
+        local rightEdgeX = containerPos.x + containerSize.x + 10;
+        local yOffset = 0;
+        for(local i = 0; i < options.len(); i++){
+            local optionButton = buttonWidgets[i];
+            local buttonSize = optionButton.getSize();
+            local xPos = rightEdgeX - buttonSize.x;
+            optionButton.setPosition(xPos, currentYPos - yOffset - buttonSize.y);
+            yOffset += buttonSize.y + 5;
+        }
+
+        //Hide remaining buttons
+        for(local i = options.len(); i < 4; i++){
+            mDialogOptionsButtons_[i].setVisible(false);
         }
 
         mNextDialogButton_.setVisible(false);
