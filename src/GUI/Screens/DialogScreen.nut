@@ -123,7 +123,10 @@ local DialogOptionButton = class{
             i.setVisible(false);
         }
 
-        mNextDialogButton_.setVisible(true);
+        local mobile = (::Base.getTargetInterface() == TargetInterface.MOBILE);
+        if(!mobile){
+            mNextDialogButton_.setVisible(true);
+        }
     }
 
     function requestNextDialog(){
