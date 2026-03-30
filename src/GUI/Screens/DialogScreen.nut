@@ -457,7 +457,6 @@ local DialogOptionButton = class{
         }
 
         mNextDialogButton_.setVisible(false);
-        _gui.reprocessMousePosition();
     }
 
     function setDialogVisible(visible){
