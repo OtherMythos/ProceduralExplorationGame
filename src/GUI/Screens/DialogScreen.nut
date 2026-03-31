@@ -65,6 +65,60 @@ local DialogOptionButton = class{
     }
 }
 
+local DialogActorTitle = class {
+    mWindow_ = null;
+    mBackgroundPanel_ = null;
+    mLabel_ = null;
+
+    static PADDING_X = 12;
+    static PADDING_Y = 6;
+
+    function setup(parentWindow){
+        mWindow_ = parentWindow.createWindow("DialogActorTitle");
+        mWindow_.setVisualsEnabled(false);
+        mWindow_.setClipBorders(0, 0, 0, 0);
+
+        mBackgroundPanel_ = mWindow_.createPanel();
+        mBackgroundPanel_.setSkinPack("Button_midGrey");
+        mBackgroundPanel_.setClickable(false);
+
+        mLabel_ = mWindow_.createLabel();
+        mLabel_.setClickable(false);
+    }
+
+    function setActorName(name){
+        mLabel_.setText(name);
+        mLabel_.sizeToFit(400);
+        local labelSize = mLabel_.getSize();
+        local totalWidth = labelSize.x + PADDING_X * 2;
+        if(totalWidth < 100) totalWidth = 100;
+        local totalHeight = labelSize.y + PADDING_Y * 2;
+        mWindow_.setSize(totalWidth, totalHeight);
+        mBackgroundPanel_.setSize(totalWidth, totalHeight);
+        local labelSize = mLabel_.getSize();
+        local centeredX = (totalWidth - labelSize.x) / 2.0;
+        mLabel_.setPosition(centeredX, PADDING_Y);
+    }
+
+    function setPosition(x, y){
+        mWindow_.setPosition(x, y);
+    }
+
+    function setVisible(visible){
+        mWindow_.setVisible(visible);
+    }
+
+    function setZOrder(zorder){
+        mWindow_.setZOrder(zorder);
+        mBackgroundPanel_.setZOrder(zorder + 1);
+        mLabel_.setZOrder(zorder + 2);
+    }
+
+    function getSize(){
+        return mWindow_.getSize();
+    }
+}
+
 ::ScreenManager.Screens[Screen.DIALOG_SCREEN] = class extends ::Screen{
 
     mTextContainer_ = null;
@@ -93,6 +147,8 @@ local DialogOptionButton = class{
     mLottieBackgroundDatablock_ = null;
     mShowLottieAnimation_ = false;
     mMobileInterface_ = false;
+    mActorTitle_ = null;
+    mCurrentActorName_ = null;
 
     function receiveDialogSpokenEvent(id, data){
         setNewDialogText(data);
@@ -104,13 +160,40 @@ local DialogOptionButton = class{
 
     function receiveDialogMetaEvent(id, data){
         if("ended" in data && data.ended){
+            mCurrentActorName_ = null;
             ::ScreenManager.backupScreen(mLayerIdx);
             //setDialogVisible(false);
+            return;
         }
 
         if("started" in data && data.started){
             setDialogVisible(true);
         }
+
+        if("actorSet" in data){
+            mCurrentActorName_ = data.actorSet;
+            local name = getNameForActorId(mCurrentActorName_);
+            mActorTitle_.setActorName(name);
+            local visible = actorIdMakesTitleVisible(mCurrentActorName_)
+            positionActorTitle_();
+            mActorTitle_.setVisible(visible);
+        }
+    }
+
+    function actorIdMakesTitleVisible(actorId){
+        return (actorId < 100);
+    }
+
+    function getNameForActorId(actorId){
+        //TODO remove
+        local names = [
+            "Peter",
+            "Old Man"
+        ];
+        if(actorId < 100){
+            return names[actorId];
+        }
+        return " ";
     }
 
     function nextButtonPressed(widget, action){
@@ -317,6 +400,16 @@ local DialogOptionButton = class{
             mDialogOptionsButtons_[i] = optionButton;
         }
 
+        //Setup actor title widget
+        mActorTitle_ = DialogActorTitle();
+        mActorTitle_.setup(mWindow_);
+        mActorTitle_.setVisible(false);
+        if(mCurrentActorName_ != null){
+            mActorTitle_.setActorName(mCurrentActorName_);
+            positionActorTitle_();
+            mActorTitle_.setVisible(true);
+        }
+
         setDialogVisible(false);
     }
 
@@ -361,6 +454,16 @@ local DialogOptionButton = class{
 
         //Position Lottie animation in the container
         positionLottieAnimation_();
+    }
+
+    function positionActorTitle_(){
+        local containerPos = mContainerWindow_.getPosition();
+        local containerSize = mContainerWindow_.getSize();
+        local titleSize = mActorTitle_.getSize();
+        local overlapAmount = 8;
+        local xPos = containerPos.x + containerSize.x - titleSize.x - 20;
+        local yPos = containerPos.y - titleSize.y + overlapAmount;
+        mActorTitle_.setPosition(xPos, yPos);
     }
 
     function positionLottieAnimation_(){
@@ -421,6 +524,14 @@ local DialogOptionButton = class{
         local containerSize = mContainerWindow_.getSize();
         local maxLabelWidth = ::drawable.x * 0.75;
         local yBaseOffset = containerPos.y - 10;
+
+        //Adjust for actor title if visible
+        if(mActorTitle_ != null && mActorTitle_.mWindow_.getVisible()){
+            local titlePos = mActorTitle_.mWindow_.getPosition();
+            local titleSize = mActorTitle_.getSize();
+            yBaseOffset = titlePos.y - 10;
+        }
+
         local maxWidth = 0;
         local buttonWidgets = [];
 
