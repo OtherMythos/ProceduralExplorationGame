@@ -10,6 +10,8 @@ local DialogOptionButton = class{
         mLabel_ = parentWindow.createLabel();
         mSize_ = null;
 
+        mButton_.setColour(ColourValue(1, 1, 1, 0.95));
+
         mButton_.setVisualsEnabled(true);
         mLabel_.setClickable(false);
     }
@@ -319,6 +321,7 @@ local DialogActorTitle = class {
         }
 
         mContainerWindow_.setSkinPack("Button_midGrey");
+        mContainerWindow_.setColour(ColourValue(1, 1, 1, 0.95));
 
         mContainerWindow_.setClickable(!mobile);
 
