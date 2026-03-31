@@ -509,7 +509,7 @@ local DialogActorTitle = class {
             mTextContainer_.setTextColour(1, 1, 1, 1);
         }
 
-        mTextContainer_.sizeToFit(mContainerWindow_.getSize().x * 0.95);
+        mTextContainer_.sizeToFit(mContainerWindow_.getSizeAfterClipping().x * 0.95);
         mTotalGlyphs_ = mTextContainer_.getNumGlyphs();
         mAnimationProgress_ = 0.0;
         mAnimating_ = true;
