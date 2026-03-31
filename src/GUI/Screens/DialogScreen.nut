@@ -110,6 +110,11 @@ local DialogActorTitle = class {
         mWindow_.setVisible(visible);
     }
 
+    function setAlpha(alpha){
+        mBackgroundPanel_.setColour(ColourValue(1, 1, 1, alpha * 0.95));
+        mLabel_.setTextColour(1, 1, 1, alpha);
+    }
+
     function setZOrder(zorder){
         mWindow_.setZOrder(zorder);
         mBackgroundPanel_.setZOrder(zorder + 1);
@@ -151,6 +156,14 @@ local DialogActorTitle = class {
     mMobileInterface_ = false;
     mActorTitle_ = null;
     mCurrentActorName_ = null;
+    mDialogIntroAnimating_ = false;
+    mDialogIntroFrame_ = 0;
+    mDialogIntroTargetPos_ = null;
+    mDialogIntroOffset_ = null;
+    mActorTitleTargetPos_ = null;
+    mActorTitleIntroOffset_ = null;
+
+    static DIALOG_INTRO_FRAMES = 24;
 
     function receiveDialogSpokenEvent(id, data){
         setNewDialogText(data);
@@ -179,6 +192,14 @@ local DialogActorTitle = class {
             local visible = actorIdMakesTitleVisible(mCurrentActorName_)
             positionActorTitle_();
             mActorTitle_.setVisible(visible);
+            if(visible){
+                if(mDialogIntroAnimating_){
+                    local p = min(1.0, mDialogIntroFrame_.tofloat() / DIALOG_INTRO_FRAMES.tofloat());
+                    applyDialogIntroAnimation_(p);
+                }else{
+                    mActorTitle_.setAlpha(1.0);
+                }
+            }
         }
     }
 
@@ -262,6 +283,8 @@ local DialogActorTitle = class {
     }
 
     function update(){
+        updateDialogIntroAnimation_();
+
         mTotalGlyphs_ = mTextContainer_.getNumGlyphs();
         if(mAnimating_){
             mAnimationProgress_ += mGlyphsPerFrame_;
@@ -295,6 +318,47 @@ local DialogActorTitle = class {
         mLottieAnimationPanelBackground_.setVisible(true);
     }
 
+    function startDialogIntroAnimation_(){
+        mDialogIntroFrame_ = 0;
+        mDialogIntroAnimating_ = true;
+        applyDialogIntroAnimation_(0.0);
+    }
+
+    function updateDialogIntroAnimation_(){
+        if(!mDialogIntroAnimating_) return;
+
+        mDialogIntroFrame_++;
+        local p = min(1.0, mDialogIntroFrame_.tofloat() / DIALOG_INTRO_FRAMES.tofloat());
+        applyDialogIntroAnimation_(p);
+        if(p >= 1.0){
+            mDialogIntroAnimating_ = false;
+        }
+    }
+
+    function applyDialogIntroAnimation_(progress){
+        if(mContainerWindow_ == null || mDialogIntroTargetPos_ == null || mDialogIntroOffset_ == null) return;
+
+        local easedPos = ::Easing.easeOutCubic(progress);
+        local easedAlpha = ::Easing.easeOutQuad(progress);
+        local offsetScale = 1.0 - easedPos;
+        local introPos = mDialogIntroTargetPos_ + Vec2(mDialogIntroOffset_.x * offsetScale, mDialogIntroOffset_.y * offsetScale);
+        local containerAlpha = 0.95 * easedAlpha;
+
+        mContainerWindow_.setPosition(introPos.x, introPos.y);
+        mContainerWindow_.setColour(ColourValue(1, 1, 1, containerAlpha));
+
+        if(mNextDialogButton_ != null){
+            mNextDialogButton_.setColour(ColourValue(1, 1, 1, easedAlpha));
+            mNextDialogButton_.setTextColour(1, 1, 1, easedAlpha);
+        }
+
+        if(mActorTitle_ != null && mCurrentActorName_ != null && mActorTitleTargetPos_ != null && mActorTitleIntroOffset_ != null && actorIdMakesTitleVisible(mCurrentActorName_)){
+            local titlePos = mActorTitleTargetPos_ + Vec2(mActorTitleIntroOffset_.x * offsetScale, mActorTitleIntroOffset_.y * offsetScale);
+            mActorTitle_.setPosition(titlePos.x, titlePos.y);
+            mActorTitle_.setAlpha(easedAlpha);
+        }
+    }
+
     function recreate(){
 
         //Create a window to block inputs for when the popup appears.
@@ -322,6 +386,11 @@ local DialogActorTitle = class {
 
         mContainerWindow_.setSkinPack("Button_midGrey");
         mContainerWindow_.setColour(ColourValue(1, 1, 1, 0.95));
+
+    mDialogIntroTargetPos_ = mContainerWindow_.getPosition();
+    mDialogIntroOffset_ = Vec2(0, mobile ? 28 : 20);
+    mActorTitleTargetPos_ = null;
+    mActorTitleIntroOffset_ = Vec2(0, mobile ? 18 : 14);
 
         mContainerWindow_.setClickable(!mobile);
 
@@ -460,12 +529,16 @@ local DialogActorTitle = class {
     }
 
     function positionActorTitle_(){
-        local containerPos = mContainerWindow_.getPosition();
+        local containerPos = mDialogIntroTargetPos_;
+        if(containerPos == null){
+            containerPos = mContainerWindow_.getPosition();
+        }
         local containerSize = mContainerWindow_.getSize();
         local titleSize = mActorTitle_.getSize();
         local overlapAmount = 8;
         local xPos = containerPos.x + containerSize.x - titleSize.x - 20;
         local yPos = containerPos.y - titleSize.y + overlapAmount;
+        mActorTitleTargetPos_ = Vec2(xPos, yPos);
         mActorTitle_.setPosition(xPos, yPos);
     }
 
@@ -576,5 +649,11 @@ local DialogActorTitle = class {
     function setDialogVisible(visible){
         print("Setting dialog screen visible: " + visible.tostring());
         mWindow_.setHidden(!visible);
+        if(!visible){
+            mDialogIntroAnimating_ = false;
+            return;
+        }
+
+        startDialogIntroAnimation_();
     }
 }
