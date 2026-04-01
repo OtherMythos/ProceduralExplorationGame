@@ -212,6 +212,7 @@ local DialogActorTitle = class {
             mCurrentActorName_ = data.actorSet;
             local name = getNameForActorId(mCurrentActorName_);
             mActorTitle_.setActorName(name);
+            mTextContainer_.setDefaultFont(getFontForActorId_(mCurrentActorName_));
             local visible = actorIdMakesTitleVisible(mCurrentActorName_)
             positionActorTitle_();
             mActorTitle_.setVisible(visible);
@@ -228,6 +229,11 @@ local DialogActorTitle = class {
 
     function actorIdMakesTitleVisible(actorId){
         return (actorId < 100);
+    }
+
+    function getFontForActorId_(actorId){
+        if(actorId == 100) return 6;
+        return 0;
     }
 
     function getNameForActorId(actorId){
@@ -562,6 +568,9 @@ local DialogActorTitle = class {
         assert(targetText != null);
         mCurrentDialogText_ = targetText;
         mCurrentDialogRichText_ = richText;
+        if(mCurrentActorName_ != null){
+            mTextContainer_.setDefaultFont(getFontForActorId_(mCurrentActorName_));
+        }
         mTextContainer_.setText(targetText, false);
 
         if(richText != null){
