@@ -458,6 +458,7 @@ local DialogActorTitle = class {
 
         mTextContainer_ = mContainerWindow_.createAnimatedLabel();
         mTextContainer_.setText(" ");
+        mTextContainer_.setShadowOutline(true, ::Colour_BLACK, Vec2(2, 2));
 
         mNextDialogButton_ = mContainerWindow_.createButton();
         mNextDialogButton_.setText("Next");
