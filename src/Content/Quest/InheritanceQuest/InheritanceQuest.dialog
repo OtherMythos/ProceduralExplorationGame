@@ -2,8 +2,15 @@
 
     <script path = "res://src/Content/DialogHelpers.nut" id = "0"/>
 
+    <set id="a.oldMan" v="0"/>
+    <set id="a.peter" v="1"/>
+
+    <set id="n.oldMan" v="Old Man"/>
+    <set id="n.peter" v="Peter"/>
+
 <!-- Old man Entry -->
 <b id = "0">
+    <actorSet a="#a.oldMan#" />
     <switch>
         <case test="$Q.Inheritance.moneyClaimed$" id="10"/>
     </switch>
@@ -13,6 +20,7 @@
 
 <!-- Peter Entry -->
 <b id = "100">
+    <actorSet a="#a.peter#" />
     <ts>Hello! I'm [IMPORTANT]Peter[IMPORTANT]. Hope you're having a good day!</ts>
     <switch>
         <case test="$Q.Inheritance.moneyReturned$" id="110"/>
@@ -48,7 +56,9 @@
         </b>
 
         <b id = "4">
+            <actorPush a="@dialogInformation@" />
             <ts>The old man moves surprisingly quickly and shovels the money into your pocket.</ts>
+            <actorPop />
             <ts>Here you go [IMPORTANT]Peter[IMPORTANT], make sure you spend it well.</ts>
             <script id = "0" func = "givePlayerMoney" v1="100"/>
             <script id = "0" func = "setQuestValue" v1="Inheritance" v2="0" v3="true"/>

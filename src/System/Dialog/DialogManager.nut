@@ -4,11 +4,13 @@
     mDialogMetaScanner_ = null;
     mActorStack_ = null;
     mLastSetActor_ = null;
+    mActorNames_ = null;
 
     constructor(){
         mDialogMetaScanner_ = DialogMetaScanner();
         mActorStack_ = [];
         mLastSetActor_ = null;
+        mActorNames_ = {};
     }
 
     function beginExecuting(path, targetBlock = 0){
@@ -20,6 +22,7 @@
         }
 
         _dialogSystem.executeCompiledDialog(mCurrentScript_, targetBlock);
+        buildActorNames_();
     }
 
     function _ensureDialogScreenAtLayer(idx = 2){
@@ -79,11 +82,34 @@
         _event.transmit(Event.DIALOG_META, { "started": true });
     }
 
+    function buildActorNames_(){
+        mActorNames_ = {};
+        local keys = _dialogSystem.registry.getKeys();
+        foreach(key in keys){
+            if(key.len() > 2 && key.slice(0, 2) == "a."){
+                local suffix = key.slice(2);
+                local actorId = _dialogSystem.registry.get(key);
+                local name = _dialogSystem.registry.get("n." + suffix);
+                if(name != null){
+                    mActorNames_[actorId] <- name;
+                }
+            }
+        }
+    }
+
+    function getActorName(actorId){
+        if(actorId in mActorNames_){
+            return mActorNames_[actorId];
+        }
+        return null;
+    }
+
     function notifyDialogEnd(){
         _event.transmit(Event.DIALOG_META, { "ended": true });
         //::ScreenManager.transitionToScreen(null, null, 2);
         ::Base.mExplorationLogic.notifyDialogEnded();
         mActorStack_.clear();
+        mActorNames_ = {};
     }
 
     function notifyProgress(){

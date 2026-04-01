@@ -226,14 +226,8 @@ local DialogActorTitle = class {
     }
 
     function getNameForActorId(actorId){
-        //TODO remove
-        local names = [
-            "Peter",
-            "Old Man"
-        ];
-        if(actorId < 100){
-            return names[actorId];
-        }
+        local name = ::Base.mDialogManager.getActorName(actorId);
+        if(name != null) return name;
         return " ";
     }
 
