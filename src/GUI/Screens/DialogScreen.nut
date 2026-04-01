@@ -1,7 +1,13 @@
+
+local DIALOG_OPTION_ANIM_FRAMES = 16;
+local DIALOG_OPTION_ANIM_STAGGER = 4;
+local DIALOG_OPTION_ANIM_OFFSET_Y = 16;
+
 local DialogOptionButton = class{
     mButton_ = null;
     mLabel_ = null;
     mSize_ = null;
+    mRestPos_ = null;
     static PADDING_X = 20;
     static PADDING_Y = 2;
 
@@ -9,9 +15,9 @@ local DialogOptionButton = class{
         mButton_ = parentWindow.createButton();
         mLabel_ = parentWindow.createLabel();
         mSize_ = null;
+        mRestPos_ = null;
 
         mButton_.setColour(ColourValue(1, 1, 1, 0.95));
-
         mButton_.setVisualsEnabled(true);
         mLabel_.setClickable(false);
     }
@@ -35,8 +41,18 @@ local DialogOptionButton = class{
     }
 
     function setPosition(x, y){
+        mRestPos_ = Vec2(x, y);
         mButton_.setPosition(x, y);
         mLabel_.setPosition(x + PADDING_X, y + PADDING_Y);
+    }
+
+    //p: 0.0 = start of intro (offset above, transparent), 1.0 = fully shown at rest
+    function applyAnimProgress(p){
+        local py = mRestPos_.y - DIALOG_OPTION_ANIM_OFFSET_Y * (1.0 - p);
+        mButton_.setPosition(mRestPos_.x, py);
+        mLabel_.setPosition(mRestPos_.x + PADDING_X, py + PADDING_Y);
+        mButton_.setColour(ColourValue(1, 1, 1, 0.95 * p));
+        mLabel_.setTextColour(1, 1, 1, p);
     }
 
     function setZOrder(zorder){
@@ -136,6 +152,8 @@ local DialogActorTitle = class {
     mFullScreenInputButton_ = null;
 
     mDialogOptionsButtons_ = null;
+    mDialogOptionsAnimFrame_ = 0;
+    mDialogOptionsAnimating_ = false;
     mActionSetId_ = null;
 
     mCurrentDialogText_ = null;
@@ -284,6 +302,29 @@ local DialogActorTitle = class {
 
     function update(){
         updateDialogIntroAnimation_();
+
+        // Animate dialog option buttons from top to bottom
+        if(mDialogOptionsAnimating_){
+            mDialogOptionsAnimFrame_++;
+            local staggerIdx = 0;
+            local visibleCount = 0;
+            //Count visible buttons and animate in reverse (highest index = topmost visually)
+            for(local i = 0; i < mDialogOptionsButtons_.len(); i++){
+                if(mDialogOptionsButtons_[i].mButton_ != null && mDialogOptionsButtons_[i].mButton_.getVisible()){
+                    visibleCount++;
+                }
+            }
+            for(local i = mDialogOptionsButtons_.len() - 1; i >= 0; i--){
+                local btn = mDialogOptionsButtons_[i];
+                if(btn.mButton_ == null || !btn.mButton_.getVisible()) continue;
+                local p = ::clampValue((mDialogOptionsAnimFrame_ - staggerIdx * DIALOG_OPTION_ANIM_STAGGER).tofloat() / DIALOG_OPTION_ANIM_FRAMES.tofloat(), 0.0, 1.0);
+                btn.applyAnimProgress(::Easing.easeOutQuad(p));
+                staggerIdx++;
+            }
+            if(mDialogOptionsAnimFrame_ >= DIALOG_OPTION_ANIM_FRAMES + (visibleCount - 1) * DIALOG_OPTION_ANIM_STAGGER){
+                mDialogOptionsAnimating_ = false;
+            }
+        }
 
         mTotalGlyphs_ = mTextContainer_.getNumGlyphs();
         if(mAnimating_){
@@ -635,6 +676,7 @@ local DialogActorTitle = class {
             local buttonSize = optionButton.getSize();
             local xPos = rightEdgeX - buttonSize.x;
             optionButton.setPosition(xPos, currentYPos - yOffset - buttonSize.y);
+            optionButton.applyAnimProgress(0.0);
             yOffset += buttonSize.y + 5;
         }
 
@@ -644,6 +686,10 @@ local DialogActorTitle = class {
         }
 
         mNextDialogButton_.setVisible(false);
+
+        // Start animation
+        mDialogOptionsAnimFrame_ = 0;
+        mDialogOptionsAnimating_ = true;
     }
 
     function setDialogVisible(visible){
