@@ -294,6 +294,8 @@
         manager.assignComponent(en, EntityComponents.COMPASS_INDICATOR, ::EntityManager.Components[EntityComponents.COMPASS_INDICATOR](compassPoint, compassCollisionWorld, CompassIndicatorType.ENEMY, en));
 
         entry.setPosition(targetPos);
+        //Process water positioning early to prevent enemies spawning in water from hovering
+        entry.initialiseWaterPosition();
 
         local traversable = enemyDef.getTraversableTerrain();
         if(traversable != EnemyTraversableTerrain.ALL){

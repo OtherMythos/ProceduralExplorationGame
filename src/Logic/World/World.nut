@@ -642,7 +642,9 @@
         local target = Vec3(x, 0, y);
         target.y = getZForPos(target);
         mPlayerEntry_.setPosition(target);
-        updatePlayerPos(target);
+        //Process water positioning early to prevent the player hovering after teleporting into water
+        mPlayerEntry_.initialiseWaterPosition();
+        updatePlayerPos(mPlayerEntry_.getPosition());
         notifyPlayerMoved();
     }
 

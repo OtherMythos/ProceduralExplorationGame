@@ -197,6 +197,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
     mSeparationRadius_ = 2.5;
     mSeparationStrength_ = 0.04;
     mSeparationOffset_ = null;
+    SWIM_Y_OFFSET_ = 1.8;
 
     constructor(creatorWorld, enemyType, enemyPos, entity){
         mCreatorWorld_ = creatorWorld;
@@ -254,6 +255,13 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         //if(mGizmo_) mGizmo_.setPosition(pos);
         if(mCollisionPoint_ != null) mCreatorWorld_.getTriggerWorld().mCollisionWorld_.setPositionForPoint(mCollisionPoint_, pos.x, pos.z);
         if(mSeparationPointId_ != null) mCreatorWorld_.mSeparationCollisionWorld_.setPositionForPoint(mSeparationPointId_, pos.x, pos.z);
+    }
+    function initialiseWaterPosition(){
+        if(mInWater_ && ::Enemies[mEnemy_].getAllowSwimState()){
+            local pos = mPos_.copy();
+            pos.y -= SWIM_Y_OFFSET_;
+            setPosition(pos);
+        }
     }
     function getSceneNode(){
         //if(typeof mEntity_ == "integer"){
@@ -340,9 +348,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         //Re-query height if separation shifted our X/Z.
         if(hasSeparation){
             targetPos.y = mCreatorWorld_.getZForPos(targetPos);
-            if(mInWater_){
-                if(::Enemies[mEnemy_].getAllowSwimState()) targetPos.y -= 1.8;
-            }
+            applySwimYOffset_(targetPos, mInWater_);
         }
 
         setPosition(targetPos);
@@ -370,9 +376,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         local intended = mPos_ + amount;
         local zQuery = mCreatorWorld_.getZForPos(intended);
         intended.y = zQuery;
-        if(inWater){
-            if(::Enemies[mEnemy_].getAllowSwimState()) intended.y -= 1.8;
-        }
+        applySwimYOffset_(intended, inWater);
         move_(intended, amount);
     }
     function moveToPoint(point, amount){
@@ -400,6 +404,11 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
             slow *= voxelSpeedModifier;
         }
         return slow;
+    }
+    function applySwimYOffset_(pos, inWater){
+        if(inWater && ::Enemies[mEnemy_].getAllowSwimState()){
+            pos.y -= SWIM_Y_OFFSET_;
+        }
     }
     function setId(id){
         mId_ = id;
@@ -539,9 +548,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
                 nudged = mCreatorWorld_.getEntityManager().checkEntityPositionPotential(mEntity_, nudged);
             }
             nudged.y = mCreatorWorld_.getZForPos(nudged);
-            if(mInWater_){
-                if(::Enemies[mEnemy_].getAllowSwimState()) nudged.y -= 1.8;
-            }
+            applySwimYOffset_(nudged, mInWater_);
             setPosition(nudged);
         }
 
