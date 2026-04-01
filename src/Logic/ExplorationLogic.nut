@@ -340,7 +340,7 @@
         mCurrentWorld_.notifyDialogBegan(entityId);
     }
     function notifyDialogEnded(){
-        mCurrentWorld_.setLogicPaused(false);
+        //Logic is unpaused by DialogCameraZoomRestoreComponent once the restore animation finishes
         mCurrentWorld_.notifyDialogEnded();
     }
 

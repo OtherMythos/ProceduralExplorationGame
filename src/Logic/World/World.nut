@@ -2468,6 +2468,27 @@
         //cannot be misread as the first half of a double-tap after logic resumes.
         mMouseContext_.resetDoubleClickState();
         assert(mCurrentDialogWorldComponentId_ != null);
+
+        //Capture state from the forward components before destroying them
+        local faceComp = getWorldComponent(mCurrentDialogWorldComponentId_);
+        if(faceComp != null && faceComp.mTargetAngle_ != null){
+            local restoreFace = ::DialogFacePlayerRestoreComponent(this, faceComp.mEntityId_, faceComp.mStartingOrientation_, faceComp.mTargetAngle_, faceComp.mRotationAxis_);
+            local faceRestoreId = registerWorldComponent(restoreFace);
+            restoreFace.mComponentId_ = faceRestoreId;
+        }
+
+        if(mCurrentDialogCameraComponentId_ != null){
+            local camComp = getWorldComponent(mCurrentDialogCameraComponentId_);
+            local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION);
+            if(camComp != null && camera != null && camComp.mTargetCamPos_ != null){
+                local currentCamPos = camera.getParentNode().getPositionVec3();
+                local restoreCam = ::DialogCameraZoomRestoreComponent(this, currentCamPos, camComp.mTargetLookAt_);
+                local camRestoreId = registerWorldComponent(restoreCam);
+                restoreCam.mComponentId_ = camRestoreId;
+            }
+        }
+
+        //Unregister the forward components after capturing their state
         unregisterWorldComponent(mCurrentDialogWorldComponentId_);
         mCurrentDialogWorldComponentId_ = null;
         if(mCurrentDialogCameraComponentId_ != null){

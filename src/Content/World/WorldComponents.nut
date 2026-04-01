@@ -193,7 +193,53 @@
     }
 
     function destroy(){
-        //Restore the original orientation
+        //Orientation restoration is handled by DialogFacePlayerRestoreComponent
+    }
+};
+
+::DialogFacePlayerRestoreComponent <- class extends ::WorldComponent{
+    mEntityId_ = null;
+    mComponentId_ = null;
+    mStartingOrientation_ = null;
+    mTargetAngle_ = null;
+    mRotationAxis_ = null;
+    mAnimProgress_ = 0.0;
+
+    constructor(world, entityId, startingOrientation, targetAngle, rotationAxis){
+        base.constructor(world);
+        mEntityId_ = entityId;
+        mStartingOrientation_ = startingOrientation;
+        mTargetAngle_ = targetAngle;
+        mRotationAxis_ = rotationAxis;
+    }
+
+    function updateLogicPaused(){
+        local manager = mWorld_.getEntityManager();
+        if(!manager.entityValid(mEntityId_)) return;
+        if(!manager.hasComponent(mEntityId_, EntityComponents.SCENE_NODE)) return;
+
+        mAnimProgress_ += 0.05;
+        if(mAnimProgress_ > 1.0) mAnimProgress_ = 1.0;
+
+        local comp = manager.getComponent(mEntityId_, EntityComponents.SCENE_NODE);
+
+        if(mTargetAngle_ != null && mRotationAxis_ != null){
+            local a = ::Easing.easeOutCubic(mAnimProgress_);
+            local currentAngle = ::calculateSimpleAnimation(mTargetAngle_, 0.0, a);
+            local quat = Quat(currentAngle, mRotationAxis_);
+            comp.mNode.setOrientation(quat);
+        }
+
+        if(mAnimProgress_ >= 1.0){
+            if(mStartingOrientation_ != null){
+                comp.mNode.setOrientation(mStartingOrientation_);
+            }
+            mWorld_.unregisterWorldComponent(mComponentId_);
+        }
+    }
+
+    function destroy(){
+        //Restore original orientation if component is destroyed early
         local manager = mWorld_.getEntityManager();
         if(manager.entityValid(mEntityId_) && manager.hasComponent(mEntityId_, EntityComponents.SCENE_NODE)){
             local comp = manager.getComponent(mEntityId_, EntityComponents.SCENE_NODE);
@@ -292,6 +338,59 @@
     }
 
     function destroy(){}
+};
+
+::DialogCameraZoomRestoreComponent <- class extends ::WorldComponent{
+    mComponentId_ = null;
+    mAnimProgress_ = 0.0;
+    mStartCamPos_ = null;
+    mStartLookAt_ = null;
+    mTargetCamPos_ = null;
+    mTargetLookAt_ = null;
+
+    constructor(world, startCamPos, startLookAt){
+        base.constructor(world);
+        mStartCamPos_ = startCamPos;
+        mStartLookAt_ = startLookAt;
+    }
+
+    function updateLogicPaused(){
+        if(mStartCamPos_ == null) return;
+
+        //Calculate the target (normal camera state) on the first frame
+        if(mTargetCamPos_ == null){
+            local endZoom = mWorld_.mCurrentZoomLevel_;
+            local playerPos = mWorld_.getPlayerPosition();
+            local endZPos = mWorld_.getZForPos(playerPos);
+            local cameraData = mWorld_.calculateCameraPositionAndLookAt(playerPos, endZPos, endZoom);
+            mTargetCamPos_ = cameraData[0];
+            mTargetLookAt_ = cameraData[1];
+        }
+
+        mAnimProgress_ += 0.05;
+        if(mAnimProgress_ > 1.0) mAnimProgress_ = 1.0;
+
+        local a = ::Easing.easeOutCubic(mAnimProgress_);
+        local currentPos = ::calculateSimpleAnimation(mStartCamPos_, mTargetCamPos_, a);
+        local currentLookAt = ::calculateSimpleAnimation(mStartLookAt_, mTargetLookAt_, a);
+
+        local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION);
+        if(camera == null) return;
+        camera.getParentNode().setPosition(currentPos);
+        camera.lookAt(currentLookAt);
+
+        if(mAnimProgress_ >= 1.0){
+            mWorld_.setLogicPaused(false);
+            mWorld_.unregisterWorldComponent(mComponentId_);
+        }
+    }
+
+    function destroy(){
+        //Ensure logic is resumed if the component is destroyed early
+        if(mWorld_.mLogicPaused_){
+            mWorld_.setLogicPaused(false);
+        }
+    }
 };
 
 //NOTE temporary
