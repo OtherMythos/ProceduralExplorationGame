@@ -314,6 +314,7 @@
         mExplorationPaused_ = true;
         _state.setPauseState(_PAUSE_SPECIFIC_ANIMATIONS | _PAUSE_PARTICLES);
         _state.setAnimationPauseMask(GAMEPLAY_WORLD_ANIMATION_PAUSE);
+        ::Base.mLottieManager.setPaused(true);
     }
 
     function unPauseExploration(){
@@ -329,6 +330,7 @@
         print("UnPausing exploration");
         mExplorationPaused_ = false;
         _state.setPauseState(0x0);
+        ::Base.mLottieManager.setPaused(false);
         if(mCurrentWorld_ != null){
             mCurrentWorld_.notifyModalPopupDismissed();
         }

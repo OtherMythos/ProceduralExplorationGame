@@ -152,9 +152,14 @@ const LOTTIE_MANAGER_SPRITES_WIDTH = 10;
 
     mVersionPool_ = null;
     mTotalAnims_ = 0;
+    mPaused_ = false;
 
     constructor(){
         mVersionPool_ = ::VersionPool();
+    }
+
+    function setPaused(paused){
+        mPaused_ = paused;
     }
 
     function createAnimation(animationType, animPath, width, height, repeat=true, blendblock=null){
@@ -185,6 +190,7 @@ const LOTTIE_MANAGER_SPRITES_WIDTH = 10;
     }
 
     function update(){
+        if(mPaused_) return;
         local data = mVersionPool_.mObject_;
         foreach(c,i in data){
             if(i == null) continue;
