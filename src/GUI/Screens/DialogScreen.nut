@@ -156,6 +156,11 @@ local DialogActorTitle = class {
     mDialogOptionsAnimating_ = false;
     mActionSetId_ = null;
 
+    mTextJumpFrame_ = 0;
+    mTextJumping_ = false;
+    static TEXT_JUMP_FRAMES = 10;
+    static TEXT_JUMP_HEIGHT = 5.0;
+
     mCurrentDialogText_ = null;
     mCurrentDialogRichText_ = null;
     mCurrentDialogColour_ = null;
@@ -296,6 +301,7 @@ local DialogActorTitle = class {
 
     function update(){
         updateDialogIntroAnimation_();
+        updateTextJumpAnimation_();
 
         // Animate dialog option buttons from top to bottom
         if(mDialogOptionsAnimating_){
@@ -343,6 +349,27 @@ local DialogActorTitle = class {
                 requestNextDialog();
             }
         }
+    }
+
+    function updateTextJumpAnimation_(){
+        if(!mTextJumping_) return;
+
+        mTextJumpFrame_++;
+        local p = mTextJumpFrame_.tofloat() / TEXT_JUMP_FRAMES.tofloat();
+        if(p >= 1.0){
+            mTextJumping_ = false;
+            mContainerWindow_.setPosition(mDialogIntroTargetPos_.x, mDialogIntroTargetPos_.y);
+            return;
+        }
+        //Arc up with a sine curve
+        local offset = sin(p * PI) * TEXT_JUMP_HEIGHT;
+        mContainerWindow_.setPosition(mDialogIntroTargetPos_.x, mDialogIntroTargetPos_.y - offset);
+    }
+
+    function startTextJumpAnimation_(){
+        if(mDialogIntroTargetPos_ == null) return;
+        mTextJumpFrame_ = 0;
+        mTextJumping_ = true;
     }
 
     function checkShowAnimation_(){
@@ -561,6 +588,8 @@ local DialogActorTitle = class {
 
         //Position Lottie animation in the container
         positionLottieAnimation_();
+
+        startTextJumpAnimation_();
     }
 
     function positionActorTitle_(){
