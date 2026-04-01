@@ -23,6 +23,11 @@
     mItemScale_ = 10.0;
     mFoundMeshName_ = null;
     mArtifactId_ = null;
+    mPrevStage_ = -1;
+    mVibrateFrame_ = 0;
+    mBeamHapticsTriggered_ = 0;
+    mFoundEffectFrame_ = 0;
+    mFoundEffectScaleInHapticDone_ = false;
 
     function setup(data){
         local winWidth = ::drawable.x;
@@ -100,6 +105,7 @@
         button.attachListenerForEvent(function(widget, action){
             if(mFoundEffect_ != null){
                 mFoundEffect_.beginShrink();
+                ::HapticManager.triggerSimpleHaptic(HapticType.MEDIUM);
                 mBackButton_.setDisabled(true);
                 mGradientFadingOut_ = true;
             } else {
@@ -133,7 +139,26 @@
 
     function update(){
         if(mEffect_ != null){
-            if(!mUIRevealing_ && !mRising_ && mEffect_.getStage() == CollectibleEffectStages.BREAK){
+            local currentStage = mEffect_.getStage();
+
+            if(currentStage != mPrevStage_){
+                mVibrateFrame_ = 0;
+                mPrevStage_ = currentStage;
+            }
+            if(currentStage == CollectibleEffectStages.VIBRATE_AND_ROTATE){
+                //Beams appear at p=0.2,0.3,0.4,0.5 of 100 frames (frames 20,30,40,50)
+                local nextBeamFrame = 20 + mBeamHapticsTriggered_ * 10;
+                if(mBeamHapticsTriggered_ < COLLECTIBLE_EFFECT_NUM_BEAMS && mVibrateFrame_ >= nextBeamFrame){
+                    //Escalate intensity: first two beams are light, last two build anticipation
+                    local hapticType = (mBeamHapticsTriggered_ < 2) ? HapticType.LIGHT : HapticType.MEDIUM;
+                    ::HapticManager.triggerSimpleHaptic(hapticType);
+                    mBeamHapticsTriggered_++;
+                }
+                mVibrateFrame_++;
+            }
+
+            if(!mUIRevealing_ && !mRising_ && currentStage == CollectibleEffectStages.BREAK){
+                ::HapticManager.triggerSimpleHaptic(HapticType.HEAVY);
                 startFoundEffect_();
                 startRise_();
             }
@@ -146,10 +171,16 @@
         }
 
         if(mFoundEffect_ != null){
+            mFoundEffectFrame_++;
+            if(!mFoundEffectScaleInHapticDone_ && mFoundEffectFrame_ >= COLLECTABLE_ITEM_EFFECT_SCALE_IN_FRAMES){
+                ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
+                mFoundEffectScaleInHapticDone_ = true;
+            }
             local running = mFoundEffect_.update();
             if(!running){
                 mFoundEffect_.destroy();
                 mFoundEffect_ = null;
+                ::HapticManager.triggerSimpleHaptic(HapticType.NOTIFICATION_SUCCESS);
                 ::ScreenManager.queueTransition(null, null, mLayerIdx);
             }
         }
@@ -222,6 +253,8 @@
 
     function startFoundEffect_(){
         if(mFoundMeshName_ == null) return;
+        mFoundEffectFrame_ = 0;
+        mFoundEffectScaleInHapticDone_ = false;
         local foundEffectData = {
             "meshName": mFoundMeshName_,
             "itemScale": mItemScale_,

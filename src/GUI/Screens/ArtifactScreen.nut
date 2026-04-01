@@ -400,6 +400,7 @@
 
         if(p >= 1.0) {
             mAnimating_ = false;
+            ::HapticManager.triggerSimpleHaptic(HapticType.NOTIFICATION_SUCCESS);
             if(mAnimTargetWidget_ != null) {
                 mAnimTargetWidget_.mIconPanel_.setVisible(true);
                 mAnimTargetWidget_.mRenderIcon_.setVisible(true);
