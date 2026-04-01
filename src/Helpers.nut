@@ -9,6 +9,7 @@
 ::Vec2_ZERO <- Vec2(0, 0);
 ::Quat_IDENTITY <- Quat();
 ::Colour_WHITE <- ColourValue(1, 1, 1, 1);
+::Colour_BLACK <- ColourValue(0, 0, 0, 1);
 
 ::wrapToString <- function(obj, name, desc=null){
     return (desc == null ?
