@@ -198,6 +198,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
     mSeparationStrength_ = 0.04;
     mSeparationOffset_ = null;
     SWIM_Y_OFFSET_ = 1.8;
+    LEVITATE_MAX_HEIGHT_ = 3.5;
 
     constructor(creatorWorld, enemyType, enemyPos, entity){
         mCreatorWorld_ = creatorWorld;
@@ -348,7 +349,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         //Re-query height if separation shifted our X/Z.
         if(hasSeparation){
             targetPos.y = mCreatorWorld_.getZForPos(targetPos);
-            applySwimYOffset_(targetPos, mInWater_);
+            applyYOffset_(targetPos, mInWater_);
         }
 
         setPosition(targetPos);
@@ -372,11 +373,20 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         local intended = mPos_ + amount;
         return move_(intended, amount);
     }
+    function getActiveConditionEntry_(conditionType){
+        if(mEntity_ == null) return null;
+        local entityManager = mCreatorWorld_.getEntityManager();
+        if(!entityManager.hasComponent(mEntity_, EntityComponents.ENTITY_CONDITION)) return null;
+        local comp = entityManager.getComponent(mEntity_, EntityComponents.ENTITY_CONDITION);
+        foreach(a in comp.mAfflictions){
+            if(a != null && a.mCondition == conditionType) return a;
+        }
+        return null;
+    }
     function moveQueryZ(amount, inWater=false){
         local intended = mPos_ + amount;
-        local zQuery = mCreatorWorld_.getZForPos(intended);
-        intended.y = zQuery;
-        applySwimYOffset_(intended, inWater);
+        intended.y = mCreatorWorld_.getZForPos(intended);
+        applyYOffset_(intended, inWater);
         move_(intended, amount);
     }
     function moveToPoint(point, amount){
@@ -391,6 +401,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         moveQueryZ(dir, mInWater_);
     }
     function getSlowFactor(inWater, wieldActive){
+        if(getActiveConditionEntry_(EntityConditionType.LEVITATING) != null) return 1.0;
         local slow = 1.0;
         if(inWater){
             slow *= ::Enemies[mEnemy_].getAllowSwimState() ? 0.5 : 1.0;
@@ -405,8 +416,21 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         }
         return slow;
     }
-    function applySwimYOffset_(pos, inWater){
-        if(inWater && ::Enemies[mEnemy_].getAllowSwimState()){
+    function applyYOffset_(pos, inWater){
+        local levitating = getActiveConditionEntry_(EntityConditionType.LEVITATING);
+        if(levitating != null){
+            local ratio = levitating.mTime.tofloat() / levitating.mLifetime.tofloat();
+            local RAMP = 0.15;
+            local height;
+            if(ratio < RAMP){
+                height = sin((ratio / RAMP) * (PI / 2.0)) * LEVITATE_MAX_HEIGHT_;
+            }else if(ratio > (1.0 - RAMP)){
+                height = sin(((1.0 - ratio) / RAMP) * (PI / 2.0)) * LEVITATE_MAX_HEIGHT_;
+            }else{
+                height = LEVITATE_MAX_HEIGHT_;
+            }
+            pos.y += height;
+        }else if(inWater && ::Enemies[mEnemy_].getAllowSwimState()){
             pos.y -= SWIM_Y_OFFSET_;
         }
     }
@@ -548,8 +572,16 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
                 nudged = mCreatorWorld_.getEntityManager().checkEntityPositionPotential(mEntity_, nudged);
             }
             nudged.y = mCreatorWorld_.getZForPos(nudged);
-            applySwimYOffset_(nudged, mInWater_);
+            applyYOffset_(nudged, mInWater_);
             setPosition(nudged);
+        }
+
+        //Keep levitate Y in sync every frame, even when stationary.
+        if(getActiveConditionEntry_(EntityConditionType.LEVITATING) != null){
+            local levitatePos = mPos_.copy();
+            levitatePos.y = mCreatorWorld_.getZForPos(mPos_);
+            applyYOffset_(levitatePos, mInWater_);
+            setPosition(levitatePos);
         }
 
         //if(mGizmo_){

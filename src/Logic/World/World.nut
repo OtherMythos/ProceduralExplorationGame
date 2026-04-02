@@ -148,7 +148,7 @@
 
     //TODO remove this at some point.
     mPlayerSpecialMoves = [
-        SpecialMoveId.FIRE_AREA,
+        SpecialMoveId.LEVITATE,
         SpecialMoveId.FIRE_AREA,
         SpecialMoveId.FIRE_AREA,
         SpecialMoveId.FIRE_AREA,
@@ -1169,12 +1169,16 @@
 
             local conditionDef = ::EntityConditions[afflictionId];
             if(present){
-                assignGizmoToEntity(entity, conditionDef.mGizmo);
-                if(block != null){
+                if(conditionDef.mGizmo != null){
+                    assignGizmoToEntity(entity, conditionDef.mGizmo);
+                }
+                if(block != null && conditionDef.mDiffuse != null){
                     block.applyDiffuseModifier(conditionDef.mDiffuse);
                 }
             }else{
-                removeGizmoFromEntity(entity, conditionDef.mGizmo);
+                if(conditionDef.mGizmo != null){
+                    removeGizmoFromEntity(entity, conditionDef.mGizmo);
+                }
             }
         }
 

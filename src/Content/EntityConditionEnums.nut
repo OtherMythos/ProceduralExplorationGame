@@ -2,5 +2,6 @@
 
     ON_FIRE,
     FROZEN,
+    LEVITATING,
 
 ", false);
