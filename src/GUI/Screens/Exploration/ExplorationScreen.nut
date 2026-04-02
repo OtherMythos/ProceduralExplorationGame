@@ -1577,8 +1577,8 @@ enum ExplorationScreenWidgetType{
         }
     }
 
-    function notifyPlayerMove(moveId){
-        //return mExplorationMovesContainer_.notifyPlayerMove(moveId);
+    function notifyPlayerSpecialMove(moveId){
+        //return mExplorationMovesContainer_.notifyPlayerSpecialMove(moveId);
         return true;
     }
 

@@ -147,11 +147,11 @@
 ::World <- class{
 
     //TODO remove this at some point.
-    mPlayerMoves = [
-        MoveId.FIRE_AREA,
-        MoveId.FIRE_AREA,
-        MoveId.FIRE_AREA,
-        MoveId.FIRE_AREA,
+    mPlayerSpecialMoves = [
+        SpecialMoveId.FIRE_AREA,
+        SpecialMoveId.FIRE_AREA,
+        SpecialMoveId.FIRE_AREA,
+        SpecialMoveId.FIRE_AREA,
     ];
 
     FoundObjectLogic = class{
@@ -442,7 +442,7 @@
     mTargetManager_ = null;
     mProjectileTargetManager_ = null;
 
-    mPerformingMoves_ = null;
+    mPerformingSpecialMoves_ = null;
 
     mPinchToZoomActive_ = false;
     mPinchToZoomWarmDown_ = 5;
@@ -527,7 +527,7 @@
         mActiveWorldActions_ = [];
         mPlayerTargetRadius_ = {};
         mPlayerTargetRadiusProjectiles_ = {};
-        mPerformingMoves_ = [];
+        mPerformingSpecialMoves_ = [];
 
         mSeparationPointToEntry_ = {};
 
@@ -566,7 +566,7 @@
         mInputs_ = {
             "move": _input.getAxisActionHandle("Move"),
             "camera": _input.getAxisActionHandle("Camera"),
-            "playerMoves": [
+            "playerSpecialMoves": [
                 _input.getButtonActionHandle("PerformMove1"),
                 _input.getButtonActionHandle("PerformMove2"),
                 _input.getButtonActionHandle("PerformMove3"),
@@ -840,7 +840,7 @@
         if(!isActive()) return;
         checkPlayerCombatLogic();
 
-        updatePerformingMoves();
+        updatePerformingSpecialMoves();
         updateCameraPosition();
 
         if(::Base.isProfileActive(GameProfile.ENABLE_RIGHT_CLICK_WORKAROUNDS)){
@@ -1237,20 +1237,20 @@
         processStatusAfflictionChange_(entity);
     }
 
-    function updatePerformingMoves(){
+    function updatePerformingSpecialMoves(){
         local removed = false;
-        foreach(c,i in mPerformingMoves_){
+        foreach(c,i in mPerformingSpecialMoves_){
             local result = i.update();
             if(result){
-                mPerformingMoves_[c] = null;
+                mPerformingSpecialMoves_[c] = null;
                 removed = true;
             }
         }
         if(removed){
             while(true){
-                local i = mPerformingMoves_.find(null);
+                local i = mPerformingSpecialMoves_.find(null);
                 if(i == null) break;
-                mPerformingMoves_.remove(i);
+                mPerformingSpecialMoves_.remove(i);
             }
         }
     }
@@ -1326,16 +1326,16 @@
         mMouseContext_.setGuiObject(guiObject);
     }
 
-    function triggerPlayerMove(moveId){
+    function triggerPlayerSpecialMove(moveId){
         if(!isActive()) return;
-        assert(moveId >= 0 && moveId < mPlayerMoves.len());
-        local targetMoveId = mPlayerMoves[moveId];
+        assert(moveId >= 0 && moveId < mPlayerSpecialMoves.len());
+        local targetMoveId = mPlayerSpecialMoves[moveId];
 
         if(mGui_){
             //TODO in future store the cooldown data in the logic and communicate with the bus.
-            local result = mGui_.notifyPlayerMove(moveId);
+            local result = mGui_.notifyPlayerSpecialMove(moveId);
             if(result){
-                performPlayerMove(targetMoveId);
+                performPlayerSpecialMove(targetMoveId);
             }
         }
 
@@ -2048,17 +2048,17 @@
     }
 
 
-    function performPlayerMove(moveId){
+    function performPlayerSpecialMove(moveId){
         local playerPos = mPlayerEntry_.mPos_.copy();
-        performMove(moveId, playerPos, null, _COLLISION_ENEMY);
+        performSpecialMove(moveId, playerPos, null, _COLLISION_ENEMY);
     }
 
-    function performMove(moveId, pos, dir, collisionType){
-        local moveDef = ::Moves[moveId];
+    function performSpecialMove(moveId, pos, dir, collisionType){
+        local moveDef = ::SpecialMoves[moveId];
         local targetProjectile = moveDef.getProjectile();
 
-        local performance = ::MovePerformance(moveDef);
-        mPerformingMoves_.append(performance);
+        local performance = ::SpecialMovePerformance(moveDef);
+        mPerformingSpecialMoves_.append(performance);
 
         /*
         if(targetProjectile != null){
@@ -2187,10 +2187,10 @@
 
     function checkPlayerInputs(){
         if(mBlockAllInputs_) return;
-        foreach(c,i in mInputs_.playerMoves){
+        foreach(c,i in mInputs_.playerSpecialMoves){
             local buttonState = _input.getButtonAction(i, _INPUT_PRESSED);
             if(buttonState){
-                triggerPlayerMove(c);
+                triggerPlayerSpecialMove(c);
             }
         }
 

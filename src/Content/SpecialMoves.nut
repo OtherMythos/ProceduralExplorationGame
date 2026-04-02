@@ -1,4 +1,4 @@
-enum MoveId{
+enum SpecialMoveId{
     NONE,
 
     FIREBALL,
@@ -16,7 +16,7 @@ function fireAreaAttack(frame){
     return true;
 }
 
-::MoveDef <- class{
+::SpecialMoveDef <- class{
     mName_ = null;
     mCooldown_ = 10;
     mProjectile_ = null;
@@ -41,7 +41,7 @@ function fireAreaAttack(frame){
     }
 };
 
-::MovePerformance <- class{
+::SpecialMovePerformance <- class{
     mMoveDef_ = null;
     mFrame_ = 0;
 
@@ -58,8 +58,8 @@ function fireAreaAttack(frame){
     }
 }
 
-::Moves <- array(MoveId.MAX, null);
+::SpecialMoves <- array(SpecialMoveId.MAX, null);
 
-::Moves[MoveId.NONE] = MoveDef("None");
-::Moves[MoveId.FIREBALL] = MoveDef("Fireball", 50, ProjectileId.FIREBALL);
-::Moves[MoveId.FIRE_AREA] = MoveDef("Fire Area", 50, ProjectileId.FIRE_AREA, fireAreaAttack);
+::SpecialMoves[SpecialMoveId.NONE] = SpecialMoveDef("None");
+::SpecialMoves[SpecialMoveId.FIREBALL] = SpecialMoveDef("Fireball", 50, ProjectileId.FIREBALL);
+::SpecialMoves[SpecialMoveId.FIRE_AREA] = SpecialMoveDef("Fire Area", 50, ProjectileId.FIRE_AREA, fireAreaAttack);
