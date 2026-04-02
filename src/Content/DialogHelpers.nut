@@ -53,12 +53,15 @@ function checkPlayerFreeInventorySlot(){
     return ::Base.mPlayerStats.mInventory_.hasFreeSlot();
 }
 
-function triggerInventoryForItems(desc){
+function triggerInventoryForItems(desc, playerPrompt=null){
     local data = {
         "multiSelection": true,
         "stats": ::Base.mPlayerStats,
         "acceptButtonLabel": desc,
     };
+    if(playerPrompt != null){
+        data.playerPrompt <- playerPrompt;
+    }
     //TODO fix the action set popping problem by not overriding dialog with the inventory screen.
     ::Base.mExplorationLogic.mCurrentWorld_.showInventory(data, 2);
 }

@@ -127,6 +127,7 @@ enum InventoryBusEvents{
     mStorageToggleButton_ = null;
     mAcceptButton_ = null;
     mRightSideHelperButtons_ = null;
+    mPlayerPrompt_ = null;
 
     //Drag-and-drop state
     DRAG_THRESHOLD = 15;
@@ -227,6 +228,11 @@ enum InventoryBusEvents{
         mPlayerStats_ = data.stats;
         mInventory_ = mPlayerStats_.mInventory_;
         mItemStorage_ = mPlayerStats_.mItemStorage_;
+
+        local playerPromptText = null;
+        if(data.rawin("playerPrompt")){
+            playerPromptText = data.playerPrompt;
+        }
 
         mInventoryBus_ = InventoryInfoBus();
         mBusCallbackId_ = mInventoryBus_.registerCallback(busCallback, this);
@@ -427,6 +433,14 @@ enum InventoryBusEvents{
             mPlayerInspector_.setSize(inspectorSize);
             mPlayerInspector_.notifyLayout();
         //}
+
+        if(playerPromptText != null){
+            mPlayerPrompt_ = mWindow_.createLabel();
+            mPlayerPrompt_.setDefaultFont(6);
+            mPlayerPrompt_.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
+            mPlayerPrompt_.setText(playerPromptText, false);
+        }
+        repositionPlayerPrompt_();
 
         local gridStart = mPlayerInspector_.getPosition() + mPlayerInspector_.getSize() + GRID_BACKGROUND_PADDING;
         local gridSize = mInventoryGrid_.getSize();
@@ -876,6 +890,20 @@ enum InventoryBusEvents{
         gradientRight.setColour(ColourValue(1, 1, 1, 0.5));
         gradientRight.setDatablock("gui/linearGradientRight");
         gradientRight.setClickable(false);
+
+        repositionPlayerPrompt_();
+    }
+
+    function repositionPlayerPrompt_(){
+        if(mPlayerPrompt_ == null) return;
+        local inspectorPos = mPlayerInspector_.getPosition();
+        local inspectorSz = mPlayerInspector_.getSize();
+        ::calculateFontWidth_(mPlayerPrompt_, inspectorSz.x * 0.75);
+        local promptSize = mPlayerPrompt_.getSize();
+        mPlayerPrompt_.setPosition(
+            inspectorPos.x + (inspectorSz.x / 2) - (promptSize.x / 2),
+            inspectorPos.y + inspectorSz.y - promptSize.y
+        );
     }
 
     function toggleStorageVisibility(){
