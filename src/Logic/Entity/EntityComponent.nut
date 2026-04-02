@@ -346,10 +346,10 @@
 
 };
 
-::EntityManager.Components[EntityComponents.STATUS_AFFLICTION] = class extends ::EntityManager.Component{
+::EntityManager.Components[EntityComponents.ENTITY_CONDITION] = class extends ::EntityManager.Component{
 
-    StatusAffliction = class{
-        mAffliction = null;
+    EntityCondition = class{
+        mCondition = null;
         mTime = 0;
         mLifetime = 100;
     }
@@ -419,7 +419,7 @@
 
 };
 
-::EntityManager.Components[EntityComponents.STATUS_AFFLICTION_IMMUNITY] = class extends ::EntityManager.Component{
+::EntityManager.Components[EntityComponents.ENTITY_CONDITION_IMMUNITY] = class extends ::EntityManager.Component{
 
     mImmunityMask = 0;
 

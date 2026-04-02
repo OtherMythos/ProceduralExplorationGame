@@ -790,9 +790,9 @@
            itemType == PlacedItemId.ROCK_SMALL_3 || itemType == PlacedItemId.ROCK_SMALL_4 ||
            itemType == PlacedItemId.ROCK_SMALL_5 || itemType == PlacedItemId.ROCK_SMALL_6 ||
            itemType == PlacedItemId.MAGMA_SHROOM){
-            local fireImmunityMask = 1 << StatusAfflictionType.ON_FIRE;
-            manager.assignComponent(en, EntityComponents.STATUS_AFFLICTION_IMMUNITY,
-                ::EntityManager.Components[EntityComponents.STATUS_AFFLICTION_IMMUNITY](fireImmunityMask));
+            local fireImmunityMask = 1 << EntityConditionType.ON_FIRE;
+            manager.assignComponent(en, EntityComponents.ENTITY_CONDITION_IMMUNITY,
+                ::EntityManager.Components[EntityComponents.ENTITY_CONDITION_IMMUNITY](fireImmunityMask));
         }
 
         //Register the placed item in the manager
@@ -1515,8 +1515,8 @@
         local damagePoint = damageWorld.addCollisionReceiver(en, targetPos.x, targetPos.z, 2, _COLLISION_ENEMY);
 
         local allAfflictionsMask = 0xFF;
-        manager.assignComponent(en, EntityComponents.STATUS_AFFLICTION_IMMUNITY,
-            ::EntityManager.Components[EntityComponents.STATUS_AFFLICTION_IMMUNITY](allAfflictionsMask));
+        manager.assignComponent(en, EntityComponents.ENTITY_CONDITION_IMMUNITY,
+            ::EntityManager.Components[EntityComponents.ENTITY_CONDITION_IMMUNITY](allAfflictionsMask));
 
         local spoilsComponent = ::EntityManager.Components[EntityComponents.SPOILS](SpoilsComponentType.SINGLE_ENEMY, enemyId, null, null, EntityDestroyReason.LIFETIME);
         manager.assignComponent(en, EntityComponents.SPOILS, spoilsComponent);

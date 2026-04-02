@@ -24,8 +24,8 @@ enum EntityComponents{
     SCENE_NODE,
     DATABLOCK,
     MOVEMENT,
-    STATUS_AFFLICTION,
-    STATUS_AFFLICTION_IMMUNITY,
+    ENTITY_CONDITION,
+    ENTITY_CONDITION_IMMUNITY,
     GIZMO,
     DATABLOCK_ANIMATOR,
     COMPASS_INDICATOR,
@@ -180,7 +180,7 @@ EntityManager.EntityManager <- class{
             if(i == null) continue;
             moveEntity(i.eid, i.mDirection);
         }
-        foreach(i in mComponents_[EntityComponents.STATUS_AFFLICTION].mComps_){
+        foreach(i in mComponents_[EntityComponents.ENTITY_CONDITION].mComps_){
             if(i == null) continue;
 
             local removed = false;
@@ -188,7 +188,10 @@ EntityManager.EntityManager <- class{
                 assert(entityValid(i.eid));
                 if(a == null) continue;
                 if(a.mTime % 10 == 0){
-                    ::_applyDamageOther(this, i.eid, 1);
+                    local condDef = ::EntityConditions[a.mCondition];
+                    if(condDef.mDamagePerTick > 0){
+                        ::_applyDamageOther(this, i.eid, condDef.mDamagePerTick);
+                    }
                 }
                 //Now damage has been applied there's a chance the entity is now invalid.
                 if(!entityValid(i.eid)) return;
@@ -196,8 +199,8 @@ EntityManager.EntityManager <- class{
                 a.mTime++;
                 if(a.mTime >= a.mLifetime){
                     i.mAfflictions[ac] = null;
-                    printf("Status condition for entity %i ended", i.eid);
-                    mCreatorWorld_.processStatusAfflictionChange_(i.eid);
+                    printf("Entity condition for entity %i ended", i.eid);
+                    mCreatorWorld_.processEntityConditionChange_(i.eid);
                     removed = true;
                 }
             }
@@ -211,8 +214,8 @@ EntityManager.EntityManager <- class{
                     }
                 }
                 if(!found){
-                    removeComponent(i.eid, EntityComponents.STATUS_AFFLICTION);
-                    //mCreatorWorld_.processStatusAfflictionChange_(i.eid);
+                    removeComponent(i.eid, EntityComponents.ENTITY_CONDITION);
+                    //mCreatorWorld_.processEntityConditionChange_(i.eid);
                 }
             }
         }

@@ -66,8 +66,8 @@ enum MagmaShroomState{
 
         local damageWorld = mWorld_.getDamageWorld();
         local fireArea = ::Combat.CombatMove(10);
-        fireArea.mStatusAffliction = StatusAfflictionType.ON_FIRE;
-        fireArea.mStatusAfflictionLifetime = 100;
+        fireArea.mEntityCondition = EntityConditionType.ON_FIRE;
+        fireArea.mEntityConditionLifetime = 100;
         mDamageCollisionPoint_ = damageWorld.addCollisionSender(CollisionWorldTriggerResponses.PROJECTILE_DAMAGE, fireArea, mPosition_.x, mPosition_.z, 3, _COLLISION_PLAYER);
     }
 

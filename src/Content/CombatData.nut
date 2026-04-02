@@ -123,17 +123,17 @@
     },
 
     /**
-     * Contains a definition of an attacking move, for instance damage amount, status afflictions, etc.
+     * Contains a definition of an attacking move, for instance damage amount, entity conditions, etc.
      */
     "CombatMove": class{
         mDamage = 0;
-        mStatusAffliction = null;
-        mStatusAfflictionLifetime = null;
+        mEntityCondition = null;
+        mEntityConditionLifetime = null;
 
-        constructor(damage, statusAffliction=null, statusAfflictionLifetime=null){
+        constructor(damage, entityCondition=null, entityConditionLifetime=null){
             mDamage = damage;
-            mStatusAffliction = statusAffliction;
-            mStatusAfflictionLifetime = statusAfflictionLifetime;
+            mEntityCondition = entityCondition;
+            mEntityConditionLifetime = entityConditionLifetime;
         }
 
         function getDamage(){
@@ -142,8 +142,8 @@
 
         function performOnEntity(entityId, world){
             //Do this first incase damage invalidates the entity.
-            if(mStatusAffliction != null){
-                world.applyStatusAffliction(entityId, mStatusAffliction, mStatusAfflictionLifetime);
+            if(mEntityCondition != null){
+                world.applyEntityCondition(entityId, mEntityCondition, mEntityConditionLifetime);
             }
             if(mDamage != null){
                 _applyDamageOther(world.getEntityManager(), entityId, mDamage);

@@ -1142,39 +1142,39 @@
         compassAnimator.setCompassIndicatorType(playerIndicatorId, CompassIndicatorType.PLAYER);
     }
 
-    function processStatusAfflictionChange_(entity){
+    function processEntityConditionChange_(entity){
         local block = null;
         if(mEntityManager_.hasComponent(entity, EntityComponents.DATABLOCK)){
             block = mEntityManager_.getComponent(entity, EntityComponents.DATABLOCK);
         }
         if(block != null) block.clearDiffuseModifier();
         //In this case just reset everything back to what it was.
-        if(!mEntityManager_.hasComponent(entity, EntityComponents.STATUS_AFFLICTION)){
-            for(local afflictionId = 0; afflictionId < StatusAfflictionType.MAX; afflictionId++){
+        if(!mEntityManager_.hasComponent(entity, EntityComponents.ENTITY_CONDITION)){
+            for(local afflictionId = 0; afflictionId < EntityConditionType.MAX; afflictionId++){
                 removeGizmoFromEntity(entity, afflictionId);
             }
             return;
         }
 
-        local c = mEntityManager_.getComponent(entity, EntityComponents.STATUS_AFFLICTION);
-        for(local afflictionId = 0; afflictionId < StatusAfflictionType.MAX; afflictionId++){
+        local c = mEntityManager_.getComponent(entity, EntityComponents.ENTITY_CONDITION);
+        for(local afflictionId = 0; afflictionId < EntityConditionType.MAX; afflictionId++){
             local present = false;
             foreach(a in c.mAfflictions){
                 if(a == null) continue;
-                if(a.mAffliction == afflictionId){
+                if(a.mCondition == afflictionId){
                     present = true;
                     break;
                 }
             }
 
-            local afflictionType = ::StatusAfflictions[afflictionId];
+            local conditionDef = ::EntityConditions[afflictionId];
             if(present){
-                assignGizmoToEntity(entity, afflictionType.mGizmo);
+                assignGizmoToEntity(entity, conditionDef.mGizmo);
                 if(block != null){
-                    block.applyDiffuseModifier(afflictionType.mDiffuse);
+                    block.applyDiffuseModifier(conditionDef.mDiffuse);
                 }
             }else{
-                removeGizmoFromEntity(entity, afflictionType.mGizmo);
+                removeGizmoFromEntity(entity, conditionDef.mGizmo);
             }
         }
 
@@ -1182,45 +1182,44 @@
             block.refreshDiffuseModifiers();
         }
     }
-    function applyStatusAffliction(entity, afflictionType, lifetime){
+    function applyEntityCondition(entity, conditionType, lifetime){
         //Check for immunity before applying
-        if(mEntityManager_.hasComponent(entity, EntityComponents.STATUS_AFFLICTION_IMMUNITY)){
-            local immunityComp = mEntityManager_.getComponent(entity, EntityComponents.STATUS_AFFLICTION_IMMUNITY);
-            if(immunityComp.mImmunityMask & (1 << afflictionType)){
+        if(mEntityManager_.hasComponent(entity, EntityComponents.ENTITY_CONDITION_IMMUNITY)){
+            local immunityComp = mEntityManager_.getComponent(entity, EntityComponents.ENTITY_CONDITION_IMMUNITY);
+            if(immunityComp.mImmunityMask & (1 << conditionType)){
                 return;
             }
         }
 
-        local c = ::EntityManager.Components[EntityComponents.STATUS_AFFLICTION];
+        local c = ::EntityManager.Components[EntityComponents.ENTITY_CONDITION];
         local comp = null;
-        if(!mEntityManager_.hasComponent(entity, EntityComponents.STATUS_AFFLICTION)){
+        if(!mEntityManager_.hasComponent(entity, EntityComponents.ENTITY_CONDITION)){
             comp = c();
-            mEntityManager_.assignComponent(entity, EntityComponents.STATUS_AFFLICTION, comp);
+            mEntityManager_.assignComponent(entity, EntityComponents.ENTITY_CONDITION, comp);
         }else{
-            comp = mEntityManager_.getComponent(entity, EntityComponents.STATUS_AFFLICTION);
+            comp = mEntityManager_.getComponent(entity, EntityComponents.ENTITY_CONDITION);
         }
 
-        local affliction = c.StatusAffliction();
-        affliction.mAffliction = afflictionType;
-        affliction.mLifetime = lifetime;
-        comp.mAfflictions.append(affliction);
-        processStatusAfflictionChange_(entity);
+        local condition = c.EntityCondition();
+        condition.mCondition = conditionType;
+        condition.mLifetime = lifetime;
+        comp.mAfflictions.append(condition);
+        processEntityConditionChange_(entity);
     }
 
-    function removeFireAffliction(entity){
-        //Remove all fire status afflictions from the entity
-        if(!mEntityManager_.hasComponent(entity, EntityComponents.STATUS_AFFLICTION)){
+    function removeEntityCondition(entity, conditionType){
+        if(!mEntityManager_.hasComponent(entity, EntityComponents.ENTITY_CONDITION)){
             return;
         }
 
-        local comp = mEntityManager_.getComponent(entity, EntityComponents.STATUS_AFFLICTION);
+        local comp = mEntityManager_.getComponent(entity, EntityComponents.ENTITY_CONDITION);
         for(local i = 0; i < comp.mAfflictions.len(); i++){
-            if(comp.mAfflictions[i] != null && comp.mAfflictions[i].mAffliction == StatusAfflictionType.ON_FIRE){
+            if(comp.mAfflictions[i] != null && comp.mAfflictions[i].mCondition == conditionType){
                 comp.mAfflictions[i] = null;
             }
         }
 
-        //Check if there are any remaining afflictions
+        //Check if there are any remaining conditions
         local hasRemaining = false;
         foreach(a in comp.mAfflictions){
             if(a != null){
@@ -1229,12 +1228,12 @@
             }
         }
 
-        //If no afflictions remain, remove the component
+        //If no conditions remain, remove the component
         if(!hasRemaining){
-            mEntityManager_.removeComponent(entity, EntityComponents.STATUS_AFFLICTION);
+            mEntityManager_.removeComponent(entity, EntityComponents.ENTITY_CONDITION);
         }
 
-        processStatusAfflictionChange_(entity);
+        processEntityConditionChange_(entity);
     }
 
     function updatePerformingSpecialMoves(){
@@ -2125,8 +2124,8 @@
         local startPos = playerPos - (dir * 5);
         local combatMove = ::Combat.CombatMove(5);
         if(_random.randInt(3) == 0){
-            combatMove.mStatusAffliction = StatusAfflictionType.ON_FIRE;
-            combatMove.mStatusAfflictionLifetime = 100;
+            combatMove.mEntityCondition = EntityConditionType.ON_FIRE;
+            combatMove.mEntityConditionLifetime = 100;
         }
         mProjectileManager_.spawnProjectile(ProjectileId.FIREBALL, startPos, -dir, combatMove);
     }
@@ -2172,8 +2171,8 @@
 
         //Perform the attack whether or not an enemy was hit
         local combatMove = ::Combat.CombatMove(10); //Directional attack base damage
-        combatMove.mStatusAffliction = StatusAfflictionType.ON_FIRE;
-        combatMove.mStatusAfflictionLifetime = 100;
+        combatMove.mEntityCondition = EntityConditionType.ON_FIRE;
+        combatMove.mEntityConditionLifetime = 100;
         mProjectileManager_.spawnProjectile(ProjectileId.FIREBALL, playerPos, -attackDirection, combatMove);
 
         //Apply damage to the resolved enemy if one exists
