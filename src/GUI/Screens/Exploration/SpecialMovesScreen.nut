@@ -19,6 +19,7 @@
     mIntroT_ = 1.0;
     //Offset from final position to origin, lerped to zero during intro
     mIntroOffset_ = null;
+    mDisabled_ = false;
 
     constructor(parent, text, size){
         mBaseSize_ = size;
@@ -52,7 +53,17 @@
         updatePositions_();
     }
 
+    function setDisabled(disabled){
+        mDisabled_ = disabled;
+        if(disabled){
+            mPanel_.setSkinPack("Panel_darkGrey");
+            mPanel_.setColour(ColourValue(1, 1, 1, 0.75));
+            mLabel_.setVisible(false);
+        }
+    }
+
     function setSelected(selected){
+        if(mDisabled_) return;
         if(selected){
             mPanel_.setSkinPack("Panel_blue");
             mTargetSize_ = (mBaseSize_ + SELECTED_SIZE_BONUS).tofloat();
@@ -74,9 +85,11 @@
         local displaySize = mCurrentSize_ * introScale;
         mPanel_.setSize(displaySize, displaySize);
         //easeOutQuad for a fast initial fade that settles quickly
-        local easedAlpha = ::Easing.easeOutQuad(mIntroT_);
-        mPanel_.setColour(ColourValue(1, 1, 1, easedAlpha));
-        mLabel_.setColour(ColourValue(1, 1, 1, easedAlpha));
+        if(!mDisabled_){
+            local easedAlpha = ::Easing.easeOutQuad(mIntroT_);
+            mPanel_.setColour(ColourValue(1, 1, 1, easedAlpha));
+            mLabel_.setColour(ColourValue(1, 1, 1, easedAlpha));
+        }
         updatePositions_();
     }
 
@@ -147,8 +160,15 @@
 
     function createButtons_(){
         mButtons_ = array(NUM_BUTTONS);
+        local moves = ::Base.mPlayerStats.getSpecialMoves();
         for(local i = 0; i < NUM_BUTTONS; i++){
-            mButtons_[i] = ::SpecialMoveButtonWidget(mWindow_, "Move " + (i + 1), BUTTON_SIZE);
+            local moveId = (i < moves.len()) ? moves[i] : SpecialMoveId.NONE;
+            local moveDef = ::SpecialMoves[moveId];
+            local label = (moveDef != null) ? moveDef.getName() : "None";
+            mButtons_[i] = ::SpecialMoveButtonWidget(mWindow_, label, BUTTON_SIZE);
+            if(moveId == SpecialMoveId.NONE){
+                mButtons_[i].setDisabled(true);
+            }
         }
     }
 
@@ -204,12 +224,17 @@
                     while(diff > PI) diff -= PI * 2.0;
                     while(diff < -PI) diff += PI * 2.0;
                     if(diff >= -halfStep && diff < halfStep){
-                        newSelectedIndex = i;
+                        if(!mButtons_[i].mDisabled_){
+                            newSelectedIndex = i;
+                        }
                         break;
                     }
                 }
             }
         }
+
+        //Capture selection before updating so the release check sees the last active index
+        local indexBeforeUpdate = mSelectedIndex_;
 
         //Update button selection state only when it changes
         if(newSelectedIndex != mSelectedIndex_){
@@ -229,8 +254,12 @@
 
         //On finger release, trigger the selected move (if any) and close
         if(mFingerWasActive_ && !fingerActive){
+            mSelectedIndex_ = indexBeforeUpdate;
             if(mSelectedIndex_ >= 0){
-                print("Special move " + (mSelectedIndex_ + 1) + " triggered!");
+                local world = ::Base.mExplorationLogic.mCurrentWorld_;
+                if(world != null){
+                    world.triggerPlayerSpecialMove(mSelectedIndex_);
+                }
             }
             closeScreen();
         }
