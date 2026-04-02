@@ -14,6 +14,8 @@
 
     mCurrentExplorationStats_ = null;
 
+    mSpecialMoves_ = null;
+
     constructor(){
         _event.subscribe(Event.PLACE_VISITED, receivePlaceVisitedEvent, this);
         _event.subscribe(Event.PLAYER_DIED, receivePlayerDiedEvent, this);
@@ -26,6 +28,8 @@
 
         mPlayerCombatStats = ::Combat.CombatStats(EnemyId.NONE, 200);
         mPlayerCombatStats.calculateEquippedStats();
+
+        mSpecialMoves_ = array(4, SpecialMoveId.NONE);
     }
 
     function shutdown(){
@@ -119,6 +123,16 @@
         }
 
         copyQuestData_(data.quest);
+
+        //Load special moves from save data
+        if(data.rawin("specialMoves")){
+            for(local i = 0; i < mSpecialMoves_.len(); i++){
+                local saved = data.specialMoves[i];
+                local id = (saved != null && ::SpecialMoveIdLookup.rawin(saved)) ? ::SpecialMoveIdLookup.rawget(saved) : SpecialMoveId.NONE;
+                mSpecialMoves_[i] = id;
+            }
+        }
+        mSpecialMoves_[0] = SpecialMoveId.LEVITATE;
     }
     function getSaveSlot(){
         return mCurrentSaveSlot_;
@@ -151,6 +165,12 @@
         mCurrentData_.rawset("quest", questData);
         mCurrentData_.rawset("playerCoins", mInventory_.getMoney());
         mCurrentData_.rawset("playerHealth", mPlayerCombatStats.mHealth);
+
+        //Serialise special moves as strings
+        for(local i = 0; i < mSpecialMoves_.len(); i++){
+            mCurrentData_.specialMoves[i] = ::SpecialMoveIdNames[mSpecialMoves_[i]];
+        }
+
         processTime();
         return mCurrentData_;
     }
@@ -555,6 +575,15 @@
 
         return data;
     }
+    function getSpecialMoves(){
+        return mSpecialMoves_;
+    }
+
+    function setSpecialMove(slot, moveId){
+        assert(slot >= 0 && slot < mSpecialMoves_.len());
+        mSpecialMoves_[slot] = moveId;
+    }
+
     function getEXPForLevel(level){
         local target = level-1;
         if(target < 0) return EXP_LEVELS[0];

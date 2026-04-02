@@ -146,14 +146,6 @@
 
 ::World <- class{
 
-    //TODO remove this at some point.
-    mPlayerSpecialMoves = [
-        SpecialMoveId.LEVITATE,
-        SpecialMoveId.FIRE_AREA,
-        SpecialMoveId.FIRE_AREA,
-        SpecialMoveId.FIRE_AREA,
-    ];
-
     FoundObjectLogic = class{
 
         mDataCount_ = null;
@@ -1331,8 +1323,9 @@
 
     function triggerPlayerSpecialMove(moveId){
         if(!isActive()) return;
-        assert(moveId >= 0 && moveId < mPlayerSpecialMoves.len());
-        local targetMoveId = mPlayerSpecialMoves[moveId];
+        local playerSpecialMoves = ::Base.mPlayerStats.getSpecialMoves();
+        assert(moveId >= 0 && moveId < playerSpecialMoves.len());
+        local targetMoveId = playerSpecialMoves[moveId];
 
         if(mGui_){
             //TODO in future store the cooldown data in the logic and communicate with the bus.

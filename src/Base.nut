@@ -138,9 +138,6 @@
         _doFile("res://src/System/PlayerStats.nut");
         loadContentFiles();
 
-        _doFile("res://src/Content/SpecialMoves.nut");
-
-        //TODO shift this off somewhere else.
         _doFile("res://src/Content/Enemies/BasicEnemyScript.nut");
         _doFile("res://src/Content/Enemies/BeeHiveScript.nut");
         _doFile("res://src/Content/Enemies/BeeEnemyScript.nut");

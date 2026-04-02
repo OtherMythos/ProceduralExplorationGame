@@ -15,6 +15,7 @@
         _doFile("script://ScreenEnums.nut");
         _doFile("script://OrbEnums.nut");
         _doFile("script://EntityConditionEnums.nut");
+        _doFile("script://SpecialMoveEnums.nut");
         _doFile("script://VoxelEnums.nut");
         _doFile("script://PlacedItemEnums.nut");
         _doFile("script://ArtifactEnums.nut");
@@ -28,6 +29,8 @@
         _doFile("res://src/Content/Orb.nut");
         _doFile("res://src/Content/OrbDefs.nut");
         _doFile("res://src/Content/EntityConditionDefs.nut");
+        _doFile("res://src/Content/SpecialMoves.nut");
+        _doFile("res://src/Content/SpecialMoveDefs.nut");
         _doFile("res://src/Content/PlaceDefs.nut");
         _doFile("res://src/Content/PlacedItemDefs.nut");
         _doFile("res://src/Content/Artifact.nut");

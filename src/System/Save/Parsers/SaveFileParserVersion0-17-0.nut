@@ -8,6 +8,8 @@
         assert(prev != null);
         mJSONSchema_ = clone prev.mJSONSchema_;
         mDefaultData_ = clone prev.mDefaultData_;
+
+        mJSONSchema_.specialMoves <- OBJECT_TYPE.ARRAY;
         updateData(mDefaultData_);
     }
 
@@ -18,6 +20,7 @@
         data.inventory = itemArrayToStrings_(data.inventory);
         data.playerEquipped = itemArrayToStrings_(data.playerEquipped);
         data.storage = itemArrayToStrings_(data.storage);
+        data.specialMoves <- array(4, "NONE");
         return data;
     }
 
@@ -37,6 +40,7 @@
         ensureArrayToLength(json.playerEquipped, EquippedSlotTypes.MAX);
         ensureArrayToLength(json.inventory, 35);
         ensureArrayToLength(json.storage, 35);
+        ensureArrayToLength(json.specialMoves, 4, "NONE");
         return true;
     }
 });
