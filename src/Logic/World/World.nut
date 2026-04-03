@@ -2475,6 +2475,7 @@
             restoreFace.mComponentId_ = faceRestoreId;
         }
 
+        local createdCamRestore = false;
         if(mCurrentDialogCameraComponentId_ != null){
             local camComp = getWorldComponent(mCurrentDialogCameraComponentId_);
             local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION);
@@ -2483,7 +2484,13 @@
                 local restoreCam = ::DialogCameraZoomRestoreComponent(this, currentCamPos, camComp.mTargetLookAt_);
                 local camRestoreId = registerWorldComponent(restoreCam);
                 restoreCam.mComponentId_ = camRestoreId;
+                createdCamRestore = true;
             }
+        }
+        //If no camera restore animation was created (e.g. entity had no scene node so the
+        //zoom never happened), unpause logic directly as nothing else will do it.
+        if(!createdCamRestore){
+            setLogicPaused(false);
         }
 
         //Unregister the forward components after capturing their state
