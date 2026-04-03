@@ -1140,6 +1140,20 @@
             block = mEntityManager_.getComponent(entity, EntityComponents.DATABLOCK);
         }
         if(block != null) block.clearDiffuseModifier();
+        //Update levitating flag in movement particles component if it exists
+        local isLevitating = false;
+        if(mEntityManager_.hasComponent(entity, EntityComponents.ENTITY_CONDITION)){
+            local c = mEntityManager_.getComponent(entity, EntityComponents.ENTITY_CONDITION);
+            foreach(affliction in c.mAfflictions){
+                if(affliction != null && affliction.mCondition == EntityConditionType.LEVITATING){
+                    isLevitating = true;
+                    break;
+                }
+            }
+        }
+        if(mEntityManager_.hasComponent(entity, EntityComponents.MOVEMENT_PARTICLES)){
+            mEntityManager_.getComponent(entity, EntityComponents.MOVEMENT_PARTICLES).mIsLevitating = isLevitating;
+        }
         //In this case just reset everything back to what it was.
         if(!mEntityManager_.hasComponent(entity, EntityComponents.ENTITY_CONDITION)){
             for(local afflictionId = 0; afflictionId < EntityConditionType.MAX; afflictionId++){

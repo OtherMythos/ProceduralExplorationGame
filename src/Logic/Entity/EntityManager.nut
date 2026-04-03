@@ -239,7 +239,7 @@ EntityManager.EntityManager <- class{
         }
         foreach(i in mComponents_[EntityComponents.MOVEMENT_PARTICLES].mComps_){
             if(i == null) continue;
-            i.mParticleSystem.setEmitting(i.mPositionChangedThisFrame);
+            i.mParticleSystem.setEmitting(i.mPositionChangedThisFrame && !i.mIsLevitating);
             i.mPositionChangedThisFrame = false;
         }
 

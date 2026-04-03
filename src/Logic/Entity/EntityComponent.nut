@@ -400,6 +400,7 @@
 
     mParticleSystem = null;
     mPositionChangedThisFrame = false;
+    mIsLevitating = false;
 
     constructor(particleSystem){
         mParticleSystem = particleSystem;
