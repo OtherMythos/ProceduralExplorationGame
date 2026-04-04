@@ -71,10 +71,6 @@ local ExplorationPlayerDeathScreenAnimStateMachine = class extends ::Util.StateM
 
         mScreenComponents_ = {};
 
-        local winWidth = ::drawable.x;
-        local winHeight = ::drawable.y;
-        local insets = _window.getScreenSafeAreaInsets();
-
         //Create a window to block inputs for when the popup appears.
         //createBackgroundScreen_();
 
@@ -85,6 +81,10 @@ local ExplorationPlayerDeathScreenAnimStateMachine = class extends ::Util.StateM
         mWindow_.setSize(::drawable);
         //mWindow_.setClipBorders(10, 10, 10, 10);
         mWindow_.setVisualsEnabled(false);
+
+        local winWidth = mWindow_.getSizeAfterClipping().x;
+        local winHeight = mWindow_.getSizeAfterClipping().y;
+        local insets = _window.getScreenSafeAreaInsets();
 
         //local layoutLine = _gui.createLayoutLine();
 
