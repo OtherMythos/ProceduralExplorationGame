@@ -192,7 +192,7 @@
         }
 
         if(mAnimProgress_ < 1.0){
-            mAnimProgress_ += 0.05;
+            mAnimProgress_ += 0.3;
             if(mAnimProgress_ > 1.0) mAnimProgress_ = 1.0;
 
             mCurrentAngle_ = ::calculateSimpleAnimation(0.0, mTargetAngle_, mAnimProgress_);
@@ -227,7 +227,7 @@
         if(!manager.entityValid(mEntityId_)) return;
         if(!manager.hasComponent(mEntityId_, EntityComponents.SCENE_NODE)) return;
 
-        mAnimProgress_ += 0.05;
+        mAnimProgress_ += 0.3;
         if(mAnimProgress_ > 1.0) mAnimProgress_ = 1.0;
 
         local comp = manager.getComponent(mEntityId_, EntityComponents.SCENE_NODE);
@@ -332,7 +332,7 @@
         }
 
         if(mAnimProgress_ < 1.0){
-            mAnimProgress_ += 0.05;
+            mAnimProgress_ += 0.03;
             if(mAnimProgress_ > 1.0) mAnimProgress_ = 1.0;
         }
 
@@ -376,7 +376,7 @@
             mTargetLookAt_ = cameraData[1];
         }
 
-        mAnimProgress_ += 0.05;
+        mAnimProgress_ += 0.03;
         if(mAnimProgress_ > 1.0) mAnimProgress_ = 1.0;
 
         local a = ::Easing.easeOutCubic(mAnimProgress_);
