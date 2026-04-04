@@ -466,6 +466,8 @@ enum CharacterModelAnimId{
     BASE_LEGS_WALK,
     BASE_ARMS_WALK,
     BASE_ARMS_SWIM,
+    BASE_LEGS_FLOAT,
+    BASE_ARMS_FLOAT,
 
     REGULAR_SWORD_SWING,
     REGULAR_TWO_HANDED_SWORD_SWING,
@@ -483,6 +485,9 @@ enum CharacterModelAnimBaseType{
     LOWER_WALK,
 
     UPPER_SWIM,
+
+    UPPER_FLOAT,
+    LOWER_FLOAT,
 
     MAX
 };

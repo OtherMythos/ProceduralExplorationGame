@@ -70,7 +70,7 @@ local ModelType = class{
             "playerFoot.voxMesh", CharacterModelPartType.RIGHT_FOOT, null, Vec3(4.5, 2, 0), ::Vec3_UNIT_SCALE
         )
     ],
-    [CharacterModelAnimId.BASE_ARMS_WALK, CharacterModelAnimId.BASE_LEGS_WALK, CharacterModelAnimId.BASE_ARMS_SWIM]
+    [CharacterModelAnimId.BASE_ARMS_WALK, CharacterModelAnimId.BASE_LEGS_WALK, CharacterModelAnimId.BASE_ARMS_SWIM, CharacterModelAnimId.BASE_ARMS_FLOAT, CharacterModelAnimId.BASE_LEGS_FLOAT]
 );
 ::ModelTypes[CharacterModelType.GOBLIN] = ModelType("build/assets/characterAnimations/baseCharacterAnimation.xml",
     [
@@ -99,7 +99,7 @@ local ModelType = class{
         )
 
     ],
-    [CharacterModelAnimId.BASE_ARMS_WALK, CharacterModelAnimId.BASE_LEGS_WALK, CharacterModelAnimId.BASE_ARMS_SWIM]
+    [CharacterModelAnimId.BASE_ARMS_WALK, CharacterModelAnimId.BASE_LEGS_WALK, CharacterModelAnimId.BASE_ARMS_SWIM, CharacterModelAnimId.BASE_ARMS_FLOAT, CharacterModelAnimId.BASE_LEGS_FLOAT]
 );
 ::ModelTypes[CharacterModelType.SQUID] = ModelType("build/assets/characterAnimations/squidAnimation.xml",
     [
@@ -166,7 +166,7 @@ local ModelType = class{
             "skeletonFoot.voxMesh", CharacterModelPartType.RIGHT_FOOT, null, Vec3(4.5, 2, 0), ::Vec3_UNIT_SCALE
         )
     ],
-    [CharacterModelAnimId.BASE_ARMS_WALK, CharacterModelAnimId.BASE_LEGS_WALK, CharacterModelAnimId.BASE_ARMS_SWIM]
+    [CharacterModelAnimId.BASE_ARMS_WALK, CharacterModelAnimId.BASE_LEGS_WALK, CharacterModelAnimId.BASE_ARMS_SWIM, CharacterModelAnimId.BASE_ARMS_FLOAT, CharacterModelAnimId.BASE_LEGS_FLOAT]
 );
 ::ModelTypes[CharacterModelType.FOREST_GUARDIAN] = ModelType("build/assets/characterAnimations/forestGuardianAnimation.xml",
     [
@@ -197,7 +197,7 @@ local ModelType = class{
             "forestGuardianFoot.voxMesh", CharacterModelPartType.RIGHT_FOOT, null, Vec3(4.5, 2, 0), ::Vec3_UNIT_SCALE
         )
     ],
-    [CharacterModelAnimId.FOREST_GUARDIAN_ARMS_WALK, CharacterModelAnimId.FOREST_GUARDIAN_WALK, CharacterModelAnimId.BASE_ARMS_SWIM]
+    [CharacterModelAnimId.FOREST_GUARDIAN_ARMS_WALK, CharacterModelAnimId.FOREST_GUARDIAN_WALK, CharacterModelAnimId.BASE_ARMS_SWIM, CharacterModelAnimId.BASE_ARMS_FLOAT, CharacterModelAnimId.BASE_LEGS_FLOAT]
 );
 ::ModelTypes[CharacterModelType.BEE] = ModelType("build/assets/characterAnimations/forestGuardianAnimation.xml",
     [

@@ -18,6 +18,8 @@
 ::CharacterModelAnims[CharacterModelAnimId.BASE_LEGS_WALK] = ::CharacterModelAnimDef("BaseFeetWalk", "baseCharacterAnimation.xml", [CharacterModelPartType.LEFT_FOOT, CharacterModelPartType.RIGHT_FOOT]);
 ::CharacterModelAnims[CharacterModelAnimId.BASE_ARMS_WALK] = ::CharacterModelAnimDef("BaseUpperWalk", "baseCharacterAnimation.xml", [CharacterModelPartType.RIGHT_HAND, CharacterModelPartType.LEFT_HAND]);
 ::CharacterModelAnims[CharacterModelAnimId.BASE_ARMS_SWIM] = ::CharacterModelAnimDef("BaseUpperSwim", "baseCharacterAnimation.xml", [CharacterModelPartType.RIGHT_HAND, CharacterModelPartType.LEFT_HAND]);
+::CharacterModelAnims[CharacterModelAnimId.BASE_LEGS_FLOAT] = ::CharacterModelAnimDef("BaseFeetFloat", "baseCharacterAnimation.xml", [CharacterModelPartType.LEFT_FOOT, CharacterModelPartType.RIGHT_FOOT]);
+::CharacterModelAnims[CharacterModelAnimId.BASE_ARMS_FLOAT] = ::CharacterModelAnimDef("BaseUpperFloat", "baseCharacterAnimation.xml", [CharacterModelPartType.RIGHT_HAND, CharacterModelPartType.LEFT_HAND]);
 
 ::CharacterModelAnims[CharacterModelAnimId.REGULAR_SWORD_SWING] = ::CharacterModelAnimDef("RegularSwordSwing", "EquippableAnimation.xml", [CharacterModelPartType.RIGHT_HAND, CharacterModelPartType.LEFT_HAND]);
 ::CharacterModelAnims[CharacterModelAnimId.REGULAR_TWO_HANDED_SWORD_SWING] = ::CharacterModelAnimDef("RegularTwoHandedSwordSwing", "EquippableAnimation.xml", [CharacterModelPartType.RIGHT_HAND, CharacterModelPartType.LEFT_HAND]);

@@ -4,6 +4,7 @@ enum ActiveEnemyAnimationEvents{
     STARTED_MOVING,
     STOPPED_MOVING,
     WATER_STATE_CHANGE,
+    LEVITATE_STATE_CHANGE,
     REQUEST_DASH,
 
     EQUIPPABLE_PERFORMANCE_STATE_CHANGE,
@@ -16,6 +17,7 @@ enum ActiveEnemyAnimationStage{
     IDLE,
     WALKING,
     SWIMMING,
+    LEVITATING,
     DASHING,
 
     MAX
@@ -24,6 +26,7 @@ enum ActiveEnemyAnimationStage{
     mStates_ = array(ActiveEnemyAnimationStage.MAX);
     mModel_ = null;
     mInWater_ = false;
+    mLevitating_ = false;
     mDashReturnState_ = null;
     mCount_ = 0;
 
@@ -35,6 +38,10 @@ enum ActiveEnemyAnimationStage{
     function notifyWaterState(inWater){
         mInWater_ = inWater;
         notify(ActiveEnemyAnimationEvents.WATER_STATE_CHANGE);
+    }
+    function notifyLevitatingState(levitating){
+        mLevitating_ = levitating;
+        notify(ActiveEnemyAnimationEvents.LEVITATE_STATE_CHANGE);
     }
     function notifyEquippablePerformance(performance){
         mEquippablePerformance_ = performance;
@@ -68,7 +75,11 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.IDLE] = clas
     function update(ctx){
     }
     function notify(ctx, event){
-        if(event == ActiveEnemyAnimationEvents.STARTED_MOVING){
+        if(event == ActiveEnemyAnimationEvents.LEVITATE_STATE_CHANGE && ctx.mLevitating_){
+            return ActiveEnemyAnimationStage.LEVITATING;
+        }
+        else if(event == ActiveEnemyAnimationEvents.STARTED_MOVING){
+            if(ctx.mLevitating_) return ActiveEnemyAnimationStage.LEVITATING;
             return ctx.mInWater_ ? ActiveEnemyAnimationStage.SWIMMING : ActiveEnemyAnimationStage.WALKING;
         }
         else if(event == ActiveEnemyAnimationEvents.EQUIPPABLE_PERFORMANCE_STATE_CHANGE){
@@ -89,7 +100,10 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.WALKING] = c
     function update(ctx){
     }
     function notify(ctx, event){
-        if(event == ActiveEnemyAnimationEvents.STOPPED_MOVING) return ActiveEnemyAnimationStage.IDLE;
+        if(event == ActiveEnemyAnimationEvents.LEVITATE_STATE_CHANGE && ctx.mLevitating_){
+            return ActiveEnemyAnimationStage.LEVITATING;
+        }
+        else if(event == ActiveEnemyAnimationEvents.STOPPED_MOVING) return ActiveEnemyAnimationStage.IDLE;
 
         if(event == ActiveEnemyAnimationEvents.WATER_STATE_CHANGE){
             //Assume if we're in the walking state we must be changing to in the water.
@@ -116,7 +130,10 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
     function update(ctx){
     }
     function notify(ctx, event){
-        if(event == ActiveEnemyAnimationEvents.STOPPED_MOVING) return ActiveEnemyAnimationStage.IDLE;
+        if(event == ActiveEnemyAnimationEvents.LEVITATE_STATE_CHANGE && ctx.mLevitating_){
+            return ActiveEnemyAnimationStage.LEVITATING;
+        }
+        else if(event == ActiveEnemyAnimationEvents.STOPPED_MOVING) return ActiveEnemyAnimationStage.IDLE;
 
         if(event == ActiveEnemyAnimationEvents.WATER_STATE_CHANGE){
             if(!ctx.mInWater_) return ActiveEnemyAnimationStage.WALKING;
@@ -133,6 +150,28 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.SWIMMING] = 
         ctx.mModel_.stopAnimationBaseType(CharacterModelAnimBaseType.UPPER_SWIM);
     }
 };
+ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.LEVITATING] = class extends ::Util.SimpleState{
+    function start(ctx){
+        ctx.mModel_.startAnimationBaseType(CharacterModelAnimBaseType.UPPER_FLOAT);
+        ctx.mModel_.startAnimationBaseType(CharacterModelAnimBaseType.LOWER_FLOAT);
+    }
+    function update(ctx){
+    }
+    function notify(ctx, event){
+        if(event == ActiveEnemyAnimationEvents.LEVITATE_STATE_CHANGE && !ctx.mLevitating_){
+            if(ctx.mInWater_) return ActiveEnemyAnimationStage.SWIMMING;
+            return ActiveEnemyAnimationStage.WALKING;
+        }
+        else if(event == ActiveEnemyAnimationEvents.STOPPED_MOVING) return ActiveEnemyAnimationStage.IDLE;
+        else if(event == ActiveEnemyAnimationEvents.EQUIPPABLE_PERFORMANCE_STATE_CHANGE){
+            ctx.processPerformance_(CharacterModelAnimBaseType.UPPER_FLOAT);
+        }
+    }
+    function end(ctx){
+        ctx.mModel_.stopAnimationBaseType(CharacterModelAnimBaseType.UPPER_FLOAT);
+        ctx.mModel_.stopAnimationBaseType(CharacterModelAnimBaseType.LOWER_FLOAT);
+    }
+};
 //TODO note, this state machine is supposed to manage animations, but here is responsible for logic. This will need changing or the naming updated.
 ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = class extends ::Util.SimpleState{
     function start(ctx){
@@ -143,7 +182,8 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
         //Return to the appropriate movement state instead; if the player truly stops,
         //STOPPED_MOVING will fire naturally and transition back to IDLE.
         if(ctx.mDashReturnState_ == null || ctx.mDashReturnState_ == ActiveEnemyAnimationStage.IDLE){
-            ctx.mDashReturnState_ = ctx.mInWater_ ? ActiveEnemyAnimationStage.SWIMMING : ActiveEnemyAnimationStage.WALKING;
+            if(ctx.mLevitating_) ctx.mDashReturnState_ = ActiveEnemyAnimationStage.LEVITATING;
+            else ctx.mDashReturnState_ = ctx.mInWater_ ? ActiveEnemyAnimationStage.SWIMMING : ActiveEnemyAnimationStage.WALKING;
         }
     }
     function update(ctx){
@@ -155,7 +195,12 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
     }
     function notify(ctx, event){
         if(event == ActiveEnemyAnimationEvents.WATER_STATE_CHANGE){
-            ctx.mDashReturnState_ = ctx.mInWater_ ? ActiveEnemyAnimationStage.SWIMMING : ActiveEnemyAnimationStage.WALKING;
+            if(ctx.mLevitating_) ctx.mDashReturnState_ = ActiveEnemyAnimationStage.LEVITATING;
+            else ctx.mDashReturnState_ = ctx.mInWater_ ? ActiveEnemyAnimationStage.SWIMMING : ActiveEnemyAnimationStage.WALKING;
+        }
+        else if(event == ActiveEnemyAnimationEvents.LEVITATE_STATE_CHANGE){
+            if(ctx.mLevitating_) ctx.mDashReturnState_ = ActiveEnemyAnimationStage.LEVITATING;
+            else ctx.mDashReturnState_ = ctx.mInWater_ ? ActiveEnemyAnimationStage.SWIMMING : ActiveEnemyAnimationStage.WALKING;
         }
     }
     function end(ctx){
@@ -191,6 +236,7 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
 
     mAttackers_ = null;
     mInWater_ = false;
+    mLevitating_ = false;
     mAttackActive_ = false;
 
     mSeparationPointId_ = null;
@@ -243,6 +289,12 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
             }
         }
         mInWater_ = inWater;
+
+        local isLevitating = getActiveConditionEntry_(EntityConditionType.LEVITATING) != null;
+        if(isLevitating != mLevitating_ && mStateMachineModel_){
+            mStateMachineModel_.notifyLevitatingState(isLevitating);
+        }
+        mLevitating_ = isLevitating;
 
         mCreatorWorld_.mTargetManager_.notifyEntityPositionChange(this);
         mCreatorWorld_.mProjectileTargetManager_.notifyEntityPositionChange(this);
