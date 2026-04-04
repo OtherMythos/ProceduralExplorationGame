@@ -28,6 +28,15 @@
         local playerPos = mWorld_.getPlayerPosition();
         local isInWater = mWorld_.getIsWaterForPosition(playerPos);
         if(isInWater){
+            //Check if player health is already full; if so, skip delivery processing
+            local entityManager = mWorld_.getEntityManager();
+            local playerEID = mWorld_.getPlayerEID();
+            local healthComponent = entityManager.getComponent(playerEID, EntityComponents.HEALTH);
+            if(healthComponent != null && healthComponent.mHealth >= healthComponent.mMaxHealth){
+                mLogic_.mElapsedTime_ = 0;
+                return;
+            }
+
             mLogic_.mElapsedTime_ += (1.0 / 60.0);
 
             //Calculate health delivery on a curve
