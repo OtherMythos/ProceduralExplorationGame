@@ -17,6 +17,6 @@ local levitatePerform = function(frame){
 ::SpecialMoves <- array(SpecialMoveId.MAX, null);
 
 ::SpecialMoves[SpecialMoveId.NONE] = SpecialMoveDef("None");
-::SpecialMoves[SpecialMoveId.FIREBALL] = SpecialMoveDef("Fireball", 50, ProjectileId.FIREBALL);
-::SpecialMoves[SpecialMoveId.FIRE_AREA] = SpecialMoveDef("Fire Area", 50, ProjectileId.FIRE_AREA, fireAreaAttack);
-::SpecialMoves[SpecialMoveId.LEVITATE] = SpecialMoveDef("Levitate", 150, null, levitatePerform);
+::SpecialMoves[SpecialMoveId.FIREBALL] = SpecialMoveDef("Fireball", "Launch a fireball at your enemies.", 50, ProjectileId.FIREBALL);
+::SpecialMoves[SpecialMoveId.FIRE_AREA] = SpecialMoveDef("Fire Area", "Create a ring of fire around you.", 50, ProjectileId.FIRE_AREA, fireAreaAttack);
+::SpecialMoves[SpecialMoveId.LEVITATE] = SpecialMoveDef("Levitate", "Rise into the air and avoid things on the ground.", 150, null, levitatePerform);

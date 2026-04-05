@@ -27,7 +27,8 @@
     ARTIFACT_SCREEN,
     COLLECTABLE_OPEN_SCREEN,
     GUI_TEST_SCREEN,
-    SPECIAL_MOVES_SCREEN
+    SPECIAL_MOVES_SCREEN,
+    SPECIAL_MOVES_LIST_SCREEN
 
 ");
 
@@ -60,4 +61,5 @@
     "collectableOpenScreen",
     "GUITestScreen",
     "specialMovesScreen",
+    "specialMovesListScreen",
 ]);

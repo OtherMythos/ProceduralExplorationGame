@@ -1,17 +1,22 @@
 
 ::SpecialMoveDef <- class{
     mName_ = null;
+    mDescription_ = null;
     mCooldown_ = 10;
     mProjectile_ = null;
     mPerformanceFunction_ = null;
-    constructor(name, cooldown=10, projectile=null, performanceFunction=null){
+    constructor(name, description=null, cooldown=10, projectile=null, performanceFunction=null){
         mName_ = name;
         mCooldown_ = cooldown;
         mProjectile_ = projectile;
         mPerformanceFunction_ = performanceFunction;
+        mDescription_ = description;
     }
     function getName(){
         return mName_;
+    }
+    function getDescription(){
+        return mDescription_;
     }
     function getCooldown(){
         return mCooldown_;
