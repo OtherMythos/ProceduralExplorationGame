@@ -340,7 +340,7 @@ enum GameplayComplexMenuBusEvents{
             {"icon": "swordsIcon", "label": "Explore"},
             {"icon": "bagIcon", "label": "Inventory"},
             {"icon": "helmetCoinsIcon", "label": "Shop"},
-            {"icon": "treasureChestIcon", "label": "Offers"},
+            {"icon": "treasureChestIcon", "label": "Upgrades"},
         ];
         mTabPanel_ = TabPanel(this);
         mTabPanel_.setup(tabs);
@@ -353,7 +353,8 @@ enum GameplayComplexMenuBusEvents{
         local targetWindows = [
             ExploreWindow,
             InventoryWindow,
-            ShopWindow
+            ShopWindow,
+            UpgradesWindow
         ];
         mTabWindows_ = [];
         for(local i = 0; i < GameplayMainMenuComplexWindow.MAX; i++){
@@ -530,6 +531,54 @@ enum GameplayComplexMenuBusEvents{
         }
     }
 
+};
+
+::UpgradesWindow <- class extends ::ScreenManager.Screens[Screen.GAMEPLAY_MAIN_MENU_COMPLEX_SCREEN].TabWindow{
+    mCurrentPos_ = null;
+    mSpecialMovesWidget_ = null;
+
+    function recreate(){
+        //mWindow_.setClipBorders(0, 0, 0, 0);
+
+        local centreY = 120;
+        local config = {
+            "centrePos": Vec2(mWindow_.getSizeAfterClipping().x / 2, centreY),
+            "radius": 80,
+            "buttonSize": 80,
+            "numButtons": 4,
+            "startAngle": -PI / 2.0
+        };
+
+        mSpecialMovesWidget_ = ::SpecialMovesRadialWidget(mWindow_, config);
+        local specialMoves = ::Base.mPlayerStats.getSpecialMoves();
+        mSpecialMovesWidget_.setup(specialMoves);
+
+        mCurrentPos_ = Vec2();
+    }
+
+    function setPosition(pos){
+        base.setPosition(pos);
+
+        if(pos.x != mCurrentPos_.x || pos.y != mCurrentPos_.y){
+            mCurrentPos_ = pos;
+        }
+    }
+
+    function update(){
+        base.update();
+
+        if(mSpecialMovesWidget_ != null){
+            mSpecialMovesWidget_.update();
+        }
+    }
+
+    function shutdown(){
+        if(mSpecialMovesWidget_ != null){
+            mSpecialMovesWidget_.shutdown();
+        }
+
+        base.shutdown();
+    }
 };
 
 //TODO move this out of global space
