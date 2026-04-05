@@ -77,6 +77,14 @@
         function getLabel(){
             return mLabel_;
         }
+
+        function setLabelText(text){
+            mLabel_.setText(text);
+        }
+
+        function attachListener(callback, eventType, environment){
+            mPanel_.attachListenerForEvent(callback, eventType, environment);
+        }
     };
 
     //Configuration parameters
@@ -95,10 +103,12 @@
 
     //Button storage
     mButtons_ = null;
+    mSpecialMoveIds_ = null;
 
     constructor(parentWindow, config = null){
         mParentWindow_ = parentWindow;
         mButtons_ = [];
+        mSpecialMoveIds_ = [];
 
         //Apply configuration parameters if provided
         if(config != null){
@@ -121,6 +131,9 @@
 
         //Centre position relative to container
         //mCentrePos_ = Vec2(mContainerSize_.x / 2.0, mContainerSize_.y / 2.0);
+
+        //Subscribe to special move selection event
+        _event.subscribe(Event.SPECIAL_MOVE_SELECTED, onSpecialMoveSelected, this);
     }
 
     function setup(specialMovesList = null){
@@ -152,6 +165,7 @@
 
     function createButtons_(specialMovesList){
         mButtons_.clear();
+        mSpecialMoveIds_.clear();
 
         for(local i = 0; i < mNumButtons_; i++){
             local moveId = (i < specialMovesList.len()) ? specialMovesList[i] : SpecialMoveId.NONE;
@@ -160,9 +174,27 @@
 
             local button = mButtonWidget_(mParentWindow_, label, mButtonSize_);
             mButtons_.append(button);
+            mSpecialMoveIds_.append(moveId);
 
             if(moveId == SpecialMoveId.NONE){
                 button.setDisabled(true);
+            }else{
+                //Make the button clickable and attach listener to open selection screen
+                local buttonPanel = button.getPanel();
+                buttonPanel.setClickable(true);
+
+                local self = this;
+                local slotId = i;
+                local callback = function(widget, action){
+                    //Open the special moves list screen with this slot index
+                    ::ScreenManager.queueTransition(
+                        Screen.SPECIAL_MOVES_LIST_SCREEN,
+                        {"slotId": slotId},
+                        1
+                    );
+                };
+
+                button.attachListener(callback, _GUI_ACTION_PRESSED, this);
             }
         }
     }
@@ -283,5 +315,32 @@
     //Cleanup
     function shutdown(){
         mButtons_.clear();
+        mSpecialMoveIds_.clear();
+        _event.unsubscribe(Event.SPECIAL_MOVE_SELECTED, onSpecialMoveSelected, this);
+    }
+
+    function onSpecialMoveSelected(id, data){
+        if(data == null) return;
+
+        local slotId = data.rawin("slotId") ? data.rawget("slotId") : -1;
+        local moveId = data.rawin("moveId") ? data.rawget("moveId") : SpecialMoveId.NONE;
+
+        if(slotId < 0 || slotId >= mSpecialMoveIds_.len()) return;
+
+        //Update the player stats
+        ::Base.mPlayerStats.setSpecialMove(slotId, moveId);
+
+        //Update the button label
+        mSpecialMoveIds_[slotId] = moveId;
+        local moveDef = ::SpecialMoves[moveId];
+        local newLabel = (moveDef != null) ? moveDef.getName() : "None";
+        mButtons_[slotId].setLabelText(newLabel);
+
+        //Update disabled state
+        if(moveId == SpecialMoveId.NONE){
+            mButtons_[slotId].setDisabled(true);
+        }else{
+            mButtons_[slotId].setDisabled(false);
+        }
     }
 };

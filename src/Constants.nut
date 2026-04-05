@@ -243,6 +243,8 @@ enum Event{
     GAME_MOVED_TO_BACKGROUND = 1044,
 
     SHOP_ITEM_ACQUIRED = 1045,
+
+    SPECIAL_MOVE_SELECTED = 1046,
 };
 
 enum FoundObjectType{

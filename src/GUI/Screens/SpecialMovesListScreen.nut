@@ -116,13 +116,13 @@ local SpecialMoveListItemButton = class{
 
     mScrollWindow_ = null;
     mButtonList_ = null;
-    mOnSelectionCallback_ = null;
+    mSlotId_ = 0;
     mActionSetId_ = null;
 
     function setup(data){
         if(data != null){
-            if(data.rawin("onSelection")){
-                mOnSelectionCallback_ = data.rawget("onSelection");
+            if(data.rawin("slotId")){
+                mSlotId_ = data.rawget("slotId");
             }
         }
         recreate();
@@ -182,12 +182,15 @@ local SpecialMoveListItemButton = class{
             local button = SpecialMoveListItemButton(mScrollWindow_, label, description, maxTextWidth);
             button.setSize(scrollWindowWidth - (BUTTON_PADDING * 2), BUTTON_HEIGHT);
 
-            //Create callback that captures moveId
+            //Create callback that captures moveId and emits event
             local self = this;
+            local slotId = this.mSlotId_;
             local callback = function(widget, action){
-                if(self.mOnSelectionCallback_){
-                    self.mOnSelectionCallback_(moveId);
-                }
+                //Emit event for move selection
+                _event.transmit(Event.SPECIAL_MOVE_SELECTED, {
+                    "slotId": slotId,
+                    "moveId": moveId
+                });
                 self.closeScreen();
             };
 
