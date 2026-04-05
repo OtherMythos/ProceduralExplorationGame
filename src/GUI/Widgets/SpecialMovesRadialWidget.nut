@@ -154,19 +154,16 @@
         mButtons_.clear();
 
         for(local i = 0; i < mNumButtons_; i++){
-            local label = "Move " + (i + 1);
-
-            //If special moves list provided, use move names instead
-            if(specialMovesList != null && i < specialMovesList.len()){
-                local moveId = specialMovesList[i];
-                local moveDef = ::SpecialMoves[moveId];
-                if(moveDef != null){
-                    label = moveDef.getName();
-                }
-            }
+            local moveId = (i < specialMovesList.len()) ? specialMovesList[i] : SpecialMoveId.NONE;
+            local moveDef = ::SpecialMoves[moveId];
+            local label = (moveDef != null) ? moveDef.getName() : "None";
 
             local button = mButtonWidget_(mParentWindow_, label, mButtonSize_);
             mButtons_.append(button);
+
+            if(moveId == SpecialMoveId.NONE){
+                button.setDisabled(true);
+            }
         }
     }
 
