@@ -44,6 +44,10 @@
                 mPanel_.setSkinPack("Panel_darkGrey");
                 mPanel_.setColour(ColourValue(1, 1, 1, 0.75));
                 mLabel_.setVisible(false);
+            }else{
+                mPanel_.setSkinPack("Panel_midGrey");
+                mPanel_.setColour(ColourValue(1, 1, 1, 1.0));
+                mLabel_.setVisible(true);
             }
         }
 
@@ -68,6 +72,14 @@
             local offset = (mCurrentSize_ - mBaseSize_) * 0.5;
             mPanel_.setPosition(Vec2(mBasePos_.x - offset, mBasePos_.y - offset));
             mLabel_.setPosition(mBasePos_);
+        }
+
+        function setUserId(id){
+            mPanel_.setUserId(id);
+        }
+
+        function getUserId(){
+            return mPanel_.getUserId();
         }
 
         function getPanel(){
@@ -175,27 +187,27 @@
             local button = mButtonWidget_(mParentWindow_, label, mButtonSize_);
             mButtons_.append(button);
             mSpecialMoveIds_.append(moveId);
+            button.setUserId(i);
 
             if(moveId == SpecialMoveId.NONE){
                 button.setDisabled(true);
-            }else{
-                //Make the button clickable and attach listener to open selection screen
-                local buttonPanel = button.getPanel();
-                buttonPanel.setClickable(true);
-
-                local self = this;
-                local slotId = i;
-                local callback = function(widget, action){
-                    //Open the special moves list screen with this slot index
-                    ::ScreenManager.queueTransition(
-                        Screen.SPECIAL_MOVES_LIST_SCREEN,
-                        {"slotId": slotId},
-                        1
-                    );
-                };
-
-                button.attachListener(callback, _GUI_ACTION_PRESSED, this);
             }
+
+            //Make the button clickable and attach listener to open selection screen
+            local buttonPanel = button.getPanel();
+            buttonPanel.setClickable(true);
+
+            local self = this;
+            local slotId = i;
+            local callback = function(widget, action){
+                //Open the special moves list screen with this slot index
+                ::ScreenManager.queueTransition(
+                    ::ScreenManager.ScreenData(Screen.SPECIAL_MOVES_LIST_SCREEN, {"slotId": widget.getUserId()}),
+                    null, 1
+                );
+            };
+
+            button.attachListener(callback, _GUI_ACTION_PRESSED, this);
         }
     }
 
@@ -319,6 +331,25 @@
         _event.unsubscribe(Event.SPECIAL_MOVE_SELECTED, onSpecialMoveSelected, this);
     }
 
+    function setSpecialMoveForSlot(slotId, moveId){
+        if(slotId < 0 || slotId >= mSpecialMoveIds_.len()) return;
+
+        //Update internal state
+        mSpecialMoveIds_[slotId] = moveId;
+
+        //Update the button label
+        local moveDef = ::SpecialMoves[moveId];
+        local newLabel = (moveDef != null) ? moveDef.getName() : "None";
+        mButtons_[slotId].setLabelText(newLabel);
+
+        //Update disabled state and appearance
+        if(moveId == SpecialMoveId.NONE){
+            mButtons_[slotId].setDisabled(true);
+        }else{
+            mButtons_[slotId].setDisabled(false);
+        }
+    }
+
     function onSpecialMoveSelected(id, data){
         if(data == null) return;
 
@@ -330,17 +361,7 @@
         //Update the player stats
         ::Base.mPlayerStats.setSpecialMove(slotId, moveId);
 
-        //Update the button label
-        mSpecialMoveIds_[slotId] = moveId;
-        local moveDef = ::SpecialMoves[moveId];
-        local newLabel = (moveDef != null) ? moveDef.getName() : "None";
-        mButtons_[slotId].setLabelText(newLabel);
-
-        //Update disabled state
-        if(moveId == SpecialMoveId.NONE){
-            mButtons_[slotId].setDisabled(true);
-        }else{
-            mButtons_[slotId].setDisabled(false);
-        }
+        //Update the widget
+        setSpecialMoveForSlot(slotId, moveId);
     }
 };

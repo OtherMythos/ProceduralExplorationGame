@@ -183,15 +183,13 @@ local SpecialMoveListItemButton = class{
             button.setSize(scrollWindowWidth - (BUTTON_PADDING * 2), BUTTON_HEIGHT);
 
             //Create callback that captures moveId and emits event
-            local self = this;
-            local slotId = this.mSlotId_;
             local callback = function(widget, action){
                 //Emit event for move selection
                 _event.transmit(Event.SPECIAL_MOVE_SELECTED, {
-                    "slotId": slotId,
+                    "slotId": mSlotId_,
                     "moveId": moveId
                 });
-                self.closeScreen();
+                closeScreen();
             };
 
             button.attachListenerForEvent(
