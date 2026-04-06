@@ -113,6 +113,7 @@ local SpecialMoveListItemButton = class{
     static BUTTON_HEIGHT = 90;
     static BUTTON_PADDING = 8;
     static WINDOW_PADDING = 16;
+    static BACK_BUTTON_HEIGHT = 50;
 
     mScrollWindow_ = null;
     mButtonList_ = null;
@@ -129,35 +130,58 @@ local SpecialMoveListItemButton = class{
     }
 
     function recreate(){
+        local winWidth = _window.getWidth() * 0.8;
+        local winHeight = _window.getHeight() * 0.8;
+
+        createBackgroundScreen_();
+        createBackgroundCloseButton_();
+
         mWindow_ = _gui.createWindow("SpecialMovesListScreen");
-        mWindow_.setSize(_window.getWidth(), _window.getHeight());
-        mWindow_.setVisualsEnabled(false);
-        mWindow_.setClipBorders(0, 0, 0, 0);
+        mWindow_.setSize(winWidth, winHeight);
+        mWindow_.setPosition(_window.getWidth() * 0.1, _window.getHeight() * 0.1);
+        mWindow_.setClipBorders(10, 10, 10, 10);
+        mWindow_.setBreadthFirst(true);
+        mWindow_.setZOrder(61);
+        mWindow_.setSkinPack("Button_midGrey");
+
+        createScreenCloseButton();
 
         mButtonList_ = [];
 
-        createBackgroundScreen_();
+        local afterClip = mWindow_.getSizeAfterClipping();
 
         local title = mWindow_.createLabel();
-        title.setDefaultFontSize(title.getDefaultFontSize() * 1.3);
-        title.setText("Select Special Move");
+        title.setDefaultFontSize(title.getDefaultFontSize() * 2);
         title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
-        title.setPosition(WINDOW_PADDING, WINDOW_PADDING);
+        title.setText("Special Move");
+        title.sizeToFit(afterClip.x);
+        title.setPosition(10, 10);
 
         //Create a scrollable panel for the move buttons
         mScrollWindow_ = mWindow_.createWindow("SpecialMovesList");
-        local windowHeight = _window.getHeight() - (WINDOW_PADDING * 3) - title.getSize().y;
-        mScrollWindow_.setSize(
-            _window.getWidth() - (WINDOW_PADDING * 2),
-            windowHeight
-        );
-        mScrollWindow_.setPosition(WINDOW_PADDING, WINDOW_PADDING * 2 + title.getSize().y);
+        local scrollWindowHeight = afterClip.y - title.getSize().y - 120;
+        local scrollWindowWidth = afterClip.x;
+        mScrollWindow_.setSize(scrollWindowWidth, scrollWindowHeight);
+        mScrollWindow_.setPosition(0, 10 + title.getSize().y);
         mScrollWindow_.setVisualsEnabled(true);
         mScrollWindow_.setSkinPack("Panel_lightGrey");
         mScrollWindow_.setClipBorders(0, 0, 0, 0);
 
         createMoveButtons_();
         layoutButtons_();
+
+        //Create back button
+        local backButton = mWindow_.createButton();
+        backButton.setDefaultFontSize(backButton.getDefaultFontSize() * 1.5);
+        backButton.setText("Back");
+        backButton.attachListenerForEvent(function(widget, action){
+            ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
+            closeScreen();
+        }, _GUI_ACTION_PRESSED, this);
+        backButton.setPosition(0, afterClip.y - backButton.getSize().y);
+        backButton.setSize(afterClip.x, backButton.getSize().y);
+        backButton.setSkinPack("Button_blue");
+        backButton.setFocus();
 
         mActionSetId_ = ::InputManager.pushActionSet(InputActionSets.MENU);
     }
