@@ -82,7 +82,7 @@
         base.constructor(world);
         mEndPos_ = playerPos.copy();
         mStartPos_ = playerPos.copy();
-        mStartPos_.z = mStartPos_.z + 10;
+        mStartPos_.z = mStartPos_.z + 5;
         //Move player to the start of the walk animation
         mWorld_.mPlayerEntry_.setPosition(mStartPos_);
         mWorld_.mDisableLeaveCheck_ = true;
@@ -100,9 +100,15 @@
         local delta = targetPos - mWorld_.mPlayerEntry_.mPos_;
         mWorld_.mPlayerEntry_.move(delta);
 
+        local remaining = 1.0 - mAnimationProgress_;
+        mWorld_.mPlayerEntry_.setWalkAnimSpeed(remaining * remaining);
+
         if(mAnimationProgress_ >= 1.0){
             mWorld_.mDisableLeaveCheck_ = false;
             mWorld_.mPlayerEntry_.getModel().setDefaultPauseMask(null);
+            local model = mWorld_.mPlayerEntry_.getModel();
+            model.stopAnimationBaseType(CharacterModelAnimBaseType.UPPER_WALK);
+            model.stopAnimationBaseType(CharacterModelAnimBaseType.LOWER_WALK);
             mWorld_.unregisterWorldComponent(mComponentId_);
         }
     }
@@ -113,6 +119,9 @@
     function destroy(){
         mWorld_.mDisableLeaveCheck_ = false;
         mWorld_.mPlayerEntry_.getModel().setDefaultPauseMask(null);
+        local model = mWorld_.mPlayerEntry_.getModel();
+        model.stopAnimationBaseType(CharacterModelAnimBaseType.UPPER_WALK);
+        model.stopAnimationBaseType(CharacterModelAnimBaseType.LOWER_WALK);
         //Snap to end position if destroyed early
         mWorld_.mPlayerEntry_.setPosition(mEndPos_);
     }

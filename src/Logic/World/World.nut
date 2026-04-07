@@ -1744,6 +1744,8 @@
             local movementPercentage = mMovementCooldown_.tofloat() / mMovementCooldownTotal_.tofloat();
 
             if(mDirectingPlayerSpeedModifier_ > 0.0){
+                local animSpeed = mDirectingPlayerSpeedModifier_ * sin(movementPercentage);
+                mPlayerEntry_.setWalkAnimSpeed(animSpeed);
                 movePlayer(targetForward, 0.2 * mDirectingPlayerSpeedModifier_ * sin(movementPercentage));
             }
         }

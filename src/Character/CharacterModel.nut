@@ -106,6 +106,11 @@
             i.setRunning(running);
         }
     }
+    function setSpeedForAllAnims(speed){
+        foreach(c,i in mCurrentAnimations_){
+            i.setSpeed(speed);
+        }
+    }
     function setAnimRunning(animId, running){
         if(!mCurrentAnimations_.rawin(animId)){
             throw format("No animation for id '%i'", animId);

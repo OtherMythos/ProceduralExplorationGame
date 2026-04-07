@@ -447,6 +447,11 @@ ActiveEnemyAnimationStateMachine.mStates_[ActiveEnemyAnimationStage.DASHING] = c
 
         moveToDirection(dir, amount);
     }
+    function setWalkAnimSpeed(speed){
+        if(mModel_ != null){
+            mModel_.setSpeedForAllAnims(speed);
+        }
+    }
     function moveToDirection(dir, amount){
         local wieldActive = mCombatData_ == null ? false : mCombatData_.mWieldActive;
         dir *= (amount * getSlowFactor(mInWater_, wieldActive));
