@@ -8,6 +8,7 @@
     mForceZPos_ = null;
 
     mPlayerStartPos_ = null;
+    mDisableLeaveCheck_ = false;
 
     mCurrentWorldAnim_ = null;
 
@@ -124,6 +125,7 @@
     }
 
     function checkIfPlayerHasLeft(){
+        if(mDisableLeaveCheck_) return;
         local x = mPlayerEntry_.getPosition().x.tointeger();
         local y = mPlayerEntry_.getPosition().z.tointeger();
         if(x < 0 || y < 0 || x >= mMapData_.width || y >= mMapData_.height){
@@ -237,6 +239,15 @@
         pos.y = getZForPos(pos);
         mPlayerEntry_.setPosition(pos);
         notifyPlayerMoved();
+
+        local entryAnimComponent = ::HouseEntryAnimationComponent(this);
+        local componentId = registerWorldComponent(entryAnimComponent);
+        entryAnimComponent.mComponentId_ = componentId;
+
+        local playerPos = mPlayerEntry_.getPosition();
+        local walkComponent = ::HouseEntryWalkComponent(this, playerPos);
+        local walkId = registerWorldComponent(walkComponent);
+        walkComponent.mComponentId_ = walkId;
     }
 
     function processDataPoint(pos, major, minor){

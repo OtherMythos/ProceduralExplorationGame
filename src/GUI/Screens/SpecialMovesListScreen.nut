@@ -153,7 +153,7 @@ local SpecialMoveListItemButton = class{
         local title = mWindow_.createLabel();
         title.setDefaultFontSize(title.getDefaultFontSize() * 2);
         title.setTextHorizontalAlignment(_TEXT_ALIGN_CENTER);
-        title.setText("Special Move");
+        title.setText("Special Moves");
         title.sizeToFit(afterClip.x);
         title.setPosition(10, 10);
 

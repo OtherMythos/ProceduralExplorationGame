@@ -72,6 +72,108 @@
     }
 };
 
+::HouseEntryWalkComponent <- class extends ::WorldComponent{
+    mAnimationProgress_ = 0.0;
+    mStartPos_ = null;
+    mEndPos_ = null;
+    mComponentId_ = null;
+
+    constructor(world, playerPos){
+        base.constructor(world);
+        mEndPos_ = playerPos.copy();
+        mStartPos_ = playerPos.copy();
+        mStartPos_.z = mStartPos_.z + 10;
+        //Move player to the start of the walk animation
+        mWorld_.mPlayerEntry_.setPosition(mStartPos_);
+        mWorld_.mDisableLeaveCheck_ = true;
+    }
+
+    function advanceWalkFrame_(){
+        mAnimationProgress_ += 0.01;
+        if(mAnimationProgress_ > 1.0) mAnimationProgress_ = 1.0;
+
+        local a = ::Easing.easeOutCubic(mAnimationProgress_);
+        local targetPos = ::calculateSimpleAnimation(mStartPos_, mEndPos_, a);
+        local delta = targetPos - mWorld_.mPlayerEntry_.mPos_;
+        mWorld_.mPlayerEntry_.move(delta);
+
+        if(mAnimationProgress_ >= 1.0){
+            mWorld_.mDisableLeaveCheck_ = false;
+            mWorld_.unregisterWorldComponent(mComponentId_);
+        }
+    }
+
+    function update(){ advanceWalkFrame_(); }
+    function updateLogicPaused(){ advanceWalkFrame_(); }
+
+    function destroy(){
+        mWorld_.mDisableLeaveCheck_ = false;
+        //Snap to end position if destroyed early
+        mWorld_.mPlayerEntry_.setPosition(mEndPos_);
+    }
+};
+
+::HouseEntryAnimationComponent <- class extends ::WorldComponent{
+    mAnimationProgress_ = 0.0;
+    mPlayerPos_ = null;
+    mComponentId_ = null;
+
+    constructor(world){
+        base.constructor(world);
+        mWorld_.setLogicPaused(true);
+        mPlayerPos_ = mWorld_.getPlayerPosition();
+    }
+
+    function updateLogicPaused(){
+        mAnimationProgress_ += 0.01;
+
+        if(mAnimationProgress_ > 1.0){
+            //Animation complete, restore normal camera and resume
+            mWorld_.setLogicPaused(false);
+            mWorld_.updateCameraPosition();
+            mWorld_.unregisterWorldComponent(mComponentId_);
+            return;
+        }
+
+        //Start position: higher up and offset, looking down at the player
+        local zPos = mWorld_.getZForPos(mPlayerPos_);
+        local startPos = mPlayerPos_.copy();
+        startPos.y = zPos + 40;
+        startPos.x -= 15;
+        startPos.z += 15;
+        local startLookAt = Vec3(mPlayerPos_.x, zPos, mPlayerPos_.z);
+
+        //End position: normal camera state using the same maths as updateCameraPosition
+        local zoom = mWorld_.mCurrentZoomLevel_;
+        local xOff = cos(mWorld_.mRotation_.x) * zoom;
+        local yOff = sin(mWorld_.mRotation_.x) * zoom;
+        local rot = Vec3(xOff, 0, yOff);
+        yOff = sin(mWorld_.mRotation_.y) * zoom;
+        rot += Vec3(0, yOff, 0);
+        local endPos = Vec3(mPlayerPos_.x, zPos, mPlayerPos_.z) + rot;
+        local endLookAt = Vec3(mPlayerPos_.x, zPos, mPlayerPos_.z);
+
+        local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION);
+        assert(camera != null);
+        local parentNode = camera.getParentNode();
+
+        local a = ::Easing.easeOutCubic(mAnimationProgress_);
+        local currentPos = ::calculateSimpleAnimation(startPos, endPos, a);
+        local currentLookAt = ::calculateSimpleAnimation(startLookAt, endLookAt, a);
+
+        parentNode.setPosition(currentPos);
+        camera.lookAt(currentLookAt);
+        _gameCore.update(currentLookAt);
+    }
+
+    function destroy(){
+        //Ensure logic resumes if component is destroyed early
+        if(mWorld_.mLogicPaused_){
+            mWorld_.setLogicPaused(false);
+        }
+    }
+};
+
 ::StartupAnimationComponent <- class extends ::WorldComponent{
     mAnimationProgress_ = 0.0;
     mWorldCentre_ = null;
