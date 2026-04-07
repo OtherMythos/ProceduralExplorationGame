@@ -7,6 +7,7 @@
     mQueryFlag_ = 0;
 
     mCurrentAnimations_ = null;
+    mDefaultPauseMask_ = null;
 
     constructor(modelType, parent, nodes, equipNodes, renderQueue=0, queryFlag=0){
         mModelType_ = modelType;
@@ -62,11 +63,15 @@
         mParentNode_.setOrientation(orientation);
     }
 
+    function setDefaultPauseMask(mask){
+        mDefaultPauseMask_ = mask;
+    }
+
     function startAnimationBaseType(baseAnim){
         local baseAnims = ::ModelTypes[mModelType_].mBaseAnims;
         local anim = baseAnims[baseAnim];
         if(anim == CharacterModelAnimId.NONE) return;
-        startAnimation(anim);
+        startAnimation(anim, mDefaultPauseMask_);
     }
     function stopAnimationBaseType(baseAnim){
         local baseAnims = ::ModelTypes[mModelType_].mBaseAnims;

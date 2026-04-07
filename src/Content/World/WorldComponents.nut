@@ -86,6 +86,9 @@
         //Move player to the start of the walk animation
         mWorld_.mPlayerEntry_.setPosition(mStartPos_);
         mWorld_.mDisableLeaveCheck_ = true;
+        //Exempt player walk animations from the gameplay pause mask so they
+        //play during the logic-paused entry sequence
+        mWorld_.mPlayerEntry_.getModel().setDefaultPauseMask(0x0);
     }
 
     function advanceWalkFrame_(){
@@ -99,6 +102,7 @@
 
         if(mAnimationProgress_ >= 1.0){
             mWorld_.mDisableLeaveCheck_ = false;
+            mWorld_.mPlayerEntry_.getModel().setDefaultPauseMask(null);
             mWorld_.unregisterWorldComponent(mComponentId_);
         }
     }
@@ -108,6 +112,7 @@
 
     function destroy(){
         mWorld_.mDisableLeaveCheck_ = false;
+        mWorld_.mPlayerEntry_.getModel().setDefaultPauseMask(null);
         //Snap to end position if destroyed early
         mWorld_.mPlayerEntry_.setPosition(mEndPos_);
     }
