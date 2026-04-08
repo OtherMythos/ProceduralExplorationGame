@@ -129,13 +129,11 @@
 
 ::HouseEntryAnimationComponent <- class extends ::WorldComponent{
     mAnimationProgress_ = 0.0;
-    mPlayerPos_ = null;
     mComponentId_ = null;
 
     constructor(world){
         base.constructor(world);
         mWorld_.setLogicPaused(true);
-        mPlayerPos_ = mWorld_.getPlayerPosition();
     }
 
     function updateLogicPaused(){
@@ -149,13 +147,16 @@
             return;
         }
 
+        //Follow the player's current position as they walk (not a fixed starting position)
+        local playerPos = mWorld_.getPlayerPosition();
+        local zPos = mWorld_.getZForPos(playerPos);
+
         //Start position: higher up and offset, looking down at the player
-        local zPos = mWorld_.getZForPos(mPlayerPos_);
-        local startPos = mPlayerPos_.copy();
+        local startPos = playerPos.copy();
         startPos.y = zPos + 40;
         startPos.x -= 15;
         startPos.z += 15;
-        local startLookAt = Vec3(mPlayerPos_.x, zPos, mPlayerPos_.z);
+        local startLookAt = Vec3(playerPos.x, zPos, playerPos.z);
 
         //End position: normal camera state using the same maths as updateCameraPosition
         local zoom = mWorld_.mCurrentZoomLevel_;
@@ -164,8 +165,8 @@
         local rot = Vec3(xOff, 0, yOff);
         yOff = sin(mWorld_.mRotation_.y) * zoom;
         rot += Vec3(0, yOff, 0);
-        local endPos = Vec3(mPlayerPos_.x, zPos, mPlayerPos_.z) + rot;
-        local endLookAt = Vec3(mPlayerPos_.x, zPos, mPlayerPos_.z);
+        local endPos = Vec3(playerPos.x, zPos, playerPos.z) + rot;
+        local endLookAt = Vec3(playerPos.x, zPos, playerPos.z);
 
         local camera = ::CompositorManager.getCameraForSceneType(CompositorSceneType.EXPLORATION);
         assert(camera != null);
