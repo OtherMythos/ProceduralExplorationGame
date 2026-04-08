@@ -762,11 +762,11 @@ enum GameplayComplexMenuBusEvents{
             "label": "Explore",
             "labelPosition": Vec2(80, 0),
             "labelSizeModifier": 2,
-            "skinPack": "Button_blue_smallEdge"
+            "skinPack": "Button_channelMask"
         });
         playIconButton.setSize(Vec2(240, 80));
         playIconButton.setPosition(Vec2(MARGIN + explorationMap.getSize().x / 2 - playIconButton.getSize().x / 2, currentY));
-        _gameCore.setWidgetCustomParameter(playIconButton.mIcon_, 0, 1);
+        _gameCore.setWidgetCustomParameter(playIconButton.mButton_, 0, 2);
         playIconButton.attachListenerForEvent(function(widget, action){
             notifyExplorationBegin_(null);
         }, _GUI_ACTION_PRESSED, this);

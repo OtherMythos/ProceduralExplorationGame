@@ -1,5 +1,22 @@
 @piece( custom_ps_preLights )
+@property( buttonChannelMask )
+	//Decode button sections from the channel mask texture (R=outer border, G=middle border, B=inner)
+	midf isOuter = step( midf_c( 0.5f ), diffuseCol.r );
+	midf isMid   = step( midf_c( 0.5f ), diffuseCol.g );
+	midf isInner = step( midf_c( 0.5f ), diffuseCol.b );
+	//Radial gradient from centre of inner section — lighter at centre, darker at edges
+	midf2 centreUV = midf2( midf_c( 0.5f ), midf_c( 0.484f ) );
+	midf2 uvOffset = midf2( inPs.uv0.xy ) - centreUV;
+	//Scale x to account for the button being wider than tall in UV space
+	uvOffset.x *= midf_c( 0.313f / 0.5f );
+	midf gradientT = clamp( length( uvOffset ) / midf_c( 0.2f ), midf_c( 0.0f ), midf_c( 1.0f ) );
+	midf3 outerColour = midf3_c( 0.012f, 0.012f, 0.012f );
+	midf3 midColour   = midf3_c( 0.286f, 0.286f, 0.286f );
+	midf3 innerColour = mix( midf3_c( 0.32f, 0.29f, 0.29f ), midf3_c( 0.14f, 0.12f, 0.12f ), gradientT );
+	diffuseCol.rgb = outerColour * isOuter + midColour * isMid + innerColour * isInner;
+@end
 @property( exploreButton )
-	diffuseCol.rgb *= 0.0;
+	diffuseCol.rgb = midf3_c( 0.0f, 0.0f, 0.0f );
+	diffuseCol.a = midf_c( 1.0f ) - inPs.uv0.x;
 @end
 @end

@@ -128,6 +128,9 @@ namespace ProceduralExplorationGamePlugin{
             if(v & 1u){
                 hlms->setProperty("exploreButton", true);
             }
+            if(v & 2u){
+                hlms->setProperty("buttonChannelMask", true);
+            }
         }
         Ogre::uint32 fillBuffersForV2(const Ogre::HlmsCache *cache, const Ogre::QueuedRenderable &queuedRenderable, bool casterPass, Ogre::uint32 lastCacheHash, Ogre::CommandBuffer *commandBuffer){
             return 0;

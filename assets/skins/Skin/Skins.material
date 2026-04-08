@@ -52,3 +52,9 @@ hlms gui/linearGradientRight unlit
 	scene_blend alpha_blend
 	diffuse_map linearGradientRight.png
 }
+hlms AtlasChannelMask unlit
+{
+	depth_check off
+	scene_blend alpha_blend
+	diffuse_map AtlasChannelMask.png
+}
