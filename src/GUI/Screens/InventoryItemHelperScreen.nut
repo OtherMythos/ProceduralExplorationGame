@@ -29,6 +29,15 @@ enum InventoryItemHelperScreenFunctions{
 
     mButtonFunctions_ = array(InventoryItemHelperScreenFunctions.MAX);
 
+    mAnimationFramesRemaining_ = null;
+    mAnimationStartPos_ = null;
+    mAnimationEndPos_ = null;
+    mAnimationInfoStartPos_ = null;
+    mAnimationInfoEndPos_ = null;
+    mAnimationDuration_ = null;
+    mBgOpacityStart_ = null;
+    mBgOpacityEnd_ = null;
+
     function setup(data){
         mData_ = data;
         mCustomPosition_ = true;
@@ -41,7 +50,10 @@ enum InventoryItemHelperScreenFunctions{
         //Create a window to block inputs for when the popup appears.
         createBackgroundScreen_();
         createBackgroundCloseButton_();
-        mBackgroundWindow_.setColour(ColourValue(1, 1, 1, 0.8));
+        //Start background transparent, will animate to opaque
+        mBackgroundWindow_.setColour(ColourValue(1, 1, 1, 0));
+        mBgOpacityStart_ = 0;
+        mBgOpacityEnd_ = 0.8;
 
         //Do this first so the icon has a lower z position.
         createIconPanel(mData_.item);
@@ -147,10 +159,19 @@ enum InventoryItemHelperScreenFunctions{
         local screenPosData = determinePositionForScreen_(targetPos, windowSize, data);
         local winPos = screenPosData[0];
         local itemInfoPos = screenPosData[1];
-        mWindow_.setPosition(winPos);
+
+        //Initialise animation: slide in from above
+        mAnimationDuration_ = 12;
+        mAnimationFramesRemaining_ = mAnimationDuration_;
+        mAnimationStartPos_ = Vec2(winPos.x, winPos.y - 30);
+        mAnimationEndPos_ = winPos.copy();
+        mWindow_.setPosition(mAnimationStartPos_);
 
         if(mItemInfoPanel_){
-            mItemInfoPanel_.setPosition(itemInfoPos.x, itemInfoPos.y - 5);
+            //Animate item info panel from the right
+            mAnimationInfoStartPos_ = Vec2(itemInfoPos.x + 40, itemInfoPos.y - 5);
+            mAnimationInfoEndPos_ = Vec2(itemInfoPos.x, itemInfoPos.y - 5);
+            mItemInfoPanel_.setPosition(mAnimationInfoStartPos_.x, mAnimationInfoStartPos_.y);
         }
 
         mData_.bus.notifyEvent(InventoryBusEvents.ITEM_HELPER_SCREEN_BEGAN, null);
@@ -159,6 +180,36 @@ enum InventoryItemHelperScreenFunctions{
     function setZOrder(idx){
         base.setZOrder(idx);
         mPanelContainerWindow_.setZOrder(idx);
+    }
+
+    function update(){
+        base.update();
+
+        if(mAnimationFramesRemaining_ != null && mAnimationFramesRemaining_ > 0){
+            mAnimationFramesRemaining_--;
+            local progress = 1.0 - (mAnimationFramesRemaining_.tofloat() / mAnimationDuration_.tofloat());
+            progress = ::Easing.easeOutCubic(progress);
+
+            //Interpolate window position
+            local currentPos = Vec2(
+                mAnimationStartPos_.x + (mAnimationEndPos_.x - mAnimationStartPos_.x) * progress,
+                mAnimationStartPos_.y + (mAnimationEndPos_.y - mAnimationStartPos_.y) * progress
+            );
+            mWindow_.setPosition(currentPos);
+
+            //Interpolate item info panel position if it exists
+            if(mItemInfoPanel_ != null){
+                local currentInfoPos = Vec2(
+                    mAnimationInfoStartPos_.x + (mAnimationInfoEndPos_.x - mAnimationInfoStartPos_.x) * progress,
+                    mAnimationInfoStartPos_.y + (mAnimationInfoEndPos_.y - mAnimationInfoStartPos_.y) * progress
+                );
+                mItemInfoPanel_.setPosition(currentInfoPos.x, currentInfoPos.y);
+            }
+
+            //Interpolate background opacity
+            local bgOpacity = mBgOpacityStart_ + (mBgOpacityEnd_ - mBgOpacityStart_) * progress;
+            mBackgroundWindow_.setColour(ColourValue(1, 1, 1, bgOpacity));
+        }
     }
 
     function createIconPanel(item){
@@ -238,6 +289,13 @@ enum InventoryItemHelperScreenFunctions{
     }
 
     function shutdown(){
+        mAnimationFramesRemaining_ = null;
+        mAnimationStartPos_ = null;
+        mAnimationEndPos_ = null;
+        mAnimationInfoStartPos_ = null;
+        mAnimationInfoEndPos_ = null;
+        mBgOpacityStart_ = null;
+        mBgOpacityEnd_ = null;
         base.shutdown();
         mData_.bus.notifyEvent(InventoryBusEvents.ITEM_HELPER_SCREEN_ENDED, null);
         _gui.destroy(mPanelContainerWindow_);
