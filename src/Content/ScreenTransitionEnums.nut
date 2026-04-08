@@ -1,4 +1,3 @@
 ::EnumDef.addToEnum("ScreenTransition", @"
-    SLIDE,
-    BACKGROUND_FADE,
+    BACKGROUND_FADE_SLIDE,
 ");

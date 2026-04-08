@@ -686,7 +686,7 @@ enum GameplayComplexMenuBusEvents{
         settingsButton.setSize(Vec2(64, 64));
         settingsButton.setPosition(Vec2(10, 10));
         settingsButton.attachListenerForEvent(function(widget, action){
-            ::ScreenManager.queueTransition(Screen.SETTINGS_SCREEN, null, 3);
+            ::ScreenManager.queueTransition(Screen.SETTINGS_SCREEN, ScreenTransition.BACKGROUND_FADE_SLIDE, 3);
             ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
         }, _GUI_ACTION_PRESSED, this);
 
@@ -698,7 +698,7 @@ enum GameplayComplexMenuBusEvents{
         newspaperPos.x += settingsButton.getSize().x;
         newspaperButton.setPosition(newspaperPos);
         newspaperButton.attachListenerForEvent(function(widget, action){
-            ::ScreenManager.queueTransition(Screen.SETTINGS_SCREEN, null, 3);
+            ::ScreenManager.queueTransition(Screen.SETTINGS_SCREEN, ScreenTransition.BACKGROUND_FADE_SLIDE, 3);
             ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
         }, _GUI_ACTION_PRESSED, this);
 

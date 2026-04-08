@@ -73,7 +73,6 @@
         _doFile("res://src/GUI/Screens/ArtifactScreen.nut");
         _doFile("res://src/GUI/Screens/GUITestScreen.nut");
 
-        _doFile("res://src/GUI/Transitions/SlideTransition.nut");
         _doFile("res://src/GUI/Transitions/BackgroundFadeTransition.nut");
 
         _doFile("res://src/GUI/Widgets/BankWidget.nut");
