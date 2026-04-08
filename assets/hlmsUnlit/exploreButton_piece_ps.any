@@ -1,0 +1,5 @@
+@piece( custom_ps_preLights )
+@property( exploreButton )
+	diffuseCol.rgb *= 0.0;
+@end
+@end

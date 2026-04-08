@@ -15,6 +15,7 @@
 #include "OgreHlmsPbs.h"
 #include "OgreHlmsPbsDatablock.h"
 #include "System/OgreSetup/CustomHLMS/OgreHlmsPbsAVCustom.h"
+#include "System/OgreSetup/CustomHLMS/OgreHlmsUnlitAVCustom.h"
 #include "MapGen/MapGen.h"
 #include "MapGen/Script/MapGenScriptManager.h"
 #include "PluginBaseSingleton.h"
@@ -116,6 +117,23 @@ namespace ProceduralExplorationGamePlugin{
         }
     };
 
+    class HlmsGameCoreCustomUnlitHlmsListener : public Ogre::HlmsUnlitAVCustomListener{
+    public:
+        void calculateHashForPreCaster( Ogre::HlmsUnlitAVCustom* hlms, Ogre::Renderable *renderable, Ogre::PiecesMap *inOutPieces, const Ogre::PiecesMap *normalPassPieces ){
+        }
+        void calculateHashForPreCreate( Ogre::HlmsUnlitAVCustom* hlms, Ogre::Renderable *renderable, Ogre::PiecesMap *inOutPieces ){
+            if(!renderable->hasCustomParameter(0)) return;
+            const Ogre::Vector4& params = renderable->getCustomParameter(0);
+            AV::uint32 v = *(reinterpret_cast<const AV::uint32*>(&params.x));
+            if(v & 1u){
+                hlms->setProperty("exploreButton", true);
+            }
+        }
+        Ogre::uint32 fillBuffersForV2(const Ogre::HlmsCache *cache, const Ogre::QueuedRenderable &queuedRenderable, bool casterPass, Ogre::uint32 lastCacheHash, Ogre::CommandBuffer *commandBuffer){
+            return 0;
+        }
+    };
+
 
     ProceduralExplorationGameCorePlugin::ProceduralExplorationGameCorePlugin() : Plugin("ProceduralExplorationGameCore"){
 
@@ -189,6 +207,11 @@ namespace ProceduralExplorationGamePlugin{
         Ogre::HlmsPbsAVCustom* customPbs = dynamic_cast<Ogre::HlmsPbsAVCustom*>(hlmsPbs);
         assert(customPbs);
         customPbs->registerCustomListener(new HlmsGameCoreCustomHlmsListener());
+
+        Ogre::Hlms *hlmsUnlit = Ogre::Root::getSingleton().getHlmsManager()->getHlms( Ogre::HLMS_UNLIT );
+        Ogre::HlmsUnlitAVCustom* customUnlit = dynamic_cast<Ogre::HlmsUnlitAVCustom*>(hlmsUnlit);
+        assert(customUnlit);
+        customUnlit->registerCustomListener(new HlmsGameCoreCustomUnlitHlmsListener());
 
         {
             ProceduralExplorationGameCore::WaterMeshGenerator gen;

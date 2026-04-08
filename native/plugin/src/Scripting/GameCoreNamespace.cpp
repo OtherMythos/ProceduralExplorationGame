@@ -18,6 +18,8 @@
 #include "System/Util/PathUtils.h"
 
 #include "Scripting/ScriptNamespace/Classes/Ogre/Graphics/TextureBoxUserData.h"
+#include "Scripting/ScriptNamespace/GuiNamespace.h"
+#include "ColibriGui/ColibriRenderable.h"
 #include "Scripting/ScriptNamespace/Classes/Ogre/Graphics/MeshUserData.h"
 
 #include "VisitedPlaces/VoxMeshSceneDataInserter.h"
@@ -676,6 +678,25 @@ namespace ProceduralExplorationGamePlugin{
         return 1;
     }
 
+    SQInteger GameCoreNamespace::setWidgetCustomParameter(HSQUIRRELVM vm){
+        Colibri::Widget* widget = 0;
+        void* foundType = 0;
+        SCRIPT_CHECK_RESULT(AV::GuiNamespace::getWidgetFromUserData(vm, 2, &widget, &foundType));
+
+        SQInteger idx;
+        sq_getinteger(vm, 3, &idx);
+        SQInteger val;
+        sq_getinteger(vm, 4, &val);
+        Ogre::uint32 uval = static_cast<Ogre::uint32>(val);
+        Ogre::Real floatBits = *reinterpret_cast<Ogre::Real*>(&uval);
+
+        Colibri::Renderable* rend = dynamic_cast<Colibri::Renderable*>(widget);
+        assert(rend);
+        rend->setCustomParameter(static_cast<Ogre::uint32>(idx), Ogre::Vector4(floatBits, 0.0f, 0.0f, 0.0f));
+
+        return 0;
+    }
+
     SQInteger GameCoreNamespace::writeFlagsToItem(HSQUIRRELVM vm){
         Ogre::MovableObject* outObject = 0;
         SCRIPT_CHECK_RESULT(AV::MovableObjectUserData::readMovableObjectFromUserData(vm, 2, &outObject, AV::MovableObjectType::Item));
@@ -1141,6 +1162,7 @@ namespace ProceduralExplorationGamePlugin{
         AV::ScriptUtils::addFunction(vm, setNewMapData, "setNewMapData", 2, ".u");
         AV::ScriptUtils::addFunction(vm, createTerrainFromMapData, "createTerrainFromMapData", 3, ".su");
         AV::ScriptUtils::addFunction(vm, getNameForMapGenStage, "getNameForMapGenStage", 2, ".i");
+        AV::ScriptUtils::addFunction(vm, setWidgetCustomParameter, "setWidgetCustomParameter", 4, ".uii");
         AV::ScriptUtils::addFunction(vm, writeFlagsToItem, "writeFlagsToItem", 3, ".ui");
 
         AV::ScriptUtils::addFunction(vm, createCollisionDetectionWorld, "createCollisionDetectionWorld", 2, ".i");
