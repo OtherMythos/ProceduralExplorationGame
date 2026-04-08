@@ -247,6 +247,7 @@
         _doFile("res://src/GUI/VersionInfoWindow.nut");
         ::ScreenManager.setup();
         _doFile("res://src/GUI/Screens/Screen.nut");
+        _doFile("res://src/GUI/Transitions/Transition.nut");
 
         _doFile("res://src/Logic/EntityTargetManager.nut");
         _doFile("res://src/Logic/ActiveEnemyEntry.nut");

@@ -85,6 +85,7 @@ enum ObjectType{
     SCREEN_DATA = "ScreenData",
     POPUP_DATA = "PopupData",
     EFFECT_DATA = "EffectData",
+    TRANSITION_DATA = "TransitionData",
 };
 
 enum StatType{

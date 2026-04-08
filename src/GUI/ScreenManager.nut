@@ -9,6 +9,7 @@
 
     "mScreenQueued_": false,
     "mQueuedScreens_": null,
+    "mQueuedTransitions_": null,
 
     mVersionInfoWindow_ = null
 
@@ -20,8 +21,10 @@
 
     mScheduledDestructions_ = null
     mScheduledDestructionsFrameCounter_ = 0
+    mActiveTransitions_ = null
 
     "Screens": array(Screen.MAX, null),
+    "Transitions": array(ScreenTransition.MAX, null),
 
     /**
      * Class to wrap screen data for construction and transition.
@@ -39,10 +42,27 @@
         }
     },
 
+    /**
+     * Class to wrap a transition id with optional data for parameterisation.
+     */
+    "TransitionData": class{
+        id = ScreenTransition.NONE;
+        data = null;
+        constructor(id, data){
+            this.id = id;
+            this.data = data;
+        }
+        function _typeof(){
+            return ObjectType.TRANSITION_DATA;
+        }
+    },
+
     function setup(){
         mActiveScreens_ = array(MAX_SCREENS, null);
         mPreviousScreens_ = array(MAX_SCREENS, null);
         mQueuedScreens_ = array(MAX_SCREENS, null);
+        mQueuedTransitions_ = array(MAX_SCREENS, null);
+        mActiveTransitions_ = array(MAX_SCREENS, null);
         mScheduledDestructions_ = [];
         mScheduledDestructionsFrameCounter_ = null;
 
@@ -59,6 +79,10 @@
 
     function shutdown(){
         for(local i = 0; i < MAX_SCREENS; i++){
+            if(mActiveTransitions_[i] != null){
+                mActiveTransitions_[i].shutdown();
+                mActiveTransitions_[i] = null;
+            }
             _shutdownForLayer(i);
         }
     }
@@ -77,6 +101,21 @@
             screenData = ScreenData(data, null);
         }
         return screenData;
+    }
+
+    function _wrapTransitionData(data){
+        if(data == null) return data;
+        local transData = data;
+        if(typeof transData != ObjectType.TRANSITION_DATA){
+            transData = TransitionData(data, null);
+        }
+        return transData;
+    }
+
+    function _createTransitionForId(transData){
+        if(transData == null) return null;
+        if(transData.id == null || transData.id == ScreenTransition.NONE) return null;
+        return Transitions[transData.id](transData);
     }
 
     function _shutdownForLayer(layerId, effectPrevStack = false){
@@ -128,7 +167,24 @@
      */
     function transitionToScreen(screenId, transitionEffect = null, layerId = 0, effectPrevStack = true){
         assert(layerId < MAX_SCREENS);
-        local oldId = _shutdownForLayer(layerId, effectPrevStack);
+
+        //Force complete any active transition on this layer before starting a new one.
+        if(mActiveTransitions_[layerId] != null){
+            mActiveTransitions_[layerId].shutdown();
+            mActiveTransitions_[layerId] = null;
+        }
+
+        //Capture the outgoing screen and manage the prev screen stack before clearing the slot.
+        local outgoingScreen = mActiveScreens_[layerId];
+        local oldId = null;
+        if(outgoingScreen != null){
+            oldId = outgoingScreen.getScreenData().id;
+            print("Calling shutdown for layer " + layerId);
+            if(effectPrevStack) _queuePrevScreen(layerId, outgoingScreen.getScreenData());
+        } else {
+            if(effectPrevStack) _queuePrevScreen(layerId, null);
+        }
+        mActiveScreens_[layerId] = null;
 
         local screenData = _wrapScreenData(screenId);
         local screenObject = _createScreenForId(screenData);
@@ -136,6 +192,7 @@
         mActiveScreens_[layerId] = screenObject;
 
         if(!screenObject){
+            if(outgoingScreen != null) outgoingScreen.shutdown();
             _gui.simulateMouseButton(_MB_LEFT, false);
             _gui.reprocessMousePosition();
             _gui.simulateGuiPrimary(false);
@@ -150,6 +207,19 @@
         if(!screenObject.mCustomPosition_) screenObject.setPositionCentre(_window.getWidth()/2, _window.getHeight()/2);
 
         _event.transmit(Event.SCREEN_CHANGED, {"old": oldId, "new": screenId});
+
+        local transData = _wrapTransitionData(transitionEffect);
+        if(transData != null){
+            local transObject = _createTransitionForId(transData);
+            if(transObject != null){
+                transObject.setup(screenObject, outgoingScreen, transData.data);
+                mActiveTransitions_[layerId] = transObject;
+            } else {
+                if(outgoingScreen != null) outgoingScreen.shutdown();
+            }
+        } else {
+            if(outgoingScreen != null) outgoingScreen.shutdown();
+        }
 
         _gui.simulateMouseButton(_MB_LEFT, false);
         _gui.reprocessMousePosition();
@@ -195,13 +265,13 @@
      * i.e so the gui isn't deleted as part of its callback in an inconvenient way.
      */
     function queueTransition(screenData, transitionEffect = null, layerId = 0){
-        //TODO transitionEffect isn't implemented yet as I don't use them.
         local data = _wrapScreenData(screenData);
         //TODO this is a bit of a work around.
         //For immediate transition null is fine, but here null means nothing waiting to be transitioned.
         //This means I need to mark in some way which screen needs to be reset, if null is passed in (meaning destroy window).
         if(data == null) data = ::ScreenManager.ScreenData(null, null);
         mQueuedScreens_[layerId] = data;
+        mQueuedTransitions_[layerId] = transitionEffect;
         mScreenQueued_ = true;
     }
 
@@ -237,14 +307,25 @@
                 if(screenData.id == null && screenData.data == null){
                     screenData = null;
                 }
-                transitionToScreen(screenData, null, i);
+                transitionToScreen(screenData, mQueuedTransitions_[i], i);
                 mQueuedScreens_[i] = null;
+                mQueuedTransitions_[i] = null;
             }
             mScreenQueued_ = false;
         }
 
         foreach(i in mActiveScreens_){
             if(i != null) i.update();
+        }
+
+        for(local i = 0; i < MAX_SCREENS; i++){
+            local trans = mActiveTransitions_[i];
+            if(trans == null) continue;
+            trans.update();
+            if(trans.isComplete()){
+                trans.shutdown();
+                mActiveTransitions_[i] = null;
+            }
         }
     }
 
