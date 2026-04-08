@@ -203,7 +203,7 @@
                 //Open the special moves list screen with this slot index
                 ::ScreenManager.queueTransition(
                     ::ScreenManager.ScreenData(Screen.SPECIAL_MOVES_LIST_SCREEN, {"slotId": widget.getUserId()}),
-                    null, 1
+                    ScreenTransition.BACKGROUND_FADE_SLIDE, 1
                 );
             };
 

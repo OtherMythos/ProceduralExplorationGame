@@ -64,7 +64,7 @@
             withdrawButton.setSkinPack("Panel_blue");
             withdrawButton.attachListenerForEvent(function(widget, action){
                 ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
-                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.BANK_DEPOSIT_WITHDRAW_SCREEN, {"deposit": false}), null, 3);
+                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.BANK_DEPOSIT_WITHDRAW_SCREEN, {"deposit": false}), ScreenTransition.BACKGROUND_FADE_SLIDE, 3);
             }, _GUI_ACTION_PRESSED, this);
 
             local depositButton = mParent_.createButton();
@@ -76,7 +76,7 @@
             depositButton.setSkinPack("Panel_blue");
             depositButton.attachListenerForEvent(function(widget, action){
                 ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
-                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.BANK_DEPOSIT_WITHDRAW_SCREEN, {"deposit": true}), null, 3);
+                ::ScreenManager.transitionToScreen(::ScreenManager.ScreenData(Screen.BANK_DEPOSIT_WITHDRAW_SCREEN, {"deposit": true}), ScreenTransition.BACKGROUND_FADE_SLIDE, 3);
             }, _GUI_ACTION_PRESSED, this);
 
             ::evenOutButtonsForHeight([withdrawButton, depositButton]);
