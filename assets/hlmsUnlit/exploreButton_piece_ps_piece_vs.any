@@ -1,0 +1,74 @@
+
+
+@piece( custom_passBuffer )
+	float unlitTime;
+@end
+
+@property( buttonChannelMask )
+@piece( custom_vs_posExecution )
+	float buttonTime = passBuf.unlitTime;
+	//outVs_Position += sin(buttonTime);
+	outVs.time = buttonTime;
+@end
+
+@piece( custom_VStoPS )
+	float time;
+@end
+
+
+@piece( custom_ps_preLights )
+	//Decode button sections from the channel mask texture (R=outer border, G=middle border, B=inner)
+	midf isOuter = step( midf_c( 0.5f ), diffuseCol.r );
+	midf isMid   = step( midf_c( 0.5f ), diffuseCol.g );
+	midf isInner = step( midf_c( 0.5f ), diffuseCol.b );
+
+	midf3 outerColour = midf3_c( 0.012f, 0.012f, 0.012f );
+	midf3 midColour   = midf3_c( 0.286f, 0.286f, 0.286f );
+
+	//Animated FBM noise effect for the inner section, similar to the dark GUI background
+	//float buttonTime = passBuf.unlitTime;
+	float buttonTime = inPs.time * 0.5;
+	//Tile in atlas-U-pixel space: scale both axes by atlas width (256) so tiles are
+	//square in atlas space. UV is continuous at all 9-grid boundaries so no seams.
+	float pixelSize = 12.0f;
+	float2 screenPixel = floor( float2( inPs.uv0.xy ) * 256.0f / pixelSize );
+
+	//Hash function inlined — use arithmetic hash
+	#define btnHash( p ) fract( sin( dot( p, float2( 127.1f, 311.7f ) ) ) * 43758.5453f )
+
+	//Value noise via hash, first octave
+	float2 bni = floor( screenPixel * 0.12f + buttonTime );
+	float2 bnf = fract( screenPixel * 0.12f + buttonTime );
+	float2 bnu = bnf * bnf * ( 3.0f - 2.0f * bnf );
+	float bnA = btnHash( bni );
+	float bnB = btnHash( bni + float2( 1.0f, 0.0f ) );
+	float bnC = btnHash( bni + float2( 0.0f, 1.0f ) );
+	float bnD = btnHash( bni + float2( 1.0f, 1.0f ) );
+	float btnNoise1 = mix( bnA, bnB, bnu.x ) + ( bnC - bnA ) * bnu.y * ( 1.0f - bnu.x ) + ( bnD - bnB ) * bnu.x * bnu.y;
+
+	//Second octave at double frequency
+	float2 bni2 = floor( screenPixel * 0.24f - buttonTime * 0.7f );
+	float2 bnf2 = fract( screenPixel * 0.24f - buttonTime * 0.7f );
+	float2 bnu2 = bnf2 * bnf2 * ( 3.0f - 2.0f * bnf2 );
+	float bn2A = btnHash( bni2 );
+	float bn2B = btnHash( bni2 + float2( 1.0f, 0.0f ) );
+	float bn2C = btnHash( bni2 + float2( 0.0f, 1.0f ) );
+	float bn2D = btnHash( bni2 + float2( 1.0f, 1.0f ) );
+	float btnNoise2 = mix( bn2A, bn2B, bnu2.x ) + ( bn2C - bn2A ) * bnu2.y * ( 1.0f - bnu2.x ) + ( bn2D - bn2B ) * bnu2.x * bnu2.y;
+
+	float btnPattern = btnNoise1 * 0.6f + btnNoise2 * 0.4f;
+
+	#undef btnHash
+
+	float3 btnBase   = float3( 0.02f, 0.03f, 0.045f );
+	float3 btnAccent = float3( 0.20f, 0.24f, 0.30f );
+	float3 btnColour = mix( btnBase, btnAccent, btnPattern );
+
+	midf3 innerColour = midf3( btnColour );
+	diffuseCol.rgb = outerColour * isOuter + midColour * isMid + innerColour * isInner;
+@end
+@property( exploreButton )
+	diffuseCol.rgb = midf3_c( 0.0f, 0.0f, 0.0f );
+	diffuseCol.a = midf_c( 1.0f ) - inPs.uv0.x;
+@end
+@end

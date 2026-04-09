@@ -62,6 +62,7 @@
 #include "Hlms/Pbs/OgreHlmsPbsDatablock.h"
 
 #include "GameCorePBSHlmsListener.h"
+#include "GameCoreUnlitHlmsListener.h"
 
 #include "MeshParticleEmitterUserData.h"
 #include "Ogre/MeshParticleEmitter.h"
@@ -1055,6 +1056,7 @@ namespace ProceduralExplorationGamePlugin{
     SQInteger GameCoreNamespace::update(HSQUIRRELVM vm){
         //TODO make this accurate to delta times.
         GameCorePBSHlmsListener::mTimeValue += 0.03;
+        GameCoreUnlitHlmsListener::mTimeValue = GameCorePBSHlmsListener::mTimeValue;
 
         Ogre::Vector3 offset = Ogre::Vector3::ZERO;
         SCRIPT_CHECK_RESULT(AV::Vector3UserData::readVector3FromUserData(vm, 2, &offset));

@@ -47,6 +47,7 @@
 #include "OgreStagingTexture.h"
 #include "OgreTextureBox.h"
 #include "GameCorePBSHlmsListener.h"
+#include "GameCoreUnlitHlmsListener.h"
 #include "OgreRenderable.h"
 #include "Ogre/RingProceduralWorldEmitterFactory.h"
 #include "Ogre/AreaProceduralWorldEmitterFactory.h"
@@ -212,6 +213,7 @@ namespace ProceduralExplorationGamePlugin{
         customPbs->registerCustomListener(new HlmsGameCoreCustomHlmsListener());
 
         Ogre::Hlms *hlmsUnlit = Ogre::Root::getSingleton().getHlmsManager()->getHlms( Ogre::HLMS_UNLIT );
+        hlmsUnlit->setListener(new GameCoreUnlitHlmsListener());
         Ogre::HlmsUnlitAVCustom* customUnlit = dynamic_cast<Ogre::HlmsUnlitAVCustom*>(hlmsUnlit);
         assert(customUnlit);
         customUnlit->registerCustomListener(new HlmsGameCoreCustomUnlitHlmsListener());
