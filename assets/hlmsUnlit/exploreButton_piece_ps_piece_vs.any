@@ -9,10 +9,14 @@
 	float buttonTime = passBuf.unlitTime;
 	//outVs_Position += sin(buttonTime);
 	outVs.time = buttonTime;
+	//Convert clip-space to screen pixels so the noise coord is continuous across all 9-grid planes
+	float2 ndc = outVs_Position.xy / outVs_Position.w;
+	outVs.screenPos = (ndc * 0.5f + 0.5f) / passBuf.invWindowSize.xy;
 @end
 
 @piece( custom_VStoPS )
 	float time;
+	float2 screenPos;
 @end
 
 
@@ -27,11 +31,11 @@
 
 	//Animated FBM noise effect for the inner section, similar to the dark GUI background
 	//float buttonTime = passBuf.unlitTime;
-	float buttonTime = inPs.time * 0.5;
-	//Tile in atlas-U-pixel space: scale both axes by atlas width (256) so tiles are
-	//square in atlas space. UV is continuous at all 9-grid boundaries so no seams.
-	float pixelSize = 12.0f;
-	float2 screenPixel = floor( float2( inPs.uv0.xy ) * 256.0f / pixelSize );
+	float buttonTime = inPs.time * 0.1;
+	//Tile in screen-pixel space so the pattern is continuous across all 9-grid planes.
+	//pixelSize controls how many screen pixels make up one noise tile cell.
+	float pixelSize = 24.0f;
+	float2 screenPixel = floor( inPs.screenPos / pixelSize );
 
 	//Hash function inlined — use arithmetic hash
 	#define btnHash( p ) fract( sin( dot( p, float2( 127.1f, 311.7f ) ) ) * 43758.5453f )
@@ -56,14 +60,16 @@
 	float bn2D = btnHash( bni2 + float2( 1.0f, 1.0f ) );
 	float btnNoise2 = mix( bn2A, bn2B, bnu2.x ) + ( bn2C - bn2A ) * bnu2.y * ( 1.0f - bnu2.x ) + ( bn2D - bn2B ) * bnu2.x * bnu2.y;
 
-	float btnPattern = btnNoise1 * 0.6f + btnNoise2 * 0.4f;
+	float btnPattern = btnNoise1 * 0.6f + btnNoise2 * 0.8f;
 
 	#undef btnHash
 
-	float3 btnBase   = float3( 0.02f, 0.03f, 0.045f );
-	float3 btnAccent = float3( 0.20f, 0.24f, 0.30f );
-	float3 btnColour = mix( btnBase, btnAccent, btnPattern );
+	float3 buttonColour = float3( 0.173f, 0.431f, 0.608f );  //0x2c6e9b
+	float3 btnDark   = buttonColour * 0.65f;
+	float3 btnLight  = buttonColour * 1.35f;
+	float3 btnColour = mix( btnDark, btnLight, btnPattern );
 
+	//midf3 midColour = midf3( btnColour );
 	midf3 innerColour = midf3( btnColour );
 	diffuseCol.rgb = outerColour * isOuter + midColour * isMid + innerColour * isInner;
 @end
