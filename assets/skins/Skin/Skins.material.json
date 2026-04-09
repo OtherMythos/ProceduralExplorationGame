@@ -1,0 +1,31 @@
+{
+    "blendblocks":
+    {
+        "skin/alphaBlend":
+        {
+            "src_blend_factor": "src_alpha",
+            "dst_blend_factor": "one_minus_src_alpha",
+            "src_alpha_blend_factor": "one_minus_dst_alpha",
+            "dst_alpha_blend_factor": "one"
+        }
+    },
+
+    "unlit":
+    {
+        "AtlasChannelMask":
+        {
+            "blendblock": "skin/alphaBlend",
+            "diffuse_map0":
+            {
+                "texture": "AtlasChannelMask.png",
+                "uv": 0
+            },
+            "diffuse_map1":
+            {
+                "texture": "AtlasChannelMaskInner.png",
+                "blendmode": "NormalNonPremul",
+                "uv": 0
+            }
+        }
+    }
+}
