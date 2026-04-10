@@ -230,7 +230,7 @@
             local newNode = mParentNode_.createChildSceneNode();
             local item = _scene.createItem("windStreak.mesh");
             item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
-            _gameCore.writeFlagsToItem(item, HLMS_WIND_STREAKS);
+            _gameCore.writeFlagsToItem(item, HLMS_PBS_WIND_STREAKS);
             item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_WIND);
             item.setDatablock("WindStreak");
             newNode.attachObject(item);

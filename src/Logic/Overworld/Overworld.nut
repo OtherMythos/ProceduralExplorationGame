@@ -224,7 +224,7 @@
             local oceanNode = mParentNode_.createChildSceneNode(_SCENE_STATIC);
             local oceanItem = _scene.createItem(surroundingMesh, _SCENE_STATIC);
             oceanItem.setCastsShadows(false);
-            _gameCore.writeFlagsToItem(oceanItem, HLMS_OCEAN_VERTICES | HLMS_FLOOR_DECALS);
+            _gameCore.writeFlagsToItem(oceanItem, HLMS_PBS_OCEAN_VERTICES | HLMS_PBS_FLOOR_DECALS);
             oceanItem.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_WATER);
             oceanItem.setDatablock(surroundBlock);
             oceanNode.attachObject(oceanItem);

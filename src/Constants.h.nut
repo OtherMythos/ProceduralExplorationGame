@@ -11,5 +11,8 @@ const HLMS_PBS_WIND_STREAKS = 0x20;
 const HLMS_PBS_FLOOR_DECALS = 0x40;
 const HLMS_PBS_SPRITE_ANIM = 0x80;
 
+const HLMS_UNLIT_OUTLINE_GLEAM = 0x1;
+const HLMS_UNLIT_DIAGONAL_DIFFUSE_PIXELS = 0x2;
+
 #undef enum
 #undef const

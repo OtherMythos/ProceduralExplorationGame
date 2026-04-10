@@ -4,7 +4,7 @@
 	float unlitTime;
 @end
 
-@property( buttonChannelMask )
+@property( guiWidgetModify )
 @piece( custom_vs_posExecution )
 	outVs.time = passBuf.unlitTime;
 	float2 ndc = outVs_Position.xy / outVs_Position.w;
@@ -18,53 +18,59 @@
 
 @piece( custom_ps_preLights )
 	float buttonTime = inPs.time * 0.1;
-	float pixelSize = 24.0f;
-	float2 screenPixel = floor( inPs.screenPos / pixelSize );
 
-	/*
-	#define btnHash( p ) fract( sin( dot( p, float2( 127.1f, 311.7f ) ) ) * 43758.5453f )
+	@property( diagonalDiffuse )
+		float pixelSize = 24.0f;
+		float2 screenPixel = floor( inPs.screenPos / pixelSize );
 
-	float2 bni = floor( screenPixel * 0.12f + buttonTime );
-	float2 bnf = fract( screenPixel * 0.12f + buttonTime );
-	float2 bnu = bnf * bnf * ( 3.0f - 2.0f * bnf );
-	float bnA = btnHash( bni );
-	float bnB = btnHash( bni + float2( 1.0f, 0.0f ) );
-	float bnC = btnHash( bni + float2( 0.0f, 1.0f ) );
-	float bnD = btnHash( bni + float2( 1.0f, 1.0f ) );
-	float btnNoise1 = mix( bnA, bnB, bnu.x ) + ( bnC - bnA ) * bnu.y * ( 1.0f - bnu.x ) + ( bnD - bnB ) * bnu.x * bnu.y;
+		/*
+		#define btnHash( p ) fract( sin( dot( p, float2( 127.1f, 311.7f ) ) ) * 43758.5453f )
 
-	float2 bni2 = floor( screenPixel * 0.24f - buttonTime * 0.7f );
-	float2 bnf2 = fract( screenPixel * 0.24f - buttonTime * 0.7f );
-	float2 bnu2 = bnf2 * bnf2 * ( 3.0f - 2.0f * bnf2 );
-	float bn2A = btnHash( bni2 );
-	float bn2B = btnHash( bni2 + float2( 1.0f, 0.0f ) );
-	float bn2C = btnHash( bni2 + float2( 0.0f, 1.0f ) );
-	float bn2D = btnHash( bni2 + float2( 1.0f, 1.0f ) );
-	float btnNoise2 = mix( bn2A, bn2B, bnu2.x ) + ( bn2C - bn2A ) * bnu2.y * ( 1.0f - bnu2.x ) + ( bn2D - bn2B ) * bnu2.x * bnu2.y;
+		float2 bni = floor( screenPixel * 0.12f + buttonTime );
+		float2 bnf = fract( screenPixel * 0.12f + buttonTime );
+		float2 bnu = bnf * bnf * ( 3.0f - 2.0f * bnf );
+		float bnA = btnHash( bni );
+		float bnB = btnHash( bni + float2( 1.0f, 0.0f ) );
+		float bnC = btnHash( bni + float2( 0.0f, 1.0f ) );
+		float bnD = btnHash( bni + float2( 1.0f, 1.0f ) );
+		float btnNoise1 = mix( bnA, bnB, bnu.x ) + ( bnC - bnA ) * bnu.y * ( 1.0f - bnu.x ) + ( bnD - bnB ) * bnu.x * bnu.y;
 
-	#undef btnHash
+		float2 bni2 = floor( screenPixel * 0.24f - buttonTime * 0.7f );
+		float2 bnf2 = fract( screenPixel * 0.24f - buttonTime * 0.7f );
+		float2 bnu2 = bnf2 * bnf2 * ( 3.0f - 2.0f * bnf2 );
+		float bn2A = btnHash( bni2 );
+		float bn2B = btnHash( bni2 + float2( 1.0f, 0.0f ) );
+		float bn2C = btnHash( bni2 + float2( 0.0f, 1.0f ) );
+		float bn2D = btnHash( bni2 + float2( 1.0f, 1.0f ) );
+		float btnNoise2 = mix( bn2A, bn2B, bnu2.x ) + ( bn2C - bn2A ) * bnu2.y * ( 1.0f - bnu2.x ) + ( bn2D - bn2B ) * bnu2.x * bnu2.y;
 
-	float btnPattern = btnNoise1 * 0.6f + btnNoise2 * 0.8f;
-	*/
+		#undef btnHash
 
-	float newPixelSize = 0.2f;
+		float btnPattern = btnNoise1 * 0.6f + btnNoise2 * 0.8f;
+		*/
 
-	//Diagonal animated wave with perpendicular wave offset for breaking up the pattern
-	float diagonalWave = sin( (screenPixel.x + screenPixel.y) * newPixelSize - buttonTime * 20.0f );
-	float perpendicularWave = cos( (screenPixel.y - screenPixel.x) * newPixelSize - buttonTime * 8.0f );
-	float btnPattern = mix( diagonalWave, perpendicularWave, 0.2f ) * 0.4f + 0.5f;
+		float newPixelSize = 0.2f;
 
-	//Add a very subtle darkening bias with minimal brightening
-	float effect = (btnPattern - 0.8f) * 0.1f; //Range -0.08 to +0.02
-	diffuseCol.rgb = lerp( diffuseCol.rgb, diffuseCol.rgb + effect, topImage1.a );
+		//Diagonal animated wave with perpendicular wave offset for breaking up the pattern
+		float diagonalWave = sin( (screenPixel.x + screenPixel.y) * newPixelSize - buttonTime * 20.0f );
+		float perpendicularWave = cos( (screenPixel.y - screenPixel.x) * newPixelSize - buttonTime * 8.0f );
+		float btnPattern = mix( diagonalWave, perpendicularWave, 0.2f ) * 0.4f + 0.5f;
 
-	//Border highlight effect with animated diagonal stripes
-	float borderMask = 1.0f - topImage1.a; //Inverse mask for edges/border
-	float stripeFreq = 0.0003f;
-	float stripeFraction = fract( (inPs.screenPos.x - inPs.screenPos.y) * stripeFreq - buttonTime * 0.8f );
-	float animatedStripes = step( 0.01f, stripeFraction ) * (1.0f - step( 0.05f, stripeFraction ));
-	float borderHighlight = animatedStripes * borderMask;
-	diffuseCol.rgb += float3(1.0f, 1.0f, 1.0f) * borderHighlight * 0.05f; //Hard white highlight on edges
+		//Add a very subtle darkening bias with minimal brightening
+		float effect = (btnPattern - 0.8f) * 0.1f; //Range -0.08 to +0.02
+		diffuseCol.rgb = lerp( diffuseCol.rgb, diffuseCol.rgb + effect, topImage1.a );
+
+	@end
+
+	@property( outlineGleam )
+		//Border highlight effect with animated diagonal stripes
+		float borderMask = 1.0f - topImage1.a; //Inverse mask for edges/border
+		float stripeFreq = 0.0003f;
+		float stripeFraction = fract( (inPs.screenPos.x - inPs.screenPos.y) * stripeFreq - buttonTime * 0.8f );
+		float animatedStripes = step( 0.01f, stripeFraction ) * (1.0f - step( 0.05f, stripeFraction ));
+		float borderHighlight = animatedStripes * borderMask;
+		diffuseCol.rgb += float3(1.0f, 1.0f, 1.0f) * borderHighlight * 0.05f; //Hard white highlight on edges
+	@end
 @end
 
 @end

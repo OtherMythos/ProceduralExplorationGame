@@ -766,7 +766,7 @@ enum GameplayComplexMenuBusEvents{
         });
         playIconButton.setSize(Vec2(240, 80));
         playIconButton.setPosition(Vec2(MARGIN + explorationMap.getSize().x / 2 - playIconButton.getSize().x / 2, currentY));
-        _gameCore.setWidgetCustomParameter(playIconButton.mButton_, 0, 2);
+        _gameCore.setWidgetCustomParameter(playIconButton.mButton_, 0, HLMS_UNLIT_OUTLINE_GLEAM | HLMS_UNLIT_DIAGONAL_DIFFUSE_PIXELS);
         playIconButton.attachListenerForEvent(function(widget, action){
             notifyExplorationBegin_(null);
         }, _GUI_ACTION_PRESSED, this);

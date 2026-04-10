@@ -843,7 +843,7 @@
             local targetMesh = ((x == 1 && y == 1) ? middleMesh : surroundingMesh);
             local oceanItem = _scene.createItem(targetMesh, _SCENE_STATIC);
             oceanItem.setCastsShadows(false);
-            _gameCore.writeFlagsToItem(oceanItem, HLMS_OCEAN_VERTICES | HLMS_FLOOR_DECALS);
+            _gameCore.writeFlagsToItem(oceanItem, HLMS_PBS_OCEAN_VERTICES | HLMS_PBS_FLOOR_DECALS);
             oceanItem.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_WATER);
             oceanItem.setDatablock(surroundBlock);
             oceanNode.attachObject(oceanItem);
@@ -888,7 +888,7 @@
             local decorationNode = regionNode.createChildSceneNode(_SCENE_STATIC);
 
             local item = _scene.createItem(i, _SCENE_STATIC);
-            _gameCore.writeFlagsToItem(item, HLMS_PACKED_VOXELS | HLMS_TERRAIN | HLMS_FLOOR_DECALS);
+            _gameCore.writeFlagsToItem(item, HLMS_PBS_PACKED_VOXELS | HLMS_PBS_TERRAIN | HLMS_PBS_FLOOR_DECALS);
             item.setRenderQueueGroup(getTerrainRenderQueueStart());
             item.setCastsShadows(false);
             local landNode = regionNode.createChildSceneNode(_SCENE_STATIC);

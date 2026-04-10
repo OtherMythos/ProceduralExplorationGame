@@ -126,11 +126,13 @@ namespace ProceduralExplorationGamePlugin{
             if(!renderable->hasCustomParameter(0)) return;
             const Ogre::Vector4& params = renderable->getCustomParameter(0);
             AV::uint32 v = *(reinterpret_cast<const AV::uint32*>(&params.x));
-            if(v & 1u){
-                hlms->setProperty("exploreButton", true);
+            if(v & ProceduralExplorationGameCore::HLMS_UNLIT_OUTLINE_GLEAM){
+                hlms->setProperty("guiWidgetModify", true);
+                hlms->setProperty("outlineGleam", true);
             }
-            if(v & 2u){
-                hlms->setProperty("buttonChannelMask", true);
+            if(v & ProceduralExplorationGameCore::HLMS_UNLIT_DIAGONAL_DIFFUSE_PIXELS){
+                hlms->setProperty("guiWidgetModify", true);
+                hlms->setProperty("diagonalDiffuse", true);
             }
         }
         Ogre::uint32 fillBuffersForV2(const Ogre::HlmsCache *cache, const Ogre::QueuedRenderable &queuedRenderable, bool casterPass, Ogre::uint32 lastCacheHash, Ogre::CommandBuffer *commandBuffer){
