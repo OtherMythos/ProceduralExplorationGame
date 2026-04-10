@@ -13,6 +13,13 @@ def hex_to_rgb(h):
     return tuple(int(h[i:i+2], 16) for i in (0, 2, 4))
 
 
+def srgb_to_linear(v):
+    """Convert a single sRGB component [0,1] to linear light."""
+    if v <= 0.04045:
+        return v / 12.92
+    return ((v + 0.055) / 1.055) ** 2.4
+
+
 def rgb_to_hex(rgb):
     return '#%02x%02x%02x' % tuple(max(0, min(255, int(v))) for v in rgb)
 
@@ -61,51 +68,45 @@ def normalize_hex(s):
     return s
 
 
-def generate_coloured_atlas_svg(atlas_path, entries):
-    """Build a coloured atlas SVG from a template and palette entries.
-    Returns (svg_string, new_height)."""
+def generate_neutral_atlas_svg(atlas_path):
+    """Build a single 128px neutral grey atlas SVG from a template.
+    The grey zones (outer=40%, mid=70%, inner=white) are multiplied by
+    each skin's colour attribute at runtime to produce the correct tint.
+    Returns (svg_string, 128)."""
     path_outer, path_mid, path_inner = extract_top_paths(str(atlas_path))
-    groups = []
-    for i, (entry_name, entry_val) in enumerate(entries):
-        raw_hex = entry_val.get('hex') if isinstance(entry_val, dict) else entry_val
-        if not raw_hex:
-            print(f"Skipping {entry_name}: no hex value")
-            continue
-        norm = normalize_hex(raw_hex)
-        if not norm or not norm.startswith('#'):
-            print(f"Skipping {entry_name}: invalid hex '{raw_hex}'")
-            continue
-        outer = blend(norm, '#000000', 0.6)
-        mid   = blend(norm, '#000000', 0.3)
-        inner = norm
-        groups.append(make_group(path_outer, path_mid, path_inner, outer, mid, inner, i * 128))
-    new_height = max(128, len(groups) * 128)
+    group = make_group(path_outer, path_mid, path_inner, '#666666', '#b2b2b2', '#ffffff', 0)
     svg_out = [
         '<?xml version="1.0" encoding="UTF-8"?>',
-        f'<svg width="256" height="{new_height}" xmlns="http://www.w3.org/2000/svg">',
-        '\n'.join(groups),
+        '<svg width="256" height="128" xmlns="http://www.w3.org/2000/svg">',
+        group,
         '</svg>',
     ]
-    return '\n'.join(svg_out), new_height
+    return '\n'.join(svg_out), 128
 
 
-def generate_skin_entry(template, template_key, entry_name, i, new_height):
-    """Build a single skin dict from a template for one palette colour entry."""
+def generate_skin_entry(template, template_key, entry_name, entry_val):
+    """Build a single skin dict from a template for one palette colour entry.
+    Uses a colour attribute to tint the neutral base texture at runtime."""
+    raw_hex = entry_val.get('hex') if isinstance(entry_val, dict) else entry_val
+    norm = normalize_hex(raw_hex)
+    r, g, b = hex_to_rgb(norm)
     entry = dict(template)
-    entry['tex_resolution'] = [256, new_height]
+    entry['tex_resolution'] = [256, 128]
     entry.pop('atlas', None)
-    entry.pop('colour', None)
+    entry['colour'] = [
+        round(srgb_to_linear(r / 255.0), 6),
+        round(srgb_to_linear(g / 255.0), 6),
+        round(srgb_to_linear(b / 255.0), 6),
+        1.0
+    ]
     if 'material' in entry and 'COLOUR' in entry['material']:
         entry['material'] = entry['material'].replace('COLOUR', str(entry_name))
-    y_offset = i * 128
     if 'grid_uv' in template:
-        entry['grid_uv'] = {
-            k: [v[0], v[1] + y_offset, v[2], v[3]] for k, v in template['grid_uv'].items()
-        }
+        entry['grid_uv'] = dict(template['grid_uv'])
     return entry
 
 
-def update_skins_json(sk_json_path, entries, new_height):
+def update_skins_json(sk_json_path, entries):
     """Update a Skins.colibri.json in-place: expand all COLOUR skin and pack templates."""
     with open(sk_json_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
@@ -123,13 +124,13 @@ def update_skins_json(sk_json_path, entries, new_height):
 
     #Generate entries for each template x each palette colour
     for template_key, template in skin_templates.items():
-        for i, (entry_name, entry_val) in enumerate(entries):
+        for entry_name, entry_val in entries:
             raw_hex = entry_val.get('hex') if isinstance(entry_val, dict) else entry_val
             norm = normalize_hex(raw_hex)
             if not norm or not norm.startswith('#'):
                 continue
             skin_key = template_key.replace('COLOUR', str(entry_name))
-            data['skins'][skin_key] = generate_skin_entry(template, template_key, entry_name, i, new_height)
+            data['skins'][skin_key] = generate_skin_entry(template, template_key, entry_name, entry_val)
 
     #Expand skin_packs COLOUR templates
     if 'skin_packs' in data:
@@ -190,21 +191,21 @@ class AssetModuleSkinPalette(AssetModule):
             shutil.rmtree(output_dir)
         shutil.copytree(template_skin, output_dir)
 
-        svg_content, new_height = generate_coloured_atlas_svg(atlas_template, entries)
+        svg_content, _ = generate_neutral_atlas_svg(atlas_template)
         with open(output_dir / 'Atlas.svg', 'w', encoding='utf-8') as f:
             f.write(svg_content)
 
         atlas_small_edge_template = template_skin / 'AtlasSmallEdge.svg'
         if atlas_small_edge_template.exists():
-            small_edge_content, _ = generate_coloured_atlas_svg(atlas_small_edge_template, entries)
+            small_edge_content, _ = generate_neutral_atlas_svg(atlas_small_edge_template)
             with open(output_dir / 'AtlasSmallEdge.svg', 'w', encoding='utf-8') as f:
                 f.write(small_edge_content)
 
-        # Update Skins.colibri.json tex_resolution and add skin entries
+        # Update Skins.colibri.json and add skin entries
         sk_json_path = output_dir / 'Skins.colibri.json'
         if sk_json_path.exists():
             try:
-                update_skins_json(sk_json_path, entries, new_height)
+                update_skins_json(sk_json_path, entries)
             except Exception as e:
                 print(f"Warning: failed to update Skins.colibri.json in {output_dir}: {e}")
 

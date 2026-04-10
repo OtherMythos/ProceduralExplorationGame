@@ -4,7 +4,7 @@
         "Panel_COLOUR_idle" :
         {
             "material" : "AtlasTransparent",
-            "tex_resolution" : [256, 384],
+            "tex_resolution" : [256, 128],
             "grid_uv" :
             {
                 "top_left": [0, 0, 46, 42],
@@ -26,7 +26,7 @@
         "Panel_COLOUR_smallEdge_idle" :
         {
             "material" : "AtlasSmallEdgeTransparent",
-            "tex_resolution" : [256, 384],
+            "tex_resolution" : [256, 128],
             "grid_uv" :
             {
                 "top_left": [0, 0, 46, 42],
@@ -69,19 +69,6 @@
             "grid_uv" :
             {
                 "all" : [0, 256, 256, 256]
-            }
-        },
-        "Panel_edge_red_colour" :
-        {
-            "material" : "AtlasTransparent",
-            "tex_resolution" : [256, 1280],
-            "grid_uv" :
-            {
-                "all": [90, 512, 2, 2]
-            },
-            "borders" :
-            {
-                "all" : [0, 0]
             }
         },
         "Button_channelMask_idle" :
