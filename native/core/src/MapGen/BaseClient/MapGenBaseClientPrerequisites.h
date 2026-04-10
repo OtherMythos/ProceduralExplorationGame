@@ -7,6 +7,7 @@
 namespace ProceduralExplorationGameCore{
 
     #include "../../../../../src/MapGen/Exploration/Generator/MapConstants.h.nut"
+    #include "../../../../../src/Constants.h.nut"
 
     class ExplorationMapInputData : public MapGenDataContainer{
     };

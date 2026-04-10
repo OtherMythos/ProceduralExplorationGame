@@ -42,6 +42,7 @@ function start(){
     _doFile("res://src/Versions.h.nut");
     _doFile("res://src/Constants.nut");
     _doFile("res://src/Helpers.nut");
+    _doFile("res://src/Constants.h.nut");
     _doFile("res://src/MapGen/Exploration/Generator/MapConstants.h.nut");
 
     setupInitialCanvasSize();
