@@ -3,7 +3,7 @@
     {
         "Panel_COLOUR_idle" :
         {
-            "material" : "AtlasTransparent",
+            "material" : "AtlasChannelMask",
             "tex_resolution" : [256, 128],
             "grid_uv" :
             {
@@ -25,7 +25,7 @@
         },
         "Panel_COLOUR_smallEdge_idle" :
         {
-            "material" : "AtlasSmallEdgeTransparent",
+            "material" : "AtlasSmallEdgeChannelMask",
             "tex_resolution" : [256, 128],
             "grid_uv" :
             {

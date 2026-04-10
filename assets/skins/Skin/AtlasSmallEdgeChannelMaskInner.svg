@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="256" height="128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Inner section only, transparent outside -->
+  <path d="M 38,17 L 218,17 Q 225,17 226,19 L 237,30 Q 239,31 239,38 L 239,90 Q 239,97 237,98 L 226,109 Q 225,111 218,111 L 38,111 Q 31,111 30,109 L 19,98 Q 17,97 17,90 L 17,38 Q 17,31 19,30 L 30,19 Q 31,17 38,17 Z" fill="#ffffff"/>
+</svg>
