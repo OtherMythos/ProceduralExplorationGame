@@ -57,6 +57,14 @@
 	//Add a very subtle darkening bias with minimal brightening
 	float effect = (btnPattern - 0.8f) * 0.1f; //Range -0.08 to +0.02
 	diffuseCol.rgb = lerp( diffuseCol.rgb, diffuseCol.rgb + effect, topImage1.a );
+
+	//Border highlight effect with animated diagonal stripes
+	float borderMask = 1.0f - topImage1.a; //Inverse mask for edges/border
+	float stripeFreq = 0.0003f;
+	float stripeFraction = fract( (inPs.screenPos.x - inPs.screenPos.y) * stripeFreq - buttonTime * 0.8f );
+	float animatedStripes = step( 0.01f, stripeFraction ) * (1.0f - step( 0.05f, stripeFraction ));
+	float borderHighlight = animatedStripes * borderMask;
+	diffuseCol.rgb += float3(1.0f, 1.0f, 1.0f) * borderHighlight * 0.05f; //Hard white highlight on edges
 @end
 
 @end
