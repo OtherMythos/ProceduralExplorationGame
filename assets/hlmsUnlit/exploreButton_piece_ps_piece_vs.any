@@ -45,15 +45,9 @@
 
 	float btnPattern = btnNoise1 * 0.6f + btnNoise2 * 0.8f;
 
-	float3 buttonColour = float3( 0.173f, 0.431f, 0.608f );  //0x2c6e9b
-	float3 btnColour = mix( buttonColour * 0.65f, buttonColour * 1.35f, btnPattern );
-
-	//Apply pattern only over the inner region using topImage1.a so the blend is AA-accurate
-	diffuseCol.rgb = lerp( diffuseCol.rgb, midf3( btnColour ), topImage1.a );
+	//Add a very subtle darkening bias with minimal brightening
+	float effect = (btnPattern - 0.8f) * 0.1f; //Range -0.08 to +0.02
+	diffuseCol.rgb = lerp( diffuseCol.rgb, diffuseCol.rgb + effect, topImage1.a );
 @end
 
-@property( exploreButton )
-	diffuseCol.rgb = midf3_c( 0.0f, 0.0f, 0.0f );
-	diffuseCol.a = midf_c( 1.0f ) - inPs.uv0.x;
-@end
 @end
