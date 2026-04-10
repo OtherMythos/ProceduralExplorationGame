@@ -86,23 +86,21 @@ def generate_neutral_atlas_svg(atlas_path):
 
 def generate_skin_entry(template, template_key, entry_name, entry_val):
     """Build a single skin dict from a template for one palette colour entry.
-    Uses a colour attribute to tint the neutral base texture at runtime."""
+    Uses copy_from to reference the template, only adding the colour override."""
     raw_hex = entry_val.get('hex') if isinstance(entry_val, dict) else entry_val
     norm = normalize_hex(raw_hex)
     r, g, b = hex_to_rgb(norm)
-    entry = dict(template)
-    entry['tex_resolution'] = [256, 128]
-    entry.pop('atlas', None)
-    entry['colour'] = [
-        round(srgb_to_linear(r / 255.0), 6),
-        round(srgb_to_linear(g / 255.0), 6),
-        round(srgb_to_linear(b / 255.0), 6),
-        1.0
-    ]
-    if 'material' in entry and 'COLOUR' in entry['material']:
-        entry['material'] = entry['material'].replace('COLOUR', str(entry_name))
-    if 'grid_uv' in template:
-        entry['grid_uv'] = dict(template['grid_uv'])
+    entry = {
+        'copy_from': template_key,
+        'colour': [
+            round(srgb_to_linear(r / 255.0), 6),
+            round(srgb_to_linear(g / 255.0), 6),
+            round(srgb_to_linear(b / 255.0), 6),
+            1.0
+        ]
+    }
+    if 'material' in template and 'COLOUR' in template['material']:
+        entry['material'] = template['material'].replace('COLOUR', str(entry_name))
     return entry
 
 
