@@ -47,9 +47,12 @@
 	float btnPattern = btnNoise1 * 0.6f + btnNoise2 * 0.8f;
 	*/
 
-	//Diagonal animated wave pattern with smooth sine fade
-	float diagonalPos = (screenPixel.x + screenPixel.y) * 0.2f - buttonTime * 10.0f;
-	float btnPattern = sin( diagonalPos ) * 0.4f + 0.5f; //Maps sin [-1,1] to [0,1]
+	float newPixelSize = 0.2f;
+
+	//Diagonal animated wave with perpendicular wave offset for breaking up the pattern
+	float diagonalWave = sin( (screenPixel.x + screenPixel.y) * newPixelSize - buttonTime * 20.0f );
+	float perpendicularWave = cos( (screenPixel.y - screenPixel.x) * newPixelSize - buttonTime * 8.0f );
+	float btnPattern = mix( diagonalWave, perpendicularWave, 0.2f ) * 0.4f + 0.5f;
 
 	//Add a very subtle darkening bias with minimal brightening
 	float effect = (btnPattern - 0.8f) * 0.1f; //Range -0.08 to +0.02
