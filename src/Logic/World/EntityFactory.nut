@@ -609,9 +609,9 @@
         local placeNode = parentNode.createChildSceneNode(_SCENE_STATIC);
         local meshTarget = d.mMesh;
         placeNode.setPosition(targetPos);
-        local item = _gameCore.createVoxMeshItem(meshTarget, HLMS_PACKED_VOXELS | HLMS_PACKED_OFFLINE_VOXELS | HLMS_TREE_VERTICES, _SCENE_STATIC);
+        local item = _gameCore.createVoxMeshItem(meshTarget, HLMS_PBS_PACKED_VOXELS | HLMS_PBS_PACKED_OFFLINE_VOXELS | HLMS_PBS_TREE_VERTICES, _SCENE_STATIC);
         item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION);
-        //_gameCore.writeFlagsToItem(item, HLMS_PACKED_VOXELS | HLMS_PACKED_OFFLINE_VOXELS | HLMS_TREE_VERTICES);
+        //_gameCore.writeFlagsToItem(item, HLMS_PBS_PACKED_VOXELS | HLMS_PBS_PACKED_OFFLINE_VOXELS | HLMS_PBS_TREE_VERTICES);
         placeNode.attachObject(item);
         local scale = d.mScale;
         placeNode.setScale(scale, scale, scale);

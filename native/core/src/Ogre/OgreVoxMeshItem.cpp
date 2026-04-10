@@ -143,8 +143,8 @@ namespace Ogre{
         // must have mesh parameter
         VoxMeshPtr pMesh;
         Ogre::uint32 flags =
-            ProceduralExplorationGameCore::HLMS_PACKED_VOXELS |
-            ProceduralExplorationGameCore::HLMS_PACKED_OFFLINE_VOXELS;
+            ProceduralExplorationGameCore::HLMS_PBS_PACKED_VOXELS |
+            ProceduralExplorationGameCore::HLMS_PBS_PACKED_OFFLINE_VOXELS;
         if (params != 0)
         {
             String groupName = ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME;

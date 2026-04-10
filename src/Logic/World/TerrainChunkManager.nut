@@ -133,7 +133,7 @@
         local item = _scene.createItem(meshObj);
         item.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_TERRRAIN_DISCOVERED);
         item.setCastsShadows(false);
-        _gameCore.writeFlagsToItem(item, HLMS_PACKED_VOXELS | HLMS_FLOOR_DECALS);
+        _gameCore.writeFlagsToItem(item, HLMS_PBS_PACKED_VOXELS | HLMS_PBS_FLOOR_DECALS);
         item.setDatablock("baseVoxelMaterial");
         return item;
     }

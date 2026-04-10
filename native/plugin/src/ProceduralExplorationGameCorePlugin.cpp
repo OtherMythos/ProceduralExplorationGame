@@ -76,7 +76,7 @@ namespace ProceduralExplorationGamePlugin{
             const Ogre::Vector4& params = renderable->getCustomParameter(0);
             AV::uint32 v = *(reinterpret_cast<const AV::uint32*>(&params.x));
 
-            if(v & ProceduralExplorationGameCore::HLMS_PACKED_VOXELS){
+            if(v & ProceduralExplorationGameCore::HLMS_PBS_PACKED_VOXELS){
                 hlms->setProperty("packedVoxels", true);
                 if(!CasterPass){
                     hlms->setProperty( Ogre::HlmsBaseProp::Normal, 1 );
@@ -85,25 +85,25 @@ namespace ProceduralExplorationGamePlugin{
                     hlms->setProperty( Ogre::HlmsBaseProp::UvCount, numTextures );
                 }
             }
-            if(v & ProceduralExplorationGameCore::HLMS_TERRAIN){
+            if(v & ProceduralExplorationGameCore::HLMS_PBS_TERRAIN){
                 hlms->setProperty("voxelTerrain", true);
             }
-            if(v & ProceduralExplorationGameCore::HLMS_PACKED_OFFLINE_VOXELS){
+            if(v & ProceduralExplorationGameCore::HLMS_PBS_PACKED_OFFLINE_VOXELS){
                 hlms->setProperty("offlineVoxels", true);
             }
-            if(v & ProceduralExplorationGameCore::HLMS_OCEAN_VERTICES){
+            if(v & ProceduralExplorationGameCore::HLMS_PBS_OCEAN_VERTICES){
                 hlms->setProperty("oceanVertices", true);
             }
-            if(v & ProceduralExplorationGameCore::HLMS_TREE_VERTICES){
+            if(v & ProceduralExplorationGameCore::HLMS_PBS_TREE_VERTICES){
                 hlms->setProperty("treeVertices", true);
             }
-            if(v & ProceduralExplorationGameCore::HLMS_WIND_STREAKS){
+            if(v & ProceduralExplorationGameCore::HLMS_PBS_WIND_STREAKS){
                 hlms->setProperty("windStreaks", true);
             }
-            if(v & ProceduralExplorationGameCore::HLMS_FLOOR_DECALS){
+            if(v & ProceduralExplorationGameCore::HLMS_PBS_FLOOR_DECALS){
                 hlms->setProperty("floorDecals", true);
             }
-            if(v & ProceduralExplorationGameCore::HLMS_SPRITE_ANIM){
+            if(v & ProceduralExplorationGameCore::HLMS_PBS_SPRITE_ANIM){
                 hlms->setProperty("spriteAnim", true);
             }
         }

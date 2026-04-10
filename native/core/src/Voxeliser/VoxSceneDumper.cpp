@@ -319,9 +319,9 @@ namespace ProceduralExplorationGameCore{
                 const Ogre::Vector4& params = renderable->getCustomParameter(0);
                 Ogre::uint32 v = *(reinterpret_cast<const Ogre::uint32*>(&params.x));
 
-                const bool packedVoxels = (v & ProceduralExplorationGameCore::HLMS_PACKED_VOXELS);
-                const bool terrain = (v & ProceduralExplorationGameCore::HLMS_TERRAIN);
-                const bool offlineVoxels = (v & ProceduralExplorationGameCore::HLMS_PACKED_OFFLINE_VOXELS);
+                const bool packedVoxels = (v & ProceduralExplorationGameCore::HLMS_PBS_PACKED_VOXELS);
+                const bool terrain = (v & ProceduralExplorationGameCore::HLMS_PBS_TERRAIN);
+                const bool offlineVoxels = (v & ProceduralExplorationGameCore::HLMS_PBS_PACKED_OFFLINE_VOXELS);
 
                 Ogre::VertexArrayObjectArray vaos = subMesh->mVao[Ogre::VpNormal];
 
