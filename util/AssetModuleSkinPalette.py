@@ -31,11 +31,15 @@ def blend(c1, c2, t):
 
 
 def extract_top_paths(atlas_path):
+    """Extract top 2 or 3 paths from atlas SVG."""
     txt = open(atlas_path, 'r', encoding='utf-8').read()
     paths = re.findall(r'<path[^>]+/>', txt)
-    if len(paths) < 3:
-        raise RuntimeError('Could not find three top paths in atlas')
-    return paths[0], paths[1], paths[2]
+    if len(paths) < 2:
+        raise RuntimeError('Could not find at least two top paths in atlas')
+    if len(paths) >= 3:
+        return paths[0], paths[1], paths[2]
+    else:
+        return paths[0], paths[1], None
 
 
 def make_group(path_outer, path_mid, path_inner, outer_fill, mid_fill, inner_fill, y):
@@ -45,11 +49,16 @@ def make_group(path_outer, path_mid, path_inner, outer_fill, mid_fill, inner_fil
 
     outer = replace_fill(path_outer, outer_fill)
     mid = replace_fill(path_mid, mid_fill)
-    inner = replace_fill(path_inner, inner_fill)
-    if y == 0:
-        return '  ' + outer + '\n  ' + mid + '\n  ' + inner + '\n'
+    if path_inner is None:
+        paths_str = outer + '\n  ' + mid
     else:
-        return f'  <g transform="translate(0,{y})">\n    ' + outer + '\n    ' + mid + '\n    ' + inner + '\n  </g>\n'
+        inner = replace_fill(path_inner, inner_fill)
+        paths_str = outer + '\n  ' + mid + '\n  ' + inner
+    if y == 0:
+        return '  ' + paths_str + '\n'
+    else:
+        paths_str = paths_str.replace('\n  ', '\n    ')
+        return f'  <g transform="translate(0,{y})">\n    ' + paths_str + '\n  </g>\n'
 
 
 def normalize_hex(s):
@@ -70,11 +79,14 @@ def normalize_hex(s):
 
 def generate_neutral_atlas_svg(atlas_path):
     """Build a single 128px neutral grey atlas SVG from a template.
-    The grey zones (outer=40%, mid=70%, inner=white) are multiplied by
+    The grey zones (outer=40%, mid=70%, inner=white if present) are multiplied by
     each skin's colour attribute at runtime to produce the correct tint.
     Returns (svg_string, 128)."""
     path_outer, path_mid, path_inner = extract_top_paths(str(atlas_path))
-    group = make_group(path_outer, path_mid, path_inner, '#666666', '#b2b2b2', '#ffffff', 0)
+    if path_inner is None:
+        group = make_group(path_outer, path_mid, None, '#666666', '#b2b2b2', None, 0)
+    else:
+        group = make_group(path_outer, path_mid, path_inner, '#666666', '#b2b2b2', '#ffffff', 0)
     svg_out = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<svg width="256" height="128" xmlns="http://www.w3.org/2000/svg">',
@@ -160,11 +172,6 @@ class AssetModuleSkinPalette(AssetModule):
         template_skin = repo_root / 'assets' / 'skins' / 'Skin'
         out_skins_dir = repo_root / 'assets' / 'skins'
 
-        atlas_template = template_skin / 'Atlas.svg'
-        if not atlas_template.exists():
-            print(f"Atlas template missing: {atlas_template}")
-            return
-
         try:
             with open(filePath, 'r', encoding='utf-8') as f:
                 palette_data = json.load(f)
@@ -188,10 +195,6 @@ class AssetModuleSkinPalette(AssetModule):
         if output_dir.exists():
             shutil.rmtree(output_dir)
         shutil.copytree(template_skin, output_dir)
-
-        svg_content, _ = generate_neutral_atlas_svg(atlas_template)
-        with open(output_dir / 'Atlas.svg', 'w', encoding='utf-8') as f:
-            f.write(svg_content)
 
         atlas_small_edge_template = template_skin / 'AtlasSmallEdge.svg'
         if atlas_small_edge_template.exists():
