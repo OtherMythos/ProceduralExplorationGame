@@ -21,6 +21,7 @@
 	float pixelSize = 24.0f;
 	float2 screenPixel = floor( inPs.screenPos / pixelSize );
 
+	/*
 	#define btnHash( p ) fract( sin( dot( p, float2( 127.1f, 311.7f ) ) ) * 43758.5453f )
 
 	float2 bni = floor( screenPixel * 0.12f + buttonTime );
@@ -44,6 +45,11 @@
 	#undef btnHash
 
 	float btnPattern = btnNoise1 * 0.6f + btnNoise2 * 0.8f;
+	*/
+
+	//Diagonal animated wave pattern with smooth sine fade
+	float diagonalPos = (screenPixel.x + screenPixel.y) * 0.2f - buttonTime * 10.0f;
+	float btnPattern = sin( diagonalPos ) * 0.4f + 0.5f; //Maps sin [-1,1] to [0,1]
 
 	//Add a very subtle darkening bias with minimal brightening
 	float effect = (btnPattern - 0.8f) * 0.1f; //Range -0.08 to +0.02
