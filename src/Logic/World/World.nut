@@ -56,7 +56,7 @@
         local targetItem = _scene.createItem("gizmoEffectBox.mesh");
         mAnimDB_ = ::DatablockManager.quickCloneDatablock("statusEffectFlame");
         targetItem.setRenderQueueGroup(RENDER_QUEUE_EXPLORATION_EFFECTS);
-        _gameCore.writeFlagsToItem(targetItem, HLMS_SPRITE_ANIM);
+        _gameCore.writeFlagsToItem(targetItem, HLMS_PBS_SPRITE_ANIM);
         targetItem.setDatablock(mAnimDB_);
         targetItem.setCastsShadows(false);
         targetNode.attachObject(targetItem);

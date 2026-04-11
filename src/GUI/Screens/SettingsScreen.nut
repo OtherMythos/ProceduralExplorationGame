@@ -86,7 +86,7 @@
         backButton.setPosition(0, winSizeClipping.y - backButton.getSize().y);
         backButton.setSize(winSizeClipping.x, backButton.getSize().y);
         backButton.setDatablock("internal/ButtonSkin");
-        _gameCore.setWidgetCustomParameter(backButton, 0, HLMS_UNLIT_OUTLINE_GLEAM | HLMS_UNLIT_SIMPLE_DIFFUSE);
+        _gameCore.setWidgetCustomParameter(backButton, 0, HLMS_UNLIT_SIMPLE_DIFFUSE);
         backButton.setSkinPack("Button_blue");
         backButton.setFocus();
 

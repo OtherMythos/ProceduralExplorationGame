@@ -61,6 +61,7 @@
             withdrawButton.setDefaultFontSize(withdrawButton.getDefaultFontSize() * 1.5);
             local size = withdrawButton.getSize();
             withdrawButton.setSize(mInnerPanel_.getSize().x / 2, size.y * 1.5);
+            _gameCore.setWidgetCustomParameter(withdrawButton, 0, HLMS_UNLIT_DIAGONAL_DIFFUSE_PIXELS);
             withdrawButton.setSkinPack("Panel_blue");
             withdrawButton.attachListenerForEvent(function(widget, action){
                 ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
@@ -73,6 +74,7 @@
             depositButton.setDefaultFontSize(depositButton.getDefaultFontSize() * 1.5);
             local size = depositButton.getSize();
             depositButton.setSize(mInnerPanel_.getSize().x / 2, size.y * 1.5);
+            _gameCore.setWidgetCustomParameter(depositButton, 0, HLMS_UNLIT_DIAGONAL_DIFFUSE_PIXELS);
             depositButton.setSkinPack("Panel_blue");
             depositButton.attachListenerForEvent(function(widget, action){
                 ::HapticManager.triggerSimpleHaptic(HapticType.LIGHT);
