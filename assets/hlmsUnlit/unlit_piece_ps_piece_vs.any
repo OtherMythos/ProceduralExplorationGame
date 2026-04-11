@@ -120,6 +120,12 @@
 		float borderHighlight = animatedStripes * borderMask;
 		diffuseCol.rgb += float3(1.0f, 1.0f, 1.0f) * borderHighlight * 0.05f; //Hard white highlight on edges
 	@end
+
+	@property( simpleDiffuse )
+		//Simple animated sin wave added to inner diffuse
+		float wave = sin( buttonTime * 24.0f ) * 0.5f + 0.5f;
+		diffuseCol.rgb = lerp( diffuseCol.rgb, diffuseCol.rgb + float3(1.0f, 1.0f, 1.0f) * (wave - 0.5f) * 0.01f, topImage1.a );
+	@end
 @end
 
 @end
