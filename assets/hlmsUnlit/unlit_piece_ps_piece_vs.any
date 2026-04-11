@@ -9,11 +9,13 @@
 	outVs.time = passBuf.unlitTime;
 	float2 ndc = outVs_Position.xy / outVs_Position.w;
 	outVs.screenPos = (ndc * 0.5f + 0.5f) / passBuf.invWindowSize.xy;
+	outVs.screenCentre = 0.5f / passBuf.invWindowSize.xy;
 @end
 
 @piece( custom_VStoPS )
 	float time;
 	float2 screenPos;
+	float2 screenCentre;
 @end
 
 @piece( custom_ps_preLights )
@@ -59,6 +61,53 @@
 		//Add a very subtle darkening bias with minimal brightening
 		float effect = (btnPattern - 0.8f) * 0.1f; //Range -0.08 to +0.02
 		diffuseCol.rgb = lerp( diffuseCol.rgb, diffuseCol.rgb + effect, topImage1.a );
+
+	@end
+
+	@property( windowBackgroundDiffuse )
+		//Optimised flow pattern: simplified noise + sine waves, pixelated and applied as brightness offset
+		float2 fbmScreenSize = inPs.screenCentre * 2.0f;
+
+		//Snap to coarse pixel grid before all calculations
+		//Scale block size with resolution to maintain consistent physical pixel appearance across devices
+		//Higher DPI screens (3x) have higher resolution, so we scale blocks proportionally
+		float screenDiagonal = length( fbmScreenSize );
+		float fbmBlockSize = 60.0f * (screenDiagonal / 2200.0f); //Normalised to ~1080p diagonal
+		float2 fbmSnapped = floor( inPs.screenPos / fbmBlockSize ) * fbmBlockSize;
+
+		//Normalise to aspect-corrected UV space
+		float2 fbmUV = fbmSnapped / fbmScreenSize.y - float2( fbmScreenSize.x / fbmScreenSize.y, 1.0f ) * 0.5f;
+
+		float fbmTime = inPs.time * 0.3f;
+
+		//Simplified hash: much cheaper than sin-based
+		float2 fbmP0 = fbmUV * 3.0f + fbmTime;
+		float2 fbmI0 = floor( fbmP0 );
+		float2 fbmF0 = fract( fbmP0 );
+		float2 fbmU0 = fbmF0 * fbmF0 * ( 3.0f - 2.0f * fbmF0 );
+
+		//Simple hash via multiply+fract, 4x cheaper than sin-dot
+		float fbmH00 = fract( fbmI0.x * 17.0f + fbmI0.y * 411.0f );
+		float fbmH01 = fract( (fbmI0.x + 1.0f) * 17.0f + fbmI0.y * 411.0f );
+		float fbmH10 = fract( fbmI0.x * 17.0f + (fbmI0.y + 1.0f) * 411.0f );
+		float fbmH11 = fract( (fbmI0.x + 1.0f) * 17.0f + (fbmI0.y + 1.0f) * 411.0f );
+		float fbmNoise = mix( fbmH00, fbmH01, fbmU0.x ) + ( fbmH10 - fbmH00 ) * fbmU0.y * ( 1.0f - fbmU0.x ) + ( fbmH11 - fbmH01 ) * fbmU0.x * fbmU0.y;
+
+		//Simple flow warping using just the one noise octave
+		float2 fbmFlow = float2(
+			sin( fbmUV.y * 2.5f + fbmTime * 0.5f ) * 0.8f + fbmNoise * 0.4f,
+			cos( fbmUV.x * 2.1f - fbmTime * 0.7f ) * 0.8f + fbmNoise * 0.4f
+		);
+
+		//Final pattern: blend of two offset sine waves through the flow-warped space
+		float2 warpedUV = fbmUV + fbmFlow;
+		float wave1 = sin( warpedUV.x * 3.5f + warpedUV.y * 2.2f + fbmTime * 2.0f );
+		float wave2 = cos( warpedUV.x * 2.8f - warpedUV.y * 3.1f - fbmTime * 1.5f );
+		float fbmPattern = mix( wave1, wave2, 0.4f ) * 0.4f + 0.5f;
+
+		//Apply as subtle brightness offset
+		float circEffect = (fbmPattern - 0.5f) * 0.12f;
+		diffuseCol.rgb = lerp( diffuseCol.rgb, diffuseCol.rgb + circEffect, topImage1.a );
 
 	@end
 

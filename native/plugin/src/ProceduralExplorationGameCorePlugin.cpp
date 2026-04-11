@@ -134,6 +134,10 @@ namespace ProceduralExplorationGamePlugin{
                 hlms->setProperty("guiWidgetModify", true);
                 hlms->setProperty("diagonalDiffuse", true);
             }
+            if(v & ProceduralExplorationGameCore::HLMS_UNLIT_WINDOW_BACKGROUND_PIXELS){
+                hlms->setProperty("guiWidgetModify", true);
+                hlms->setProperty("windowBackgroundDiffuse", true);
+            }
         }
         Ogre::uint32 fillBuffersForV2(const Ogre::HlmsCache *cache, const Ogre::QueuedRenderable &queuedRenderable, bool casterPass, Ogre::uint32 lastCacheHash, Ogre::CommandBuffer *commandBuffer){
             return 0;

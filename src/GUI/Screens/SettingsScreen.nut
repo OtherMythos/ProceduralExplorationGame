@@ -25,7 +25,7 @@
         mWindow_.setClipBorders(10, 10, 10, 10);
         mWindow_.setBreadthFirst(true);
         mWindow_.setZOrder(61);
-        _gameCore.setWidgetCustomParameter(mWindow_, 0, HLMS_UNLIT_DIAGONAL_DIFFUSE_PIXELS);
+        _gameCore.setWidgetCustomParameter(mWindow_, 0, HLMS_UNLIT_WINDOW_BACKGROUND_PIXELS);
         mWindow_.setSkinPack("Button_midGrey");
 
         createScreenCloseButton();
