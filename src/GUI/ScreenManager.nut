@@ -199,6 +199,17 @@
             return;
         }
 
+        //Resolve the transition object upfront. For non-animated transitions the outgoing screen
+        //is shut down before the incoming screen is set up, preserving correct action set LIFO order.
+        //For animated transitions both screens must be alive simultaneously so setup comes first.
+        local transData = _wrapTransitionData(transitionEffect);
+        local transObject = _createTransitionForId(transData);
+
+        if(transObject == null && outgoingScreen != null){
+            outgoingScreen.shutdown();
+            outgoingScreen = null;
+        }
+
         print("Setting up screen for layer " + layerId);
         screenObject.mLayerIdx = layerId;
         _gui.simulateGuiPrimary(false);
@@ -208,17 +219,9 @@
 
         _event.transmit(Event.SCREEN_CHANGED, {"old": oldId, "new": screenId});
 
-        local transData = _wrapTransitionData(transitionEffect);
-        if(transData != null){
-            local transObject = _createTransitionForId(transData);
-            if(transObject != null){
-                transObject.setup(screenObject, outgoingScreen, transData.data);
-                mActiveTransitions_[layerId] = transObject;
-            } else {
-                if(outgoingScreen != null) outgoingScreen.shutdown();
-            }
-        } else {
-            if(outgoingScreen != null) outgoingScreen.shutdown();
+        if(transObject != null){
+            transObject.setup(screenObject, outgoingScreen, transData.data);
+            mActiveTransitions_[layerId] = transObject;
         }
 
         _gui.simulateMouseButton(_MB_LEFT, false);
