@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="256" height="128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer triangle-ended shape (border layer) -->
+  <path d="M 40,0 L 216,0 L 252,57 Q 256,64 252,71 L 216,128 L 40,128 L 4,71 Q 0,64 4,57 Z" fill="#666666"/>
+
+  <!-- Middle shape (fill layer, inset ~12px) -->
+  <path d="M 46,12 L 210,12 L 239,59 Q 242,64 239,69 L 210,116 L 46,116 L 17,69 Q 14,64 17,59 Z" fill="#b2b2b2"/>
+</svg>

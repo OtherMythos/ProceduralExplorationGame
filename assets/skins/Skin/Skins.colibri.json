@@ -92,6 +92,47 @@
                 "all" : [10, 0],
                 "bottom" : [10, 0]
             }
+        },
+        "Panel_COLOUR_triangleEdge_idle": {
+            "material": "AtlasTriangleEdgeChannelMask",
+            "tex_resolution": [
+                256,
+                128
+            ],
+            "grid_uv": {
+                "center_left": [
+                    0,
+                    0,
+                    80,
+                    128
+                ],
+                "center": [
+                    80,
+                    0,
+                    96,
+                    128
+                ],
+                "center_right": [
+                    176,
+                    0,
+                    80,
+                    128
+                ]
+            },
+            "borders": {
+                "all": [
+                    0,
+                    0
+                ],
+                "left": [
+                    30,
+                    0
+                ],
+                "right": [
+                    30,
+                    0
+                ]
+            }
         }
     },
 
@@ -116,6 +157,14 @@
         "Button_channelMask" :
         {
             "auto" : "Button_channelMask"
+        },
+        "Button_COLOUR_triangleEdge" :
+        {
+            "auto" : "Panel_COLOUR_triangleEdge"
+        },
+        "Panel_COLOUR_triangleEdge" :
+        {
+            "auto" : "Panel_COLOUR_triangleEdge"
         }
     },
 

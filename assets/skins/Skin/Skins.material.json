@@ -41,6 +41,21 @@
                 "blendmode": "NormalNonPremul",
                 "uv": 0
             }
+        },
+        "AtlasTriangleEdgeChannelMask":
+        {
+            "blendblock": "skin/alphaBlend",
+            "diffuse_map0":
+            {
+                "texture": "AtlasTriangleEdge.png",
+                "uv": 0
+            },
+            "diffuse_map1":
+            {
+                "texture": "AtlasTriangleEdgeChannelMaskInner.png",
+                "blendmode": "NormalNonPremul",
+                "uv": 0
+            }
         }
     }
 }
