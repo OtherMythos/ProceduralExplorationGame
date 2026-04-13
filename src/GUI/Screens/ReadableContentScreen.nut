@@ -74,7 +74,7 @@
         mContentPanel_.setSkinPack("Panel_midGrey");
         mContentPanel_.setPosition(mContentPos_);
         mContentPanel_.setBreadthFirst(true);
-        mContentPanel_.setColour(ColourValue(1, 1, 1, 0));
+        mContentPanel_.setOpacity(0);
 
         mContentLabels_ = [];
         local layoutLine = _gui.createLayoutLine();
@@ -215,7 +215,7 @@
             if(mBgPanel_ != null){
                 mBgPanel_.setSize(mBgInitialSize_);
                 mBgPanel_.setCentre(currentPos.x, currentPos.y);
-                mBgPanel_.setColour(ColourValue(1, 1, 1, 0.95));
+                mBgPanel_.setOpacity(0.95);
             }
             //Fade in background screen during phase 1
             if(mBackgroundWindow_ != null){
@@ -232,7 +232,7 @@
             if(mBgPanel_ != null){
                 mBgPanel_.setSize(currentSize);
                 mBgPanel_.setCentre(mBgEndPos_.x, mBgEndPos_.y);
-                mBgPanel_.setColour(ColourValue(1, 1, 1, 0.95));
+                mBgPanel_.setOpacity(0.95);
             }
             //Maintain background opacity during phase 2
             if(mBackgroundWindow_ != null){
@@ -253,7 +253,7 @@
             local p = min(1.0, mContentFadeFrame_.tofloat() / CONTENT_FADE_FRAMES.tofloat());
             local eased = ::Easing.easeInOutCubic(p);
             local opacity = eased * 0.95;
-            mContentPanel_.setColour(ColourValue(1, 1, 1, opacity));
+            mContentPanel_.setOpacity(opacity);
 
             //Fade in labels
             if(mContentLabels_ != null){
@@ -300,7 +300,7 @@
                 mBgPanel_.setCentre(mBgEndPos_.x, mBgEndPos_.y);
                 //Fade out opacity
                 local opacity = 1.0 - p;
-                mBgPanel_.setColour(ColourValue(1, 1, 1, opacity));
+                mBgPanel_.setOpacity(opacity);
             }
 
             //Fade out labels

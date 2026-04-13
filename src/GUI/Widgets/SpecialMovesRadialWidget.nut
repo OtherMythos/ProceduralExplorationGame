@@ -42,11 +42,11 @@
             mDisabled_ = disabled;
             if(disabled){
                 mPanel_.setSkinPack("Panel_darkGrey");
-                mPanel_.setColour(ColourValue(1, 1, 1, 0.75));
+                mPanel_.setOpacity(0.75);
                 mLabel_.setVisible(false);
             }else{
                 mPanel_.setSkinPack("Panel_midGrey");
-                mPanel_.setColour(ColourValue(1, 1, 1, 1.0));
+                mPanel_.setOpacity(1.0);
                 mLabel_.setVisible(true);
             }
         }

@@ -41,8 +41,8 @@
         mChildBar_.setSkinPack("Button_red_smallEdge");
 
         mInnerPanel_ = mWindowContainer_.createPanel();
-        mInnerPanel_.setSkin("Panel_edge_red_colour");
-        //mInnerPanel_.setColour(ColourValue(0.277, 0.090, 0.090, 1));
+        //mInnerPanel_.setSkin("Panel_edge_red_colour");
+        mInnerPanel_.setColour(ColourValue(0.07, 0.01, 0.01, 1));
 
         mParentContainer_.setClickable(false);
         mChildBar_.setClickable(false);
@@ -72,14 +72,14 @@
     }
 
     function setColour(colour){
-        mParentContainer_.setColour(ColourValue(1, 1, 1, colour.a));
-        mChildBar_.setColour(ColourValue(1, 1, 1, colour.a));
+        mParentContainer_.setOpacity(colour.a);
+        mChildBar_.setOpacity(colour.a);
         if(mLabelObject_ != null){
             mLabelObject_.setColour(colour);
         }
         if(mInnerPanel_ != null){
             local newColour = colour.a * colour.a * colour.a;
-            mInnerPanel_.setColour(ColourValue(1.0, 1.0, 1.0, newColour));
+            mInnerPanel_.setOpacity(newColour);
         }
     }
 

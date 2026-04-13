@@ -17,7 +17,7 @@ local DialogOptionButton = class{
         mSize_ = null;
         mRestPos_ = null;
 
-        mButton_.setColour(ColourValue(1, 1, 1, 0.95));
+        mButton_.setOpacity(0.95);
         mButton_.setVisualsEnabled(true);
         mLabel_.setClickable(false);
     }
@@ -51,7 +51,7 @@ local DialogOptionButton = class{
         local py = mRestPos_.y - DIALOG_OPTION_ANIM_OFFSET_Y * (1.0 - p);
         mButton_.setPosition(mRestPos_.x, py);
         mLabel_.setPosition(mRestPos_.x + PADDING_X, py + PADDING_Y);
-        mButton_.setColour(ColourValue(1, 1, 1, 0.95 * p));
+        mButton_.setOpacity(0.95 * p);
         mLabel_.setTextColour(1, 1, 1, p);
     }
 
@@ -127,7 +127,7 @@ local DialogActorTitle = class {
     }
 
     function setAlpha(alpha){
-        mBackgroundPanel_.setColour(ColourValue(1, 1, 1, alpha * 0.95));
+        mBackgroundPanel_.setOpacity(alpha * 0.95);
         mLabel_.setTextColour(1, 1, 1, alpha);
     }
 
@@ -413,10 +413,10 @@ local DialogActorTitle = class {
         local containerAlpha = 0.95 * easedAlpha;
 
         mContainerWindow_.setPosition(introPos.x, introPos.y);
-        mContainerWindow_.setColour(ColourValue(1, 1, 1, containerAlpha));
+        mContainerWindow_.setOpacity(containerAlpha);
 
         if(mNextDialogButton_ != null){
-            mNextDialogButton_.setColour(ColourValue(1, 1, 1, easedAlpha));
+            mNextDialogButton_.setOpacity(easedAlpha);
             mNextDialogButton_.setTextColour(1, 1, 1, easedAlpha);
         }
 
@@ -453,7 +453,7 @@ local DialogActorTitle = class {
         }
 
         mContainerWindow_.setSkinPack("Button_midGrey");
-        mContainerWindow_.setColour(ColourValue(1, 1, 1, 0.95));
+        mContainerWindow_.setOpacity(0.95);
 
     mDialogIntroTargetPos_ = mContainerWindow_.getPosition();
     mDialogIntroOffset_ = Vec2(0, mobile ? 28 : 20);

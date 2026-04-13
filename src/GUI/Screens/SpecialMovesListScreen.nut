@@ -20,7 +20,6 @@ local SpecialMoveListItemButton = class{
         //Left panel for visual representation
         mLeftPanel_ = parentWindow.createPanel();
         mLeftPanel_.setSkinPack("Button_midGrey");
-        mLeftPanel_.setColour(ColourValue(1, 1, 1, 0.95));
         mLeftPanel_.setClickable(false);
 
         mNameLabel_ = parentWindow.createLabel();
@@ -79,12 +78,12 @@ local SpecialMoveListItemButton = class{
         mDisabled_ = disabled;
         if(disabled){
             mLeftPanel_.setSkinPack("Button_darkGrey");
-            mLeftPanel_.setColour(ColourValue(1, 1, 1, 0.75));
+            mLeftPanel_.setOpacity(0.75);
             mNameLabel_.setVisible(false);
             mDescriptionLabel_.setVisible(false);
         }else{
             mLeftPanel_.setSkinPack("Button_midGrey");
-            mLeftPanel_.setColour(ColourValue(1, 1, 1, 0.95));
+            mLeftPanel_.setOpacity(0.95);
             mNameLabel_.setVisible(true);
             mDescriptionLabel_.setVisible(true);
         }
