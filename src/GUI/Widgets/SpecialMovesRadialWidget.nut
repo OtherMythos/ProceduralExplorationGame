@@ -21,6 +21,7 @@
             mBasePos_ = null;
 
             mPanel_ = parent.createPanel();
+            _gameCore.setWidgetCustomParameter(mPanel_, 0, HLMS_UNLIT_DIAGONAL_DIFFUSE_PIXELS | HLMS_UNLIT_OUTLINE_GLEAM);
             mPanel_.setSkinPack("Panel_midGrey");
             mPanel_.setSize(size, size);
             mPanel_.setClickable(false);

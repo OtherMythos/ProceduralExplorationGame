@@ -15,24 +15,32 @@
     function setup(){
         mBackgroundPanel_ = mParent_.createPanel();
 
-        mBackgroundPanel_.setSize(mParent_.getSizeAfterClipping().x, 200);
+        mBackgroundPanel_.setSize(mParent_.getSizeAfterClipping().x, 240);
         mBackgroundPanel_.setDatablock("simpleGrey");
         mBackgroundPanel_.setSkinPack("Panel_darkGrey");
 
         local innerPadding = 10;
 
+        local testPanel = mParent_.createPanel();
+        testPanel.setSkinPack("Button_red_triangleEdge");
+        _gameCore.setWidgetCustomParameter(testPanel, 0, HLMS_UNLIT_DIAGONAL_DIFFUSE_PIXELS | HLMS_UNLIT_OUTLINE_GLEAM);
+
         mTitle_ = mParent_.createLabel();
         mTitle_.setDefaultFontSize(mTitle_.getDefaultFontSize() * 1.1);
         mTitle_.setText("Bank");
-        mTitle_.setPosition(innerPadding, 0);
+        mTitle_.setPosition(innerPadding + 25, 15);
 
-        local yPos = 0;
+        testPanel.setSize(mTitle_.getSize() + Vec2(50, 10));
+        testPanel.setPosition(10, 10);
+
+        local yPos = 30;
         yPos += mTitle_.getSize().y;
 
         mInnerPanel_ = mParent_.createPanel();
         local backgroundSize = mBackgroundPanel_.getSize();
         mInnerPanel_.setSize(backgroundSize.x - innerPadding * 2, backgroundSize.y - yPos - innerPadding);
         mInnerPanel_.setPosition(innerPadding, yPos);
+        _gameCore.setWidgetCustomParameter(mInnerPanel_, 0, HLMS_UNLIT_DIAGONAL_DIFFUSE_PIXELS);
         mInnerPanel_.setDatablock("placeMapIndicator");
         mInnerPanel_.setSkinPack("Panel_lightGrey");
 
@@ -93,6 +101,9 @@
             }
         }
 
+        mBackgroundPanel_.setPosition(mBackgroundPanel_.getPosition() + Vec2(0, 40));
+        mBackgroundPanel_.setSize(mBackgroundPanel_.getSize() - Vec2(0, 40));
+
         _event.subscribe(Event.BANK_MONEY_CHANGED, receiveBankMoneyChanged, this);
     }
 
@@ -113,7 +124,7 @@
     }
 
     function getSize(){
-        return mBackgroundPanel_.getSize();
+        return mBackgroundPanel_.getSize() + Vec2(0, 40);
     }
 
 };

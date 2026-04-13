@@ -133,23 +133,30 @@
         local gridSize = calculateGridSize();
 
         mBackgroundPanel_ = mParent_.createPanel();
-        mBackgroundPanel_.setSize(mParent_.getSizeAfterClipping().x, 230 + GRID_PADDING * 2);
+        mBackgroundPanel_.setSize(mParent_.getSizeAfterClipping().x, 255 + GRID_PADDING * 2);
         mBackgroundPanel_.setDatablock("simpleGrey");
         mBackgroundPanel_.setPosition(0, yPos);
         mBackgroundPanel_.setSkinPack("Panel_darkGrey");
 
         local innerPadding = INNER_PADDING;
 
+        local testPanel = mParent_.createPanel();
+        testPanel.setSkinPack("Button_red_triangleEdge");
+        _gameCore.setWidgetCustomParameter(testPanel, 0, HLMS_UNLIT_DIAGONAL_DIFFUSE_PIXELS | HLMS_UNLIT_OUTLINE_GLEAM);
+
         mTitle_ = mParent_.createLabel();
         mTitle_.setDefaultFontSize(mTitle_.getDefaultFontSize() * 1.1);
         mTitle_.setText("Shop");
-        mTitle_.setPosition(innerPadding, yPos);
+        mTitle_.setPosition(innerPadding + 25, yPos + 15);
 
-        yPos += mTitle_.getSize().y;
+        testPanel.setSize(mTitle_.getSize() + Vec2(50, 10));
+        testPanel.setPosition(10, yPos + 10);
+
+        yPos += mTitle_.getSize().y + 25;
 
         mInnerPanel_ = mParent_.createPanel();
         local backgroundSize = mBackgroundPanel_.getSize();
-        mInnerPanel_.setSize(backgroundSize.x - innerPadding * 2, backgroundSize.y - mTitle_.getSize().x - GRID_PADDING);
+        mInnerPanel_.setSize(backgroundSize.x - innerPadding * 2, backgroundSize.y - mTitle_.getSize().x - GRID_PADDING - 25);
         mInnerPanel_.setPosition(innerPadding, yPos);
         mInnerPanel_.setSkinPack("Panel_lightGrey");
 
@@ -165,6 +172,9 @@
         mPrices_ = shopData["prices"];
         mBuyAnimations_ = [];
         refreshGrid_()
+
+        mBackgroundPanel_.setPosition(mBackgroundPanel_.getPosition() + Vec2(0, 40));
+        mBackgroundPanel_.setSize(mBackgroundPanel_.getSize() - Vec2(0, 40));
 
     }
 
