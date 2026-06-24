@@ -483,9 +483,9 @@ jobs:
           git clone https://github.com/OtherMythos/avEngine.git /tmp/avEngine
           cd /tmp/avEngine
           git log -1
-          sed -i '' 's/com\.othermythos\.av/com.othermythos.proceduralexplorationgame/g' setup/ios/Info.plist
-          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $GITHUB_RUN_NUMBER" setup/ios/Info.plist
-          cat setup/ios/Info.plist
+          sed -i '' 's/com\.othermythos\.av/com.othermythos.proceduralexplorationgame/g' setup/ios/Info.plist.in
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $GITHUB_RUN_NUMBER" setup/ios/Info.plist.in
+          cat setup/ios/Info.plist.in
           #Bit of a hack to resolve a linking error relating to the git_version library.
           sed -i '' '/git_version/d' CMakeLists.txt
           sed -i '' '\#include(CMake/CheckGit.cmake)#d' CMakeLists.txt
@@ -504,7 +504,7 @@ jobs:
           # Combine into a version string
           version="${major}.${minor}.${patch}"
           echo "$version"
-          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $version" setup/ios/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $version" setup/ios/Info.plist.in
       - name: Setup CMake
         run: |
           xcrun simctl list
