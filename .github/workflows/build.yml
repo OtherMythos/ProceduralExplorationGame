@@ -52,6 +52,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+      - name: Select Xcode 26
+        run: sudo xcode-select -s /Applications/Xcode_26.0.app
       - name: Download artifact
         uses: dawidd6/action-download-artifact@v8
         with:
@@ -439,6 +441,8 @@ jobs:
         buildType: [Debug, Release]
 
     steps:
+      - name: Select Xcode 26
+        run: sudo xcode-select -s /Applications/Xcode_26.0.app
       - name: Setup temporary keychain
         env:
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
