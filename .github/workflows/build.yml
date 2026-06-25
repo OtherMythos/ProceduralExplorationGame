@@ -528,6 +528,7 @@ jobs:
           -DCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM="${{ secrets.APPLE_TEAM_ID }}" \
           -DCMAKE_XCODE_ATTRIBUTE_PROVISIONING_PROFILE_SPECIFIER="ProceduralExplorationGame" \
           -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGN_STYLE=Manual \
+          -DCMAKE_XCODE_ATTRIBUTE_ENABLE_ON_DEMAND_RESOURCES=NO \
           ..
       - name: build
         run: |
@@ -544,7 +545,8 @@ jobs:
             -archivePath /tmp/avEngine/build/av.xcarchive \
             clean archive \
             DEVELOPMENT_TEAM=${{ secrets.APPLE_TEAM_ID }} \
-            PROVISIONING_PROFILE_SPECIFIER="ProceduralExplorationGame"
+            PROVISIONING_PROFILE_SPECIFIER="ProceduralExplorationGame" \
+            ENABLE_ON_DEMAND_RESOURCES=NO
       - name: Generate exportOptions.plist
         run: |
           cp /tmp/avEngine/setup/ios/ExportOptions.plist ${{ github.workspace }}
